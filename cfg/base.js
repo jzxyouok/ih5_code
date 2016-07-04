@@ -35,7 +35,10 @@ module.exports = {
             sources: `${defaultSettings.srcPath}/sources/`,
             stores: `${defaultSettings.srcPath}/stores/`,
             styles: `${defaultSettings.srcPath}/styles/`,
-            config: `${defaultSettings.srcPath}/config/` + process.env.REACT_WEBPACK_ENV
+            config: `${defaultSettings.srcPath}/config/` + process.env.REACT_WEBPACK_ENV,
+            'rc-slider/src/Track': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Track`,
+            'rc-slider/src/Steps': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Steps`,
+            'rc-slider/src/Marks': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Marks`
         }
     },
     module: {}

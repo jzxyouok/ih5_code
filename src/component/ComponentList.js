@@ -14,7 +14,7 @@ class ComponentList extends React.Component {
         var items = [];
         for (var i = 0; i < this.props.content.length; i++) {
             items.push(
-                <Component cid={this.props.content[i].cid} icon={this.props.content[i].icon} />
+                <Component key={i} cid={this.props.content[i].cid} icon={this.props.content[i].icon} className={this.props.content[i].className} param={this.props.content[i].param || null}/>
             );
         }
 

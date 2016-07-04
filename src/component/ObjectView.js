@@ -3,8 +3,6 @@ import Outline from './Outline';
 import ParamsPanel from './ParamsPanel';
 
 class ObjectView extends React.Component {
-
-
         render()
         {
             return (

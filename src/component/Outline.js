@@ -5,53 +5,30 @@ import { Tree } from 'antd';
 import { Card } from 'antd';
 const TreeNode = Tree.TreeNode;
 
-const x = 3;
-const y = 2;
-const z = 1;
-const gData = [];
-const generateData = (_level, _preKey, _tns) => {
-    const preKey = _preKey || '0';
-    const tns = _tns || gData;
-
-    const children = [];
-    for (let i = 0; i < x; i++) {
-        const key = `${preKey}-${i}`;
-        tns.push({ title: key, key });
-        if (i < y) {
-            children.push(key);
-        }
-    }
-    if (_level < 0) {
-        return tns;
-    }
-    const level = _level - 1;
-    children.forEach((key, index) => {
-        tns[index].children = [];
-        return generateData(level, key, tns[index].children);
-    });
-};
-generateData(z);
+import WidgetActions from '../actions/WidgetActions';
+import WidgetStore from '../stores/WidgetStore';
 
 class Outline extends React.Component{
     constructor (props) {
         super(props);
         this.state = {
-            gData,
-            expandedKeys: ['0-0', '0-0-0', '0-0-0-0']
+            widgetTree: null,
+            selectedNode: [],
+            expandedNodes: []
         };
-
     }
 
-    onDragEnter(info) {
-        console.log(info);
+    onDragEnter() {
+        //console.log(info);
         // expandedKeys 需要受控时设置
         // this.setState({
         //   expandedKeys: info.expandedKeys,
         // });
     }
 
-    onDrop(info) {
+    onDrop() {
         //console.log(info);
+        /*
         const dropKey = info.node.props.eventKey;
         const dragKey = info.dragNode.props.eventKey;
         // const dragNodesKeys = info.dragNodesKeys;
@@ -89,24 +66,72 @@ class Outline extends React.Component{
         this.setState({
             gData: data
         });
+        {(this.state.widgetTree) ? loop(this.state.widgetTree) : ''}
+        */
+    }
+
+    onStatusChange(widget) {
+        if (widget.initTree !== undefined)
+            this.setState({widgetTree: widget.initTree});
+        else if (widget.redrawTree !== undefined)
+            this.forceUpdate();
+
+        if (widget.selectWidget !== undefined) {
+            let changed;
+            if (widget.selectWidget) {
+                let key = '' + widget.selectWidget.key;
+                changed = {selectedNode: [key], expandedNodes:this.state.expandedNodes};
+                let node = widget.selectWidget;
+                while (node) {
+                    key = '' + node.key;
+                    if (changed.expandedNodes.indexOf(key) < 0)
+                        changed.expandedNodes.push(key);
+                    node = node.parent;
+                }
+            } else {
+                changed = {selectedNode: []};
+            }
+            this.setState(changed);
+
+        }
+    }
+
+    componentDidMount() {
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onSelect(selectedKeys, e) {
+        if (e.selectedNodes.length > 0) {
+            WidgetActions['selectWidget'](e.selectedNodes[0].props.node, true);
+        } else {
+            WidgetActions['selectWidget'](null);
+        }
+    }
+
+    onExpand(expandedKeys, e) {
+        if (!e.expanded) {
+            expandedKeys.splice(expandedKeys.indexOf('' + e.node.props.node.key), 1);
+        }
+        this.setState({expandedNodes: expandedKeys});
     }
 
     render() {
-        const loop = data => data.map((item) => {
-            if (item.children) {
-                return <TreeNode key={item.key} title={item.key}>{loop(item.children)}</TreeNode>;
-            }
-            return <TreeNode key={item.key} title={item.key} />;
+        const loop = (data,rootName) => data.map(item => {
+            return <TreeNode key={item.key} title={(rootName) ? rootName : item.className} node={item}>{(item.children) ? loop(item.children) : ''}</TreeNode>;
         });
+        let child = [];
+        if (this.state.widgetTree) {
+            this.state.widgetTree.forEach(item => {
+                child.push(loop([item.tree], item.name));
+            });
+        }
         return (
-                <Card title="对象树"  style={{ width:300,height:400,overflow:'auto' }} >
-                    <p>
-                        <Tree defaultExpandedKeys={this.state.expandedKeys} openAnimation={{}} draggable
-                              onDragEnter={this.onDragEnter.bind(this)}
-                              onDrop={this.onDrop.bind(this)}>
-                            {loop(this.state.gData)}
-                        </Tree>
-                    </p>
+                <Card title="对象树" >
+                    <Tree autoExpandParent={false} selectedKeys={this.state.selectedNode} expandedKeys={this.state.expandedNodes} onSelect={this.onSelect.bind(this)} onExpand={this.onExpand.bind(this)}>{child}</Tree>
                 </Card>
         );
     }
