@@ -38,7 +38,8 @@ module.exports = {
             config: `${defaultSettings.srcPath}/config/` + process.env.REACT_WEBPACK_ENV,
             'rc-slider/src/Track': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Track`,
             'rc-slider/src/Steps': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Steps`,
-            'rc-slider/src/Marks': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Marks`
+            'rc-slider/src/Marks': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Marks`,
+            'bridge': `${defaultSettings.srcPath}/bridge`
         }
     },
     module: {}

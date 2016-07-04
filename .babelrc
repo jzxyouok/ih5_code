@@ -1,7 +1,26 @@
 {
-  "presets": ["es2015","react"],
-  "plugins":
-  [
-    ["antd", {style:true}]
-  ]
+  "env": {
+    "production": {
+      "presets": ["es2015","react"],
+      "plugins":
+      [
+        ["antd", {style:true}]
+      ]
+    },
+    "development": {
+      "presets": ["es2015","react"],
+      "plugins":
+      [
+        ["antd", {style:true}]
+      ]
+    },
+    "merge": {
+      "presets": ['react'],
+      "plugins":
+      [
+        ["antd", {style:true, libDir:'components'}],
+        ["transform-es2015-modules-commonjs", {loose: true}]
+      ]
+    }
+  }
 }

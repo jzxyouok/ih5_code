@@ -1,7 +1,7 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
 
-var bridge = require('../bridge');
+var bridge = require('bridge');
 var elm = bridge.create(640, 480);
 
 var selector = bridge.createSelector();

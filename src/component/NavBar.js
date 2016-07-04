@@ -7,7 +7,7 @@ import WidgetActions from '../actions/WidgetActions';
 import Cookies  from 'js-cookie';
 import InputText from './InputText';
 
-import bridge from '../bridge';
+import bridge from 'bridge';
 
 class NavBar extends React.Component {
     constructor(props) {
