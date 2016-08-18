@@ -4,22 +4,22 @@
       "presets": ["es2015","react"],
       "plugins":
       [
-        ["antd", {style:true}]
+        ["antd", {"style":true}]
       ]
     },
     "development": {
       "presets": ["es2015","react"],
       "plugins":
       [
-        ["antd", {style:true}]
+        ["antd", {"style":true}]
       ]
     },
     "merge": {
-      "presets": ['react'],
+      "presets": ["react"],
       "plugins":
       [
-        ["antd", {style:true, libDir:'components'}],
-        ["transform-es2015-modules-commonjs", {loose: true}]
+        ["antd", {"style":true, "libDir":"components"}],
+        ["transform-es2015-modules-commonjs", {"loose": true}]
       ]
     }
   }
