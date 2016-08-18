@@ -71,9 +71,13 @@ class ParamsPanel extends React.Component{
     }
 
     onEditDone(s) {
-        if (s) {
-            this.state.currentWidget.events[this.currentEvent] = this.state.currentWidget.events[this.currentEvent] || {};
-            this.state.currentWidget.events[this.currentEvent]['func'] = s;
+        if (s !== null) {
+            if (s) {
+                this.state.currentWidget.events[this.currentEvent] = this.state.currentWidget.events[this.currentEvent] || {};
+                this.state.currentWidget.events[this.currentEvent]['func'] = s;
+            } else {
+                delete this.state.currentWidget.events[this.currentEvent];
+            }
         }
         this.setState({editTextVisible: false});
     }

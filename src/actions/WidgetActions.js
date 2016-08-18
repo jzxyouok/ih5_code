@@ -5,10 +5,16 @@ export default Reflux.createActions([
   'addWidget',
   'addClass',
   'removeWidget',
+  'copyWidget',
+  'pasteWidget',
+  'reorderWidget',
   'initTree',
   'render',
   'updateProperties',
   'resetTrack',
   'syncTrack',
   'deletePoint',
-  'saveNode']);
+  'saveNode',
+  'chooseFile',
+  'setFont',
+  'setImageText']);

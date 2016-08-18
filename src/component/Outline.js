@@ -108,7 +108,7 @@ class Outline extends React.Component{
         if (e.selectedNodes.length > 0) {
             WidgetActions['selectWidget'](e.selectedNodes[0].props.node, true);
         } else {
-            WidgetActions['selectWidget'](null);
+            //WidgetActions['selectWidget'](null);
         }
     }
 
@@ -120,9 +120,14 @@ class Outline extends React.Component{
     }
 
     render() {
-        const loop = (data,rootName) => data.map(item => {
-            return <TreeNode key={item.key} title={(rootName) ? rootName : item.className} node={item}>{(item.children) ? loop(item.children) : ''}</TreeNode>;
-        });
+        const loop = (data,rootName) => {
+            var result = []
+            for (var i = data.length - 1; i >= 0; i--) {
+                var item = data[i];
+                result.push(<TreeNode key={item.key} title={(rootName) ? rootName : item.className} node={item}>{(item.children) ? loop(item.children) : ''}</TreeNode>);
+            }
+            return result;
+        };
         let child = [];
         if (this.state.widgetTree) {
             this.state.widgetTree.forEach(item => {

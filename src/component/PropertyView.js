@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import { Form, Input, InputNumber, Slider, Switch, Collapse } from 'antd';
 const Panel = Collapse.Panel;
@@ -7,6 +8,8 @@ import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
 
 import {propertyType, propertyMap} from './PropertyMap';
+
+require("jscolor/jscolor");
 
 function getInputBox(type, defaultProp) {
     switch (type) {
@@ -22,6 +25,17 @@ function getInputBox(type, defaultProp) {
         case propertyType.Text:
             return <Input type="textarea" {...defaultProp} />;
 
+        case propertyType.Color:
+            return <Input ref={(input) => {
+                if (input) {
+                    var dom = ReactDOM.findDOMNode(input).firstChild;
+                    if (!dom.jscolor) {
+                        dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                        dom.jscolor.onFineChange = defaultProp.onChange;
+                    }
+                }
+            }} {...defaultProp} />;
+
         case propertyType.Boolean:
             return <Switch {...defaultProp} />;
 
@@ -35,6 +49,7 @@ class PropertyView extends React.Component {
         super(props);
         this.state = {fields: null};
         this.selectNode = null;
+        this.currentPage = null;
     }
 
     onChangeProp(prop, value) {
@@ -111,7 +126,7 @@ class PropertyView extends React.Component {
                 size: 'small',
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
-                onChange: (item.type === propertyType.String || item.type === propertyType.Text) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item),
+                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item),
                 currentNode: node,
                 currentProp: item
             };
@@ -146,6 +161,17 @@ class PropertyView extends React.Component {
         if (widget.selectWidget !== undefined){
             this.selectNode = widget.selectWidget;
             this.setState({fields: this.getFields()});
+            let node = this.selectNode;
+            while (node != null) {
+                if (node.className == 'page') {
+                    if (node != this.currentPage) {
+                        this.currentPage = node;
+                        node.parent.node['gotoPage'](node.node);
+                    }
+                    break;
+                }
+                node = node.parent;
+            }
         } else if (widget.updateProperties !== undefined && widget.skipProperty === undefined) {
             let needRender = (widget.skipRender === undefined);
             let selectNode = this.selectNode;

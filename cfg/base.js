@@ -39,7 +39,8 @@ module.exports = {
             'rc-slider/src/Track': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Track`,
             'rc-slider/src/Steps': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Steps`,
             'rc-slider/src/Marks': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Marks`,
-            'bridge': `${defaultSettings.srcPath}/bridge`
+            'bridge': `${defaultSettings.srcPath}/bridge`,
+            'jscolor/jscolor': `${defaultSettings.srcPath}/../lib/jscolor`,
         }
     },
     module: {}

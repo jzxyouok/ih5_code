@@ -6,13 +6,16 @@ import { Row, Col } from 'antd';
 import WidgetActions from '../actions/WidgetActions';
 import Cookies  from 'js-cookie';
 import InputText from './InputText';
+import LoginDialog from './LoginDialog';
 
 import bridge from 'bridge';
+
+const PREFIX = 'app/';
 
 class NavBar extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {username: null, workname: null, importname: null, saveVisible: false, importVisible: false, workList:[], classList:[]};
+        this.state = {username: null, workname: null, importname: null, saveVisible: false, importVisible: false, workList:[], classList:[], fontList:[]};
         this.onLogout = this.onLogout.bind(this);
         this.onOpen = this.onOpen.bind(this);
         this.onSave = this.onSave.bind(this);
@@ -21,11 +24,13 @@ class NavBar extends React.Component {
         this.saveCallback = this.saveCallback.bind(this);
         this.onImport = this.onImport.bind(this);
 
-        this.userid = null;
-        var name = Cookies.get('ih5user');
+        this.token = null;
+        this.playUrl = null;
+        var name = Cookies.get('ih5token');
         if (name) {
             this.state.loginVisible = false;
-            this.login(name);
+            this.token = name;
+            this.getWorks();
         } else {
             this.state.loginVisible = true;
         }
@@ -42,6 +47,9 @@ class NavBar extends React.Component {
         xhr.open(method, url);
         if (type)
             xhr.setRequestHeader('Content-Type', type);
+        if (this.token) {
+            xhr.setRequestHeader('Authorization', 'Bearer {' + this.token + '}');
+        }
         xhr.send(data);
     }
 
@@ -51,21 +59,28 @@ class NavBar extends React.Component {
         WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 480}, links:[]}});
     }
 
-    getWorks(name) {
-        Cookies.set('ih5user', name, { expires: 30 });
-        this.ajaxSend('GET', 'user/'+ this.userid, null, null, (text) => {
+    getWorks() {
+        this.ajaxSend('GET', PREFIX + 'userInfo', null, null, (text) => {
             let result = JSON.parse(text);
-            this.setState({loginVisible: false, username: name, workList:result});
+            if (result['name']) {
+                this.playUrl = result['playUrl'];
+                this.setState({loginVisible: false, username: result['name'], workList: result['list'], fontList: result['font']});
+            } else {
+                this.setState({loginVisible: true});
+            }
         });
     }
 
-    login(name) {
-        this.ajaxSend('POST', 'login',
-            'application/x-www-form-urlencoded', 'username=' + encodeURIComponent(name), (text) => {
+    login(name, pass) {
+        this.ajaxSend('POST', PREFIX + 'login',
+            'application/x-www-form-urlencoded', 'username=' + encodeURIComponent(name) + "&password=" + encodeURIComponent(pass), (text) => {
             let r = JSON.parse(text);
-            if (r.id) {
-                this.userid = r.id;
-                this.getWorks(name);
+            if (r['token']) {
+                this.token = r['token'];
+                Cookies.set('ih5token', r['token'], { expires: 30 });
+                getWorks();
+            } else {
+                this.setState({loginVisible: true});
             }
         });
     }
@@ -77,14 +92,14 @@ class NavBar extends React.Component {
         }
         this.workid = id;
         if (this.isPlay) {
-            window.open('work/' + id, '_blank');
+            window.open(this.playUrl + 'work/' + id, '_blank');
         }
     }
 
     onPlaySave(isPlay) {
         this.isPlay = isPlay;
         if (this.workid) {
-            WidgetActions['saveNode'](this.userid, this.workid, null, this.saveCallback);
+            WidgetActions['saveNode'](this.token, this.workid, null, this.saveCallback);
         } else {
             this.setState({saveVisible: true});
         }
@@ -104,7 +119,7 @@ class NavBar extends React.Component {
 
     onDelete() {
         if (this.workid) {
-            this.ajaxSend('DELETE', 'work/' + this.workid, null, null, () => {
+            this.ajaxSend('DELETE', PREFIX + 'work/' + this.workid, null, null, () => {
                 let result = [];
                 for (var i = 0; i < this.state.workList.length; i++) {
                     if (this.state.workList[i]['id'] != this.workid) {
@@ -123,7 +138,7 @@ class NavBar extends React.Component {
     }
 
     onOpen(id) {
-        this.onImportUrl('work/' + id, id);
+        this.onImportUrl(PREFIX + 'work/' + id, id);
     }
 
     onImportUrl(url, id) {
@@ -137,17 +152,17 @@ class NavBar extends React.Component {
         });
     }
 
-    onLoginDone(s) {
-        if (s) {
-            this.login(s);
-            this.setState({loginVisible: false, username:s});
+    onLoginDone(name, pass) {
+        if (name) {
+            this.login(name, pass);
+            this.setState({loginVisible: false, username:name});
         }
     }
 
     onSaveDone(s) {
         this.setState({saveVisible: false});
         if (s)
-            WidgetActions['saveNode'](this.userid, null, s, this.saveCallback);
+            WidgetActions['saveNode'](this.token, null, s, this.saveCallback);
     }
 
     onImportDone(s) {
@@ -156,12 +171,22 @@ class NavBar extends React.Component {
             this.onImportUrl(s, null);
     }
 
+    onUploadChange(s) {
+        s.target.sysCallback(s.target);
+    }
+
+    onUploadFont(text) {
+        var s = JSON.parse(text);
+        var fontList = this.state.fontList;
+        fontList.push(s);
+        this.setState({fontList:fontList});
+    }
+
     render() {
         return (
             <div>
                 <Row type="flex" justify="start" align="middle">
-                    <Col span={3}><img src="http://www.ih5.cn/css/images/logo.png" height="50px" width="200px" /></Col>
-                    <Col span={12}><VxMenu works={this.state.workList} onOpen={this.onOpen} classList={this.state.classList} /></Col>
+                    <Col span={15}><VxMenu works={this.state.workList} onOpen={this.onOpen} classList={this.state.classList} fontList={this.state.fontList} onUploadFont={this.onUploadFont.bind(this)} /></Col>
                     <Col span={6}>
                         <Button onClick={this.onSave}>保存</Button>
                         <Button onClick={this.onPlay}>播放</Button>
@@ -171,9 +196,10 @@ class NavBar extends React.Component {
                     </Col>
                     <Col span={3}><AccountArea username={this.state.username}/></Col>
                 </Row>
-                <InputText title="登录" visible={this.state.loginVisible} editText={null} onEditDone={this.onLoginDone.bind(this)} />
+                <LoginDialog title="登录" visible={this.state.loginVisible} editText={null} editText2={null} onEditDone={this.onLoginDone.bind(this)} />
                 <InputText title="作品名字" visible={this.state.saveVisible} editText={null} onEditDone={this.onSaveDone.bind(this)} />
                 <InputText title="导入网址" visible={this.state.importVisible} editText={null} onEditDone={this.onImportDone.bind(this)} />
+                <input id="upload-box" style={{'display':'none'}} onChange={this.onUploadChange} type="file" />
             </div>
         );
     }

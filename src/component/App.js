@@ -14,9 +14,9 @@ class App extends React.Component {
             <div>
                 <NavBar />
                 <Row gutter={5}>
-                    <Col span={2}><ComponentPanel /></Col>
+                    <Col span={3}><ComponentPanel /></Col>
                     <Col span={4}><PropertyView /></Col>
-                    <Col span={13}><DesignView /><TimelineView /></Col>
+                    <Col span={12}><DesignView /><TimelineView /></Col>
                     <Col span={5}><ObjectView /></Col>
                 </Row>
             </div>

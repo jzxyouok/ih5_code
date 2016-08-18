@@ -5,6 +5,7 @@ import React from 'react';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import InputText from './InputText';
+import JSZip from 'jszip';
 
 import { Menu, Icon } from 'antd';
 const SubMenu = Menu.SubMenu;
@@ -20,7 +21,6 @@ class  VxMenu extends React.Component {
             addClassVisible: false
         };
     }
-
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
@@ -44,12 +44,25 @@ class  VxMenu extends React.Component {
             this.props.onOpen(key.substr(5));
         } else if (key === 'delete') {
             WidgetActions['removeWidget']();
+        } else if (key === 'copy') {
+            WidgetActions['copyWidget']();
+        } else if (key === 'paste') {
+            WidgetActions['pasteWidget']();
+        } else if (key === 'moveUp') {
+            WidgetActions['reorderWidget'](1);
+        } else if (key === 'moveDown') {
+            WidgetActions['reorderWidget'](-1);
         } else if (key === 'addClass') {
             this.setState({addClassVisible: true});
         } else if (key.substr(0, 6) === 'class_') {
             WidgetActions['addWidget'](key.substr(5));
+        } else if (key === 'uploadFont') {
+            WidgetActions['chooseFile']('font', true, (w, text) => {
+                this.props.onUploadFont(text);
+            });
+        } else if (key.substr(0, 5) === 'font_') {
+            WidgetActions['setFont'](key.substr(5));
         }
-
         /*
         this.setState({
             current: e.key
@@ -144,9 +157,18 @@ class  VxMenu extends React.Component {
                     { this.state.classList.map(item => <Menu.Item key={'class_' + item}>Add {item}</Menu.Item>) }
                 </SubMenu>
 
+                <SubMenu title={<span><Icon type="edit" />字体</span>}>
+                    <Menu.Item key="uploadFont">上传字体</Menu.Item>
+                    { this.props.fontList.map(item => <Menu.Item key={'font_' + item['file']}>{item['name']}</Menu.Item>) }
+                </SubMenu>
+
                 <SubMenu title={<span><Icon type="edit" />编辑</span>}>
                     <MenuItemGroup>
                         <Menu.Item key="delete">删除</Menu.Item>
+                        <Menu.Item key="copy">复制</Menu.Item>
+                        <Menu.Item key="paste">粘贴</Menu.Item>
+                        <Menu.Item key="moveUp">向上移动</Menu.Item>
+                        <Menu.Item key="moveDown">向下移动</Menu.Item>
                     </MenuItemGroup>
                 </SubMenu>
             </Menu>
