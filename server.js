@@ -27,6 +27,10 @@ app.get('/ih5core.js', function(req, res) {
   res.sendFile(path.join(__dirname, 'ih5core.js'));
 });
 
+app.get('/index.css', function(req, res) {
+  res.sendFile(path.join(__dirname, 'dist/assets', 'index.css'));
+});
+
 route(app);
 
 app.listen(process.env.PORT || 10000, 'localhost');
