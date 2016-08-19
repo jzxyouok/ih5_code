@@ -1,0 +1,70 @@
+@import "_flexbox";
+
+.flex-1{
+    @include flex(1);
+}
+
+// 方向: 水平;
+.f--h {
+    @include flexbox;
+    @include align-items(stretch);
+}
+
+// 方向： 垂直;
+.f--s {
+    @include flexbox;
+    @include align-items(stretch);
+    @include flex-direction(column);
+}
+
+// 方向: 水平; 对齐: 水平居左, 垂直居中
+.f--hlc {
+    @include flexbox;
+    @include flex-direction(row);
+    @include align-items(center);
+}
+
+// 方向: 水平; 对齐: 水平居左, 垂直居上
+.f--hlt {
+    @include flexbox;
+    @include flex-direction(row);
+    @include justify-content(center);
+}
+
+// 方向: 水平; 对齐: 水平居中, 垂直居中
+.f--hcc {
+    @include flexbox;
+    @include align-items(center);
+    @include justify-content(center);
+}
+
+// 方向：横向; 对齐：水平居左，垂直居中
+.f--slc{
+    @include flexbox;
+    @include flex-direction(column);
+    @include justify-content(center);
+}
+
+
+
+//隐藏
+.hide {
+    display: none;
+}
+
+
+/******************* 按钮 **************************/
+//去掉按钮样式
+.btn-clear{
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+/******************* 圆角 **************************/
+@mixin border-radius($radius) {
+    border-radius: $radius;
+}
