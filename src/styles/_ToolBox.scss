@@ -1,0 +1,81 @@
+@import "./base/variables";
+
+#ToolBox {
+	position: absolute;
+	left: 0;
+	top: 36px;
+	bottom: 0;
+	width: 36px;
+	background-color: $colorNavBackground;
+	z-index: 999;
+	box-sizing: border-box;
+	li {
+		list-style-type: none;
+	}
+	button {
+		outline: none;
+	}
+
+	.ToolBoxGroup {
+		padding-top: 8px;
+		padding-bottom: 8px;
+	}
+
+	.ToolBoxButtonGroup {
+		position: relative;
+		margin-bottom: 4px;
+
+		&.hasSecondaryMenu {
+			.ToolBoxButtonPrimary {
+				position: relative;
+				&:after {
+					content: "";
+					width: 0;
+					height: 0;
+					border-bottom: 4px solid #b5b5b5;
+					border-left: 4px solid transparent;
+					position: absolute;
+					right: 2px;
+					bottom: 2px;
+				}
+			}
+		}
+
+		.ToolBoxButton {
+			-webkit-appearance: none;
+			display: block;
+			border: none;
+			background: none;
+			img {
+				display: block;
+				width: 18px;
+				height: 18px;
+				margin: 5px;
+				opacity: 0.6;
+			}
+			&:hover {
+				img {
+					opacity: 1;
+				}
+			}
+			&.active {
+				background: #1e1e1e;
+				border-radius: 2px;
+				img {
+					opacity: 1;
+				}
+			}
+		}
+		.ToolBoxButtonSubGroup {
+			display: none;
+			position: absolute;
+			left: 36px;
+			top: 0;
+			padding: 4px;
+			background: #353535;
+			&.visible {
+				display: block;
+			}
+		}
+	}
+}

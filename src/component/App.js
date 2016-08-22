@@ -7,6 +7,7 @@ import DesignView from './DesignView';
 import ObjectView from './ObjectView';
 import PropertyView from './PropertyView';
 import TimelineView from './TimelineView';
+import ToolBox from './ToolBox/ToolBox';
 
 class App extends React.Component {
     render() {
@@ -14,11 +15,11 @@ class App extends React.Component {
             <div>
                 <NavBar />
                 <Row gutter={5}>
-                    <Col span={3}><ComponentPanel /></Col>
                     <Col span={4}><PropertyView /></Col>
                     <Col span={12}><DesignView /><TimelineView /></Col>
                     <Col span={5}><ObjectView /></Col>
                 </Row>
+                <ToolBox />
             </div>
         );
     }
