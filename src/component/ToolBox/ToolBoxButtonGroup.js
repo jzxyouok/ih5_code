@@ -5,6 +5,7 @@ import cls from 'classnames';
 import ToolBoxAction from '../../actions/ToolBoxAction';
 import ToolBoxStore from '../../stores/ToolBoxStore';
 
+// 工具栏的按钮组（包含多个工具按钮）
 class ToolBoxButtonGroup extends Component {
     constructor (props) {
         super(props);
@@ -37,6 +38,7 @@ class ToolBoxButtonGroup extends Component {
                 <ToolBoxButton
                     cid={this.props.primary.cid}
                     gid={this.props.gid}
+                    name={this.props.primary.name}
                     icon={this.props.primary.icon}
                     url={this.props.primary.url}
                     isPrimary={true}
@@ -50,6 +52,7 @@ class ToolBoxButtonGroup extends Component {
                                 <ToolBoxButton key={index}
                                     cid={item.cid}
                                     gid={this.props.gid}
+                                    name={item.name}
                                     icon={item.icon}
                                     url={item.url}
                                     isPrimary={false}

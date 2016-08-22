@@ -5,6 +5,7 @@ import WidgetActions from '../../actions/WidgetActions';
 import ToolBoxAction from '../../actions/ToolBoxAction';
 import ToolBoxStore from '../../stores/ToolBoxStore';
 
+// 工具栏按钮（最小单位）
 class ToolBoxButton extends Component {
     constructor (props) {
         super(props);
@@ -92,6 +93,7 @@ class ToolBoxButton extends Component {
         return (
             <button
                 className={cls('ToolBoxButton', {'ToolBoxButtonPrimary': this.props.isPrimary}, {'active': this.state.selected})}
+                title={this.props.name}
                 onClick={this.onClick.bind(this)}
                 onContextMenu={this.onRightClick.bind(this)}>
                 <img src={this.props.icon} />
@@ -103,6 +105,7 @@ class ToolBoxButton extends Component {
 ToolBoxButton.propTypes = {
     cid: PropTypes.number,
     gid: PropTypes.number,
+    name: PropTypes.string,
     icon: PropTypes.string,
     url: PropTypes.string,
     type: PropTypes.string,

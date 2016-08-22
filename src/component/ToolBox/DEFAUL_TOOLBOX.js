@@ -1,3 +1,7 @@
+/**
+ * 默认工具栏配置
+ */
+
 let img = (path) => `/dist/img/icons/${path}`;
 
 let rectIcon = img('rect.svg');

@@ -2,6 +2,8 @@ import React,{PropTypes, Component} from 'react';
 
 import ToolBoxButtonGroup from './ToolBoxButtonGroup';
 
+// 工具栏按钮组别
+// 如：默认工具，自定义工具etc
 class ToolBoxGroup extends Component {
     constructor (props) {
         super(props);

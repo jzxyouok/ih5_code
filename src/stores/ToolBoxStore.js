@@ -1,3 +1,7 @@
+/**
+ * 用于左侧工具栏的 store
+ */
+
 import Reflux from 'reflux';
 import Actions from '../actions/ToolBoxAction';
 
