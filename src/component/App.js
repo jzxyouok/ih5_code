@@ -7,6 +7,7 @@ import DesignView from './DesignView';
 import ObjectView from './ObjectView/_index';
 import PropertyView from './PropertyView';
 import TimelineView from './TimelineView';
+import ToolBox from './ToolBox/ToolBox';
 
 class App extends React.Component {
     render() {
@@ -19,6 +20,7 @@ class App extends React.Component {
                     <DesignView />
                 </div>
 
+                <ToolBox />
                 <ObjectView />
 
                 {

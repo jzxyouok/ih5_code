@@ -1,11 +1,11 @@
-//默认样式
-body{
-    background: #151515 !important;
-}
 
 // 公用的样式
 @import "_common";
+@import "base/mixin";
+@import "base/reset";
+@import "base/variables";
 
 // 组件
 @import "_NavBar";
+@import "_ToolBox";
 @import "_ObjectView";
