@@ -7,6 +7,8 @@ import WidgetActions from '../actions/WidgetActions';
 import Cookies  from 'js-cookie';
 import InputText from './InputText';
 import LoginDialog from './LoginDialog';
+import $ from "jquery"
+import $class from 'classnames'
 
 import bridge from 'bridge';
 
@@ -24,7 +26,8 @@ class NavBar extends React.Component {
             workList:[],
             classList:[],
             fontList:[],
-            stageZoom : 100
+            stageZoom : 100,
+            dropDownState : 0
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -36,6 +39,8 @@ class NavBar extends React.Component {
         this.onImport = this.onImport.bind(this);
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
+        this.dropDownShow = this.dropDownShow.bind(this);
+        this.clickOthersHide = this.clickOthersHide.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -211,6 +216,38 @@ class NavBar extends React.Component {
         }
     }
 
+    dropDownShow(num){
+        this.setState({
+            dropDownState : num
+        },()=>{
+            this.clickOthersHide();
+        });
+    }
+
+    clickOthersHide(){
+        let self = this;
+        let fuc = function(e){
+            let _con1 = $('.dropDownToggle');   // 设置目标区域
+            let _con2 = $('.dropDownBtn');
+            if(
+                (!_con1.is(e.target) && _con1.has(e.target).length === 0)
+                &&(!_con2.is(e.target) && _con2.has(e.target).length === 0)
+            ){
+                self.setState({
+                    dropDownState : 0
+                },()=>{
+                    $(document).off("mouseup", fuc);
+                })
+            }
+        };
+        if(this.state.dropDownState !== 0){
+            $(document).on("mouseup", fuc);
+        }
+        else {
+            $(document).off("mouseup", fuc);
+        }
+    }
+
     render() {
         return (
             <div className="NavBar f--h">
@@ -226,9 +263,11 @@ class NavBar extends React.Component {
                         <button className="btn btn-clear hide-btn" title="隐藏准基线"  />
 
                         <div className="dropDown-btn">
-                            <button className="btn btn-clear align-btn" title="对齐" />
+                            <button className={$class("btn btn-clear align-btn dropDownBtn",{"active":1 === this.state.dropDownState})}
+                                    title="对齐"
+                                    onClick={this.dropDownShow.bind(this, 1)} />
 
-                            <ul className="hide">
+                            <ul className={$class("dropDownToggle", { "hide": 1 !== this.state.dropDownState })}>
                                 <li className="left-icon"><span className="icon" />左对齐</li>
                                 <li className="zhong-icon"><span className="icon zhong-icon" />左右居中</li>
                                 <li className="right-icon" ><span className="icon right-icon" />右对齐</li>
@@ -239,9 +278,11 @@ class NavBar extends React.Component {
                         </div>
 
                         <div className="dropDown-btn">
-                            <button className="btn btn-clear distributed-btn" title="分布" />
+                            <button className={$class("btn btn-clear distributed-btn dropDownBtn",{"active":2 === this.state.dropDownState})}
+                                    title="分布"
+                                    onClick={this.dropDownShow.bind(this, 2)} />
 
-                            <ul className="hide">
+                            <ul className={$class("dropDownToggle", { "hide": 2 !== this.state.dropDownState })}>
                                 <li className="stretch-icon"><span className="icon" />水平分布</li>
                                 <li className="vertical-icon"><span className="icon" />垂直分布</li>
                             </ul>
@@ -285,6 +326,11 @@ class NavBar extends React.Component {
                            visible={this.state.saveVisible}
                            editText={null}
                            onEditDone={this.onSaveDone.bind(this)} />
+
+                <input id="upload-box"
+                       style={{'display':'none'}}
+                       onChange={this.onUploadChange}
+                       type="file" />
 
                 {
                     //    <Row type="flex" justify="start" align="middle">

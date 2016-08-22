@@ -52,11 +52,13 @@
                     background-position: -200px 0 ;
                     &:hover{ background-position: -200px -40px; }
                     &:active{ background-position: -200px -80px; }
+                    &.active{ background-position: -200px -80px; }
                 }
                 &.distributed-btn {
                     background-position: -240px 0 ;
                     &:hover{ background-position: -240px -40px; }
                     &:active{ background-position: -240px -80px; }
+                    &.active{ background-position: -240px -80px; }
                 }
             }
 
