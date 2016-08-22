@@ -1,0 +1,172 @@
+.ObjectView {
+    position: fixed;
+    right: 0;
+    top: 37px;
+    bottom: 0;
+    width: 280px;
+
+    .ov--nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 26px;
+        background: #303030;
+
+        li{
+            width: 59px;
+            height: 100%;
+            line-height: 26px;
+            text-align: center;
+            font-size: 12px;
+            color: #bfbfbf;
+            cursor: pointer;
+
+            &:hover , &.active{
+                color: #fff;
+            }
+
+            &.active {
+                background: #232323;
+            }
+        }
+
+        .btn {
+            width: 32px;
+            height: 100%;
+            background: url("/dist/img/button-icon.svg") no-repeat -1240px 0;
+
+            &:hover {
+                background: url("/dist/img/button-icon.svg") no-repeat -1240px -40px;
+            }
+        }
+    }
+
+    .ov--main {
+        position: absolute;
+        top: 26px;
+        left: 0;
+        bottom: 30px;
+        width: 100%;
+
+        .ov--content{
+            height: 100%;
+            background: #232323;
+            border-right: 1px solid #151515;
+        }
+
+        .Animation{
+            width: 35px;
+            height: 100%;
+            background: #232323;
+        }
+    }
+
+    .ov--footer {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 30px;
+        background: #313131;
+        padding-right: 6px;
+
+        &:before{
+            content:"";
+            @include flex(1);
+        }
+
+        .btn {
+            width: 26px;
+            height: 26px;
+            margin-left: 4px;
+            display: block;
+            background: url("/dist/img/button-icon.svg") no-repeat;
+
+            &.not-allowed {
+                cursor: not-allowed;
+            }
+
+            &.lock-btn {
+                background-position: -1440px 0;
+                &:hover{ background-position: -1440px -80px; }
+                &:active{ background-position: -1440px -120px; }
+                &.not-allowed{ background-position: -1440px -40px; }
+            }
+
+            &.event-btn {
+                background-position: -1400px 0;
+                &:hover{ background-position: -1400px -80px; }
+                &:active{ background-position: -1400px -120px; }
+                &.not-allowed{ background-position: -1400px -40px; }
+            }
+
+            &.new-btn {
+                background-position: -1360px 0;
+                &:hover{ background-position: -1360px -80px; }
+                &:active{ background-position: -1360px -120px; }
+                &.not-allowed{ background-position: -1360px -40px; }
+            }
+
+            &.delete-btn {
+                background-position: -1320px 0;
+                &:hover{ background-position: -1320px -80px; }
+                &:active{ background-position: -1320px -120px;}
+                &.not-allowed{ background-position: -1320px -40px; }
+            }
+        }
+    }
+
+
+    .Animation {
+        .btn {
+            width: 30px;
+            height: 30px;
+            margin: 8px auto 0 auto;
+            background: url("/dist/img/object-tree.svg") no-repeat;
+            display: block;
+
+            &.sports-btn {
+                background-position: -360px 0;
+                &:hover{ background-position: -360px -40px; }
+                &:active{ background-position: -360px -80px; }
+            }
+
+            &.rotation-btn {
+                background-position: -400px 0;
+                &:hover{ background-position: -400px -40px; }
+                &:active{ background-position: -400px -80px; }
+            }
+
+            &.dx-btn {
+                background-position: -440px 0;
+                &:hover{ background-position: -440px -40px; }
+                &:active{ background-position: -440px -80px; }
+            }
+
+            &.easing-btn {
+                background-position: -480px 0;
+                &:hover{ background-position: -480px -40px; }
+                &:active{ background-position: -480px -80px;}
+            }
+
+            &.physical-btn {
+                background-position: -520px 0;
+                &:hover{ background-position: -520px -40px; }
+                &:active{ background-position: -520px -80px;}
+            }
+
+            &.object-btn {
+                background-position: -560px 0;
+                &:hover{ background-position: -560px -40px; }
+                &:active{ background-position: -560px -80px;}
+            }
+
+            &.collision-btn {
+                background-position: -600px 0;
+                &:hover{ background-position: -600px -40px; }
+                &:active{ background-position: -600px -80px;}
+            }
+        }
+    }
+}

@@ -64,6 +64,13 @@
     outline: none;
 }
 
+/******************* ul **************************/
+.ul-clear{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 /******************* 圆角 **************************/
 @mixin border-radius($radius) {
     border-radius: $radius;
