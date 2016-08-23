@@ -15,12 +15,14 @@ class App extends React.Component {
             <div>
                 <NavBar />
 
-                <div className="f--h">
-                    <PropertyView />
-                    <DesignView />
-                </div>
-
                 <ToolBox />
+
+                {
+                    //<PropertyView />
+                }
+
+                <DesignView />
+
                 <ObjectView />
 
                 {
