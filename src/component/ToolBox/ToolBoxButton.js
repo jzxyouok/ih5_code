@@ -3,16 +3,24 @@ import JSZip from 'jszip';
 import cls from 'classnames';
 import WidgetActions from '../../actions/WidgetActions';
 import ToolBoxAction from '../../actions/ToolBoxAction';
-import ToolBoxStore from '../../stores/ToolBoxStore';
+import ToolBoxStore, {isActiveButton} from '../../stores/ToolBoxStore';
 
 // 工具栏按钮（最小单位）
 class ToolBoxButton extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            selected: false
+            selected: isActiveButton(this.props.cid)
         };
         this.self = this;
+    }
+
+    componentWillMount() {
+        //console.log('will mount', this.props.name, this.state.selected);
+    }
+
+    componentWillUpdate() {
+        //console.log('will update', this.props.name, this.state.selected);
     }
 
     componentDidMount() {
@@ -24,9 +32,11 @@ class ToolBoxButton extends Component {
     }
 
     onStatusChange(store) {
+        let status = (store.activeButtonId === this.props.cid);
+        if(status === this.state.selected) return;
         this.setState({
-            selected: store.activeButtonId === this.props.cid
-        })
+            selected: status
+        });
     }
 
     onClick() {

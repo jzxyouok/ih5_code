@@ -32,12 +32,13 @@ class ToolBox extends Component {
     }
 
     onBlur() {
+        //console.log('onblur');
         ToolBoxStore['openSecondary'](null, true);
     }
 
     render() {
         return (
-            <div id="ToolBox">
+            <div id="ToolBox" onClick={ (event)=>{event.stopPropagation()} }>
             {
                 (this.state === null || this.state.data === null) ? null :
                 <ToolBoxGroup {...this.state.data}/>
