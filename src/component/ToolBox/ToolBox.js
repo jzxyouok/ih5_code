@@ -31,6 +31,7 @@ class ToolBox extends Component {
         }
     }
 
+    // 点击窗口其他区域，关闭已打开的工具菜单
     onBlur() {
         //console.log('onblur');
         ToolBoxStore['openSecondary'](null, true);
