@@ -1,3 +1,7 @@
+/**
+ * 属性面板
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -208,7 +212,11 @@ class PropertyView extends React.Component {
     }
 
     render() {
-        return (<Collapse accordion defaultActiveKey={['basic']}>{this.state.fields}</Collapse>);
+        return (
+            <div id="PropertyView">
+                <Collapse accordion defaultActiveKey={['basic']}>{this.state.fields}</Collapse>
+            </div>
+        );
     }
 }
 

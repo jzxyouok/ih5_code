@@ -5,7 +5,7 @@
 import Reflux from 'reflux';
 
 export default Reflux.createActions([
-    'onSelect',
-    'onOpenSecondary',
-    'onButtonClick'
+    'selectPrimary',
+    'selectSecondary',
+    'openSecondary'
 ]);

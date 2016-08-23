@@ -31,7 +31,11 @@ class ToolBoxButton extends Component {
 
     onClick() {
         //console.log(this.props);
-        ToolBoxAction['onSelect'](this.props.cid, null);
+        if(this.props.isPrimary) {
+            ToolBoxAction['selectPrimary'](this.props.cid, null);
+        } else {
+            ToolBoxAction['selectSecondary'](this.props.cid, this.props.gid);
+        }
 
         if (this.props.upload) {
             WidgetActions['chooseFile'](this.props.className, false, (w) => {
@@ -84,7 +88,7 @@ class ToolBoxButton extends Component {
     onRightClick(event) {
         event.preventDefault();
         event.stopPropagation();
-        ToolBoxAction['onSelect'](this.props.cid, this.props.gid);
+        ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
     }
 
     render() {
