@@ -36,28 +36,18 @@ class ToolBoxButtonGroup extends Component {
         return (
             <div className={ cls('ToolBoxButtonGroup', {'hasSecondaryMenu': hasSecondaryMenu}) }>
                 <ToolBoxButton
-                    cid={this.props.primary.cid}
-                    gid={this.props.gid}
-                    name={this.props.primary.name}
-                    icon={this.props.primary.icon}
-                    url={this.props.primary.url}
                     isPrimary={true}
-                    className={this.props.primary.className}
-                    upload={this.props.primary.upload} />
+                    gid={this.props.gid}
+                    {...this.props.primary}/>
                 {
                     !hasSecondaryMenu ? null :
                         <div className={cls('ToolBoxButtonSubGroup', {'visible': this.state.secondaryMenuVisible})}>
                         {
                             this.props.secondary.map((item, index)=>
                                 <ToolBoxButton key={index}
-                                    cid={item.cid}
-                                    gid={this.props.gid}
-                                    name={item.name}
-                                    icon={item.icon}
-                                    url={item.url}
                                     isPrimary={false}
-                                    className={item.className}
-                                    upload={item.upload} />)
+                                    gid={this.props.gid}
+                                    {...item} />)
                         }
                         </div>
                 }
