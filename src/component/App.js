@@ -21,7 +21,9 @@ class App extends React.Component {
                     //<PropertyView />
                 }
 
-                <DesignView />
+                <div className="f--hcc">
+                    <DesignView />
+                </div>
 
                 <ObjectView />
 

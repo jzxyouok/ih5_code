@@ -12,7 +12,7 @@ class Resource extends React.Component {
     render() {
         return (
             <div className="Resource">
-                    45646
+                45646
             </div>
         );
     }
