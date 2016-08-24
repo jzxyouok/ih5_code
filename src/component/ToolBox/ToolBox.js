@@ -40,10 +40,12 @@ class ToolBox extends Component {
     render() {
         return (
             <div id="ToolBox" onClick={ (event)=>{event.stopPropagation()} }>
+            <ul className='toolbox-list'>
             {
                 (this.state === null || this.state.data === null) ? null :
                 <ToolBoxGroup {...this.state.data}/>
             }
+            </ul>
             </div>);
     }
 }
