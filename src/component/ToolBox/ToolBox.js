@@ -6,6 +6,13 @@ import ToolBoxStore from '../../stores/ToolBoxStore';
 // 左侧工具菜单
 class ToolBox extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: config
+        };
+    }
+
     componentDidMount() {
         this.unsubscribe = ToolBoxStore.listen(this.onStatusChange.bind(this));
         window.addEventListener("click", this.onBlur);
@@ -16,18 +23,27 @@ class ToolBox extends Component {
         window.removeEventListener("click", this.onBlur);
     }
 
-    onStatusChange(data) {
-        //console.log(data);
+    onStatusChange(bundle, configUpdate) {
+        if(configUpdate) {
+            this.setState({
+                data: bundle.data
+            });
+        }
     }
 
+    // 点击窗口其他区域，关闭已打开的工具菜单
     onBlur() {
-        ToolBoxStore['onOpenSecondary'](null);
+        //console.log('onblur');
+        ToolBoxStore['openSecondary'](null, true);
     }
 
     render() {
         return (
-            <div id="ToolBox">
-                <ToolBoxGroup name={config.name} data={config.data} />
+            <div id="ToolBox" onClick={ (event)=>{event.stopPropagation()} }>
+            {
+                (this.state === null || this.state.data === null) ? null :
+                <ToolBoxGroup {...this.state.data}/>
+            }
             </div>);
     }
 }

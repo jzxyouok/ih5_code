@@ -3,16 +3,24 @@ import JSZip from 'jszip';
 import cls from 'classnames';
 import WidgetActions from '../../actions/WidgetActions';
 import ToolBoxAction from '../../actions/ToolBoxAction';
-import ToolBoxStore from '../../stores/ToolBoxStore';
+import ToolBoxStore, {isActiveButton} from '../../stores/ToolBoxStore';
 
 // 工具栏按钮（最小单位）
 class ToolBoxButton extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            selected: false
+            selected: isActiveButton(this.props.cid)
         };
         this.self = this;
+    }
+
+    componentWillMount() {
+        //console.log('will mount', this.props.name, this.state.selected);
+    }
+
+    componentWillUpdate() {
+        //console.log('will update', this.props.name, this.state.selected);
     }
 
     componentDidMount() {
@@ -24,14 +32,20 @@ class ToolBoxButton extends Component {
     }
 
     onStatusChange(store) {
+        let status = (store.activeButtonId === this.props.cid);
+        if(status === this.state.selected) return;
         this.setState({
-            selected: store.activeButtonId === this.props.cid
-        })
+            selected: status
+        });
     }
 
     onClick() {
         //console.log(this.props);
-        ToolBoxAction['onSelect'](this.props.cid, null);
+        if(this.props.isPrimary) {
+            ToolBoxAction['selectPrimary'](this.props.cid, null);
+        } else {
+            ToolBoxAction['selectSecondary'](this.props.cid, this.props.gid);
+        }
 
         if (this.props.upload) {
             WidgetActions['chooseFile'](this.props.className, false, (w) => {
@@ -84,7 +98,7 @@ class ToolBoxButton extends Component {
     onRightClick(event) {
         event.preventDefault();
         event.stopPropagation();
-        ToolBoxAction['onSelect'](this.props.cid, this.props.gid);
+        ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
     }
 
     render() {

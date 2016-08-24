@@ -18,7 +18,7 @@ class App extends React.Component {
                 <ToolBox />
 
                 {
-                    //<PropertyView />
+                    <PropertyView />
                 }
 
                 <div className="f--hcc">

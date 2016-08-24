@@ -23,10 +23,11 @@ class ToolBoxButtonGroup extends Component {
     }
 
     onStatusChange(store) {
-        //console.log('s', store);
+        let status = store.openSecondaryId === this.props.gid;
+        if(status===this.state.secondaryMenuVisible) return;
         this.setState({
-            secondaryMenuVisible: store.openSecondaryId === this.props.gid
-        })
+            secondaryMenuVisible: status
+        });
     }
 
     render() {
