@@ -9,13 +9,28 @@
 
         .stage-title ,
         .item-title{
+            position: relative;
             width: 100%;
-            padding: 2px;
+            padding: 2px 2px 2px 22px;
+            font-size: 12px;
+            color: #adadad;
             border-bottom: 1px solid #151515;
 
+            &.active {
+                background: #39311f;
+
+                .event-icon {
+                    background-position:-760px -80px;
+                }
+            }
+
             .btn {
+                position: absolute;
+                left: 2px;
+                top: 2px;
+                bottom: 2px;
                 width: 20px;
-                height: 100%;
+                //height: 100%;
                 background: #151515;
 
                 span{
@@ -35,12 +50,41 @@
             }
 
             .icon {
+                width: 8px;
+                height: 6px;
+                background: url("/dist/img/button-icon.svg") no-repeat -1280px 0;
+                margin-right: 3px;
 
+                &.close-icon {
+                    transform: rotate(-90deg);
+                }
+            }
+
+            p{
+                @extend %font-omitted;
+                margin: 0 0 0 10px;
+                max-width: 95px;
+            }
+
+            .event-icon {
+                position: absolute;
+                right: 10px;
+                width: 14px;
+                height: 14px;
+                background: url("/dist/img/button-icon.svg") no-repeat -760px 0;
             }
         }
 
         .stage-title{
             height: 25px;
+            padding-left: 28px;
+
+            .stage-icon {
+                width: 14px;
+                height: 14px;
+                margin-left: 3px;
+                background: url("/dist/img/button-icon.svg") no-repeat -720px 0;
+            }
         }
     }
 }

@@ -76,3 +76,20 @@
 @mixin border-radius($radius) {
     border-radius: $radius;
 }
+
+/******************* 省略号 **************************/
+//1行省略
+%font-omitted {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+//多行省略
+@mixin font-omitted($row) {
+    overflow : hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: $row;
+    -webkit-box-orient: vertical;
+}
