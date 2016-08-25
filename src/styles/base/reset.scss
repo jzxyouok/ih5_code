@@ -5,3 +5,12 @@ body{
 .hidden {
 	display: none;
 }
+
+#iH5-App-Container,
+#iH5-App,
+#DesignView-Container {
+	height: 100%;
+}
+#DesignView-Container {
+	overflow: hidden;
+}

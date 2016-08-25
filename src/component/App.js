@@ -12,7 +12,7 @@ import ToolBox from './ToolBox/ToolBox';
 class App extends React.Component {
     render() {
         return (
-            <div>
+            <div id="iH5-App">
                 <NavBar />
 
                 <ToolBox />
@@ -21,9 +21,7 @@ class App extends React.Component {
                     <PropertyView />
                 }
 
-                <div className="f--hcc">
-                    <DesignView />
-                </div>
+                <DesignView />
 
                 <ObjectView />
 
