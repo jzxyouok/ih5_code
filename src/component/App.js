@@ -8,6 +8,7 @@ import ObjectView from './ObjectView/_index';
 import PropertyView from './PropertyView';
 import TimelineView from './TimelineView';
 import ToolBox from './ToolBox/ToolBox';
+import EventBox from './EventBox/_index'
 
 class App extends React.Component {
     render() {
@@ -17,9 +18,9 @@ class App extends React.Component {
 
                 <ToolBox />
 
-                {
-                    <PropertyView />
-                }
+                <PropertyView />
+
+                <EventBox />
 
                 <div className="f--hcc">
                     <DesignView />

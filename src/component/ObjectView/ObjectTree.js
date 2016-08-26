@@ -33,7 +33,16 @@ class ObjectTree extends React.Component {
                         {showState:0,openState:0,name:"222",images:"/dist/img/thumbnails.png",event:"",nid:10,children:[]}
                         , {showState:1,openState:1,name:"222",images:"/dist/img/thumbnails.png",event:1,nid:11,
                             children:[
-                                {showState:0,openState:0,name:"333",images:"/dist/img/thumbnails.png",event:"",nid:12,children:[]}
+                                {showState:0,openState:1,name:"333",images:"/dist/img/thumbnails.png",event:"",nid:12,
+                                    children:[
+                                        {showState:1,openState:1,name:"4444444444444",images:"/dist/img/thumbnails.png",event:"",nid:14,
+                                            children:[
+                                                , {showState:1,openState:1,name:"55555555555555",images:"/dist/img/thumbnails.png",event:"",nid:15,
+                                                    children:[
+                                                        {showState:0,openState:0,name:"66666666666666",images:"/dist/img/thumbnails.png",event:"",nid:16,children:[]}
+                                                    ]}
+                                            ]}
+                                    ]}
                             ]}
                     ]}
                 , {showState:0,openState:0,name:"111",images:"/dist/img/thumbnails.png",event:"",nid:13,children:[]}
@@ -115,7 +124,7 @@ class ObjectTree extends React.Component {
         let icon = (open, nid)=>{
             // 0是该图层下不包含任何内容，1有内容，但是内容收起来， 2有内容，且展开内容
             if(open === 0){
-                return null;
+                return <span className="icon not-icon" />;
             }
             else if(open === 1){
                 return <span className="icon close-icon" onClick={this.closeBtn.bind(this)} data-nid={nid} />;
@@ -132,7 +141,6 @@ class ObjectTree extends React.Component {
             return content;
         };
 
-        //Todo:active 选中状态，放在item-title后面，stage-title后面为选中舞台
         let fuc = (v,i)=>{
             return  <div className="item" key={i}>
                         <div className={$class("item-title f--h f--hlc",{"active": v.nid === this.state.nid})}
