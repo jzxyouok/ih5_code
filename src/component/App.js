@@ -6,14 +6,15 @@ import ComponentPanel from './ComponentPanel';
 import DesignView from './DesignView';
 import ObjectView from './ObjectView/_index';
 import PropertyView from './PropertyView';
-import TimelineView from './TimelineView';
+//import TimelineView from './TimelineView';
 import ToolBox from './ToolBox/ToolBox';
-import EventBox from './EventBox/_index'
+import EventBox from './EventBox/_index';
+import Timeline from './Timeline/TimelineView';
 
 class App extends React.Component {
     render() {
         return (
-            <div>
+            <div id="iH5-App">
                 <NavBar />
 
                 <ToolBox />
@@ -22,12 +23,10 @@ class App extends React.Component {
 
                 <EventBox />
 
-                <div className="f--hcc">
-                    <DesignView />
-                </div>
+                <DesignView />
 
                 <ObjectView />
-
+                <Timeline />
                 {
                     //<Row gutter={5}>
                     //    <Col span={3}><ComponentPanel /></Col>

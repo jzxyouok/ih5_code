@@ -1,0 +1,220 @@
+$size: 24px;
+
+@mixin btn() {
+	background-image: url(/dist/img/timeline-icons.svg);
+	background-repeat: no-repeat;
+};
+@mixin clearInput {
+	-webkit-appearance: none;
+	border: none;
+	background: none;
+	outline:none;
+	cursor: pointer;
+};
+
+@mixin bg($x, $y) {
+	background-position: #{-40 * $x}px #{-40 * $y}px;
+};
+
+@mixin bg-btn($i) {
+	@include bg($i, 0);
+	&:hover {
+		@include bg($i, 1);
+	}
+	&:active {
+		@include bg($i, 2);
+	}
+}
+
+@mixin bg-btn2($i) {
+	@include btn();
+	@include bg($i, 0);
+	&.active {
+		@include bg($i, 1);
+	}
+}
+@mixin icon($i) {
+	@include bg($i, 0);
+}
+
+#TimelineView {
+	position: absolute;
+	bottom: 0;
+	left: 37px;
+	z-index: 9;
+	background-color: #232323;
+	width: 70%;
+
+	button {
+		@include clearInput();
+	}
+
+	.timeline-row {
+		height: $size;
+		.timline-column-left {
+			height: $size;
+			width: 180px;
+		}
+		.timline-column-right {
+			height: $size;
+			border-left: 1px solid #151515;
+		}
+	}
+
+	// 头部
+	#TimelineHeader {
+		$height: 26px;
+		height: $height;
+		background-color: #303030;
+		border-bottom: 1px solid #141414;
+
+		#TimelineTitle {
+			display: inline-block;
+			padding-left: 12px;
+			padding-right: 12px;
+			color: #fff;
+			height: $height;
+			line-height: $height;
+		}
+
+		#TimelineNodeDuration {
+			//display: inline-block;
+			height: $height - 6;
+			line-height: $height - 6;
+			position: relative;
+			padding: {
+				left: 26px;
+				right: 8px;
+			}
+			background-color: #151515;
+			border-radius: 2px;
+
+			#TimelineIndicator {
+				@include btn();
+				background-position: 0px 0px;
+				position: absolute;
+				left: 0px;
+				top: -3px;
+				width: 26px;
+				height: 26px;
+				&.active {
+
+				}
+			}
+			input {
+				-webkit-appearance: none;
+				background: none;
+				border: none;
+				outline: none;
+				width: 80px;
+				height: 20px;
+				line-height: 20px;
+			}
+		}
+
+		&.timline-row,
+		.timline-column-left,
+		.timline-column-right {
+			height: $height;
+		}
+
+		#TimelineNodeAction {
+			border-left: none;
+			button {
+				width: $height;
+				height: $height;
+				display: inline-block;
+				@include btn();
+			}
+			#TimelineNodeActionPrev {
+				@include bg(1, 1);
+			}
+			#TimelineNodeActionModify {
+				@include bg(2, 2);
+				&.add {
+					@include bg(2, 0);
+				}
+				&.remove {
+					@include bg(2, 1);
+				}
+			}
+			#TimelineNodeActionNext {
+				@include bg(3, 1);
+			}
+		}
+	}
+
+	// 标尺栏
+	#TimelineTool {
+		border-bottom: 1px solid #151515;
+		#TimelinePlay {
+			display: flex;
+			justify-content: space-around;
+			button {
+				width: $size;
+				height: $size;
+				display: inline-block;
+				background-image: url(/dist/img/timeline-icons.svg);
+				background-repeat: no-repeat;
+			}
+			#TimelinePlayBegin {
+				@include bg-btn(4);
+			}
+			#TimelinePlayStart {
+				@include bg-btn(5);
+			}
+			#TimelinePlayEnd {
+				@include bg-btn(6);
+			}
+		}
+		#TimelineRuler {
+			flex: 1;
+			#TimelineRulerNumbers {
+				height: 16px;
+			}
+			#TimelineRulerMap {
+				height: 7px;
+				background-image: url(/dist/img/ruler.png);
+				background-repeat: repeat-x;
+			}
+		}
+	}
+
+	// 列表
+	.timeline-node {
+		border-bottom: 1px solid #141414;
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+	.timeline-node-track {
+		position: relative;
+	}
+	.timeline-node-meta {
+		.timeline-node-type {
+			width: 24px;
+			height: 24px;
+			display: inline-block;
+			@include btn();
+			&.timeline-node-type-image {
+				@include icon(9);
+			}
+			&.timeline-node-type-button {
+				@include icon(10);
+			}
+		}
+		.timeline-node-name {
+			height: 24px;
+			line-height: 24px;
+			color: #b5b5b5;
+		}
+	}
+
+	.timeline-node-track-breakpoint {
+		width: 24px;
+		height: 24px;
+		position: absolute;
+		@include bg-btn2(7);
+	}
+
+}
