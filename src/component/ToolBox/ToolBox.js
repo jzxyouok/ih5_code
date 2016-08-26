@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component} from 'react';
 import ToolBoxGroup from './ToolBoxGroup';
 import config from './DEFAUL_TOOLBOX';
 import ToolBoxStore from '../../stores/ToolBoxStore';
@@ -15,12 +15,12 @@ class ToolBox extends Component {
 
     componentDidMount() {
         this.unsubscribe = ToolBoxStore.listen(this.onStatusChange.bind(this));
-        window.addEventListener("click", this.onBlur);
+        window.addEventListener('click', this.onBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
-        window.removeEventListener("click", this.onBlur);
+        window.removeEventListener('click', this.onBlur);
     }
 
     onStatusChange(bundle, configUpdate) {
@@ -39,7 +39,7 @@ class ToolBox extends Component {
 
     render() {
         return (
-            <div id="ToolBox" onClick={ (event)=>{event.stopPropagation()} }>
+            <div id='ToolBox' onClick={ (event)=>{event.stopPropagation()} }>
             <ul className='toolbox-list'>
             {
                 (this.state === null || this.state.data === null) ? null :
