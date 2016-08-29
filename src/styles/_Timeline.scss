@@ -169,6 +169,7 @@ $size: 24px;
 		}
 		#TimelineRuler {
 			flex: 1;
+			position: relative;
 			#TimelineRulerNumbers {
 				height: 16px;
 			}
@@ -176,6 +177,37 @@ $size: 24px;
 				height: 7px;
 				background-image: url(/dist/img/ruler.png);
 				background-repeat: repeat-x;
+			}
+			#TimelineRulerSlide {
+				position: absolute;
+				bottom: 0;
+				width: 24px;
+				height: 24px;
+				@include btn();
+				@include bg(8, 0);
+				cursor: pointer;
+			}
+		}
+	}
+
+	#TimlineNodeContent {
+		position: relative;
+		#TimelineRulerAlign {
+			position: absolute;
+			width: 1px;
+			height: 100%;
+			top: 0;
+			background: #ff0000;
+			display: block;
+			&:before {
+				content: "";
+				height: 8px;
+				left: 0;
+				top: -8px;
+				position: relative;
+				width: 1px;
+				background: #ff0000;
+				display: block;
 			}
 		}
 	}
@@ -207,6 +239,11 @@ $size: 24px;
 			height: 24px;
 			line-height: 24px;
 			color: #b5b5b5;
+			display: block;
+			flex: 1;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
 		}
 	}
 
@@ -215,6 +252,7 @@ $size: 24px;
 		height: 24px;
 		position: absolute;
 		@include bg-btn2(7);
+		cursor: pointer;
 	}
 
 }

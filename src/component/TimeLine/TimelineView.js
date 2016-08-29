@@ -13,6 +13,7 @@ class TimelineView extends React.Component {
 		super(props);
 		this.state = {
 			activeLine: null,
+			activeTime: 1.6,
 			timerNode: [{
 				id: 1,
 				name: '图片1',
@@ -34,6 +35,17 @@ class TimelineView extends React.Component {
 				},
 				breakpoints: [
 					0.8, 2.7, 4.9, 5.5
+				]
+			},{
+				id: 2,
+				name: '某某某按钮0000000001111111111',
+				type: 'button',
+				duration: {
+					begin: 0.8,
+					end: 5.500
+				},
+				breakpoints: [
+					0.5, 1.8, 3.3
 				]
 			}]
 		};
@@ -108,9 +120,15 @@ class TimelineView extends React.Component {
 					<div id='TimelineRuler' className='timline-column-right'>
 						<div id="TimelineRulerNumbers"></div>
 						<div id="TimelineRulerMap"></div>
+						<div id='TimelineRulerSlide' style={{
+							left: `${this.state.activeTime * 100 - 13}px`
+						}}></div>
 					</div>
 				</div>
 				<div id='TimlineNodeContent'>
+					<div id='TimelineRulerAlign' style={{
+						left: `${180 + this.state.activeTime * 100}px`
+					}}></div>
 					<ul id='TimlineNodeList'>
 					{
 						this.state.timerNode.map((node, index)=> {
