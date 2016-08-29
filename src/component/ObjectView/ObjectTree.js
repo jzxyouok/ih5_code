@@ -85,7 +85,7 @@ class ObjectTree extends React.Component {
                 openData : data
             });
         }
-        console.log(data);
+        //console.log(data);
     }
 
     closeBtn(event){
@@ -99,11 +99,11 @@ class ObjectTree extends React.Component {
                 openData : data
             });
         }
-        console.log(data);
+        //console.log(data);
     }
 
     render() {
-        console.log(this.state.widgetTree);
+        //console.log(this.state.widgetTree);
         let objectData = this.state.widgetTree;
         let num = 0;
 
