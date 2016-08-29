@@ -20,8 +20,6 @@ class ObjectTree extends React.Component {
         this.openBtn = this.openBtn.bind(this);
         this.closeBtn = this.closeBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        this.onSelect = this.onSelect.bind(this);
-        this.onExpand = this.onExpand.bind(this);
     }
 
     componentDidMount() {
@@ -67,24 +65,12 @@ class ObjectTree extends React.Component {
         }
     }
 
-    onSelect(selectedKeys, e) {
-        if (e.selectedNodes.length > 0) {
-            WidgetActions['selectWidget'](e.selectedNodes[0].props.node, true);
-        } else {
-            //WidgetActions['selectWidget'](null);
-        }
-    }
-
-    onExpand(expandedKeys, e) {
-        if (!e.expanded) {
-            expandedKeys.splice(expandedKeys.indexOf('' + e.node.props.node.key), 1);
-        }
-        this.setState({expandedNodes: expandedKeys});
-    }
-
-    chooseBtn(data){
+    chooseBtn(nid, data){
+        //console.log(data);
         this.setState({
-            nid : data
+            nid : nid
+        },()=>{
+            WidgetActions['selectWidget'](data, true);
         })
     }
 
@@ -99,6 +85,7 @@ class ObjectTree extends React.Component {
                 openData : data
             });
         }
+        console.log(data);
     }
 
     closeBtn(event){
@@ -112,10 +99,11 @@ class ObjectTree extends React.Component {
                 openData : data
             });
         }
+        console.log(data);
     }
 
     render() {
-        //console.log(this.state.widgetTree);
+        console.log(this.state.widgetTree);
         let objectData = this.state.widgetTree;
         let num = 0;
 
@@ -158,7 +146,7 @@ class ObjectTree extends React.Component {
             //console.log(v);
             return  <div className="item" key={i}>
                         <div className={$class("item-title f--h f--hlc",{"active": v.key === this.state.nid})}
-                             onClick={this.chooseBtn.bind(this,v.key)}
+                             onClick={this.chooseBtn.bind(this,v.key, v)}
                              style={{ paddingLeft: num === 0 ? "28px" :num *20 + 22 +"px" }}>
 
                             { btn(1) }
@@ -182,7 +170,7 @@ class ObjectTree extends React.Component {
                             }
                         </div>
 
-                        <div className={$class({"hidden": v.openState === 0 || v.openState === 1 })}>
+                        <div className={$class({"hidden": this.state.openData.indexOf(v.key) < 0 }) }>
                             {
                                 v.children.length === 0
                                     ? null
@@ -199,7 +187,7 @@ class ObjectTree extends React.Component {
                     ? null
                     : <div className="stage">
                         <div className={$class("stage-title f--h f--hlc",{"active": objectData.tree.key === this.state.nid})}
-                             onClick={this.chooseBtn.bind(this, objectData.tree.key)}>
+                             onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}>
                             { btn(-1) }
                             {
                                 objectData.tree.children.length > 0
