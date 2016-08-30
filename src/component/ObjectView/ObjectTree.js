@@ -174,9 +174,10 @@ class ObjectTree extends React.Component {
                             <p>{v.className}</p>
 
                             {
-                                Object.keys(v.events).length > 0
-                                    ? <span className="event-icon" />
-                                    : null
+                                <span className="event-icon" />
+                                //Object.keys(v.events).length > 0
+                                //    ? <span className="event-icon" />
+                                //    : null
                             }
                         </div>
 
