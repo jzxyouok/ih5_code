@@ -6,10 +6,10 @@ import ComponentPanel from './ComponentPanel';
 import DesignView from './DesignView';
 import ObjectView from './ObjectView/_index';
 import PropertyView from './PropertyView';
-//import TimelineView from './TimelineView';
+import TimelineView from './TimelineView';
 import ToolBox from './ToolBox/ToolBox';
 import EventBox from './EventBox/_index';
-import Timeline from './Timeline/TimelineView';
+//import TimelineView from './Timeline/TimelineView';
 
 class App extends React.Component {
     render() {
@@ -26,7 +26,7 @@ class App extends React.Component {
                 <DesignView />
 
                 <ObjectView />
-                <Timeline />
+                <TimelineView />
                 {
                     //<Row gutter={5}>
                     //    <Col span={3}><ComponentPanel /></Col>

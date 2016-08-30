@@ -52,34 +52,106 @@ class TimelineView extends React.Component {
 	}
 
 	componentDidMount() {
-
+		this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
 	}
 
 	componentWillUnmount() {
+		this.unsubscribe();
+	}
+
+	onStatusChange(widget) {
+		if (widget.selectWidget !== undefined) {
+			const changed = {currentTrack:null};
+			let node = widget.selectWidget;
+			if (node) {
+				node.children.map(item => {
+					if (item.className === 'track') {
+						changed.currentTrack = item;
+					}
+				});
+			}
+			if (node)
+				node = node.timerWidget;
+			if (node !== this.state.timerNode) {
+				if (node) {
+					this.renderer = node.node.renderer;
+					node.node.addCallback(this);
+				} else {
+					this.renderer = null;
+					if (this.state.timerNode)
+						this.state.timerNode.node.removeCallback(this);
+				}
+				changed.timerNode = node;
+			}
+			this.setState(changed);
+		}
+		if (widget.updateTrack !== undefined) {
+			if (widget.updateTrack !== null && widget.updateTrack.timerWidget === this.state.timerNode) {
+				this.setState({currentTrack: widget.updateTrack});
+			} else {
+				this.setState({currentTrack: null});
+			}
+		}
+	}
+
+	onTimer(p) {
+		this.setState({currentTime:p});
+		WidgetActions['syncTrack']();
+	}
+
+	onPlay() {
+		WidgetActions['resetTrack']();
+		this.state.timerNode.node['play']();
+	}
+
+	onPause() {
+		this.state.timerNode.node['pause']();
+	}
+
+	onTogglePlay() {
+
+	}
+	
+	onTimerChange(value) {
+		WidgetActions['resetTrack']();
+		this.state.timerNode.node['seek'](value * this.state.timerNode.node['totalTime']);
+		WidgetActions['syncTrack']();
+		this.setState({currentTime:value});
+	}
+
+	onAdd() {
+		if (this.state.currentTrack) {
+			let p = this.state.currentTime;
+			let data = this.state.currentTrack.props['data'];
+			let index = 0;
+			while (index < data.length && p >= data[index][0]) {
+				index++;
+			}
+			let d = [p];
+			let prop = this.state.currentTrack.props['prop'];
+			let parent = this.state.currentTrack.parent;
+			for (let i = 0; i < prop.length; i++) {
+				d.push(parent.node[prop[i]]);
+			}
+			data.splice(index, 0, d);
+			this.state.currentTrack.node['data'] = data;
+			this.forceUpdate();
+		}
+	}
+
+	onDelete() {
+		WidgetActions['deletePoint']();
+	}
+
+	onAddOrDelete() {
 
 	}
 
-	nodeSelect() {
+	selectNextBreakpoint() {
 
 	}
 
-	breakpointSelect() {
-		
-	}
-
-	breakpointChange() {
-
-	}
-
-	breakpointAdd() {
-
-	}
-
-	breakpointRemove() {
-
-	}
-
-	playTrack() {
+	selectPrevBreakpoint() {
 
 	}
 
@@ -104,21 +176,28 @@ class TimelineView extends React.Component {
 					</div>
 					<div className='timline-column-right' id='TimelineNodeAction'>
 						<div>
-							<button id='TimelineNodeActionPrev'></button>
+							<button id='TimelineNodeActionPrev'
+								onClick={this.selectNextBreakpoint.bind(this)}></button>
 							<button id='TimelineNodeActionModify'
-								className={cls({'active': this.state.activeLine!=null})}></button>
-							<button id='TimelineNodeActionNext'></button>
+								className={cls({'active': this.state.activeLine!=null})}
+								onClick={this.onAddOrDelete.bind(this)}></button>
+							<button id='TimelineNodeActionNext'
+								onClick={this.selectPrevBreakpoint.bind(this)}></button>
 						</div>
 					</div>
 				</div>
 				<div id='TimelineTool' className='timeline-row f--h'>
 					<div id='TimelinePlay' className='timline-column-left'>
 						<button id='TimelinePlayBegin'></button>
-						<button id='TimelinePlayStart'></button>
+						<button id='TimelinePlayStart' onClick={this.onPlay.bind(this)}></button>
 						<button id='TimelinePlayEnd'></button>
 					</div>
 					<div id='TimelineRuler' className='timline-column-right'>
-						<div id="TimelineRulerNumbers"></div>
+						<div id="TimelineRulerNumbers">
+						{
+
+						}
+						</div>
 						<div id="TimelineRulerMap"></div>
 						<div id='TimelineRulerSlide' style={{
 							left: `${this.state.activeTime * 100 - 13}px`

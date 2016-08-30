@@ -27,26 +27,26 @@ let igroupIcon = img('imageGroup.svg');
 
 var cid = 1;
 var TOOL_ID = {
-    IMAGE: 2,
-    IMAGE_LIST: 3,
-    TIMER: 4,
-    CONTAINER: 5,
-    RECT: 6,
-    ELLIPSE: 7,
-    PATH: 8,
-    SLIDE_TIMER: 9,
-    TEXT: 10,
-    VIDEO: 11,
-    AUDIO: 12,
-    TRACK: 13,
-    WORLD: 14,
-    BODY: 15,
-    EASING: 16,
-    PAGE: 17,
-    EFFECT: 18,
-    CANVAS: 19,
-    WECAHT: 20,
-    BITMAPTEXT: 21
+    IMAGE: 1,
+    IMAGE_LIST: 2,
+    TIMER: 3,
+    CONTAINER: 4,
+    RECT: 5,
+    ELLIPSE: 6,
+    PATH: 7,
+    SLIDE_TIMER: 8,
+    TEXT: 9,
+    VIDEO: 10,
+    AUDIO: 11,
+    TRACK: 12,
+    WORLD: 13,
+    BODY: 14,
+    EASING: 15,
+    PAGE: 16,
+    EFFECT: 17,
+    CANVAS: 18,
+    WECAHT: 19,
+    BITMAPTEXT: 20
 };
 
 var DEFAULT_TOOLBOX = {
@@ -55,29 +55,36 @@ var DEFAULT_TOOLBOX = {
         name:'图片上传',
         key:1,
         gid:1,
-        primary: {cid:cid++,name:'上传单个图片',icon:imageIcon, className:'image', upload:true},
+        primary: {cid:TOOL_ID.IMAGE, name:'上传单个图片',icon:imageIcon, className:'image', upload:true},
         secondary: [
-            {cid:cid++,name:'上传多个图片', icon:igroupIcon, className:'imagelist', upload:true}]
+            {cid:TOOL_ID.IMAGE_LIST, name:'上传多个图片', icon:igroupIcon, className:'imagelist', upload:true}]
     },{
         name:'几何图形',
         key:2,
         gid:2,
-        primary: {cid:cid++,name:'矩形',icon:rectIcon, className:'rect'},
+        primary: {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect'},
         secondary: [
-            {cid:cid++,name:'椭圆',icon:ellipseIcon, className:'ellipse'},
-            {cid:cid++,name:'路径',icon:curveIcon, className:'path'}]
+            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse'},
+            {cid:TOOL_ID.PATH,name:'路径',icon:curveIcon, className:'path'}]
     },{
         name:'时间轴',
         key:3,
         gid:3,
-        primary: {cid:cid++,name:'添加时间轴',icon:timerIcon, className:'timer'}
+        primary: {cid:TOOL_ID.TIMER, name:'添加时间轴', icon:timerIcon, className:'timer'},
+        secondary: [
+            {cid:TOOL_ID.TRACK, name:'轨迹', icon: trackIcon, className: 'track'},
+            {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
+            {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},
+            {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer'}
+            
+        ]
     },{
         name:'文字',
         key:4,
         gid:4,
-        primary: {cid:cid++,name:'文本',icon:textIcon, className:'text'},
+        primary: {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text'},
         secondary: [
-            {cid:cid++,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext'}]
+            {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext'}]
     }]
 };
 
