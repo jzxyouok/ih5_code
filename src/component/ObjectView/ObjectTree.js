@@ -25,6 +25,7 @@ class ObjectTree extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {

@@ -536,5 +536,9 @@ export default Reflux.createStore({
           this.render();
         });
       }
+    },
+    getStore: function() {
+      //this.selectWidget(stageTree[0].tree);
+      return {initTree: stageTree, classList: classList};
     }
 });
