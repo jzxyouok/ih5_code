@@ -3,8 +3,9 @@
     left: 37px;
     top: 37px;
     bottom: 201px;
-    width: 565px;
+    width: 733px;
     background: #232323;
+    overflow: hidden;
 
     .EB--title {
         width: 100%;
@@ -24,6 +25,327 @@
 
             &:hover {
                 background: url("/dist/img/button-icon.svg") no-repeat -1240px -40px;
+            }
+        }
+    }
+
+    .EB--content-layer {
+        position: absolute;
+        left: 0;
+        right: -20px;
+        top: 30px;
+        bottom: -20px;
+        overflow: scroll;
+
+        .EB--content {
+            width: 733px;
+            padding: 10px;
+        }
+
+
+        .Event {
+            width: 100%;
+            border: 1px solid #232323;
+
+            .E--title {
+                width: 100%;
+                height: 30px;
+                background: #343434;
+                cursor: pointer;
+
+                .title-content:hover span,
+                .title-content:hover span{
+                    background: #ffa800;
+                }
+
+                .close-btn ,
+                .open-btn {
+                    position: relative;
+                    width: 16px;
+                    height: 16px;
+                    margin: 0 11px 0 6px;
+                    background: #282828;
+
+                    span {
+                        background: #b5b5b5;
+                    }
+                }
+
+                .heng {
+                    position: absolute;
+                    left: 3px;
+                    top: 7px;
+                    width: 10px;
+                    height: 2px;
+                }
+
+                .shu {
+                    position: absolute;
+                    left: 7px;
+                    top: 3px;
+                    width: 2px;
+                    height: 10px;
+                }
+
+                .close-btn { display: none; }
+                .open-btn { display: block; }
+
+                .name {
+                    font-size: 14px;
+                    color: #bfbfbf;
+                }
+
+                .btn {
+                    &:hover{
+                        .btn-name{ color: #fff; }
+                        .btn-icon{ background: #fff; }
+                    }
+
+                    &:active{
+                        .btn-name{ color: #ffa800; }
+                        .btn-icon{ background: #ffa800; }
+                    }
+
+                    .btn-name {
+                        font-size: 14px;
+                        color: #b5b5b5;
+                    }
+
+                    .btn-icon {
+                        @include border-radius(8px);
+                        position: relative;
+                        width: 16px;
+                        height: 16px;
+                        background: #b5b5b5;
+                        margin: 0 8px  0 6px;
+
+                        span { background: #343434; }
+                    }
+                }
+            }
+
+            &.active {
+                border: 1px solid #7b5815;
+
+                .E--title {
+                    .close-btn { display: block; }
+                    .open-btn { display: none; }
+                }
+            }
+
+            .E--content {
+                width: 100%;
+
+                .item {
+                    &:last-child .left-line {
+                        height: 17px;
+                    }
+                }
+
+                .left-line {
+                    width: 1px;
+                    background: #4d4d4d;
+                    margin-left: 13px;
+                }
+
+                .item-main { }
+
+                .item-header {
+                    //height: 28px;
+
+                    .close-line {
+                        width: 20px;
+                        height: 11px;
+                        margin-top: 11px;
+                        background: url("/dist/img/button-icon.svg") no-repeat -1600px 0;
+                        cursor: pointer;
+
+                        &:hover {
+                            background-position: -1600px -40px;
+                        }
+                    }
+
+                    .item-title {
+                        //height: 26px;
+                        margin: 1px 0;
+
+                        .left {
+                            width: 169px;
+                            border-right: 1px solid #232323;
+                            .dropDown-layer { margin-top: 2px }
+                        }
+
+                        .zhong {
+                            width: 482px;
+                            border-right: 1px solid #232323;
+
+                            .dropDown-layer {
+                                margin-right: 2px;
+
+                                &:last-child { margin-right: 0; }
+                            }
+                        }
+
+                        .left-layer ,
+                        .right-layer {
+                            height: 26px;
+                            background: #303f54;
+                        }
+
+                        .title-icon {
+                            width: 26px;
+                            height: 100%;
+                            background: url("/dist/img/button-icon.svg") no-repeat -1480px 0;
+                        }
+
+                        .dropDown-layer {
+                            position: relative;
+
+                            .title {
+                                @include border-radius(2px);
+                                position: relative;
+                                width: 100%;
+                                height: 22px;
+                                background: #1d2736;
+                                font-size: 12px;
+                                color: #b5b5b5;
+                                padding-left: 10px;
+                                cursor: pointer;
+
+                                &:hover {
+                                    background: #19222e;
+                                }
+
+                                .icon {
+                                    position: absolute;
+                                    right: 8px;
+                                    top: 0;
+                                    width: 10px;
+                                    height: 22px;
+                                    background: url("/dist/img/button-icon.svg") no-repeat -1680px 0;
+                                    display: block;
+                                }
+                            }
+
+                            &.long {
+                                width: 140px;
+                            }
+
+                            &.middle {
+                                width: 70px;
+                            }
+
+                            &.short {
+                                width: 50px;
+                            }
+                        }
+
+                        .list {
+                            height: 26px;
+                            padding-left: 2px;
+                            background: #303f54;
+                            margin-bottom: 1px;
+
+                            &:last-child{ margin-bottom: 0; }
+
+                            .number {
+                                @include border-radius(2px);
+                                width: 70px;
+                                height: 22px;
+                                padding-left: 2px;
+                                background: #1d2736;
+
+                                input {
+                                    @include border-radius(2px);
+                                    width: 48px;
+                                    height: 18px;
+                                    line-height: 18px;
+                                    background: #343d4a;
+                                    outline: none;
+                                    border: none;
+                                    font-size: 12px;
+                                    color: #b5b5b5;
+                                    padding-left: 5px;
+                                }
+
+                                .number-icon {
+                                    div{
+                                        position: relative;
+                                        width: 100%;
+                                        height: 11px;
+                                        cursor: pointer;
+
+                                        span{
+                                            position: absolute;
+                                            top: 0;
+                                            left: 6px;
+                                        }
+                                    }
+
+                                    .shang-btn span{
+                                        @include triangle(10px, #3c516f ,up);
+                                        &:hover{ @include triangle(10px, #b5b5b5 ,up); }
+                                        &:active{ @include triangle(10px, #fff ,up); }
+                                    }
+
+                                    .xia-btn span{
+                                        top: 2px;
+                                        @include triangle(10px, #3c516f ,down);
+                                        &:hover{ @include triangle(10px, #b5b5b5 ,down); }
+                                        &:active{ @include triangle(10px, #fff ,down); }
+                                    }
+                                }
+                            }
+
+                            .close-btn {
+                                cursor: pointer;
+                                width: 22px;
+                                height: 26px;
+                                background: url("/dist/img/button-icon.svg") no-repeat -1720px 0;
+                                display: block;
+
+                                &:hover { background-position: -1720px -40px; }
+                                &:active { background-position: -1720px -80px; }
+                            }
+                        }
+
+                        .plus-btn {
+                            cursor: pointer;
+                            padding: 2px;
+
+                            &:hover .btn span{ background: #b5b5b5;}
+                            &:active .btn span{ background: #fff;}
+
+                            .btn {
+                                @include border-radius(2px);
+                                position: relative;
+                                width: 22px;
+                                height: 22px;
+                                background: #1d2736;
+
+                                span{
+                                    background: #3c516f;
+                                }
+
+                                .heng {
+                                    position: absolute;
+                                    left: 5px;
+                                    top: 10px;
+                                    width: 12px;
+                                    height: 2px;
+                                }
+
+                                .shu {
+                                    position: absolute;
+                                    left: 10px;
+                                    top: 5px;
+                                    width: 2px;
+                                    height: 12px;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

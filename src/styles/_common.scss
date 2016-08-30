@@ -39,7 +39,7 @@
     @include justify-content(center);
 }
 
-// 方向：横向; 对齐：水平居左，垂直居中
+// 方向：垂直; 对齐：水平居左，垂直居中
 .f--slc{
     @include flexbox;
     @include flex-direction(column);
@@ -92,4 +92,47 @@
     display: -webkit-box;
     -webkit-line-clamp: $row;
     -webkit-box-orient: vertical;
+}
+
+/******************* 形状 **************************/
+// 三角形
+@mixin triangle ($size, $color, $direction) {
+    height: 0;
+    width: 0;
+
+    //三角向上、向下、向右和向左时，设置边框样式
+    @if ($direction == up) or ($direction == down) or ($direction == right) or ($direction == left) {
+        border: solid $size / 2 transparent;
+
+        @if $direction == up {
+            border-bottom-color: $color;
+
+        } @else if $direction == right {
+            border-left-color:   $color;
+
+        } @else if $direction == down {
+            border-top-color:    $color;
+
+        } @else if $direction == left {
+            border-right-color:  $color;
+        }
+    }
+
+    @else if ($direction == up-right) or ($direction == up-left) {
+        border-top: $size solid $color;
+        @if $direction == up-right {
+            border-left:  $size solid transparent;
+        } @else if $direction == up-left {
+            border-right: $size solid transparent;
+        }
+    }
+
+    @else if ($direction == down-right) or ($direction == down-left) {
+        border-bottom: $size solid $color;
+        @if $direction == down-right {
+            border-left:  $size solid transparent;
+        } @else if $direction == down-left {
+            border-right: $size solid transparent;
+        }
+    }
 }

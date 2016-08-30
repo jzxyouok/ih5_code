@@ -15,6 +15,8 @@ class App extends React.Component {
     render() {
         return (
             <div id="iH5-App">
+                <DesignView />
+
                 <NavBar />
 
                 <ToolBox />
@@ -23,10 +25,10 @@ class App extends React.Component {
 
                 <EventBox />
 
-                <DesignView />
-
                 <ObjectView />
+
                 <TimelineView />
+
                 {
                     //<Row gutter={5}>
                     //    <Col span={3}><ComponentPanel /></Col>

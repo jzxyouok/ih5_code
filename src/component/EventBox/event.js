@@ -10,89 +10,140 @@ class Event extends React.Component {
         this.state = {
 
         };
+        this.chooseEventBtn = this.chooseEventBtn.bind(this);
+    }
+
+    chooseEventBtn(nid){
+        this.props.chooseEventBtn(nid);
     }
 
     render() {
+        let content = ((v,i)=>{
+            return  <div className="item f--h" key={i}>
+                        <span className="left-line" />
+                        <div className="item-main flex-1">
+                            <div className="item-header f--h">
+                                <span className="close-line" />
+                                <div className="item-title flex-1 f--h">
+                                    <div className="left">
+                                        <div className="left-layer  f--h">
+                                            <span className="title-icon" />
+                                            <div className="dropDown-layer long">
+                                                <div className="title f--hlc">
+                                                    { v.condition }
+                                                    <span className="icon" />
+                                                </div>
+                                                <div className="dropDown"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    {
+                                        v.children.length === 0 || !v.children
+                                        ? null
+                                        : <div className="zhong">
+                                            {
+                                                v.children.map((v1,i1)=>{
+                                                return  <div className="list f--hlc" key={i1}>
+                                                        <div className="dropDown-layer short">
+                                                            <div className="title f--hlc">
+                                                                { v1.bind }
+                                                                <span className="icon" />
+                                                            </div>
+                                                            <div className="dropDown"></div>
+                                                        </div>
+
+                                                        <div className="dropDown-layer long">
+                                                            <div className="title f--hlc">
+                                                                { v1.object }
+                                                                <span className="icon" />
+                                                            </div>
+                                                            <div className="dropDown"></div>
+                                                        </div>
+
+                                                        <div className="dropDown-layer long">
+                                                            <div className="title f--hlc">
+                                                                { v1.action }
+                                                                <span className="icon" />
+                                                            </div>
+                                                            <div className="dropDown"></div>
+                                                        </div>
+
+                                                        <div className="dropDown-layer short">
+                                                            <div className="title f--hlc">
+                                                                { v1.judgment }
+                                                                <span className="icon" />
+                                                            </div>
+                                                            <div className="dropDown"></div>
+                                                        </div>
+
+                                                        {
+                                                            v1.calculator
+                                                            ? <div className="number f--hlc">
+                                                                <input />
+                                                                <div className="number-icon flex-1">
+                                                                    <div className="shang-btn"><span/></div>
+                                                                    <div className="xia-btn"><span/></div>
+                                                                </div>
+                                                              </div>
+
+                                                            : <div className="dropDown-layer middle">
+                                                                <div className="title f--hlc">
+                                                                    { v1.value }
+                                                                    <span className="icon" />
+                                                                </div>
+                                                                <div className="dropDown"></div>
+                                                              </div>
+                                                        }
+
+                                                        <span className="close-btn" />
+                                                    </div>
+                                                })
+                                            }
+                                          </div>
+                                    }
+
+                                    <div className="right flex-1">
+                                        <div className="right-layer">
+                                            <div className="plus-btn">
+                                                <div className="btn">
+                                                    <span className="heng" />
+                                                    <span className="shu" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="item-content">
+
+                            </div>
+                        </div>
+                    </div>
+        });
+
         return (
-            <div className={$class("Event",{"active" :this.props.nowID === this.props.id })} >
-                <div className="E--title">
-                    <div className="close-btn"><span className="heng" /></div>
-                    <div className="open-btn"><span  className="heng"  /><span  className="shu" /></div>
+            <div className={$class("Event",{"active" :this.props.nowID === this.props.id })}
+                 onClick={this.chooseEventBtn.bind(this, this.props.id)}>
+                <div className="E--title f--h">
+                    <div className="title-content f--hlc flex-1">
+                        <div className="close-btn"><span className="heng" /></div>
+                        <div className="open-btn"><span  className="heng"  /><span  className="shu" /></div>
 
-                    <div className="name">{ this.props.name }</div>
+                        <div className="name flex-1">{ this.props.name }</div>
+                    </div>
 
-                    <div className="btn">
+                    <div className={$class("btn f--hlc",{"hidden" :this.props.nowID !== this.props.id })}>
                         <div className="btn-name">添加事件</div>
                         <div className="btn-icon"><span  className="heng"  /><span  className="shu" /></div>
                     </div>
                 </div>
 
-                <div className="E--content">
+                <div className={$class("E--content",{"hidden" :this.props.nowID !== this.props.id })}>
                     {
-                        this.props.event.map((v,i)=>{
-                            return  <div className="item" key={i}>
-                                        <span className="left-line" />
-                                        <div className="item-main">
-                                            <div className="item-header">
-                                                <span className="line" />
-                                                <div className="item-title">
-                                                    <span className="title-icon" />
-
-                                                    <div className="dropDown-middle">
-                                                        <div className="title">{ v.condition }</div>
-                                                        <div className="dropDown"></div>
-                                                    </div>
-
-                                                    {
-                                                        v.children.length === 0 || !v.children
-                                                        ?   null
-                                                        :   v.children.map((v1,i1)=>{
-                                                                return  <div className="list" key={i1}>
-                                                                            <div className="dropDown-short">
-                                                                                <div className="title">{ v1.bind }</div>
-                                                                                <div className="dropDown"></div>
-                                                                            </div>
-
-                                                                            <div className="dropDown-middle">
-                                                                                <div className="title">{ v1.object }</div>
-                                                                                <div className="dropDown"></div>
-                                                                            </div>
-                                                                            {
-                                                                                v1.and
-                                                                                ?   <div className="dropDown-short">
-                                                                                        <div className="title">{ v1.bind }</div>
-                                                                                        <div className="dropDown"></div>
-                                                                                    </div>
-                                                                                :   null
-                                                                            }
-                                                                            {
-                                                                                v1.num ? <input/> : null
-                                                                            }
-                                                                            {
-                                                                                v1.action
-                                                                                ?   <div className="dropDown-middle">
-                                                                                        <div className="title">{ v1.action }</div>
-                                                                                        <div className="dropDown"></div>
-                                                                                    </div>
-                                                                                :   null
-                                                                            }
-                                                                        </div>
-                                                            })
-                                                    }
-
-                                                    <div className="plus-btn">
-                                                        <span className="heng" />
-                                                        <span className="shu" />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="item-content">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                        })
+                        this.props.event.map(content)
                     }
                 </div>
             </div>
