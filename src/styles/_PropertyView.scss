@@ -1,11 +1,39 @@
 /**
  * 属性面板
  */
+@mixin title() {
+	background-color: #353535;
+	color: #b5b5b5;
+}
 
 #PropertyView {
 	position: absolute;
 	top: 36px;
 	left: 37px;
+	width: 260px;
+	box-sizing: border-box;
+	background: #232323;
+	border: 1px solid #1a1a1a;
+
+	#PropertyViewHeader {
+		@include title();
+		font-size: 14px;
+		font-weight: normal;
+		margin: 0;
+		padding: 4px 12px;
+	}
+	#PropertyViewBody {
+		padding: 8px 12px;
+	}
+
+	.ant-form-horizontal {
+		margin-bottom: 16px;
+		border-bottom: 1px solid #161616;
+		&:last-child {
+			margin-bottom: 0;
+			border-bottom: none;
+		}
+	}
 
 	.ant-collapse {
 		width: 280px;
@@ -20,8 +48,7 @@
 	}
 	// 标题区
 	.ant-collapse-header {
-		background-color: #353535;
-		color: #b5b5b5;
+		@include title();
 	}
 	// 内容区
 	.ant-collapse-content {
@@ -88,6 +115,9 @@
 			background-color: #353535;
 			border-radius: 2px;
 			color: #858585;
+			&:focus {
+				color: #fefefe;
+			}
 		}
 	}
 

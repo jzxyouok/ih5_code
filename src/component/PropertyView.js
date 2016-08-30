@@ -100,7 +100,8 @@ class PropertyView extends React.Component {
         let node = this.selectNode;
 
         if (!node)
-            return;
+            return null;
+        //console.log(node);
 
         let className = node.className;
         if (className.charAt(0) == '_')
@@ -113,7 +114,9 @@ class PropertyView extends React.Component {
             labelCol: { span: 12 },
             wrapperCol: { span: 12 }
         };
+        
         const groups = {};
+        //const groups = [];
 
         const getInput = item => {
             let defaultValue;
@@ -131,8 +134,6 @@ class PropertyView extends React.Component {
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
                 onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item),
-                currentNode: node,
-                currentProp: item
             };
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;
@@ -148,17 +149,15 @@ class PropertyView extends React.Component {
         };
 
         const result = [];
-
         propertyMap[className].forEach((item, index) => {
             if (item.isProperty)
                 getInput(item, index);
         });
 
-        for (let name in groups) {
-            result.push(<Panel header={name} key={name}><Form horizontal>{groups[name]}</Form></Panel>);
-        }
-
-        return result;
+        return Object.keys(groups).map((name,index)=> 
+                <Form horizontal key={index}>
+                    {groups[name].map((input, i) => input)}
+                </Form>);
     }
 
     onStatusChange(widget) {
@@ -213,8 +212,11 @@ class PropertyView extends React.Component {
 
     render() {
         return (
-            <div id="PropertyView">
-                <Collapse accordion defaultActiveKey={['basic']}>{this.state.fields}</Collapse>
+            <div id='PropertyView'>
+                <h1 id='PropertyViewHeader'>属性</h1>
+                <div id='PropertyViewBody'>
+                    {this.state.fields}
+                </div>
             </div>
         );
     }

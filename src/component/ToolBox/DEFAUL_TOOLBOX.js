@@ -82,7 +82,7 @@ var DEFAULT_TOOLBOX = {
         name:'文字',
         key:4,
         gid:4,
-        primary: {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text'},
+        primary: {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', param: {'text': 'Text'}},
         secondary: [
             {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext'}]
     }]
