@@ -1,7 +1,8 @@
 //对象树
 import React from 'react';
-import $class from "classnames"
+import $class from "classnames";
 
+import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
@@ -71,7 +72,7 @@ class ObjectTree extends React.Component {
             nid : nid
         },()=>{
             WidgetActions['selectWidget'](data, true);
-        })
+        });
     }
 
     openBtn(event){
@@ -144,12 +145,22 @@ class ObjectTree extends React.Component {
 
         let fuc = (v,i)=>{
             //console.log(v);
+            let pic = null;
+            this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
+                if (v1.className === v.className){
+                    pic = v1.icon;
+                }
+            });
             return  <div className="item" key={i}>
                         <div className={$class("item-title f--h f--hlc",{"active": v.key === this.state.nid})}
                              onClick={this.chooseBtn.bind(this,v.key, v)}
                              style={{ paddingLeft: num === 0 ? "28px" :num *20 + 22 +"px" }}>
 
-                            { btn(1) }
+                            {
+                                v.props.visible && v.props.visible === false
+                                    ? btn(0)
+                                    : btn(1)
+                            }
 
                             {
                                 v.children.length > 0
@@ -157,9 +168,7 @@ class ObjectTree extends React.Component {
                                     : icon( 0 , v.key)
                             }
 
-                            {
-                                <img src="/dist/img/thumbnails.png" />
-                            }
+                            <img src={ pic } />
 
                             <p>{v.className}</p>
 
@@ -207,6 +216,9 @@ class ObjectTree extends React.Component {
                         </div>
                     </div>
                 }
+                <div className="hidden">
+                    <ComponentPanel ref="ComponentPanel" />
+                </div>
             </div>
         );
     }

@@ -36,6 +36,35 @@ function callback() {
 }
 
 class ComponentPanel extends React.Component {
+    constructor (props) {
+        super(props);
+        this.cid = 1;
+        this.shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
+        this.panels = [
+            {name:'基础组件',key:1,cplist: [
+                {cid:this.cid++,icon:imageIcon, className:'image', upload:true},
+                {cid:this.cid++,icon:igroupIcon, className:'imagelist', upload:true},
+                {cid:this.cid++,icon:timerIcon, className:'timer'},
+                {cid:this.cid++,icon:containerIcon, className:'container'},
+                {cid:this.cid++,icon:rectIcon, className:'rect', param: this.shapeParam},
+                {cid:this.cid++,icon:ellipseIcon, className:'ellipse', param: this.shapeParam},
+                {cid:this.cid++,icon:curveIcon, className:'path', param: this.shapeParam},
+                {cid:this.cid++,icon:slidetimerIcon, className:'slidetimer', param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}},
+                {cid:this.cid++,icon:textIcon, className:'text', param: {'text': 'Text'}},
+                {cid:this.cid++,icon:videoIcon, className:'video'},
+                {cid:this.cid++,icon:audioIcon, className:'audio'},
+                {cid:this.cid++,icon:trackIcon, className:'track'},
+                {cid:this.cid++,icon:worldIcon, className:'world'},
+                {cid:this.cid++,icon:bodyIcon, className:'body'},
+                {cid:this.cid++,icon:easingIcon, className:'easing'},
+                {cid:this.cid++,icon:pageIcon, className:'page'},
+                {cid:this.cid++,icon:effectIcon, className:'effect'},
+                {cid:this.cid++,icon:canvasIcon, className:'canvas', param: {'width': 300, 'height': 300}},
+                {cid:this.cid++,icon:wechatIcon, className:'wechat'},
+                {cid:this.cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+            }
+        ];
+    }
 
     render() {
 
