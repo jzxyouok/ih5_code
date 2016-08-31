@@ -101,7 +101,6 @@ class PropertyView extends React.Component {
 
         if (!node)
             return null;
-        //console.log(node);
 
         let className = node.className;
         if (className.charAt(0) == '_')
@@ -111,12 +110,11 @@ class PropertyView extends React.Component {
             return null;
 
         const formItemLayout = {
-            labelCol: { span: 12 },
-            wrapperCol: { span: 12 }
+            labelCol: { span: 8 },
+            wrapperCol: { span: 16 }
         };
-        
+
         const groups = {};
-        //const groups = [];
 
         const getInput = item => {
             let defaultValue;
@@ -133,7 +131,7 @@ class PropertyView extends React.Component {
                 size: 'small',
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
-                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item),
+                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item)
             };
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;
@@ -145,7 +143,10 @@ class PropertyView extends React.Component {
             if (groups[groupName] === undefined)
                 groups[groupName] = [];
 
-            groups[groupName].push(<Form.Item key={item.name} label={item.name} {...formItemLayout}>{getInputBox(item.type, defaultProp, item.readOnly !== undefined)}</Form.Item>);
+            groups[groupName].push(
+                <Form.Item key={item.name} label={item.name} {...formItemLayout}>
+                {getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
+                </Form.Item>);
         };
 
         const result = [];

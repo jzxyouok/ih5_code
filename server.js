@@ -7,6 +7,7 @@ var app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text({ limit: '50mb' }));
+app.use(bodyParser.raw({ limit: '50mb' }));
 
 var webpack = require('webpack');
 var config = require('./webpack.config');

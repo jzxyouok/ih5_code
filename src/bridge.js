@@ -12,6 +12,7 @@ module.exports = {
 'render':bridge.render,
 'createGraphics':bridge.createGraphics,
 'encryptData':bridge.encryptData,
+'encryptData':bridge.encryptData,
 'decryptData':bridge.decryptData,
 'createSelector':bridge.createSelector,
 'selectWidget':bridge.selectWidget,
@@ -19,4 +20,7 @@ module.exports = {
 'addMouseDownHandler':bridge.addMouseDownHandler,
 'isDom':bridge.isDom,
 'setGenerateText':bridge.setGenerateText,
+'isTimer':bridge.isTimer,
+'timerAddCallback':bridge.timerAddCallback,
+'timerRemoveCallback':bridge.timerRemoveCallback,
 };
