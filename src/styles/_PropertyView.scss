@@ -14,6 +14,10 @@
 	box-sizing: border-box;
 	background: #232323;
 	border: 1px solid #1a1a1a;
+	max-height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 
 	#PropertyViewHeader {
 		@include title();
@@ -21,17 +25,24 @@
 		font-weight: normal;
 		margin: 0;
 		padding: 4px 12px;
+		height: 28px;
 	}
 	#PropertyViewBody {
-		padding: 8px 12px;
+		padding: 0 12px;
+		flex: 1;
+		overflow-y: auto;
 	}
 
 	.ant-form-horizontal {
-		margin-bottom: 16px;
+		//margin-bottom: 16px;
+		padding: 12px 0;
 		border-bottom: 1px solid #161616;
 		&:last-child {
 			margin-bottom: 0;
 			border-bottom: none;
+		}
+		> .ant-form-item:last-child {
+			margin-bottom: 0;
 		}
 	}
 

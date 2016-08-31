@@ -111,14 +111,16 @@ class PropertyView extends React.Component {
             return null;
 
         const formItemLayout = {
-            labelCol: { span: 12 },
-            wrapperCol: { span: 12 }
+            labelCol: { span: 8 },
+            wrapperCol: { span: 16 }
         };
         
         const groups = {};
         //const groups = [];
 
         const getInput = item => {
+            console.log('node', node)
+            console.log('item', item)
             let defaultValue;
             if (item.readOnly) {
                 defaultValue = node.node[item.name];
@@ -145,7 +147,10 @@ class PropertyView extends React.Component {
             if (groups[groupName] === undefined)
                 groups[groupName] = [];
 
-            groups[groupName].push(<Form.Item key={item.name} label={item.name} {...formItemLayout}>{getInputBox(item.type, defaultProp, item.readOnly !== undefined)}</Form.Item>);
+            groups[groupName].push(
+                <Form.Item key={item.name} label={item.name} {...formItemLayout}>
+                {getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
+                </Form.Item>);
         };
 
         const result = [];
