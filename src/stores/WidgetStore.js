@@ -48,7 +48,7 @@ function loadTree(parent, node) {
 
   var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
   current.node = bridge.addWidget(renderer, (parent) ? parent.node : null, node['cls'], null, node['props'], (parent && parent.timerWidget) ? parent.timerWidget.node : null);
-  current.timerWidget = (current.node.isTimer) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
+  current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
 
   if (parent) {
     parent.children.push(current);
@@ -76,6 +76,23 @@ function loadTree(parent, node) {
   }
 
   return current;
+}
+
+function trimTreeNode(node, links) {
+  if (node.props['link'] !== undefined)
+    node.props['link'] = links.push(node.rootWidget.imageList[node.props['link']]) - 1;
+  if (node.children.length > 0) {
+    node.children.map(item => {
+      trimTreeNode(item, links);
+    });
+  }
+}
+
+function trimTree(node) {
+  var links = [];
+  trimTreeNode(node, links);
+  node.imageList = links;
+  bridge.setLinks(node.node, links);
 }
 
 function saveTree(data, node) {
@@ -278,6 +295,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['chooseFile'], this.chooseFile);
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
+        this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -431,7 +449,7 @@ export default Reflux.createStore({
         process.nextTick(() => bridge.render(this.currentWidget.rootWidget.node));
       }
     },
-    saveNode: function(token, wid, wname, callback) {
+    saveNode: function(wid, wname, callback) {
       // let appendArray = function(a1, a2) {
       //     for (let i = 0; i < a2.length; i++) {
       //       a1.push(a2[i]);
@@ -468,6 +486,7 @@ export default Reflux.createStore({
       let data = {};
       let images = [];
       data['stage'] = {};
+      trimTree(stageTree[0].tree);
       saveTree(data['stage'], stageTree[0].tree);
       data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
       // data['stage']['links'] = stageTree[0].tree.imageList.length;
@@ -479,6 +498,7 @@ export default Reflux.createStore({
         for (let i = 1; i < stageTree.length; i++) {
           let name = stageTree[i].name;
           data['defs'][name] = {};
+          trimTree(stageTree[i].tree);
           saveTree(data['defs'][name], stageTree[i].tree);
           data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
           // data['defs'][name]['links'] = stageTree[i].tree.imageList.length;
@@ -491,22 +511,16 @@ export default Reflux.createStore({
       if (!data)
         return;
 
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = () => {
-          if (xhr.readyState == 4) {
-            let result = JSON.parse(xhr.responseText);
-            callback(result['id'], wname);
-          }
-      };
-      if (wid) {
-        xhr.open('PUT', 'app/work/' + wid);
-      } else {
-        xhr.open('POST', 'app/work?name=' + encodeURIComponent(wname));
+      var cb = function(text) {
+          var result = JSON.parse(text);
+          callback(result['id'], wname);
       }
-      if (token)
-        xhr.setRequestHeader('Authorization', 'Bearer {' + token + '}');
-      xhr.setRequestHeader('Content-Type', 'text/plain');
-      xhr.send(data);
+
+      if (wid) {
+        this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb);
+      } else {
+        this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname), 'application/octet-stream', data, cb);
+      }
     },
     chooseFile: function(type, upload, callback) {
       var w = document.getElementById('upload-box');
@@ -536,6 +550,26 @@ export default Reflux.createStore({
           this.render();
         });
       }
+    },
+    ajaxSend(token, method, url, type, data, callback, binary) {
+        if (token)
+          this.token = token;
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+            if (binary)
+              callback(xhr.response);
+            else
+              callback(xhr.responseText);
+        };
+        xhr.open(method, url);
+        if (binary)
+          xhr.responseType = "arraybuffer";
+        if (type)
+            xhr.setRequestHeader('Content-Type', type);
+        if (this.token) {
+            xhr.setRequestHeader('Authorization', 'Bearer {' + this.token + '}');
+        }
+        xhr.send(data);
     },
     getStore: function() {
       //this.selectWidget(stageTree[0].tree);

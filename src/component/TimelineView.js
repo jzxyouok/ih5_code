@@ -6,10 +6,15 @@ import WidgetActions from '../actions/WidgetActions';
 
 import VxSlider from './VxSlider';
 
+import bridge from 'bridge';
+
+var timerCallback = {};
+
 class TimelineView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {timerNode: null, currentTime:0, currentTrack: null};
+        this.onTimer = this.onTimer.bind(this);
     }
 
     componentDidMount() {
@@ -35,12 +40,10 @@ class TimelineView extends React.Component {
                 node = node.timerWidget;
             if (node !== this.state.timerNode) {
                 if (node) {
-                    this.renderer = node.node.renderer;
-                    node.node.addCallback(this);
+                    bridge.timerAddCallback(node.node, timerCallback, this.onTimer);
                 } else {
-                    this.renderer = null;
                     if (this.state.timerNode)
-                        this.state.timerNode.node.removeCallback(this);
+                        bridge.timerRemoveCallback(this.state.timerNode.node, timerCallback);
                 }
                 changed.timerNode = node;
             }

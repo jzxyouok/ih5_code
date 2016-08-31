@@ -5,6 +5,7 @@ import React from 'react';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import InputText from './InputText';
+import DbDialog from './DbDialog';
 import JSZip from 'jszip';
 
 import { Menu, Icon } from 'antd';
@@ -18,7 +19,8 @@ class  VxMenu extends React.Component {
         this.state = {
             current: 'mail',
             classList: [],
-            addClassVisible: false
+            addClassVisible: false,
+            editDbVisible: false
         };
     }
 
@@ -62,6 +64,8 @@ class  VxMenu extends React.Component {
             });
         } else if (key.substr(0, 5) === 'font_') {
             WidgetActions['setFont'](key.substr(5));
+        } else if (key === 'editDb') {
+            this.setState({editDbVisible: true});
         }
         /*
         this.setState({
@@ -162,6 +166,10 @@ class  VxMenu extends React.Component {
                     { this.props.fontList.map(item => <Menu.Item key={'font_' + item['file']}>{item['name']}</Menu.Item>) }
                 </SubMenu>
 
+                <SubMenu title={<span><Icon type="edit" />数据库</span>}>
+                    <Menu.Item key="editDb">编辑数据库</Menu.Item>
+                </SubMenu>
+
                 <SubMenu title={<span><Icon type="edit" />编辑</span>}>
                     <MenuItemGroup>
                         <Menu.Item key="delete">删除</Menu.Item>
@@ -173,6 +181,7 @@ class  VxMenu extends React.Component {
                 </SubMenu>
             </Menu>
             <InputText title="类名字" visible={this.state.addClassVisible} editText={null} onEditDone={this.onAddClassDone.bind(this)} />
+            <DbDialog visible={this.state.editDbVisible} />
             </div>
         );
     }

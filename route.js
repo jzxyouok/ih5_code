@@ -31,7 +31,9 @@ function playWork(req, res) {
       res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
       res.send(r.data);
     } else {
-      res.send('<html><meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1"><title>' + r.name + '</title><body style="margin:0"><script src="../../ih5core.js"></script><script>window.VXCORE.load(\'' + r.data + '\');</script></body></html>');
+      res.send('<html><meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1"><title>'
+        + r.name + '</title><body style="margin:0"><script src="../../ih5core.js"></script><script>window.VXCORE.load(\'/app/work/'
+        + req.params.id + '?raw=1\');</script></body></html>');
     }
   }
 };

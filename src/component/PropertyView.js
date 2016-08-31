@@ -101,7 +101,6 @@ class PropertyView extends React.Component {
 
         if (!node)
             return null;
-        //console.log(node);
 
         let className = node.className;
         if (className.charAt(0) == '_')
@@ -114,13 +113,10 @@ class PropertyView extends React.Component {
             labelCol: { span: 8 },
             wrapperCol: { span: 16 }
         };
-        
+
         const groups = {};
-        //const groups = [];
 
         const getInput = item => {
-            console.log('node', node)
-            console.log('item', item)
             let defaultValue;
             if (item.readOnly) {
                 defaultValue = node.node[item.name];
@@ -135,7 +131,7 @@ class PropertyView extends React.Component {
                 size: 'small',
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
-                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item),
+                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item)
             };
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;
