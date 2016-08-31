@@ -9,6 +9,7 @@ import PropertyView from './PropertyView';
 import TimelineView from './TimelineView';
 import ToolBox from './ToolBox/ToolBox';
 import EventBox from './EventBox/_index';
+import ParamsPanel from './ParamsPanel';
 //import TimelineView from './Timeline/TimelineView';
 
 class App extends React.Component {
@@ -23,7 +24,13 @@ class App extends React.Component {
 
                 <PropertyView />
 
-                <EventBox />
+                {
+                    //<EventBox />
+                }
+                
+                <div style={{position: "absolute",left: "300px",top: "0",background: "#fff",width: "312px"}}>
+                    <ParamsPanel />
+                </div>
 
                 <ObjectView />
 
