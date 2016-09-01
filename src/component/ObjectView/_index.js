@@ -20,6 +20,7 @@ class ObjectView extends React.Component {
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     toggleBtn(i){
@@ -30,6 +31,10 @@ class ObjectView extends React.Component {
 
     create(className,param){
         WidgetActions['addWidget'](className,param);
+    }
+
+    delete(){
+        WidgetActions['removeWidget']();
     }
 
     render() {
@@ -78,7 +83,7 @@ class ObjectView extends React.Component {
                    <button className="btn btn-clear container-btn" title="容器" onClick={ this.create.bind(this,"container",null)} />
                    <button className="btn btn-clear event-btn" title="事件" />
                    <button className="btn btn-clear new-btn" title="新建" />
-                   <button className="btn btn-clear delete-btn" title="删除" />
+                   <button className="btn btn-clear delete-btn" title="删除" onClick={ this.delete } />
                </div>
 
                 {
