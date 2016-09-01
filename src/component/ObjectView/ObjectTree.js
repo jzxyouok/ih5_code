@@ -38,9 +38,8 @@ class ObjectTree extends React.Component {
         if (widget.initTree !== undefined){
             this.setState({
                 widgetTree: widget.initTree[0]
-            },()=>{
-                this.addOpenId();
             });
+            this.addOpenId();
         }
 
         //redrawTree : 重新加载对象树
