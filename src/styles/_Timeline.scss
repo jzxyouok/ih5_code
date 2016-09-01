@@ -29,7 +29,8 @@ $size: 24px;
 @mixin bg-btn2($i) {
 	@include btn();
 	@include bg($i, 0);
-	&.active {
+	&.active,
+	&:active {
 		@include bg($i, 1);
 	}
 }
@@ -44,6 +45,7 @@ $size: 24px;
 	z-index: 9;
 	background-color: #232323;
 	width: 70%;
+	overflow: hidden;
 
 	button {
 		@include clearInput();
@@ -170,6 +172,47 @@ $size: 24px;
 		#TimelineRuler {
 			flex: 1;
 			position: relative;
+			&.timline-column-right {
+				padding-right: 20px;
+			}
+			.ant-slider {
+				background: none;
+				border: none;
+				margin: 0 -5px;
+				height: 24px;
+			}
+			.ant-slider-handle {
+				width: 24px;
+				height: 24px;
+				margin-top: 0;
+				border: none;
+				background-color: transparent;
+				@include btn();
+				@include bg(8, 0);
+				//transform: translateX(-4px);
+				&:active {
+					box-shadow: none;
+				}
+				&:before {
+					content: "";
+					height: 99999999px;
+					width: 1px;
+					background: red;
+					margin-left: 11.5px;
+					display: block;
+					margin-top: 16px;
+				}
+			}
+			.ant-slider-track {
+				background: none;
+			}
+			.ant-slider-mark {
+				background: url(/dist/img/ruler.png) repeat-x;
+				height: 10px;
+				top: 15px;
+				margin: 0 5px;
+			}
+
 			#TimelineRulerNumbers {
 				height: 16px;
 			}
@@ -199,6 +242,7 @@ $size: 24px;
 			top: 0;
 			background: #ff0000;
 			display: block;
+			z-index: 99;
 			&:before {
 				content: "";
 				height: 8px;
@@ -218,9 +262,46 @@ $size: 24px;
 		&:last-child {
 			border-bottom: none;
 		}
+		.timline-column-right {
+			padding-right: 10px;
+		}
+
+		&.active {
+			.ant-slider {
+				background-color: #1f4240;
+			}
+		}
 	}
 	.timeline-node-track {
 		position: relative;
+		flex: 1;
+		// 使用 ant design 的组件
+
+		.ant-slider {
+			background: none;
+			border: none!important;
+			height: 24px;
+			margin: 0;
+			border-radius: 0;
+			.ant-slider-handle {
+				width: 24px;
+				height: 24px;
+				@include bg-btn2(7);
+				cursor: pointer;
+				border: none!important;
+				background-color: transparent;
+				margin-top: 0;
+				transform: translateX(-5px);
+				&:active {
+					box-shadow: none;
+				}
+			}
+			.ant-slider-track {
+				background: none;
+				margin: 0 -5px;
+				height: 24px;
+			}
+		}
 	}
 	.timeline-node-meta {
 		.timeline-node-type {

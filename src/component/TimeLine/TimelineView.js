@@ -1,8 +1,19 @@
 import React from 'react';
 import cls from 'classnames';
+import bridge from 'bridge';
+
+import { Slider, Row, Col, Card, Button } from 'antd';
+import WidgetStore from '../../stores/WidgetStore';
+import WidgetActions from '../../actions/WidgetActions';
+
+import TimelineTrack from './TimelineTrack';
+
+import VxSlider from '../VxSlider';
 
 // const Namespace = 'Timeline';
 // const ns = (name)=> {id: `${Namespace}name`};
+
+var timerCallback = {};
 
 /**
  * 时间轴组件
@@ -12,43 +23,12 @@ class TimelineView extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			activeLine: null,
-			activeTime: 1.6,
-			timerNode: [{
-				id: 1,
-				name: '图片1',
-				type: 'image',
-				duration: {
-					begin: 0,
-					end: 2.500
-				},
-				breakpoints: [
-					0.5, 1.2, 2.1
-				]
-			},{
-				id: 2,
-				name: '某某某按钮00000000',
-				type: 'button',
-				duration: {
-					begin: 0.8,
-					end: 6.500
-				},
-				breakpoints: [
-					0.8, 2.7, 4.9, 5.5
-				]
-			},{
-				id: 2,
-				name: '某某某按钮0000000001111111111',
-				type: 'button',
-				duration: {
-					begin: 0.8,
-					end: 5.500
-				},
-				breakpoints: [
-					0.5, 1.8, 3.3
-				]
-			}]
+			currentTime: 0,
+			currentTrack: null,
+			timerNode: null
 		};
+		this.hasCurrent = false;
+		this.onTimer = this.onTimer.bind(this);
 	}
 
 	componentDidMount() {
@@ -74,12 +54,10 @@ class TimelineView extends React.Component {
 				node = node.timerWidget;
 			if (node !== this.state.timerNode) {
 				if (node) {
-					this.renderer = node.node.renderer;
-					node.node.addCallback(this);
+					bridge.timerAddCallback(node.node, timerCallback, this.onTimer);
 				} else {
-					this.renderer = null;
 					if (this.state.timerNode)
-						this.state.timerNode.node.removeCallback(this);
+						bridge.timerRemoveCallback(this.state.timerNode.node, timerCallback);
 				}
 				changed.timerNode = node;
 			}
@@ -108,10 +86,6 @@ class TimelineView extends React.Component {
 		this.state.timerNode.node['pause']();
 	}
 
-	onTogglePlay() {
-
-	}
-	
 	onTimerChange(value) {
 		WidgetActions['resetTrack']();
 		this.state.timerNode.node['seek'](value * this.state.timerNode.node['totalTime']);
@@ -144,7 +118,15 @@ class TimelineView extends React.Component {
 	}
 
 	onAddOrDelete() {
+		// 如果没有活动的轨迹
+		if(this.state.currentTrack===null) return;
 
+		// 如果有活动的时间断点
+		if(this.hasCurrent) {
+			this.onDelete();
+		} else {
+			this.onAdd();
+		}
 	}
 
 	selectNextBreakpoint() {
@@ -156,30 +138,52 @@ class TimelineView extends React.Component {
 	}
 
 	render() {
-		return (
-			<div id='TimelineView'>
+		let tracks = [];
+		let index = 0;
+
+		const getTracks = (node) => {
+			if (node.className === 'track') {
+				tracks.push(
+					<VxSlider key={index++} max={1} step={0.001} 
+						refTrack={node} refTimer={this.state.timerNode} 
+						points={node.props.data} isCurrent={node === this.state.currentTrack} />);
+			}
+			node.children.map(item => getTracks(item));
+		};
+
+		//console.log('timerNode',this.state.timerNode)
+		if (this.state.timerNode) {
+			getTracks(this.state.timerNode);
+		}
+		//console.log('timerNode', this.state.timerNode);
+
+		return (!this.state.timerNode) ? null :(
+			<div id='TimelineView' data-name='timeline2'>
 				<div id='TimelineHeader' className='timeline-row f--h'>
 					<div className='timline-column-left f--hlc'>
 						<span id='TimelineTitle'>时间轴</span>
 						<span id='TimelineNodeDuration' className={
-							cls('f--h', {'active': this.state.activeLine!=null})
+							cls('f--h',{'active': this.state.currentTrack!=null})
 						}>
 							<button id='TimelineIndicator'
-								className={cls({'active': this.state.activeLine!=null})}></button>
+								className={cls({'active': this.state.currentTrack!=null})}></button>
 							<input type='number' defaultValue={
-								this.state.activeLine === null ? 0.000 :
-								this.state.timerNode[this.state.activeLine].time }
+								this.state.currentTrack === null ? 0.000 :
+								this.state.currentTime }
 								min={0.000}
 								step={0.001}/>
 							<span>s</span>
 						</span>
 					</div>
-					<div className='timline-column-right' id='TimelineNodeAction'>
+					<div className='timline-column-right' id='TimelineNodeAction'
+						style={{
+						 width: `${500+2}px`
+						}}>
 						<div>
 							<button id='TimelineNodeActionPrev'
 								onClick={this.selectNextBreakpoint.bind(this)}></button>
 							<button id='TimelineNodeActionModify'
-								className={cls({'active': this.state.activeLine!=null})}
+								className={cls({'active': this.state.currentTrack!=null})}
 								onClick={this.onAddOrDelete.bind(this)}></button>
 							<button id='TimelineNodeActionNext'
 								onClick={this.selectPrevBreakpoint.bind(this)}></button>
@@ -193,49 +197,24 @@ class TimelineView extends React.Component {
 						<button id='TimelinePlayEnd'></button>
 					</div>
 					<div id='TimelineRuler' className='timline-column-right'>
-						<div id="TimelineRulerNumbers">
-						{
-
-						}
-						</div>
-						<div id="TimelineRulerMap"></div>
-						<div id='TimelineRulerSlide' style={{
-							left: `${this.state.activeTime * 100 - 13}px`
-						}}></div>
+					{
+						// <div id="TimelineRulerNumbers">
+						// </div>
+						// <div id="TimelineRulerMap"></div>
+						// <div id='TimelineRulerSlide' style={{
+						// 	left: `${this.state.currentTime * 100 - 13}px`
+						// }}></div>
+					}
+					<Slider max={1} step={0.001} value={this.state.currentTime} onChange={this.onTimerChange.bind(this)} />
 					</div>
 				</div>
 				<div id='TimlineNodeContent'>
-					<div id='TimelineRulerAlign' style={{
-						left: `${180 + this.state.activeTime * 100}px`
-					}}></div>
 					<ul id='TimlineNodeList'>
+					{tracks}
 					{
-						this.state.timerNode.map((node, index)=> {
-							return <li className={cls(
-								{'active': this.state.activeLine===node.id},
-								'timeline-row',
-								'timeline-node',
-								`timeline-node-${node.type}`,
-								'f--h')} key={index}>
-								<div className='timeline-node-meta timline-column-left f--hlc'>
-									<label className={cls('timeline-node-type', `timeline-node-type-${node.type}`)} />
-									<span className='timeline-node-name'>
-									{node.name}
-									</span>
-								</div>
-								<div className='timeline-node-track timline-column-right'>
-								{
-									node.breakpoints.map((point, index)=> {
-										return <div key={index}
-											className='timeline-node-track-breakpoint'
-											style={{
-											left : `${point*100}px`
-											}}></div>
-									})
-								}
-								</div>
-							</li>
-						})
+						// this.state.timerNode.map((node, index)=> {
+						// 	return <TimelineTrack track={node} key={index} />
+						// })
 					}
 					</ul>
 				</div>
