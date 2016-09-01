@@ -108,17 +108,22 @@ class TimelineView extends React.Component {
         let index = 0;
 
         const getTracks = (node) => {
+            console.log('node', node)
             if (node.className === 'track') {
-                tracks.push(<VxSlider key={index++} max={1} step={0.001} refTrack={node} refTimer={this.state.timerNode} points={node.props.data} isCurrent={node === this.state.currentTrack} />);
+                tracks.push(<VxSlider key={index++} max={1} step={0.001} 
+                    refTrack={node} refTimer={this.state.timerNode} 
+                    points={node.props.data} isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));
         };
 
+        //console.log('timerNode',this.state.timerNode)
         if (this.state.timerNode)
             getTracks(this.state.timerNode);
 
         return (this.state.timerNode) ?
-                (<Card title="时间轴">
+                (<div id='TimelineView'>
+                <Card title="时间轴">
                         <Row>
                             <Col>
                                 <Button onClick={this.onPlay.bind(this)}>播放</Button>
@@ -133,7 +138,8 @@ class TimelineView extends React.Component {
                                 {tracks}
                             </Col>
                         </Row>
-                </Card>) : null;
+                </Card>
+                </div>) : null;
     }
 }
 

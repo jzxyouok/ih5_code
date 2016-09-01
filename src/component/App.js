@@ -6,11 +6,11 @@ import ComponentPanel from './ComponentPanel';
 import DesignView from './DesignView';
 import ObjectView from './ObjectView/_index';
 import PropertyView from './PropertyView';
-import TimelineView from './TimelineView';
+//import TimelineView from './TimelineView';
 import ToolBox from './ToolBox/ToolBox';
 import EventBox from './EventBox/_index';
 import ParamsPanel from './ParamsPanel';
-//import TimelineView from './Timeline/TimelineView';
+import TimelineView from './Timeline/TimelineView';
 
 class App extends React.Component {
     render() {

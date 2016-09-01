@@ -5,6 +5,7 @@ import Tooltip from 'rc-tooltip';
 import Track from 'rc-slider/src/Track';
 import Steps from 'rc-slider/src/Steps';
 import Marks from 'rc-slider/src/Marks';
+import cls from 'classnames';
 
 import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -43,9 +44,13 @@ class VxHandle extends React.Component {
     const {dragging, noTip} = props;
 
     const style = vertical ? { bottom: offset + '%' } : { left: offset + '%' };
-    if (isCurrent)
-        style['border'] = 'solid 2px #E00';
-    const handle = (<div className={className} style={style}
+
+	let classNames = className;
+    if (isCurrent) {
+        //style['border'] = 'solid 2px #E00';
+		classNames = classNames + ' active';
+	}
+    const handle = (<div className={classNames} style={style}
                       onMouseUp={this.showTooltip.bind(this)}
                       onMouseEnter={this.showTooltip.bind(this)}
                       onMouseLeave={this.hideTooltip.bind(this)}
@@ -79,6 +84,7 @@ function pauseEvent(e) {
   e.preventDefault();
 }
 
+// 轨迹 的 组件
 class VxRcSlider extends RcSlider {
     constructor(props) {
         super(props);
@@ -195,27 +201,46 @@ class VxRcSlider extends RcSlider {
         const style = {};
         if (this.props.isCurrent)
             style['borderColor'] = '#CCC';
+		
+		let track = this.props.refTrack;
 		return (
-			<div ref="slider" className={sliderClassName} style={style}
-					 onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
-					 onMouseDown={disabled ? noop : this.onMouseDown.bind(this)}>
-				{handles}
-				<Track className={prefixCls + '-track'} vertical = {vertical} included={isIncluded}
-							 offset={lowerOffset} length={upperOffset - lowerOffset}/>
-				<Steps prefixCls={prefixCls} vertical = {vertical} marks={marks} dots={dots} step={step}
-							included={isIncluded} lowerBound={lowerBound}
-							upperBound={upperBound} max={max} min={min}/>
-				<Marks className={prefixCls + '-mark'} vertical = {vertical} marks={marks}
-							 included={isIncluded} lowerBound={lowerBound}
-							 upperBound={upperBound} max={max} min={min}/>
-				{children}
-			</div>
+			<li className={
+				cls(
+				{'active': this.props.isCurrent},
+				'timeline-row',
+				'timeline-node',
+				`timeline-node-${track.parent.className}`,
+				'f--h')}>
+				<div className='timeline-node-meta timline-column-left f--hlc'>
+					<label className={cls('timeline-node-type', `timeline-node-type-${track.parent.className}`)} />
+					<span className='timeline-node-name'>
+					{track.parent.className}
+					</span>
+				</div>
+				<div className='timeline-node-track timline-column-right'>
+					<div ref="slider" className={sliderClassName} style={style}
+							onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
+							onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
+						{handles}
+						<Track className={prefixCls + '-track'} vertical = {vertical} included={isIncluded}
+									offset={lowerOffset} length={upperOffset - lowerOffset}/>
+						<Steps prefixCls={prefixCls} vertical = {vertical} marks={marks} dots={dots} step={step}
+									included={isIncluded} lowerBound={lowerBound}
+									upperBound={upperBound} max={max} min={min}/>
+						<Marks className={prefixCls + '-mark'} vertical = {vertical} marks={marks}
+									included={isIncluded} lowerBound={lowerBound}
+									upperBound={upperBound} max={max} min={min}/>
+						{children}
+					</div>
+				</div>
+			</li>
 		);
 	}
 }
 
 class VxSlider extends React.Component {
 	render() {
+        //console.log('props: ', this.props);
 		return <VxRcSlider {...this.props} />;
 	}
 }
