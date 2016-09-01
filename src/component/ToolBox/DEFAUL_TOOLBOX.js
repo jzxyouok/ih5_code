@@ -5,23 +5,23 @@
 let img = (path) => `/dist/img/icons/${path}`;
 
 let rectIcon = img('rect.svg');
-let ellipseIcon = img('ellipseNormal.svg');
-let curveIcon = img('curveNormal.svg');
+let ellipseIcon = img('ellipse.svg');
+let curveIcon = img('curve.svg');
 let textIcon = img('text.svg');
-let videoIcon = img('videoNormal.svg');
-let audioIcon = img('audioNormal.svg');
-let containerIcon = img('containerNormal.svg');
+let videoIcon = img('video.svg');
+let audioIcon = img('audio.svg');
+let containerIcon = img('container.svg');
 let timerIcon = img('timer.svg');
-let trackIcon = img('trackNormal.svg');
-let worldIcon = img('worldNormal.svg');
-let bodyIcon = img('bodyNormal.svg');
-let easingIcon = img('easingNormal.svg');
-let pageIcon = img('pageNormal.svg');
-let effectIcon = img('effectNormal.svg');
-let canvasIcon = img('canvasNormal.svg');
-let wechatIcon = img('wechatNormal.svg');
-let slidetimerIcon = img('slidetimerNormal.svg');
-let bitmaptextIcon = img('bitmaptextNormal.svg');
+let trackIcon = img('track.svg');
+let worldIcon = img('world.svg');
+let bodyIcon = img('body.svg');
+let easingIcon = img('easing.svg');
+let pageIcon = img('page.svg');
+let effectIcon = img('effect.svg');
+let canvasIcon = img('canvas.svg');
+let wechatIcon = img('wechat.svg');
+let slidetimerIcon = img('slidetimer.svg');
+let bitmaptextIcon = img('bitmaptext.svg');
 let imageIcon = img('image.svg');
 let igroupIcon = img('imageGroup.svg');
 
@@ -75,8 +75,7 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.TRACK, name:'轨迹', icon: trackIcon, className: 'track'},
             {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
             {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},
-            {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer'}
-            
+            {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer',  param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}}
         ]
     },{
         name:'文字',
@@ -85,6 +84,14 @@ var DEFAULT_TOOLBOX = {
         primary: {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', param: {'text': 'Text'}},
         secondary: [
             {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext'}]
+    },{
+        name:'多媒体',
+        key:5,
+        gid:5,
+        primary: {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'},
+        secondary: [
+            {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video'}
+        ]
     }]
 };
 
