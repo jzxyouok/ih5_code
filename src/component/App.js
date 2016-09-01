@@ -27,14 +27,14 @@ class App extends React.Component {
                 {
                     //<EventBox />
                 }
-                
-                <div style={{position: "absolute",left: "300px",top: "37px",background: "#fff",width: "312px"}}>
-                    <ParamsPanel />
-                </div>
 
                 <ObjectView />
 
                 <TimelineView />
+
+                <div style={{position: "fixed",right: "0",bottom: "32px",background: "#fff",width: "312px"}}>
+                    <ParamsPanel />
+                </div>
 
                 {
                     //<Row gutter={5}>
