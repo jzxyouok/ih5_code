@@ -24,9 +24,7 @@ class App extends React.Component {
 
                 <PropertyView />
 
-                {
-                    //<EventBox />
-                }
+                <EventBox />
 
                 <ObjectView />
 

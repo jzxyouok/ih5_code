@@ -8,7 +8,7 @@ class EventBox extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-
+            keepIt : true
         };
         this.eventData = {
             nowId: 2,
@@ -116,6 +116,7 @@ class EventBox extends React.Component {
         };
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
+        this.keepBtn = this.keepBtn.bind(this);
     }
 
     chooseEventBtn(nid){
@@ -125,12 +126,18 @@ class EventBox extends React.Component {
         //console.log(this.eventData.nowId);
     }
 
+    keepBtn(){
+        this.setState({
+            keepIt : !this.state.keepIt
+        })
+    }
+
     render() {
         return (
-            <div className="EventBox">
+            <div className={$class("EventBox",{"keep":this.state.keepIt})}>
                 <div className="EB--title f--hlc">
                     <span className="flex-1">事件属性</span>
-                    <button className="btn btn-clear" title="收起" />
+                    <button className="btn btn-clear" title="收起" onClick={this.keepBtn} />
                 </div>
 
                 <div className="EB--content-layer">

@@ -1,11 +1,18 @@
 .EventBox {
     position: fixed;
-    left: 37px;
+    left: 296px;
     top: 37px;
-    bottom: 201px;
+    //bottom: 201px;
     width: 733px;
+    height: 716px;
     background: #232323;
+    transition: 0.5s;
     overflow: hidden;
+
+    &.keep {
+        height: 30px;
+        transition: 0.5s;
+    }
 
     .EB--title {
         width: 100%;
