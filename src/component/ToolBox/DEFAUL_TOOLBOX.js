@@ -73,8 +73,8 @@ var DEFAULT_TOOLBOX = {
         primary: {cid:TOOL_ID.TIMER, name:'添加时间轴', icon:timerIcon, className:'timer'},
         secondary: [
             {cid:TOOL_ID.TRACK, name:'轨迹', icon: trackIcon, className: 'track'},
-            {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
-            {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},
+            // {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
+            // {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},
             {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer',  param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}}
         ]
     },{
@@ -92,7 +92,30 @@ var DEFAULT_TOOLBOX = {
         secondary: [
             {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video'}
         ]
+    },{
+        name:'微信',
+        key:6,
+        gid:6,
+        primary: {cid:TOOL_ID.WECAHT,name:'微信',icon:wechatIcon, className:'wechat'}
     }]
+    // ,{
+    //     name:'容器',
+    //     key:7,
+    //     gid:7,
+    //     primary: {cid:TOOL_ID.CONTAINER,name:'容器',icon:containerIcon, className:'container'},
+    //     secondary: [
+    //         {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'},
+    //         {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param: {'width': 300, 'height': 300}}
+    //     ]
+    // }, {
+    //     name: '坐标',
+    //     key: 8,
+    //     gid: 8,
+    //     primary: {cid:TOOL_ID.WORLD,name:'世界',icon:worldIcon, className:'world'},
+    //     secondary: [
+    //         {cid:TOOL_ID.BODY,name:'主体',icon:bodyIcon, className:'body'}
+    //     ]
+    // }
 };
 
 export default DEFAULT_TOOLBOX;
