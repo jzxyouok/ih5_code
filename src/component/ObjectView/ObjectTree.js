@@ -90,7 +90,7 @@ class ObjectTree extends React.Component {
         //    }
         //};
 
-        if(data.tree.key){
+        if(data){
             fuc(data.tree.key);
             //if(data.tree.children.length!==0){
             //    data.tree.children.map(CFuc)
