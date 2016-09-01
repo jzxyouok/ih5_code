@@ -11,7 +11,7 @@ class ObjectTree extends React.Component {
         super(props);
         this.state = {
             nid : null,
-            openData : [1],
+            openData : [],
             widgetTree: null,
             selectedNode: [],
             expandedNodes: [],
@@ -21,7 +21,7 @@ class ObjectTree extends React.Component {
         this.openBtn = this.openBtn.bind(this);
         this.closeBtn = this.closeBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        //this.addOpenId = this.addOpenId.bind(this);
+        this.addOpenId = this.addOpenId.bind(this);
     }
 
     componentDidMount() {
@@ -39,13 +39,13 @@ class ObjectTree extends React.Component {
             this.setState({
                 widgetTree: widget.initTree[0]
             });
-            //this.addOpenId();
+            this.addOpenId();
         }
 
         //redrawTree : 重新加载对象树
         else if (widget.redrawTree !== undefined){
             this.forceUpdate();
-            //this.addOpenId();
+            this.addOpenId();
         }
 
         //selectWidget : 选择工具创建相应图层
@@ -70,33 +70,33 @@ class ObjectTree extends React.Component {
         }
     }
 
-    //addOpenId(){
-    //    let data = this.state.widgetTree;
-    //    let fuc = (nid)=>{
-    //        let array = this.state.openData;
-    //        let index = array.indexOf(nid);
-    //        if( index < 0){
-    //            array.push(nid);
-    //            this.setState({
-    //                openData : array
-    //            });
-    //        }
-    //    };
-    //
-    //    let CFuc = (v,i)=>{
-    //        fuc(v.key);
-    //        if(v.children.length!==0){
-    //            v.children.map(CFuc)
-    //        }
-    //    };
-    //
-    //    if(data.tree.key){
-    //        fuc(data.tree.key);
-    //        if(data.tree.children.length!==0){
-    //            data.tree.children.map(CFuc)
-    //        }
-    //    }
-    //}
+    addOpenId(){
+        let data = this.state.widgetTree;
+        let fuc = (nid)=>{
+            let array = this.state.openData;
+            let index = array.indexOf(nid);
+            if( index < 0){
+                array.push(nid);
+                this.setState({
+                    openData : array
+                });
+            }
+        };
+
+        //let CFuc = (v,i)=>{
+        //    fuc(v.key);
+        //    if(v.children.length!==0){
+        //        v.children.map(CFuc)
+        //    }
+        //};
+
+        if(data.tree.key){
+            fuc(data.tree.key);
+            //if(data.tree.children.length!==0){
+            //    data.tree.children.map(CFuc)
+            //}
+        }
+    }
 
     chooseBtn(nid, data){
         //console.log(data);
