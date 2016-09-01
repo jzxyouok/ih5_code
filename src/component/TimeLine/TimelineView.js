@@ -6,7 +6,7 @@ import { Slider, Row, Col, Card, Button } from 'antd';
 import WidgetStore from '../../stores/WidgetStore';
 import WidgetActions from '../../actions/WidgetActions';
 
-import TimelineTrack from './TimelineTrack';
+//import TimelineTrack from './TimelineTrack';
 
 import VxSlider from '../VxSlider';
 

@@ -9,6 +9,8 @@ import ObjectTree from './ObjectTree'
 import Resource from './Resource'
 import Animation from './Animation'
 
+import WidgetActions from '../../actions/WidgetActions'
+
 class ObjectView extends React.Component {
     constructor (props) {
         super(props);
@@ -16,13 +18,18 @@ class ObjectView extends React.Component {
             whichContent : 0,
             whichContentData : ["对象树","资源"]
         };
-        this.toggleBtn = this.toggleBtn.bind(this)
+        this.toggleBtn = this.toggleBtn.bind(this);
+        this.create = this.create.bind(this);
     }
 
     toggleBtn(i){
         this.setState({
             whichContent : i
         })
+    }
+
+    create(className,param){
+        WidgetActions['addWidget'](className,param);
     }
 
     render() {
@@ -67,6 +74,8 @@ class ObjectView extends React.Component {
                        // not-allowed 为不可点击
                    }
                    <button className="btn btn-clear lock-btn not-allowed" title="锁住" />
+                   <button className="btn btn-clear folder-btn" title="文件夹"  />
+                   <button className="btn btn-clear container-btn" title="容器" onClick={ this.create.bind(this,"container",null)} />
                    <button className="btn btn-clear event-btn" title="事件" />
                    <button className="btn btn-clear new-btn" title="新建" />
                    <button className="btn btn-clear delete-btn" title="删除" />

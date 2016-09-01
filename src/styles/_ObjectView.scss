@@ -95,6 +95,20 @@
                 &.not-allowed{ background-position: -1440px -40px; }
             }
 
+            &.folder-btn {
+                background-position: -1840px 0;
+                &:hover{ background-position: -1840px -80px; }
+                &:active{ background-position: -1840px -120px; }
+                &.not-allowed{ background-position: -1840px -40px; }
+            }
+
+            &.container-btn {
+                background-position: -1880px 0;
+                &:hover{ background-position: -1880px -80px; }
+                &:active{ background-position: -1880px -120px; }
+                &.not-allowed{ background-position: -1880px -40px; }
+            }
+
             &.event-btn {
                 background-position: -1400px 0;
                 &:hover{ background-position: -1400px -80px; }
