@@ -28,7 +28,7 @@ class App extends React.Component {
                     //<EventBox />
                 }
                 
-                <div style={{position: "absolute",left: "300px",top: "0",background: "#fff",width: "312px"}}>
+                <div style={{position: "absolute",left: "300px",top: "37px",background: "#fff",width: "312px"}}>
                     <ParamsPanel />
                 </div>
 

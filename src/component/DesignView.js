@@ -16,7 +16,7 @@ class DesignView extends React.Component {
         //console.log(event);
         let y  = event.deltaY;
         let x  = event.deltaX;
-        if(x===0 || y===0 || x===-0 || y===-0) return;
+        if(y===0 || y===-0) return;
         let top = window.getComputedStyle(this.refs.view,null).getPropertyValue("top");
         let t = parseFloat(top.replace(/(px)?/, ''));
         t = t - y/2;
