@@ -5,7 +5,7 @@ import React from 'react';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import InputText from './InputText';
-import DbDialog from './DbDialog';
+//import DbDialog from './DbDialog';
 import JSZip from 'jszip';
 
 import { Menu, Icon } from 'antd';
@@ -181,7 +181,9 @@ class  VxMenu extends React.Component {
                     </SubMenu>
                 </Menu>
                 <InputText title="类名字" visible={this.state.addClassVisible} editText={null} onEditDone={this.onAddClassDone.bind(this)} />
-                <DbDialog visible={this.state.editDbVisible} />
+                {
+                    //<DbDialog visible={this.state.editDbVisible} />
+                }
             </div>
         );
     }
