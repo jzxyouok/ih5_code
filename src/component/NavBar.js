@@ -145,11 +145,12 @@ class NavBar extends React.Component {
 
     onImportUrl(url, id) {
         WidgetActions['ajaxSend'](null, 'GET', url + '?raw=1', null, null, function(text) {
-            let result = bridge.decryptData(text);
-            if (result && result['stage']) {
-                this.workid = id;
-                WidgetActions['initTree'](result);
-            }
+            bridge.decryptData(text, function(result) {
+                if (result && result['stage']) {
+                    this.workid = id;
+                    WidgetActions['initTree'](result);
+                }
+            }.bind(this));
         }.bind(this), true);
     }
 
