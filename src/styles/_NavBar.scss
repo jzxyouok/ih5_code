@@ -32,6 +32,12 @@
                 background: url("/dist/img/button-icon.svg") no-repeat;
                 display: block;
 
+                &.open-btn {
+                    background-position: 0 -200px;
+                    &:hover{ background-position: 0 -240px; }
+                    &:active{ background-position: 0 -280px; }
+                }
+
                 &.save-btn {
                     background-position: -40px 0 ;
                     &:hover{ background-position: -40px -40px; }
@@ -69,6 +75,25 @@
             .dropDown-btn {
                 position: relative;
 
+                &.dropDown-btn2 ul{
+                    width: 120px;
+
+                    li{
+                        @extend %font-omitted;
+                        line-height: 30px;
+                        padding: 0 10px;
+                        display: block;
+
+                        &:nth-child(1){
+                            text-align: center;
+                            background: #4f4f4f;
+                            color: #fff;
+                        }
+
+                        &:nth-child(3){ border: none; }
+                    }
+                }
+
                 ul {
                     position: absolute;
                     top: 29px;
@@ -85,7 +110,7 @@
                         height: 32px;
                         overflow: hidden;
                         font-size: 12px;
-                        color: #858585;
+                        color: #b5b5b5;
                         cursor: pointer;
 
                         &:hover {
