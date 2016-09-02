@@ -22,7 +22,7 @@ class DesignView extends React.Component {
         if(y===0 || y===-0) return;
         let top = window.getComputedStyle(this.refs.view,null).getPropertyValue("top");
         let t = parseFloat(top.replace(/(px)?/, ''));
-        t = t - y / 10;
+        t -= y/8;
         this.refs.view.style.top = t+'px';
     }
 
