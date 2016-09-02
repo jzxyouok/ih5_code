@@ -15,7 +15,7 @@ var compiler = webpack(config);
 
 app.use(require('webpack-dev-middleware')(compiler));
 app.use(require('webpack-hot-middleware')(compiler));
-app.use('/dist', express.static(path.join(__dirname, '/dist')));
+app.use('/img', express.static(path.join(__dirname, 'src', 'styles', 'img')));
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'src', 'index.html'));
@@ -27,10 +27,6 @@ app.get('/ih5bridge.js', function(req, res) {
 
 app.get('/ih5core.js', function(req, res) {
   res.sendFile(path.join(__dirname, 'ih5core.js'));
-});
-
-app.get('/index.css', function(req, res) {
-  res.sendFile(path.join(__dirname, 'dist/assets', 'index.css'));
 });
 
 route(app);

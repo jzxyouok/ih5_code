@@ -2,7 +2,7 @@
  * 默认工具栏配置
  */
 
-let img = (path) => `/dist/img/icons/${path}`;
+let img = (path) => `img/icons/${path}`;
 
 let rectIcon = img('rect.svg');
 let ellipseIcon = img('ellipse.svg');

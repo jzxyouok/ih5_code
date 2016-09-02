@@ -28,10 +28,10 @@
         .btn {
             width: 32px;
             height: 26px;
-            background: url("/dist/img/button-icon.svg") no-repeat -1240px 0;
+            background: url("img/button-icon.svg") no-repeat -1240px 0;
 
             &:hover {
-                background: url("/dist/img/button-icon.svg") no-repeat -1240px -40px;
+                background: url("img/button-icon.svg") no-repeat -1240px -40px;
             }
         }
     }
@@ -167,7 +167,7 @@
                         width: 20px;
                         height: 11px;
                         margin-top: 8.5px;
-                        background: url("/dist/img/button-icon.svg") no-repeat -1600px 0;
+                        background: url("img/button-icon.svg") no-repeat -1600px 0;
                         cursor: pointer;
 
                         &:hover {
@@ -205,7 +205,7 @@
                         .title-icon {
                             width: 26px;
                             height: 100%;
-                            background: url("/dist/img/button-icon.svg") no-repeat -1480px 0;
+                            background: url("img/button-icon.svg") no-repeat -1480px 0;
                         }
 
                         .dropDown-layer {
@@ -232,7 +232,7 @@
                                     top: 0;
                                     width: 10px;
                                     height: 22px;
-                                    background: url("/dist/img/button-icon.svg") no-repeat -1680px 0;
+                                    background: url("img/button-icon.svg") no-repeat -1680px 0;
                                     display: block;
                                 }
                             }
@@ -323,7 +323,7 @@
                                 cursor: pointer;
                                 width: 22px;
                                 height: 26px;
-                                background: url("/dist/img/button-icon.svg") no-repeat -1720px 0;
+                                background: url("img/button-icon.svg") no-repeat -1720px 0;
                                 display: block;
 
                                 &:hover { background-position: -1720px -40px; }
@@ -396,7 +396,7 @@
                     width: 20px;
                     height: 11px;
                     margin-top: 8.5px;
-                    background: url("/dist/img/button-icon.svg") no-repeat -1600px 0;
+                    background: url("img/button-icon.svg") no-repeat -1600px 0;
                     cursor: pointer;
 
                     &:hover {
@@ -431,7 +431,7 @@
                             top: 0;
                             width: 10px;
                             height: 22px;
-                            background: url("/dist/img/button-icon.svg") no-repeat -1680px -40px;
+                            background: url("img/button-icon.svg") no-repeat -1680px -40px;
                             display: block;
                         }
                     }
@@ -503,7 +503,7 @@
                     .p--icon {
                         width: 26px;
                         height: 100%;
-                        background: url("/dist/img/button-icon.svg") no-repeat -1520px 0;
+                        background: url("img/button-icon.svg") no-repeat -1520px 0;
                     }
                 }
 

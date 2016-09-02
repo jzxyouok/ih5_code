@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import App from './component/App';
 
 require('./app.css');
+require("!style!css!sass!./styles/index.scss");
 
 var obj = document.createElement('div');
 obj.id = "iH5-App-Container";
