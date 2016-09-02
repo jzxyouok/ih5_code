@@ -232,6 +232,7 @@ class NavBar extends React.Component {
     }
 
     render() {
+        console.log(this.state.workList);
         return (
             <div className="NavBar f--h">
                 <div className="nb--left f--h">
@@ -240,6 +241,24 @@ class NavBar extends React.Component {
                     </div>
 
                     <div className="left-group f--hlc">
+                        <div className="dropDown-btn dropDown-btn2">
+                            <button className={$class("btn btn-clear open-btn dropDownBtn",{"active":3 === this.state.dropDownState})}
+                                    title="最近打开"
+                                    onClick={this.dropDownShow.bind(this, 3)} />
+
+                            <ul className={$class("dropDownToggle", { "hide": 3 !== this.state.dropDownState })}>
+                                <li>最近打开</li>
+                                {
+                                    this.state.workList.map((v,i)=>{
+                                        return  <li key={i}
+                                                    className={$class({"hidden": i >= 10})}
+                                                    onClick={ this.onOpen.bind(this, v.id)}>
+                                                    { i >= 10 ? null : v.name}
+                                                </li>
+                                    })
+                                }
+                            </ul>
+                        </div>
                         <button className="btn btn-clear save-btn" title="保存" onClick={this.onSave} />
                         <button className="btn btn-clear saveAs-btn"  title="另存为"  />
                         <button className="btn btn-clear history-btn" title="历史"  />
