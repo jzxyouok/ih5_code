@@ -232,7 +232,7 @@ class NavBar extends React.Component {
     }
 
     render() {
-        console.log(this.state.workList);
+        //console.log(this.state.workList);
         return (
             <div className="NavBar f--h">
                 <div className="nb--left f--h">
