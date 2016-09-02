@@ -45,7 +45,7 @@
                     width: 12px;
                     height: 12px;
                     display: block;
-                    background: url("/dist/img/button-icon.svg") no-repeat;
+                    background: url("img/button-icon.svg") no-repeat;
                 }
 
                 &.show-btn span{
@@ -60,7 +60,7 @@
             .icon {
                 width: 8px;
                 height: 6px;
-                background: url("/dist/img/button-icon.svg") no-repeat -1280px 0;
+                background: url("img/button-icon.svg") no-repeat -1280px 0;
                 margin-right: 3px;
 
                 &.close-icon {
@@ -83,7 +83,7 @@
                 right: 10px;
                 width: 14px;
                 height: 14px;
-                background: url("/dist/img/button-icon.svg") no-repeat -760px 0;
+                background: url("img/button-icon.svg") no-repeat -760px 0;
             }
         }
 
@@ -95,7 +95,7 @@
                 width: 14px;
                 height: 14px;
                 margin-left: 3px;
-                background: url("/dist/img/button-icon.svg") no-repeat -720px 0;
+                background: url("img/button-icon.svg") no-repeat -720px 0;
             }
         }
     }

@@ -1,7 +1,7 @@
 $size: 24px;
 
 @mixin btn() {
-	background-image: url(/dist/img/timeline-icons.svg);
+	background-image: url(img/timeline-icons.svg);
 	background-repeat: no-repeat;
 };
 @mixin clearInput {
@@ -156,7 +156,7 @@ $size: 24px;
 				width: $size;
 				height: $size;
 				display: inline-block;
-				background-image: url(/dist/img/timeline-icons.svg);
+				background-image: url(img/timeline-icons.svg);
 				background-repeat: no-repeat;
 			}
 			#TimelinePlayBegin {
@@ -207,7 +207,7 @@ $size: 24px;
 				background: none;
 			}
 			.ant-slider-mark {
-				background: url(/dist/img/ruler.png) repeat-x;
+				background: url(img/ruler.png) repeat-x;
 				height: 10px;
 				top: 15px;
 				margin: 0 5px;
@@ -218,7 +218,7 @@ $size: 24px;
 			}
 			#TimelineRulerMap {
 				height: 7px;
-				background-image: url(/dist/img/ruler.png);
+				background-image: url(img/ruler.png);
 				background-repeat: repeat-x;
 			}
 			#TimelineRulerSlide {

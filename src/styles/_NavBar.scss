@@ -17,7 +17,7 @@
                 width: 24px;
                 height: 24px;
                 display: block;
-                background: url("/dist/img/button-icon.svg") no-repeat 0 0 ;
+                background: url("img/button-icon.svg") no-repeat 0 0 ;
             }
         }
 
@@ -29,7 +29,7 @@
                 width: 24px;
                 height: 24px;
                 margin-left: 8px;
-                background: url("/dist/img/button-icon.svg") no-repeat;
+                background: url("img/button-icon.svg") no-repeat;
                 display: block;
 
                 &.open-btn {
@@ -130,7 +130,7 @@
                             height: 24px;
                             margin: 0 11px 0 7px;
                             display: block;
-                            background: url("/dist/img/button-icon.svg") no-repeat;
+                            background: url("img/button-icon.svg") no-repeat;
                         }
 
                         &.left-icon {
@@ -189,7 +189,7 @@
             }
 
             .icon {
-                background: url("/dist/img/button-icon.svg") no-repeat;
+                background: url("img/button-icon.svg") no-repeat;
                 float: left;
                 display: block;
             }
@@ -248,7 +248,7 @@
         .hui-btn{
             width: 24px;
             height: 24px;
-            background: url("/dist/img/button-icon.svg") no-repeat;
+            background: url("img/button-icon.svg") no-repeat;
         }
 
         .che-btn {
@@ -312,7 +312,7 @@
             width: 30px;
             height: 30px;
             margin: 0 2px 0 7px;
-            background: url("/dist/img/button-icon.svg") no-repeat -680px 0;
+            background: url("img/button-icon.svg") no-repeat -680px 0;
             &:hover{ background-position: -680px -40px; }
             &:active{ background-position: -680px -80px; }
         }
