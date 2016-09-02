@@ -235,6 +235,19 @@ $size: 24px;
 
 	#TimlineNodeContent {
 		position: relative;
+		$num: 6;
+		width: 100%;
+		height: #{24 * $num}px;
+
+		#TimlineNodeList {
+			height: #{24 * $num}px;
+			display: block;
+			width: 100%;
+			overflow-y: scroll;
+			padding-right: 20px;
+			box-sizing: initial;
+		}
+
 		#TimelineRulerAlign {
 			position: absolute;
 			width: 1px;
