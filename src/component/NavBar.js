@@ -47,28 +47,12 @@ class NavBar extends React.Component {
         var name = Cookies.get('ih5token');
         if (name) {
             this.state.loginVisible = false;
-            this.token = name;
-            this.getWorks();
+            this.getWorks(name);
         } else {
             this.state.loginVisible = true;
         }
         this.newWork();
-    }
-
-    ajaxSend(method, url, type, data, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4) {
-                callback(xhr.responseText);
-            }
-        };
-        xhr.open(method, url);
-        if (type)
-            xhr.setRequestHeader('Content-Type', type);
-        if (this.token) {
-            xhr.setRequestHeader('Authorization', 'Bearer {' + this.token + '}');
-        }
-        xhr.send(data);
+        this.workid = null;
     }
 
     newWork() {
@@ -77,8 +61,8 @@ class NavBar extends React.Component {
         WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 480}, links:[]}});
     }
 
-    getWorks() {
-        this.ajaxSend('GET', PREFIX + 'userInfo', null, null, (text) => {
+    getWorks(token) {
+        WidgetActions['ajaxSend'](token, 'GET', PREFIX + 'userInfo', null, null, function(text) {
             let result = JSON.parse(text);
             if (result['name']) {
                 this.playUrl = result['playUrl'];
@@ -86,21 +70,21 @@ class NavBar extends React.Component {
             } else {
                 this.setState({loginVisible: true});
             }
-        });
+        }.bind(this));
     }
 
     login(name, pass) {
-        this.ajaxSend('POST', PREFIX + 'login',
-            'application/x-www-form-urlencoded', 'username=' + encodeURIComponent(name) + "&password=" + encodeURIComponent(pass), (text) => {
-            let r = JSON.parse(text);
-            if (r['token']) {
-                this.token = r['token'];
-                Cookies.set('ih5token', r['token'], { expires: 30 });
-                getWorks();
-            } else {
-                this.setState({loginVisible: true});
-            }
-        });
+        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'login',
+            'application/x-www-form-urlencoded', 'username=' + encodeURIComponent(name) + "&password=" + encodeURIComponent(pass),
+            function(text) {
+                let r = JSON.parse(text);
+                if (r['token']) {
+                    Cookies.set('ih5token', r['token'], { expires: 30 });
+                    getWorks(r['token']);
+                } else {
+                    this.setState({loginVisible: true});
+                }
+            }.bind(this));
     }
 
     saveCallback(id, wname) {
@@ -117,7 +101,7 @@ class NavBar extends React.Component {
     onPlaySave(isPlay) {
         this.isPlay = isPlay;
         if (this.workid) {
-            WidgetActions['saveNode'](this.token, this.workid, null, this.saveCallback);
+            WidgetActions['saveNode'](this.workid, null, this.saveCallback);
         } else {
             this.setState({saveVisible: true});
         }
@@ -137,7 +121,7 @@ class NavBar extends React.Component {
 
     onDelete() {
         if (this.workid) {
-            this.ajaxSend('DELETE', PREFIX + 'work/' + this.workid, null, null, () => {
+            WidgetActions['ajaxSend'](null, 'DELETE', PREFIX + 'work/' + this.workid, null, null, function() {
                 let result = [];
                 for (var i = 0; i < this.state.workList.length; i++) {
                     if (this.state.workList[i]['id'] != this.workid) {
@@ -146,12 +130,12 @@ class NavBar extends React.Component {
                 }
                 this.workid = null;
                 this.setState({workList: result});
-            });
+            }.bind(this));
         }
     }
 
     onLogout() {
-        Cookies.remove('ih5user');
+        Cookies.remove('ih5token');
         this.setState({loginVisible: true, username: null});
     }
 
@@ -160,14 +144,13 @@ class NavBar extends React.Component {
     }
 
     onImportUrl(url, id) {
-        this.ajaxSend('GET', url + '?raw=1', null, null, (text) => {
-            //let result = JSON.parse(text);
+        WidgetActions['ajaxSend'](null, 'GET', url + '?raw=1', null, null, function(text) {
             let result = bridge.decryptData(text);
             if (result && result['stage']) {
                 this.workid = id;
                 WidgetActions['initTree'](result);
             }
-        });
+        }.bind(this), true);
     }
 
     onLoginDone(name, pass) {
@@ -180,7 +163,7 @@ class NavBar extends React.Component {
     onSaveDone(s) {
         this.setState({saveVisible: false});
         if (s)
-            WidgetActions['saveNode'](this.token, null, s, this.saveCallback);
+            WidgetActions['saveNode'](null, s, this.saveCallback);
     }
 
     onImportDone(s) {
