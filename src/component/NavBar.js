@@ -250,7 +250,9 @@ class NavBar extends React.Component {
                             <ul className={$class("dropDownToggle", { "hide": 3 !== this.state.dropDownState })}>
                                 <li>最近打开</li>
                                 {
-                                    this.state.workList.map((v,i)=>{
+                                    this.state.workList.length === 0
+                                    ? <li>你还没创建文件!</li>
+                                    : this.state.workList.map((v,i)=>{
                                         return  <li key={i}
                                                     className={$class({"hidden": i >= 10})}
                                                     onClick={ this.onOpen.bind(this, v.id)}>
