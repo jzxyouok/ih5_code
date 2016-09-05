@@ -94,8 +94,8 @@ copyFolder("./src/styles/img/icons", "./dist/img/icons");
 
 
 console.log("  - copying JavaScript files...");
-copyFile("./ih5core.js", "./dist/ih5core.js");
-copyFile("./ih5bridge.js", "./dist/ih5bridge.js");
+//copyFile("./ih5core.js", "./dist/ih5core.js");
+//copyFile("./ih5bridge.js", "./dist/ih5bridge.js");
 
 // done
 console.log("\nCongratulations!");

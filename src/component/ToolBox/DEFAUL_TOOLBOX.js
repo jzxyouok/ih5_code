@@ -21,7 +21,7 @@ let effectIcon = img('effect.svg');
 let canvasIcon = img('canvas.svg');
 let wechatIcon = img('wechat.svg');
 let slidetimerIcon = img('slidetimer.svg');
-let bitmaptextIcon = img('bitmaptext.svg');
+let bitmaptextIcon = img('bitmapText.svg');
 let imageIcon = img('image.svg');
 let igroupIcon = img('imageGroup.svg');
 
