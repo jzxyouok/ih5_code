@@ -314,6 +314,12 @@ $size: 24px;
 				margin: 0 -5px;
 				height: 24px;
 			}
+			.ant-slider-mark {
+				height: 1px;
+				background: #151515;
+				top: 12px;
+				z-index: 0;
+			}
 		}
 	}
 	.timeline-node-meta {
