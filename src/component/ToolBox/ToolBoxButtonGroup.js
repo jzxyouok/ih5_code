@@ -32,21 +32,21 @@ class ToolBoxButtonGroup extends Component {
 
     render() {
         // 是否存在次级菜单
-        let hasSecondaryMenu = this.props.secondary instanceof Array;
+        let hasSecondaryMenu = this.props.secondary instanceof Array && this.props.secondary.length > 1;
 
         return (
             <div className={ cls('ToolBoxButtonGroup', {'hasSecondaryMenu': hasSecondaryMenu}) }>
                 <ToolBoxButton
                     isPrimary={true}
                     gid={this.props.gid}
-                    {...this.props.primary}/>
+                    {...this.props.secondary[this.props.primary]}/>
                 {
                     !hasSecondaryMenu ? null :
                         <div className={cls('ToolBoxButtonSubGroup', {'visible': this.state.secondaryMenuVisible})}>
                         {
                             this.props.secondary.map((item, index)=>
                                 <ToolBoxButton key={index}
-                                    isPrimary={false}
+                                    isPrimary={index===this.props.primary}
                                     gid={this.props.gid}
                                     {...item} />)
                         }
@@ -60,7 +60,7 @@ class ToolBoxButtonGroup extends Component {
 ToolBoxButtonGroup.propTypes = {
     name: PropTypes.string,
     gid: PropTypes.number.isRequired,
-    primary: PropTypes.object,
+    primary: PropTypes.number,
     secondary: PropTypes.array
 };
 

@@ -24,10 +24,7 @@ var selectSecondary = function(config, gid, cid) {
     if(group===null || !group.secondary instanceof Array) return;
     for(let j=0; j<group.secondary.length; j++) {
         if(group.secondary[j].cid===cid) {
-            let temp = group.primary;
-            group.primary = group.secondary[j];
-            group.secondary[j] = temp;
-            data[groupIndex] = group;
+            group.primary = j;
             hasUpdate = true;
             break;
         }
