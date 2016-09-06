@@ -7,6 +7,7 @@ import ReactDOM from 'react-dom';
 
 import { Form, Input, InputNumber, Slider, Switch, Collapse } from 'antd';
 const Panel = Collapse.Panel;
+import cls from 'classnames';
 
 import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -116,7 +117,7 @@ class PropertyView extends React.Component {
 
         const groups = {};
 
-        const getInput = item => {
+        const getInput = (item, index) => {
             let defaultValue;
             if (item.readOnly) {
                 defaultValue = node.node[item.name];
@@ -143,10 +144,21 @@ class PropertyView extends React.Component {
             if (groups[groupName] === undefined)
                 groups[groupName] = [];
 
+            let hasTwin = ['width', 'height', 'positionX', 'positionY'].indexOf(item.name) >= 0;
             groups[groupName].push(
-                <Form.Item key={item.name} label={item.name} {...formItemLayout}>
-                {getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
-                </Form.Item>);
+                <div key={item.name}
+                    className={cls('f--hlc','ant-row','ant-form-item',
+                        {'ant-form-half': hasTwin}, {'ant-form-full': !hasTwin})}>
+                    <div className='ant-col-l ant-form-item-label'>
+                        <label>{item.name}</label>
+                    </div>
+                    <div className='ant-col-r'>
+                        <div className='ant-form-item-control'>
+                        {getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
+                        </div>
+                    </div>
+                </div>
+            );
         };
 
         const result = [];

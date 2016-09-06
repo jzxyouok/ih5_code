@@ -10,7 +10,7 @@
 	position: absolute;
 	top: 36px;
 	left: 36px;
-	width: 260px;
+	width: 320px;
 	box-sizing: border-box;
 	background: #232323;
 	border: 1px solid #1a1a1a;
@@ -78,6 +78,38 @@
 	// input
 	.ant-form-item {
 		margin-bottom: 12px;
+
+		&.ant-form-half {
+			width: 50%;
+			float: left;
+			& + div.ant-form-full {
+				clear: both;
+			}
+
+			& + div.ant-form-half {
+
+			}
+
+		}
+		.ant-form-item-label {
+			width: 54px;
+			label {
+				text-overflow: ellipsis;
+				overflow: hidden;
+				white-space: nowrap;
+				display: block;
+			}
+		}
+		.ant-col-r {
+			flex: 1;
+		}
+
+		.ant-input-wrapper {
+			input[type='text'] {
+				max-width: 80px;
+			}
+		}
+
 		.ant-input {
 			background-color: #353535;
 			border-color: #444;
