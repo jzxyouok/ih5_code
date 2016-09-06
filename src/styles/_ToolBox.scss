@@ -19,6 +19,8 @@
 	}
 	button {
 		outline: none;
+		background: none;
+		border: none;
 	}
 
 	.ToolBoxGroup {
@@ -29,6 +31,12 @@
 	.ToolBoxButtonGroup {
 		position: relative;
 		margin-bottom: 4px;
+
+		.ToolBoxButtonPrimary {
+			.ToolBoxButtonName {
+				display: none;
+			}
+		}
 
 		&.hasSecondaryMenu {
 			.ToolBoxButtonPrimary {
@@ -78,8 +86,40 @@
 			top: 0;
 			padding: 4px;
 			background: #353535;
+			border: 1px solid #000;
 			&.visible {
 				display: block;
+			}
+			.ToolBoxButton {
+				width: 160px;
+				padding-left: 10px;
+				&:hover {
+					background-color: #282828 !important;
+				}
+				&.active {
+					background: none;
+					&:after {
+						content: "";
+						width: 4px;
+						height: 4px;
+						border-left: 4px solid #b5b5b5;
+						border-top: 4px solid transparent;
+						border-bottom: 4px solid transparent;
+						position: absolute;
+						left: 3px;
+						top: 9px;
+					}
+				}
+				img {
+					float:left;
+				}
+				.ToolBoxButtonName {
+					float: left;
+					display: block;
+					height: 28px;
+					line-height: 28px;
+					color: #eee;
+				}
 			}
 		}
 	}

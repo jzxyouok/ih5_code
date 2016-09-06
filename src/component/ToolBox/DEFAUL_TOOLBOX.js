@@ -55,23 +55,26 @@ var DEFAULT_TOOLBOX = {
         name:'图片上传',
         key:1,
         gid:1,
-        primary: {cid:TOOL_ID.IMAGE, name:'上传单个图片',icon:imageIcon, className:'image', upload:true},
+        primary: 0,
         secondary: [
+            {cid:TOOL_ID.IMAGE, name:'上传单个图片',icon:imageIcon, className:'image', upload:true},
             {cid:TOOL_ID.IMAGE_LIST, name:'上传多个图片', icon:igroupIcon, className:'imagelist', upload:true}]
     },{
         name:'几何图形',
         key:2,
         gid:2,
-        primary: {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect'},
+        primary: 0,
         secondary: [
+            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect'},
             {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse'},
             {cid:TOOL_ID.PATH,name:'路径',icon:curveIcon, className:'path'}]
     },{
         name:'时间轴',
         key:3,
         gid:3,
-        primary: {cid:TOOL_ID.TIMER, name:'添加时间轴', icon:timerIcon, className:'timer'},
+        primary: 0,
         secondary: [
+            {cid:TOOL_ID.TIMER, name:'添加时间轴', icon:timerIcon, className:'timer'},
             {cid:TOOL_ID.TRACK, name:'轨迹', icon: trackIcon, className: 'track'},
             // {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
             // {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},
@@ -81,22 +84,25 @@ var DEFAULT_TOOLBOX = {
         name:'文字',
         key:4,
         gid:4,
-        primary: {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', param: {'text': 'Text'}},
+        primary: 0,
         secondary: [
+            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', param: {'text': 'Text'}},
             {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext'}]
     },{
         name:'多媒体',
         key:5,
         gid:5,
-        primary: {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'},
+        primary: 0,
         secondary: [
+            {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'},
             {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video'}
         ]
     },{
         name:'微信',
         key:6,
         gid:6,
-        primary: {cid:TOOL_ID.WECAHT,name:'微信',icon:wechatIcon, className:'wechat'}
+        primary: 0,
+        secondary: [{cid:TOOL_ID.WECAHT,name:'微信',icon:wechatIcon, className:'wechat'}]
     }]
     // ,{
     //     name:'容器',

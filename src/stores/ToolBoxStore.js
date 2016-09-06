@@ -6,6 +6,7 @@ import Reflux from 'reflux';
 import Actions from '../actions/ToolBoxAction';
 import defaultTool from '../component/ToolBox/DEFAUL_TOOLBOX';
 
+// 响应 点击二级（默认隐藏）工具菜单的事件
 var selectSecondary = function(config, gid, cid) {
     // 是否有更新
     let hasUpdate = false;
@@ -24,10 +25,7 @@ var selectSecondary = function(config, gid, cid) {
     if(group===null || !group.secondary instanceof Array) return;
     for(let j=0; j<group.secondary.length; j++) {
         if(group.secondary[j].cid===cid) {
-            let temp = group.primary;
-            group.primary = group.secondary[j];
-            group.secondary[j] = temp;
-            data[groupIndex] = group;
+            group.primary = j;
             hasUpdate = true;
             break;
         }
@@ -65,9 +63,9 @@ export default Reflux.createStore({
         this.trigger(toolBoxConfig, hasUpdate);
 
         // retrigger event, a patch to fix React state checking issues
-        setTimeout(()=> {
-            this.trigger(toolBoxConfig, hasUpdate);
-        }, 100);
+        // setTimeout(()=> {
+        //     this.trigger(toolBoxConfig, hasUpdate);
+        // }, 100);
     },
 
     openSecondary: function(groupId, update) {

@@ -104,11 +104,14 @@ class ToolBoxButton extends Component {
     render() {
         return (
             <button
-                className={cls('ToolBoxButton', {'ToolBoxButtonPrimary': this.props.isPrimary}, {'active': this.state.selected})}
+                className={cls('ToolBoxButton',
+                {'ToolBoxButtonPrimary': this.props.isPrimary},
+                {'active': this.state.selected})}
                 title={this.props.name}
                 onClick={this.onClick.bind(this)}
                 onContextMenu={this.onRightClick.bind(this)}>
                 <img src={this.props.icon} />
+                <span className='ToolBoxButtonName'>{this.props.name}</span>
             </button>
         );
     }
