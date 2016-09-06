@@ -25,10 +25,21 @@ class TimelineView extends React.Component {
 		this.state = {
 			currentTime: 0,
 			currentTrack: null,
-			timerNode: null
+			timerNode: null,
+			stepX: 37,
+			stepY: 0
 		};
 		this.hasCurrent = false;
 		this.onTimer = this.onTimer.bind(this);
+		this.onWidgetClick = this.onWidgetClick.bind(this);
+		this.onWidgetMouseUp = this.onWidgetMouseUp.bind(this);
+		this.onWidgetMouseDown = this.onWidgetMouseDown.bind(this);
+		this.onWidgetMouseMove = this.onWidgetMouseMove.bind(this);
+		this.onBodyMouseUp = this.onBodyMouseUp.bind(this);
+
+		this.flag = 0;
+		this.stepX = null;
+		this.stepY = null;
 	}
 
 	componentDidMount() {
@@ -137,6 +148,44 @@ class TimelineView extends React.Component {
 
 	}
 
+	onWidgetClick(event) {
+		event.preventDefault();
+		event.stopPropagation();
+	}
+
+	onWidgetMouseUp(event) {
+		//event.preventDefault();
+		//event.stopPropagation();
+	}
+
+	onWidgetMouseDown(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		document.body.addEventListener('mouseup', this.onBodyMouseUp);
+		this.flag = 1;
+		this.stepX = event.clientX;
+		this.stepY = event.clientY;
+	}
+
+	onWidgetMouseMove(event) {
+		if(this.flag===1) {
+			let x = event.clientX - this.stepX;
+			let y = event.clientY - this.stepY;
+			this.setState({
+				stepX: x > 37 ? x: 37,
+				stepY: y < 0 ? y: 0
+			});
+		}
+	}
+
+	onBodyMouseUp(event) {
+		document.body.removeEventListener('mouseup', this.onBodyMouseUp);
+		this.flag = 0;
+		this.stepX = 0;
+		this.stepY = 0;
+	}
+
 	render() {
 		let tracks = [];
 		let index = 0;
@@ -158,7 +207,15 @@ class TimelineView extends React.Component {
 		//console.log('timerNode', this.state.timerNode);
 
 		return (!this.state.timerNode) ? null :(
-			<div id='TimelineView' data-name='timeline2'>
+			<div id='TimelineView'
+				onClick={this.onWidgetClick}
+				onMouseUp={this.onWidgetMouseUp}
+				onMouseDown={this.onWidgetMouseDown}
+				onMouseMove={this.onWidgetMouseMove}
+				style={{
+					left: `${this.state.stepX}px`,
+					bottom: `${-this.state.stepY}px`,
+				}}>
 				<div id='TimelineHeader' className='timeline-row f--h'>
 					<div className='timline-column-left f--hlc'>
 						<span id='TimelineTitle'>时间轴</span>
