@@ -6,6 +6,17 @@
     width: 280px;
     min-width: 280px;
 
+    .drag-left {
+        position: absolute;
+        left: -5px;
+        top: 0;
+        bottom: 0;
+        width: 10px;
+        opacity: 0;
+        z-index: 99;
+        cursor: w-resize;
+    }
+
     .ov--nav {
         position: absolute;
         top: 0;

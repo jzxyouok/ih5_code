@@ -30,10 +30,6 @@ class App extends React.Component {
 
                 <TimelineView />
 
-                <div style={{position: "fixed",right: "0",bottom: "32px",background: "#fff",width: "312px"}}>
-                    <ParamsPanel />
-                </div>
-
                 {
                     //<Row gutter={5}>
                     //    <Col span={3}><ComponentPanel /></Col>
