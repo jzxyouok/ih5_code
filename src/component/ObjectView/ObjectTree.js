@@ -141,17 +141,11 @@ class ObjectTree extends React.Component {
         //console.log(data);
     }
 
-    showHideBtn(event){
-        event.stopPropagation();
-        let prop = event.currentTarget.getAttribute("data-prop");
-        let value = event.currentTarget.getAttribute("data-value");
-        const obj = {};
-        if (value === undefined) {
-            obj["visible"]  = null;
-        } else {
-            obj["visible"]  = false;
-        }
-        WidgetActions['updateProperties'](obj, false, true);
+    showHideBtn(data,bool){
+        //console.log(data);
+        data.props['visible'] = bool;
+        data.node['visible'] = bool;
+        WidgetActions['render']();
     }
 
     render() {
@@ -159,22 +153,18 @@ class ObjectTree extends React.Component {
         let objectData = this.state.widgetTree;
         let num = 0;
 
-        let btn = (show,v)=>{
+        let btn = (show,data)=>{
             //0图层及图层内的所有内容不可看，1可在舞台看见，-1指的是整个舞台，必是可见的
             if(show === 0 ){
                 return <div className="btn f--hcc hide-btn"
-                            data-prop = {v}
-                            data-value = { undefined }
-                            onClick={ this.showHideBtn.bind(this) }><span /></div>;
+                            onClick={ this.showHideBtn.bind(this,data,true) }><span /></div>;
             }
             else if(show === -1){
                 return <div className="btn f--hcc show-btn"><span /></div>;
             }
             else{
                 return <div className="btn f--hcc show-btn"
-                            data-prop = {v}
-                            data-value = { false }
-                            onClick={ this.showHideBtn.bind(this) }><span /></div>;
+                            onClick={ this.showHideBtn.bind(this,data,false) }><span /></div>;
             }
         };
 
@@ -215,8 +205,8 @@ class ObjectTree extends React.Component {
 
                             {
                                 v.props.visible === false
-                                    ? btn(0, v.props)
-                                    : btn(1, v.props)
+                                    ? btn(0, v)
+                                    : btn(1, v)
                             }
 
                             {
@@ -254,7 +244,7 @@ class ObjectTree extends React.Component {
                     : <div className="stage">
                         <div className={$class("stage-title f--h f--hlc",{"active": objectData.tree.key === this.state.nid})}
                              onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}>
-                            { btn(-1, objectData.tree.props) }
+                            { btn(-1, objectData.tree) }
                             {
                                 objectData.tree.children.length > 0
                                     ? icon( 1 , objectData.tree.key)
