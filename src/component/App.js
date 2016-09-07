@@ -13,12 +13,49 @@ import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
 
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            stageZoom : 100
+        };
+        this.stageZoomPlus = this.stageZoomPlus.bind(this);
+        this.stageZoomLess = this.stageZoomLess.bind(this);
+    }
+
+    componentDidMount() {
+
+    }
+
+
+    componentWillUnmount() {
+
+    }
+
+    stageZoomPlus(){
+        if(this.state.stageZoom <120 ){
+            this.setState({
+                stageZoom : this.state.stageZoom + 10
+            })
+        }
+    }
+
+    stageZoomLess(){
+        if(this.state.stageZoom >50 ){
+            this.setState({
+                stageZoom : this.state.stageZoom - 10
+            })
+        }
+    }
+
     render() {
+
         return (
             <div id="iH5-App">
-                <DesignView />
+                <DesignView stageZoom={this.state.stageZoom}   />
 
-                <NavBar />
+                <NavBar stageZoom={this.state.stageZoom}
+                        stageZoomPlus={ this.stageZoomPlus}
+                        stageZoomLess={this.stageZoomLess}  />
 
                 <ToolBox />
 

@@ -1,9 +1,12 @@
 import React from 'react';
 
 class DesignView extends React.Component {
-
     constructor(props) {
         super(props);
+        this.state={
+
+        };
+
         this.scroll = this.scroll.bind(this);
     }
 
@@ -27,13 +30,18 @@ class DesignView extends React.Component {
     }
 
     render() {
-      return (
-        <div className='f--hcc' 
+        return (
+        <div className='f--hcc'
             id='DesignView-Container'
-            ref='container' onWheel={this.scroll}>
-          <div id='canvas-dom' className="DesignView" ref='view'></div>
+            ref='container'
+            onWheel={this.scroll}>
+
+            <div id='canvas-dom'
+                className="DesignView"
+                ref='view'
+                style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}></div>
         </div>
-      );
+        );
     }
 }
 
