@@ -18,4 +18,5 @@ export default Reflux.createActions([
   'chooseFile',
   'setFont',
   'setImageText',
-  'ajaxSend']);
+  'ajaxSend',
+  'activeHandle']);

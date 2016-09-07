@@ -5,13 +5,7 @@ import bridge from 'bridge';
 import { Slider, Row, Col, Card, Button } from 'antd';
 import WidgetStore from '../../stores/WidgetStore';
 import WidgetActions from '../../actions/WidgetActions';
-
-//import TimelineTrack from './TimelineTrack';
-
 import VxSlider from '../VxSlider';
-
-// const Namespace = 'Timeline';
-// const ns = (name)=> {id: `${Namespace}name`};
 
 var timerCallback = {};
 
@@ -27,15 +21,16 @@ class TimelineView extends React.Component {
 			currentTrack: null,
 			timerNode: null,
 			stepX: 37,
-			stepY: 0
+			stepY: 0,
+			hasHandle: false
 		};
-		this.hasCurrent = false;
 		this.onTimer = this.onTimer.bind(this);
 		this.onWidgetClick = this.onWidgetClick.bind(this);
 		this.onWidgetMouseUp = this.onWidgetMouseUp.bind(this);
 		this.onWidgetMouseDown = this.onWidgetMouseDown.bind(this);
 		this.onWidgetMouseMove = this.onWidgetMouseMove.bind(this);
 		this.onBodyMouseUp = this.onBodyMouseUp.bind(this);
+		this.onBodyMouseMove = this.onBodyMouseMove.bind(this);
 
 		this.flag = 0;
 		this.stepX = null;
@@ -51,6 +46,19 @@ class TimelineView extends React.Component {
 	}
 
 	onStatusChange(widget) {
+		//console.log('w2', widget);
+		if(widget.hasOwnProperty('hasHandle')) {
+			this.setState({
+				hasHandle: widget.hasHandle
+			});
+			return;
+		}
+		if(widget.resetTrack || widget.selectWidget) {
+			this.setState({
+				hasHandle: false
+			});
+		}
+
 		if (widget.selectWidget !== undefined) {
 			const changed = {currentTrack:null};
 			let node = widget.selectWidget;
@@ -104,6 +112,7 @@ class TimelineView extends React.Component {
 		this.setState({currentTime:value});
 	}
 
+	// 添加时间断点
 	onAdd() {
 		if (this.state.currentTrack) {
 			let p = this.state.currentTime;
@@ -124,8 +133,12 @@ class TimelineView extends React.Component {
 		}
 	}
 
+	// 删除时间断点
 	onDelete() {
 		WidgetActions['deletePoint']();
+		this.setState({
+			hasHandle: false
+		});
 	}
 
 	onAddOrDelete() {
@@ -133,7 +146,7 @@ class TimelineView extends React.Component {
 		if(this.state.currentTrack===null) return;
 
 		// 如果有活动的时间断点
-		if(this.hasCurrent) {
+		if(this.state.hasHandle) {
 			this.onDelete();
 		} else {
 			this.onAdd();
@@ -163,12 +176,16 @@ class TimelineView extends React.Component {
 		event.stopPropagation();
 
 		document.body.addEventListener('mouseup', this.onBodyMouseUp);
+		document.body.addEventListener('mousemove', this.onBodyMouseMove);
 		this.flag = 1;
 		this.stepX = event.clientX;
 		this.stepY = event.clientY;
 	}
 
 	onWidgetMouseMove(event) {
+	}
+
+	onBodyMouseMove(event) {
 		if(this.flag===1) {
 			let x = event.clientX - this.stepX;
 			let y = event.clientY - this.stepY;
@@ -181,6 +198,8 @@ class TimelineView extends React.Component {
 
 	onBodyMouseUp(event) {
 		document.body.removeEventListener('mouseup', this.onBodyMouseUp);
+		document.body.removeEventListener('mousemove', this.onBodyMouseMove);
+
 		this.flag = 0;
 		this.stepX = 0;
 		this.stepY = 0;
@@ -240,7 +259,10 @@ class TimelineView extends React.Component {
 							<button id='TimelineNodeActionPrev'
 								onClick={this.selectNextBreakpoint.bind(this)}></button>
 							<button id='TimelineNodeActionModify'
-								className={cls({'active': this.state.currentTrack!=null})}
+								className={cls(
+									{'active': this.state.currentTrack!=null},
+									{'delete': this.state.hasHandle}
+								)}
 								onClick={this.onAddOrDelete.bind(this)}></button>
 							<button id='TimelineNodeActionNext'
 								onClick={this.selectPrevBreakpoint.bind(this)}></button>

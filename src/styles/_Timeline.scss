@@ -133,10 +133,11 @@ $size: 24px;
 			}
 			#TimelineNodeActionModify {
 				@include bg(2, 2);
+				&.active,
 				&.add {
 					@include bg(2, 0);
 				}
-				&.remove {
+				&.active.delete {
 					@include bg(2, 1);
 				}
 			}

@@ -296,6 +296,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
+        this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -574,5 +575,8 @@ export default Reflux.createStore({
     getStore: function() {
       //this.selectWidget(stageTree[0].tree);
       return {initTree: stageTree, classList: classList};
+    },
+    activeHandle: function(status) {
+      this.trigger({hasHandle: status});
     }
 });
