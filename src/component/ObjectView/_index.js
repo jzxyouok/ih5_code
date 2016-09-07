@@ -74,7 +74,7 @@ class ObjectView extends React.Component {
         let content;
         switch (this.state.whichContent){
             case 0 :
-                content = <ObjectTree />;
+                content = <ObjectTree width = { this.state.width } />;
                 break;
             case 1 :
                 content = <Resource />;

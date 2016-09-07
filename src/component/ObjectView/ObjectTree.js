@@ -15,7 +15,11 @@ class ObjectTree extends React.Component {
             widgetTree: null,
             selectedNode: [],
             expandedNodes: [],
-            changed : null
+            changed : null,
+            isLoadTree : true,
+            selectedLayer : -1,
+            selectWidget : null
+
         };
         this.chooseBtn = this.chooseBtn.bind(this);
         this.openBtn = this.openBtn.bind(this);
@@ -54,6 +58,12 @@ class ObjectTree extends React.Component {
             this.forceUpdate();
         }
 
+        else if(widget.selectWidget){
+            this.setState({
+                selectWidget : widget.selectWidget
+            })
+        }
+
         //selectWidget : 选择工具创建相应图层
         if (widget.selectWidget !== undefined) {
             let changed;
@@ -88,19 +98,50 @@ class ObjectTree extends React.Component {
                 });
             }
         };
-
-        //let CFuc = (v,i)=>{
-        //    fuc(v.key);
-        //    if(v.children.length!==0){
-        //        v.children.map(CFuc)
-        //    }
-        //};
-
         if(data){
             fuc(data.tree.key);
-            //if(data.tree.children.length!==0){
-            //    data.tree.children.map(CFuc)
-            //}
+        }
+
+        if(this.state.selectWidget){
+            let nid = this.state.selectWidget.key;
+            let array = this.state.openData;
+            let index = array.indexOf(nid);
+            let index2 = array.indexOf(this.state.selectedLayer);
+            let index3 = this.state.selectWidget.parent ? array.indexOf(this.state.selectWidget.parent.key) : -1;
+
+            let fun = (v)=>{
+                if(v.parent){
+                    let ccc = array.indexOf(v.parent.key);
+                    let xxx = v.parent.key;
+                    if (ccc< 0 && xxx !==1){
+                        array.push(xxx);
+                    }
+                    if(v.parent.parent){
+                        fun(v.parent);
+                    }
+                }
+            };
+            if(this.state.selectedLayer !== nid){
+                if( index < 0){
+                    array.push(nid);
+                    if( index2 >= 0 && index3 < 0 && this.state.selectedLayer !== 1){
+                        array.splice(index2, 1);
+                    }
+                }
+            }
+            else {
+                if( index < 0){
+                    array.push(nid);
+                }
+                if(index3 < 0){
+                    fun(this.state.selectWidget)
+                }
+            }
+            //console.log(array);
+            this.setState({
+                openData : array,
+                selectedLayer : nid
+            });
         }
     }
 
@@ -201,7 +242,7 @@ class ObjectTree extends React.Component {
             return  <div className="item" key={i}>
                         <div className={$class("item-title f--h f--hlc",{"active": v.key === this.state.nid})}
                              onClick={this.chooseBtn.bind(this,v.key, v)}
-                             style={{ paddingLeft: num === 0 ? "28px" :num *20 + 22 +"px" }}>
+                             style={{ paddingLeft: num === 0 ? "28px" :num *20 + 22 +"px", width : this.props.width - 36  }}>
 
                             {
                                 v.props.visible === false
@@ -243,6 +284,7 @@ class ObjectTree extends React.Component {
                     ? null
                     : <div className="stage">
                         <div className={$class("stage-title f--h f--hlc",{"active": objectData.tree.key === this.state.nid})}
+                             style={{ width : this.props.width - 36 }}
                              onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}>
                             { btn(-1, objectData.tree) }
                             {
