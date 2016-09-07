@@ -16,6 +16,7 @@ class DesignView extends React.Component {
     }
 
     componentWillUnmount() {
+        document.body.removeEventListener('keyup', this.onKeyScroll);
     }
 
     scroll(event) {
@@ -34,21 +35,24 @@ class DesignView extends React.Component {
     onKeyScroll(event) {
         event.preventDefault();
         event.stopPropagation();
-        let STEP = 16;
         //console.log(event);
-        // left
-        if(event.keyCode === 37 || event.which === 37) {
+
+        const STEP = 100;
+        let isEvent = (keycode) => event.keycode===keycode || event.which===keycode;
+        // left or right
+        if(isEvent(37) || isEvent(39)) {
             let left = window.getComputedStyle(this.refs.view,null).getPropertyValue("left");
             let l = parseFloat(left.replace(/(px)?/, ''));
-            l -= STEP;
+            l += STEP * (isEvent(37) ? -1 : 1);
             this.refs.view.style.left = l+'px';
             return;
         }
-        if(event.keyCode === 39 || event.which === 39) {
-            let left = window.getComputedStyle(this.refs.view,null).getPropertyValue("left");
-            let l = parseFloat(left.replace(/(px)?/, ''));
-            l += STEP;
-            this.refs.view.style.left = l+'px';
+        // up or down
+        if(isEvent(38) || isEvent(40)) {
+            let top = window.getComputedStyle(this.refs.view,null).getPropertyValue("top");
+            let t = parseFloat(top.replace(/(px)?/, ''));
+            t += STEP * (isEvent(38) ? -1 : 1);
+            this.refs.view.style.top = t+'px';
             return;
         }
     }
