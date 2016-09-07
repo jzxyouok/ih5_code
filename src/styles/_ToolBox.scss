@@ -23,6 +23,84 @@
 		border: none;
 	}
 
+	&.expanded {
+		width: 64px;
+
+		#ToolBoxHeader {
+			#ToolBoxHeaderExpanedButton {
+				background-position: 0 0;
+				&:hover {
+					background-position: 0 -20px;
+				}
+				&:active {
+					background-position: 0 -40px;
+				}
+			}
+		}
+		.ToolBoxGroup {
+			.ToolBoxButtonGroup {
+				text-align: left;
+				> .ToolBoxButtonPrimary {
+					width: 28px;
+					margin-left: 4px;
+					&:hover {
+						background-color: #262626;
+					}
+				}
+				&.hasSecondaryMenu {
+					> .ToolBoxButtonPrimary {
+						display: none;
+					}
+					> .ToolBoxButtonSubGroup {
+						display: block;
+						position: static;
+						border: none;
+						overflow: hidden;
+
+						.ToolBoxButton {
+							width: 28px;
+							padding-left: 0;
+							float: left;
+							&.ToolBoxButtonPrimary.active {
+								background-color: #282828; 
+							}
+							&:after {
+								display: none;
+							}
+						}
+						.ToolBoxButtonName {
+							display: none;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	#ToolBoxHeader {
+		background-color: #2d2d2d;
+		border-bottom: 1px solid #262626;
+		height: 11px;
+		#ToolBoxHeaderExpanedButton {
+			border: none;
+			background: none;
+			width: 20px;
+			height: 11px;
+			display: block;
+			background: {
+				image: url(/img/toolbox-arrow.svg);
+				repeat: no-repeat;
+				position: -30px 0;
+			}
+			&:hover {
+				background-position: -30px -20px;
+			}
+			&:active {
+				background-position:-30px -40px;
+			}
+		}
+	}
+
 	.ToolBoxGroup {
 		padding-top: 8px;
 		padding-bottom: 8px;
@@ -32,7 +110,7 @@
 		position: relative;
 		margin-bottom: 4px;
 
-		.ToolBoxButtonPrimary {
+		> .ToolBoxButtonPrimary {
 			.ToolBoxButtonName {
 				display: none;
 			}

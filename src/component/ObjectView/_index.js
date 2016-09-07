@@ -2,7 +2,7 @@
 
 import React from 'react';
 import $class from 'classnames';
-import $ from 'jQuery';
+import $ from 'jquery';
 
 //import Outline from './Outline';
 //import ParamsPanel from './ParamsPanel';

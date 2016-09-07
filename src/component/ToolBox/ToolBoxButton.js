@@ -32,6 +32,7 @@ class ToolBoxButton extends Component {
     }
 
     onStatusChange(store) {
+        console.log('id', store.activeButtonId, this.props.id);
         let status = (store.activeButtonId === this.props.cid);
         if(status === this.state.selected) return;
         this.setState({
@@ -43,8 +44,10 @@ class ToolBoxButton extends Component {
         //console.log(this.props);
         if(this.props.isPrimary) {
             ToolBoxAction['selectPrimary'](this.props.cid, null);
+            console.log('p', this.props.cid, null)
         } else {
             ToolBoxAction['selectSecondary'](this.props.cid, this.props.gid);
+            console.log('s', this.props.cid, null)
         }
 
         if (this.props.upload) {
