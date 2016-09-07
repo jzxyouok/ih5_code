@@ -66,7 +66,12 @@ class NavBar extends React.Component {
             let result = JSON.parse(text);
             if (result['name']) {
                 this.playUrl = result['playUrl'];
-                this.setState({loginVisible: false, username: result['name'], workList: result['list'], fontList: result['font']});
+                this.setState({
+                    loginVisible: false,
+                    username: result['name'],
+                    workList: result['list'].reverse(),
+                    fontList: result['font']
+                });
             } else {
                 this.setState({loginVisible: true});
             }
@@ -89,7 +94,7 @@ class NavBar extends React.Component {
 
     saveCallback(id, wname) {
         if (wname != null) {
-            let result = [...this.state.workList, {'id': id, 'name': wname}];
+            let result = [{'id': id, 'name': wname}, ...this.state.workList];
             this.setState({workList: result});
         }
         this.workid = id;
