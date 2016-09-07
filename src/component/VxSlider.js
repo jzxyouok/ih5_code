@@ -97,6 +97,7 @@ class VxRcSlider extends RcSlider {
             this.props.refTimer.node['pause']();
             this.props.refTimer.node['seek'](this.props.refTrack.props['data'][handle.props.handleIndex][0] * this.props.refTimer.node['totalTime']);
             this.state.currentHandle = handle.props.handleIndex;
+            WidgetActions['activeHandle'](true);
             WidgetActions['syncTrack']();
         }
     }
@@ -176,6 +177,7 @@ class VxRcSlider extends RcSlider {
 
         for (let i = 0; i < points.length; i++) {
             let offset = this.calcOffset(points[i][0]);
+            console.log(this.state.isCurrent, i);
             handles.push(<VxHandle
                 className={handleClassName}
                 noTip={isNoTip}

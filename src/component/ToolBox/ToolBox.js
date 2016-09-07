@@ -44,6 +44,7 @@ class ToolBox extends Component {
         this.setState({
             expanded: newStatus
         });
+        ToolBoxStore['openSecondary'](null, true);
     }
 
     render() {
