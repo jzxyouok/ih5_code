@@ -44,10 +44,10 @@
 					left: 4px;
 					right: 4px;
 				}
+				padding-bottom: 4px;
 				text-align: left;
 				> .ToolBoxButtonPrimary {
 					width: 28px;
-					margin-left: 4px;
 					&:hover {
 						background-color: #262626;
 					}
@@ -61,7 +61,7 @@
 						position: static;
 						border: none;
 						overflow: hidden;
-						padding: 4px 0;
+						padding: 0;
 
 						.ToolBoxButton {
 							width: 28px;
