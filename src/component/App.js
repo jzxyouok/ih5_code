@@ -32,15 +32,18 @@ class App extends React.Component {
     }
 
     stageZoomPlus(){
-        if(this.state.stageZoom <120 ){
-            this.setState({
-                stageZoom : this.state.stageZoom + 10
-            })
-        }
+        this.setState({
+            stageZoom : this.state.stageZoom + 10
+        });
+        //if(this.state.stageZoom <120 ){
+        //    this.setState({
+        //        stageZoom : this.state.stageZoom + 10
+        //    })
+        //}
     }
 
     stageZoomLess(){
-        if(this.state.stageZoom >50 ){
+        if(this.state.stageZoom >10 ){
             this.setState({
                 stageZoom : this.state.stageZoom - 10
             })
