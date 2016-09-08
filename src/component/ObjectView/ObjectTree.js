@@ -61,6 +61,7 @@ class ObjectTree extends React.Component {
         else if(widget.selectWidget){
             this.setState({
                 selectWidget : widget.selectWidget
+                , nid : widget.selectWidget.key
             })
         }
 
