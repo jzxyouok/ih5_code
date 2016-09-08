@@ -29,9 +29,6 @@ class TimelineView extends React.Component {
 		this.onWidgetMouseUp = this.onWidgetMouseUp.bind(this);
 		this.onWidgetMouseDown = this.onWidgetMouseDown.bind(this);
 		this.onWidgetMouseMove = this.onWidgetMouseMove.bind(this);
-		this.onBodyMouseUp = this.onBodyMouseUp.bind(this);
-		this.onBodyMouseMove = this.onBodyMouseMove.bind(this);
-
 		this.flag = 0;
 		this.stepX = null;
 		this.stepY = null;
@@ -167,42 +164,35 @@ class TimelineView extends React.Component {
 	}
 
 	onWidgetMouseUp(event) {
-		//event.preventDefault();
-		//event.stopPropagation();
+		event.preventDefault();
+		event.stopPropagation();
+		if(this.flag===1) {
+			this.flag = 0;
+			this.stepX = 0;
+			this.stepY = 0;
+		}
 	}
 
 	onWidgetMouseDown(event) {
 		event.preventDefault();
 		event.stopPropagation();
-
-		document.body.addEventListener('mouseup', this.onBodyMouseUp);
-		document.body.addEventListener('mousemove', this.onBodyMouseMove);
-		this.flag = 1;
-		this.stepX = event.clientX;
-		this.stepY = event.clientY;
+		if(this.flag===0) {
+			this.flag = 1;
+			this.stepX = event.clientX;
+			this.stepY = event.clientY;
+		}
 	}
 
 	onWidgetMouseMove(event) {
-	}
-
-	onBodyMouseMove(event) {
 		if(this.flag===1) {
 			let x = event.clientX - this.stepX;
 			let y = event.clientY - this.stepY;
+			console.log(x, y);
 			this.setState({
 				stepX: x > 37 ? x: 37,
 				stepY: y < 0 ? y: 0
 			});
 		}
-	}
-
-	onBodyMouseUp(event) {
-		document.body.removeEventListener('mouseup', this.onBodyMouseUp);
-		document.body.removeEventListener('mousemove', this.onBodyMouseMove);
-
-		this.flag = 0;
-		this.stepX = 0;
-		this.stepY = 0;
 	}
 
 	render() {
