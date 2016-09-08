@@ -42,6 +42,14 @@ class App extends React.Component {
         //}
     }
 
+    stageZoomEdit(newStageZoom){
+        if (newStageZoom>10) {
+            this.setState({
+                stageZoom : newStageZoom
+            });
+        }
+    }
+
     stageZoomLess(){
         if(this.state.stageZoom >10 ){
             this.setState({
@@ -57,7 +65,8 @@ class App extends React.Component {
                 <DesignView stageZoom={this.state.stageZoom}   />
 
                 <NavBar stageZoom={this.state.stageZoom}
-                        stageZoomPlus={ this.stageZoomPlus}
+                        stageZoomEdit={this.stageZoomEdit.bind(this)}
+                        stageZoomPlus={this.stageZoomPlus}
                         stageZoomLess={this.stageZoomLess}  />
 
                 <ToolBox />

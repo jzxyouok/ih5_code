@@ -1,7 +1,7 @@
 import React from 'react';
 import VxMenu from  './VxMenu';
 import AccountArea from './AccountArea';
-import { Button } from 'antd';
+import { Button, InputNumber } from 'antd';
 import { Row, Col } from 'antd';
 import WidgetActions from '../actions/WidgetActions';
 import Cookies  from 'js-cookie';
@@ -303,7 +303,13 @@ class NavBar extends React.Component {
                     <button className="btn-clear less-btn"  title="缩小" onClick={ this.props.stageZoomLess }>
                         <span className="heng" />
                     </button>
-                    <div className="size">{ this.props.stageZoom }%</div>
+                    <div className="size-input">
+                        <InputNumber step={1} min={10} size="small"
+                                     defaultValue={this.props.stageZoom}
+                                     value={this.props.stageZoom}
+                                     onChange={this.props.stageZoomEdit}/>%
+                    </div>
+                    {/*<div className="size">{ this.props.stageZoom }%</div>*/}
                     <button className="btn-clear plus-btn"  title="放大" onClick={ this.props.stageZoomPlus }>
                         <span className="heng" />
                         <span className="shu" />
