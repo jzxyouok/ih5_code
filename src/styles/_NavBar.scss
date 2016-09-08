@@ -316,42 +316,15 @@
                 border: 1px solid #444;
                 background: none;
                 border-radius: 2px;
-                width: 62px;
-
+                width: 45px;
                 .ant-input-number-handler-wrap {
-                    background: #151515;
-                    border-left: 1px solid #313131;
-                    &:hover {
-                        color: #ffa800;
-                    }
-                    .ant-input-number-handler {
-                        color: #adadad;
-                        &:hover {
-                            background: #151515;
-                            .ant-input-number-handler-up-inner,
-                            .ant-input-number-handler-down-inner {
-                                color: #ffa800;
-                            }
-                        }
-                    }
-                    .ant-input-number-handler-down {
-                        border-top: 1px solid #313131;
-                    }
-                    .ant-input-number-handler-up-inner {
-                        &:before {
-                            content: '\E610';
-                        }
-                    }
-                    .ant-input-number-handler-down-inner {
-                        &:before {
-                            content: '\E611';
-                        }
-                    }
+                    display: none;
                 }
                 .ant-input-number-input {
                     background-color: #353535;
                     border-radius: 2px;
                     color: #b5b5b5;
+                    text-align: center;
                     &:focus {
                         color: #fefefe;
                     }

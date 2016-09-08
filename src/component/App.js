@@ -43,7 +43,7 @@ class App extends React.Component {
     }
 
     stageZoomEdit(newStageZoom){
-        if (newStageZoom>10) {
+        if (newStageZoom >=10) {
             this.setState({
                 stageZoom : newStageZoom
             });
@@ -51,7 +51,8 @@ class App extends React.Component {
     }
 
     stageZoomLess(){
-        if(this.state.stageZoom >10 ){
+        //minimum:10
+        if(this.state.stageZoom >20 ){
             this.setState({
                 stageZoom : this.state.stageZoom - 10
             })
