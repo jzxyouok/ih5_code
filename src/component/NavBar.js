@@ -222,11 +222,9 @@ class NavBar extends React.Component {
     }
 
     focusOrBlurZoomInput(e) {
-        let currentState;
+        let currentState = 0;
         if (e.type == 'focus') {
             currentState = 1;
-        } else {
-            currentState = 0;
         }
         this.setState({
             zoomInputState: currentState
