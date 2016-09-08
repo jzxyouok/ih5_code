@@ -18,8 +18,8 @@ class ObjectTree extends React.Component {
             changed : null,
             isLoadTree : true,
             selectedLayer : -1,
-            selectWidget : null
-
+            selectWidget : null,
+            widgetTreeChildren :null
         };
         this.chooseBtn = this.chooseBtn.bind(this);
         this.openBtn = this.openBtn.bind(this);
@@ -61,6 +61,7 @@ class ObjectTree extends React.Component {
         else if(widget.selectWidget){
             this.setState({
                 selectWidget : widget.selectWidget
+                , nid : widget.selectWidget.key
             })
         }
 
@@ -88,6 +89,7 @@ class ObjectTree extends React.Component {
 
     addOpenId(){
         let data = this.state.widgetTree;
+        let data2 = null;
         let fuc = (nid)=>{
             let array = this.state.openData;
             let index = array.indexOf(nid);
@@ -100,6 +102,13 @@ class ObjectTree extends React.Component {
         };
         if(data){
             fuc(data.tree.key);
+            data2 = data.tree.children.concat();
+            if(data2){
+                data2.reverse();
+                this.setState({
+                    widgetTreeChildren : data2
+                });
+            }
         }
 
         if(this.state.selectWidget){
@@ -298,9 +307,11 @@ class ObjectTree extends React.Component {
 
                         <div className={$class("stage-content", {"hidden":  this.state.openData.indexOf(objectData.tree.key) < 0 })} >
                             {
-                                objectData.tree.children.length === 0
-                                    ? null
-                                    : stageContent(objectData.tree.children)
+                                this.state.widgetTreeChildren
+                                    ?  this.state.widgetTreeChildren.length === 0
+                                            ? null
+                                            : stageContent(this.state.widgetTreeChildren)
+                                    : null
                             }
                         </div>
                     </div>
