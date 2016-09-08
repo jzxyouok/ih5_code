@@ -89,8 +89,6 @@ class ObjectTree extends React.Component {
     addOpenId(){
         let data = this.state.widgetTree;
         let data2 = null;
-        console.log(1,data);
-        console.log(2,data2);
         let fuc = (nid)=>{
             let array = this.state.openData;
             let index = array.indexOf(nid);
@@ -109,8 +107,6 @@ class ObjectTree extends React.Component {
                 this.setState({
                     widgetTreeChildren : data2
                 });
-                console.log(3,data);
-                console.log(4,data2);
             }
         }
 
