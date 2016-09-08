@@ -193,6 +193,12 @@
                 &:hover{ background-position: -600px -40px; }
                 &:active{ background-position: -600px -80px;}
             }
+
+            &.locus-btn {
+                background-position: -640px 0;
+                &:hover{ background-position: -640px -40px; }
+                &:active{ background-position: -640px -80px;}
+            }
         }
     }
 }
