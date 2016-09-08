@@ -32,21 +32,31 @@ class App extends React.Component {
     }
 
     stageZoomPlus(){
-        this.setState({
-            stageZoom : this.state.stageZoom + 10
-        });
-        //if(this.state.stageZoom <120 ){
-        //    this.setState({
-        //        stageZoom : this.state.stageZoom + 10
-        //    })
-        //}
+        // this.setState({
+        //     stageZoom : this.state.stageZoom + 10
+        // });
+        if(this.state.stageZoom <=190 ){
+           this.setState({
+               stageZoom : this.state.stageZoom + 10
+           })
+        }
     }
 
-    stageZoomEdit(newStageZoom){
-        if (newStageZoom >=10) {
-            this.setState({
-                stageZoom : newStageZoom
-            });
+    stageZoomEdit(zoomObject){
+        let setZoomState = (newZoom, object) =>{
+            if (!isNaN(newZoom) && newZoom>=10 && newZoom<=200) {
+                this.setState({
+                    stageZoom: newZoom
+                });
+                if(object){
+                    object.target.blur();
+                }
+            }
+        };
+        if (zoomObject.keyCode == 13 && zoomObject.type == 'keydown') {
+            setZoomState(parseFloat(zoomObject.target.value), zoomObject);
+        } else {
+            setZoomState(zoomObject);
         }
     }
 

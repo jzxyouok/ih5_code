@@ -309,27 +309,57 @@
         }
 
         .size-input {
-            margin: 0 10px;
+            margin: 0 2px;
             color: #b5b5b5;
-            line-height: 28px;
+            width: 41px;
+            border-radius: 2px;
+            &:hover {
+                background-color: #232323;
+            }
             .ant-input-number {
-                border: 1px solid #444;
+                border: none;
                 background: none;
-                border-radius: 2px;
-                width: 45px;
+                width: 24px;
+                height: 24px;
+                margin-left: 2px;
                 .ant-input-number-handler-wrap {
                     display: none;
+                    height: 24px;
                 }
                 .ant-input-number-input {
-                    background-color: #353535;
-                    border-radius: 2px;
+                    margin-top: 0;
+                    width: 24px;
+                    height: 24px;
+                    line-height: 24px;
+                    background: none;
+                    padding: 0;
                     color: #b5b5b5;
-                    text-align: center;
+                    border: none;
+                    text-align: right;
                     &:focus {
                         color: #fefefe;
                     }
                 }
             }
+            .ant-input-number-focused {
+                outline: none;
+                border: none;
+                box-shadow: none;
+            }
+            .input-percentage {
+                line-height: 26px;
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+        .size-input-focus {
+            background-color: #1b1b1b !important;
+            .input-percentage {
+                color: #fefefe;
+            }
+        }
+        .size-input-blur {
+            background-color: inherit;
         }
 
         .home-btn {
