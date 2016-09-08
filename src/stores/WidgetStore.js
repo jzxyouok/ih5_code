@@ -296,6 +296,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
+        this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -439,7 +440,7 @@ export default Reflux.createStore({
       this.selectWidget(stageTree[0].tree);
     },
     addClass: function(name) {
-      stageTree.push({name: name, tree: loadTree(null, {'cls': 'root', 'type': bridge.getRendererType(this.currentWidget.node), 'props': {'width': 640, 'height': 480}})});
+      stageTree.push({name: name, tree: loadTree(null, {'cls': 'root', 'type': bridge.getRendererType(this.currentWidget.node), 'props': {'width': 640, 'height': 1040}})});
       classList.push(name);
       bridge.addClass(name);
       this.trigger({initTree: stageTree, classList: classList});
@@ -574,5 +575,8 @@ export default Reflux.createStore({
     getStore: function() {
       //this.selectWidget(stageTree[0].tree);
       return {initTree: stageTree, classList: classList};
+    },
+    activeHandle: function(status) {
+      this.trigger({hasHandle: status});
     }
 });

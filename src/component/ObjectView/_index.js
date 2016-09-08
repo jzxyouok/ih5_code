@@ -2,7 +2,7 @@
 
 import React from 'react';
 import $class from 'classnames';
-import $ from 'jQuery';
+import $ from 'jquery';
 
 //import Outline from './Outline';
 //import ParamsPanel from './ParamsPanel';
@@ -52,6 +52,7 @@ class ObjectView extends React.Component {
         let move = false;
         let _x;
         let self = this;
+        let initialWidth = 280;
         $(".drag-left").mousedown(function(e){
             move=true;
             _x=e.pageX;
@@ -60,11 +61,12 @@ class ObjectView extends React.Component {
             if(move){
                 let x = -( e.pageX - _x);
                 self.setState({
-                    width : 280 + x + "px"
-                })
+                    width : initialWidth + x
+                });
             }
         }).mouseup(function(){
             move=false;
+            initialWidth = self.state.width <=280 ? 280 : self.state.width;
         });
     }
 
@@ -72,7 +74,7 @@ class ObjectView extends React.Component {
         let content;
         switch (this.state.whichContent){
             case 0 :
-                content = <ObjectTree />;
+                content = <ObjectTree width = { this.state.width } />;
                 break;
             case 1 :
                 content = <Resource />;

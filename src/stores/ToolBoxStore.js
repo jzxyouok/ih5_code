@@ -63,9 +63,9 @@ export default Reflux.createStore({
         this.trigger(toolBoxConfig, hasUpdate);
 
         // retrigger event, a patch to fix React state checking issues
-        // setTimeout(()=> {
-        //     this.trigger(toolBoxConfig, hasUpdate);
-        // }, 100);
+        setTimeout(()=> {
+            this.trigger(toolBoxConfig, hasUpdate);
+        }, 100);
     },
 
     openSecondary: function(groupId, update) {

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import cls from 'classnames';
 import ToolBoxGroup from './ToolBoxGroup';
 import config from './DEFAUL_TOOLBOX';
 import ToolBoxStore from '../../stores/ToolBoxStore';
@@ -9,7 +10,8 @@ class ToolBox extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: config
+            data: config,
+            expanded: false
         };
     }
 
@@ -37,9 +39,19 @@ class ToolBox extends Component {
         ToolBoxStore['openSecondary'](null, true);
     }
 
+    toggleExpaned() {
+        let newStatus = !this.state.expanded;
+        this.setState({
+            expanded: newStatus
+        });
+        ToolBoxStore['openSecondary'](null, true);
+    }
+
     render() {
         return (
-            <div id='ToolBox' onClick={ (event)=>{event.stopPropagation()} }>
+            <div id='ToolBox' onClick={ (event)=>{event.stopPropagation()} }
+                className={cls({'expanded': this.state.expanded})}>
+            <div id='ToolBoxHeader'><button id='ToolBoxHeaderExpanedButton' onClick={this.toggleExpaned.bind(this)}></button></div>
             <ul className='toolbox-list'>
             {
                 (this.state === null || this.state.data === null) ? null :

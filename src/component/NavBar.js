@@ -1,7 +1,7 @@
 import React from 'react';
 import VxMenu from  './VxMenu';
 import AccountArea from './AccountArea';
-import { Button } from 'antd';
+import { Button, InputNumber } from 'antd';
 import { Row, Col } from 'antd';
 import WidgetActions from '../actions/WidgetActions';
 import Cookies  from 'js-cookie';
@@ -26,7 +26,6 @@ class NavBar extends React.Component {
             workList:[],
             classList:[],
             fontList:[],
-            stageZoom : 100,
             dropDownState : 0
         };
 
@@ -37,8 +36,6 @@ class NavBar extends React.Component {
         this.onDelete = this.onDelete.bind(this);
         this.saveCallback = this.saveCallback.bind(this);
         this.onImport = this.onImport.bind(this);
-        this.stageZoomPlus = this.stageZoomPlus.bind(this);
-        this.stageZoomLess = this.stageZoomLess.bind(this);
         this.dropDownShow = this.dropDownShow.bind(this);
         this.clickOthersHide = this.clickOthersHide.bind(this);
 
@@ -57,8 +54,7 @@ class NavBar extends React.Component {
 
     newWork() {
         this.workid = null;
-        //WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 480}},'defs':{'box':{'cls': 'root', 'props': {'width': 640, 'height': 480}}}});
-        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 480}, links:[]}});
+        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040}, links:[]}});
     }
 
     getWorks(token) {
@@ -66,7 +62,12 @@ class NavBar extends React.Component {
             let result = JSON.parse(text);
             if (result['name']) {
                 this.playUrl = result['playUrl'];
-                this.setState({loginVisible: false, username: result['name'], workList: result['list'], fontList: result['font']});
+                this.setState({
+                    loginVisible: false,
+                    username: result['name'],
+                    workList: result['list'].reverse(),
+                    fontList: result['font']
+                });
             } else {
                 this.setState({loginVisible: true});
             }
@@ -89,7 +90,7 @@ class NavBar extends React.Component {
 
     saveCallback(id, wname) {
         if (wname != null) {
-            let result = [...this.state.workList, {'id': id, 'name': wname}];
+            let result = [{'id': id, 'name': wname}, ...this.state.workList];
             this.setState({workList: result});
         }
         this.workid = id;
@@ -182,22 +183,6 @@ class NavBar extends React.Component {
         var fontList = this.state.fontList;
         fontList.push(s);
         this.setState({fontList:fontList});
-    }
-
-    stageZoomPlus(){
-        if(this.state.stageZoom <120 ){
-            this.setState({
-                stageZoom : this.state.stageZoom + 10
-            })
-        }
-    }
-
-    stageZoomLess(){
-        if(this.state.stageZoom >50 ){
-            this.setState({
-                stageZoom : this.state.stageZoom - 10
-            })
-        }
     }
 
     dropDownShow(num){
@@ -315,11 +300,17 @@ class NavBar extends React.Component {
                 <div className="nb-right f--hlc">
                     <button className="btn-clear che-btn"  title="撤销" />
                     <button className="btn-clear hui-btn"  title="恢复" />
-                    <button className="btn-clear less-btn"  title="缩小" onClick={ this.stageZoomLess }>
+                    <button className="btn-clear less-btn"  title="缩小" onClick={ this.props.stageZoomLess }>
                         <span className="heng" />
                     </button>
-                    <div className="size">{ this.state.stageZoom }%</div>
-                    <button className="btn-clear plus-btn"  title="放大" onClick={ this.stageZoomPlus }>
+                    <div className="size-input">
+                        <InputNumber step={1} min={10} size="small"
+                                     defaultValue={this.props.stageZoom}
+                                     value={this.props.stageZoom}
+                                     onChange={this.props.stageZoomEdit}/>%
+                    </div>
+                    {/*<div className="size">{ this.props.stageZoom }%</div>*/}
+                    <button className="btn-clear plus-btn"  title="放大" onClick={ this.props.stageZoomPlus }>
                         <span className="heng" />
                         <span className="shu" />
                     </button>
