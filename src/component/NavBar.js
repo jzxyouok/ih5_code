@@ -26,7 +26,8 @@ class NavBar extends React.Component {
             workList:[],
             classList:[],
             fontList:[],
-            dropDownState : 0
+            dropDownState : 0,
+            zoomInputState: 0
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -38,6 +39,7 @@ class NavBar extends React.Component {
         this.onImport = this.onImport.bind(this);
         this.dropDownShow = this.dropDownShow.bind(this);
         this.clickOthersHide = this.clickOthersHide.bind(this);
+        this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -50,6 +52,8 @@ class NavBar extends React.Component {
         }
         this.newWork();
         this.workid = null;
+
+        this.zoomInputFocus = false;
     }
 
     newWork() {
@@ -217,6 +221,18 @@ class NavBar extends React.Component {
         }
     }
 
+    focusOrBlurZoomInput(e) {
+        let currentState;
+        if (e.type == 'focus') {
+            currentState = 1;
+        } else {
+            currentState = 0;
+        }
+        this.setState({
+            zoomInputState: currentState
+        });
+    }
+
     render() {
         //console.log(this.state.workList);
         return (
@@ -303,11 +319,19 @@ class NavBar extends React.Component {
                     <button className="btn-clear less-btn"  title="缩小" onClick={ this.props.stageZoomLess }>
                         <span className="heng" />
                     </button>
-                    <div className="size-input">
-                        <InputNumber step={1} min={10} size="small"
+                    <div className={$class("size-input", {"size-input-focus": this.state.zoomInputState }, {"size-input-blur":!this.state.zoomInputState})}>
+                        <InputNumber step={1}
+                                     min={10}
+                                     size="small"
                                      defaultValue={this.props.stageZoom}
                                      value={this.props.stageZoom}
-                                     onChange={this.props.stageZoomEdit}/>%
+                                     onFocus={this.focusOrBlurZoomInput}
+                                     onBlur={this.focusOrBlurZoomInput}
+                                     onChange={this.props.stageZoomEdit}
+                                     onKeyDown={this.props.stageZoomEdit}/>
+                        <div className="input-percentage">
+                            %
+                        </div>
                     </div>
                     {/*<div className="size">{ this.props.stageZoom }%</div>*/}
                     <button className="btn-clear plus-btn"  title="放大" onClick={ this.props.stageZoomPlus }>

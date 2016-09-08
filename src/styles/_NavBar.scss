@@ -301,62 +301,74 @@
             }
         }
 
-        .size {
-            width: 43px;
-            text-align: center;
-            font-size: 12px;
-            color: #b5b5b5;
-        }
+        //.size {
+        //    width: 43px;
+        //    text-align: center;
+        //    font-size: 12px;
+        //    color: #b5b5b5;
+        //}
 
         .size-input {
-            margin: 0 10px;
+            margin: 0 2px;
             color: #b5b5b5;
-            line-height: 28px;
-            .ant-input-number {
-                border: 1px solid #444;
-                background: none;
-                border-radius: 2px;
-                width: 62px;
+            width: 41px;
+            border-radius: 2px;
+            -webkit-transition:background-color 0.5s ease-in-out;
+            -moz-transition:background-color 0.5s ease-in-out;
+            -o-transition:background-color 0.5s ease-in-out;
+            transition:background-color 0.5s ease-in-out;
 
+            &:hover {
+                background-color: #232323;
+            }
+            .ant-input-number {
+                border: none;
+                background: none;
+                width: 24px;
+                height: 24px;
+                margin-left: 2px;
                 .ant-input-number-handler-wrap {
-                    background: #151515;
-                    border-left: 1px solid #313131;
-                    &:hover {
-                        color: #ffa800;
-                    }
-                    .ant-input-number-handler {
-                        color: #adadad;
-                        &:hover {
-                            background: #151515;
-                            .ant-input-number-handler-up-inner,
-                            .ant-input-number-handler-down-inner {
-                                color: #ffa800;
-                            }
-                        }
-                    }
-                    .ant-input-number-handler-down {
-                        border-top: 1px solid #313131;
-                    }
-                    .ant-input-number-handler-up-inner {
-                        &:before {
-                            content: '\E610';
-                        }
-                    }
-                    .ant-input-number-handler-down-inner {
-                        &:before {
-                            content: '\E611';
-                        }
-                    }
+                    display: none;
+                    height: 24px;
                 }
                 .ant-input-number-input {
-                    background-color: #353535;
-                    border-radius: 2px;
+                    margin-top: 0;
+                    width: 24px;
+                    height: 24px;
+                    line-height: 24px;
+                    background: none;
+                    padding: 0;
                     color: #b5b5b5;
+                    border: none;
+                    text-align: right;
                     &:focus {
                         color: #fefefe;
                     }
                 }
             }
+            .ant-input-number-focused {
+                outline: none;
+                border: none;
+                box-shadow: none;
+            }
+            .input-percentage {
+                line-height: 26px;
+                display: inline-block;
+                vertical-align: middle;
+                -webkit-transition:color 0.5s ease-in-out;
+                -moz-transition:color 0.5s ease-in-out;
+                -o-transition:color 0.5s ease-in-out;
+                transition:color 0.5s ease-in-out;
+            }
+        }
+        .size-input-focus {
+            background-color: #1b1b1b !important;
+            .input-percentage {
+                color: #fefefe;
+            }
+        }
+        .size-input-blur {
+            background-color: inherit;
         }
 
         .home-btn {

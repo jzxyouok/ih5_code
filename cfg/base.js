@@ -41,6 +41,7 @@ module.exports = {
             'rc-slider/src/Marks': `${defaultSettings.srcPath}/../node_modules/rc-slider/lib/Marks`,
             'bridge': `${defaultSettings.srcPath}/bridge`,
             'jscolor/jscolor': `${defaultSettings.srcPath}/../lib/jscolor`,
+            'lodash': `${defaultSettings.srcPath}/../lib/lodash`,
         }
     },
     module: {}
