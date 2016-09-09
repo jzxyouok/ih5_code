@@ -22,7 +22,8 @@ class TimelineView extends React.Component {
 			timerNode: null,
 			stepX: 37,
 			stepY: 0,
-			hasHandle: false
+			hasHandle: false,
+			isPlaying: false
 		};
 		this.onTimer = this.onTimer.bind(this);
 		this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -32,6 +33,10 @@ class TimelineView extends React.Component {
 		this.flag = 0;
 		this.stepX = null;
 		this.stepY = null;
+
+        this.onPlay = this.onPlay.bind(this);
+        this.onPause = this.onPause.bind(this);
+        this.onPlayOrPause = this.onPlayOrPause.bind(this);
 	}
 
 	componentDidMount() {
@@ -96,10 +101,16 @@ class TimelineView extends React.Component {
 	onPlay() {
 		WidgetActions['resetTrack']();
 		this.state.timerNode.node['play']();
+		this.setState({isPlaying:true});
 	}
 
 	onPause() {
 		this.state.timerNode.node['pause']();
+		this.setState({isPlaying:false});
+	}
+
+	onPlayOrPause() {
+		this.state.isPlaying?this.onPause():this.onPlay();
 	}
 
 	onTimerChange(value) {
@@ -187,7 +198,7 @@ class TimelineView extends React.Component {
 		if(this.flag===1) {
 			let x = event.clientX - this.stepX;
 			let y = event.clientY - this.stepY;
-			console.log(x, y);
+			// console.log(x, y);
 			this.setState({
 				stepX: x > 37 ? x: 37,
 				stepY: y < 0 ? y: 0
@@ -262,7 +273,10 @@ class TimelineView extends React.Component {
 				<div id='TimelineTool' className='timeline-row f--h'>
 					<div id='TimelinePlay' className='timline-column-left'>
 						<button id='TimelinePlayBegin'></button>
-						<button id='TimelinePlayStart' onClick={this.onPlay.bind(this)}></button>
+						{/*<button id='TimelinePlayStart' onClick={this.onPlay.bind(this)}></button>*/}
+						<button id={!this.state.isPlaying?'TimelinePlayStart':'TimelinePlayPause'}
+								onClick={this.onPlayOrPause}></button>
+
 						<button id='TimelinePlayEnd'></button>
 					</div>
 					<div id='TimelineRuler' className='timline-column-right'>
