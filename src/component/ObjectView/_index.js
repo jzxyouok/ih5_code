@@ -114,7 +114,7 @@ class ObjectView extends React.Component {
                         // not-allowed 为不可点击
                     }
                     <button className="btn btn-clear lock-btn not-allowed" title="锁住" />
-                    <button className="btn btn-clear folder-btn" title="文件夹" onClick={ this.create.bind(this,"folder",null)} />
+                    <button className="btn btn-clear folder-btn" title="文件夹"  onClick={ this.create.bind(this,"folder",null)}  />
                     <button className="btn btn-clear container-btn" title="容器" onClick={ this.create.bind(this,"container",null)} />
                     <button className="btn btn-clear event-btn" title="事件" />
                     <button className="btn btn-clear new-btn" title="新建"  onClick={ this.create.bind(this,"page",null)} />
