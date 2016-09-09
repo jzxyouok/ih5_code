@@ -28,8 +28,9 @@ let canvasIcon = require('../images/canvasNormal.png');
 let wechatIcon = require('../images/wechatNormal.png');
 let slidetimerIcon = require('../images/slidetimerNormal.png');
 let bitmaptextIcon = require('../images/bitmaptextNormal.png');
-let imageIcon = require('../images/imageNormal.png')
-let igroupIcon = require('../images/igroupNormal.png')
+let imageIcon = require('../images/imageNormal.png');
+let igroupIcon = require('../images/igroupNormal.png');
+let folderIcon = require('../images/folder.svg');
 
 function callback() {
     //console.log(key);
@@ -61,7 +62,8 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:effectIcon, className:'effect'},
                 {cid:this.cid++,icon:canvasIcon, className:'canvas', param: {'width': 300, 'height': 300}},
                 {cid:this.cid++,icon:wechatIcon, className:'wechat'},
-                {cid:this.cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+                {cid:this.cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}},
+                {cid:this.cid++,icon:folderIcon, className:'folder'}]
             }
         ];
     }
@@ -114,6 +116,7 @@ class ComponentPanel extends React.Component {
                 {cid:cid++,icon:canvasIcon, className:'canvas', param: {'width': 300, 'height': 300}},
                 {cid:cid++,icon:wechatIcon, className:'wechat'},
                 {cid:cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}},
+                {cid:cid++,icon:folderIcon, className:'folder'}
                 ]
             }
         ];
