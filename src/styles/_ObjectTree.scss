@@ -99,5 +99,22 @@
                 background: url("img/button-icon.svg") no-repeat -720px 0;
             }
         }
+
+        .placeholder {
+            height: 2px;
+            border-top: 2px dotted #adadad;
+        }
     }
+}
+
+.dragTip {
+    color: white;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    position: absolute;
+    border: 1px solid white;
+    background: #b5b5b5;
+    padding: 2px 5px;
 }
