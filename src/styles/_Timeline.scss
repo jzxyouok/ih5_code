@@ -166,6 +166,9 @@ $size: 24px;
 			#TimelinePlayStart {
 				@include bg-btn(5);
 			}
+			#TimelinePlayPause {
+				@include bg-btn(11);
+			}
 			#TimelinePlayEnd {
 				@include bg-btn(6);
 			}
