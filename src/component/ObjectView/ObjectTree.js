@@ -246,7 +246,7 @@ class ObjectTree extends React.Component {
         let from = Number(this.dragged.dataset.keyid);
         let to = Number(this.over.dataset.keyid);
         if (from != to) {
-            WidgetActions['reorderWidget'](from-to>0?from-to:from-(--to));
+            WidgetActions['reorderWidget'](from-to>0?-(from-to):-(from-(--to)));
         }
     }
 
