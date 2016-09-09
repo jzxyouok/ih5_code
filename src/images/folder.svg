@@ -1,0 +1,11 @@
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #b5b5b5;
+      }
+    </style>
+  </defs>
+  <title>folder</title>
+  <path class="cls-1" d="M0,13.9a1,1,0,0,0,1,1H15a1,1,0,0,0,1-1V4.76a1,1,0,0,0-1-1H7L5.9,2.1a1.6,1.6,0,0,0-1.14-1H1a1,1,0,0,0-1,1V13.9Z"/>
+</svg>

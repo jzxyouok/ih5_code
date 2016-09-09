@@ -362,14 +362,16 @@ export default Reflux.createStore({
       }
     },
     removeWidget: function() {
-      if (this.currentWidget && this.currentWidget.parent) {
-          bridge.removeWidget(this.currentWidget.node);
-          let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
-          this.currentWidget.parent.children.splice(index, 1);
-          this.currentWidget = null;
-          this.trigger({selectWidget: null, redrawTree: true});
-          this.render();
-      }
+        if (this.currentWidget && this.currentWidget.parent) {
+            //isModified = true;
+            bridge.removeWidget(this.currentWidget.node);
+            let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
+            var rootNode = this.currentWidget.rootWidget.node;
+            this.currentWidget.parent.children.splice(index, 1);
+            this.currentWidget = null;
+            this.trigger({selectWidget: null, redrawTree: true});
+            process.nextTick(() => bridge.render(rootNode));
+        }
     },
     copyWidget: function() {
       if (this.currentWidget && this.currentWidget.parent) {
