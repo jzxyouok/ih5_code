@@ -11,6 +11,7 @@ class Animation extends React.Component {
             className : "root"
         };
         this.onStatusChange = this.onStatusChange.bind(this);
+        this.addWidgetBtn = this.addWidgetBtn.bind(this);
     }
 
     componentDidMount() {
@@ -32,68 +33,72 @@ class Animation extends React.Component {
         }
     }
 
+    addWidgetBtn(className,param){
+        WidgetActions['addWidget'](className, param);
+    }
+
     render() {
         let btnData = [];
         switch (this.state.className){
             case "root" :
-                btnData = [{"name":"物理世界","class":"physical-btn"}];
+                btnData = [{"name":"物理世界","class":"physical-btn","className":"world"}];
                 break;
             case "container":
-                btnData = [{"name":"物理世界","class":"physical-btn"}];
+                btnData = [{"name":"物理世界","class":"physical-btn","className":"world"}];
                 break;
             case "page" :
-                btnData = [{"name":"轨迹","class":"locus-btn"}
-                           , {"name":"动效","class":"dx-btn"}
-                           , {"name":"缓动","class":"easing-btn"}];
+                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
+                           , {"name":"动效","class":"dx-btn", className:'effect'}
+                           , {"name":"缓动","class":"easing-btn", className:'easing'}];
                 break;
             case "image" :
-                btnData = [{"name":"轨迹","class":"locus-btn"}
-                    , {"name":"动效","class":"dx-btn"}
-                    , {"name":"缓动","class":"easing-btn"}
-                    , {"name":"物理世界","class":"physical-btn"}
-                    , {"name":"物体","class":"object-btn"}];
+                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
+                    , {"name":"动效","class":"dx-btn", className:'effect'}
+                    , {"name":"缓动","class":"easing-btn", className:'easing'}
+                    , {"name":"物理世界","class":"physical-btn","className":"world"}
+                    , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "imagelist" :
-                btnData = [{"name":"轨迹","class":"locus-btn"}
-                    , {"name":"动效","class":"dx-btn"}
-                    , {"name":"缓动","class":"easing-btn"}
-                    , {"name":"物理世界","class":"physical-btn"}
-                    , {"name":"物体","class":"object-btn"}];
+                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
+                    , {"name":"动效","class":"dx-btn", className:'effect'}
+                    , {"name":"缓动","class":"easing-btn", className:'easing'}
+                    , {"name":"物理世界","class":"physical-btn","className":"world"}
+                    , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "text" :
-                btnData = [{"name":"轨迹","class":"locus-btn"}
-                    , {"name":"动效","class":"dx-btn"}
-                    , {"name":"缓动","class":"easing-btn"}
-                    , {"name":"物理世界","class":"physical-btn"}
-                    , {"name":"物体","class":"object-btn"}];
+                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
+                    , {"name":"动效","class":"dx-btn", className:'effect'}
+                    , {"name":"缓动","class":"easing-btn", className:'easing'}
+                    , {"name":"物理世界","class":"physical-btn","className":"world"}
+                    , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "bitmaptext" :
-                btnData = [{"name":"轨迹","class":"locus-btn"}
-                    , {"name":"动效","class":"dx-btn"}
-                    , {"name":"缓动","class":"easing-btn"}
-                    , {"name":"物理世界","class":"physical-btn"}
-                    , {"name":"物体","class":"object-btn"}];
+                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
+                    , {"name":"动效","class":"dx-btn", className:'effect'}
+                    , {"name":"缓动","class":"easing-btn", className:'easing'}
+                    , {"name":"物理世界","class":"physical-btn","className":"world"}
+                    , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "rect" :
-                btnData = [{"name":"轨迹","class":"locus-btn"}
-                    , {"name":"动效","class":"dx-btn"}
-                    , {"name":"缓动","class":"easing-btn"}
-                    , {"name":"物理世界","class":"physical-btn"}
-                    , {"name":"物体","class":"object-btn"}];
+                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
+                    , {"name":"动效","class":"dx-btn", className:'effect'}
+                    , {"name":"缓动","class":"easing-btn", className:'easing'}
+                    , {"name":"物理世界","class":"physical-btn","className":"world"}
+                    , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "ellipse" :
-                btnData = [{"name":"轨迹","class":"locus-btn"}
-                    , {"name":"动效","class":"dx-btn"}
-                    , {"name":"缓动","class":"easing-btn"}
-                    , {"name":"物理世界","class":"physical-btn"}
-                    , {"name":"物体","class":"object-btn"}];
+                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
+                    , {"name":"动效","class":"dx-btn", className:'effect'}
+                    , {"name":"缓动","class":"easing-btn", className:'easing'}
+                    , {"name":"物理世界","class":"physical-btn","className":"world"}
+                    , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "path" :
-                btnData = [{"name":"轨迹","class":"locus-btn"}
-                    , {"name":"动效","class":"dx-btn"}
-                    , {"name":"缓动","class":"easing-btn"}
-                    , {"name":"物理世界","class":"physical-btn"}
-                    , {"name":"物体","class":"object-btn"}];
+                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
+                    , {"name":"动效","class":"dx-btn", className:'effect'}
+                    , {"name":"缓动","class":"easing-btn", className:'easing'}
+                    , {"name":"物理世界","class":"physical-btn","className":"world"}
+                    , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "wechat" :
                 btnData = [];
@@ -116,7 +121,10 @@ class Animation extends React.Component {
             <div className="Animation">
                 {
                     btnData.map((v,i)=>{
-                        return <button key={i} className={ "btn btn-clear " + v.class } title={v.name} />
+                        return <button key={i}
+                                       className={ "btn btn-clear " + v.class }
+                                       title={v.name}
+                                       onClick={ this.addWidgetBtn.bind(this, v.className, v.param)} />
                     })
                 }
             </div>
@@ -125,13 +133,3 @@ class Animation extends React.Component {
 }
 
 module.exports = Animation;
-
-//btnData : [
-//    {"name":"运动","class":"sports-btn"}
-//    , {"name":"3D旋转","class":"rotation-btn"}
-//    , {"name":"动效","class":"dx-btn"}
-//    , {"name":"缓动","class":"easing-btn"}
-//    , {"name":"物理世界","class":"physical-btn"}
-//    , {"name":"物体","class":"object-btn"}
-//    , {"name":"碰撞探测器","class":"collision-btn"}
-//]
