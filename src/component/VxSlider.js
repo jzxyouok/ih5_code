@@ -88,12 +88,22 @@ function pauseEvent(e) {
 class VxRcSlider extends RcSlider {
     constructor(props) {
         super(props);
+        this.state = {
+            points: this.props.points,
+            currentHandle: -1};
         this.onHandleClick = this.onHandleClick.bind(this);
-        this.state = {points: this.props.points, currentHandle: -1};
+        this.onStatusChange = this.onStatusChange.bind(this);
+        this.selectTrack = this.selectTrack.bind(this);
+    }
+
+    selectTrack(){
+        //console.log(this.props.refTrack);
+        WidgetActions['selectWidget'](this.props.refTrack.parent, true);
     }
 
     onHandleClick(handle) {
         if (this.props.isCurrent) {
+            //console.log(this.props.refTimer);
             this.props.refTimer.node['pause']();
             this.props.refTimer.node['seek'](this.props.refTrack.props['data'][handle.props.handleIndex][0] * this.props.refTimer.node['totalTime']);
             this.state.currentHandle = handle.props.handleIndex;
@@ -122,7 +132,8 @@ class VxRcSlider extends RcSlider {
     }
 
     componentDidMount() {
-        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
@@ -130,6 +141,7 @@ class VxRcSlider extends RcSlider {
     }
 
     onStatusChange(widget) {
+        //console.log(widget);
         if (widget.resetTrack !== undefined) {
             this.setState({currentHandle: -1});
         }
@@ -177,7 +189,7 @@ class VxRcSlider extends RcSlider {
 
         for (let i = 0; i < points.length; i++) {
             let offset = this.calcOffset(points[i][0]);
-            console.log(this.state.isCurrent, i);
+            //console.log(this.state.isCurrent, i);
             handles.push(<VxHandle
                 className={handleClassName}
                 noTip={isNoTip}
@@ -219,19 +231,40 @@ class VxRcSlider extends RcSlider {
 					{track.parent.className}
 					</span>
 				</div>
+
 				<div className='timeline-node-track timline-column-right'>
 					<div ref="slider" className={sliderClassName} style={style}
+                            onClick={ this.selectTrack }
 							onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
 							onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
 						{handles}
-						<Track className={prefixCls + '-track'} vertical = {vertical} included={isIncluded}
-									offset={lowerOffset} length={upperOffset - lowerOffset}/>
-						<Steps prefixCls={prefixCls} vertical = {vertical} marks={marks} dots={dots} step={step}
-									included={isIncluded} lowerBound={lowerBound}
-									upperBound={upperBound} max={max} min={min}/>
-						<Marks className={prefixCls + '-mark'} vertical = {vertical} marks={marks}
-									included={isIncluded} lowerBound={lowerBound}
-									upperBound={upperBound} max={max} min={min}/>
+
+						<Track className={prefixCls + '-track'}
+                               vertical = {vertical}
+                               included={isIncluded}
+                               offset={lowerOffset}
+                               length={upperOffset - lowerOffset}/>
+
+						<Steps prefixCls={prefixCls}
+                               vertical = {vertical}
+                               marks={marks}
+                               dots={dots}
+                               step={step}
+                               included={isIncluded}
+                               lowerBound={lowerBound}
+                               upperBound={upperBound}
+                               max={max}
+                               min={min}/>
+
+						<Marks className={prefixCls + '-mark'}
+                               vertical = {vertical}
+                               marks={marks}
+                               included={isIncluded}
+                               lowerBound={lowerBound}
+                               upperBound={upperBound}
+                               max={max}
+                               min={min}/>
+
 						{children}
 					</div>
 				</div>

@@ -23,7 +23,8 @@ class TimelineView extends React.Component {
 			stepX: 37,
 			stepY: 0,
 			hasHandle: false,
-			isPlaying: false
+			isPlaying: false,
+            selectLayerData : null
 		};
 		this.onTimer = this.onTimer.bind(this);
 		this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -70,6 +71,11 @@ class TimelineView extends React.Component {
 						changed.currentTrack = item;
 					}
 				});
+
+                if(node.className === 'track'){
+                    changed.currentTrack = node;
+                }
+                //console.log(changed.currentTrack);
 			}
 			if (node)
 				node = node.timerWidget;
@@ -213,9 +219,14 @@ class TimelineView extends React.Component {
 		const getTracks = (node) => {
 			if (node.className === 'track') {
 				tracks.push(
-					<VxSlider key={index++} max={1} step={0.001} 
-						refTrack={node} refTimer={this.state.timerNode} 
-						points={node.props.data} isCurrent={node === this.state.currentTrack} />);
+					<VxSlider
+                        key={index++}
+                        max={1}
+                        step={0.001}
+						refTrack={node}
+                        refTimer={this.state.timerNode}
+						points={node.props.data}
+                        isCurrent={node === this.state.currentTrack} />);
 			}
 			node.children.map(item => getTracks(item));
 		};
@@ -243,7 +254,7 @@ class TimelineView extends React.Component {
 							cls('f--h',{'active': this.state.currentTrack!=null})
 						}>
 							<button id='TimelineIndicator'
-								className={cls({'active': this.state.currentTrack!=null})}></button>
+								className={cls({'active': this.state.currentTrack!=null})}> </button>
 							<input type='number' defaultValue={
 								this.state.currentTrack === null ? 0.000 :
 								this.state.currentTime }
@@ -258,27 +269,27 @@ class TimelineView extends React.Component {
 						}}>
 						<div>
 							<button id='TimelineNodeActionPrev'
-								onClick={this.selectNextBreakpoint.bind(this)}></button>
+								onClick={this.selectNextBreakpoint.bind(this)} />
 							<button id='TimelineNodeActionModify'
 								className={cls(
 									{'active': this.state.currentTrack!=null},
 									{'delete': this.state.hasHandle}
 								)}
-								onClick={this.onAddOrDelete.bind(this)}></button>
-							<button id='TimelineNodeActionNext'
-								onClick={this.selectPrevBreakpoint.bind(this)}></button>
-						</div>
+								onClick={this.onAddOrDelete.bind(this)} />
+                            <button id='TimelineNodeActionNext'
+								onClick={this.selectPrevBreakpoint.bind(this)} />
+                        </div>
 					</div>
 				</div>
 				<div id='TimelineTool' className='timeline-row f--h'>
 					<div id='TimelinePlay' className='timline-column-left'>
-						<button id='TimelinePlayBegin'></button>
-						{/*<button id='TimelinePlayStart' onClick={this.onPlay.bind(this)}></button>*/}
+						<button id='TimelinePlayBegin' />
+                        {/*<button id='TimelinePlayStart' onClick={this.onPlay.bind(this)}></button>*/}
 						<button id={!this.state.isPlaying?'TimelinePlayStart':'TimelinePlayPause'}
-								onClick={this.onPlayOrPause}></button>
+								onClick={this.onPlayOrPause} />
 
-						<button id='TimelinePlayEnd'></button>
-					</div>
+                        <button id='TimelinePlayEnd' />
+                    </div>
 					<div id='TimelineRuler' className='timline-column-right'>
 					{
 						// <div id="TimelineRulerNumbers">
