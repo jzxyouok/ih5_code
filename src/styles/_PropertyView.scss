@@ -10,7 +10,7 @@
 	position: absolute;
 	top: 36px;
 	left: 36px;
-	width: 320px;
+	width: 260px;
 	box-sizing: border-box;
 	background: #232323;
 	border: 1px solid #1a1a1a;
@@ -28,14 +28,12 @@
 		height: 30px;
 	}
 	#PropertyViewBody {
-		padding: 0 12px;
 		flex: 1;
 		overflow-y: auto;
 	}
 
 	.ant-form-horizontal {
-		//margin-bottom: 16px;
-		padding: 12px 0;
+		padding:10px 10px 5px 5px;
 		border-bottom: 1px solid #161616;
 		overflow: hidden;
 		&:last-child {
@@ -45,6 +43,20 @@
 		> .ant-form-item:last-child {
 			margin-bottom: 0;
 		}
+	    >.ant-form-half:last-child{
+		    text-align: right;
+		   .ant-input-number{margin-right: 0;}
+		}
+	    >.ant-form-half:nth-child(odd) ,>.ant-form-full{
+		  .ant-form-item-label label{
+			width: 61px;
+		  }
+		}
+	  >.ant-form-half:nth-child(even){
+		.ant-form-item-label label{
+		  width: 50px;
+		}
+	  }
 	}
 
 	.ant-collapse {
@@ -69,7 +81,45 @@
 
 	.ant-form-item-label label {
 		color: #b5b5b5;
+	    .originPos{
+		  width: 20px;
+		  height: 20px;
+		  display: inline-block;
+		  position: relative;
+		  top: 4px;
+		  background: url("./img/ico-sprite2.svg") no-repeat -60px 0;
+		}
+	    .rotation{
+		  width: 20px;
+		  height:20px;
+		  display: inline-block;
+		  position: relative;
+		  top: 4px;
+		  background: url("./img/ico-sprite2.svg") no-repeat -80px 0;
+		}
+	  .ant-lock{
+		width: 20px;
+		height: 20px;
+		display: inline-block;
+		position: absolute;
+		top: 1px;
+		background: url("./img/ico-sprite2.svg") no-repeat -100px 0;
+		left: 8px;
+		cursor: pointer;
+		&:hover{
+		  background-position: -100px -20px;
+		}
+	  }
+
+	  .ant-lock-checked{
+		background-position: -100px -40px;
+	  }
 	}
+
+
+
+
+
 	// switch
 	.ant-switch-checked {
 		border-color: #ffa800;
@@ -77,11 +127,12 @@
 	}
 
 	// input
+
 	.ant-form-item {
-		margin-bottom: 12px;
+		margin-bottom: 0px;
 
 		&.ant-form-half {
-			width: 50%;
+			width: 120px;
 			float: left;
 			& + div.ant-form-full {
 				clear: both;
@@ -90,10 +141,12 @@
 			& + div.ant-form-half {
 
 			}
-
+            .ant-select-enabled{width: 60px;}
 		}
+
+
+
 		.ant-form-item-label {
-			width: 54px;
 			label {
 				text-overflow: ellipsis;
 				overflow: hidden;
@@ -107,10 +160,40 @@
 
 		.ant-input-wrapper {
 			input[type='text'] {
-				max-width: 80px;
+				width:100%;
 			}
 		}
 
+	   .ant-input-px{
+            .ant-input-number-input-wrap:after{
+			  content: 'px';
+			  position: absolute;
+			  right: 2px;
+			  z-index: 100;
+			  top: -4px;
+			}
+		 &:hover{
+		   .ant-input-number-input-wrap:after{
+			  display: none;
+		   }
+		 }
+	   }
+	  .ant-input-degree{
+		width: 60px;
+		.ant-input-number-input-wrap:after{
+		  content: '°';
+		  position: absolute;
+		  right: 3px;
+		  z-index: 100;
+		  font-size: 16px;
+		  top: -3px;
+		}
+		&:hover{
+		  .ant-input-number-input-wrap:after{
+			display: none;
+		  }
+		}
+	  }
 		.ant-input {
 			background-color: #353535;
 			border-color: #444;
@@ -124,9 +207,11 @@
 		border: 1px solid #444;
 		background: none;
 		border-radius: 2px;
+	  width: 60px;
 
 		.ant-input-number-handler-wrap {
 			background: #151515;
+		    width: 16px;
 			border-left: 1px solid #313131;
 			&:hover {
 				color: #ffa800;
@@ -145,28 +230,76 @@
 				border-top: 1px solid #313131;
 			}
 			.ant-input-number-handler-up-inner {
+			    right: 2px;
 				&:before {
 					content: '\E610';
 				}
 			}
 			.ant-input-number-handler-down-inner {
-				&:before {
+			  right: 2px;
+			  &:before {
 					content: '\E611';
 				}
 			}
 		}
-		.ant-input-number-input {
+
+		.ant-input-number-input{
 			background-color: #353535;
 			border-radius: 2px;
 			color: #858585;
+
 			&:focus {
 				color: #fefefe;
 			}
 		}
 	}
 
+
+   //select
+	  .ant-select-selection--single {
+
+		border-radius: 2px;
+		color: #858585;
+		border: 1px solid #444;
+		background: none;
+	  }
+
+
 	// slide
 	.ant-form-item-control {
+	   .slider-input{
+		 border: 1px solid #444;
+		 background: none;
+		 border-radius: 2px;
+		 width: 60px;
+		 height: 22px;
+		 float: left;
+		 margin-top: 5px;
+		 .ant-input-number-handler{height: 11px;}
+		 .ant-input-number-input-wrap{
+		   height: 22px;
+		   line-height: 22px;
+		 }
+		 .ant-input-number-input{
+		  height: 22px;
+		 }
+		 &:after{
+		   content: '%';
+		   position: absolute;
+		   right: 2px;
+		   z-index: 100;
+		   top: -4px;
+		 }
+
+		   &:hover:after{
+			 display: none;
+		   }
+
+	   }
+	  .slider-per{
+		width: 46%;
+		float: left;
+	  }
 		.ant-slider {
 			background-color: #151515;
 			border-color: #232323;
@@ -185,3 +318,29 @@
 		}
 	}
 }
+
+//动态插入到body的弹框
+
+//select
+.ant-select-dropdown{
+  border-radius: 2px !important;
+  color: #858585 !important;
+  border: 1px solid #444 !important;
+  background: #353535;
+  .ant-select-dropdown-menu-item:hover{
+	background: #151515;
+	color: white;
+  }
+  .ant-select-dropdown-menu-item-active,.ant-select-dropdown-menu-item-selected{
+	background: #151515;
+	color: white;
+  }
+  >div{
+	overflow: visible !important;
+  }
+  .ant-select-dropdown-menu{
+	overflow: visible;
+  }
+}
+
+form .ant-select, form .ant-cascader-picker{width:100%;}

@@ -5,7 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Form, Input, InputNumber, Slider, Switch, Collapse } from 'antd';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select } from 'antd';
 const Panel = Collapse.Panel;
 import cls from 'classnames';
 
@@ -25,7 +25,10 @@ function getInputBox(type, defaultProp) {
             return <InputNumber step={0.1} {...defaultProp} />;
 
         case propertyType.Percentage:
-            return <Slider max={1} step={0.001} {...defaultProp} />;
+            return  <div>
+                <InputNumber step={0.1} max={100} min={0} defaultValue={100}  className='slider-input' />
+                <Slider max={1} step={0.001} {...defaultProp}  className='slider-per' />
+            </div>;
 
         case propertyType.Text:
             return <Input type="textarea" {...defaultProp} />;
@@ -44,6 +47,11 @@ function getInputBox(type, defaultProp) {
         case propertyType.Boolean:
             return <Switch {...defaultProp} />;
 
+        case propertyType.Select:
+            return  <Select   {...defaultProp}   >
+                {defaultProp.options}
+            </Select>;
+
         default:
             return <Input {...defaultProp} />;
     }
@@ -59,7 +67,6 @@ class PropertyView extends React.Component {
 
     onChangeProp(prop, value) {
         let v;
-
         if (value === undefined) {
             v = null;
         } else {
@@ -86,16 +93,24 @@ class PropertyView extends React.Component {
                     v = value;
             }
         }
-
         const obj = {};
         obj[prop.name] = v;
         this.onStatusChange({updateProperties: obj});
+
         WidgetActions['updateProperties'](obj, false, true);
     }
 
     onChangePropDom(item, value) {
         this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
     }
+
+
+
+    antLockEvent(event) {
+
+    }
+
+
 
     getFields() {
         let node = this.selectNode;
@@ -117,6 +132,7 @@ class PropertyView extends React.Component {
 
         const groups = {};
 
+
         const getInput = (item, index) => {
             let defaultValue;
             if (item.readOnly) {
@@ -132,36 +148,62 @@ class PropertyView extends React.Component {
                 size: 'small',
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
-                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item)
+                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color ) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item)
             };
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;
+            }else if(item.type ==propertyType.Select ){
+               defaultProp.defaultValue=item.default;
+                defaultProp.options=  item.options.map((ele,index)=><Option key={index}>{ele}</Option>);
             } else {
                 defaultProp.value = defaultValue;
             }
+
 
             let groupName = item.group || 'basic';
             if (groups[groupName] === undefined)
                 groups[groupName] = [];
 
-            let hasTwin = ['width', 'height', 'positionX', 'positionY'].indexOf(item.name) >= 0;
+            let hasTwin = ['x','y','w','h','width', 'height', 'positionX', 'positionY','imageTagLeft','imageTagRight'].indexOf(item.name) >= 0;
+            let hasPx=['x','y','w','h'].indexOf(item.name)>=0; //判断input中是否添加px单位
+            let hasLock=['y'].indexOf(item.name)>=0; //判断是否在元素前添加锁图标
+            let hasDegree =['rotation'].indexOf(item.imgClassName)>=0; //判断input中是否添加°单位
+
+            let htmlStr;
+
+            if(item.imgClassName){
+                htmlStr=<label><div className={item.imgClassName}></div></label>
+            }else{
+                if(hasLock){
+                    htmlStr=<label><div className='ant-lock'  ></div>{item.name}</label>
+                }else {
+                    htmlStr =<label>{item.name}</label>
+                }
+            }
+
+
             groups[groupName].push(
                 <div key={item.name}
                     className={cls('f--hlc','ant-row','ant-form-item',
                         {'ant-form-half': hasTwin}, {'ant-form-full': !hasTwin})}>
+
                     <div className='ant-col-l ant-form-item-label'>
-                        <label>{item.name}</label>
+
+                        { htmlStr  }
                     </div>
+
                     <div className='ant-col-r'>
-                        <div className='ant-form-item-control'>
+                        <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
                         {getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
                         </div>
                     </div>
                 </div>
             );
+
         };
 
         const result = [];
+
         propertyMap[className].forEach((item, index) => {
             if (item.isProperty)
                 getInput(item, index);
