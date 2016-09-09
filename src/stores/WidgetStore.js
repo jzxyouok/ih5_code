@@ -32,14 +32,14 @@ function loadTree(parent, node) {
   if (node['vars']) {
     for (let n in node['vars']) {
       if (n.length >= 3 && n.substr(0, 2) == '__')
-        current.varList.push({key:n.substr(2), value: node['vars'][n]});
+        current.varList.unshift({key:n.substr(2), value: node['vars'][n]});
     }
   }
   current.funcList = [];
   if (node['funcs']) {
     for (let n in node['funcs']) {
       if (n.length >= 3 && n.substr(0, 2) == '__')
-        current.funcList.push({key:n.substr(2), value:node['funcs'][n]});
+        current.funcList.unshift({key:n.substr(2), value:node['funcs'][n]});
     }
   }
 
@@ -51,10 +51,10 @@ function loadTree(parent, node) {
   current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
 
   if (parent) {
-    parent.children.push(current);
+    parent.children.unshift(current);
     current.rootWidget = parent.rootWidget;
     if (renderer != current.rootWidget.rendererList[0])
-      current.rootWidget.rendererList.push(renderer);
+      current.rootWidget.rendererList.unshift(renderer);
   } else {
     current.rootWidget = current;
     current.imageList = node['links'] || [];
@@ -416,30 +416,31 @@ export default Reflux.createStore({
       this.trigger({deletePoint: true});
     },
     initTree: function(data) {
-      classList = [];
-      bridge.resetClass();
-      stageTree = [];
+        classList = [];
+        bridge.resetClass();
+        stageTree = [];
 
-      if (data['defs']) {
-        for (let n in data['defs']) {
-          bridge.addClass(n);
-          classList.push(n);
-          stageTree.push({name: n, tree: loadTree(null, data['defs'][n])});
+        if (data['defs']) {
+            for (let n in data['defs']) {
+                bridge.addClass(n);
+                classList.push(n);
+                stageTree.push({name: n, tree: loadTree(null, data['defs'][n])});
+            }
         }
-      }
 
-      stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
-      bridge.createSelector(null);
+        stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
+        bridge.createSelector(null);
 
-      if (!rootDiv) {
-        rootDiv = document.getElementById('canvas-dom');
-        rootDiv.addEventListener('dragenter', dragenter, false);
-        rootDiv.addEventListener('dragover', dragover, false);
-        rootDiv.addEventListener('drop', drop.bind(this), false);
-      }
+        if (!rootDiv) {
+            rootDiv = document.getElementById('canvas-dom');
+            rootDiv.addEventListener('dragenter', dragenter, false);
+            rootDiv.addEventListener('dragover', dragover, false);
+            rootDiv.addEventListener('drop', drop.bind(this), false);
+        }
 
-      this.trigger({initTree: stageTree, classList: classList});
-      this.selectWidget(stageTree[0].tree);
+        this.trigger({initTree: stageTree, classList: classList});
+
+        this.selectWidget(stageTree[0].tree);
     },
     addClass: function(name) {
       stageTree.push({name: name, tree: loadTree(null, {'cls': 'root', 'type': bridge.getRendererType(this.currentWidget.node), 'props': {'width': 640, 'height': 1040}})});

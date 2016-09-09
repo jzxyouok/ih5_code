@@ -19,7 +19,7 @@ class ObjectTree extends React.Component {
             isLoadTree : true,
             selectedLayer : -1,
             selectWidget : null,
-            widgetTreeChildren :null
+            //widgetTreeChildren :null
         };
         this.chooseBtn = this.chooseBtn.bind(this);
         this.openBtn = this.openBtn.bind(this);
@@ -102,7 +102,7 @@ class ObjectTree extends React.Component {
 
     addOpenId(){
         let data = this.state.widgetTree;
-        let data2 = null;
+        //let data2 = null;
         let fuc = (nid)=>{
             let array = this.state.openData;
             let index = array.indexOf(nid);
@@ -115,13 +115,13 @@ class ObjectTree extends React.Component {
         };
         if(data){
             fuc(data.tree.key);
-            data2 = data.tree.children.concat();
-            if(data2){
-                data2.reverse();
-                this.setState({
-                    widgetTreeChildren : data2
-                });
-            }
+            //data2 = data.tree.children.concat();
+            //if(data2){
+            //    data2.reverse();
+            //    this.setState({
+            //        widgetTreeChildren : data2
+            //    });
+            //}
         }
 
         if(this.state.selectWidget){
@@ -272,13 +272,16 @@ class ObjectTree extends React.Component {
         let num = 0;
 
         let btn = (show,data)=>{
-            //0图层及图层内的所有内容不可看，1可在舞台看见，-1指的是整个舞台，必是可见的
+            //0图层及图层内的所有内容不可看，1可在舞台看见，-1指的是整个舞台，必是可见的, -2是没有可见隐藏这个属性
             if(show === 0 ){
                 return <div className="btn f--hcc hide-btn"
                             onClick={ this.showHideBtn.bind(this,data,true) }><span /></div>;
             }
             else if(show === -1){
                 return <div className="btn f--hcc show-btn"><span /></div>;
+            }
+            else if(show === -2){
+                return <div className="btn f--hcc none-btn"><span/></div>;
             }
             else{
                 return <div className="btn f--hcc show-btn"
@@ -327,9 +330,13 @@ class ObjectTree extends React.Component {
                              style={{ paddingLeft: num === 0 ? "28px" :num *20 + 22 +"px", width : this.props.width - 36  }}>
 
                             {
-                                v.props.visible === false
-                                    ? btn(0, v)
-                                    : btn(1, v)
+                                v.className =="track" || v.className=="effect"
+                                || v.className=="easing"||v.className=="world"
+                                ||v.className=="body"||v.className=="audio"
+                                    ? btn(-2, v)
+                                    : v.props.visible === false
+                                        ? btn(0, v)
+                                        : btn(1, v)
                             }
 
                             {
@@ -381,11 +388,14 @@ class ObjectTree extends React.Component {
                         <div className={$class("stage-content", {"hidden":  this.state.openData.indexOf(objectData.tree.key) < 0 })}
                              onDragOver={this.itemDragOver}>
                             {
-                                this.state.widgetTreeChildren
-                                    ?  this.state.widgetTreeChildren.length === 0
-                                            ? null
-                                            : stageContent(this.state.widgetTreeChildren)
-                                    : null
+                                objectData.tree.children.length === 0
+                                ? null
+                                : stageContent(objectData.tree.children)
+                                //this.state.widgetTreeChildren
+                                //    ?  this.state.widgetTreeChildren.length === 0
+                                //            ? null
+                                //            : stageContent(this.state.widgetTreeChildren)
+                                //    : null
                             }
                         </div>
                     </div>

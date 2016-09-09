@@ -48,7 +48,7 @@ var TOOL_ID = {
     WECAHT: 19,
     BITMAPTEXT: 20
 };
-
+var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
     name: '默认工具',
     data: [{
@@ -65,9 +65,9 @@ var DEFAULT_TOOLBOX = {
         gid:2,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect'},
-            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse'},
-            {cid:TOOL_ID.PATH,name:'路径',icon:curveIcon, className:'path'}]
+            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', param: shapeParam},
+            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', param: shapeParam},
+            {cid:TOOL_ID.PATH,name:'路径',icon:curveIcon, className:'path', param: shapeParam}]
     },{
         name:'时间轴',
         key:3,
@@ -75,7 +75,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.TIMER, name:'添加时间轴', icon:timerIcon, className:'timer'},
-            {cid:TOOL_ID.TRACK, name:'轨迹', icon: trackIcon, className: 'track'},
+            //{cid:TOOL_ID.TRACK, name:'轨迹', icon: trackIcon, className: 'track'},
             // {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
             // {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},
             {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer',  param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}}
@@ -87,7 +87,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', param: {'text': 'Text'}},
-            {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext'}]
+            {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}}]
     },{
         name:'多媒体',
         key:5,

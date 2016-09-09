@@ -56,6 +56,11 @@
                 &.hide-btn span{
                     background-position: -800px -40px;
                 }
+
+                &.none-btn ,
+                &.none-btn span{
+                    background: none;
+                }
             }
 
             .icon {
