@@ -57,7 +57,6 @@ propertyMap['box'] = [
     { name: 'scaleX', type: propertyType.Number, default: 1, group:'position', isProperty: false },
     { name: 'scaleY', type: propertyType.Number, default: 1, group:'position', isProperty: false },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
-    //{ name: 'rotation', type: propertyType.Integer, default: 0, group:'display', isProperty: true },
     { name: 'visible',showName:'初始可见', type: propertyType.Boolean, default: true, group:'display', isProperty: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
@@ -144,10 +143,11 @@ propertyMap['slidetimer'] = [
     { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'fillColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
-    { name: 'loop',showName:'循环播放', type: propertyType.Boolean, default: false, isProperty: true},
+    { name: 'loop', type: propertyType.Boolean, default: false, isProperty: true},
     { name: 'vertical', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'sliderScale', type: propertyType.Number, default: 1, isProperty: true},
     { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true}
+
 ];
 
 propertyMap['ellipse'] = [
@@ -185,9 +185,12 @@ propertyMap['class'] = [
 ];
 
 propertyMap['timer'] = [
+    { name: 'totalTime',showName:'总时长', type: propertyType.Number, default: 10, isProperty: true},
+    { name: 'loop',showName:'循环播放', type: propertyType.Boolean, default: false, isProperty: true},
     ...propertyMap['container'],
-    { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true},
-    { name: 'loop', type: propertyType.Boolean, default: false, isProperty: true},
+    { name: 'width', showName:'w',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'height',showName:'h',showLock:true ,type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+
     { name: 'play', isFunc: true },
     { name: 'pause', isFunc: true },
     { name: 'seek', info: '(time)', isFunc: true },
