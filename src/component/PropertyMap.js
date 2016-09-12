@@ -81,8 +81,9 @@ propertyMap['sprite'] = [
 ];
 
 propertyMap['text'] = [
-    ...propertyMap['sprite'],
-    { name: 'text', type: propertyType.Text, default: '', isProperty: true }
+    { name: 'text',showName:'内容', type: propertyType.Text, default: '', isProperty: true },
+    ...propertyMap['sprite']
+
 ];
 
 propertyMap['video'] = [
