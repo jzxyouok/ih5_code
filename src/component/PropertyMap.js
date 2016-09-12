@@ -78,7 +78,7 @@ propertyMap['sprite'] = [
     { name: 'height',showName:'h', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     //替代originX和originY
     { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '上',options:['上','左','右','中心','左上','左下','右上','右下'], group:'position',isProperty: true },
-    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'display', isProperty: true },
+    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
     //{ name: 'imageTagRight', type: propertyType.Integer,imgClassName:'rotation',default: 0, group:'position',isProperty: true }
 ];
 
@@ -100,7 +100,7 @@ propertyMap['audio'] = [
 ];
 
 propertyMap['image'] = [
-    { name: '资源', type: propertyType.Integer, default:0, isProperty: true },
+    { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: true },
     ...propertyMap['sprite'],
 
 ];
