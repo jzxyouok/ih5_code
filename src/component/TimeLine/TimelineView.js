@@ -6,6 +6,7 @@ import { Slider, Row, Col, Card, Button } from 'antd';
 import WidgetStore from '../../stores/WidgetStore';
 import WidgetActions from '../../actions/WidgetActions';
 import VxSlider from '../VxSlider';
+import ComponentPanel from '../ComponentPanel';
 
 var timerCallback = {};
 
@@ -27,10 +28,10 @@ class TimelineView extends React.Component {
             selectLayerData : null
 		};
 		this.onTimer = this.onTimer.bind(this);
-		this.onWidgetClick = this.onWidgetClick.bind(this);
-		this.onWidgetMouseUp = this.onWidgetMouseUp.bind(this);
-		this.onWidgetMouseDown = this.onWidgetMouseDown.bind(this);
-		this.onWidgetMouseMove = this.onWidgetMouseMove.bind(this);
+		//this.onWidgetClick = this.onWidgetClick.bind(this);
+		//this.onWidgetMouseUp = this.onWidgetMouseUp.bind(this);
+		//this.onWidgetMouseDown = this.onWidgetMouseDown.bind(this);
+		//this.onWidgetMouseMove = this.onWidgetMouseMove.bind(this);
 		this.flag = 0;
 		this.stepX = null;
 		this.stepY = null;
@@ -175,144 +176,181 @@ class TimelineView extends React.Component {
 
 	}
 
-	onWidgetClick(event) {
-		event.preventDefault();
-		event.stopPropagation();
-	}
-
-	onWidgetMouseUp(event) {
-		event.preventDefault();
-		event.stopPropagation();
-		if(this.flag===1) {
-			this.flag = 0;
-			this.stepX = 0;
-			this.stepY = 0;
-		}
-	}
-
-	onWidgetMouseDown(event) {
-		event.preventDefault();
-		event.stopPropagation();
-		if(this.flag===0) {
-			this.flag = 1;
-			this.stepX = event.clientX;
-			this.stepY = event.clientY;
-		}
-	}
-
-	onWidgetMouseMove(event) {
-		if(this.flag===1) {
-			let x = event.clientX - this.stepX;
-			let y = event.clientY - this.stepY;
-			// console.log(x, y);
-			this.setState({
-				stepX: x > 37 ? x: 37,
-				stepY: y < 0 ? y: 0
-			});
-		}
-	}
+	//onWidgetClick(event) {
+	//	event.preventDefault();
+	//	event.stopPropagation();
+	//}
+    //
+	//onWidgetMouseUp(event) {
+	//	event.preventDefault();
+	//	event.stopPropagation();
+	//	if(this.flag===1) {
+	//		this.flag = 0;
+	//		this.stepX = 0;
+	//		this.stepY = 0;
+	//	}
+	//}
+    //
+	//onWidgetMouseDown(event) {
+	//	event.preventDefault();
+	//	event.stopPropagation();
+	//	if(this.flag===0) {
+	//		this.flag = 1;
+	//		this.stepX = event.clientX;
+	//		this.stepY = event.clientY;
+	//	}
+	//}
+    //
+	//onWidgetMouseMove(event) {
+	//	if(this.flag===1) {
+	//		let x = event.clientX - this.stepX;
+	//		let y = event.clientY - this.stepY;
+	//		// console.log(x, y);
+	//		this.setState({
+	//			stepX: x > 37 ? x: 37,
+	//			stepY: y < 0 ? y: 0
+	//		});
+	//	}
+	//}
 
 	render() {
-		let tracks = [];
-		let index = 0;
+        let tracks = [];
+        let index = 0;
+        let totalTime = 10;
+        //console.log('timerNode', this.state.timerNode);
 
-		const getTracks = (node) => {
-			if (node.className === 'track') {
-				tracks.push(
-					<VxSlider
+        const getTracks = (node) => {
+            if (node.className === 'track') {
+                let pic = null;
+                this.refs.ComponentPanel.panels[0].cplist.map((v1,i2)=>{
+                    if (v1.className === node.parent.className){
+                        pic = v1.icon;
+                    }
+                });
+
+                tracks.push(
+                    <VxSlider
                         key={index++}
                         max={1}
                         step={0.001}
-						refTrack={node}
+                        refTrack={node}
+                        pic={pic}
+                        width={61 * totalTime}
                         refTimer={this.state.timerNode}
-						points={node.props.data}
+                        points={node.props.data}
                         isCurrent={node === this.state.currentTrack} />);
-			}
-			node.children.map(item => getTracks(item));
-		};
+            }
+            node.children.map(item => getTracks(item));
+        };
 
-		//console.log('timerNode',this.state.timerNode)
-		if (this.state.timerNode) {
-			getTracks(this.state.timerNode);
-		}
-		//console.log('timerNode', this.state.timerNode);
+        if (this.state.timerNode && this.refs.ComponentPanel) {
+            getTracks(this.state.timerNode);
 
-		return (!this.state.timerNode) ? null :(
-			<div id='TimelineView'
-				onClick={this.onWidgetClick}
-				onMouseUp={this.onWidgetMouseUp}
-				onMouseDown={this.onWidgetMouseDown}
-				onMouseMove={this.onWidgetMouseMove}
-				style={{
-					left: `${this.state.stepX}px`,
-					bottom: `${-this.state.stepY}px`,
-				}}>
-				<div id='TimelineHeader' className='timeline-row f--h'>
-					<div className='timline-column-left f--hlc'>
-						<span id='TimelineTitle'>时间轴</span>
-						<span id='TimelineNodeDuration' className={
-							cls('f--h',{'active': this.state.currentTrack!=null})
-						}>
-							<button id='TimelineIndicator'
-								className={cls({'active': this.state.currentTrack!=null})}> </button>
-							<input type='number' defaultValue={
-								this.state.currentTrack === null ? 0.000 :
-								this.state.currentTime }
-								min={0.000}
-								step={0.001}/>
-							<span>s</span>
-						</span>
-					</div>
-					<div className='timline-column-right' id='TimelineNodeAction'
-						style={{
-						 width: `${500+2}px`
-						}}>
-						<div>
-							<button id='TimelineNodeActionPrev'
-								onClick={this.selectNextBreakpoint.bind(this)} />
-							<button id='TimelineNodeActionModify'
-								className={cls(
-									{'active': this.state.currentTrack!=null},
-									{'delete': this.state.hasHandle}
-								)}
-								onClick={this.onAddOrDelete.bind(this)} />
-                            <button id='TimelineNodeActionNext'
-								onClick={this.selectPrevBreakpoint.bind(this)} />
+            if(this.state.timerNode.props.totalTime){
+                totalTime = this.state.timerNode.props.totalTime;
+            }
+        }
+
+        let unit = (data)=>{
+            let arry = [];
+            for(let i=1; i<=data; i++){
+                arry.push(i);
+            }
+            return arry.map((v,i)=>{
+                return <li key={i}><span>{ v >= 10 || v == 0 ? v + 's' : '0'+ v + 's' }</span></li>;
+            });
+        };
+
+        return (
+            <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })}>
+                <div className="hidden">
+                    <ComponentPanel ref="ComponentPanel" />
+                </div>
+
+                <div id='TimelineHeader' className='timeline-row f--h'>
+                    <div className='timline-column-left f--hlc'>
+                        <div id='TimelineTitle'>时间轴</div>
+                        <div id='TimelineNodeDuration' className={
+                        cls('f--hlc flex-1',{'active': this.state.currentTrack!=null})
+                    }>
+                        <span id='TimelineIndicator'
+                              className={cls({'active': this.state.currentTrack!=null})} />
+                            <input type='number'
+                                //defaultValue={ this.state.currentTrack === null ? 0.000 : this.state.currentTime }
+                                   placeholder="1"
+                                   min={0.000}
+                                   step={0.001}/>
+                            <span>s</span>
                         </div>
-					</div>
-				</div>
-				<div id='TimelineTool' className='timeline-row f--h'>
-					<div id='TimelinePlay' className='timline-column-left'>
-						<button id='TimelinePlayBegin' />
+                    </div>
+
+                    <div className='timline-column-right flex-1' id='TimelineNodeAction'>
+                        <div>
+                            <button id='TimelineNodeActionPrev'
+                                    onClick={this.selectNextBreakpoint.bind(this)} />
+                            <button id='TimelineNodeActionModify'
+                                    className={cls(
+                                        {'active': this.state.currentTrack!=null},
+                                        {'delete': this.state.hasHandle}
+                                    )}
+                                    onClick={this.onAddOrDelete.bind(this)} />
+                            <button id='TimelineNodeActionNext'
+                                    onClick={this.selectPrevBreakpoint.bind(this)} />
+                        </div>
+                    </div>
+                </div>
+
+                <div id='TimelineTool' className='timeline-row f--h'>
+                    <div id='TimelinePlay' className='timline-column-left'>
+                        <button id='TimelinePlayBegin' />
                         {/*<button id='TimelinePlayStart' onClick={this.onPlay.bind(this)}></button>*/}
-						<button id={!this.state.isPlaying?'TimelinePlayStart':'TimelinePlayPause'}
-								onClick={this.onPlayOrPause} />
+                        <button id={!this.state.isPlaying?'TimelinePlayStart':'TimelinePlayPause'}
+                                onClick={this.onPlayOrPause} />
 
                         <button id='TimelinePlayEnd' />
+
+                        <span className="line" />
                     </div>
-					<div id='TimelineRuler' className='timline-column-right'>
-					{
-						// <div id="TimelineRulerNumbers">
-						// </div>
-						// <div id="TimelineRulerMap"></div>
-						// <div id='TimelineRulerSlide' style={{
-						// 	left: `${this.state.currentTime * 100 - 13}px`
-						// }}></div>
-					}
-					<Slider max={1} step={0.001} value={this.state.currentTime} onChange={this.onTimerChange.bind(this)} />
-					</div>
-				</div>
-				<div id='TimlineNodeContent'>
-					<ul id='TimlineNodeList'>
-					{tracks}
-					{
-						// this.state.timerNode.map((node, index)=> {
-						// 	return <TimelineTrack track={node} key={index} />
-						// })
-					}
-					</ul>
-				</div>
-			</div>
+
+                    <div id='TimelineRuler' className='timline-column-right'>
+                        {
+                            // <div id="TimelineRulerNumbers">
+                            // </div>
+                            // <div id="TimelineRulerMap"></div>
+                            // <div id='TimelineRulerSlide' style={{
+                            // 	left: `${this.state.currentTime * 100 - 13}px`
+                            // }}></div>
+                        }
+                        <span className="unit-0">0s</span>
+
+                        <ul className="unit" style={{ width : 61 * totalTime +"px" }}>
+                            { unit(totalTime) }
+                        </ul>
+
+                        <div style={{ width : 61 * totalTime +"px" }}>
+                            <Slider max={1}
+                                    step={0.001}
+                                    value={this.state.currentTime}
+                                    onChange={this.onTimerChange.bind(this)} />
+                        </div>
+
+                        <span className="flex-1" />
+                    </div>
+                </div>
+                <div id='TimlineNodeContent'>
+                    <ul id='TimlineNodeList'>
+                        {
+                            tracks
+                        }
+
+                        {
+                            // this.state.timerNode.map((node, index)=> {
+                            // 	return <TimelineTrack track={node} key={index} />
+                            // })
+                        }
+                    </ul>
+                </div>
+            </div>
 		);
 	}
 

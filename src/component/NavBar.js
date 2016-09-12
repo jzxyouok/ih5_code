@@ -273,9 +273,9 @@ class NavBar extends React.Component {
                                 <li className="left-icon"><span className="icon" />左对齐</li>
                                 <li className="zhong-icon"><span className="icon zhong-icon" />左右居中</li>
                                 <li className="right-icon" ><span className="icon right-icon" />右对齐</li>
-                                <li className="top-icon"><span className="icon top-icon" />顶部对齐</li>
+                                <li className="top-icon"><span className="icon top-icon" />底部对齐</li>
                                 <li className="middle-icon"><span className="icon middle-icon" />上下居中</li>
-                                <li className="bottom-icon"><span className="icon bottom-icon" />底部对齐</li>
+                                <li className="bottom-icon"><span className="icon bottom-icon" />顶部对齐</li>
                             </ul>
                         </div>
 

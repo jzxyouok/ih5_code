@@ -187,7 +187,7 @@ class VxRcSlider extends RcSlider {
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
 
-        for (let i = 0; i < points.length; i++) {
+        for (let i = 1; i < points.length-1; i++) {
             let offset = this.calcOffset(points[i][0]);
             //console.log(this.state.isCurrent, i);
             handles.push(<VxHandle
@@ -212,11 +212,15 @@ class VxRcSlider extends RcSlider {
 			[prefixCls + '-vertical']: this.props.vertical
 		});
 		const isIncluded = included || range;
+
         const style = {};
-        if (this.props.isCurrent)
+        style['width']= this.props.width;
+        if (this.props.isCurrent){
             style['borderColor'] = '#CCC';
+        }
 		
 		let track = this.props.refTrack;
+        //console.log(track);
 		return (
 			<li className={
 				cls(
@@ -224,12 +228,14 @@ class VxRcSlider extends RcSlider {
 				'timeline-row',
 				'timeline-node',
 				`timeline-node-${track.parent.className}`,
-				'f--h')}>
+				'f--hlc')}>
 				<div className='timeline-node-meta timline-column-left f--hlc'>
-					<label className={cls('timeline-node-type', `timeline-node-type-${track.parent.className}`)} />
-					<span className='timeline-node-name'>
-					{track.parent.className}
-					</span>
+                    {
+                        //<label className={cls('timeline-node-type', `timeline-node-type-${track.parent.className}`)} />
+                    }
+                    <img src={ this.props.pic } className="timeline-node-type" />
+
+					<span className='timeline-node-name'>{track.parent.className}</span>
 				</div>
 
 				<div className='timeline-node-track timline-column-right'>

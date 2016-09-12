@@ -25,6 +25,15 @@ let bitmaptextIcon = img('bitmapText.svg');
 let imageIcon = img('image.svg');
 let igroupIcon = img('imageGroup.svg');
 
+let buttonIcon = img('button.svg');
+let transbuttonIcon = img('transButton.svg');
+let qrcodeIcon = img('qrCode.svg');
+let fileIcon = img('file.svg');
+let counterIcon = img('counter.svg');
+let databaseIcon = img('database.svg');
+let remotedeviceIcon = img('remoteDevice.svg');
+let pcdeviceIcon = img('pcDevice.svg');
+
 var cid = 1;
 var TOOL_ID = {
     IMAGE: 1,
@@ -46,7 +55,16 @@ var TOOL_ID = {
     EFFECT: 17,
     CANVAS: 18,
     WECAHT: 19,
-    BITMAPTEXT: 20
+    BITMAPTEXT: 20,
+
+    BUTTON: 21,
+    TRANSBUTTON: 22,
+    QRCODE: 23,
+    FILE: 24,
+    COUNTER: 25,
+    DATABASE: 26,
+    REMOTEDEVICE: 27,
+    PCDEVICE: 28,
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -60,18 +78,65 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.IMAGE, name:'上传单个图片',icon:imageIcon, className:'image', upload:true},
             {cid:TOOL_ID.IMAGE_LIST, name:'上传多个图片', icon:igroupIcon, className:'imagelist', upload:true}]
     },{
-        name:'几何图形',
+        name:'文字',
         key:2,
         gid:2,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', param: {'text': 'Text'}},
+            {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+    },{
+        name:'几何图形',
+        key:4,
+        gid:4,
         primary: 0,
         secondary: [
             {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', param: shapeParam},
             {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', param: shapeParam},
             {cid:TOOL_ID.PATH,name:'路径',icon:curveIcon, className:'path', param: shapeParam}]
     },{
+        name:'按钮',
+        key:5,
+        gid:5,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.BUTTON,name:'按钮',icon:buttonIcon, className:'button'},
+            {cid:TOOL_ID.TRANSBUTTON,name:'透明按钮',icon:transbuttonIcon, className:'transbutton'}]
+    },{
+        name:'二维码',
+        key:6,
+        gid:6,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.QRCODE,name:'二维码',icon:qrcodeIcon, className:'qrcode'}]
+    },{
+        name:'多媒体',
+        key:7,
+        gid:7,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'},
+            {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video'}
+        ]
+    },{
+        name:'文件',
+        key:9,
+        gid:9,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.FILE,name:'文件',icon:fileIcon, className:'file'}]
+    },{
+        name:'容器',
+        key:11,
+        gid:11,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.CONTAINER,name:'容器',icon:containerIcon, className:'container'}
+        ]
+    },{
         name:'时间轴',
-        key:3,
-        gid:3,
+        key:14,
+        gid:14,
         primary: 0,
         secondary: [
             {cid:TOOL_ID.TIMER, name:'添加时间轴', icon:timerIcon, className:'timer'},
@@ -81,26 +146,32 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer',  param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}}
         ]
     },{
-        name:'文字',
-        key:4,
-        gid:4,
+        name:'计数器',
+        key:15,
+        gid:15,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', param: {'text': 'Text'}},
-            {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter'}]
     },{
-        name:'多媒体',
-        key:5,
-        gid:5,
+        name:'数据库',
+        key:16,
+        gid:16,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'},
-            {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video'}
+            {cid:TOOL_ID.DATABASE, name:'数据库', icon: databaseIcon, className:'database'}]
+    },{
+        name:'设备',
+        key:22,
+        gid:22,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.REMOTEDEVICE, name:'移动设备', icon: remotedeviceIcon, className:'remotedevice'},
+            {cid:TOOL_ID.REMOTEDEVICE, name:'PC设备', icon: pcdeviceIcon, className:'pcdevice'}
         ]
     },{
         name:'微信',
-        key:6,
-        gid:6,
+        key:23,
+        gid:23,
         primary: 0,
         secondary: [{cid:TOOL_ID.WECAHT,name:'微信',icon:wechatIcon, className:'wechat'}]
     }]
