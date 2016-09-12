@@ -25,7 +25,7 @@ class TimelineTrack extends React.Component {
 				<div className='timeline-node-meta timline-column-left f--hlc'>
 					<label className={cls('timeline-node-type', `timeline-node-type-${track.parent.className}`)} />
 					<span className='timeline-node-name'>
-					{track.parent.className}
+					    {track.parent.className}
 					</span>
 				</div>
 				<div className='timeline-node-track timline-column-right'>
