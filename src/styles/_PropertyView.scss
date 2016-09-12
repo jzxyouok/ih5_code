@@ -44,7 +44,6 @@
 			margin-bottom: 0;
 		}
 	    >.ant-form-half:last-child{
-		    text-align: right;
 		   .ant-input-number{margin-right: 0;}
 		}
 	    >.ant-form-half:nth-child(odd) ,>.ant-form-full{
@@ -102,7 +101,7 @@
 		height: 20px;
 		display: inline-block;
 		position: absolute;
-		top: 1px;
+		top: -1px;
 		background: url("./img/ico-sprite2.svg") no-repeat -100px 0;
 		left: 8px;
 		cursor: pointer;

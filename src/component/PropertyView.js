@@ -168,7 +168,7 @@ class PropertyView extends React.Component {
 
             let hasPx=['x','y','w','h'].indexOf(item.showName)>=0; //判断input中是否添加px单位
 
-            let hasLock=['y'].indexOf(item.showName)>=0; //判断是否在元素前添加锁图标
+            let hasLock=['h'].indexOf(item.showName)>=0; //判断是否在元素前添加锁图标
 
             let hasDegree =['rotationImgTag'].indexOf(item.imgClassName)>=0; //判断input中是否添加°单位
 
