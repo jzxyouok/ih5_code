@@ -75,7 +75,7 @@ propertyMap['sprite'] = [
     { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty: false },
     { name: 'originY', type: propertyType.Number, default: 0, group:'position', isProperty: false },
     { name: 'width', showName:'w',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'height',showName:'h', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'height',showName:'h',showLock:true ,type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '上',options:['上','左','右','中心','左上','左下','右上','右下'], group:'position',isProperty: true },
     { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
 
@@ -144,7 +144,7 @@ propertyMap['slidetimer'] = [
     { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'fillColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
-    { name: '循环播放', type: propertyType.Boolean, default: false, isProperty: true},
+    { name: 'loop',showName:'循环播放', type: propertyType.Boolean, default: false, isProperty: true},
     { name: 'vertical', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'sliderScale', type: propertyType.Number, default: 1, isProperty: true},
     { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true}
