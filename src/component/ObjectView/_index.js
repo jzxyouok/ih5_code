@@ -11,6 +11,7 @@ import Resource from './Resource';
 import Animation from './Animation';
 
 import WidgetActions from '../../actions/WidgetActions';
+import WidgetStore from '../../stores/WidgetStore';
 
 class ObjectView extends React.Component {
     constructor (props) {
@@ -18,20 +19,37 @@ class ObjectView extends React.Component {
         this.state = {
             whichContent : 0,
             whichContentData : ["对象树","资源"],
-            width : null
+            width : null,
+            parentID : null,
+            parentData : null
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
+        this.onStatusChange = this.onStatusChange.bind(this);
     }
 
     componentDidMount() {
         this.dragLeftBtn();
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
+        this.unsubscribe();
+    }
 
+    onStatusChange(widget) {
+        //获取选中图层的父级id
+        if(widget.selectWidget){
+            if(widget.selectWidget.parent){
+                this.setState({
+                    parentID : widget.selectWidget.parent.key,
+                    parentData : widget.selectWidget.parent
+                });
+            }
+        }
     }
 
     toggleBtn(i){
@@ -46,6 +64,7 @@ class ObjectView extends React.Component {
 
     delete(){
         WidgetActions['removeWidget']();
+        this.refs.ObjectTree.chooseBtn(this.state.parentID, this.state.parentData);
     }
 
     dragLeftBtn(){
@@ -74,7 +93,7 @@ class ObjectView extends React.Component {
         let content;
         switch (this.state.whichContent){
             case 0 :
-                content = <ObjectTree width = { this.state.width } />;
+                content = <ObjectTree width = { this.state.width } ref="ObjectTree" />;
                 break;
             case 1 :
                 content = <Resource />;
@@ -114,10 +133,10 @@ class ObjectView extends React.Component {
                         // not-allowed 为不可点击
                     }
                     <button className="btn btn-clear lock-btn not-allowed" title="锁住" />
-                    <button className="btn btn-clear folder-btn" title="文件夹"  />
+                    <button className="btn btn-clear folder-btn" title="文件夹"  onClick={ this.create.bind(this,"folder",null)}  />
                     <button className="btn btn-clear container-btn" title="容器" onClick={ this.create.bind(this,"container",null)} />
                     <button className="btn btn-clear event-btn" title="事件" />
-                    <button className="btn btn-clear new-btn" title="新建" />
+                    <button className="btn btn-clear new-btn" title="新建"  onClick={ this.create.bind(this,"page",null)} />
                     <button className="btn btn-clear delete-btn" title="删除" onClick={ this.delete } />
                 </div>
 

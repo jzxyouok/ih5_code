@@ -11,7 +11,7 @@ class TimelineTrack extends React.Component {
 	}
 
 	render() {
-		console.log('props', this.props)
+		//console.log('props', this.props)
 		//return <li></li>;
 		let track = this.props.refTrack;
 		return (

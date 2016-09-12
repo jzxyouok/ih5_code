@@ -19,7 +19,7 @@ class ObjectTree extends React.Component {
             isLoadTree : true,
             selectedLayer : -1,
             selectWidget : null,
-            widgetTreeChildren :null
+            //widgetTreeChildren :null
         };
         this.chooseBtn = this.chooseBtn.bind(this);
         this.openBtn = this.openBtn.bind(this);
@@ -27,6 +27,19 @@ class ObjectTree extends React.Component {
         this.onStatusChange = this.onStatusChange.bind(this);
         this.addOpenId = this.addOpenId.bind(this);
         this.showHideBtn = this.showHideBtn.bind(this);
+        //拖动对象的方法
+        this.itemDragStart = this.itemDragStart.bind(this);
+        this.itemDragEnd = this.itemDragEnd.bind(this);
+        this.itemDragOver = this.itemDragOver.bind(this);
+        //拖动时显示的tip
+        this.dragWithTip = this.dragWithTip.bind(this);
+        this.initialDragTip = this.initialDragTip.bind(this);
+        this.destroyDragTip = this.destroyDragTip.bind(this);
+        //有关拖动的相关参数
+        this.placeholder = document.createElement("div");
+        this.placeholder.className = 'placeholder';
+        this.dragTip = document.createElement('div');
+        this.dragTip.className = 'dragTip';
     }
 
     componentDidMount() {
@@ -89,7 +102,7 @@ class ObjectTree extends React.Component {
 
     addOpenId(){
         let data = this.state.widgetTree;
-        let data2 = null;
+        //let data2 = null;
         let fuc = (nid)=>{
             let array = this.state.openData;
             let index = array.indexOf(nid);
@@ -102,13 +115,13 @@ class ObjectTree extends React.Component {
         };
         if(data){
             fuc(data.tree.key);
-            data2 = data.tree.children.concat();
-            if(data2){
-                data2.reverse();
-                this.setState({
-                    widgetTreeChildren : data2
-                });
-            }
+            //data2 = data.tree.children.concat();
+            //if(data2){
+            //    data2.reverse();
+            //    this.setState({
+            //        widgetTreeChildren : data2
+            //    });
+            //}
         }
 
         if(this.state.selectWidget){
@@ -198,19 +211,77 @@ class ObjectTree extends React.Component {
         WidgetActions['render']();
     }
 
+    dragWithTip(x, y, isShow) {
+        this.dragTip.style.top = y+15+'px';
+        this.dragTip.style.left = x+10+'px';
+        isShow?this.dragTip.style.display='block':this.dragTip.style.display='none';
+    }
+
+    initialDragTip(content, isShow){
+        this.dragTip.innerHTML = content;
+        document.getElementById('iH5-App').appendChild(this.dragTip);
+        isShow?this.dragTip.style.display='block':this.dragTip.style.display='none';
+    }
+
+    destroyDragTip(){
+        this.dragTip.innerHTML = '';
+        this.dragTip.style.display = 'none';
+        this.dragTip.parentNode.removeChild(this.dragTip);
+    }
+
+    itemDragStart(nid, data, e){
+        this.initialDragTip('拖拽对象到此', false);
+        //拖动同时把item设为被选中
+        this.chooseBtn(nid, data);
+        this.dragged = e.currentTarget;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.dragged);
+    }
+
+    itemDragEnd(e) {
+        this.destroyDragTip();
+        this.dragged.style.display = 'block';
+        this.dragged.parentNode.removeChild(this.placeholder);
+        // update state
+        let from = Number(this.dragged.dataset.keyid);
+        let to = Number(this.over.dataset.keyid);
+        if (from != to) {
+            WidgetActions['reorderWidget'](from-to>0?-(from-to):-(from-(--to)));
+        }
+    }
+
+    itemDragOver(e) {
+        e.preventDefault();
+        this.dragWithTip(e.clientX, e.clientY, true);
+        this.dragged.style.display = "none";
+        if(e.target.className === 'placeholder') return;
+        //递归找到并获取名字叫item的div
+        let findItemDiv = (target,cName) => {
+            if(target.className === cName) {
+                return target;
+            }
+            return findItemDiv(target.parentNode, cName);
+        };
+        this.over = findItemDiv(e.target, 'item');
+        this.over.parentNode.insertBefore(this.placeholder, this.over);
+    }
+
     render() {
         //console.log(this.state.widgetTree);
         let objectData = this.state.widgetTree;
         let num = 0;
 
         let btn = (show,data)=>{
-            //0图层及图层内的所有内容不可看，1可在舞台看见，-1指的是整个舞台，必是可见的
+            //0图层及图层内的所有内容不可看，1可在舞台看见，-1指的是整个舞台，必是可见的, -2是没有可见隐藏这个属性
             if(show === 0 ){
                 return <div className="btn f--hcc hide-btn"
                             onClick={ this.showHideBtn.bind(this,data,true) }><span /></div>;
             }
             else if(show === -1){
                 return <div className="btn f--hcc show-btn"><span /></div>;
+            }
+            else if(show === -2){
+                return <div className="btn f--hcc none-btn"><span/></div>;
             }
             else{
                 return <div className="btn f--hcc show-btn"
@@ -248,15 +319,24 @@ class ObjectTree extends React.Component {
                     pic = v1.icon;
                 }
             });
-            return  <div className="item" key={i}>
+            return  <div className="item"
+                         key={i}
+                         data-keyId={i}
+                         draggable='true'
+                         onDragStart={this.itemDragStart.bind(this,v.key, v)}
+                         onDragEnd={this.itemDragEnd}>
                         <div className={$class("item-title f--h f--hlc",{"active": v.key === this.state.nid})}
                              onClick={this.chooseBtn.bind(this,v.key, v)}
                              style={{ paddingLeft: num === 0 ? "28px" :num *20 + 22 +"px", width : this.props.width - 36  }}>
 
                             {
-                                v.props.visible === false
-                                    ? btn(0, v)
-                                    : btn(1, v)
+                                v.className =="track" || v.className=="effect"
+                                || v.className=="easing"||v.className=="world"
+                                ||v.className=="body"||v.className=="audio"
+                                    ? btn(-2, v)
+                                    : v.props.visible === false
+                                        ? btn(0, v)
+                                        : btn(1, v)
                             }
 
                             {
@@ -305,13 +385,17 @@ class ObjectTree extends React.Component {
                             <p>{ objectData.name }</p>
                         </div>
 
-                        <div className={$class("stage-content", {"hidden":  this.state.openData.indexOf(objectData.tree.key) < 0 })} >
+                        <div className={$class("stage-content", {"hidden":  this.state.openData.indexOf(objectData.tree.key) < 0 })}
+                             onDragOver={this.itemDragOver}>
                             {
-                                this.state.widgetTreeChildren
-                                    ?  this.state.widgetTreeChildren.length === 0
-                                            ? null
-                                            : stageContent(this.state.widgetTreeChildren)
-                                    : null
+                                objectData.tree.children.length === 0
+                                ? null
+                                : stageContent(objectData.tree.children)
+                                //this.state.widgetTreeChildren
+                                //    ?  this.state.widgetTreeChildren.length === 0
+                                //            ? null
+                                //            : stageContent(this.state.widgetTreeChildren)
+                                //    : null
                             }
                         </div>
                     </div>

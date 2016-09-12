@@ -52,8 +52,6 @@ class NavBar extends React.Component {
         }
         this.newWork();
         this.workid = null;
-
-        this.zoomInputFocus = false;
     }
 
     newWork() {
