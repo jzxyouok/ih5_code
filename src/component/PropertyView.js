@@ -164,10 +164,14 @@ class PropertyView extends React.Component {
             if (groups[groupName] === undefined)
                 groups[groupName] = [];
 
-            let hasTwin = ['x','y','w','h','width', 'height', 'positionX', 'positionY','imageTagLeft','imageTagRight'].indexOf(item.name) >= 0;
-            let hasPx=['x','y','w','h'].indexOf(item.name)>=0; //判断input中是否添加px单位
-            let hasLock=['y'].indexOf(item.name)>=0; //判断是否在元素前添加锁图标
-            let hasDegree =['rotation'].indexOf(item.imgClassName)>=0; //判断input中是否添加°单位
+            let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag'].indexOf(item.showName) >= 0;//左右结构显示
+
+            let hasPx=['x','y','w','h'].indexOf(item.showName)>=0; //判断input中是否添加px单位
+
+            let hasLock=['y'].indexOf(item.showName)>=0; //判断是否在元素前添加锁图标
+
+            let hasDegree =['rotationImgTag'].indexOf(item.imgClassName)>=0; //判断input中是否添加°单位
+
 
             let htmlStr;
 
@@ -175,9 +179,9 @@ class PropertyView extends React.Component {
                 htmlStr=<label><div className={item.imgClassName}></div></label>
             }else{
                 if(hasLock){
-                    htmlStr=<label><div className='ant-lock'  ></div>{item.name}</label>
+                    htmlStr=<label><div className='ant-lock'  ></div>{item.showName}</label>
                 }else {
-                    htmlStr =<label>{item.name}</label>
+                    htmlStr =<label>{item.showName}</label>
                 }
             }
 
@@ -187,10 +191,7 @@ class PropertyView extends React.Component {
                     className={cls('f--hlc','ant-row','ant-form-item',
                         {'ant-form-half': hasTwin}, {'ant-form-full': !hasTwin})}>
 
-                    <div className='ant-col-l ant-form-item-label'>
-
-                        { htmlStr  }
-                    </div>
+                    <div className='ant-col-l ant-form-item-label'>{htmlStr}</div>
 
                     <div className='ant-col-r'>
                         <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
@@ -201,6 +202,7 @@ class PropertyView extends React.Component {
             );
 
         };
+        
 
         const result = [];
 

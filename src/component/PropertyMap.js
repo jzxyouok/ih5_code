@@ -19,10 +19,10 @@ propertyMap['widget'] = [
 
 propertyMap['root'] = [
     ...propertyMap['widget'],
-    { name: 'w', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
-    { name: 'h', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: '适配', type: propertyType.Select, default: '满屏',options:['适中','居上','居中','居下','满屏'], group:'tools', isProperty: true},
-    { name: '剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
+    { name: 'width',showName:'w', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
+    { name: 'height', showName:'h',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'scaleType',showName:'适配', type: propertyType.Select, default: '满屏',options:['适中','居上','居中','居下','满屏'], group:'tools', isProperty: true},
+    { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
 
     { name: 'init', isEvent: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
@@ -51,13 +51,13 @@ propertyMap['wechat'] = [
 
 propertyMap['box'] = [
     ...propertyMap['widget'],
-    { name: 'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
-    { name: 'y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'positionY',showName:'y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleX', type: propertyType.Number, default: 1, group:'position', isProperty: false },
     { name: 'scaleY', type: propertyType.Number, default: 1, group:'position', isProperty: false },
-    { name: '不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
-    { name: 'rotation', type: propertyType.Integer, default: 0, group:'display', isProperty: false },
-    { name: '初始可见', type: propertyType.Boolean, default: true, group:'display', isProperty: true },
+    { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
+    //{ name: 'rotation', type: propertyType.Integer, default: 0, group:'display', isProperty: true },
+    { name: 'visible',showName:'初始可见', type: propertyType.Boolean, default: true, group:'display', isProperty: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchUp', isEvent: true, info:'{globalX, globalY}'},
@@ -73,10 +73,12 @@ propertyMap['sprite'] = [
     ...propertyMap['box'],
     { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty: false },
     { name: 'originY', type: propertyType.Number, default: 0, group:'position', isProperty: false },
-    { name: 'w', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'h', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
-    { name: 'imageTagLeft', type: propertyType.Select,imgClassName:'originPos',default: '上',options:['上','左','右','中心','左上','左下','右上','右下'], group:'position',isProperty: true },
-    { name: 'imageTagRight', type: propertyType.Integer,imgClassName:'rotation',default: 0, group:'position',isProperty: true }
+    { name: 'width', showName:'w',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'height',showName:'h', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    //替代originX和originY
+    { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '上',options:['上','左','右','中心','左上','左下','右上','右下'], group:'position',isProperty: true },
+    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'display', isProperty: true },
+    //{ name: 'imageTagRight', type: propertyType.Integer,imgClassName:'rotation',default: 0, group:'position',isProperty: true }
 ];
 
 propertyMap['text'] = [
