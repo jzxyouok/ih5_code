@@ -21,7 +21,7 @@ propertyMap['root'] = [
     ...propertyMap['widget'],
     { name: 'width',showName:'w', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'h',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    //需要功能改造
+
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default: '满屏',options:['适中','居上','居中','居下','满屏'], group:'tools', isProperty: true},
     { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
 
@@ -76,7 +76,7 @@ propertyMap['sprite'] = [
     { name: 'width', showName:'w',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'height',showName:'h',showLock:true ,type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '上',options:['上','左','右','中心','左上','左下','右上','右下'], group:'position',isProperty: true },
-    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
+    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true }
 
 ];
 
@@ -120,15 +120,18 @@ propertyMap['bitmaptext'] = [
 
 propertyMap['graphics'] = [
     ...propertyMap['box'],
-    { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty: true },
-    { name: 'originY', type: propertyType.Number, default: 0, group:'position', isProperty: true },
-    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
-    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
-    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
-    { name: 'fillColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
-    { name: 'lineColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
-    { name: 'lineWidth', type: propertyType.Integer, default: 1, group:'position', isProperty: true }
+    { name: 'width', showName:'w',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'height',showName:'h',showLock:true ,type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty:false },
+    { name: 'originY', type: propertyType.Number, default: 0, group:'position', isProperty: false },
+    { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '上',options:['上','左','右','中心','左上','左下','右上','右下'], group:'position',isProperty: true },
+    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
+    { name: 'shapeWidth',showName:'shapeW', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', showName:'shapeH',type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+
+    { name: 'fillColor',showName:'填充颜色', type: propertyType.Color, default: '', group:'display', isProperty: true },
+    { name: 'lineColor',showName:'描边颜色', type: propertyType.Color, default: '', group:'display', isProperty: true },
+    { name: 'lineWidth',showName:'描边宽度', type: propertyType.Integer, default: 1, group:'display', isProperty: true }
 ];
 
 propertyMap['rect'] = [

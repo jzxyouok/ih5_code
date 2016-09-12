@@ -48,12 +48,12 @@
 		}
 	    >.ant-form-half:nth-child(odd) ,>.ant-form-full{
 		  .ant-form-item-label label{
-			width: 61px;
+			width: 60px;
 		  }
 		}
 	  >.ant-form-half:nth-child(even){
 		.ant-form-item-label label{
-		  width: 50px;
+		  width: 60px;
 		}
 	  }
 	}
@@ -80,6 +80,7 @@
 
 	.ant-form-item-label label {
 		color: #b5b5b5;
+	  text-overflow:inherit !important;
 	    .originPos{
 		  width: 20px;
 		  height: 20px;
@@ -103,7 +104,7 @@
 		position: absolute;
 		top: -1px;
 		background: url("./img/ico-sprite2.svg") no-repeat -100px 0;
-		left: 8px;
+		left: 12px;
 		cursor: pointer;
 		&:hover{
 		  background-position: -100px -20px;
@@ -266,6 +267,15 @@
 
 	// slide
 	.ant-form-item-control {
+	  .color-input{
+		width: 125px !important;
+		float: left;
+
+	  }
+	  .visible-switch{
+		float: left;
+		margin-left: 20px;
+	  }
 	   .slider-input{
 		 border: 1px solid #444;
 		 background: none;
