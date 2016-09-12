@@ -21,6 +21,7 @@ propertyMap['root'] = [
     ...propertyMap['widget'],
     { name: 'width',showName:'w', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'h',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    //需要功能改造
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default: '满屏',options:['适中','居上','居中','居下','满屏'], group:'tools', isProperty: true},
     { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
 
