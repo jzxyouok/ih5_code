@@ -16,53 +16,6 @@ import {propertyType, propertyMap} from './PropertyMap';
 
 require("jscolor/jscolor");
 
-//getInputBox作为组件中的一部分,为什么不放组件中?
-//获取封装的form组件
-function getInputBox(type, defaultProp) {
-    switch (type) {
-        case propertyType.Integer:
-            return <InputNumber {...defaultProp} />;
-
-        case propertyType.Number:
-            return <InputNumber step={0.1} {...defaultProp} />;
-
-        case propertyType.Percentage:
-            return  <div>
-                <InputNumber step={0.1} max={100} min={0} defaultValue={100}  className='slider-input' />
-                <Slider max={1} step={0.001} {...defaultProp}  className='slider-per' />
-            </div>;
-
-        case propertyType.Text:
-            return <Input type="textarea" {...defaultProp} />;
-
-        case propertyType.Color:
-
-            return <div>
-                <Input ref={(input) => {
-                if (input) {
-                    var dom = ReactDOM.findDOMNode(input).firstChild;
-                    if (!dom.jscolor) {
-                        dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
-                        dom.jscolor.onFineChange = defaultProp.onChange;
-                    }
-                }
-            }} {...defaultProp}   className='color-input' />
-                <Switch    defaultChecked={true}     className='visible-switch ant-switch-small' />
-            </div>;
-
-        case propertyType.Boolean:
-
-            return <Switch   {...defaultProp} />;
-
-        case propertyType.Select:
-            return  <Select   {...defaultProp}   >
-                {defaultProp.options}
-            </Select>;
-
-        default:
-            return <Input {...defaultProp} />;
-    }
-}
 
 class PropertyView extends React.Component {
     constructor(props) {
@@ -71,6 +24,56 @@ class PropertyView extends React.Component {
         this.selectNode = null;
         this.currentPage = null;
     }
+
+
+//获取封装的form组件
+     getInputBox(type, defaultProp) {
+        switch (type) {
+            case propertyType.Integer:
+                return <InputNumber {...defaultProp} />;
+
+            case propertyType.Number:
+                return <InputNumber step={0.1} {...defaultProp} />;
+
+            case propertyType.Percentage:
+                return  <div>
+                    <InputNumber step={0.1} max={100} min={0} defaultValue={100}    className='slider-input' />
+                    <Slider max={1} step={0.001} {...defaultProp}    className='slider-per' />
+                </div>;
+
+            case propertyType.Text:
+                return <Input type="textarea" {...defaultProp} />;
+
+            case propertyType.Color:
+
+                return <div>
+                    <Input ref={(input) => {
+                if (input) {
+                    var dom = ReactDOM.findDOMNode(input).firstChild;
+                    if (!dom.jscolor) {
+                        dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                        dom.jscolor.onFineChange = defaultProp.onChange;
+                    }
+                }
+            }} {...defaultProp}   className='color-input' />
+                    <Switch    defaultChecked={true}     className='visible-switch ant-switch-small' />
+                </div>;
+
+            case propertyType.Boolean:
+
+                return <Switch   {...defaultProp} />;
+
+            case propertyType.Select:
+                return  <Select   {...defaultProp}   >
+                    {defaultProp.options}
+                </Select>;
+
+            default:
+                return <Input {...defaultProp} />;
+        }
+    }
+
+
 
     onChangeProp(prop, value) {
         let v;
@@ -205,7 +208,7 @@ class PropertyView extends React.Component {
 
                     <div className='ant-col-r'>
                         <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
-                        {getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
+                        {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
 
                         </div>
                     </div>
@@ -252,7 +255,7 @@ class PropertyView extends React.Component {
             let className = selectNode.className;
             if (className.charAt(0) == '_')
                 className = 'class';
-            propertyMap[className].map(item => {
+             propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
                     if (obj[item.name] === null) {
                         delete(selectNode.props[item.name]);

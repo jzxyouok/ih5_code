@@ -32,6 +32,10 @@
 		overflow-y: auto;
 	}
 
+   .ant-form-full {
+	 .ant-input-number.ant-input-number-sm{width: 100%;}
+   }
+
 	.ant-form-horizontal {
 		padding:10px 10px 5px 5px;
 		border-bottom: 1px solid #161616;
@@ -121,6 +125,13 @@
 
 
 	// switch
+   .ant-switch{
+	 border: 1px solid #151515;
+	 background-color: #151515;
+   }
+  .ant-switch:after{
+	background-color: #858585;
+  }
 	.ant-switch-checked {
 		border-color: #ffa800;
 		background-color: #ffa800; 
@@ -261,7 +272,7 @@
 		border-radius: 2px;
 		color: #858585;
 		border: 1px solid #444;
-		background: none;
+		background-color:#353535;
 	  }
 
 
@@ -306,7 +317,7 @@
 
 	   }
 	  .slider-per{
-		width: 46%;
+		width: 53%;
 		float: left;
 	  }
 		.ant-slider {
