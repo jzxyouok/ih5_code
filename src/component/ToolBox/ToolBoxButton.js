@@ -1,4 +1,5 @@
 import React,{PropTypes, Component} from 'react';
+import { Modal } from 'antd';
 import JSZip from 'jszip';
 import cls from 'classnames';
 import $ from 'jquery';
@@ -11,11 +12,26 @@ class ToolBoxButton extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            selected: isActiveButton(this.props.cid)
+            selected: isActiveButton(this.props.cid),
+            modal: {
+                isVisible: false,
+                value: ''
+            },
+            drawRectFlag: false,
+            propsParam: {
+                positionX: 0,
+                positionY: 0,
+                shapeWidth: 0,
+                shapeHeight: 0
+            }
         };
         this.self = this;
 
         this.onDrawRect = this.onDrawRect.bind(this);
+        this.onModalOK = this.onModalOK.bind(this);
+        this.onModalCancel = this.onModalCancel.bind(this);
+        this.onModalTextAreaChange = this.onModalTextAreaChange.bind(this);
+        this.onModalClear = this.onModalClear.bind(this);
     }
 
     componentWillMount() {
@@ -94,20 +110,33 @@ class ToolBoxButton extends Component {
                 }
             });
         } else {
-            if (this.props.className === 'rect') {
-                this.onDrawRect(false).then(data => {
-                    this.props.param.positionX = data.positionX;
-                    this.props.param.positionY = data.positionY;
-                    this.props.param.shapeWidth = parseInt(data.shapeWidth);
-                    this.props.param.shapeHeight = parseInt(data.shapeHeight);
-                    WidgetActions['addWidget'](this.props.className, this.props.param);
-                });
-            } else if (this.props.className === 'text'|| this.props.className === 'bitmaptext'){
-                this.onDrawRect(true).then(data => {
-                    this.props.param.positionX = data.positionX;
-                    this.props.param.positionY = data.positionY;
-                    this.props.param.text = data.text;
-                    WidgetActions['addWidget'](this.props.className, this.props.param);
+            if(this.props.className === 'rect'||this.props.className === 'text'|| this.props.className === 'bitmaptext'){
+                this.onDrawRect().then(data => {
+                    if(this.props.className === 'rect') {
+                        document.body.removeChild(document.getElementById('drawRect'));
+                        this.props.param.positionX = data.positionX;
+                        this.props.param.positionY = data.positionY;
+                        this.props.param.shapeWidth = parseInt(data.shapeWidth);
+                        this.props.param.shapeHeight = parseInt(data.shapeHeight);
+                        this.setState(
+                            {drawRectFlag:false}
+                        );
+                        WidgetActions['addWidget'](this.props.className, this.props.param);
+                    } else {
+                        //弹窗事件
+                        this.setState({
+                            propsParam: {
+                                positionX: data.positionX,
+                                positionY: data.positionY,
+                                shapeWidth: parseInt(data.shapeWidth),
+                                shapeHeight: parseInt(data.shapeHeight)
+                            },
+                            modal: {
+                                isVisible: true,
+                                value: ''
+                            }
+                        });
+                    }
                 });
             } else {
                 WidgetActions['addWidget'](this.props.className, this.props.param);
@@ -115,16 +144,24 @@ class ToolBoxButton extends Component {
         }
     }
 
-    onDrawRect(isText) {
+    onRightClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
+    }
+
+    // 画图的实现
+    onDrawRect() {
         let startX = 0, startY = 0;
         let rectLeft = "0px", rectTop = "0px", rectHeight = "0px", rectWidth = "0px";
-        let flag = false;
         var def = $.Deferred();
 
         var mouseDown = e => {
             e.preventDefault();
             e.stopPropagation();
-            flag = true;
+            this.setState(
+                {drawRectFlag:true}
+            );
             //创建临时的方框div
             var evt = window.event || e;
             var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
@@ -137,7 +174,9 @@ class ToolBoxButton extends Component {
             div.style.position = "absolute";
             div.style.left = startX + "px";
             div.style.top = startY + "px";
-            div.style.border = '1px dotted white';
+            div.style.backgroundColor = '#a0a0a0';
+            div.style.opacity = '0.2';
+            div.style.border = '1px solid #000';
             document.body.appendChild(div);
         };
 
@@ -145,27 +184,21 @@ class ToolBoxButton extends Component {
             e.preventDefault();
             e.stopPropagation();
             //画图结束
-            var drawRectDiv = document.getElementById('drawRect');
-            var result;
-            if(isText) {
-                //弹窗事件
-                result = {text:popUpEdit()};
-            } else {
-                result = {shapeWidth:rectWidth,shapeHeight:rectHeight};
-            }
-            var canvasRect = document.getElementById('canvas-dom').getBoundingClientRect();
-            result.positionX = parseInt(rectLeft) - canvasRect.left;
-            result.positionY = parseInt(rectTop) - canvasRect.top;
-            flag = false;
-            document.body.removeChild(drawRectDiv);
             removeDrawEventListner();
+            var canvasRect = document.getElementById('canvas-dom').getBoundingClientRect();
+            var result = {
+                shapeWidth: rectWidth,
+                shapeHeight: rectHeight,
+                positionX: parseInt(rectLeft) - canvasRect.left,
+                positionY: parseInt(rectTop) - canvasRect.top
+            };
             def.resolve(result);
         };
 
         var mouseMove = e => {
             e.preventDefault();
             e.stopPropagation();
-            if(flag){
+            if(this.state.drawRectFlag){
                 //画图跟踪
                 var evt = window.event || e;
                 var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
@@ -198,20 +231,50 @@ class ToolBoxButton extends Component {
             document.body.removeEventListener('mousemove', mouseMove);
         };
 
-        var popUpEdit = () => {
-            //弹窗后填写的结果，需要回调
-            return 'testing';
-        };
-
         addDrawEventListener();
 
         return def.promise();
     }
 
-    onRightClick(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
+    // modal的一些操作
+    onModalOK() {
+        this.props.param.positionX = this.state.propsParam.positionX;
+        this.props.param.positionY = this.state.propsParam.positionY;
+        this.props.param.shapeWidth = this.state.propsParam.shapeWidth;
+        this.props.param.shapeHeight = this.state.propsParam.shapeHeight;
+        this.props.param.text = this.state.modal.value;
+        WidgetActions['addWidget'](this.props.className, this.props.param);
+        this.onModalClear();
+    }
+
+    onModalCancel() {
+        this.onModalClear();
+    }
+
+    onModalTextAreaChange(event) {
+        this.setState({
+            modal: {
+                isVisible: true,
+                value: event.target.value
+            }
+        })
+    }
+
+    onModalClear(){
+        document.body.removeChild(document.getElementById('drawRect'));
+        this.setState({
+            drawRectFlag: true,
+            modal: {
+                isVisible: false,
+                value: ''
+            },
+            propsParam: {
+                positionX: 0,
+                positionY: 0,
+                shapeWidth: 0,
+                shapeHeight: 0
+            }
+        });
     }
 
     render() {
@@ -225,6 +288,16 @@ class ToolBoxButton extends Component {
                 onContextMenu={this.onRightClick.bind(this)}>
                 <img src={this.props.icon} />
                 <span className='ToolBoxButtonName'>{this.props.name}</span>
+                <Modal  ref="modal"
+                        visible={this.state.modal.isVisible}
+                        maskClosable={false}
+                        closable={false}
+                        wrapClassName="vertical-center-modal"
+                        onOk={this.onModalOK.bind(this)}
+                        onCancel={this.onModalCancel.bind(this)}>
+                    <textarea value={this.state.modal.value} onChange={this.onModalTextAreaChange.bind(this)}>
+                    </textarea>
+                </Modal>
             </button>
         );
     }
