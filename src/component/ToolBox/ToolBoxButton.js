@@ -96,12 +96,16 @@ class ToolBoxButton extends Component {
         } else {
             if (this.props.className === 'rect') {
                 this.onDrawRect(false).then(data => {
+                    this.props.param.positionX = data.positionX;
+                    this.props.param.positionY = data.positionY;
                     this.props.param.shapeWidth = parseInt(data.shapeWidth);
                     this.props.param.shapeHeight = parseInt(data.shapeHeight);
                     WidgetActions['addWidget'](this.props.className, this.props.param);
                 });
             } else if (this.props.className === 'text'|| this.props.className === 'bitmaptext'){
                 this.onDrawRect(true).then(data => {
+                    this.props.param.positionX = data.positionX;
+                    this.props.param.positionY = data.positionY;
                     this.props.param.text = data.text;
                     WidgetActions['addWidget'](this.props.className, this.props.param);
                 });
@@ -149,6 +153,9 @@ class ToolBoxButton extends Component {
             } else {
                 result = {shapeWidth:rectWidth,shapeHeight:rectHeight};
             }
+            var canvasRect = document.getElementById('canvas-dom').getBoundingClientRect();
+            result.positionX = parseInt(rectLeft) - canvasRect.left;
+            result.positionY = parseInt(rectTop) - canvasRect.top;
             flag = false;
             document.body.removeChild(drawRectDiv);
             removeDrawEventListner();
