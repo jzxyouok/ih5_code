@@ -218,8 +218,27 @@ class VxRcSlider extends RcSlider {
         if (this.props.isCurrent){
             style['borderColor'] = '#CCC';
         }
-		
-		let track = this.props.refTrack;
+        //console.log(this.props.refTrack);
+
+        let track = this.props.refTrack;
+        let trackClass = track.parent.className;
+
+        if(trackClass == "image" || trackClass == "imagelist"){
+            style['backgroundColor'] = '#386d6a';
+        }
+        else if(trackClass == "text" || trackClass == "bitmaptext"){
+            style['backgroundColor'] = '#937c3f';
+        }
+        else if(trackClass == "rect" || trackClass == "ellipse" || trackClass == "path"){
+            style['backgroundColor'] = '#9c5454';
+        }
+        else if(trackClass == "button" || trackClass == "transbutton"){
+            style['backgroundColor'] = '#405b83';
+        }
+        else {
+            style['backgroundColor'] = '#764a8f';
+        }
+
         //console.log(track);
 		return (
 			<li className={

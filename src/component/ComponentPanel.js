@@ -30,7 +30,17 @@ let slidetimerIcon = require('../images/slidetimerNormal.png');
 let bitmaptextIcon = require('../images/bitmaptextNormal.png');
 let imageIcon = require('../images/imageNormal.png');
 let igroupIcon = require('../images/igroupNormal.png');
+
 let folderIcon = require('../images/folder.svg');
+let buttonIcon = require('../images/base/button.svg');
+let transbuttonIcon = require('../images/base/transButton.svg');
+let qrcodeIcon = require('../images/base/qrCode.svg');
+let fileIcon = require('../images/base/file.svg');
+let counterIcon = require('../images/base/counter.svg');
+let databaseIcon = require('../images/base/database.svg');
+let remotedeviceIcon = require('../images/base/remoteDevice.svg');
+let pcdeviceIcon = require('../images/base/pcDevice.svg');
+let twodvarIcon = require('../images/base/twoDvar.svg');
 
 function callback() {
     //console.log(key);
@@ -63,7 +73,17 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:canvasIcon, className:'canvas', param: {'width': 300, 'height': 300}},
                 {cid:this.cid++,icon:wechatIcon, className:'wechat'},
                 {cid:this.cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}},
-                {cid:this.cid++,icon:folderIcon, className:'folder'}]
+                {cid:this.cid++,icon:folderIcon, className:'folder'},
+
+                {cid:this.cid++,icon:buttonIcon, className:'button'},
+                {cid:this.cid++,icon:transbuttonIcon, className:'transbutton'},
+                {cid:this.cid++,icon:qrcodeIcon, className:'qrcode'},
+                {cid:this.cid++,icon:fileIcon, className:'file'},
+                {cid:this.cid++,icon:counterIcon, className:'counter'},
+                {cid:this.cid++,icon:databaseIcon, className:'database'},
+                {cid:this.cid++,icon:remotedeviceIcon, className:'remotedevice'},
+                {cid:this.cid++,icon:pcdeviceIcon, className:'pcdevice'},
+                {cid:this.cid++,icon:twodvarIcon, className:'twodvar'}]
             }
         ];
     }
