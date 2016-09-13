@@ -34,6 +34,8 @@ let databaseIcon = img('database.svg');
 let remotedeviceIcon = img('remoteDevice.svg');
 let pcdeviceIcon = img('pcDevice.svg');
 let twodvarIcon = img('twoDvar.svg');
+let composingcontainerIcon = img('composingContainer.svg');
+let cominterfaceIcon = img('comInterface.svg');
 
 var cid = 1;
 var TOOL_ID = {
@@ -66,7 +68,9 @@ var TOOL_ID = {
     DATABASE: 26,
     REMOTEDEVICE: 27,
     PCDEVICE: 28,
-    TWODVAR: 29
+    TWODVAR: 29,
+    COMPOSINGCONTAINER:30,
+    COMINTERFACE:31,
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -136,6 +140,14 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.CONTAINER,name:'容器',icon:containerIcon, className:'container'}
         ]
     },{
+        name:'排版容器',
+        key:12,
+        gid:12,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.COMPOSINGCONTAINER,name:'排版容器',icon:composingcontainerIcon, className:'composingcontainer'}
+        ]
+    },{
         name:'时间轴',
         key:14,
         gid:14,
@@ -168,6 +180,13 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.TWODVAR, name:'二维变量', icon: twodvarIcon, className:'twodvar'}]
+    },{
+        name:'通信接口',
+        key:19,
+        gid:19,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.COMINTERFACE, name:'通信接口', icon: cominterfaceIcon, className:'cominterface'}]
     },{
         name:'设备',
         key:22,

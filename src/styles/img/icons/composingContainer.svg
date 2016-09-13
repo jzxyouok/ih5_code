@@ -1,0 +1,16 @@
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <title>排版容器</title>
+  <g>
+    <path class="cls-1" d="M1.62,0.89A1.12,1.12,0,0,0,.5,2V16a1.09,1.09,0,0,0,1.09,1.09H16.41A1.09,1.09,0,0,0,17.5,16V2A1.12,1.12,0,0,0,16.38.89H1.62Zm14.68,15H1.7V3.75H16.3V15.91Z"/>
+    <rect class="cls-1" x="7.38" y="9.1" width="7.69" height="5.42"/>
+    <rect class="cls-1" x="7.38" y="5.14" width="7.69" height="2.72"/>
+    <rect class="cls-1" x="2.94" y="5.14" width="3.2" height="9.38"/>
+  </g>
+</svg>

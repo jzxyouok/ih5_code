@@ -46,7 +46,7 @@ class Animation extends React.Component {
                 break;
             case "page" :
                 btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                           , {"name":"动效","class":"dx-btn", className:'effect'}
+                           // , {"name":"动效","class":"dx-btn", className:'effect'}
                            , {"name":"缓动","class":"easing-btn", className:'easing'}];
                 break;
             case "image" :
@@ -57,7 +57,7 @@ class Animation extends React.Component {
             case "ellipse" :
             case "path" :
                 btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                    , {"name":"动效","class":"dx-btn", className:'effect'}
+                    // , {"name":"动效","class":"dx-btn", className:'effect'}
                     , {"name":"缓动","class":"easing-btn", className:'easing'}
                     , {"name":"物理世界","class":"physical-btn", className:'world'}
                     , {"name":"物体","class":"object-btn", className:'body'}];

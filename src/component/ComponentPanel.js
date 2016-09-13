@@ -41,6 +41,8 @@ let databaseIcon = require('../images/base/database.svg');
 let remotedeviceIcon = require('../images/base/remoteDevice.svg');
 let pcdeviceIcon = require('../images/base/pcDevice.svg');
 let twodvarIcon = require('../images/base/twoDvar.svg');
+let composingcontainerIcon = require('../images/base/composingContainer.svg');
+let cominterfaceIcon = require('../images/base/comInterface.svg');
 
 function callback() {
     //console.log(key);
@@ -83,7 +85,9 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:databaseIcon, className:'database'},
                 {cid:this.cid++,icon:remotedeviceIcon, className:'remotedevice'},
                 {cid:this.cid++,icon:pcdeviceIcon, className:'pcdevice'},
-                {cid:this.cid++,icon:twodvarIcon, className:'twodvar'}]
+                {cid:this.cid++,icon:twodvarIcon, className:'twodvar'},
+                {cid:this.cid++,icon:composingcontainerIcon, className:'composingcontainer'},
+                {cid:this.cid++,icon:cominterfaceIcon, className:'cominterface'}]
             }
         ];
     }
@@ -136,7 +140,19 @@ class ComponentPanel extends React.Component {
                 {cid:cid++,icon:canvasIcon, className:'canvas', param: {'width': 300, 'height': 300}},
                 {cid:cid++,icon:wechatIcon, className:'wechat'},
                 {cid:cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}},
-                {cid:cid++,icon:folderIcon, className:'folder'}
+                {cid:cid++,icon:folderIcon, className:'folder'},
+
+                {cid:cid++,icon:buttonIcon, className:'button'},
+                {cid:cid++,icon:transbuttonIcon, className:'transbutton'},
+                {cid:cid++,icon:qrcodeIcon, className:'qrcode'},
+                {cid:cid++,icon:fileIcon, className:'file'},
+                {cid:cid++,icon:counterIcon, className:'counter'},
+                {cid:cid++,icon:databaseIcon, className:'database'},
+                {cid:cid++,icon:remotedeviceIcon, className:'remotedevice'},
+                {cid:cid++,icon:pcdeviceIcon, className:'pcdevice'},
+                {cid:cid++,icon:twodvarIcon, className:'twodvar'},
+                {cid:cid++,icon:composingcontainerIcon, className:'composingcontainer'},
+                {cid:cid++,icon:cominterfaceIcon, className:'cominterface'}
                 ]
             }
         ];
