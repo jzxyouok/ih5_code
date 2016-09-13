@@ -1,4 +1,4 @@
-$size: 24px;
+$size: 25px;
 
 @mixin btn() {
 	background-image: url(img/timeline-icons.svg);
@@ -42,9 +42,9 @@ $size: 24px;
 	position: absolute;
 	bottom: 0;
 	left: 37px;
+    right: 281px;
 	z-index: 9;
 	background-color: #232323;
-	width: 70%;
 	overflow: hidden;
 
 	button {
@@ -55,11 +55,12 @@ $size: 24px;
 		height: $size;
 		.timline-column-left {
 			height: $size;
-			width: 180px;
+			width: 170px;
+            min-width: 170px;
 		}
 		.timline-column-right {
 			height: $size;
-			border-left: 1px solid #151515;
+			//border-left: 1px solid #151515;
 		}
 	}
 
@@ -71,12 +72,13 @@ $size: 24px;
 		border-bottom: 1px solid #141414;
 
 		#TimelineTitle {
-			display: inline-block;
-			padding-left: 12px;
-			padding-right: 12px;
+            width: 62px;
+            min-width: 62px;
+            text-align: center;
 			color: #fff;
 			height: $height;
 			line-height: $height;
+            font-size: 12px;
 		}
 
 		#TimelineNodeDuration {
@@ -84,34 +86,31 @@ $size: 24px;
 			height: $height - 6;
 			line-height: $height - 6;
 			position: relative;
-			padding: {
-				left: 26px;
-				right: 8px;
-			}
 			background-color: #151515;
 			border-radius: 2px;
 
 			#TimelineIndicator {
 				@include btn();
-				background-position: 0px 0px;
-				position: absolute;
-				left: 0px;
-				top: -3px;
-				width: 26px;
-				height: 26px;
-				&.active {
-
-				}
+                width: 16px;
+                height: 16px;
+                margin: 0 10px 0 8px;
+                display: block;
 			}
 			input {
+                width: 62px;
 				-webkit-appearance: none;
 				background: none;
 				border: none;
 				outline: none;
-				width: 80px;
 				height: 20px;
 				line-height: 20px;
 			}
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+            }
+            input::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+            }
 		}
 
 		&.timline-row,
@@ -149,10 +148,22 @@ $size: 24px;
 
 	// 标尺栏
 	#TimelineTool {
-		border-bottom: 1px solid #151515;
+        border-bottom: 1px solid #151515;
 		#TimelinePlay {
+            position: relative;
 			display: flex;
 			justify-content: space-around;
+            //border-right: 1px solid #151515;
+
+            .line {
+                position: absolute;
+                right: 0;
+                bottom: 1px;
+                width: 1px;
+                height: 5px;
+                background: #151515;
+            }
+
 			button {
 				width: $size;
 				height: $size;
@@ -173,27 +184,76 @@ $size: 24px;
 				@include bg-btn(6);
 			}
 		}
+
 		#TimelineRuler {
+            @include flexbox;
+            @include align-items(stretch);
 			flex: 1;
-			position: relative;
-			&.timline-column-right {
-				padding-right: 20px;
-			}
+            height: 24px;
+            background: #424242;
+            position: relative;
+
+            &:after{
+                content: '';
+                width: 5px;
+                height: 24px;
+                background: #737373;
+                border-top-right-radius: 2px;
+                border-bottom-right-radius: 2px;
+            }
+
+			//&.timline-column-right {
+			//	padding-right: 20px;
+			//}
+
+            .unit-0 {
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 0;
+                font-size: 12px;
+                color: #aeaeae;
+            }
+            .unit {
+                @include flexbox;
+                @include align-items(stretch);
+                position: absolute;
+                z-index: 2;
+                margin: 0;
+                font-size: 12px;
+                color: #aeaeae;
+
+                li{
+                    @include flex(1);
+                    position: relative;
+
+                    span{
+                        position: absolute;
+                        right: -50px;
+                        width: 100px;
+                        text-align: center;
+                        display: block;
+                    }
+                }
+            }
 			.ant-slider {
+                //@include flex(1);
 				background: none;
 				border: none;
-				margin: 0 -5px;
 				height: 24px;
+                margin: 0;
+                padding: 0;
 			}
 			.ant-slider-handle {
 				width: 24px;
 				height: 24px;
-				margin-top: 0;
+				margin: 0 0 0 -12px;
 				border: none;
 				background-color: transparent;
 				@include btn();
 				@include bg(8, 0);
 				//transform: translateX(-4px);
+
 				&:active {
 					box-shadow: none;
 				}
@@ -202,19 +262,20 @@ $size: 24px;
 					height: 99999999px;
 					width: 1px;
 					background: red;
-					margin-left: 11.5px;
 					display: block;
-					margin-top: 16px;
+                    margin: 15px 0 0 11.3px;
 				}
 			}
 			.ant-slider-track {
 				background: none;
 			}
 			.ant-slider-mark {
-				background: url(img/ruler.png) repeat-x;
-				height: 10px;
-				top: 15px;
-				margin: 0 5px;
+				background: url(img/ruler.png) repeat-x bottom left;
+				height: 24px;
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 1;
 			}
 
 			#TimelineRulerNumbers {
@@ -244,12 +305,31 @@ $size: 24px;
 		height: #{24 * $num}px;
 
 		#TimlineNodeList {
-			height: #{24 * $num}px;
+			height: #{25 * $num}px;
 			display: block;
 			width: 100%;
 			overflow-y: scroll;
 			padding-right: 20px;
 			box-sizing: initial;
+
+            li{
+                border-bottom: none !important;
+
+                .timline-column-left{
+                    height: 25px;
+                    border-bottom: 1px solid #151515;
+                }
+
+                .timline-column-right {
+                    @include flexbox;
+                    @include align-items(stretch);
+
+                    &:after{
+                        @include flex(1);
+                        content: "";
+                    }
+                }
+            }
 		}
 
 		#TimelineRulerAlign {
@@ -260,6 +340,7 @@ $size: 24px;
 			background: #ff0000;
 			display: block;
 			z-index: 99;
+
 			&:before {
 				content: "";
 				height: 8px;
@@ -280,7 +361,7 @@ $size: 24px;
 			border-bottom: none;
 		}
 		.timline-column-right {
-			padding-right: 10px;
+			//padding-right: 10px;
 		}
 
 		&.active {
@@ -300,24 +381,29 @@ $size: 24px;
 			height: 24px;
 			margin: 0;
 			border-radius: 0;
+
 			.ant-slider-handle {
 				width: 24px;
 				height: 24px;
 				@include bg-btn2(7);
 				cursor: pointer;
-				border: none!important;
+				border: none !important;
 				background-color: transparent;
 				margin-top: 0;
 				transform: translateX(-5px);
+
 				&:active {
 					box-shadow: none;
 				}
 			}
+
 			.ant-slider-track {
 				background: none;
-				margin: 0 -5px;
-				height: 24px;
+				margin: 0;
+				height: 25px;
+                border-bottom: 1px solid #151515;
 			}
+
 			.ant-slider-mark {
 				height: 1px;
 				background: #151515;
@@ -327,18 +413,18 @@ $size: 24px;
 		}
 	}
 	.timeline-node-meta {
+        height: 24px;
+        border-right: 1px solid #151515;
+
 		.timeline-node-type {
-			width: 24px;
-			height: 24px;
+			width: 14px;
+			height: 14px;
 			display: inline-block;
-			@include btn();
-			&.timeline-node-type-image {
-				@include icon(9);
-			}
-			&.timeline-node-type-button {
-				@include icon(10);
-			}
+            margin: 0 10px 0 20px;
+            padding: 0;
+            //background: #fff;
 		}
+
 		.timeline-node-name {
 			height: 24px;
 			line-height: 24px;
