@@ -292,14 +292,18 @@ class ToolBoxButton extends Component {
                 onContextMenu={this.onRightClick.bind(this)}>
                 <img src={this.props.icon} />
                 <span className='ToolBoxButtonName'>{this.props.name}</span>
-                <Modal  ref="modal"
-                        visible={this.state.modal.isVisible}
+                <Modal  visible={this.state.modal.isVisible}
+                        title={<div className="title">
+                            <img src="img/toolButton-text.svg" />
+                            <span>文本内容</span>
+                        </div>}
                         maskClosable={false}
                         closable={false}
-                        wrapClassName="vertical-center-modal"
+                        width={490}
+                        wrapClassName="vertical-center-modal tool-box-button-modal"
                         onOk={this.onModalOK.bind(this)}
                         onCancel={this.onModalCancel.bind(this)}>
-                    <textarea value={this.state.modal.value} onChange={this.onModalTextAreaChange.bind(this)}>
+                    <textarea className="body-textarea" value={this.state.modal.value} onChange={this.onModalTextAreaChange.bind(this)}>
                     </textarea>
                 </Modal>
             </button>
