@@ -93,10 +93,14 @@ class ToolBoxButton extends Component {
             });
         } else {
             if (this.props.className === 'rect') {
-                this.onDrawRect().then(data => {
-                    //可在这设置弹框等内容
+                this.onDrawRect(false).then(data => {
                     this.props.param.shapeWidth = parseInt(data.shapeWidth);
                     this.props.param.shapeHeight = parseInt(data.shapeHeight);
+                    WidgetActions['addWidget'](this.props.className, this.props.param);
+                });
+            } else if (this.props.className === 'text'|| this.props.className === 'bitmaptext'){
+                this.onDrawRect(true).then(data => {
+                    this.props.param.text = data.text;
                     WidgetActions['addWidget'](this.props.className, this.props.param);
                 });
             } else {
@@ -105,9 +109,9 @@ class ToolBoxButton extends Component {
         }
     }
 
-    onDrawRect() {
+    onDrawRect(isText) {
         let startX = 0, startY = 0;
-        let retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
+        let rectLeft = "0px", rectTop = "0px", rectHeight = "0px", rectWidth = "0px";
         let flag = false;
         var def = $.Deferred();
 
@@ -115,63 +119,62 @@ class ToolBoxButton extends Component {
             e.preventDefault();
             e.stopPropagation();
             flag = true;
-            try{
-                var evt = window.event || e;
-                var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-                var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-                startX = evt.clientX + scrollLeft;
-                startY = evt.clientY + scrollTop;
-                var div = document.createElement("div");
-                div.id = 'drawRect';
-                div.className = "div";
-                div.style.position = "absolute";
-                div.style.left = startX + "px";
-                div.style.top = startY + "px";
-                div.style.border = '1px dotted white';
-                document.body.appendChild(div);
-            }catch(e){
-                //alert(e);
-            }
+            //创建临时的方框div
+            var evt = window.event || e;
+            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+            startX = evt.clientX + scrollLeft;
+            startY = evt.clientY + scrollTop;
+            var div = document.createElement("div");
+            div.id = 'drawRect';
+            div.className = "div";
+            div.style.position = "absolute";
+            div.style.left = startX + "px";
+            div.style.top = startY + "px";
+            div.style.border = '1px dotted white';
+            document.body.appendChild(div);
         };
 
         var mouseUp = e => {
             e.preventDefault();
             e.stopPropagation();
-            try{
-                var drawRectDiv = document.getElementById('drawRect');
-                document.body.removeChild(drawRectDiv);
-                def.resolve({shapeWidth:retcWidth,shapeHeight:retcHeight});
-                removeDrawEventListner();
-            }catch(e){
-                //alert(e);
+            //画图结束
+            var drawRectDiv = document.getElementById('drawRect');
+            var result;
+            if(isText) {
+                //弹窗事件
+                result = {text:popUpEdit()};
+            } else {
+                result = {shapeWidth:rectWidth,shapeHeight:rectHeight};
             }
             flag = false;
+            document.body.removeChild(drawRectDiv);
+            removeDrawEventListner();
+            def.resolve(result);
         };
 
         var mouseMove = e => {
             e.preventDefault();
             e.stopPropagation();
             if(flag){
-                try{
-                    var evt = window.event || e;
-                    var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-                    var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-                    var drawRectDiv = document.getElementById('drawRect');
-                    retcLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
-                    retcTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
-                    retcHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
-                    retcWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
-                    drawRectDiv.style.left = retcLeft;
-                    drawRectDiv.style.top = retcTop;
-                    drawRectDiv.style.width = retcWidth;
-                    drawRectDiv.style.height = retcHeight;
-                }catch(e){
-                    //alert(e);
-                }
+                //画图跟踪
+                var evt = window.event || e;
+                var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                var drawRectDiv = document.getElementById('drawRect');
+                rectLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
+                rectTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
+                rectHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
+                rectWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
+                drawRectDiv.style.left = rectLeft;
+                drawRectDiv.style.top = rectTop;
+                drawRectDiv.style.width = rectWidth;
+                drawRectDiv.style.height = rectHeight;
             }
         };
 
         var addDrawEventListener = () => {
+            //添加listener
             document.body.style.cursor = 'crosshair';
             document.body.addEventListener('mousedown', mouseDown);
             document.body.addEventListener('mouseup', mouseUp);
@@ -179,10 +182,16 @@ class ToolBoxButton extends Component {
         };
 
         var removeDrawEventListner = () => {
+            //移除listener
             document.body.style.cursor = 'auto';
             document.body.removeEventListener('mousedown', mouseDown);
             document.body.removeEventListener('mouseup', mouseUp);
             document.body.removeEventListener('mousemove', mouseMove);
+        };
+
+        var popUpEdit = () => {
+            //弹窗后填写的结果，需要回调
+            return 'testing';
         };
 
         addDrawEventListener();
