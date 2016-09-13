@@ -90,10 +90,13 @@ class VxRcSlider extends RcSlider {
         super(props);
         this.state = {
             points: this.props.points,
-            currentHandle: -1};
+            currentHandle: -1,
+            whichBtn : null
+        };
         this.onHandleClick = this.onHandleClick.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.selectTrack = this.selectTrack.bind(this);
+        this.changeHandle = this.changeHandle.bind(this);
     }
 
     selectTrack(){
@@ -109,7 +112,17 @@ class VxRcSlider extends RcSlider {
             this.state.currentHandle = handle.props.handleIndex;
             WidgetActions['activeHandle'](true);
             WidgetActions['syncTrack']();
+            this.setState({
+                whichBtn : handle.props.handleIndex
+            });
+
         }
+    }
+
+    changeHandle(value){
+        let data = this.state;
+        let i = this.state.whichBtn;
+        data[i][0] = value;
     }
 
     onMove(e, position) {

@@ -208,6 +208,11 @@ class TimelineView extends React.Component {
                 inputState : false,
                 currentTime : parseFloat(data) / 10
             });
+            //if(this.refs.VxSlider.state){
+            //    if(this.refs.VxSlider.state.whichBtn===null){
+            //        console.log(this.refs.VxSlider.state.whichBtn);
+            //    }
+            //}
         }
         else if(event.key == "ArrowUp"){
             this.setState({
@@ -293,6 +298,7 @@ class TimelineView extends React.Component {
                         width={61 * totalTime}
                         refTimer={this.state.timerNode}
                         points={node.props.data}
+                        ref="VxSlider"
                         isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));
