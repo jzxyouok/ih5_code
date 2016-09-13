@@ -31,7 +31,6 @@
 		flex: 1;
 		overflow-y: auto;
 	}
-
    .ant-form-full {
 	 .ant-input-number.ant-input-number-sm{width: 100%;}
    }
@@ -83,7 +82,7 @@
 	}
 
 	.ant-form-item-label label {
-		color: #b5b5b5;
+		color: #858585;
 	  text-overflow:inherit !important;
 	    .originPos{
 		  width: 20px;
@@ -214,12 +213,18 @@
 			}
 		}
 	}
+  .ant-input-sm,.ant-input-number,.ant-select-selection--single{
+	&:focus {
+	  border-color: #444;
+	  outline: 0;
+	  box-shadow: 0 0 0 2px rgba(255, 168, 00, 0.4);
+	}
+  }
 	.ant-input-number {
 		border: 1px solid #444;
 		background: none;
 		border-radius: 2px;
-	  width: 60px;
-
+	    width: 60px;
 		.ant-input-number-handler-wrap {
 			background: #151515;
 		    width: 16px;
@@ -291,7 +296,7 @@
 		 border: 1px solid #444;
 		 background: none;
 		 border-radius: 2px;
-		 width: 60px;
+		 width: 60px !important;
 		 height: 22px;
 		 float: left;
 		 margin-top: 5px;
@@ -343,10 +348,14 @@
 
 //select
 .ant-select-dropdown{
-  border-radius: 2px !important;
   color: #858585 !important;
-  border: 1px solid #444 !important;
+  border: 1px solid #353535 !important;
   background: #353535;
+  border-bottom-left-radius: 2px !important;
+  border-bottom-right-radius: 2px !important;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  box-shadow: 2px 2px 5px #1d1d1d;
   .ant-select-dropdown-menu-item:hover{
 	background: #151515;
 	color: white;
@@ -364,3 +373,26 @@
 }
 
 form .ant-select, form .ant-cascader-picker{width:100%;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
