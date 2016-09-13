@@ -41,10 +41,8 @@ class Animation extends React.Component {
         let btnData = [];
         switch (this.state.className){
             case "root" :
-                btnData = [{"name":"物理世界","class":"physical-btn","className":"world"}];
-                break;
             case "container":
-                btnData = [{"name":"物理世界","class":"physical-btn","className":"world"}];
+                btnData = [{"name":"物理世界","class":"physical-btn", className:'world'}];
                 break;
             case "page" :
                 btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
@@ -52,66 +50,22 @@ class Animation extends React.Component {
                            , {"name":"缓动","class":"easing-btn", className:'easing'}];
                 break;
             case "image" :
-                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                    , {"name":"动效","class":"dx-btn", className:'effect'}
-                    , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn","className":"world"}
-                    , {"name":"物体","class":"object-btn", className:'body'}];
-                break;
             case "imagelist" :
-                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                    , {"name":"动效","class":"dx-btn", className:'effect'}
-                    , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn","className":"world"}
-                    , {"name":"物体","class":"object-btn", className:'body'}];
-                break;
-            case "text" :
-                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                    , {"name":"动效","class":"dx-btn", className:'effect'}
-                    , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn","className":"world"}
-                    , {"name":"物体","class":"object-btn", className:'body'}];
-                break;
+            case "text":
             case "bitmaptext" :
-                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                    , {"name":"动效","class":"dx-btn", className:'effect'}
-                    , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn","className":"world"}
-                    , {"name":"物体","class":"object-btn", className:'body'}];
-                break;
             case "rect" :
-                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                    , {"name":"动效","class":"dx-btn", className:'effect'}
-                    , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn","className":"world"}
-                    , {"name":"物体","class":"object-btn", className:'body'}];
-                break;
             case "ellipse" :
-                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                    , {"name":"动效","class":"dx-btn", className:'effect'}
-                    , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn","className":"world"}
-                    , {"name":"物体","class":"object-btn", className:'body'}];
-                break;
             case "path" :
                 btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
                     , {"name":"动效","class":"dx-btn", className:'effect'}
                     , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn","className":"world"}
+                    , {"name":"物理世界","class":"physical-btn", className:'world'}
                     , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "wechat" :
-                btnData = [];
-                break;
             case "video" :
-                btnData = [];
-                break;
             case "audio" :
-                btnData = [];
-                break;
             case "timer" :
-                btnData = [];
-                break;
             case "slidetimer" :
                 btnData = [];
                 break;

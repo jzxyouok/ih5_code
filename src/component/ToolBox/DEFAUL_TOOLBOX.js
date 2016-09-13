@@ -33,6 +33,7 @@ let counterIcon = img('counter.svg');
 let databaseIcon = img('database.svg');
 let remotedeviceIcon = img('remoteDevice.svg');
 let pcdeviceIcon = img('pcDevice.svg');
+let twodvarIcon = img('twoDvar.svg');
 
 var cid = 1;
 var TOOL_ID = {
@@ -65,6 +66,7 @@ var TOOL_ID = {
     DATABASE: 26,
     REMOTEDEVICE: 27,
     PCDEVICE: 28,
+    TWODVAR: 29
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -159,6 +161,13 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.DATABASE, name:'数据库', icon: databaseIcon, className:'database'}]
+    },{
+        name:'二维变量',
+        key:17,
+        gid:17,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.TWODVAR, name:'二维变量', icon: twodvarIcon, className:'twodvar'}]
     },{
         name:'设备',
         key:22,
