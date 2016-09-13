@@ -14,6 +14,8 @@ class ToolBoxButton extends Component {
             selected: isActiveButton(this.props.cid)
         };
         this.self = this;
+
+        this.onDrawRect = this.onDrawRect.bind(this);
     }
 
     componentWillMount() {
