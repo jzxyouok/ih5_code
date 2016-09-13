@@ -366,7 +366,8 @@ $size: 25px;
 
 		&.active {
 			.ant-slider {
-				background-color: #1f4240;
+				//background-color: #1f4240;
+                opacity: 1;
 			}
 		}
 	}
@@ -381,6 +382,7 @@ $size: 25px;
 			height: 24px;
 			margin: 0;
 			border-radius: 0;
+            opacity: 0.6;
 
 			.ant-slider-handle {
 				width: 24px;
