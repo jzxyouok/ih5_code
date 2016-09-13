@@ -1,5 +1,8 @@
 import React from 'react';
 
+import WidgetActions from '../actions/WidgetActions';
+import WidgetStore from '../stores/WidgetStore';
+
 class DesignView extends React.Component {
     constructor(props) {
         super(props);
@@ -9,14 +12,28 @@ class DesignView extends React.Component {
 
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
+        this.onStatusChange = this.onStatusChange.bind(this);
     }
 
     componentDidMount() {
-        document.body.addEventListener('keyup', this.onKeyScroll);
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
-        document.body.removeEventListener('keyup', this.onKeyScroll);
+        this.unsubscribe();
+    }
+
+    onStatusChange(widget) {
+        //console.log(widget);
+        if(widget.selectWidget){
+            if(widget.selectWidget.className == "root"){
+                document.body.addEventListener('keyup', this.onKeyScroll);
+            }
+            else {
+                document.body.removeEventListener('keyup', this.onKeyScroll);
+            }
+        }
     }
 
     scroll(event) {
