@@ -118,10 +118,10 @@ class ToolBoxButton extends Component {
                         this.props.param.positionY = data.positionY;
                         this.props.param.shapeWidth = parseInt(data.shapeWidth);
                         this.props.param.shapeHeight = parseInt(data.shapeHeight);
+                        WidgetActions['addWidget'](this.props.className, this.props.param);
                         this.setState(
                             {drawRectFlag:false}
                         );
-                        WidgetActions['addWidget'](this.props.className, this.props.param);
                     } else {
                         //弹窗事件
                         this.setState({
@@ -192,7 +192,11 @@ class ToolBoxButton extends Component {
                 positionX: parseInt(rectLeft) - canvasRect.left,
                 positionY: parseInt(rectTop) - canvasRect.top
             };
-            def.resolve(result);
+            if(this.state.drawRectFlag) {
+                def.resolve(result);
+            } else {
+                def.reject();
+            }
         };
 
         var mouseMove = e => {
@@ -263,7 +267,7 @@ class ToolBoxButton extends Component {
     onModalClear(){
         document.body.removeChild(document.getElementById('drawRect'));
         this.setState({
-            drawRectFlag: true,
+            drawRectFlag: false,
             modal: {
                 isVisible: false,
                 value: ''
