@@ -25,7 +25,9 @@ class TimelineView extends React.Component {
 			stepY: 0,
 			hasHandle: false,
 			isPlaying: false,
-            selectLayerData : null
+            selectLayerData : null,
+            inputState : false,
+            inputTime : null
 		};
 		this.onTimer = this.onTimer.bind(this);
 		//this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -39,6 +41,9 @@ class TimelineView extends React.Component {
         this.onPlay = this.onPlay.bind(this);
         this.onPause = this.onPause.bind(this);
         this.onPlayOrPause = this.onPlayOrPause.bind(this);
+        this.formatter = this.formatter.bind(this);
+        this.timeInput = this.timeInput.bind(this);
+        this.timeInputSure = this.timeInputSure.bind(this);
 	}
 
 	componentDidMount() {
@@ -124,6 +129,7 @@ class TimelineView extends React.Component {
 		WidgetActions['resetTrack']();
 		this.state.timerNode.node['seek'](value * this.state.timerNode.node['totalTime']);
 		WidgetActions['syncTrack']();
+        //console.log(value);
 		this.setState({currentTime:value});
 	}
 
@@ -167,6 +173,47 @@ class TimelineView extends React.Component {
 			this.onAdd();
 		}
 	}
+
+    formatter(value){
+        let data = value;
+        //data = data.toFixed(4);
+        return (data * 10).toFixed(2);
+    }
+
+    timeInput(){
+        let data = this.refs.TimeInput.value;
+        this.setState({
+            inputState : true,
+            inputTime : data
+        });
+    }
+
+    timeInputSure(event){
+        //console.log(event.key);
+        let data = this.refs.TimeInput.value;
+        let max = parseInt(event.currentTarget.getAttribute("data-max"));
+        if(event.key == "Enter"){
+            if(data > max){
+                data = max;
+            }
+            this.setState({
+                inputState : false,
+                currentTime : parseFloat(data) / 10
+            });
+        }
+        else if(event.key == "ArrowUp"){
+            this.setState({
+                inputState : true,
+                inputTime : parseFloat(data) + 0.01
+            });
+        }
+        else if(event.key == "ArrowDown" && parseFloat(data) !== 0){
+            this.setState({
+                inputState : true,
+                inputTime : parseFloat(data) - 0.01
+            });
+        }
+    }
 
 	selectNextBreakpoint() {
 
@@ -275,11 +322,12 @@ class TimelineView extends React.Component {
                     }>
                         <span id='TimelineIndicator'
                               className={cls({'active': this.state.currentTrack!=null})} />
-                            <input type='number'
-                                //defaultValue={ this.state.currentTrack === null ? 0.000 : this.state.currentTime }
-                                   placeholder="1"
-                                   min={0.000}
-                                   step={0.001}/>
+                            <input type='text'
+                                   value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
+                                   onChange={ this.timeInput.bind(this) }
+                                   onKeyDown = { this.timeInputSure.bind(this)}
+                                   data-max = {totalTime}
+                                   ref="TimeInput"/>
                             <span>s</span>
                         </div>
                     </div>
@@ -331,6 +379,7 @@ class TimelineView extends React.Component {
                             <Slider max={1}
                                     step={0.001}
                                     value={this.state.currentTime}
+                                    tipFormatter={  this.formatter  }
                                     onChange={this.onTimerChange.bind(this)} />
                         </div>
 
