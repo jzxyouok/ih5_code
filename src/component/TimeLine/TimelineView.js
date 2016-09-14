@@ -61,7 +61,7 @@ class TimelineView extends React.Component {
 	}
 
 	onStatusChange(widget) {
-		//console.log('w2', widget);
+		console.log('w2', widget);
 		//if(widget.hasOwnProperty('hasHandle')) {
 		//	this.setState({
 		//		hasHandle: widget.hasHandle

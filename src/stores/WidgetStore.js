@@ -110,14 +110,14 @@ function saveTree(data, node) {
     data['events'] = node.events;
   if (node.varList.length > 0) {
     let o = {};
-    for (let i = 0; i < node.varList.length; i++) {
+    for (let i = node.varList.length; i >0; i--) {
       o['__' + node.varList[i].key] = node.varList[i].value;
     }
     data['vars'] = o;
   }
   if (node.funcList.length > 0) {
     let o = {};
-    for (let i = 0; i < node.funcList.length; i++) {
+    for (let i = node.funcList.length; i >0; i--) {
       o['__' + node.funcList[i].key] = node.funcList[i].value;
     }
     data['funcs'] = o;
@@ -127,12 +127,12 @@ function saveTree(data, node) {
     node.children.map(item => {
       if (item.className == 'track' && item.props['prop'] && item.props['data'].length > 0) {
         data['props'] = data['props'] || {};
-        for (var i = 0; i < item.props['prop'].length; i++) {
+        for (var i = item.props['prop'].length; i > 0; i--) {
           data['props'][item.props['prop'][i]] = item.props['data'][0][i + 1];
         }
       }
       let child = {};
-      data['children'].push(child);
+      data['children'].unshift(child);
       saveTree(child, item);
     });
   }
