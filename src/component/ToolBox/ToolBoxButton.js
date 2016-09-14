@@ -55,10 +55,7 @@ class ToolBoxButton extends Component {
             ToolBoxAction['selectSecondary'](this.props.cid, this.props.gid);
         }
 
-        if(this.props.className === 'rect'|| this.props.className === 'ellipse' ||
-            this.props.className === 'text'|| this.props.className === 'bitmaptext'||
-            this.props.className === 'path' || this.props.className === 'video' ||
-            this.props.upload){
+        if(this.props.drawRect || this.props.drawRectText){
             //点击时才清除原来有的，再创建drawRect对象
             this.onDrawRect();
         } else {
@@ -89,9 +86,11 @@ class ToolBoxButton extends Component {
             }
             if (this.props.upload) {
                 //上传
-                this.drawRect.end();
                 this.onFileUpload();
-            } else if(this.props.className === 'text' || this.props.className === 'bitmaptext') {
+                this.drawRect.end();
+                this.drawRect.cleanUp();
+                this.drawRect = null;
+            } else if(this.props.drawRectText) {
                 //弹窗输入文本
                 this.drawRect.end();
                 //弹窗事件
@@ -101,8 +100,7 @@ class ToolBoxButton extends Component {
                         value: ''
                     }
                 });
-            } else if (this.props.className === 'rect'|| this.props.className === 'ellipse'||
-                this.props.className == 'path') {
+            } else if (this.props.drawRect) {
                 //普通画框
                 WidgetActions['addWidget'](this.props.className, this.props.param);
                 this.drawRect.end();
@@ -117,11 +115,6 @@ class ToolBoxButton extends Component {
     }
 
     onFileUpload() {
-        //清掉rect
-        if(this.drawRect) {
-            this.drawRect.cleanUp();
-            this.drawRect = null;
-        }
         WidgetActions['chooseFile'](this.props.className, false, (w) => {
             if (w.files.length) {
                 var self = this;
