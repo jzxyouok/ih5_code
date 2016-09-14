@@ -580,6 +580,6 @@ export default Reflux.createStore({
       return {initTree: stageTree, classList: classList};
     },
     activeHandle: function(status) {
-      this.trigger({hasHandle: status});
+        this.trigger({hasHandle: status});
     }
 });

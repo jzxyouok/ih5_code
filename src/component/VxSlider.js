@@ -134,7 +134,9 @@ class VxRcSlider extends RcSlider {
     }
 
     onHandleClick(handle) {
+        //console.log(this.props.isCurrent);
         if (this.props.isCurrent) {
+            //console.log(2);
             //console.log(this.props.refTimer);
             this.props.refTimer.node['pause']();
             this.props.refTimer.node['seek'](
@@ -144,10 +146,17 @@ class VxRcSlider extends RcSlider {
             this.state.currentHandle = handle.props.handleIndex;
             WidgetActions['activeHandle'](true);
             WidgetActions['syncTrack']();
-
             this.setState({
                 changeKeyValue : null,
                 changeKey : handle.props.handleIndex
+            })
+        }
+        else {
+            this.setState({
+                currentHandle: -1,
+                changeKey : null,
+                changeKeyBool : false,
+                changeKeyValue : null
             })
         }
     }

@@ -26,7 +26,7 @@ class TimelineView extends React.Component {
 			timerNode: null,
 			stepX: 37,
 			stepY: 0,
-			hasHandle: false,
+			//hasHandle: false,
 			isPlaying: false,
             selectLayerData : null,
             inputState : false,
@@ -62,17 +62,17 @@ class TimelineView extends React.Component {
 
 	onStatusChange(widget) {
 		//console.log('w2', widget);
-		if(widget.hasOwnProperty('hasHandle')) {
-			this.setState({
-				hasHandle: widget.hasHandle
-			});
-			return;
-		}
-		if(widget.resetTrack || widget.selectWidget) {
-			this.setState({
-				hasHandle: false
-			});
-		}
+		//if(widget.hasOwnProperty('hasHandle')) {
+		//	this.setState({
+		//		hasHandle: widget.hasHandle
+		//	});
+		//	return;
+		//}
+		//if(widget.resetTrack || widget.selectWidget) {
+		//	this.setState({
+		//		hasHandle: false
+		//	});
+		//}
 
 		if (widget.selectWidget !== undefined) {
 			const changed = {currentTrack:null};
@@ -171,9 +171,10 @@ class TimelineView extends React.Component {
 	// 删除时间断点
 	onDelete() {
 		WidgetActions['deletePoint']();
-		this.setState({
-			hasHandle: false
-		});
+		//this.setState({
+		//	hasHandle: false
+		//});
+        TimelineAction['ChangeKeyframe'](false);
 	}
 
 	onAddOrDelete() {
@@ -181,7 +182,7 @@ class TimelineView extends React.Component {
 		if(this.state.currentTrack===null) return;
 
 		// 如果有活动的时间断点
-		if(this.state.hasHandle) {
+		if(this.state.isChangeKey) {
 			this.onDelete();
 		} else {
 			this.onAdd();
@@ -364,7 +365,7 @@ class TimelineView extends React.Component {
                             <button id='TimelineNodeActionModify'
                                     className={cls(
                                         {'active': this.state.currentTrack!=null},
-                                        {'delete': this.state.hasHandle}
+                                        {'delete': this.state.isChangeKey}
                                     )}
                                     onClick={this.onAddOrDelete.bind(this)} />
                             <button id='TimelineNodeActionNext'
