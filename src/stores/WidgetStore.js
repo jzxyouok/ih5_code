@@ -392,6 +392,8 @@ export default Reflux.createStore({
           if (delta > 0 && index < this.currentWidget.parent.children.length - 1 || delta < 0 && index > 0) {
             this.currentWidget.parent.children.splice(index, 1);
             this.currentWidget.parent.children.splice(index + delta, 0, this.currentWidget);
+            bridge.reorderWidget(this.currentWidget.node, delta);
+            this.render();
             this.trigger({redrawTree: true});
           }
       }
