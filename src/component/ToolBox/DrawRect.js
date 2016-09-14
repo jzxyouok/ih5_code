@@ -107,17 +107,17 @@ export default class DrawRect {
     addDrawRectEventListener() {
         //添加listener
         document.body.style.cursor = 'crosshair';
-        document.body.addEventListener('mousedown', this.onMouseDown.bind(this));
-        document.body.addEventListener('mouseup', this.onMouseUp.bind(this));
-        document.body.addEventListener('mousemove', this.onMouseMove.bind(this));
+        document.body.addEventListener('mousedown', this.onMouseDown);
+        document.body.addEventListener('mouseup', this.onMouseUp);
+        document.body.addEventListener('mousemove', this.onMouseMove);
     }
 
     removeDrawRectEventListener() {
         //移除listener
         document.body.style.cursor = 'auto';
-        document.body.removeEventListener('mousedown', this.onMouseDown.bind(this));
-        document.body.removeEventListener('mouseup', this.onMouseUp.bind(this));
-        document.body.removeEventListener('mousemove', this.onMouseMove.bind(this));
+        document.body.removeEventListener('mousedown', this.onMouseDown);
+        document.body.removeEventListener('mouseup', this.onMouseUp);
+        document.body.removeEventListener('mousemove', this.onMouseMove);
     }
 }
 

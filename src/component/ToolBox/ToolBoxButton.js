@@ -18,7 +18,7 @@ class ToolBoxButton extends Component {
                 value: ''
             }
         };
-        this.drawRect = new DrawRect();
+        this.drawRect = null;
     }
 
     componentWillMount() {
@@ -35,7 +35,6 @@ class ToolBoxButton extends Component {
 
     componentWillUnmount() {
         this.unsubscribe();
-        this.drawRect.cleanUp();
     }
 
     onStatusChange(store) {
@@ -99,6 +98,8 @@ class ToolBoxButton extends Component {
             });
         } else {
             if(this.props.className === 'rect'||this.props.className === 'text'|| this.props.className === 'bitmaptext'){
+                //点击时才创建drawrect对象
+                this.drawRect = new DrawRect();
                 this.drawRect.start();
                 this.drawRect.def.promise().then(data => {
                     if(this.props.className === 'rect') {
@@ -109,6 +110,7 @@ class ToolBoxButton extends Component {
                         WidgetActions['addWidget'](this.props.className, this.props.param);
                         this.drawRect.end();
                         this.drawRect.cleanUp();
+                        this.drawRect = null;
                     } else {
                         //弹窗事件
                         this.setState({
@@ -122,6 +124,7 @@ class ToolBoxButton extends Component {
                 },(() => {
                     this.drawRect.end();
                     this.drawRect.cleanUp();
+                    this.drawRect = null;
                 }));
             } else {
                 WidgetActions['addWidget'](this.props.className, this.props.param);
@@ -160,8 +163,8 @@ class ToolBoxButton extends Component {
     }
 
     onModalClear(){
-        this.drawRect.end();
         this.drawRect.cleanUp();
+        this.drawRect = null;
         this.setState({
             modal: {
                 isVisible: false,
