@@ -12,8 +12,6 @@ import EventBox from './EventBox/_index';
 import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
 
-require('macKeys'); //引入mackey快捷键的库
-
 class App extends React.Component {
     constructor(props) {
         super(props);
