@@ -38,7 +38,9 @@ class VxHandle extends React.Component {
         });
     }
 
-    onHandleClick() {
+    onHandleClick(event) {
+        //e.stopPropagation();
+        //e.preventDefault();
         TimelineAction['ChangeKeyframe'](true);
         this.props.onHandleClick(this);
     }
@@ -98,7 +100,10 @@ class VxRcSlider extends RcSlider {
             currentHandle: -1,
             changeKey : null,
             changeKeyBool : false,
-            changeKeyValue : null
+            changeKeyValue : null,
+            isChooseKey : false,
+            lastLayer : null,
+            nowLayer:null
         };
         this.onHandleClick = this.onHandleClick.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -134,21 +139,20 @@ class VxRcSlider extends RcSlider {
     }
 
     onHandleClick(handle) {
-        //console.log(this.props.isCurrent);
         if (this.props.isCurrent) {
-            //console.log(2);
-            //console.log(this.props.refTimer);
             this.props.refTimer.node['pause']();
             this.props.refTimer.node['seek'](
                 this.props.refTrack.props['data'][handle.props.handleIndex][0]
                 * this.props.refTimer.node['totalTime']
             );
             this.state.currentHandle = handle.props.handleIndex;
-            WidgetActions['activeHandle'](true);
+            //WidgetActions['activeHandle'](true);
+
             WidgetActions['syncTrack']();
             this.setState({
                 changeKeyValue : null,
-                changeKey : handle.props.handleIndex
+                changeKey : handle.props.handleIndex,
+                isChooseKey : true
             })
         }
         else {
@@ -212,6 +216,25 @@ class VxRcSlider extends RcSlider {
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
             this.setState({currentHandle: -1, points: points});
         }
+        if(widget.selectWidget){
+            //console.log(widget.selectWidget);
+            if(this.state.isChooseKey){
+                let test = widget.selectWidget.key;
+                this.setState({
+                    isChooseKey : false,
+                    lastLayer : test
+                })
+            }
+            this.setState({
+                nowLayer : widget.selectWidget.key
+            },()=>{
+                if(this.state.lastLayer !== this.state.nowLayer ){
+                    this.setState({
+                        currentHandle: -1
+                    });
+                }
+            });
+        }
     }
 
     componentWillReceiveProps() {
@@ -230,22 +253,22 @@ class VxRcSlider extends RcSlider {
         const upperBound = points[points.length - 1][0];
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
-        //console.log(this.state.changeKeyBool);
 
         for (let i = 1; i < points.length-1; i++) {
             let offset = this.calcOffset(points[i][0]);
             let which = this.state.changeKey;
-            //console.log(this.state.changeKeyValue);
-            //console.log(this.state.changeKeyBool);
-            if(this.state.changeKeyBool){
-                if(this.state.changeKeyValue){
-                    if(which === i) {
-                        points[which][0] = this.state.changeKeyValue;
-                        let position = points[which][0];
-                        offset = this.calcOffset(position);
-                    }
-                    else {
-                        offset = this.calcOffset(points[i][0])
+
+            if(this.props.myID === this.state.nowLayer ){
+                if(this.state.changeKeyBool){
+                    if(this.state.changeKeyValue){
+                        if(which === i) {
+                            points[which][0] = this.state.changeKeyValue;
+                            let position = points[which][0];
+                            offset = this.calcOffset(position);
+                        }
+                        else {
+                            offset = this.calcOffset(points[i][0])
+                        }
                     }
                 }
             }
