@@ -300,7 +300,6 @@ class TimelineView extends React.Component {
                         pic = v1.icon;
                     }
                 });
-
                 tracks.push(
                     <VxSlider
                         key={index++}
@@ -311,6 +310,7 @@ class TimelineView extends React.Component {
                         width={61 * totalTime}
                         refTimer={this.state.timerNode}
                         points={node.props.data}
+                        myID = { node.parent.key }
                         isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));
