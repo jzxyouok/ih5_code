@@ -7,7 +7,7 @@ function userInfo(req, res) {
     if (workList[i].data)
       list.push({id:i, name:workList[i].name})
   }
-  res.json({name: 'bean', list:list, font:[], playUrl:'app/'});
+  res.json({name: 'bean', list:list, font:[], db:[], sock:[], playUrl:'app/'});
 }
 
 function login(req, res) {
