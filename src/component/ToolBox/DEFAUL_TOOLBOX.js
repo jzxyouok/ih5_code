@@ -81,8 +81,8 @@ var DEFAULT_TOOLBOX = {
         gid:1,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.IMAGE, name:'上传单个图片',icon:imageIcon, className:'image', upload:true},
-            {cid:TOOL_ID.IMAGE_LIST, name:'上传多个图片', icon:igroupIcon, className:'imagelist', upload:true}]
+            {cid:TOOL_ID.IMAGE, name:'上传单个图片',icon:imageIcon, className:'image', upload:true, param: shapeParam},
+            {cid:TOOL_ID.IMAGE_LIST, name:'上传多个图片', icon:igroupIcon, className:'imagelist', upload:true, param: shapeParam}]
     },{
         name:'文字',
         key:2,

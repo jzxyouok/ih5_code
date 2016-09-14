@@ -19,6 +19,8 @@ class ToolBoxButton extends Component {
             }
         };
         this.drawRect = null;
+        this.onDrawRect = this.onDrawRect.bind(this);
+        this.onFileUpload = this.onFileUpload.bind(this);
     }
 
     componentWillMount() {
@@ -53,19 +55,85 @@ class ToolBoxButton extends Component {
             ToolBoxAction['selectSecondary'](this.props.cid, this.props.gid);
         }
 
-        if (this.props.upload) {
-            WidgetActions['chooseFile'](this.props.className, false, (w) => {
-                if (w.files.length) {
-                    var self = this;
-                    if (this.props.className == 'image') {
-                        var reader = new FileReader();
-                        reader.onload = function(e) {
-                            WidgetActions['addWidget'](self.props.className, self.props.param, e.target.result);
-                        };
-                        reader.readAsDataURL(w.files[0]);
-                    } else {
-                        JSZip.loadAsync(w.files[0])
-                          .then(function(zip) {
+        if(this.props.className === 'rect'|| this.props.className === 'ellipse' ||
+            this.props.className === 'text'|| this.props.className === 'bitmaptext'||
+            this.props.className === 'path' || this.props.className === 'video' ||
+            this.props.upload){
+            //点击时才清除原来有的，再创建drawRect对象
+            this.onDrawRect();
+        } else {
+            WidgetActions['addWidget'](this.props.className, this.props.param);
+        }
+    }
+
+    onRightClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
+    }
+
+    onDrawRect() {
+        if(this.drawRect) {
+            this.drawRect.end();
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        }
+        this.drawRect = new DrawRect();
+        this.drawRect.start();
+        this.drawRect.def.promise().then(data => {
+            if(this.props.param) {
+                this.props.param.positionX = data.positionX;
+                this.props.param.positionY = data.positionY;
+                this.props.param.shapeWidth = data.shapeWidth;
+                this.props.param.shapeHeight = data.shapeHeight;
+            }
+            if (this.props.upload) {
+                //上传
+                this.drawRect.end();
+                this.onFileUpload();
+            } else if(this.props.className === 'text' || this.props.className === 'bitmaptext') {
+                //弹窗输入文本
+                this.drawRect.end();
+                //弹窗事件
+                this.setState({
+                    modal: {
+                        isVisible: true,
+                        value: ''
+                    }
+                });
+            } else if (this.props.className === 'rect'|| this.props.className === 'ellipse'||
+                this.props.className == 'path') {
+                //普通画框
+                WidgetActions['addWidget'](this.props.className, this.props.param);
+                this.drawRect.end();
+                this.drawRect.cleanUp();
+                this.drawRect = null;
+            }
+        },(() => {
+            this.drawRect.end();
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        }));
+    }
+
+    onFileUpload() {
+        //清掉rect
+        if(this.drawRect) {
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        }
+        WidgetActions['chooseFile'](this.props.className, false, (w) => {
+            if (w.files.length) {
+                var self = this;
+                if (self.props.className == 'image') {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        WidgetActions['addWidget'](self.props.className, self.props.param, e.target.result);
+                    };
+                    reader.readAsDataURL(w.files[0]);
+                } else {
+                    JSZip.loadAsync(w.files[0])
+                        .then(function(zip) {
                             var list = [];
                             var count = 0;
                             zip.forEach(function (relativePath, zipEntry) {
@@ -93,57 +161,13 @@ class ToolBoxButton extends Component {
                                 }
                             });
                         });
-                    }
                 }
-            });
-        } else {
-            if(this.props.className === 'rect'||this.props.className === 'text'|| this.props.className === 'bitmaptext'){
-                //点击时才创建drawrect对象
-                this.drawRect = new DrawRect();
-                this.drawRect.start();
-                this.drawRect.def.promise().then(data => {
-                    if(this.props.className === 'rect') {
-                        this.props.param.positionX = data.positionX;
-                        this.props.param.positionY = data.positionY;
-                        this.props.param.shapeWidth = data.shapeWidth;
-                        this.props.param.shapeHeight = data.shapeHeight;
-                        WidgetActions['addWidget'](this.props.className, this.props.param);
-                        this.drawRect.end();
-                        this.drawRect.cleanUp();
-                        this.drawRect = null;
-                    } else {
-                        //弹窗事件
-                        this.setState({
-                            modal: {
-                                isVisible: true,
-                                value: ''
-                            }
-                        });
-                        this.drawRect.end();
-                    }
-                },(() => {
-                    this.drawRect.end();
-                    this.drawRect.cleanUp();
-                    this.drawRect = null;
-                }));
-            } else {
-                WidgetActions['addWidget'](this.props.className, this.props.param);
             }
-        }
-    }
-
-    onRightClick(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
+        });
     }
 
     // modal的一些操作
     onModalOK() {
-        this.props.param.positionX = this.drawRect.result.positionX;
-        this.props.param.positionY = this.drawRect.result.positionY;
-        this.props.param.shapeWidth = this.drawRect.result.shapeWidth;
-        this.props.param.shapeHeight = this.drawRect.result.shapeHeight;
         this.props.param.text = this.state.modal.value;
         WidgetActions['addWidget'](this.props.className, this.props.param);
         this.onModalClear();

@@ -35,8 +35,9 @@ export default class DrawRect {
         this.rectWidth = '0px';
         this.flag = false;
         this.result = {};
-        this.def = $.Deferred();
-        document.body.removeChild(document.getElementById('drawRect'));
+        if (document.getElementById('drawRect')) {
+            document.body.removeChild(document.getElementById('drawRect'));
+        }
     }
 
     end() {
