@@ -23,13 +23,16 @@ class PropertyView extends React.Component {
         this.state = {fields: null};
         this.selectNode = null;
         this.currentPage = null;
-        this.defaultWidth=null;
-        this.defaultData={
-            width:null,
-            height:null
+        this.defaultWidth = null;
+        this.defaultData = {
+            width: null,
+            height: null
+        };
+        this.originPos={
+            x:null,
+            y:null
         };
     }
-
 
 //获取封装的form组件
      getInputBox(type, defaultProp) {
@@ -45,8 +48,8 @@ class PropertyView extends React.Component {
 
             case propertyType.Percentage:
                 return  <div>
-                    <InputNumber step={0.01} max={1} min={0}  {...defaultProp}  className='slider-input' />
-                    <Slider max={1} min={0} step={0.01} {...defaultProp}    className='slider-per' />
+                    <InputNumber step={0.1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+                    <Slider    step={0.1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
                 </div>;
 
             case propertyType.Text:
@@ -93,8 +96,6 @@ class PropertyView extends React.Component {
             switch (prop.type) {
                 case propertyType.Percentage:
                     v = parseFloat(value);
-                    if (v === prop.default)
-                        v = null;
                     break;
                 case propertyType.Number:
                     v = parseFloat(value);
@@ -104,15 +105,48 @@ class PropertyView extends React.Component {
                     v = parseInt(value);
                     break;
                 case propertyType.Float:
+                    if(this.selectNode.props.isLock){
 
+                        if('scaleX'== prop.name) {
+                            //获取scaleY的值
+                            let h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.defaultData.height;
+                           //获取scaleX的值
+                           let w =parseFloat(value) /this.defaultData.width;
 
-                    if('scaleX'== prop.name) {
-                        v =parseFloat(value) /this.defaultData.width;
-                    }else if('scaleY'== prop.name){
-                        v = parseFloat(value)/this.defaultData.height;
+                            //调用更新
+
+                            const obj = {};
+
+                            obj[prop.name] =w;
+                            obj['scaleY']=h;
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, true);
+
+                        }else if('scaleY'== prop.name){
+                            //获取scaleX的值
+                            let w  =parseFloat(value)*(this.selectNode.node.width/this.selectNode.node.height)/this.defaultData.width;
+                            //获取scaleY的值
+                            let h =parseFloat(value) /this.defaultData.height;
+
+                            //调用更新
+
+                            const obj = {};
+
+                            obj[prop.name] =h;
+                            obj['scaleX']=w;
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, true);
+
+                        }
+
+                        bTag=false;
+                    }else{
+                        if('scaleX'== prop.name) {
+                            v =parseFloat(value) /this.defaultData.width;
+                        }else if('scaleY'== prop.name){
+                            v = parseFloat(value)/this.defaultData.height;
+                        }
                     }
-                    console.log(this.defaultData.width);
-
                     break;
                 case propertyType.Select:
 
@@ -120,10 +154,10 @@ class PropertyView extends React.Component {
                       //数组
                       let arr=value.split(',');
 
-
                       const obj = {};
-                      prop.name='originX';
-                      obj[prop.name] = parseFloat(arr[0]);
+
+                       prop.name='originX';
+                       obj[prop.name] = parseFloat(arr[0]);
                       this.onStatusChange({updateProperties: obj});
                       WidgetActions['updateProperties'](obj, false, true);//reflux模式,調用actions
 
@@ -133,6 +167,7 @@ class PropertyView extends React.Component {
                       WidgetActions['updateProperties'](obj, false, true);//reflux模式,調用actions
 
                       prop.name='originPos';
+
                        bTag=false;
 
                   }else{
@@ -162,13 +197,41 @@ class PropertyView extends React.Component {
     onChangePropDom(item, value) {
         this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
     }
+   //获取下拉框默认值
+    getSelectDefault(originPos,options){
+        for(var i in options){
+             if(options[i][0]==originPos.x && options[i][1]==originPos.y  ){
+                 return i;
+             }
+        }
+    }
+    //锁定
+    antLock(){
 
+        this.selectNode.props.isLock=!this.selectNode.props.isLock
+
+
+
+        let  oLock=  document.getElementsByClassName('ant-lock')[0];
+       if(this.selectNode.props.isLock){
+           oLock.classList.add('ant-lock-checked');
+
+
+       }else{
+           oLock.classList.remove('ant-lock-checked');
+       }
+    }
 
     getFields() {
         let node = this.selectNode;//当前舞台选中的对象
+       console.log(node);
+
+
 
         if (!node)
             return null;
+
+        if( node.props.isLock ===undefined){ node.props.isLock=false;}
 
         let className = node.className;
         if (className.charAt(0) == '_')
@@ -198,13 +261,17 @@ class PropertyView extends React.Component {
                 defaultValue = node.node[str];
                 if (!this.defaultData[str]) { this.defaultData[str] = defaultValue;}//只执行一次
             } else {
-                if (node.props[item.name] === undefined)
+                if (node.props[item.name] === undefined){
                     defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
-                else
+                }  else{
                     defaultValue = node.props[item.name];
+                    if(item.name == 'originX'){
+                        this.originPos.x=defaultValue;
+                    }else if(item.name == 'originY'){
+                        this.originPos.y=defaultValue;
+                    }
+                }
             }
-
-
 
 
 
@@ -220,7 +287,9 @@ class PropertyView extends React.Component {
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;
             }else if(item.type ==propertyType.Select ){
-                defaultProp.defaultValue= item.default;
+              if(item.name=='originY' ||item.name=='originPos') {
+                  defaultProp.defaultValue = this.getSelectDefault(this.originPos, item.options);
+              }
                 //拼接children元素
                 defaultProp.options=[];
                 for(var i in  item.options){
@@ -231,12 +300,13 @@ class PropertyView extends React.Component {
             }
 
 
+
             let groupName = item.group || 'basic';
             if (groups[groupName] === undefined)
                 groups[groupName] = [];
 
             //设置布局结构和图标
-            let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH'].indexOf(item.showName) >= 0;//左右结构显示
+            let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY'].indexOf(item.showName) >= 0;//左右结构显示
             let hasPx=['x','y','w','h'].indexOf(item.showName)>=0; //判断input中是否添加px单位
             let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
             let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
@@ -251,13 +321,8 @@ class PropertyView extends React.Component {
             if(item.imgClassName){
                 htmlStr=<label><div className={item.imgClassName}></div></label>
             }else{
-                if(hasLock){
-                    htmlStr=<label><div className='ant-lock'></div>{item.showName}</label>
-                }else {
-                    htmlStr =<label>{item.showName}</label>
-                }
+                htmlStr= hasLock ?<label><div className={cls('ant-lock',{'ant-lock-checked':node.props.isLock})} onClick={this.antLock.bind(this)}></div>{item.showName}</label>:<label>{item.showName}</label>
             }
-
 
             groups[groupName].push(
                 <div key={item.name}
@@ -268,7 +333,6 @@ class PropertyView extends React.Component {
                     <div className='ant-col-r'>
                         <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
                         {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
-
                         </div>
                     </div>
                 </div>
@@ -290,6 +354,7 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
+
         if (widget.selectWidget !== undefined){
             //加载后被调用,数据的更改激活change
             this.selectNode = widget.selectWidget;
@@ -314,23 +379,34 @@ class PropertyView extends React.Component {
             let className = selectNode.className;
             if (className.charAt(0) == '_')
                 className = 'class';
+
+
              propertyMap[className].map(item => {
+
                 if (item.isProperty && obj[item.name] !== undefined) {
-                    if (obj[item.name] === null) {
+
+                    if ( obj[item.name]=== null) {
+
+
                         delete(selectNode.props[item.name]);
                         if (needRender)
                             selectNode.node[item.name] = item.default;
-                    } else {
-                        selectNode.props[item.name] = obj[item.name];
-                        if (needRender)
-                            selectNode.node[item.name] = obj[item.name];
 
+                    } else {
+                    //用于回填
+                        selectNode.props[item.name] = obj[item.name];
+
+                     //更新
+                        if (needRender)
+                            selectNode.node[item.name] = item.name == 'alpha' ? obj[item.name] / 100 : obj[item.name];
                     }
                 }
+
             });
+
             if (needRender)
                 WidgetActions['render']();
-            this.setState({fields: this.getFields()});
+             this.setState({fields: this.getFields()});
         }
     }
 
