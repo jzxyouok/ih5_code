@@ -46,6 +46,7 @@ export default Reflux.createStore({
         this.listenTo(Actions['selectPrimary'], this.selectPrimary);
         this.listenTo(Actions['selectSecondary'], this.selectSecondary);
         this.listenTo(Actions['openSecondary'], this.openSecondary);
+        this.listenTo(Actions['deselect'], this.deselect);
     },
 
     selectPrimary: function(buttonId, groupId, boxId) {
@@ -81,6 +82,13 @@ export default Reflux.createStore({
     clickPrimary: function(buttonId) {
         //console.log('clickPrimary');
         toolBoxConfig.activeButtonId = buttonId;
+    },
+
+    deselect: function(){
+        toolBoxConfig.activeButtonId = null;
+        toolBoxConfig.openSecondaryId = null;
+        toolBoxConfig.data = defaultTool;
+        this.trigger(toolBoxConfig);
     }
 
 });

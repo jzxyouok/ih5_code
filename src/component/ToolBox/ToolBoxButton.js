@@ -60,6 +60,7 @@ class ToolBoxButton extends Component {
             this.onDrawRect();
         } else {
             WidgetActions['addWidget'](this.props.className, this.props.param);
+            ToolBoxAction['deselect']();
         }
     }
 
@@ -67,6 +68,7 @@ class ToolBoxButton extends Component {
         event.preventDefault();
         event.stopPropagation();
         ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
+        ToolBoxAction['deselect']();
     }
 
     onDrawRect() {
@@ -87,6 +89,7 @@ class ToolBoxButton extends Component {
             if (this.props.upload) {
                 //上传
                 this.onFileUpload();
+                ToolBoxAction['deselect']();
                 this.drawRect.end();
                 this.drawRect.cleanUp();
                 this.drawRect = null;
@@ -103,11 +106,13 @@ class ToolBoxButton extends Component {
             } else if (this.props.drawRect) {
                 //普通画框
                 WidgetActions['addWidget'](this.props.className, this.props.param);
+                ToolBoxAction['deselect']();
                 this.drawRect.end();
                 this.drawRect.cleanUp();
                 this.drawRect = null;
             }
         },(() => {
+            ToolBoxAction['deselect']();
             this.drawRect.end();
             this.drawRect.cleanUp();
             this.drawRect = null;
@@ -180,6 +185,7 @@ class ToolBoxButton extends Component {
     }
 
     onModalClear(){
+        ToolBoxAction['deselect']();
         this.drawRect.cleanUp();
         this.drawRect = null;
         this.setState({

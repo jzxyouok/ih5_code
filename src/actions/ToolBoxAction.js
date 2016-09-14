@@ -7,5 +7,6 @@ import Reflux from 'reflux';
 export default Reflux.createActions([
     'selectPrimary',
     'selectSecondary',
-    'openSecondary'
+    'openSecondary',
+    'deselect',
 ]);
