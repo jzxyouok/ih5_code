@@ -81,25 +81,25 @@ var DEFAULT_TOOLBOX = {
         gid:1,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.IMAGE, name:'上传单个图片',icon:imageIcon, className:'image', upload:true},
-            {cid:TOOL_ID.IMAGE_LIST, name:'上传多个图片', icon:igroupIcon, className:'imagelist', upload:true}]
+            {cid:TOOL_ID.IMAGE, name:'上传单个图片',icon:imageIcon, className:'image', drawRect:true, upload:true, param: shapeParam},
+            {cid:TOOL_ID.IMAGE_LIST, name:'上传多个图片', icon:igroupIcon, className:'imagelist', drawRect:true, upload:true, param: shapeParam}]
     },{
         name:'文字',
         key:2,
         gid:2,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', param: {'text': 'Text'}},
-            {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', drawRectText:true, param: {'text': 'Text'}},
+            {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
     },{
         name:'几何图形',
         key:4,
         gid:4,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', param: shapeParam},
-            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', param: shapeParam},
-            {cid:TOOL_ID.PATH,name:'路径',icon:curveIcon, className:'path', param: shapeParam}]
+            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', drawRect:true, param: shapeParam},
+            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', drawRect:true, param: shapeParam},
+            {cid:TOOL_ID.PATH,name:'路径',icon:curveIcon, className:'path', drawRect:true, param: shapeParam}]
     },{
         name:'按钮',
         key:5,
@@ -122,7 +122,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'},
-            {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video'}
+            {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video', drawRect:true}
         ]
     },{
         name:'文件',
