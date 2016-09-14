@@ -144,8 +144,9 @@ class VxRcSlider extends RcSlider {
             this.state.currentHandle = handle.props.handleIndex;
             WidgetActions['activeHandle'](true);
             WidgetActions['syncTrack']();
-            //TimelineAction['ChangeKeyframe'](true);
+
             this.setState({
+                changeKeyValue : null,
                 changeKey : handle.props.handleIndex
             })
         }
@@ -226,13 +227,20 @@ class VxRcSlider extends RcSlider {
             let offset = this.calcOffset(points[i][0]);
             let which = this.state.changeKey;
             //console.log(this.state.changeKeyValue);
+            //console.log(this.state.changeKeyBool);
             if(this.state.changeKeyBool){
                 if(this.state.changeKeyValue){
-                    points[which][0] = this.state.changeKeyValue;
-                    let position = points[which][0];
-                    offset = this.calcOffset(position);
+                    if(which === i) {
+                        points[which][0] = this.state.changeKeyValue;
+                        let position = points[which][0];
+                        offset = this.calcOffset(position);
+                    }
+                    else {
+                        offset = this.calcOffset(points[i][0])
+                    }
                 }
             }
+
             handles.push(<VxHandle
                 className={handleClassName}
                 noTip={isNoTip}
