@@ -13,6 +13,7 @@ class ToolBoxButton extends Component {
         super(props);
         this.state = {
             selected: isActiveButton(this.props.cid),
+            enabled: true,
             modal: {
                 isVisible: false,
                 value: ''
@@ -24,6 +25,12 @@ class ToolBoxButton extends Component {
         this.drawRect = null;
         this.onDrawRect = this.onDrawRect.bind(this);
         this.onFileUpload = this.onFileUpload.bind(this);
+
+        this.onModalOK = this.onModalOK.bind(this);
+        this.onUploadOK = this.onUploadOK.bind(this);
+        this.onModalCancel = this.onModalCancel.bind(this);
+        this.onModalClear = this.onModalClear.bind(this);
+        this.onModalTextAreaChange = this.onModalTextAreaChange.bind(this);
     }
 
     componentWillMount() {
@@ -215,6 +222,7 @@ class ToolBoxButton extends Component {
                 {'ToolBoxButtonPrimary': this.props.isPrimary},
                 {'active': this.state.selected})}
                 title={this.props.name}
+                disabled={!this.state.enabled}
                 onClick={this.onClick.bind(this)}
                 onContextMenu={this.onRightClick.bind(this)}>
                 <img src={this.props.icon} />
@@ -228,9 +236,9 @@ class ToolBoxButton extends Component {
                         closable={false}
                         width={490}
                         wrapClassName="vertical-center-modal tool-box-button-modal"
-                        onOk={this.onModalOK.bind(this)}
-                        onCancel={this.onModalCancel.bind(this)}>
-                    <textarea className="body-textarea" value={this.state.modal.value} onChange={this.onModalTextAreaChange.bind(this)}>
+                        onOk={this.onModalOK}
+                        onCancel={this.onModalCancel}>
+                    <textarea className="body-textarea" value={this.state.modal.value} onChange={this.onModalTextAreaChange}>
                     </textarea>
                 </Modal>
                 <Modal  visible={this.state.upload.isVisible}
@@ -241,8 +249,8 @@ class ToolBoxButton extends Component {
                         closable={false}
                         width={490}
                         wrapClassName="vertical-center-modal tool-box-button-modal"
-                        onOk={this.onUploadOK.bind(this)}
-                        onCancel={this.onModalCancel.bind(this)}>
+                        onOk={this.onUploadOK}
+                        onCancel={this.onModalCancel}>
                 </Modal>
             </button>
         );
