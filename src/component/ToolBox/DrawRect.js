@@ -15,11 +15,13 @@ export default class DrawRect {
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
-        this.cleanUp = this.cleanUp.bind(this);
+
         this.addDrawRectEventListener = this.addDrawRectEventListener.bind(this);
         this.removeDrawRectEventListener = this.removeDrawRectEventListener.bind(this);
+
         this.start = this.start.bind(this);
         this.end = this.end.bind(this);
+        this.cleanUp = this.cleanUp.bind(this);
     }
 
     start() {

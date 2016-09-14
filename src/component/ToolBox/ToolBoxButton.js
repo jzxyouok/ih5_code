@@ -16,6 +16,9 @@ class ToolBoxButton extends Component {
             modal: {
                 isVisible: false,
                 value: ''
+            },
+            upload: {
+                isVisible: false,
             }
         };
         this.drawRect = null;
@@ -88,11 +91,12 @@ class ToolBoxButton extends Component {
             }
             if (this.props.upload) {
                 //上传
-                this.onFileUpload();
-                ToolBoxAction['deselect']();
                 this.drawRect.end();
-                this.drawRect.cleanUp();
-                this.drawRect = null;
+                this.setState({
+                    upload: {
+                        isVisible: true
+                    }
+                });
             } else if(this.props.drawRectText) {
                 //弹窗输入文本
                 this.drawRect.end();
@@ -171,6 +175,11 @@ class ToolBoxButton extends Component {
         this.onModalClear();
     }
 
+    onUploadOK() {
+        this.onFileUpload();
+        this.onModalClear();
+    }
+
     onModalCancel() {
         this.onModalClear();
     }
@@ -192,6 +201,9 @@ class ToolBoxButton extends Component {
             modal: {
                 isVisible: false,
                 value: ''
+            },
+            upload: {
+                isVisible: false
             }
         });
     }
@@ -220,6 +232,17 @@ class ToolBoxButton extends Component {
                         onCancel={this.onModalCancel.bind(this)}>
                     <textarea className="body-textarea" value={this.state.modal.value} onChange={this.onModalTextAreaChange.bind(this)}>
                     </textarea>
+                </Modal>
+                <Modal  visible={this.state.upload.isVisible}
+                        title={<div className="title">
+                            <span style={{paddingLeft:'10px'}}>添加图片</span>
+                        </div>}
+                        maskClosable={false}
+                        closable={false}
+                        width={490}
+                        wrapClassName="vertical-center-modal tool-box-button-modal"
+                        onOk={this.onUploadOK.bind(this)}
+                        onCancel={this.onModalCancel.bind(this)}>
                 </Modal>
             </button>
         );
