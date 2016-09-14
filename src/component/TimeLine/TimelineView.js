@@ -5,6 +5,9 @@ import bridge from 'bridge';
 import { Slider, Row, Col, Card, Button } from 'antd';
 import WidgetStore from '../../stores/WidgetStore';
 import WidgetActions from '../../actions/WidgetActions';
+import TimelineStores from '../../stores/Timeline';
+import TimelineAction from '../../actions/TimelineAction';
+
 import VxSlider from '../VxSlider';
 import ComponentPanel from '../ComponentPanel';
 
@@ -27,7 +30,8 @@ class TimelineView extends React.Component {
 			isPlaying: false,
             selectLayerData : null,
             inputState : false,
-            inputTime : null
+            inputTime : null,
+            isChangeKey : false
 		};
 		this.onTimer = this.onTimer.bind(this);
 		//this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -48,10 +52,12 @@ class TimelineView extends React.Component {
 
 	componentDidMount() {
 		this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        TimelineStores.listen(this.ChangeKeyframe.bind(this));
 	}
 
 	componentWillUnmount() {
 		this.unsubscribe();
+        TimelineStores.removeListener(this.ChangeKeyframe);
 	}
 
 	onStatusChange(widget) {
@@ -131,7 +137,15 @@ class TimelineView extends React.Component {
 		WidgetActions['syncTrack']();
         //console.log(value);
 		this.setState({currentTime:value});
+        TimelineAction['ChangeKeyframe'](false,value);
 	}
+
+    ChangeKeyframe(data){
+        //console.log(data);
+       this.setState({
+           isChangeKey : data
+       })
+    }
 
 	// 添加时间断点
 	onAdd() {
@@ -208,6 +222,9 @@ class TimelineView extends React.Component {
                 inputState : false,
                 currentTime : parseFloat(data) / 10
             });
+            if(this.state.isChangeKey){
+                TimelineAction['ChangeKeyframe'](true,parseFloat(data) / 10);
+            }
         }
         else if(event.key == "ArrowUp"){
             this.setState({

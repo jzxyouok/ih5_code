@@ -10,33 +10,38 @@ import cls from 'classnames';
 import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
 
+import TimelineStores from '../stores/Timeline';
+import TimelineAction from '../actions/TimelineAction';
+
 function noop() {
 }
 
 class VxHandle extends React.Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      isTooltipVisible: false
-    };
-  }
+        this.state = {
+            isTooltipVisible: false
+        };
+    }
 
-  showTooltip() {
-    this.setState({
-      isTooltipVisible: true
-    });
-  }
+    showTooltip() {
+        this.setState({
+            isTooltipVisible: true
+        });
+        TimelineAction['ChangeKeyframe'](true);
+    }
 
-  hideTooltip() {
-    this.setState({
-      isTooltipVisible: false
-    });
-  }
+    hideTooltip() {
+        this.setState({
+          isTooltipVisible: false
+        });
+    }
 
-  onHandleClick() {
-    this.props.onHandleClick(this);
-  }
+    onHandleClick() {
+        TimelineAction['ChangeKeyframe'](true);
+        this.props.onHandleClick(this);
+    }
 
   render() {
     const props = this.props;
@@ -90,10 +95,37 @@ class VxRcSlider extends RcSlider {
         super(props);
         this.state = {
             points: this.props.points,
-            currentHandle: -1};
+            currentHandle: -1,
+            changeKey : null,
+            changeKeyBool : false,
+            changeKeyValue : null
+        };
         this.onHandleClick = this.onHandleClick.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.selectTrack = this.selectTrack.bind(this);
+    }
+
+    componentDidMount() {
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
+        TimelineStores.listen(this.ChangeKeyframe.bind(this));
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+        TimelineStores.removeListener(this.ChangeKeyframe);
+    }
+
+    ChangeKeyframe(bool,value){
+        //console.log('key',bool,value);
+        if(bool){
+            if(value){
+                this.setState({
+                    changeKeyBool : bool,
+                    changeKeyValue : value
+                });
+            }
+        }
     }
 
     selectTrack(){
@@ -105,14 +137,25 @@ class VxRcSlider extends RcSlider {
         if (this.props.isCurrent) {
             //console.log(this.props.refTimer);
             this.props.refTimer.node['pause']();
-            this.props.refTimer.node['seek'](this.props.refTrack.props['data'][handle.props.handleIndex][0] * this.props.refTimer.node['totalTime']);
+            this.props.refTimer.node['seek'](
+                this.props.refTrack.props['data'][handle.props.handleIndex][0]
+                * this.props.refTimer.node['totalTime']
+            );
             this.state.currentHandle = handle.props.handleIndex;
             WidgetActions['activeHandle'](true);
             WidgetActions['syncTrack']();
+            //TimelineAction['ChangeKeyframe'](true);
+            this.setState({
+                changeKey : handle.props.handleIndex
+            })
         }
     }
 
     onMove(e, position) {
+        TimelineAction['ChangeKeyframe'](false);
+        this.setState({
+            changeKeyBool : false
+        });
         pauseEvent(e);
         const props = this.props;
 
@@ -129,15 +172,6 @@ class VxRcSlider extends RcSlider {
             this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
             this.setState({points: points});
         }
-    }
-
-    componentDidMount() {
-        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
-        this.onStatusChange(WidgetStore.getStore());
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
     }
 
     onStatusChange(widget) {
@@ -186,10 +220,19 @@ class VxRcSlider extends RcSlider {
         const upperBound = points[points.length - 1][0];
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
+        //console.log(this.state.changeKeyBool);
 
         for (let i = 1; i < points.length-1; i++) {
             let offset = this.calcOffset(points[i][0]);
-            //console.log(this.state.isCurrent, i);
+            let which = this.state.changeKey;
+            //console.log(this.state.changeKeyValue);
+            if(this.state.changeKeyBool){
+                if(this.state.changeKeyValue){
+                    points[which][0] = this.state.changeKeyValue;
+                    let position = points[which][0];
+                    offset = this.calcOffset(position);
+                }
+            }
             handles.push(<VxHandle
                 className={handleClassName}
                 noTip={isNoTip}
