@@ -134,7 +134,7 @@ class ToolBoxButton extends Component {
         WidgetActions['chooseFile'](this.props.className, false, (w) => {
             if (w.files.length) {
                 var self = this;
-                if (self.props.className == 'image') {
+                if (self.props.className == 'image' || self.props.className == 'video') {
                     var reader = new FileReader();
                     reader.onload = function(e) {
                         WidgetActions['addWidget'](self.props.className, self.props.param, e.target.result);
@@ -243,7 +243,7 @@ class ToolBoxButton extends Component {
                 </Modal>
                 <Modal  visible={this.state.upload.isVisible}
                         title={<div className="title">
-                            <span style={{paddingLeft:'10px'}}>添加图片</span>
+                            <span style={{paddingLeft:'10px'}}>添加</span>
                         </div>}
                         maskClosable={false}
                         closable={false}
