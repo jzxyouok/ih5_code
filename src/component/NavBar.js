@@ -344,7 +344,7 @@ class NavBar extends React.Component {
                            onEditDone={this.onSaveDone.bind(this)} />
 
                 <input id="upload-box"
-                       style={{'display':'none'}}
+                       style={{'position':'absolute', 'height':'1px', 'zIndex':'-1000', 'width':'1px'}}
                        onChange={this.onUploadChange}
                        type="file" />
 
