@@ -48,6 +48,7 @@ class TimelineView extends React.Component {
         this.formatter = this.formatter.bind(this);
         this.timeInput = this.timeInput.bind(this);
         this.timeInputSure = this.timeInputSure.bind(this);
+        this.inputOnBlur = this.inputOnBlur.bind(this);
 	}
 
 	componentDidMount() {
@@ -241,6 +242,21 @@ class TimelineView extends React.Component {
         }
     }
 
+    inputOnBlur(){
+        let data = this.refs.TimeInput.value;
+        let max = parseInt(event.currentTarget.getAttribute("data-max"));
+        if(data > max){
+            data = max;
+        }
+        this.setState({
+            inputState : false,
+            currentTime : parseFloat(data) / 10
+        });
+        if(this.state.isChangeKey){
+            TimelineAction['ChangeKeyframe'](true,parseFloat(data) / 10);
+        }
+    }
+
 	selectNextBreakpoint() {
 
 	}
@@ -353,6 +369,7 @@ class TimelineView extends React.Component {
                                    value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
                                    onChange={ this.timeInput.bind(this) }
                                    onKeyDown = { this.timeInputSure.bind(this)}
+                                   onBlur={ this.inputOnBlur }
                                    data-max = {totalTime}
                                    ref="TimeInput"/>
                             <span>s</span>
