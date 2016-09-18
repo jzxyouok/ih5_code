@@ -59,7 +59,7 @@ class Animation extends React.Component {
                 btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
                     // , {"name":"动效","class":"dx-btn", className:'effect'}
                     , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn", className:'world'}
+                    // , {"name":"物理世界","class":"physical-btn", className:'world'}
                     , {"name":"物体","class":"object-btn", className:'body'}];
                 break;
             case "wechat" :
@@ -71,6 +71,11 @@ class Animation extends React.Component {
                 break;
             default : btnData = [];
         }
+        //添加fx变量
+        if (this.state.className !== 'text' || this.state.className !== 'counter') {
+            btnData.unshift({"name":'变量fx','class':'fx-btn', className:'fx'});
+        }
+
         return (
             <div className="Animation">
                 {

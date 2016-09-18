@@ -89,15 +89,11 @@
 		height: 11px;
 		#ToolBoxHeaderExpanedButton {
 			border: none;
-			background: none;
+			//background: none;
 			width: 20px;
 			height: 11px;
 			display: block;
-			background: {
-				image: url(/img/toolbox-arrow.svg);
-				repeat: no-repeat;
-				position: -30px 0;
-			}
+			background: url("img/toolbox-arrow.svg") no-repeat -30px 0;
 			&:hover {
 				background-position: -30px -20px;
 			}
