@@ -268,7 +268,9 @@ $size: 25px;
 					width: 1px;
 					background: red;
 					display: block;
-                    margin: 15px 0 0 11.3px;
+                    position: absolute;
+                    top: 15px;
+                    left: 11.3px;
 				}
 			}
 			.ant-slider-track {
