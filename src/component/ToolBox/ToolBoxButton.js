@@ -90,6 +90,8 @@ class ToolBoxButton extends Component {
         this.drawRect.start();
         this.drawRect.def.promise().then(data => {
             if(this.props.param) {
+                // this.props.param.originX = data.shapeWidth;
+                // this.props.param.originY = data.shapeHeight;
                 this.props.param.positionX = data.positionX;
                 this.props.param.positionY = data.positionY;
                 this.props.param.shapeWidth = data.shapeWidth;
