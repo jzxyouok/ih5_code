@@ -385,6 +385,7 @@ $size: 25px;
 		// 使用 ant design 的组件
 
 		.ant-slider {
+            position: relative;
 			background: none;
 			border: none!important;
 			height: 24px;
@@ -392,7 +393,19 @@ $size: 25px;
 			border-radius: 0;
             opacity: 0.6;
 
+            .locus-layer {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 2;
+                //background: #000;
+            }
+
 			.ant-slider-handle {
+                position: absolute;
+                z-index: 3;
 				width: 24px;
 				height: 24px;
 				@include bg-btn2(7);
