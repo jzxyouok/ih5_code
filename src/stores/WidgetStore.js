@@ -128,7 +128,7 @@ function saveTree(data, node) {
     node.children.map(item => {
       if (item.className == 'track' && item.props['prop'] && item.props['data'].length > 0) {
         data['props'] = data['props'] || {};
-        for (var i = item.props['prop'].length; i > 0; i--) {
+        for (var i = 0; i < item.props['prop'].length; i++) {
           data['props'][item.props['prop'][i]] = item.props['data'][0][i + 1];
         }
       }
@@ -232,6 +232,8 @@ function chooseFileCallback(w) {
       allowExt = ['zip'];
     } else if (w.userType == 'zip') {
       allowExt = ['zip'];
+    } else if (w.userType == 'video') {
+      allowExt = ['mov', 'mp4', 'avi'];
     } else {
       return;
     }
@@ -298,6 +300,10 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
+
+        this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
+        this.listenTo(WidgetActions['addEvent'], this.addEvent);
+        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -315,6 +321,7 @@ export default Reflux.createStore({
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
+        // TODO:加Locked Here
         if (widget && selectableClass.indexOf(widget.className) >= 0) {
             bridge.selectWidget(widget.node, this.updateProperties.bind(this));
         } else {
@@ -334,11 +341,11 @@ export default Reflux.createStore({
               && this.currentWidget.className !== 'container'))
           return;
         let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
-        let dataList = [[0], [1]];
+        let dataList = [[0]];   //let dataList = [[0], [1]];
         for (let i = 0; i < propList.length; i++) {
           let d = this.currentWidget.node[propList[i]];
           dataList[0].push(d);
-          dataList[1].push(d);
+          //dataList[1].push(d);
         }
         let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList}});
         this.trigger({redrawTree: true, updateTrack: track});
@@ -387,6 +394,10 @@ export default Reflux.createStore({
         this.render();
       }
     },
+    cutWidget: function() {
+        this.copyWidget();
+        this.removeWidget();
+    },
     reorderWidget: function(delta) {
       if (this.currentWidget && this.currentWidget.parent) {
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
@@ -427,6 +438,12 @@ export default Reflux.createStore({
         p.skipProperty = true;
       this.trigger(p);
 
+    },
+    addEvent: function(className, props) {
+        //TODO:添加事件
+    },
+    removeEvent: function() {
+        //TODO:删除事件
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});
@@ -540,7 +557,7 @@ export default Reflux.createStore({
       var cb = function(text) {
           var result = JSON.parse(text);
           callback(result['id'], wname);
-      }
+      };
 
       if (wid) {
         this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb);

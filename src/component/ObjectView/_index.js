@@ -26,6 +26,7 @@ class ObjectView extends React.Component {
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);
+        this.addEvent = this.addEvent.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
     }
@@ -62,6 +63,10 @@ class ObjectView extends React.Component {
         WidgetActions['addWidget'](className,param);
     }
 
+    addEvent(className,param) {
+        WidgetActions['addEvent'](className,param);
+    }
+
     delete(){
         WidgetActions['removeWidget']();
         this.refs.ObjectTree.chooseBtn(this.state.parentID, this.state.parentData);
@@ -93,7 +98,7 @@ class ObjectView extends React.Component {
         let content;
         switch (this.state.whichContent){
             case 0 :
-                content = <ObjectTree width = { this.state.width } ref="ObjectTree" />;
+                content = <ObjectTree width = { this.state.width } ref='ObjectTree' />;
                 break;
             case 1 :
                 content = <Resource />;
@@ -101,15 +106,15 @@ class ObjectView extends React.Component {
         }
 
         return (
-            <div className="ObjectView" style={{width:this.state.width}}>
-                <div className="drag-left"></div>
+            <div className='ObjectView' style={{width:this.state.width}}>
+                <div className='drag-left'></div>
 
-                <nav className="ov--nav f--h">
-                    <ul className="ul-clear flex-1 f--h">
+                <nav className='ov--nav f--h'>
+                    <ul className='ul-clear flex-1 f--h'>
                         {
                             this.state.whichContentData.map((v,i)=>{
                                 return  <li key={i}
-                                            className={$class({ "active": i === this.state.whichContent})}
+                                            className={$class({ 'active': i === this.state.whichContent})}
                                             onClick={ this.toggleBtn.bind(this, i) }>
                                             {v}
                                         </li>
@@ -117,27 +122,27 @@ class ObjectView extends React.Component {
                         }
                     </ul>
 
-                    <button className="btn btn-clear" title="收起" />
+                    <button className='btn btn-clear' title='收起' />
                 </nav>
 
-                <div className="ov--main f--h">
-                    <div className="ov--content flex-1">
+                <div className='ov--main f--h'>
+                    <div className='ov--content flex-1'>
                         { content }
                     </div>
 
                     <Animation />
                 </div>
 
-                <div className="ov--footer f--h f--hlc">
+                <div className='ov--footer f--h f--hlc'>
                     {
                         // not-allowed 为不可点击
                     }
-                    <button className="btn btn-clear lock-btn not-allowed" title="锁住" />
+                    <button className='btn btn-clear lock-btn not-allowed' title='锁住'/>
                     {/*<button className="btn btn-clear folder-btn" title="文件夹"  onClick={ this.create.bind(this,"folder",null)}  />*/}
-                    <button className="btn btn-clear container-btn" title="容器" onClick={ this.create.bind(this,"container",null)} />
-                    <button className="btn btn-clear event-btn" title="事件" />
-                    <button className="btn btn-clear new-btn" title="新建"  onClick={ this.create.bind(this,"page",null)} />
-                    <button className="btn btn-clear delete-btn" title="删除" onClick={ this.delete } />
+                    <button className='btn btn-clear container-btn' title='容器' onClick={ this.create.bind(this,'container',null)} />
+                    <button className='btn btn-clear event-btn' title='事件' onClick={ this.addEvent.bind(this, 'event', null)}/>
+                    <button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />
+                    <button className='btn btn-clear delete-btn' title='删除' onClick={ this.delete } />
                 </div>
 
                 {

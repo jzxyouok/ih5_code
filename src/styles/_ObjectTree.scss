@@ -14,6 +14,10 @@
         //height: 100%;
         overflow: scroll;
 
+        .item {
+            outline: 0;
+        }
+
         .stage-title ,
         .item-title{
             position: relative;
@@ -107,7 +111,8 @@
 
         .placeholder {
             height: 2px;
-            border-top: 2px dotted #adadad;
+            background-color: #FFA800;
+            //border-top: 2px dotted #adadad;
         }
     }
 }

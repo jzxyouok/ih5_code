@@ -121,9 +121,9 @@ var DEFAULT_TOOLBOX = {
         gid:7,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'},
-            {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video', drawRect:true}
-        ]
+            {cid:TOOL_ID.VIDEO,name:'视频',icon:videoIcon, className:'video', drawRect:true, upload:true,
+                param: {'shapeWidth': 100, 'shapeHeight': 100}},
+            {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'}]
     },{
         name:'文件',
         key:9,
@@ -157,7 +157,8 @@ var DEFAULT_TOOLBOX = {
             //{cid:TOOL_ID.TRACK, name:'轨迹', icon: trackIcon, className: 'track'},
             // {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
             // {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},
-            {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer',  param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}}
+            {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer', drawRect:true,
+                param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}}
         ]
     },{
         name:'计数器',

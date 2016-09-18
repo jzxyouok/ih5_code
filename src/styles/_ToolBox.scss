@@ -89,15 +89,11 @@
 		height: 11px;
 		#ToolBoxHeaderExpanedButton {
 			border: none;
-			background: none;
+			//background: none;
 			width: 20px;
 			height: 11px;
 			display: block;
-			background: {
-				image: url(/img/toolbox-arrow.svg);
-				repeat: no-repeat;
-				position: -30px 0;
-			}
+			background: url("img/toolbox-arrow.svg") no-repeat -30px 0;
 			&:hover {
 				background-position: -30px -20px;
 			}
@@ -216,11 +212,21 @@
 	}
 }
 
+.ant-modal-mask {
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
 .tool-box-button-modal {
 	.ant-modal-content {
 		border-radius: 2px;
-		border: 1px solid #353535;
 		background-color: #353535;
+		//Firefox4.0-
+		-moz-box-shadow: 0 0 14px 5px rgba(0, 0, 0, 0.3);
+		//Safariand Google chrome10.0-
+		-webkit-box-shadow: 0 0 14px 5px rgba(0, 0, 0, 0.3);
+		//Firefox4.0+、 Google chrome 10.0+ 、 Oprea10.5+ and IE9
+		box-shadow:  0 0 14px 5px rgba(0, 0, 0, 0.3);
+
 		.ant-modal-header {
 			//height: 40px;
 			background-color: #545454;
@@ -271,6 +277,7 @@
 			.ant-btn-ghost {
 				border: 1px solid #7b7b7b;
 				background-color: #7b7b7b;
+				outline: none;
 				&:hover {
 					border: 1px solid #b5b5b5;
 					background-color: #b5b5b5;
@@ -284,6 +291,7 @@
 				margin-left: 40px;
 				border: 1px solid #b5b5b5;
 				background-color: #b5b5b5;
+				outline: none;
 				&:hover {
 					border: 1px solid #ffffff;
 					background-color: #ffffff;
@@ -293,6 +301,6 @@
 					background-color: #545454;
 				}
 			}
- 		}
+		}
 	}
 }

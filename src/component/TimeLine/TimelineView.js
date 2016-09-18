@@ -48,6 +48,7 @@ class TimelineView extends React.Component {
         this.formatter = this.formatter.bind(this);
         this.timeInput = this.timeInput.bind(this);
         this.timeInputSure = this.timeInputSure.bind(this);
+        this.inputOnBlur = this.inputOnBlur.bind(this);
 	}
 
 	componentDidMount() {
@@ -61,11 +62,12 @@ class TimelineView extends React.Component {
 	}
 
 	onStatusChange(widget) {
-		console.log('w2', widget);
+		//console.log('w2', widget);
 		//if(widget.hasOwnProperty('hasHandle')) {
 		//	this.setState({
 		//		hasHandle: widget.hasHandle
 		//	});
+         //   console.log( widget.hasHandle);
 		//	return;
 		//}
 		//if(widget.resetTrack || widget.selectWidget) {
@@ -102,6 +104,7 @@ class TimelineView extends React.Component {
 			this.setState(changed);
 		}
 		if (widget.updateTrack !== undefined) {
+            //console.log(widget.updateTrack );
 			if (widget.updateTrack !== null && widget.updateTrack.timerWidget === this.state.timerNode) {
 				this.setState({currentTrack: widget.updateTrack});
 			} else {
@@ -149,6 +152,7 @@ class TimelineView extends React.Component {
 	// 添加时间断点
 	onAdd() {
 		if (this.state.currentTrack) {
+            //console.log(this.state.currentTrack);
 			let p = this.state.currentTime;
 			let data = this.state.currentTrack.props['data'];
 			let index = 0;
@@ -164,6 +168,7 @@ class TimelineView extends React.Component {
 			data.splice(index, 0, d);
 			this.state.currentTrack.node['data'] = data;
 			this.forceUpdate();
+            TimelineAction['ChangeKeyframe'](false);
 		}
 	}
 
@@ -240,6 +245,21 @@ class TimelineView extends React.Component {
         }
     }
 
+    inputOnBlur(){
+        let data = this.refs.TimeInput.value;
+        let max = parseInt(event.currentTarget.getAttribute("data-max"));
+        if(data > max){
+            data = max;
+        }
+        this.setState({
+            inputState : false,
+            currentTime : parseFloat(data) / 10
+        });
+        if(this.state.isChangeKey){
+            TimelineAction['ChangeKeyframe'](true,parseFloat(data) / 10);
+        }
+    }
+
 	selectNextBreakpoint() {
 
 	}
@@ -299,6 +319,8 @@ class TimelineView extends React.Component {
                         pic = v1.icon;
                     }
                 });
+                //console.log(node);
+                //console.log(this.state.currentTrack);
                 tracks.push(
                     <VxSlider
                         key={index++}
@@ -342,15 +364,17 @@ class TimelineView extends React.Component {
                 <div id='TimelineHeader' className='timeline-row f--h'>
                     <div className='timline-column-left f--hlc'>
                         <div id='TimelineTitle'>时间轴</div>
-                        <div id='TimelineNodeDuration' className={
-                        cls('f--hlc flex-1',{'active': this.state.currentTrack!=null})
-                    }>
-                        <span id='TimelineIndicator'
-                              className={cls({'active': this.state.currentTrack!=null})} />
+                        <div id='TimelineNodeDuration'
+                             className={ cls('f--hlc flex-1',{'active': this.state.currentTrack!=null})}>
+
+                            <span id='TimelineIndicator'
+                                  className={cls({'active': this.state.currentTrack!=null})} />
+
                             <input type='text'
                                    value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
                                    onChange={ this.timeInput.bind(this) }
                                    onKeyDown = { this.timeInputSure.bind(this)}
+                                   onBlur={ this.inputOnBlur }
                                    data-max = {totalTime}
                                    ref="TimeInput"/>
                             <span>s</span>

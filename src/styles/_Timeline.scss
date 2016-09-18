@@ -95,6 +95,10 @@ $size: 25px;
                 height: 16px;
                 margin: 0 10px 0 8px;
                 display: block;
+
+                &.active{
+                    background-position: 0 -40px;
+                }
 			}
 			input {
                 width: 62px;
@@ -253,6 +257,7 @@ $size: 25px;
 				background-color: transparent;
 				@include btn();
 				@include bg(8, 0);
+                z-index: 4;
 				//transform: translateX(-4px);
 
 				&:active {
@@ -264,7 +269,9 @@ $size: 25px;
 					width: 1px;
 					background: red;
 					display: block;
-                    margin: 15px 0 0 11.3px;
+                    position: absolute;
+                    top: 15px;
+                    left: 11.3px;
 				}
 			}
 			.ant-slider-track {
@@ -276,7 +283,7 @@ $size: 25px;
                 position: absolute;
                 left: 0;
                 top: 0;
-                z-index: 1;
+                z-index: 3;
 			}
 
 			#TimelineRulerNumbers {

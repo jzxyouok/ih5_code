@@ -28,8 +28,10 @@ class ObjectTree extends React.Component {
         this.addOpenId = this.addOpenId.bind(this);
         this.showHideBtn = this.showHideBtn.bind(this);
 
-        this.itemAddCPListener = this.itemAddCPListener.bind(this);
-        this.itemCopyOrPaste = this.itemCopyOrPaste.bind(this);
+        //对象的复制/剪切/黏贴
+        this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
+        this.itemRemoveKeyListener = this.itemRemoveKeyListener.bind(this);
+        this.itemKeyAction = this.itemKeyAction.bind(this);
         this.itemPaste = this.itemPaste.bind(this);
         //拖动对象的方法
         this.itemDragStart = this.itemDragStart.bind(this);
@@ -76,11 +78,16 @@ class ObjectTree extends React.Component {
         }
 
         else if(widget.selectWidget){
-            this.itemAddCPListener(widget);
+            //触发失焦
+            if(this.state.nid){
+                document.getElementById('tree-item-'+this.state.nid).blur();
+            }
             this.setState({
                 selectWidget : widget.selectWidget
                 , nid : widget.selectWidget.key
-            })
+            });
+            //触发聚焦
+            document.getElementById('tree-item-'+this.state.nid).focus();
         }
 
         //selectWidget : 选择工具创建相应图层
@@ -234,13 +241,19 @@ class ObjectTree extends React.Component {
         this.dragTip.parentNode.removeChild(this.dragTip);
     }
 
-    itemAddCPListener(widget){
-        if (widget.selectWidget.className != 'root'){
-            document.body.addEventListener('keyup', this.itemCopyOrPaste);
-            document.body.removeEventListener('keyup', this.itemPaste);
+    itemAddKeyListener(event){
+        if (event.currentTarget.className == 'stage'){
+            event.currentTarget.addEventListener('keyup', this.itemPaste);
         } else {
-            document.body.addEventListener('keyup', this.itemPaste);
-            document.body.removeEventListener('keyup', this.itemCopyOrPaste);
+            event.currentTarget.addEventListener('keyup', this.itemKeyAction);
+        }
+    }
+
+    itemRemoveKeyListener(event){
+        if (event.currentTarget.className == 'stage'){
+            event.currentTarget.removeEventListener('keyup', this.itemPaste);
+        } else {
+            event.currentTarget.removeEventListener('keyup', this.itemKeyAction);
         }
     }
 
@@ -255,18 +268,28 @@ class ObjectTree extends React.Component {
         }
     }
 
-    itemCopyOrPaste(event){
+    itemKeyAction(event){
         event.preventDefault();
         event.stopPropagation();
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
-        //复制
+        //复制 67
         if (didPressCtrl && event.keyCode == 67) {
             WidgetActions['copyWidget']();
         }
-        //黏贴
+        //黏贴 86
         if (didPressCtrl && event.keyCode == 86) {
             WidgetActions['pasteWidget']();
+        }
+        //剪切 88
+        if (didPressCtrl && event.keyCode == 88) {
+            WidgetActions['cutWidget']();
+        }
+        //删除 delete
+        if (!didPressCtrl && event.keyCode == 8) {
+            WidgetActions['removeWidget']();
+            let parentWidget = this.state.selectWidget.parent ? this.state.selectWidget.parent: this.state.selectWidget.rootWidget;
+            this.chooseBtn(parentWidget.key, parentWidget);
         }
     }
 
@@ -362,8 +385,12 @@ class ObjectTree extends React.Component {
             });
             return  <div className="item"
                          key={i}
+                         id={'tree-item-'+ v.key}
                          data-keyId={i}
+                         tabIndex={v.key}
                          draggable='true'
+                         onFocus={this.itemAddKeyListener.bind(this)}
+                         onBlur={this.itemRemoveKeyListener.bind(this)}
                          onDragStart={this.itemDragStart.bind(this,v.key, v)}
                          onDragEnd={this.itemDragEnd}>
                         <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
@@ -412,7 +439,12 @@ class ObjectTree extends React.Component {
                 {
                     !objectData
                     ? null
-                    : <div className='stage'>
+                    : <div className='stage'
+                           onFocus={this.itemAddKeyListener.bind(this)}
+                           onBlur={this.itemRemoveKeyListener.bind(this)}
+                           tabIndex={objectData.tree.key}
+                           id={'tree-item-'+ objectData.tree.key}
+                        >
                         <div className={$class('stage-title f--h f--hlc',{'active': objectData.tree.key === this.state.nid})}
                              style={{ width : this.props.width - 36 }}
                              onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}>

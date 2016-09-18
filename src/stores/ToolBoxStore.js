@@ -33,6 +33,20 @@ var selectSecondary = function(config, gid, cid) {
     return hasUpdate;
 };
 
+// 是否有多于2个按钮
+var hasSecondary = function(config, gid) {
+    let data = config.data;
+    let group = null;
+    for(let i =0; i < data.length; i++) {
+        if(data[i].gid===gid) {
+            group = data[i];
+            break;
+        }
+    }
+    if(group===null) return false;
+    if(group.secondary===null) return false;
+    return (group.secondary.length>1);
+};
 
 var toolBoxConfig = {
     activeButtonId: null,
@@ -70,13 +84,22 @@ export default Reflux.createStore({
     },
 
     openSecondary: function(groupId, update) {
-        if(groupId===toolBoxConfig.openSecondaryId) return;
-
+        if(groupId===toolBoxConfig.openSecondaryId) {
+            return;
+        }
+        if(!hasSecondary(toolBoxConfig.data, groupId) && !update) {
+            //看是否有多于2个按钮
+            this.deselect();
+            return;
+        }
         toolBoxConfig.openSecondaryId = groupId;
         if(arguments.length>=2 && update) {
             //console.log('trigger: openSecondary');
+            //没有点击相关按钮
+            this.deselect();
             this.trigger(toolBoxConfig);
         }
+
     },
 
     clickPrimary: function(buttonId) {
