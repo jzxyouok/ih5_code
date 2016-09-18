@@ -320,6 +320,7 @@ export default Reflux.createStore({
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
+        // TODO:加Locked Here
         if (widget && selectableClass.indexOf(widget.className) >= 0) {
             bridge.selectWidget(widget.node, this.updateProperties.bind(this));
         } else {
