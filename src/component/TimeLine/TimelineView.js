@@ -67,6 +67,7 @@ class TimelineView extends React.Component {
 		//	this.setState({
 		//		hasHandle: widget.hasHandle
 		//	});
+         //   console.log( widget.hasHandle);
 		//	return;
 		//}
 		//if(widget.resetTrack || widget.selectWidget) {
@@ -104,6 +105,7 @@ class TimelineView extends React.Component {
 			this.setState(changed);
 		}
 		if (widget.updateTrack !== undefined) {
+            //console.log(widget.updateTrack );
 			if (widget.updateTrack !== null && widget.updateTrack.timerWidget === this.state.timerNode) {
 				this.setState({currentTrack: widget.updateTrack});
 			} else {
@@ -151,6 +153,7 @@ class TimelineView extends React.Component {
 	// 添加时间断点
 	onAdd() {
 		if (this.state.currentTrack) {
+            //console.log(this.state.currentTrack);
 			let p = this.state.currentTime;
 			let data = this.state.currentTrack.props['data'];
 			let index = 0;
@@ -166,6 +169,7 @@ class TimelineView extends React.Component {
 			data.splice(index, 0, d);
 			this.state.currentTrack.node['data'] = data;
 			this.forceUpdate();
+            TimelineAction['ChangeKeyframe'](false);
 		}
 	}
 

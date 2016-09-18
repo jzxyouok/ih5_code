@@ -127,7 +127,7 @@ function saveTree(data, node) {
     node.children.map(item => {
       if (item.className == 'track' && item.props['prop'] && item.props['data'].length > 0) {
         data['props'] = data['props'] || {};
-        for (var i = item.props['prop'].length; i > 0; i--) {
+        for (var i = 0; i < item.props['prop'].length; i++) {
           data['props'][item.props['prop'][i]] = item.props['data'][0][i + 1];
         }
       }
@@ -335,11 +335,11 @@ export default Reflux.createStore({
               && this.currentWidget.className !== 'container'))
           return;
         let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
-        let dataList = [[0], [1]];
+        let dataList = [[0]];   //let dataList = [[0], [1]];
         for (let i = 0; i < propList.length; i++) {
           let d = this.currentWidget.node[propList[i]];
           dataList[0].push(d);
-          dataList[1].push(d);
+          //dataList[1].push(d);
         }
         let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList}});
         this.trigger({redrawTree: true, updateTrack: track});
