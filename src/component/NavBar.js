@@ -43,7 +43,8 @@ class NavBar extends React.Component {
 
         this.token = null;
         this.playUrl = null;
-        var name = Cookies.get('ih5token');
+        var name = Cookies.get('ih5token')
+        //console.log(name);
         if (name) {
             this.state.loginVisible = false;
             this.getWorks(name);
@@ -62,6 +63,7 @@ class NavBar extends React.Component {
     getWorks(token) {
         WidgetActions['ajaxSend'](token, 'GET', PREFIX + 'userInfo', null, null, function(text) {
             let result = JSON.parse(text);
+            //console.log(result);
             if (result['name']) {
                 this.playUrl = result['playUrl'];
                 this.setState({
@@ -347,6 +349,12 @@ class NavBar extends React.Component {
                        style={{'position':'absolute', 'height':'1px', 'zIndex':'-1000', 'width':'1px'}}
                        onChange={this.onUploadChange}
                        type="file" />
+
+                <LoginDialog title="登录"
+                     visible={this.state.loginVisible}
+                     editText={null}
+                     editText2={null}
+                     onEditDone={this.onLoginDone.bind(this)} />
 
                 {
                     //    <Row type="flex" justify="start" align="middle">
