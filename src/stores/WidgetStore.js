@@ -299,6 +299,10 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
+
+        this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
+        this.listenTo(WidgetActions['addEvent'], this.addEvent);
+        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -388,6 +392,10 @@ export default Reflux.createStore({
         this.render();
       }
     },
+    cutWidget: function() {
+        this.copyWidget();
+        this.removeWidget();
+    },
     reorderWidget: function(delta) {
       if (this.currentWidget && this.currentWidget.parent) {
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
@@ -409,6 +417,12 @@ export default Reflux.createStore({
       if (skipProperty)
         p.skipProperty = true;
       this.trigger(p);
+    },
+    addEvent: function(className, props) {
+        //TODO:添加事件
+    },
+    removeEvent: function() {
+        //TODO:删除事件
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});
@@ -522,7 +536,7 @@ export default Reflux.createStore({
       var cb = function(text) {
           var result = JSON.parse(text);
           callback(result['id'], wname);
-      }
+      };
 
       if (wid) {
         this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb);
