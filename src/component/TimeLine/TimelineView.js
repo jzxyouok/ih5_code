@@ -73,7 +73,6 @@ class TimelineView extends React.Component {
 		//		hasHandle: false
 		//	});
 		//}
-
 		if (widget.selectWidget !== undefined) {
 			const changed = {currentTrack:null};
 			let node = widget.selectWidget;

@@ -11,6 +11,7 @@ var stageTree;
 var classList;
 let _keyCount = 1;
 
+
 var copyObj = {};
 
 function onSelect() {
@@ -399,6 +400,24 @@ export default Reflux.createStore({
       }
     },
     updateProperties: function(obj, skipRender, skipProperty) {
+
+        //判断是否锁定,改变的是哪个值
+
+
+        let node = this.currentWidget.node;
+
+
+      if(this.currentWidget.props.isLock){
+         if(obj.scaleX && obj.scaleX != node.scaleX){
+             //x方向变动
+            obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
+         }else if(obj.scaleX && obj.scaleX == node.scaleX){
+             obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
+         }
+      }
+        console.log('haha',obj);
+        console.log('hehe',this.currentWidget);
+
       let p = {updateProperties: obj};
       if (skipRender) {
         p.skipRender = true;
@@ -407,6 +426,7 @@ export default Reflux.createStore({
       if (skipProperty)
         p.skipProperty = true;
       this.trigger(p);
+
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});
