@@ -28,6 +28,7 @@ class ObjectTree extends React.Component {
         this.addOpenId = this.addOpenId.bind(this);
         this.showHideBtn = this.showHideBtn.bind(this);
 
+        //对象的复制黏贴
         this.itemAddCPListener = this.itemAddCPListener.bind(this);
         this.itemCopyOrPaste = this.itemCopyOrPaste.bind(this);
         this.itemPaste = this.itemPaste.bind(this);
