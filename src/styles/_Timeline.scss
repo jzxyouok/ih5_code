@@ -257,6 +257,7 @@ $size: 25px;
 				background-color: transparent;
 				@include btn();
 				@include bg(8, 0);
+                z-index: 4;
 				//transform: translateX(-4px);
 
 				&:active {

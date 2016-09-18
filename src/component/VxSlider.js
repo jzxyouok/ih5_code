@@ -29,7 +29,7 @@ class VxHandle extends React.Component {
         this.setState({
             isTooltipVisible: true
         });
-        TimelineAction['ChangeKeyframe'](true);
+        //TimelineAction['ChangeKeyframe'](true);
     }
 
     hideTooltip() {
@@ -41,7 +41,6 @@ class VxHandle extends React.Component {
     onHandleClick(event) {
         //event.stopPropagation();
         //event.preventDefault();
-        TimelineAction['ChangeKeyframe'](true);
         this.props.onHandleClick(this);
     }
 
@@ -146,6 +145,7 @@ class VxRcSlider extends RcSlider {
             * this.props.refTimer.node['totalTime']
         );
         this.state.currentHandle = handle.props.handleIndex;
+        TimelineAction['ChangeKeyframe'](true);
         //WidgetActions['activeHandle'](true);
         WidgetActions['syncTrack']();
         this.setState({
@@ -268,7 +268,7 @@ class VxRcSlider extends RcSlider {
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
 
-        for (let i = 1; i < points.length-1; i++) {
+        for (let i = 1; i < points.length; i++) {
             let offset = this.calcOffset(points[i][0]);
             let which = this.state.changeKey;
             let isCurrentBool = false;
@@ -372,7 +372,8 @@ class VxRcSlider extends RcSlider {
                                vertical = {vertical}
                                included={isIncluded}
                                offset={lowerOffset}
-                               length={upperOffset - lowerOffset}/>
+                               length={upperOffset - lowerOffset}
+                                />
 
 						<Steps prefixCls={prefixCls}
                                vertical = {vertical}
