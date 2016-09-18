@@ -39,8 +39,8 @@ class VxHandle extends React.Component {
     }
 
     onHandleClick(event) {
-        //e.stopPropagation();
-        //e.preventDefault();
+        //event.stopPropagation();
+        //event.preventDefault();
         TimelineAction['ChangeKeyframe'](true);
         this.props.onHandleClick(this);
     }
@@ -139,30 +139,44 @@ class VxRcSlider extends RcSlider {
     }
 
     onHandleClick(handle) {
-        if (this.props.isCurrent) {
-            this.props.refTimer.node['pause']();
-            this.props.refTimer.node['seek'](
-                this.props.refTrack.props['data'][handle.props.handleIndex][0]
-                * this.props.refTimer.node['totalTime']
-            );
-            this.state.currentHandle = handle.props.handleIndex;
-            //WidgetActions['activeHandle'](true);
-
-            WidgetActions['syncTrack']();
-            this.setState({
-                changeKeyValue : null,
-                changeKey : handle.props.handleIndex,
-                isChooseKey : true
-            })
-        }
-        else {
-            this.setState({
-                currentHandle: -1,
-                changeKey : null,
-                changeKeyBool : false,
-                changeKeyValue : null
-            })
-        }
+        this.selectTrack();
+        this.props.refTimer.node['pause']();
+        this.props.refTimer.node['seek'](
+            this.props.refTrack.props['data'][handle.props.handleIndex][0]
+            * this.props.refTimer.node['totalTime']
+        );
+        this.state.currentHandle = handle.props.handleIndex;
+        //WidgetActions['activeHandle'](true);
+        WidgetActions['syncTrack']();
+        this.setState({
+            changeKeyValue : null,
+            changeKey : handle.props.handleIndex,
+            isChooseKey : true
+        });
+        //if (this.props.isCurrent) {
+        //    this.props.refTimer.node['pause']();
+        //    this.props.refTimer.node['seek'](
+        //        this.props.refTrack.props['data'][handle.props.handleIndex][0]
+        //        * this.props.refTimer.node['totalTime']
+        //    );
+        //    this.state.currentHandle = handle.props.handleIndex;
+        //    //WidgetActions['activeHandle'](true);
+        //
+        //    WidgetActions['syncTrack']();
+        //    this.setState({
+        //        changeKeyValue : null,
+        //        changeKey : handle.props.handleIndex,
+        //        isChooseKey : true
+        //    })
+        //}
+        //else {
+        //    this.setState({
+        //        currentHandle: -1,
+        //        changeKey : null,
+        //        changeKeyBool : false,
+        //        changeKeyValue : null
+        //    })
+        //}
     }
 
     onMove(e, position) {
@@ -257,7 +271,7 @@ class VxRcSlider extends RcSlider {
         for (let i = 1; i < points.length-1; i++) {
             let offset = this.calcOffset(points[i][0]);
             let which = this.state.changeKey;
-
+            let isCurrentBool = false;
             if(this.props.myID === this.state.nowLayer ){
                 if(this.state.changeKeyBool){
                     if(this.state.changeKeyValue){
@@ -271,6 +285,12 @@ class VxRcSlider extends RcSlider {
                         }
                     }
                 }
+                if(this.state.currentHandle == i){
+                    isCurrentBool = true;
+                }
+                else {
+                    isCurrentBool = false;
+                }
             }
 
             handles.push(<VxHandle
@@ -282,7 +302,7 @@ class VxRcSlider extends RcSlider {
                 offset={offset}
                 value={points[i][0]}
                 dragging={false}
-                isCurrent={this.state.currentHandle == i}
+                isCurrent={isCurrentBool}
                 key={i}
                 handleIndex={i}
                 onHandleClick={this.onHandleClick} />)
@@ -323,10 +343,11 @@ class VxRcSlider extends RcSlider {
         }
 
         //console.log(track);
+        //console.log(this.props.myID ,this.state.nowLayer);
 		return (
 			<li className={
 				cls(
-				{'active': this.props.isCurrent},
+				{'active': this.props.myID === this.state.nowLayer},
 				'timeline-row',
 				'timeline-node',
 				`timeline-node-${track.parent.className}`,
