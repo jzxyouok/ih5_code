@@ -61,7 +61,7 @@ class TimelineView extends React.Component {
 	}
 
 	onStatusChange(widget) {
-		console.log('w2', widget);
+		//console.log('w2', widget);
 		//if(widget.hasOwnProperty('hasHandle')) {
 		//	this.setState({
 		//		hasHandle: widget.hasHandle
@@ -343,11 +343,12 @@ class TimelineView extends React.Component {
                 <div id='TimelineHeader' className='timeline-row f--h'>
                     <div className='timline-column-left f--hlc'>
                         <div id='TimelineTitle'>时间轴</div>
-                        <div id='TimelineNodeDuration' className={
-                        cls('f--hlc flex-1',{'active': this.state.currentTrack!=null})
-                    }>
-                        <span id='TimelineIndicator'
-                              className={cls({'active': this.state.currentTrack!=null})} />
+                        <div id='TimelineNodeDuration'
+                             className={ cls('f--hlc flex-1',{'active': this.state.currentTrack!=null})}>
+
+                            <span id='TimelineIndicator'
+                                  className={cls({'active': this.state.currentTrack!=null})} />
+
                             <input type='text'
                                    value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
                                    onChange={ this.timeInput.bind(this) }
