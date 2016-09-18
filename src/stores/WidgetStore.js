@@ -231,6 +231,8 @@ function chooseFileCallback(w) {
       allowExt = ['zip'];
     } else if (w.userType == 'zip') {
       allowExt = ['zip'];
+    } else if (w.userType == 'video') {
+      allowExt = ['mov', 'mp4', 'avi'];
     } else {
       return;
     }
