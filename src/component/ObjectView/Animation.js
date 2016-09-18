@@ -40,37 +40,57 @@ class Animation extends React.Component {
     render() {
         let btnData = [];
         switch (this.state.className){
-            case "root" :
-            case "container":
-                btnData = [{"name":"物理世界","class":"physical-btn", className:'world'}];
+            // , {"name":"动效","class":"dx-btn", className:'effect'}
+            case 'root':
+                btnData = [
+                    {"name":"物理世界","class":"physical-btn", className:'world'}
+                ];
                 break;
-            case "page" :
-                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                           // , {"name":"动效","class":"dx-btn", className:'effect'}
-                           , {"name":"缓动","class":"easing-btn", className:'easing'}];
+            case 'image':
+            case 'imagelist':
+            case 'text':
+            case 'bitmaptext':
+            case 'rect':
+            case 'ellipse':
+            case 'path':
+            case 'qrcode':
+            case 'counter':
+                btnData = [
+                    {"name":"轨迹","class":"locus-btn", className:'track'},
+                    {"name":"缓动","class":"easing-btn", className:'easing'},
+                    {"name":"物体","class":"object-btn", className:'body'}
+                ];
                 break;
-            case "image" :
-            case "imagelist" :
-            case "text":
-            case "bitmaptext" :
-            case "rect" :
-            case "ellipse" :
-            case "path" :
-                btnData = [{"name":"轨迹","class":"locus-btn", className:'track'}
-                    // , {"name":"动效","class":"dx-btn", className:'effect'}
-                    , {"name":"缓动","class":"easing-btn", className:'easing'}
-                    , {"name":"物理世界","class":"physical-btn", className:'world'}
-                    , {"name":"物体","class":"object-btn", className:'body'}];
+            case 'container':
+                btnData = [
+                    {"name":"轨迹","class":"locus-btn", className:'track'},
+                    {"name":"缓动","class":"easing-btn", className:'easing'}
+                ];
                 break;
-            case "wechat" :
-            case "video" :
-            case "audio" :
-            case "timer" :
-            case "slidetimer" :
+            case 'video':
+            case 'slidetimer':
+                btnData = [
+                    {"name":"缓动","class":"easing-btn", className:'easing'}
+                ];
+                break;
+            case 'audio':
+            case 'file':
+            case 'composingcontainer':
+            case 'timer':
+            case 'database':
+            case 'cominterface':
+            case 'remotedevice':
+            case 'pcdevice':
+            case 'wechat':
                 btnData = [];
                 break;
             default : btnData = [];
         }
+        //添加fx变量
+        if (this.state.className !== 'text' || this.state.className !== 'counter'|| this.state.className !== 'twodvar') {
+            btnData.unshift({"name":'变量fx','class':'fx-btn', className:'fx'});
+        }
+
         return (
             <div className="Animation">
                 {

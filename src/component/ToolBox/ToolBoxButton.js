@@ -78,7 +78,6 @@ class ToolBoxButton extends Component {
         event.preventDefault();
         event.stopPropagation();
         ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
-        ToolBoxAction['deselect']();
     }
 
     onDrawRect() {
