@@ -256,6 +256,7 @@ class ObjectTree extends React.Component {
     }
 
     itemAddKeyListener(event){
+        this.itemRemoveKeyListener(event);
         if (event.currentTarget.className == 'stage'){
             event.currentTarget.addEventListener('keyup', this.itemPaste);
         } else {
@@ -290,20 +291,24 @@ class ObjectTree extends React.Component {
         //复制 67
         if (didPressCtrl && event.keyCode == 67) {
             WidgetActions['copyWidget']();
+            window.macKeys.reset();
         }
         //黏贴 86
         if (didPressCtrl && event.keyCode == 86) {
             WidgetActions['pasteWidget']();
+            window.macKeys.reset();
         }
         //剪切 88
         if (didPressCtrl && event.keyCode == 88) {
             WidgetActions['cutWidget']();
+            window.macKeys.reset();
         }
         //删除 delete
         if (!didPressCtrl && event.keyCode == 8) {
             WidgetActions['removeWidget']();
             let parentWidget = this.state.selectWidget.parent ? this.state.selectWidget.parent: this.state.selectWidget.rootWidget;
             this.chooseBtn(parentWidget.key, parentWidget);
+            window.macKeys.reset();
         }
     }
 
