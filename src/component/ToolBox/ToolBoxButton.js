@@ -117,6 +117,10 @@ class ToolBoxButton extends Component {
                 });
             } else if (this.props.drawRect) {
                 //普通画框
+                if(this.props.className === 'qrcode') {
+                    //qrcode处理
+                    this.props.param.shapeHeight = this.props.param.shapeWidth;
+                }
                 WidgetActions['addWidget'](this.props.className, this.props.param);
                 ToolBoxAction['deselect']();
                 this.drawRect.end();
@@ -178,11 +182,7 @@ class ToolBoxButton extends Component {
 
     // modal的一些操作
     onModalOK() {
-        if(this.props.className === 'qrcode') {
-            this.props.param.data = this.state.modal.value;
-        } else {
-            this.props.param.text = this.state.modal.value;
-        }
+        this.props.param.text = this.state.modal.value;
         WidgetActions['addWidget'](this.props.className, this.props.param);
         this.onModalClear();
     }
@@ -235,7 +235,7 @@ class ToolBoxButton extends Component {
                 <Modal  visible={this.state.modal.isVisible}
                         title={<div className="title">
                             <img src="img/toolButton-text.svg" />
-                            <span>{this.props.className==='qrcode'?'二维码内容':'文本内容'}</span>
+                            <span>文本内容</span>
                         </div>}
                         maskClosable={false}
                         closable={false}
