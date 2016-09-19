@@ -86,6 +86,7 @@ class ObjectTree extends React.Component {
                 selectWidget : widget.selectWidget
                 , nid : widget.selectWidget.key
             });
+            this.addOpenId();
             //触发聚焦
             document.getElementById('tree-item-'+this.state.nid).focus();
         }
@@ -135,7 +136,6 @@ class ObjectTree extends React.Component {
             //    });
             //}
         }
-
         if(this.state.selectWidget){
             let nid = this.state.selectWidget.key;
             let array = this.state.openData;
@@ -155,12 +155,16 @@ class ObjectTree extends React.Component {
                     }
                 }
             };
+            //console.log(this.state.selectedLayer !== nid);
             if(this.state.selectedLayer !== nid){
                 if( index < 0){
                     array.push(nid);
                     if( index2 >= 0 && index3 < 0 && this.state.selectedLayer !== 1){
                         array.splice(index2, 1);
                     }
+                }
+                if(index3 < 0){
+                    fun(this.state.selectWidget)
                 }
             }
             else {
