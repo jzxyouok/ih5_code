@@ -76,7 +76,7 @@ class DesignView extends React.Component {
 
     render() {
         return (
-        <div className='f--hcc'
+        <div className='f--hlt'
             id='DesignView-Container'
             ref='container'
             onWheel={this.scroll}>
