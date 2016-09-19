@@ -12,7 +12,7 @@ import $class from 'classnames'
 
 import bridge from 'bridge';
 
-var PREFIX = 'app/';
+const PREFIX = 'app/';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -29,6 +29,7 @@ class NavBar extends React.Component {
             dropDownState : 0,
             zoomInputState: 0
         };
+
         this.onLogout = this.onLogout.bind(this);
         this.onOpen = this.onOpen.bind(this);
         this.onSave = this.onSave.bind(this);
@@ -40,8 +41,9 @@ class NavBar extends React.Component {
         this.clickOthersHide = this.clickOthersHide.bind(this);
         this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
 
+        this.token = null;
         this.playUrl = null;
-        var name = Cookies.get('ih5token');
+        var name = Cookies.get('ih5token')
         //console.log(name);
         if (name) {
             this.state.loginVisible = false;

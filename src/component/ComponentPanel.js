@@ -30,6 +30,7 @@ let slidetimerIcon = require('../images/slidetimerNormal.png');
 let bitmaptextIcon = require('../images/bitmaptextNormal.png');
 let imageIcon = require('../images/imageNormal.png');
 let igroupIcon = require('../images/igroupNormal.png');
+
 let folderIcon = require('../images/folder.svg');
 let buttonIcon = require('../images/base/button.svg');
 let transbuttonIcon = require('../images/base/transButton.svg');
@@ -42,7 +43,6 @@ let pcdeviceIcon = require('../images/base/pcDevice.svg');
 let twodvarIcon = require('../images/base/twoDvar.svg');
 let composingcontainerIcon = require('../images/base/composingContainer.svg');
 let cominterfaceIcon = require('../images/base/comInterface.svg');
-let htmlIcon = require('../images/htmlNormal.png');
 
 function callback() {
     //console.log(key);
@@ -141,9 +141,10 @@ class ComponentPanel extends React.Component {
                 {cid:cid++,icon:wechatIcon, className:'wechat'},
                 {cid:cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}},
                 {cid:cid++,icon:folderIcon, className:'folder'},
+
                 {cid:cid++,icon:buttonIcon, className:'button'},
                 {cid:cid++,icon:transbuttonIcon, className:'transbutton'},
-                {cid:cid++,icon:qrcodeIcon, className:'qrcode', param:{'shapeWidth': 200, 'shapeHeight': 200, 'data': '0'}},
+                {cid:cid++,icon:qrcodeIcon, className:'qrcode'},
                 {cid:cid++,icon:fileIcon, className:'file'},
                 {cid:cid++,icon:counterIcon, className:'counter'},
                 {cid:cid++,icon:databaseIcon, className:'database'},
@@ -151,8 +152,7 @@ class ComponentPanel extends React.Component {
                 {cid:cid++,icon:pcdeviceIcon, className:'pcdevice'},
                 {cid:cid++,icon:twodvarIcon, className:'twodvar'},
                 {cid:cid++,icon:composingcontainerIcon, className:'composingcontainer'},
-                {cid:cid++,icon:cominterfaceIcon, className:'cominterface'},
-                {cid:cid++,icon:htmlIcon, className:'html', param:{'shapeWidth': 100, 'shapeHeight': 100}}
+                {cid:cid++,icon:cominterfaceIcon, className:'cominterface'}
                 ]
             }
         ];

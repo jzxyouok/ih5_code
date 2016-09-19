@@ -265,7 +265,7 @@ class VxRcSlider extends RcSlider {
             let points = this.state.points;
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
-            this.props.refTimer.node['seek'](value);
+            this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
             this.setState({points: points});
         }
     }
@@ -331,8 +331,8 @@ class VxRcSlider extends RcSlider {
 		const isNoTip = (step === null) || (tipFormatter === null);
 
         let handles = [];
-        const lowerBound = (points.length > 0) ? points[0][0] : 0;
-        const upperBound = (points.length > 0) ? points[points.length - 1][0] : max;
+        const lowerBound = points[0][0];
+        const upperBound = points[points.length - 1][0];
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
 

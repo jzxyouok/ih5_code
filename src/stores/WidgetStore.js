@@ -4,8 +4,6 @@ import WidgetActions from '../actions/WidgetActions';
 var bridge = require('bridge');
 bridge.create();
 
-var isModified;
-
 var rootDiv;
 var rootElm;
 
@@ -20,7 +18,7 @@ function onSelect() {
   WidgetActions['selectWidget'](this);
 }
 
-const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext', 'qrcode'];
+const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext'];
 
 function loadTree(parent, node) {
   let current = {};
@@ -302,11 +300,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
+
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
-        this.listenTo(WidgetActions['modifyNode'], this.modifyNode);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -339,7 +337,6 @@ export default Reflux.createStore({
     addWidget: function(className, props, link) {
       if (!this.currentWidget)
           return;
-      isModified = true;
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
             (this.currentWidget.className !== 'image'
@@ -396,7 +393,6 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
-        isModified = true;
         loadTree(this.currentWidget, copyObj);
         this.trigger({selectWidget: null, redrawTree: true});
         this.render();
@@ -421,7 +417,6 @@ export default Reflux.createStore({
     },
     reorderWidget: function(delta) {
       if (this.currentWidget && this.currentWidget.parent) {
-          isModified = true;
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
           if (delta > 0 && index < this.currentWidget.parent.children.length - 1 || delta < 0 && index > 0) {
             this.currentWidget.parent.children.splice(index, 1);
@@ -459,15 +454,6 @@ export default Reflux.createStore({
     },
     removeEvent: function() {
         //TODO:删除事件
-      isModified = true;
-      let p = {updateProperties: obj};
-      if (skipRender) {
-        p.skipRender = true;
-        bridge.updateSelector(this.currentWidget.node);
-      }
-      if (skipProperty)
-        p.skipProperty = true;
-      this.trigger(p);
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});
@@ -476,7 +462,6 @@ export default Reflux.createStore({
       this.trigger({syncTrack: true});
     },
     deletePoint: function() {
-      isModified = true;
       this.trigger({deletePoint: true});
     },
     initTree: function(data) {
@@ -491,11 +476,9 @@ export default Reflux.createStore({
                 stageTree.push({name: n, tree: loadTree(null, data['defs'][n])});
             }
         }
-        //stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
-        //bridge.createSelector(null);
+
         stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
         bridge.createSelector(null);
-        isModified = false;
 
         if (!rootDiv) {
             rootDiv = document.getElementById('canvas-dom');
@@ -510,7 +493,6 @@ export default Reflux.createStore({
     },
     addClass: function(name) {
       stageTree.push({name: name, tree: loadTree(null, {'cls': 'root', 'type': bridge.getRendererType(this.currentWidget.node), 'props': {'width': 640, 'height': 1040}})});
-      isModified = true;
       classList.push(name);
       bridge.addClass(name);
       this.trigger({initTree: stageTree, classList: classList});
@@ -526,10 +508,6 @@ export default Reflux.createStore({
       //       a1.push(a2[i]);
       //     }
       // };
-      if (!isModified && wid) {
-        callback(wid, wname);
-        return;
-      }
       let getImageList = function(array, list) {
         var result = [];
         var count = 0;
@@ -588,9 +566,8 @@ export default Reflux.createStore({
 
       var cb = function(text) {
           var result = JSON.parse(text);
-          isModified = false;
           callback(result['id'], wname);
-      }
+      };
 
       if (wid) {
         this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb);
@@ -614,7 +591,6 @@ export default Reflux.createStore({
     },
     setImageText:function(data) {
       if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
-        isModified = true;
         var link = this.currentWidget.props['link'];
         if (link === undefined) {
           link = this.currentWidget.rootWidget.imageList.push(data) - 1;
@@ -653,9 +629,6 @@ export default Reflux.createStore({
       return {initTree: stageTree, classList: classList};
     },
     activeHandle: function(status) {
-        this.trigger({hasHandle: status})
-    },
-    modifyNode() {
-      isModified = true;
+        this.trigger({hasHandle: status});
     }
 });
