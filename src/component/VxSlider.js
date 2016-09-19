@@ -9,9 +9,10 @@ import cls from 'classnames';
 
 import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
-
 import TimelineStores from '../stores/Timeline';
 import TimelineAction from '../actions/TimelineAction';
+import ChangeKeyStore from '../stores/ChangeKeyStore';
+import changeKeyAction from '../actions/changeKeyAction';
 
 function noop() {
 }
@@ -19,7 +20,6 @@ function noop() {
 class VxHandle extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             isTooltipVisible: false
         };
@@ -41,6 +41,7 @@ class VxHandle extends React.Component {
     onHandleClick(event) {
         //event.stopPropagation();
         //event.preventDefault();
+        this.props.selectTrack();
         this.props.onHandleClick(this);
     }
 
@@ -107,17 +108,35 @@ class VxRcSlider extends RcSlider {
         this.onHandleClick = this.onHandleClick.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.selectTrack = this.selectTrack.bind(this);
+        this.lastOrNext = this.lastOrNext.bind(this);
+        this.initializationState= this.initializationState.bind(this);
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         TimelineStores.listen(this.ChangeKeyframe.bind(this));
+        ChangeKeyStore.listen(this.ChangeKey.bind(this));
+        this.initializationState();
     }
 
     componentWillUnmount() {
         this.unsubscribe();
-        TimelineStores.removeListener(this.ChangeKeyframe);
+        //TimelineStores.removeListener(this.ChangeKeyframe.bind(this));
+        //ChangeKeyStore.removeListener(this.ChangeKey.bind(this));
+    }
+
+    initializationState(){
+        this.setState({
+            points: this.props.points,
+            currentHandle: -1,
+            changeKey : null,
+            changeKeyBool : false,
+            changeKeyValue : null,
+            isChooseKey : false,
+            lastLayer : null,
+            nowLayer:null
+        });
     }
 
     ChangeKeyframe(bool,value){
@@ -132,26 +151,75 @@ class VxRcSlider extends RcSlider {
         }
     }
 
+    lastOrNext(){
+        if(this.props.myID === this.state.nowLayer){
+            this.props.refTimer.node['pause']();
+            this.props.refTimer.node['seek'](
+                this.props.refTrack.props['data'][this.state.currentHandle][0]
+                * this.props.refTimer.node['totalTime']
+            );
+            TimelineAction['ChangeKeyframe'](true);
+            changeKeyAction['ChangeKey'](false);
+        }
+    }
+
+    ChangeKey(bool,value){
+        if(bool){
+            let num = this.props.refTrack.props.data.length -1;
+            if(value == 1 && this.state.currentHandle < num){
+                this.setState({
+                    currentHandle: this.state.currentHandle +1,
+                    changeKey: this.state.currentHandle +1,
+                    changeKeyBool : false
+                },()=>{
+                    this.lastOrNext();
+                })
+            }
+            else if(value == -1 &&this.state.currentHandle > 1){
+                this.setState({
+                    currentHandle: this.state.currentHandle -1,
+                    changeKey: this.state.currentHandle -1,
+                    changeKeyBool : false
+                },()=>{
+                    this.lastOrNext();
+                })
+            }
+            else {
+                this.setState({
+                    changeKeyBool : true
+                });
+                TimelineAction['ChangeKeyframe'](true);
+            }
+        }
+    }
+
     selectTrack(){
-        //console.log(this.props.refTrack);
         WidgetActions['selectWidget'](this.props.refTrack.parent, true);
+        TimelineAction['ChangeKeyframe'](false);
+        this.setState({
+            currentHandle: -1,
+            changeKey : null,
+            changeKeyBool : false,
+            changeKeyValue : null
+        });
     }
 
     onHandleClick(handle) {
-        this.selectTrack();
+        //console.log(handle);
         this.props.refTimer.node['pause']();
         this.props.refTimer.node['seek'](
             this.props.refTrack.props['data'][handle.props.handleIndex][0]
             * this.props.refTimer.node['totalTime']
         );
-        this.state.currentHandle = handle.props.handleIndex;
-        TimelineAction['ChangeKeyframe'](true);
-        //WidgetActions['activeHandle'](true);
-        WidgetActions['syncTrack']();
         this.setState({
+            currentHandle : handle.props.handleIndex,
             changeKeyValue : null,
             changeKey : handle.props.handleIndex,
             isChooseKey : true
+        },()=>{
+            TimelineAction['ChangeKeyframe'](true);
+            WidgetActions['syncTrack']();
+            this.forceUpdate();
         });
         //if (this.props.isCurrent) {
         //    this.props.refTimer.node['pause']();
@@ -198,7 +266,11 @@ class VxRcSlider extends RcSlider {
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
             this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
-            this.setState({points: points});
+            this.setState({
+                points: points
+            },()=>{
+                TimelineAction['ChangeKeyframe'](true);
+            });
         }
     }
 
@@ -255,7 +327,7 @@ class VxRcSlider extends RcSlider {
     }
 
   	render() {
-        const {points} = this.state;
+        const points = this.props.points;
 		const {className, prefixCls, disabled, vertical, dots, included, range, step,
 			marks, max, min, tipTransitionName, tipFormatter, children} = this.props;
 
@@ -273,6 +345,7 @@ class VxRcSlider extends RcSlider {
             let which = this.state.changeKey;
             let isCurrentBool = false;
             if(this.props.myID === this.state.nowLayer ){
+                //console.log(this.state.changeKeyBool,this.state.changeKeyValue)
                 if(this.state.changeKeyBool){
                     if(this.state.changeKeyValue){
                         if(which === i) {
@@ -305,6 +378,8 @@ class VxRcSlider extends RcSlider {
                 isCurrent={isCurrentBool}
                 key={i}
                 handleIndex={i}
+                whichKey={ this.state.currentHandle }
+                selectTrack={this.selectTrack}
                 onHandleClick={this.onHandleClick} />)
         }
 
@@ -345,14 +420,12 @@ class VxRcSlider extends RcSlider {
         //console.log(track);
         //console.log(this.props.myID ,this.state.nowLayer);
 		return (
-			<li className={
-				cls(
-				{'active': this.props.myID === this.state.nowLayer},
-				'timeline-row',
-				'timeline-node',
-				`timeline-node-${track.parent.className}`,
-				'f--hlc')}>
-				<div className='timeline-node-meta timline-column-left f--hlc'>
+			<li className={ cls({'active': this.props.isCurrent || this.props.myID === this.state.nowLayer},
+                                    'timeline-row',
+                                    'timeline-node',
+                                    `timeline-node-${track.parent.className}`,
+                                    'f--hlc')}>
+				<div className='timeline-node-meta timline-column-left f--hlc' onClick={ this.selectTrack.bind(this) }>
                     {
                         //<label className={cls('timeline-node-type', `timeline-node-type-${track.parent.className}`)} />
                     }
@@ -362,18 +435,19 @@ class VxRcSlider extends RcSlider {
 				</div>
 
 				<div className='timeline-node-track timline-column-right'>
-					<div ref="slider" className={sliderClassName} style={style}
-                            onClick={ this.selectTrack }
-							onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
-							onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
-						{handles}
+					<div ref="slider" className={sliderClassName} style={style}>
+                        <div className="locus-layer" onClick={ this.selectTrack.bind(this) }></div>
+
+                        <div onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
+                             onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
+						    {handles}
+                        </div>
 
 						<Track className={prefixCls + '-track'}
                                vertical = {vertical}
                                included={isIncluded}
                                offset={lowerOffset}
-                               length={upperOffset - lowerOffset}
-                                />
+                               length={upperOffset - lowerOffset}/>
 
 						<Steps prefixCls={prefixCls}
                                vertical = {vertical}
@@ -395,7 +469,9 @@ class VxRcSlider extends RcSlider {
                                max={max}
                                min={min}/>
 
-						{children}
+						{
+                            //children
+                        }
 					</div>
 				</div>
 			</li>
@@ -406,7 +482,7 @@ class VxRcSlider extends RcSlider {
 class VxSlider extends React.Component {
 	render() {
         //console.log('props: ', this.props);
-		return <VxRcSlider {...this.props} />;
+		return <VxRcSlider {...this.props} ref="VxRcSlider" />;
 	}
 }
 

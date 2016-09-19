@@ -32,9 +32,9 @@
             &.active {
                 background: #39311f;
 
-                .event-icon {
-                    background-position:-760px -80px;
-                }
+                //.event-icon {
+                //    background-position:-760px -80px;
+                //}
             }
 
             .btn {
@@ -93,13 +93,36 @@
                 right: 10px;
                 width: 14px;
                 height: 14px;
+            }
+            .event-icon-normal {
                 background: url("img/button-icon.svg") no-repeat -760px 0;
+                &.active {
+                    background: url("img/button-icon.svg") no-repeat -760px -80px;
+                }
+            }
+            .event-icon-disable {
+                background: url("img/button-icon.svg") no-repeat -760px -120px;
+                &.active {
+                    background: url("img/button-icon.svg") no-repeat -760px -160px;
+                }
+            }
+
+            .lock-icon {
+                position: absolute;
+                right: 29px;
+                width: 14px;
+                height: 14px;
+                background: url("img/button-icon.svg") no-repeat -360px -200px;
+                &:active {
+                    background: url("img/button-icon.svg") no-repeat -360px -200px;
+                }
             }
         }
 
         .stage-title{
             height: 25px;
             padding-left: 28px;
+            outline: none;
 
             .stage-icon {
                 width: 14px;

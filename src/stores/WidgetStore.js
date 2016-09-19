@@ -312,6 +312,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
+        this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -327,10 +328,13 @@ export default Reflux.createStore({
             }
           }
         }
+        if(widget.props.locked === undefined) {
+            widget.props.locked = false;
+        }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
-        // TODO:加Locked Here
-        if (widget && selectableClass.indexOf(widget.className) >= 0) {
+        //判断是否是可选择的，是否加锁
+        if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props.locked) {
             bridge.selectWidget(widget.node, this.updateProperties.bind(this));
         } else {
             bridge.selectWidget(widget.node);
@@ -406,6 +410,19 @@ export default Reflux.createStore({
         this.copyWidget();
         this.removeWidget();
     },
+    lockWidget: function () {
+        if (this.currentWidget) {
+            this.currentWidget.props.locked = !this.currentWidget.props.locked;
+            this.updateProperties({'locked':this.currentWidget.props.locked});
+            if (!this.currentWidget.props.locked) {
+                bridge.selectWidget(this.currentWidget.node, this.updateProperties.bind(this));
+            } else {
+                bridge.selectWidget(this.currentWidget.node);
+            }
+            this.trigger({redrawTree: true});
+            this.render();
+        }
+    },
     reorderWidget: function(delta) {
       if (this.currentWidget && this.currentWidget.parent) {
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
@@ -458,13 +475,21 @@ export default Reflux.createStore({
         if (skipProperty)
             p.skipProperty = true;
         this.trigger(p);
-
     },
     addEvent: function(className, props) {
-        //TODO:添加事件
+        if (this.currentWidget) {
+            this.currentWidget.events.test = {func:'this is testing func'};
+            this.currentWidget.props.enableEvent = true;
+        }
+        this.render();
+        this.trigger({redrawTree: true});
     },
     removeEvent: function() {
-        //TODO:删除事件
+        if (this.currentWidget) {
+            this.currentWidget.events = {};
+        }
+        this.render();
+        this.trigger({redrawTree: true});
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});

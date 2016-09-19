@@ -7,6 +7,7 @@ import WidgetStore from '../../stores/WidgetStore';
 import WidgetActions from '../../actions/WidgetActions';
 import TimelineStores from '../../stores/Timeline';
 import TimelineAction from '../../actions/TimelineAction';
+import changeKeyAction from '../../actions/changeKeyAction';
 
 import VxSlider from '../VxSlider';
 import ComponentPanel from '../ComponentPanel';
@@ -58,7 +59,7 @@ class TimelineView extends React.Component {
 
 	componentWillUnmount() {
 		this.unsubscribe();
-        TimelineStores.removeListener(this.ChangeKeyframe);
+        //TimelineStores.removeListener(this.ChangeKeyframe.bind(this));
 	}
 
 	onStatusChange(widget) {
@@ -138,8 +139,11 @@ class TimelineView extends React.Component {
 		this.state.timerNode.node['seek'](value * this.state.timerNode.node['totalTime']);
 		WidgetActions['syncTrack']();
         //console.log(value);
-		this.setState({currentTime:value});
+		this.setState({
+            currentTime:value
+        });
         TimelineAction['ChangeKeyframe'](false,value);
+        changeKeyAction['ChangeKey'](false);
 	}
 
     ChangeKeyframe(data){
@@ -245,7 +249,7 @@ class TimelineView extends React.Component {
         }
     }
 
-    inputOnBlur(){
+    inputOnBlur(event){
         let data = this.refs.TimeInput.value;
         let max = parseInt(event.currentTarget.getAttribute("data-max"));
         if(data > max){
@@ -261,11 +265,13 @@ class TimelineView extends React.Component {
     }
 
 	selectNextBreakpoint() {
-
+        TimelineAction['ChangeKeyframe'](false);
+        changeKeyAction['ChangeKey'](true,1);
 	}
 
 	selectPrevBreakpoint() {
-
+        TimelineAction['ChangeKeyframe'](false);
+        changeKeyAction['ChangeKey'](true,-1);
 	}
 
 	//onWidgetClick(event) {
@@ -332,6 +338,7 @@ class TimelineView extends React.Component {
                         refTimer={this.state.timerNode}
                         points={node.props.data}
                         myID = { node.parent.key }
+                        ref="VxSlider"
                         isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));
@@ -368,13 +375,13 @@ class TimelineView extends React.Component {
                              className={ cls('f--hlc flex-1',{'active': this.state.currentTrack!=null})}>
 
                             <span id='TimelineIndicator'
-                                  className={cls({'active': this.state.currentTrack!=null})} />
+                                  className={cls({'active': this.state.isChangeKey})} />
 
                             <input type='text'
                                    value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
                                    onChange={ this.timeInput.bind(this) }
                                    onKeyDown = { this.timeInputSure.bind(this)}
-                                   onBlur={ this.inputOnBlur }
+                                   onBlur={ this.inputOnBlur.bind(this) }
                                    data-max = {totalTime}
                                    ref="TimeInput"/>
                             <span>s</span>
@@ -384,7 +391,7 @@ class TimelineView extends React.Component {
                     <div className='timline-column-right flex-1' id='TimelineNodeAction'>
                         <div>
                             <button id='TimelineNodeActionPrev'
-                                    onClick={this.selectNextBreakpoint.bind(this)} />
+                                    onClick={this.selectPrevBreakpoint.bind(this)} />
                             <button id='TimelineNodeActionModify'
                                     className={cls(
                                         {'active': this.state.currentTrack!=null},
@@ -392,7 +399,7 @@ class TimelineView extends React.Component {
                                     )}
                                     onClick={this.onAddOrDelete.bind(this)} />
                             <button id='TimelineNodeActionNext'
-                                    onClick={this.selectPrevBreakpoint.bind(this)} />
+                                    onClick={this.selectNextBreakpoint.bind(this)} />
                         </div>
                     </div>
                 </div>

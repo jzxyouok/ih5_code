@@ -18,7 +18,8 @@ class ObjectTree extends React.Component {
             changed : null,
             isLoadTree : true,
             selectedLayer : -1,
-            selectWidget : null
+            selectWidget : null,
+            activeEvent: false //事件按钮是否被激活激活
             //widgetTreeChildren :null
         };
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -27,6 +28,7 @@ class ObjectTree extends React.Component {
         this.onStatusChange = this.onStatusChange.bind(this);
         this.addOpenId = this.addOpenId.bind(this);
         this.showHideBtn = this.showHideBtn.bind(this);
+        this.lockBtn = this.lockBtn.bind(this);
 
         //对象的复制/剪切/黏贴
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
@@ -79,15 +81,19 @@ class ObjectTree extends React.Component {
 
         else if(widget.selectWidget){
             //触发失焦
-            if(this.state.nid){
+            if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
             }
             this.setState({
                 selectWidget : widget.selectWidget
                 , nid : widget.selectWidget.key
+                ,activeEvent: false
             });
+            this.addOpenId();
             //触发聚焦
-            document.getElementById('tree-item-'+this.state.nid).focus();
+            if(document.getElementById('tree-item-'+this.state.nid)){
+                document.getElementById('tree-item-'+this.state.nid).focus();
+            }
         }
 
         //selectWidget : 选择工具创建相应图层
@@ -135,7 +141,6 @@ class ObjectTree extends React.Component {
             //    });
             //}
         }
-
         if(this.state.selectWidget){
             let nid = this.state.selectWidget.key;
             let array = this.state.openData;
@@ -155,12 +160,16 @@ class ObjectTree extends React.Component {
                     }
                 }
             };
+            //console.log(this.state.selectedLayer !== nid);
             if(this.state.selectedLayer !== nid){
                 if( index < 0){
                     array.push(nid);
                     if( index2 >= 0 && index3 < 0 && this.state.selectedLayer !== 1){
                         array.splice(index2, 1);
                     }
+                }
+                if(index3 < 0){
+                    fun(this.state.selectWidget)
                 }
             }
             else {
@@ -223,6 +232,13 @@ class ObjectTree extends React.Component {
         WidgetActions['render']();
     }
 
+    lockBtn(key) {
+        if(key === this.state.nid){
+            WidgetActions['lockWidget']();
+            WidgetActions['render']();
+        }
+    }
+
     dragWithTip(x, y, isShow) {
         this.dragTip.style.top = y+15+'px';
         this.dragTip.style.left = x+10+'px';
@@ -242,6 +258,7 @@ class ObjectTree extends React.Component {
     }
 
     itemAddKeyListener(event){
+        this.itemRemoveKeyListener(event);
         if (event.currentTarget.className == 'stage'){
             event.currentTarget.addEventListener('keyup', this.itemPaste);
         } else {
@@ -276,20 +293,24 @@ class ObjectTree extends React.Component {
         //复制 67
         if (didPressCtrl && event.keyCode == 67) {
             WidgetActions['copyWidget']();
+            window.macKeys.reset();
         }
         //黏贴 86
         if (didPressCtrl && event.keyCode == 86) {
             WidgetActions['pasteWidget']();
+            window.macKeys.reset();
         }
         //剪切 88
         if (didPressCtrl && event.keyCode == 88) {
             WidgetActions['cutWidget']();
+            window.macKeys.reset();
         }
         //删除 delete
         if (!didPressCtrl && event.keyCode == 8) {
             WidgetActions['removeWidget']();
             let parentWidget = this.state.selectWidget.parent ? this.state.selectWidget.parent: this.state.selectWidget.rootWidget;
             this.chooseBtn(parentWidget.key, parentWidget);
+            window.macKeys.reset();
         }
     }
 
@@ -351,6 +372,17 @@ class ObjectTree extends React.Component {
                 return <div className="btn f--hcc show-btn"
                             onClick={ this.showHideBtn.bind(this,data,false) }><span /></div>;
             }
+        };
+
+        let eventBtn = (data)=> {
+            //0为没有事件, 1为有事件正常状态
+            let btn = null;
+            if (data.props.enableEvent) {
+                btn = <div className={$class('event-icon event-icon-normal', {'active':this.state.activeEvent})}></div>;
+            } else {
+                btn = <div className={$class('event-icon event-icon-disable', {'active':this.state.activeEvent})}></div>;
+            }
+            return btn;
         };
 
         let icon = (open, nid)=>{
@@ -416,10 +448,14 @@ class ObjectTree extends React.Component {
                             <img src={ pic } />
 
                             <p>{v.className}</p>
-
+                            {
+                                v.props.locked!==undefined && v.props.locked
+                                    ? <span className='lock-icon' onClick={ this.lockBtn.bind(this, v.key, v) }/>
+                                    : null
+                            }
                             {
                                 Object.keys(v.events).length > 0
-                                    ? <span className='event-icon' />
+                                    ? eventBtn(v)
                                     : null
                             }
                         </div>
@@ -439,15 +475,14 @@ class ObjectTree extends React.Component {
                 {
                     !objectData
                     ? null
-                    : <div className='stage'
-                           onFocus={this.itemAddKeyListener.bind(this)}
-                           onBlur={this.itemRemoveKeyListener.bind(this)}
-                           tabIndex={objectData.tree.key}
-                           id={'tree-item-'+ objectData.tree.key}
-                        >
+                    : <div className='stage'>
                         <div className={$class('stage-title f--h f--hlc',{'active': objectData.tree.key === this.state.nid})}
                              style={{ width : this.props.width - 36 }}
-                             onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}>
+                             onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}
+                             onFocus={this.itemAddKeyListener.bind(this)}
+                             onBlur={this.itemRemoveKeyListener.bind(this)}
+                             tabIndex={objectData.tree.key}
+                             id={'tree-item-'+ objectData.tree.key}>
                             { btn(-1, objectData.tree) }
                             {
                                 objectData.tree.children.length > 0

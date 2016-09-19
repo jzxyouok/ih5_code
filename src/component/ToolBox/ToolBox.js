@@ -43,7 +43,10 @@ class ToolBox extends Component {
         let newStatus = !this.state.expanded;
         this.setState({
             expanded: newStatus
+        }, ()=>{
+            this.props.expendedToolBox(this.state.expanded);
         });
+
         ToolBoxStore['openSecondary'](null, true);
     }
 

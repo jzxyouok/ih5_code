@@ -21,14 +21,21 @@ class ObjectView extends React.Component {
             whichContentData : ["对象树","资源"],
             width : null,
             parentID : null,
-            parentData : null
+            parentData : null,
+            canLock: false, //是否可有锁
+            locked: false,  //是否已锁
+            canHaveEvent: false,    //是否可有事件
+            hasEvent: false //是否有事件
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);
+        this.lock = this.lock.bind(this);
         this.addEvent = this.addEvent.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
+        this.onInitLock = this.onInitLock.bind(this);
+        this.onInitHasEvent = this.onInitHasEvent.bind(this);
     }
 
     componentDidMount() {
@@ -50,7 +57,38 @@ class ObjectView extends React.Component {
                     parentData : widget.selectWidget.parent
                 });
             }
+            this.onInitLock(widget.selectWidget);
+            this.onInitHasEvent(widget.selectWidget);
         }
+    }
+
+    onInitHasEvent(selectWidget){
+        let hasEvent = false;
+        let canHaveEvent = true;
+        if(selectWidget.className === 'root') {
+            canHaveEvent = false;
+            hasEvent = false;
+        } else if (Object.keys(selectWidget.events).length > 0) {
+            hasEvent = true;
+        }
+        this.setState({
+            hasEvent: hasEvent,
+            canHaveEvent: canHaveEvent
+        });
+    }
+
+    onInitLock(selectWidget) {
+        let canLock = false;
+        // let locked = false;
+        if(selectWidget.className === 'root') {
+            canLock = false;
+        } else {
+            canLock = true;
+        }
+        this.setState({
+            canLock: canLock,
+            locked: selectWidget.props.locked
+        });
     }
 
     toggleBtn(i){
@@ -65,6 +103,16 @@ class ObjectView extends React.Component {
 
     addEvent(className,param) {
         WidgetActions['addEvent'](className,param);
+        this.setState({
+            hasEvent: !this.state.hasEvent
+        });
+    }
+
+    lock() {
+        WidgetActions['lockWidget']();
+        this.setState({
+            locked: !this.state.locked
+        });
     }
 
     delete(){
@@ -137,10 +185,17 @@ class ObjectView extends React.Component {
                     {
                         // not-allowed 为不可点击
                     }
-                    <button className='btn btn-clear lock-btn not-allowed' title='锁住'/>
+                    <button className={$class(
+                        'btn btn-clear lock-btn',
+                        {'not-allowed': !this.state.canLock||this.state.whichContent===1, 'locked': this.state.locked})}
+                            onClick={this.lock.bind(this)} title='锁住' disabled={!this.state.canLock}/>
                     {/*<button className="btn btn-clear folder-btn" title="文件夹"  onClick={ this.create.bind(this,"folder",null)}  />*/}
                     <button className='btn btn-clear container-btn' title='容器' onClick={ this.create.bind(this,'container',null)} />
-                    <button className='btn btn-clear event-btn' title='事件' onClick={ this.addEvent.bind(this, 'event', null)}/>
+                    <button className={$class(
+                        'btn btn-clear event-btn',
+                        {'not-allowed': !this.state.canHaveEvent||this.state.hasEvent}
+                        )} title='事件' disabled={!this.state.canHaveEvent||this.state.hasEvent}
+                            onClick={ this.addEvent.bind(this, 'event', null)}/>
                     <button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />
                     <button className='btn btn-clear delete-btn' title='删除' onClick={ this.delete } />
                 </div>

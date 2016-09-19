@@ -117,6 +117,10 @@ class ToolBoxButton extends Component {
                 });
             } else if (this.props.drawRect) {
                 //普通画框
+                if(this.props.className === 'qrcode') {
+                    //qrcode处理
+                    this.props.param.shapeHeight = this.props.param.shapeWidth;
+                }
                 WidgetActions['addWidget'](this.props.className, this.props.param);
                 ToolBoxAction['deselect']();
                 this.drawRect.end();
