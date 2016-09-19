@@ -422,7 +422,11 @@ class ObjectTree extends React.Component {
                             <img src={ pic } />
 
                             <p>{v.className}</p>
-
+                            {
+                                v.props.locked!==undefined && v.props.locked
+                                    ? <span className='lock-icon' />
+                                    : null
+                            }
                             {
                                 Object.keys(v.events).length > 0
                                     ? <span className='event-icon' />
