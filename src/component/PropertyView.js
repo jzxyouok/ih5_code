@@ -34,15 +34,7 @@ class PropertyView extends React.Component {
         };
     }
 
-    setColor(value){
-        let oInput =document.getElementsByClassName('color-input')[0];
-        if(value){
 
-        }else{
-            oInput.value='transparent';
-            oInput.jscolor.onFineChange();
-        }
-    }
 
      //获取封装的form组件
      getInputBox(type, defaultProp) {
