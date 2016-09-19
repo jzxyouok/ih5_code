@@ -27,6 +27,7 @@ class ObjectTree extends React.Component {
         this.onStatusChange = this.onStatusChange.bind(this);
         this.addOpenId = this.addOpenId.bind(this);
         this.showHideBtn = this.showHideBtn.bind(this);
+        this.lockBtn = this.lockBtn.bind(this);
 
         //对象的复制/剪切/黏贴
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
@@ -229,6 +230,13 @@ class ObjectTree extends React.Component {
         WidgetActions['render']();
     }
 
+    lockBtn(key) {
+        if(key === this.state.nid){
+            WidgetActions['lockWidget']();
+            WidgetActions['render']();
+        }
+    }
+
     dragWithTip(x, y, isShow) {
         this.dragTip.style.top = y+15+'px';
         this.dragTip.style.left = x+10+'px';
@@ -422,7 +430,11 @@ class ObjectTree extends React.Component {
                             <img src={ pic } />
 
                             <p>{v.className}</p>
-
+                            {
+                                v.props.locked!==undefined && v.props.locked
+                                    ? <span className='lock-icon' onClick={ this.lockBtn.bind(this, v.key, v) }/>
+                                    : null
+                            }
                             {
                                 Object.keys(v.events).length > 0
                                     ? <span className='event-icon' />

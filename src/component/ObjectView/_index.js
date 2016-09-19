@@ -32,7 +32,7 @@ class ObjectView extends React.Component {
         this.addEvent = this.addEvent.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        this.onChangeLock = this.onChangeLock.bind(this);
+        this.onInitLock = this.onInitLock.bind(this);
     }
 
     componentDidMount() {
@@ -54,11 +54,11 @@ class ObjectView extends React.Component {
                     parentData : widget.selectWidget.parent
                 });
             }
-            this.onChangeLock(widget.selectWidget);
+            this.onInitLock(widget.selectWidget);
         }
     }
 
-    onChangeLock(selectWidget) {
+    onInitLock(selectWidget) {
         let canLock = false;
         // let locked = false;
         if(selectWidget.className === 'root') {
@@ -66,12 +66,10 @@ class ObjectView extends React.Component {
         } else {
             canLock = true;
         }
-        console.log('1',this.state.locked);
         this.setState({
             canLock: canLock,
             locked: selectWidget.props.locked
         });
-        console.log('2',this.state.locked);
     }
 
     toggleBtn(i){
@@ -167,8 +165,8 @@ class ObjectView extends React.Component {
                     }
                     <button className={$class(
                         'btn btn-clear lock-btn',
-                        {'not-allowed': !this.state.canLock||this.state.whichContent===1, 'locked': this.state.locked})}
-                            onClick={this.lock.bind(this)} title='锁住'/>
+                        {'not-allowed': !this.state.canLock||this.state.whichContent===1, 'locked': this.state.locked,})}
+                            onClick={this.lock.bind(this)} title='锁住' disabled={!this.state.canLock}/>
                     {/*<button className="btn btn-clear folder-btn" title="文件夹"  onClick={ this.create.bind(this,"folder",null)}  />*/}
                     <button className='btn btn-clear container-btn' title='容器' onClick={ this.create.bind(this,'container',null)} />
                     <button className='btn btn-clear event-btn' title='事件' onClick={ this.addEvent.bind(this, 'event', null)}/>

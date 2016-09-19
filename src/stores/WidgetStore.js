@@ -411,6 +411,7 @@ export default Reflux.createStore({
             } else {
                 bridge.selectWidget(this.currentWidget.node);
             }
+            this.trigger({redrawTree: true});
             this.render();
         }
     },

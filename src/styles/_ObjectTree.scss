@@ -95,6 +95,17 @@
                 height: 14px;
                 background: url("img/button-icon.svg") no-repeat -760px 0;
             }
+
+            .lock-icon {
+                position: absolute;
+                right: 34px;
+                width: 14px;
+                height: 14px;
+                background: url("img/button-icon.svg") no-repeat -360px -200px;
+                &:active {
+                    background: url("img/button-icon.svg") no-repeat -360px -200px;
+                }
+            }
         }
 
         .stage-title{
