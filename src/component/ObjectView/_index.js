@@ -21,11 +21,14 @@ class ObjectView extends React.Component {
             whichContentData : ["对象树","资源"],
             width : null,
             parentID : null,
-            parentData : null
+            parentData : null,
+            canLock: false,
+            isLock: false
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);
+        this.lock = this.lock.bind(this);
         this.addEvent = this.addEvent.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -50,7 +53,11 @@ class ObjectView extends React.Component {
                     parentData : widget.selectWidget.parent
                 });
             }
+            this.setState({
+
+            });
         }
+
     }
 
     toggleBtn(i){
@@ -65,6 +72,10 @@ class ObjectView extends React.Component {
 
     addEvent(className,param) {
         WidgetActions['addEvent'](className,param);
+    }
+
+    lock() {
+        //do lock/unlock here
     }
 
     delete(){
@@ -137,7 +148,11 @@ class ObjectView extends React.Component {
                     {
                         // not-allowed 为不可点击
                     }
-                    <button className='btn btn-clear lock-btn not-allowed' title='锁住'/>
+                    <button className={$class({
+                        'not-allowed': this.state.canLock},
+                        {'is-lock': this.state.isLock},
+                        'btn btn-clear lock-btn')}
+                            onClick={this.lock.bind(this)} title='锁住'/>
                     {/*<button className="btn btn-clear folder-btn" title="文件夹"  onClick={ this.create.bind(this,"folder",null)}  />*/}
                     <button className='btn btn-clear container-btn' title='容器' onClick={ this.create.bind(this,'container',null)} />
                     <button className='btn btn-clear event-btn' title='事件' onClick={ this.addEvent.bind(this, 'event', null)}/>

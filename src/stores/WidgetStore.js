@@ -321,8 +321,8 @@ export default Reflux.createStore({
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
-        // TODO:åŠ Locked Here
-        if (widget && selectableClass.indexOf(widget.className) >= 0) {
+        //åˆ¤æ–­æ˜¯å¦æ˜¯å¯é€‰æ‹©çš„ï¼Œæ˜¯å¦åŠ é”
+        if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props.isLock) {
             bridge.selectWidget(widget.node, this.updateProperties.bind(this));
         } else {
             bridge.selectWidget(widget.node);
@@ -412,7 +412,7 @@ export default Reflux.createStore({
     },
     updateProperties: function(obj, skipRender, skipProperty) {
 
-        //ÅÐ¶ÏÊÇ·ñËø¶¨,¸Ä±äµÄÊÇÄÄ¸öÖµ
+        //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½Öµ
 
 
         let node = this.currentWidget.node;
@@ -420,7 +420,7 @@ export default Reflux.createStore({
 
       if(this.currentWidget.props.isLock){
          if(obj.scaleX && obj.scaleX != node.scaleX){
-             //x·½Ïò±ä¶¯
+             //xï¿½ï¿½ï¿½ï¿½ä¶¯
             obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
          }else if(obj.scaleX && obj.scaleX == node.scaleX){
              obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
