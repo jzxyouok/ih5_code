@@ -18,7 +18,8 @@ class ObjectTree extends React.Component {
             changed : null,
             isLoadTree : true,
             selectedLayer : -1,
-            selectWidget : null
+            selectWidget : null,
+            activeEvent: false //事件按钮是否被激活激活
             //widgetTreeChildren :null
         };
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -86,6 +87,7 @@ class ObjectTree extends React.Component {
             this.setState({
                 selectWidget : widget.selectWidget
                 , nid : widget.selectWidget.key
+                ,activeEvent: false
             });
             this.addOpenId();
             //触发聚焦
@@ -372,6 +374,17 @@ class ObjectTree extends React.Component {
             }
         };
 
+        let eventBtn = (data)=> {
+            //0为没有事件, 1为有事件正常状态
+            let btn = null;
+            if (data.props.enableEvent) {
+                btn = <div className={$class('event-icon event-icon-normal', {'active':this.state.activeEvent})}></div>;
+            } else {
+                btn = <div className={$class('event-icon event-icon-disable', {'active':this.state.activeEvent})}></div>;
+            }
+            return btn;
+        };
+
         let icon = (open, nid)=>{
             // 0是该图层下不包含任何内容，1有内容，但是内容收起来， 2有内容，且展开内容
             if(open === 0){
@@ -442,7 +455,7 @@ class ObjectTree extends React.Component {
                             }
                             {
                                 Object.keys(v.events).length > 0
-                                    ? <span className='event-icon' />
+                                    ? eventBtn(v)
                                     : null
                             }
                         </div>

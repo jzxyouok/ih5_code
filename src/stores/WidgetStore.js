@@ -450,10 +450,19 @@ export default Reflux.createStore({
         this.trigger(p);
     },
     addEvent: function(className, props) {
-        //TODO:添加事件
+        if (this.currentWidget) {
+            this.currentWidget.events.test = {func:'this is testing func'};
+            this.currentWidget.props.enableEvent = true;
+        }
+        this.render();
+        this.trigger({redrawTree: true});
     },
     removeEvent: function() {
-        //TODO:删除事件
+        if (this.currentWidget) {
+            this.currentWidget.events = {};
+        }
+        this.render();
+        this.trigger({redrawTree: true});
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});
