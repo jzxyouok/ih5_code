@@ -104,7 +104,7 @@
                 &:hover{ background-position: -1440px -80px; }
                 &:active{ background-position: -1440px -120px; }
                 &.not-allowed{ background-position: -1440px -40px; }
-                &.is-lock { background-position: -1440px -80px; }
+                &.locked { background-position: -1440px -80px; }
             }
 
             &.folder-btn {
