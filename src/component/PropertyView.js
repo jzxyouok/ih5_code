@@ -212,13 +212,8 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;//当前舞台选中的对象
-<<<<<<< HEAD
-        console.log(node);
-=======
+
        //console.log(node);
-
-
->>>>>>> cfb6b337c69c30a2c8eeb9847a0ad20340f1a657
 
         if (!node)
             return null;
