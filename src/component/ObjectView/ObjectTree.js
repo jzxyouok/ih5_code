@@ -79,7 +79,7 @@ class ObjectTree extends React.Component {
 
         else if(widget.selectWidget){
             //触发失焦
-            if(this.state.nid){
+            if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
             }
             this.setState({
@@ -88,7 +88,9 @@ class ObjectTree extends React.Component {
             });
             this.addOpenId();
             //触发聚焦
-            document.getElementById('tree-item-'+this.state.nid).focus();
+            if(document.getElementById('tree-item-'+this.state.nid)){
+                document.getElementById('tree-item-'+this.state.nid).focus();
+            }
         }
 
         //selectWidget : 选择工具创建相应图层

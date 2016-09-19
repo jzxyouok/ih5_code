@@ -321,8 +321,8 @@ export default Reflux.createStore({
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
-        // TODO:加Locked Here
-        if (widget && selectableClass.indexOf(widget.className) >= 0) {
+        //判断是否是可选择的，是否加锁
+        if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props.isLock) {
             bridge.selectWidget(widget.node, this.updateProperties.bind(this));
         } else {
             bridge.selectWidget(widget.node);
