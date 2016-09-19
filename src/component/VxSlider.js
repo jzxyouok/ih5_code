@@ -443,8 +443,7 @@ class VxRcSlider extends RcSlider {
                                vertical = {vertical}
                                included={isIncluded}
                                offset={lowerOffset}
-                               length={upperOffset - lowerOffset}
-                                />
+                               length={upperOffset - lowerOffset}/>
 
 						<Steps prefixCls={prefixCls}
                                vertical = {vertical}
@@ -466,7 +465,9 @@ class VxRcSlider extends RcSlider {
                                max={max}
                                min={min}/>
 
-						{children}
+						{
+                            //children
+                        }
 					</div>
 				</div>
 			</li>
