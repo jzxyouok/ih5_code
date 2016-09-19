@@ -68,10 +68,10 @@ propertyMap['box'] = [
 ];
 
 propertyMap['sprite'] = [
-    ...propertyMap['box'], 
+    ...propertyMap['box'],
     { name: 'scaleX', showName:'w',type: propertyType.Float, default: 0, group:'position', isProperty: true },
     { name: 'scaleY',showName:'h',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
-    { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[-0.5,0],'下':[-0.5,-1],'左':[0,-0.5],'右':[-1,-0.5],'中心':[-0.5,-0.5],'左上':[0,0],'左下':[0,-1],'右上':[-1,0],'右下':[-1,-1]}, group:'position',isProperty: true },
+    { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
     { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true }
 
 ];
@@ -117,8 +117,8 @@ propertyMap['graphics'] = [
     { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'positionY',showName:'y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleX', showName:'w',type: propertyType.Float, default: 0, group:'position', isProperty: true },
-    { name: 'scaleY',showName:'h',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
-    { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[-0.5,0],'下':[-0.5,-1],'左':[0,-0.5],'右':[-1,-0.5],'中心':[-0.5,-0.5],'左上':[0,0],'左下':[0,-1],'右上':[-1,0],'右下':[-1,-1]}, group:'position',isProperty: true },
+    { name: 'scaleY',showName:'h',type: propertyType.Float, default: 0, group:'position', isProperty: true},
+    { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
     { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
     { name: 'shapeWidth',showName:'shapeW', type: propertyType.Integer, default: 0, group:'position', isProperty: false },
     { name: 'shapeHeight', showName:'shapeH',type: propertyType.Integer, default: 0, group:'position', isProperty: false},

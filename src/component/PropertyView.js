@@ -34,7 +34,7 @@ class PropertyView extends React.Component {
         };
     }
 
-//获取封装的form组件
+     //获取封装的form组件
      getInputBox(type, defaultProp) {
         switch (type) {
             case propertyType.Integer:
@@ -75,7 +75,7 @@ class PropertyView extends React.Component {
                 return <Switch   {...defaultProp} />;
 
             case propertyType.Select:
-                return  <Select   {...defaultProp}   >
+                return  <Select   {...defaultProp}  >
                     {defaultProp.options}
                 </Select>;
 
@@ -100,26 +100,23 @@ class PropertyView extends React.Component {
                 case propertyType.Number:
                     v = parseFloat(value);
                     break;
-
                 case propertyType.Integer:
                     v = parseInt(value);
                     break;
                 case propertyType.Float:
                     if(this.selectNode.props.isLock){
-
                         if('scaleX'== prop.name) {
                             //获取scaleY的值
                             let h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.defaultData.height;
                            //获取scaleX的值
                            let w =parseFloat(value) /this.defaultData.width;
-
                             //调用更新
-
                             const obj = {};
 
                             obj[prop.name] =w;
                             obj['scaleY']=h;
                             this.onStatusChange({updateProperties: obj});
+
                             WidgetActions['updateProperties'](obj, false, true);
 
                         }else if('scaleY'== prop.name){
@@ -129,16 +126,13 @@ class PropertyView extends React.Component {
                             let h =parseFloat(value) /this.defaultData.height;
 
                             //调用更新
-
                             const obj = {};
 
                             obj[prop.name] =h;
                             obj['scaleX']=w;
                             this.onStatusChange({updateProperties: obj});
                             WidgetActions['updateProperties'](obj, false, true);
-
                         }
-
                         bTag=false;
                     }else{
                         if('scaleX'== prop.name) {
@@ -207,16 +201,10 @@ class PropertyView extends React.Component {
     }
     //锁定
     antLock(){
-
-        this.selectNode.props.isLock=!this.selectNode.props.isLock
-
-
-
+        this.selectNode.props.isLock=!this.selectNode.props.isLock;
         let  oLock=  document.getElementsByClassName('ant-lock')[0];
        if(this.selectNode.props.isLock){
            oLock.classList.add('ant-lock-checked');
-
-
        }else{
            oLock.classList.remove('ant-lock-checked');
        }
@@ -224,9 +212,13 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;//当前舞台选中的对象
+<<<<<<< HEAD
+        console.log(node);
+=======
        //console.log(node);
 
 
+>>>>>>> cfb6b337c69c30a2c8eeb9847a0ad20340f1a657
 
         if (!node)
             return null;
@@ -250,6 +242,7 @@ class PropertyView extends React.Component {
 
 
         const getInput = (item, index) => {
+             //item,propertyMap中的元素;node,当前选中的属性面板,node.node中存储了属性值,props中存储了用于回填的值
 
             //设置默认值
             let defaultValue;
@@ -273,8 +266,6 @@ class PropertyView extends React.Component {
                 }
             }
 
-
-
             //设置通用默认参数和事件
             const defaultProp = {
                 size: 'small',
@@ -287,19 +278,19 @@ class PropertyView extends React.Component {
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;
             }else if(item.type ==propertyType.Select ){
+              let selectClassName='';
               if(item.name=='originY' ||item.name=='originPos') {
                   defaultProp.defaultValue = this.getSelectDefault(this.originPos, item.options);
+                  selectClassName='originIcon';
               }
                 //拼接children元素
                 defaultProp.options=[];
                 for(var i in  item.options){
-                    defaultProp.options.push(<Option key={item.options[i]}>{i}</Option>);
+                    defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
                 }
             } else {
                 defaultProp.value = defaultValue;
             }
-
-
 
             let groupName = item.group || 'basic';
             if (groups[groupName] === undefined)
@@ -311,10 +302,7 @@ class PropertyView extends React.Component {
             let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
             let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
 
-
-
            if(!item.showName){item.showName=item.name;}//当showName不存在时,用name作为showName
-
 
             //拼接图标样式
             let htmlStr;
@@ -327,9 +315,7 @@ class PropertyView extends React.Component {
             groups[groupName].push(
                 <div key={item.name}
                     className={cls('f--hlc','ant-row','ant-form-item',{'ant-form-half': hasTwin}, {'ant-form-full': !hasTwin})}>
-
                     <div className='ant-col-l ant-form-item-label'>{htmlStr}</div>
-
                     <div className='ant-col-r'>
                         <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
                         {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
@@ -338,9 +324,6 @@ class PropertyView extends React.Component {
                 </div>
             );
         };
-        
-
-        const result = [];
 
         propertyMap[className].forEach((item, index) => {
             if (item.isProperty)
@@ -358,6 +341,7 @@ class PropertyView extends React.Component {
         if (widget.selectWidget !== undefined){
             //加载后被调用,数据的更改激活change
             this.selectNode = widget.selectWidget;
+
             this.setState({fields: this.getFields()});
             let node = this.selectNode; //当前加载的对象
 
@@ -374,39 +358,32 @@ class PropertyView extends React.Component {
         } else if (widget.updateProperties !== undefined && widget.skipProperty === undefined) {
 
             let needRender = (widget.skipRender === undefined);
+
             let selectNode = this.selectNode;
             let obj = widget.updateProperties;
             let className = selectNode.className;
             if (className.charAt(0) == '_')
                 className = 'class';
 
-
              propertyMap[className].map(item => {
-
                 if (item.isProperty && obj[item.name] !== undefined) {
-
                     if ( obj[item.name]=== null) {
-
-
                         delete(selectNode.props[item.name]);
                         if (needRender)
                             selectNode.node[item.name] = item.default;
-
                     } else {
-                    //用于回填
+                        //用于回填
                         selectNode.props[item.name] = obj[item.name];
-
-                     //更新
+                        //用于更新
                         if (needRender)
                             selectNode.node[item.name] = item.name == 'alpha' ? obj[item.name] / 100 : obj[item.name];
                     }
                 }
-
             });
 
             if (needRender)
                 WidgetActions['render']();
-             this.setState({fields: this.getFields()});
+                this.setState({fields: this.getFields()});
         }
     }
 
