@@ -457,15 +457,14 @@ class ObjectTree extends React.Component {
                 {
                     !objectData
                     ? null
-                    : <div className='stage'
-                           onFocus={this.itemAddKeyListener.bind(this)}
-                           onBlur={this.itemRemoveKeyListener.bind(this)}
-                           tabIndex={objectData.tree.key}
-                           id={'tree-item-'+ objectData.tree.key}
-                        >
+                    : <div className='stage'>
                         <div className={$class('stage-title f--h f--hlc',{'active': objectData.tree.key === this.state.nid})}
                              style={{ width : this.props.width - 36 }}
-                             onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}>
+                             onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}
+                             onFocus={this.itemAddKeyListener.bind(this)}
+                             onBlur={this.itemRemoveKeyListener.bind(this)}
+                             tabIndex={objectData.tree.key}
+                             id={'tree-item-'+ objectData.tree.key}>
                             { btn(-1, objectData.tree) }
                             {
                                 objectData.tree.children.length > 0
