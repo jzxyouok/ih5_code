@@ -12,7 +12,15 @@ var classList;
 let _keyCount = 1;
 
 
+var prevObj;
+var prevNewObj;
+var dragTag;
+
+
 var copyObj = {};
+
+//jsonÂØπË±°ÊµÖÂÖãÈöÜ
+function cpJson(a){return JSON.parse(JSON.stringify(a))}
 
 function onSelect() {
   WidgetActions['selectWidget'](this);
@@ -411,32 +419,45 @@ export default Reflux.createStore({
       }
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-
-        //≈–∂œ «∑ÒÀ¯∂®,∏ƒ±‰µƒ «ƒƒ∏ˆ÷µ
-
-
-        let node = this.currentWidget.node;
-
-
       if(this.currentWidget.props.isLock){
-         if(obj.scaleX && obj.scaleX != node.scaleX){
-             //x∑ΩœÚ±‰∂Ø
-            obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
-         }else if(obj.scaleX && obj.scaleX == node.scaleX){
-             obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
-         }
+          let newObj =cpJson(obj);
+          if(prevObj) {
+              if (prevObj.scaleX == obj.scaleX && prevObj.scaleY == obj.scaleY) {
+                  //ÊùæÂºÄÈº†Ê†á
+                  newObj.scaleX = prevNewObj.scaleX;
+                  newObj.scaleY = prevNewObj.scaleY;
+                  dragTag = null;
+              } else if ( prevObj.scaleY != obj.scaleY && prevObj.scaleX != obj.scaleX) {
+                  //x yËΩ¥ÂèòÂä®
+                  newObj.scaleY = newObj.scaleX;
+                     dragTag = 'xy';
+              } else if (prevObj.scaleY == obj.scaleY && prevObj.scaleX != obj.scaleX) {
+                  //xËΩ¥ÂèòÂä®
+                  newObj.scaleY = newObj.scaleX;
+                  dragTag = 'x';
+              } else if(prevObj.scaleX == obj.scaleX && prevObj.scaleY != obj.scaleY){
+                  //yËΩ¥ÂèòÂä®
+                  if(dragTag=='x' || dragTag =='xy'){
+                      //‰øÆÂ§çÈó™Âä®ÁöÑbug
+                      newObj.scaleY = newObj.scaleX;
+                  }else{
+                      newObj.scaleX = newObj.scaleY;
+                      dragTag = 'y';
+                  }
+              }
+          }
+          prevObj =cpJson(obj);
+          obj =newObj;
+          prevNewObj =cpJson(newObj);
       }
-        console.log('haha',obj);
-        console.log('hehe',this.currentWidget);
-
-      let p = {updateProperties: obj};
-      if (skipRender) {
-        p.skipRender = true;
-        bridge.updateSelector(this.currentWidget.node);
-      }
-      if (skipProperty)
-        p.skipProperty = true;
-      this.trigger(p);
+        let p = {updateProperties: obj};
+        if (skipRender) {
+            p.skipRender = true;
+            bridge.updateSelector(this.currentWidget.node);
+        }
+        if (skipProperty)
+            p.skipProperty = true;
+        this.trigger(p);
 
     },
     addEvent: function(className, props) {

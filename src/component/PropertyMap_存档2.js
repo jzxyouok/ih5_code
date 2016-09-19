@@ -5,27 +5,22 @@ const propertyType = {
     Text: 3,
     Boolean: 4,
     Percentage: 5,
-    Color: 6,
-    Select:7,
-    Float:8
+    Color: 6
 };
 
 const propertyMap = {};
 
 propertyMap['widget'] = [
-    { name: 'ID', type: propertyType.String, default: '', isProperty: true},
-    { name: 'getRoot', isFunc: true }
+    { name: 'id', type: propertyType.String, default: '', isProperty: true },
+    { name: 'getRoot', isFunc: true },
 ];
-
 
 propertyMap['root'] = [
     ...propertyMap['widget'],
-    { name: 'width',showName:'w', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
-    { name: 'height', showName:'h',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
-
-    { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
-    { name: 'color',showName:'舞台颜色', type: propertyType.Color, default: '', group:'tools', isProperty: true },
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'scaleType', type: propertyType.Integer, default: 5, isProperty: true},
+    { name: 'clipped', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'init', isEvent: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
@@ -42,8 +37,7 @@ propertyMap['root'] = [
     { name: 'getTouchX', isFunc: true },
     { name: 'getTouchY', isFunc: true }
 ];
-
-
+   
 propertyMap['wechat'] = [
     ...propertyMap['widget'],
     { name: 'title', type: propertyType.String, default: '', isProperty: true },
@@ -53,10 +47,13 @@ propertyMap['wechat'] = [
 
 propertyMap['box'] = [
     ...propertyMap['widget'],
-    { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
-    { name: 'positionY',showName:'y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 100, group:'display', isProperty: true },
-    { name: 'visible',showName:'初始可见', type: propertyType.Boolean, default: true, group:'display', isProperty: true },
+    { name: 'positionX', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'positionY', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'scaleX', type: propertyType.Number, default: 1, group:'position', isProperty: true },
+    { name: 'scaleY', type: propertyType.Number, default: 1, group:'position', isProperty: true },
+    { name: 'alpha', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
+    { name: 'rotation', type: propertyType.Integer, default: 0, group:'display', isProperty: true },
+    { name: 'visible', type: propertyType.Boolean, default: true, group:'display', isProperty: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchUp', isEvent: true, info:'{globalX, globalY}'},
@@ -70,16 +67,15 @@ propertyMap['box'] = [
 
 propertyMap['sprite'] = [
     ...propertyMap['box'],
-    { name: 'scaleX', showName:'w',type: propertyType.Float, default: 0, group:'position', isProperty: true },
-    { name: 'scaleY',showName:'h',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
-    { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
-    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true }
-
+    { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty: true },
+    { name: 'originY', type: propertyType.Number, default: 0, group:'position', isProperty: true },
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true}
 ];
 
 propertyMap['text'] = [
     ...propertyMap['sprite'],
-    { name: 'text',showName:'内容', type: propertyType.Text, default: '', isProperty: true }
+    { name: 'text', type: propertyType.Text, default: '', isProperty: true }
 ];
 
 propertyMap['video'] = [
@@ -96,16 +92,16 @@ propertyMap['audio'] = [
 
 propertyMap['image'] = [
     ...propertyMap['sprite'],
-    { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: false }
+    { name: 'link', type: propertyType.Integer, default:0, isProperty: true },
 ];
 
 propertyMap['imagelist'] = [
     ...propertyMap['sprite'],
-    { name: 'delay', type: propertyType.Number, default: 0.2, isProperty: true }
+    { name: 'delay', type: propertyType.Number, default: 0.2, isProperty: true },
 ];
 
 propertyMap['bitmaptext'] = [
-    ...propertyMap['sprite'],
+    ...propertyMap['sprite'],   
     { name: 'text', type: propertyType.Text, default:'', isProperty: true },
     { name: 'font', type: propertyType.String, default:'', isProperty: true },
     { name: 'size', type: propertyType.Integer, default:20, isProperty: true },
@@ -114,20 +110,16 @@ propertyMap['bitmaptext'] = [
 ];
 
 propertyMap['graphics'] = [
-    ...propertyMap['widget'],
-    { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
-    { name: 'positionY',showName:'y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'scaleX', showName:'w',type: propertyType.Float, default: 0, group:'position', isProperty: true },
-    { name: 'scaleY',showName:'h',type: propertyType.Float, default: 0, group:'position', isProperty: true},
-    { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
-    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
-    { name: 'shapeWidth',showName:'shapeW', type: propertyType.Integer, default: 0, group:'position', isProperty: false },
-    { name: 'shapeHeight', showName:'shapeH',type: propertyType.Integer, default: 0, group:'position', isProperty: false},
-    { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 100, group:'display', isProperty: true },
-    { name: 'fillColor',showName:'填充颜色', type: propertyType.Color, default: '', group:'display', isProperty: true },
-    { name: 'lineColor',showName:'描边颜色', type: propertyType.Color, default: '', group:'display', isProperty: true },
-    { name: 'lineWidth',showName:'描边宽度', type: propertyType.Integer, default: 1, group:'display', isProperty: true },
-    { name: 'visible',showName:'初始可见', type: propertyType.Boolean, default: true, group:'display', isProperty: true }
+    ...propertyMap['box'],
+    { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty: true },
+    { name: 'originY', type: propertyType.Number, default: 0, group:'position', isProperty: true },
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'fillColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
+    { name: 'lineColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
+    { name: 'lineWidth', type: propertyType.Integer, default: 1, group:'position', isProperty: true }
 ];
 
 propertyMap['rect'] = [
@@ -147,7 +139,6 @@ propertyMap['slidetimer'] = [
     { name: 'vertical', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'sliderScale', type: propertyType.Number, default: 1, isProperty: true},
     { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true}
-
 ];
 
 propertyMap['ellipse'] = [
@@ -186,10 +177,8 @@ propertyMap['class'] = [
 
 propertyMap['timer'] = [
     ...propertyMap['container'],
-    { name: 'totalTime',showName:'总时长', type: propertyType.Number, default: 10, isProperty: true},
-    { name: 'loop',showName:'循环播放', type: propertyType.Boolean, default: false, isProperty: true},
-    { name: 'scaleX',showName:'scaleX', type: propertyType.Number, default: 1, group:'position', isProperty: true },
-    { name: 'scaleY',showName:'scaleY', type: propertyType.Number, default: 1, group:'position', isProperty: true },
+    { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true},
+    { name: 'loop', type: propertyType.Boolean, default: false, isProperty: true},
     { name: 'play', isFunc: true },
     { name: 'pause', isFunc: true },
     { name: 'seek', info: '(time)', isFunc: true },

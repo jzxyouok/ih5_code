@@ -421,6 +421,34 @@
 
 form .ant-select, form .ant-cascader-picker{width:100%;}
 
+//舞台
+#canvas-dom{
+  line-height: .74em;
+  canvas{line-height: 1.5;}
+  &:before{
+	content: '';
+	background: url('./img/hline.jpg') no-repeat;
+	background-size: 100% 100%;
+	width: 100%;
+	height: 14px;
+	position: absolute;
+	left: 0;
+	top: -14px;
+	cursor: n-resize;
+  }
+  &:after{
+	content: '';
+	background: url('./img/vline.jpg') no-repeat;
+	background-size: 100% 100%;
+	width: 13px;
+	height: 100%;
+	position: absolute;
+	left:-13px;
+	top: 0;
+	cursor: e-resize;
+  }
+}
+
 
 
 

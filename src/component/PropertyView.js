@@ -34,6 +34,16 @@ class PropertyView extends React.Component {
         };
     }
 
+    setColor(value){
+        let oInput =document.getElementsByClassName('color-input')[0];
+        if(value){
+
+        }else{
+            oInput.value='transparent';
+            oInput.jscolor.onFineChange();
+        }
+    }
+
      //获取封装的form组件
      getInputBox(type, defaultProp) {
         switch (type) {
@@ -58,16 +68,16 @@ class PropertyView extends React.Component {
             case propertyType.Color:
 
                 return <div>
-                    <Input ref={(input) => {
-                if (input) {
-                    var dom = ReactDOM.findDOMNode(input).firstChild;
+                    <Input ref={(inputDom) => {
+                if (inputDom) {
+                    var dom = ReactDOM.findDOMNode(inputDom).firstChild;
                     if (!dom.jscolor) {
                         dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                         dom.jscolor.onFineChange = defaultProp.onChange;
                     }
                 }
-            }} {...defaultProp}   className='color-input' />
-                    <Switch    defaultChecked={true}     className='visible-switch ant-switch-small' />
+                }} {...defaultProp}   className='color-input' />
+                    <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
                 </div>;
 
             case propertyType.Boolean:
@@ -107,9 +117,11 @@ class PropertyView extends React.Component {
                     if(this.selectNode.props.isLock){
                         if('scaleX'== prop.name) {
                             //获取scaleY的值
-                            let h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.defaultData.height;
+                            let h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.selectNode.node.defaultData.height;
                            //获取scaleX的值
-                           let w =parseFloat(value) /this.defaultData.width;
+                            let w =parseFloat(value) /this.selectNode.node.defaultData.width;
+
+
                             //调用更新
                             const obj = {};
 
@@ -121,9 +133,9 @@ class PropertyView extends React.Component {
 
                         }else if('scaleY'== prop.name){
                             //获取scaleX的值
-                            let w  =parseFloat(value)*(this.selectNode.node.width/this.selectNode.node.height)/this.defaultData.width;
+                             let w  =parseFloat(value)*(this.selectNode.node.width/this.selectNode.node.height)/this.selectNode.node.defaultData.width;
                             //获取scaleY的值
-                            let h =parseFloat(value) /this.defaultData.height;
+                            let h =parseFloat(value) /this.selectNode.node.defaultData.height;
 
                             //调用更新
                             const obj = {};
@@ -136,9 +148,9 @@ class PropertyView extends React.Component {
                         bTag=false;
                     }else{
                         if('scaleX'== prop.name) {
-                            v =parseFloat(value) /this.defaultData.width;
+                            v =parseFloat(value) /this.selectNode.node.defaultData.width;
                         }else if('scaleY'== prop.name){
-                            v = parseFloat(value)/this.defaultData.height;
+                            v = parseFloat(value)/this.selectNode.node.defaultData.height;
                         }
                     }
                     break;
@@ -172,7 +184,13 @@ class PropertyView extends React.Component {
                 case propertyType.Boolean:
                     v = (value === prop.default) ? null : value;
                     break;
+                case propertyType.Color:
 
+
+
+                    v =value;
+
+                    break;
                 default:
                     v = value;
             }
@@ -187,9 +205,33 @@ class PropertyView extends React.Component {
     }
 
 
-    //为什么不写到onChangeProp中去?
+
     onChangePropDom(item, value) {
-        this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
+        if(item.type === propertyType.String || item.type === propertyType.Text ){
+            this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
+        }else if(item.type === propertyType.Color){
+            if(typeof value == 'boolean'){
+                let colorStr;
+                if(value){
+                    colorStr =this.selectNode.props[item.name+'_originColor'];
+                    this.selectNode.props[item.name+'_originColor']=null;
+                }else{
+                    colorStr='transparent';
+                    this.selectNode.props[item.name+'_originColor'] = this.selectNode.props[item.name];
+                }
+
+                this.onChangeProp(item,colorStr);
+            }else{
+
+                if(this.selectNode.props[item.name+'_originColor']){
+                    this.selectNode.props[item.name+'_originColor']=value.target.value
+                }else{
+                    this.onChangeProp(item,value.target.value);
+                }
+            }
+        } else{
+            this.onChangeProp(item,value);
+        }
     }
    //获取下拉框默认值
     getSelectDefault(originPos,options){
@@ -212,13 +254,6 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;//当前舞台选中的对象
-<<<<<<< HEAD
-        console.log(node);
-=======
-       //console.log(node);
-
-
->>>>>>> cfb6b337c69c30a2c8eeb9847a0ad20340f1a657
 
         if (!node)
             return null;
@@ -241,6 +276,7 @@ class PropertyView extends React.Component {
         const groups = {};
 
 
+
         const getInput = (item, index) => {
              //item,propertyMap中的元素;node,当前选中的属性面板,node.node中存储了属性值,props中存储了用于回填的值
 
@@ -252,7 +288,21 @@ class PropertyView extends React.Component {
             }else if(item.type==propertyType.Float) {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
                 defaultValue = node.node[str];
-                if (!this.defaultData[str]) { this.defaultData[str] = defaultValue;}//只执行一次
+                if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
+                if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}
+            }else if(item.type==propertyType.Color){
+               if( item.name == 'color' &&  !node.props.color){ //只执行一次
+                   node.props.color='#FFFFFF';
+               }
+                if(node.props[item.name+'_originColor']){
+                    defaultValue =node.props[item.name+'_originColor'];
+                }else{
+                    defaultValue =node.props[item.name];
+                }
+
+
+
+
             } else {
                 if (node.props[item.name] === undefined){
                     defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
@@ -266,12 +316,13 @@ class PropertyView extends React.Component {
                 }
             }
 
+
             //设置通用默认参数和事件
             const defaultProp = {
                 size: 'small',
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
-                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color ) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item)
+                onChange:  this.onChangePropDom.bind(this, item)
             };
 
             //单独设置默认参数
@@ -288,6 +339,9 @@ class PropertyView extends React.Component {
                 for(var i in  item.options){
                     defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
                 }
+            }else if(item.type ==propertyType.Color){
+                    defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
+                    defaultProp.value = defaultValue;
             } else {
                 defaultProp.value = defaultValue;
             }
