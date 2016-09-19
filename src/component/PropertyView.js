@@ -392,7 +392,7 @@ class PropertyView extends React.Component {
 
     render() {
         return (
-            <div id='PropertyView'>
+            <div id='PropertyView' style={{ left : this.props.expended? '64px':'36px'}}>
                 <h1 id='PropertyViewHeader'>属性</h1>
                 <div id='PropertyViewBody'>
                     {this.state.fields}

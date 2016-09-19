@@ -16,10 +16,13 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            stageZoom : 100
+            stageZoom : 100,
+            expendedToolbox: false
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
+        this.stageZoomEdit = this.stageZoomEdit.bind(this);
+        this.toolboxExpanded = this.toolboxExpanded.bind(this);
     }
 
     componentDidMount() {
@@ -69,22 +72,28 @@ class App extends React.Component {
         }
     }
 
+    toolboxExpanded(expanded) {
+        this.setState({
+            expendedToolbox : expanded
+        })
+    }
+
     render() {
 
         return (
             <div id="iH5-App">
-                <DesignView stageZoom={this.state.stageZoom}   />
+                <DesignView stageZoom={this.state.stageZoom} />
 
                 <NavBar stageZoom={this.state.stageZoom}
-                        stageZoomEdit={this.stageZoomEdit.bind(this)}
+                        stageZoomEdit={this.stageZoomEdit}
                         stageZoomPlus={this.stageZoomPlus}
-                        stageZoomLess={this.stageZoomLess}  />
+                        stageZoomLess={this.stageZoomLess} />
 
-                <ToolBox />
+                <ToolBox expendedToolBox={this.toolboxExpanded}/>
 
-                <PropertyView />
+                <PropertyView expended={this.state.expendedToolbox}/>
 
-                <EventBox />
+                <EventBox expended={this.state.expendedToolbox}/>
 
                 <ObjectView />
 
