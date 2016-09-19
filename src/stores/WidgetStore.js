@@ -411,33 +411,26 @@ export default Reflux.createStore({
       }
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-
-        //�ж��Ƿ�����,�ı�����ĸ�ֵ
-
-
         let node = this.currentWidget.node;
-
-
-      if(this.currentWidget.props.isLock){
-         if(obj.scaleX && obj.scaleX != node.scaleX){
-             //x����䶯
-            obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
-         }else if(obj.scaleX && obj.scaleX == node.scaleX){
-             obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
-         }
-      }
+        if(this.currentWidget.props.isLock){
+            if(obj.scaleX && obj.scaleX != node.scaleX){
+                obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
+            }else if(obj.scaleX && obj.scaleX == node.scaleX){
+                obj.scaleY = obj.scaleX*(node.scaleY /node.scaleX);
+            }
+        }
         //console.log('haha',obj);
         //console.log('hehe',this.currentWidget);
 
-      let p = {updateProperties: obj};
-      if (skipRender) {
-        p.skipRender = true;
-        bridge.updateSelector(this.currentWidget.node);
-      }
-      if (skipProperty)
-        p.skipProperty = true;
-      this.trigger(p);
-
+        let p = {updateProperties: obj};
+        if (skipRender) {
+            p.skipRender = true;
+            bridge.updateSelector(this.currentWidget.node);
+        }
+        if (skipProperty) {
+            p.skipProperty = true;
+        }
+        this.trigger(p);
     },
     addEvent: function(className, props) {
         //TODO:添加事件
