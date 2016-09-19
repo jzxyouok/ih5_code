@@ -23,4 +23,5 @@ export default Reflux.createActions([
   'setFont',
   'setImageText',
   'ajaxSend',
-  'activeHandle']);
+  'activeHandle',
+  'modifyNode']);

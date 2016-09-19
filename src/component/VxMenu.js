@@ -13,7 +13,6 @@ const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
 class  VxMenu extends React.Component {
-
     constructor (props) {
         super(props);
         this.state = {
@@ -22,6 +21,16 @@ class  VxMenu extends React.Component {
             addClassVisible: false,
             editDbVisible: false
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.dbList) {
+            nextProps.dbList.forEach(item => item['key'] = item['id']);
+            this.setState({dbList: nextProps.dbList});
+        }
+        if (nextProps.sockList) {
+            this.setState({sockList: nextProps.sockList});
+        }
     }
 
     componentDidMount() {
@@ -78,6 +87,26 @@ class  VxMenu extends React.Component {
         if (s)
             WidgetActions['addClass'](s);
         this.setState({addClassVisible: false});
+    }
+
+    onUpdateDb(list) {
+        this.setState({'dbList': list});
+    }
+
+    onCreateSockDone(s) {
+        this.setState({createSockVisible: false});
+        if (s) {
+            WidgetActions['ajaxSend'](null, 'POST', 'app/createSock',
+                'application/x-www-form-urlencoded', 'name=' + encodeURIComponent(s),
+                function(text) {
+                let r = JSON.parse(text);
+                if (r['id']) {
+                    var list = this.state.sockList;
+                    list.push({'id':r['id'], 'name':s});
+                    this.setState({sockList:list});
+                }
+            }.bind(this));
+        }
     }
 
     render() {

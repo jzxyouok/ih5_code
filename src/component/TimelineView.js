@@ -74,7 +74,7 @@ class TimelineView extends React.Component {
 
     onTimerChange(value) {
         WidgetActions['resetTrack']();
-        this.state.timerNode.node['seek'](value * this.state.timerNode.node['totalTime']);
+        this.state.timerNode.node['seek'](value);
         WidgetActions['syncTrack']();
         this.setState({currentTime:value});
     }
@@ -106,12 +106,13 @@ class TimelineView extends React.Component {
     render() {
         let tracks = [];
         let index = 0;
+        let totalTime = (this.state.timerNode) ? this.state.timerNode.node['totalTime'] : 0;
 
         const getTracks = (node) => {
             console.log('node', node)
             if (node.className === 'track') {
-                tracks.push(<VxSlider key={index++} max={1} step={0.001} 
-                    refTrack={node} refTimer={this.state.timerNode} 
+                tracks.push(<VxSlider key={index++} max={totalTime} step={0.01}
+                    refTrack={node} refTimer={this.state.timerNode}
                     points={node.props.data} isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));
@@ -134,7 +135,7 @@ class TimelineView extends React.Component {
                         </Row>
                         <Row>
                             <Col>
-                                <Slider max={1} step={0.001} value={this.state.currentTime} onChange={this.onTimerChange.bind(this)} />
+                                <Slider max={totalTime} step={0.01} value={this.state.currentTime} onChange={this.onTimerChange.bind(this)} />
                                 {tracks}
                             </Col>
                         </Row>

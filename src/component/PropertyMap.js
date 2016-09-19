@@ -10,6 +10,9 @@ const propertyType = {
     Float:8
 };
 
+const widgetGroup = {
+};
+
 const propertyMap = {};
 
 propertyMap['widget'] = [
@@ -112,6 +115,13 @@ propertyMap['bitmaptext'] = [
     { name: 'lineHeight', type: propertyType.Integer, default:10, isProperty: true }
 ];
 
+propertyMap['qrcode'] = [
+    ...propertyMap['sprite'],
+    { name: 'data', type: propertyType.String, default:'', isProperty: true },
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+];
+
 propertyMap['graphics'] = [
     ...propertyMap['widget'],
     { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
@@ -147,6 +157,15 @@ propertyMap['slidetimer'] = [
     { name: 'sliderScale', type: propertyType.Number, default: 1, isProperty: true},
     { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true}
 
+];
+
+propertyMap['html'] = [
+    ...propertyMap['box'],
+    { name: 'src', type: propertyType.String, default:'', isProperty: true },
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
 
 propertyMap['ellipse'] = [
@@ -255,6 +274,19 @@ propertyMap['effect'] = [
 propertyMap['track'] = [
     ...propertyMap['widget'],
     { name: 'type', type: propertyType.String, default: '', isProperty: true }
+];
+
+propertyMap['db'] = [
+    ...propertyMap['widget'],
+    { name: 'find', isFunc: true, info:'(option, callback(err, result))' },
+    { name: 'insert', isFunc: true, info:'(data, callback(err, result))' },
+    { name: 'update', isFunc: true, info:'(data, callback(err, result))' }
+];
+
+propertyMap['sock'] = [
+    ...propertyMap['widget'],
+    { name: 'listened', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'message', isEvent: true, info:'data'},
 ];
 
 export { propertyType, propertyMap };
