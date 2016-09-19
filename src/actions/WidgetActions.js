@@ -8,6 +8,7 @@ export default Reflux.createActions([
   'copyWidget',                   //复制组件
   'pasteWidget',                  //粘贴组件
   'cutWidget',                    //剪切组件
+  'lockWidget',                   //锁定组件
   'reorderWidget',                //移动组件
   'initTree',                     //对象树的数据
   'render',                       //重新加载数据
