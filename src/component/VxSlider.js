@@ -109,6 +109,7 @@ class VxRcSlider extends RcSlider {
         this.onStatusChange = this.onStatusChange.bind(this);
         this.selectTrack = this.selectTrack.bind(this);
         this.lastOrNext = this.lastOrNext.bind(this);
+        this.initializationState= this.initializationState.bind(this);
     }
 
     componentDidMount() {
@@ -116,12 +117,26 @@ class VxRcSlider extends RcSlider {
         this.onStatusChange(WidgetStore.getStore());
         TimelineStores.listen(this.ChangeKeyframe.bind(this));
         ChangeKeyStore.listen(this.ChangeKey.bind(this));
+        this.initializationState();
     }
 
     componentWillUnmount() {
         this.unsubscribe();
         //TimelineStores.removeListener(this.ChangeKeyframe.bind(this));
         //ChangeKeyStore.removeListener(this.ChangeKey.bind(this));
+    }
+
+    initializationState(){
+        this.setState({
+            points: this.props.points,
+            currentHandle: -1,
+            changeKey : null,
+            changeKeyBool : false,
+            changeKeyValue : null,
+            isChooseKey : false,
+            lastLayer : null,
+            nowLayer:null
+        });
     }
 
     ChangeKeyframe(bool,value){
@@ -308,7 +323,7 @@ class VxRcSlider extends RcSlider {
     }
 
   	render() {
-        const {points} = this.state;
+        const points = this.props.points;
 		const {className, prefixCls, disabled, vertical, dots, included, range, step,
 			marks, max, min, tipTransitionName, tipFormatter, children} = this.props;
 
