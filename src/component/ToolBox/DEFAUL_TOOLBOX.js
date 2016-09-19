@@ -114,7 +114,7 @@ var DEFAULT_TOOLBOX = {
         gid:6,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.QRCODE,name:'二维码',icon:qrcodeIcon, className:'qrcode'}]
+            {cid:TOOL_ID.QRCODE,name:'二维码',icon:qrcodeIcon, className:'qrcode', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100, 'data': '0'}}]
     },{
         name:'多媒体',
         key:7,
