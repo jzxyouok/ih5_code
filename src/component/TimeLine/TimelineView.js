@@ -375,7 +375,7 @@ class TimelineView extends React.Component {
                              className={ cls('f--hlc flex-1',{'active': this.state.currentTrack!=null})}>
 
                             <span id='TimelineIndicator'
-                                  className={cls({'active': this.state.currentTrack!=null})} />
+                                  className={cls({'active': this.state.isChangeKey})} />
 
                             <input type='text'
                                    value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
