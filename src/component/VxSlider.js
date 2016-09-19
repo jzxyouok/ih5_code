@@ -266,7 +266,11 @@ class VxRcSlider extends RcSlider {
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
             this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
-            this.setState({points: points});
+            this.setState({
+                points: points
+            },()=>{
+                TimelineAction['ChangeKeyframe'](true);
+            });
         }
     }
 
@@ -421,7 +425,7 @@ class VxRcSlider extends RcSlider {
                                     'timeline-node',
                                     `timeline-node-${track.parent.className}`,
                                     'f--hlc')}>
-				<div className='timeline-node-meta timline-column-left f--hlc'>
+				<div className='timeline-node-meta timline-column-left f--hlc' onClick={ this.selectTrack.bind(this) }>
                     {
                         //<label className={cls('timeline-node-type', `timeline-node-type-${track.parent.className}`)} />
                     }
@@ -431,13 +435,13 @@ class VxRcSlider extends RcSlider {
 				</div>
 
 				<div className='timeline-node-track timline-column-right'>
-					<div ref="slider" className={sliderClassName} style={style}
-							onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
-							onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
-
+					<div ref="slider" className={sliderClassName} style={style}>
                         <div className="locus-layer" onClick={ this.selectTrack.bind(this) }></div>
 
-						{handles}
+                        <div onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
+                             onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
+						    {handles}
+                        </div>
 
 						<Track className={prefixCls + '-track'}
                                vertical = {vertical}
