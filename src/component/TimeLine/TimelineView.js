@@ -250,7 +250,7 @@ class TimelineView extends React.Component {
         }
     }
 
-    inputOnBlur(){
+    inputOnBlur(event){
         let data = this.refs.TimeInput.value;
         let max = parseInt(event.currentTarget.getAttribute("data-max"));
         if(data > max){
@@ -382,7 +382,7 @@ class TimelineView extends React.Component {
                                    value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
                                    onChange={ this.timeInput.bind(this) }
                                    onKeyDown = { this.timeInputSure.bind(this)}
-                                   onBlur={ this.inputOnBlur }
+                                   onBlur={ this.inputOnBlur.bind(this) }
                                    data-max = {totalTime}
                                    ref="TimeInput"/>
                             <span>s</span>
