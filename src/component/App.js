@@ -12,7 +12,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <NavBar />
+                <NavBar/>
                 <Row gutter={5}>
                     <Col span={3}><ComponentPanel /></Col>
                     <Col span={4}><PropertyView /></Col>

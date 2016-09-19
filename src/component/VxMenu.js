@@ -5,6 +5,7 @@ import React from 'react';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import InputText from './InputText';
+import DbDialog from './DbDialog';
 import JSZip from 'jszip';
 
 import { Menu, Icon } from 'antd';
@@ -12,14 +13,27 @@ const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
 class  VxMenu extends React.Component {
-
     constructor (props) {
         super(props);
         this.state = {
             current: 'mail',
             classList: [],
-            addClassVisible: false
+            dbList: [],
+            sockList: [],
+            addClassVisible: false,
+            createSockVisible: false,
+            editDbVisible: false
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.dbList) {
+            nextProps.dbList.forEach(item => item['key'] = item['id']);
+            this.setState({dbList: nextProps.dbList});
+        }
+        if (nextProps.sockList) {
+            this.setState({sockList: nextProps.sockList});
+        }
     }
 
     componentDidMount() {
@@ -62,18 +76,41 @@ class  VxMenu extends React.Component {
             });
         } else if (key.substr(0, 5) === 'font_') {
             WidgetActions['setFont'](key.substr(5));
+        } else if (key === 'editDb') {
+            this.setState({editDbVisible: true});
+        } else if (key.substr(0, 3) === 'db_') {
+            WidgetActions['addWidget']('db', {'dbid': key.substr(3)} );
+        } else if (key === 'createSock') {
+            this.setState({createSockVisible: true});
+        } else if (key.substr(0, 5) === 'sock_') {
+            WidgetActions['addWidget']('sock', {'sid': key.substr(5)} );
         }
-        /*
-        this.setState({
-            current: e.key
-        });
-        PixelActions['createScene']();*/
     }
 
     onAddClassDone(s) {
         if (s)
             WidgetActions['addClass'](s);
         this.setState({addClassVisible: false});
+    }
+
+    onUpdateDb(list) {
+        this.setState({'dbList': list});
+    }
+
+    onCreateSockDone(s) {
+        this.setState({createSockVisible: false});
+        if (s) {
+            WidgetActions['ajaxSend'](null, 'POST', 'app/createSock',
+                'application/x-www-form-urlencoded', 'name=' + encodeURIComponent(s),
+                function(text) {
+                let r = JSON.parse(text);
+                if (r['id']) {
+                    var list = this.state.sockList;
+                    list.push({'id':r['id'], 'name':s});
+                    this.setState({sockList:list});
+                }
+            }.bind(this));
+        }
     }
 
     render() {
@@ -162,6 +199,16 @@ class  VxMenu extends React.Component {
                     { this.props.fontList.map(item => <Menu.Item key={'font_' + item['file']}>{item['name']}</Menu.Item>) }
                 </SubMenu>
 
+                <SubMenu title={<span><Icon type="edit" />数据库</span>}>
+                    <Menu.Item key="editDb">编辑数据库</Menu.Item>
+                    { this.props.dbList.map(item => <Menu.Item key={'db_' + item['id']}>{item['name']}</Menu.Item>) }
+                </SubMenu>
+
+                <SubMenu title={<span><Icon type="edit" />连接</span>}>
+                    <Menu.Item key="createSock">创建连接</Menu.Item>
+                    { this.state.sockList.map(item => <Menu.Item key={'sock_' + item['id']}>{item['name']}</Menu.Item>) }
+                </SubMenu>
+
                 <SubMenu title={<span><Icon type="edit" />编辑</span>}>
                     <MenuItemGroup>
                         <Menu.Item key="delete">删除</Menu.Item>
@@ -173,6 +220,8 @@ class  VxMenu extends React.Component {
                 </SubMenu>
             </Menu>
             <InputText title="类名字" visible={this.state.addClassVisible} editText={null} onEditDone={this.onAddClassDone.bind(this)} />
+            <InputText title="连接名字" visible={this.state.createSockVisible} editText={null} onEditDone={this.onCreateSockDone.bind(this)} />
+            <DbDialog visible={this.state.editDbVisible} dbList={this.state.dbList} onUpdateDb={this.onUpdateDb.bind(this)} />
             </div>
         );
     }

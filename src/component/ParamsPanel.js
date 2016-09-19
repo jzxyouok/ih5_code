@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Tabs, Table } from 'antd';
+import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import CustomVar from './CustomVar';
 import InputText from './InputText';
@@ -75,6 +76,7 @@ class ParamsPanel extends React.Component{
             if (s) {
                 this.state.currentWidget.events[this.currentEvent] = this.state.currentWidget.events[this.currentEvent] || {};
                 this.state.currentWidget.events[this.currentEvent]['func'] = s;
+                WidgetActions['modifyNode']();
             } else {
                 delete this.state.currentWidget.events[this.currentEvent];
             }

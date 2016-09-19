@@ -17,4 +17,6 @@ export default Reflux.createActions([
   'saveNode',
   'chooseFile',
   'setFont',
-  'setImageText']);
+  'setImageText',
+  'ajaxSend',
+  'modifyNode']);

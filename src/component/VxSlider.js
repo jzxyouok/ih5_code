@@ -89,7 +89,7 @@ class VxRcSlider extends RcSlider {
     onHandleClick(handle) {
         if (this.props.isCurrent) {
             this.props.refTimer.node['pause']();
-            this.props.refTimer.node['seek'](this.props.refTrack.props['data'][handle.props.handleIndex][0] * this.props.refTimer.node['totalTime']);
+            this.props.refTimer.node['seek'](this.props.refTrack.props['data'][handle.props.handleIndex][0]);
             this.state.currentHandle = handle.props.handleIndex;
             WidgetActions['syncTrack']();
         }
@@ -109,7 +109,7 @@ class VxRcSlider extends RcSlider {
             let points = this.state.points;
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
-            this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
+            this.props.refTimer.node['seek'](value);
             this.setState({points: points});
         }
     }
@@ -163,10 +163,11 @@ class VxRcSlider extends RcSlider {
 		const isNoTip = (step === null) || (tipFormatter === null);
 
         let handles = [];
-        const lowerBound = points[0][0];
-        const upperBound = points[points.length - 1][0];
+        const lowerBound = (points.length > 0) ? points[0][0] : 0;
+        const upperBound = (points.length > 0) ? points[points.length - 1][0] : max;
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
+
 
         for (let i = 0; i < points.length; i++) {
             let offset = this.calcOffset(points[i][0]);

@@ -30,6 +30,8 @@ let slidetimerIcon = require('../images/slidetimerNormal.png');
 let bitmaptextIcon = require('../images/bitmaptextNormal.png');
 let imageIcon = require('../images/imageNormal.png')
 let igroupIcon = require('../images/igroupNormal.png')
+let htmlIcon = require('../images/htmlNormal.png')
+let qrcodeIcon = require('../images/qrcodeNormal.png')
 
 function callback() {
     //console.log(key);
@@ -85,6 +87,8 @@ class ComponentPanel extends React.Component {
                 {cid:cid++,icon:canvasIcon, className:'canvas', param: {'width': 300, 'height': 300}},
                 {cid:cid++,icon:wechatIcon, className:'wechat'},
                 {cid:cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}},
+                {cid:cid++,icon:htmlIcon, className:'html', param:{'shapeWidth': 100, 'shapeHeight': 100}},
+                {cid:cid++,icon:qrcodeIcon, className:'qrcode', param:{'shapeWidth': 200, 'shapeHeight': 200, 'data': '0'}},
                 ]
             }
         ];

@@ -15,8 +15,12 @@ module.exports = {
 'decryptData':bridge.decryptData,
 'createSelector':bridge.createSelector,
 'selectWidget':bridge.selectWidget,
+'reorderWidget':bridge.reorderWidget,
 'updateSelector':bridge.updateSelector,
 'addMouseDownHandler':bridge.addMouseDownHandler,
 'isDom':bridge.isDom,
 'setGenerateText':bridge.setGenerateText,
+'isTimer':bridge.isTimer,
+'timerAddCallback':bridge.timerAddCallback,
+'timerRemoveCallback':bridge.timerRemoveCallback,
 };

@@ -6,10 +6,15 @@ import WidgetActions from '../actions/WidgetActions';
 
 import VxSlider from './VxSlider';
 
+import bridge from 'bridge';
+
+var timerCallback = {};
+
 class TimelineView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {timerNode: null, currentTime:0, currentTrack: null};
+        this.onTimer = this.onTimer.bind(this);
     }
 
     componentDidMount() {
@@ -35,12 +40,10 @@ class TimelineView extends React.Component {
                 node = node.timerWidget;
             if (node !== this.state.timerNode) {
                 if (node) {
-                    this.renderer = node.node.renderer;
-                    node.node.addCallback(this);
+                    bridge.timerAddCallback(node.node, timerCallback, this.onTimer);
                 } else {
-                    this.renderer = null;
                     if (this.state.timerNode)
-                        this.state.timerNode.node.removeCallback(this);
+                        bridge.timerRemoveCallback(this.state.timerNode.node, timerCallback);
                 }
                 changed.timerNode = node;
             }
@@ -71,7 +74,7 @@ class TimelineView extends React.Component {
 
     onTimerChange(value) {
         WidgetActions['resetTrack']();
-        this.state.timerNode.node['seek'](value * this.state.timerNode.node['totalTime']);
+        this.state.timerNode.node['seek'](value);
         WidgetActions['syncTrack']();
         this.setState({currentTime:value});
     }
@@ -103,10 +106,11 @@ class TimelineView extends React.Component {
     render() {
         let tracks = [];
         let index = 0;
+        let totalTime = (this.state.timerNode) ? this.state.timerNode.node['totalTime'] : 0;
 
         const getTracks = (node) => {
             if (node.className === 'track') {
-                tracks.push(<VxSlider key={index++} max={1} step={0.001} refTrack={node} refTimer={this.state.timerNode} points={node.props.data} isCurrent={node === this.state.currentTrack} />);
+                tracks.push(<VxSlider key={index++} max={totalTime} step={0.01} refTrack={node} refTimer={this.state.timerNode} points={node.props.data} isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));
         };
@@ -126,7 +130,7 @@ class TimelineView extends React.Component {
                         </Row>
                         <Row>
                             <Col>
-                                <Slider max={1} step={0.001} value={this.state.currentTime} onChange={this.onTimerChange.bind(this)} />
+                                <Slider max={totalTime} step={0.01} value={this.state.currentTime} onChange={this.onTimerChange.bind(this)} />
                                 {tracks}
                             </Col>
                         </Row>

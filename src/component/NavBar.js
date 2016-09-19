@@ -10,12 +10,13 @@ import LoginDialog from './LoginDialog';
 
 import bridge from 'bridge';
 
-const PREFIX = 'app/';
+var PREFIX = 'app/';
 
 class NavBar extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {username: null, workname: null, importname: null, saveVisible: false, importVisible: false, workList:[], classList:[], fontList:[]};
+        this.state = {username: null, workname: null, importname: null, saveVisible: false, importVisible: false,
+            workList:[], classList:[], fontList:[], dbList:[], sockList:[]};
         this.onLogout = this.onLogout.bind(this);
         this.onOpen = this.onOpen.bind(this);
         this.onSave = this.onSave.bind(this);
@@ -24,65 +25,47 @@ class NavBar extends React.Component {
         this.saveCallback = this.saveCallback.bind(this);
         this.onImport = this.onImport.bind(this);
 
-        this.token = null;
         this.playUrl = null;
         var name = Cookies.get('ih5token');
         if (name) {
             this.state.loginVisible = false;
-            this.token = name;
-            this.getWorks();
+            this.getWorks(name);
         } else {
             this.state.loginVisible = true;
         }
         this.newWork();
     }
 
-    ajaxSend(method, url, type, data, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4) {
-                callback(xhr.responseText);
-            }
-        };
-        xhr.open(method, url);
-        if (type)
-            xhr.setRequestHeader('Content-Type', type);
-        if (this.token) {
-            xhr.setRequestHeader('Authorization', 'Bearer {' + this.token + '}');
-        }
-        xhr.send(data);
-    }
-
     newWork() {
         this.workid = null;
         //WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 480}},'defs':{'box':{'cls': 'root', 'props': {'width': 640, 'height': 480}}}});
-        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 480}, links:[]}});
+        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 480, 'color':'#CCCCCC'}, links:[]}});
     }
 
-    getWorks() {
-        this.ajaxSend('GET', PREFIX + 'userInfo', null, null, (text) => {
+    getWorks(token) {
+        WidgetActions['ajaxSend'](token, 'GET', PREFIX + 'userInfo', null, null, function(text) {
             let result = JSON.parse(text);
             if (result['name']) {
                 this.playUrl = result['playUrl'];
-                this.setState({loginVisible: false, username: result['name'], workList: result['list'], fontList: result['font']});
+                this.setState({loginVisible: false, username: result['name'], workList: result['list'], fontList: result['font'], dbList: result['db'], sockList: result['sock']});
             } else {
                 this.setState({loginVisible: true});
             }
-        });
+        }.bind(this));
     }
 
     login(name, pass) {
-        this.ajaxSend('POST', PREFIX + 'login',
-            'application/x-www-form-urlencoded', 'username=' + encodeURIComponent(name) + "&password=" + encodeURIComponent(pass), (text) => {
+        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'login',
+            'application/x-www-form-urlencoded', 'username=' + encodeURIComponent(name) + "&password=" + encodeURIComponent(pass),
+            function(text) {
             let r = JSON.parse(text);
             if (r['token']) {
-                this.token = r['token'];
                 Cookies.set('ih5token', r['token'], { expires: 30 });
-                getWorks();
+                getWorks(r['token']);
             } else {
                 this.setState({loginVisible: true});
             }
-        });
+        }.bind(this));
     }
 
     saveCallback(id, wname) {
@@ -99,7 +82,7 @@ class NavBar extends React.Component {
     onPlaySave(isPlay) {
         this.isPlay = isPlay;
         if (this.workid) {
-            WidgetActions['saveNode'](this.token, this.workid, null, this.saveCallback);
+            WidgetActions['saveNode'](this.workid, null, this.saveCallback);
         } else {
             this.setState({saveVisible: true});
         }
@@ -119,7 +102,7 @@ class NavBar extends React.Component {
 
     onDelete() {
         if (this.workid) {
-            this.ajaxSend('DELETE', PREFIX + 'work/' + this.workid, null, null, () => {
+            WidgetActions['ajaxSend'](null, 'DELETE', PREFIX + 'work/' + this.workid, null, null, function() {
                 let result = [];
                 for (var i = 0; i < this.state.workList.length; i++) {
                     if (this.state.workList[i]['id'] != this.workid) {
@@ -128,12 +111,12 @@ class NavBar extends React.Component {
                 }
                 this.workid = null;
                 this.setState({workList: result});
-            });
+            }.bind(this));
         }
     }
 
     onLogout() {
-        Cookies.remove('ih5user');
+        Cookies.remove('ih5token');
         this.setState({loginVisible: true, username: null});
     }
 
@@ -142,14 +125,14 @@ class NavBar extends React.Component {
     }
 
     onImportUrl(url, id) {
-        this.ajaxSend('GET', url + '?raw=1', null, null, (text) => {
-            //let result = JSON.parse(text);
-            let result = bridge.decryptData(text);
-            if (result && result['stage']) {
-                this.workid = id;
-                WidgetActions['initTree'](result);
-            }
-        });
+        WidgetActions['ajaxSend'](null, 'GET', url + '?raw=1', null, null, function(text) {
+            bridge.decryptData(text, function(result) {
+                if (result && result['stage']) {
+                    this.workid = id;
+                    WidgetActions['initTree'](result);
+                }
+            }.bind(this));
+        }.bind(this), true);
     }
 
     onLoginDone(name, pass) {
@@ -162,7 +145,7 @@ class NavBar extends React.Component {
     onSaveDone(s) {
         this.setState({saveVisible: false});
         if (s)
-            WidgetActions['saveNode'](this.token, null, s, this.saveCallback);
+            WidgetActions['saveNode'](null, s, this.saveCallback);
     }
 
     onImportDone(s) {
@@ -186,7 +169,7 @@ class NavBar extends React.Component {
         return (
             <div>
                 <Row type="flex" justify="start" align="middle">
-                    <Col span={15}><VxMenu works={this.state.workList} onOpen={this.onOpen} classList={this.state.classList} fontList={this.state.fontList} onUploadFont={this.onUploadFont.bind(this)} /></Col>
+                    <Col span={15}><VxMenu works={this.state.workList} onOpen={this.onOpen} classList={this.state.classList} fontList={this.state.fontList} dbList={this.state.dbList} sockList={this.state.sockList} onUploadFont={this.onUploadFont.bind(this)} /></Col>
                     <Col span={6}>
                         <Button onClick={this.onSave}>保存</Button>
                         <Button onClick={this.onPlay}>播放</Button>

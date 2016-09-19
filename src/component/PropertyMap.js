@@ -8,6 +8,9 @@ const propertyType = {
     Color: 6
 };
 
+const widgetGroup = {
+};
+
 const propertyMap = {};
 
 propertyMap['widget'] = [
@@ -21,6 +24,7 @@ propertyMap['root'] = [
     { name: 'height', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleType', type: propertyType.Integer, default: 5, isProperty: true},
     { name: 'clipped', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'color', type: propertyType.Color, default:'', isProperty: true },
     { name: 'init', isEvent: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
@@ -47,6 +51,7 @@ propertyMap['wechat'] = [
 
 propertyMap['box'] = [
     ...propertyMap['widget'],
+    { name: 'locked', type: propertyType.Boolean, default: true, isProperty: true },
     { name: 'positionX', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'positionY', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleX', type: propertyType.Number, default: 1, group:'position', isProperty: true },
@@ -109,6 +114,13 @@ propertyMap['bitmaptext'] = [
     { name: 'lineHeight', type: propertyType.Integer, default:10, isProperty: true }
 ];
 
+propertyMap['qrcode'] = [
+    ...propertyMap['sprite'],
+    { name: 'data', type: propertyType.String, default:'', isProperty: true },
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+];
+
 propertyMap['graphics'] = [
     ...propertyMap['box'],
     { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty: true },
@@ -139,6 +151,15 @@ propertyMap['slidetimer'] = [
     { name: 'vertical', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'sliderScale', type: propertyType.Number, default: 1, isProperty: true},
     { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true}
+];
+
+propertyMap['html'] = [
+    ...propertyMap['box'],
+    { name: 'src', type: propertyType.String, default:'', isProperty: true },
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
 
 propertyMap['ellipse'] = [
@@ -245,6 +266,19 @@ propertyMap['effect'] = [
 propertyMap['track'] = [
     ...propertyMap['widget'],
     { name: 'type', type: propertyType.String, default: '', isProperty: true }
+];
+
+propertyMap['db'] = [
+    ...propertyMap['widget'],
+    { name: 'find', isFunc: true, info:'(option, callback(err, result))' },
+    { name: 'insert', isFunc: true, info:'(data, callback(err, result))' },
+    { name: 'update', isFunc: true, info:'(data, callback(err, result))' }
+];
+
+propertyMap['sock'] = [
+    ...propertyMap['widget'],
+    { name: 'listened', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'message', isEvent: true, info:'data'},
 ];
 
 export { propertyType, propertyMap };

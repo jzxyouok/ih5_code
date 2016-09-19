@@ -126,9 +126,7 @@ class PropertyView extends React.Component {
                 size: 'small',
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
-                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item),
-                currentNode: node,
-                currentProp: item
+                onChange: (item.type === propertyType.String || item.type === propertyType.Text || item.type === propertyType.Color) ? this.onChangePropDom.bind(this, item) : this.onChangeProp.bind(this, item)
             };
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;

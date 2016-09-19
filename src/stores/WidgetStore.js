@@ -4,6 +4,8 @@ import WidgetActions from '../actions/WidgetActions';
 var bridge = require('bridge');
 bridge.create();
 
+var isModified;
+
 var rootDiv;
 var rootElm;
 
@@ -17,7 +19,7 @@ function onSelect() {
   WidgetActions['selectWidget'](this);
 }
 
-const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext'];
+const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext', 'qrcode'];
 
 function loadTree(parent, node) {
   let current = {};
@@ -48,7 +50,7 @@ function loadTree(parent, node) {
 
   var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
   current.node = bridge.addWidget(renderer, (parent) ? parent.node : null, node['cls'], null, node['props'], (parent && parent.timerWidget) ? parent.timerWidget.node : null);
-  current.timerWidget = (current.node.isTimer) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
+  current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
 
   if (parent) {
     parent.children.push(current);
@@ -76,6 +78,23 @@ function loadTree(parent, node) {
   }
 
   return current;
+}
+
+function trimTreeNode(node, links) {
+  if (node.props['link'] !== undefined)
+    node.props['link'] = links.push(node.rootWidget.imageList[node.props['link']]) - 1;
+  if (node.children.length > 0) {
+    node.children.map(item => {
+      trimTreeNode(item, links);
+    });
+  }
+}
+
+function trimTree(node) {
+  var links = [];
+  trimTreeNode(node, links);
+  node.imageList = links;
+  bridge.setLinks(node.node, links);
 }
 
 function saveTree(data, node) {
@@ -278,6 +297,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['chooseFile'], this.chooseFile);
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
+        this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
+        this.listenTo(WidgetActions['modifyNode'], this.modifyNode);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -306,6 +327,7 @@ export default Reflux.createStore({
     addWidget: function(className, props, link) {
       if (!this.currentWidget)
           return;
+      isModified = true;
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
             (this.currentWidget.className !== 'image'
@@ -314,13 +336,7 @@ export default Reflux.createStore({
               && this.currentWidget.className !== 'container'))
           return;
         let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
-        let dataList = [[0], [1]];
-        for (let i = 0; i < propList.length; i++) {
-          let d = this.currentWidget.node[propList[i]];
-          dataList[0].push(d);
-          dataList[1].push(d);
-        }
-        let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList}});
+        let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': []}});
         this.trigger({redrawTree: true, updateTrack: track});
       } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
         let p;
@@ -344,12 +360,14 @@ export default Reflux.createStore({
     },
     removeWidget: function() {
       if (this.currentWidget && this.currentWidget.parent) {
+          isModified = true;
           bridge.removeWidget(this.currentWidget.node);
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
+          var rootNode = this.currentWidget.rootWidget.node;
           this.currentWidget.parent.children.splice(index, 1);
           this.currentWidget = null;
           this.trigger({selectWidget: null, redrawTree: true});
-          this.render();
+          process.nextTick(() => bridge.render(rootNode));
       }
     },
     copyWidget: function() {
@@ -360,6 +378,7 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
+        isModified = true;
         loadTree(this.currentWidget, copyObj);
         this.trigger({selectWidget: null, redrawTree: true});
         this.render();
@@ -367,15 +386,19 @@ export default Reflux.createStore({
     },
     reorderWidget: function(delta) {
       if (this.currentWidget && this.currentWidget.parent) {
+          isModified = true;
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
           if (delta > 0 && index < this.currentWidget.parent.children.length - 1 || delta < 0 && index > 0) {
             this.currentWidget.parent.children.splice(index, 1);
             this.currentWidget.parent.children.splice(index + delta, 0, this.currentWidget);
+            bridge.reorderWidget(this.currentWidget.node, delta);
+            this.render();
             this.trigger({redrawTree: true});
           }
       }
     },
     updateProperties: function(obj, skipRender, skipProperty) {
+      isModified = true;
       let p = {updateProperties: obj};
       if (skipRender) {
         p.skipRender = true;
@@ -392,6 +415,7 @@ export default Reflux.createStore({
       this.trigger({syncTrack: true});
     },
     deletePoint: function() {
+      isModified = true;
       this.trigger({deletePoint: true});
     },
     initTree: function(data) {
@@ -409,6 +433,7 @@ export default Reflux.createStore({
 
       stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
       bridge.createSelector(null);
+      isModified = false;
 
       if (!rootDiv) {
         rootDiv = document.getElementById('canvas-dom');
@@ -421,6 +446,7 @@ export default Reflux.createStore({
       this.selectWidget(stageTree[0].tree);
     },
     addClass: function(name) {
+      isModified = true;
       stageTree.push({name: name, tree: loadTree(null, {'cls': 'root', 'type': bridge.getRendererType(this.currentWidget.node), 'props': {'width': 640, 'height': 480}})});
       classList.push(name);
       bridge.addClass(name);
@@ -431,12 +457,16 @@ export default Reflux.createStore({
         process.nextTick(() => bridge.render(this.currentWidget.rootWidget.node));
       }
     },
-    saveNode: function(token, wid, wname, callback) {
+    saveNode: function(wid, wname, callback) {
       // let appendArray = function(a1, a2) {
       //     for (let i = 0; i < a2.length; i++) {
       //       a1.push(a2[i]);
       //     }
       // };
+      if (!isModified && wid) {
+        callback(wid, wname);
+        return;
+      }
       let getImageList = function(array, list) {
         var result = [];
         var count = 0;
@@ -468,6 +498,7 @@ export default Reflux.createStore({
       let data = {};
       let images = [];
       data['stage'] = {};
+      trimTree(stageTree[0].tree);
       saveTree(data['stage'], stageTree[0].tree);
       data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
       // data['stage']['links'] = stageTree[0].tree.imageList.length;
@@ -479,6 +510,7 @@ export default Reflux.createStore({
         for (let i = 1; i < stageTree.length; i++) {
           let name = stageTree[i].name;
           data['defs'][name] = {};
+          trimTree(stageTree[i].tree);
           saveTree(data['defs'][name], stageTree[i].tree);
           data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
           // data['defs'][name]['links'] = stageTree[i].tree.imageList.length;
@@ -491,22 +523,17 @@ export default Reflux.createStore({
       if (!data)
         return;
 
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = () => {
-          if (xhr.readyState == 4) {
-            let result = JSON.parse(xhr.responseText);
-            callback(result['id'], wname);
-          }
-      };
-      if (wid) {
-        xhr.open('PUT', 'app/work/' + wid);
-      } else {
-        xhr.open('POST', 'app/work?name=' + encodeURIComponent(wname));
+      var cb = function(text) {
+          var result = JSON.parse(text);
+          isModified = false;
+          callback(result['id'], wname);
       }
-      if (token)
-        xhr.setRequestHeader('Authorization', 'Bearer {' + token + '}');
-      xhr.setRequestHeader('Content-Type', 'text/plain');
-      xhr.send(data);
+
+      if (wid) {
+        this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb);
+      } else {
+        this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname), 'application/octet-stream', data, cb);
+      }
     },
     chooseFile: function(type, upload, callback) {
       var w = document.getElementById('upload-box');
@@ -524,6 +551,7 @@ export default Reflux.createStore({
     },
     setImageText:function(data) {
       if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
+        isModified = true;
         var link = this.currentWidget.props['link'];
         if (link === undefined) {
           link = this.currentWidget.rootWidget.imageList.push(data) - 1;
@@ -536,5 +564,28 @@ export default Reflux.createStore({
           this.render();
         });
       }
+    },
+    ajaxSend(token, method, url, type, data, callback, binary) {
+        if (token)
+          this.token = token;
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+            if (binary)
+              callback(xhr.response);
+            else
+              callback(xhr.responseText);
+        };
+        xhr.open(method, url);
+        if (binary)
+          xhr.responseType = "arraybuffer";
+        if (type)
+            xhr.setRequestHeader('Content-Type', type);
+        if (this.token) {
+            xhr.setRequestHeader('Authorization', 'Bearer {' + this.token + '}');
+        }
+        xhr.send(data);
+    },
+    modifyNode() {
+      isModified = true;
     }
 });
