@@ -114,6 +114,13 @@ propertyMap['bitmaptext'] = [
     { name: 'lineHeight', type: propertyType.Integer, default:10, isProperty: true }
 ];
 
+propertyMap['qrcode'] = [
+    ...propertyMap['box'],
+    { name: 'data', type: propertyType.String, default:'', isProperty: true },
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+];
+
 propertyMap['graphics'] = [
     ...propertyMap['widget'],
     { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
@@ -257,6 +264,13 @@ propertyMap['effect'] = [
 propertyMap['track'] = [
     ...propertyMap['widget'],
     { name: 'type', type: propertyType.String, default: '', isProperty: true }
+];
+
+propertyMap['db'] = [
+    ...propertyMap['widget'],
+    { name: 'find', isFunc: true, info:'(option, callback(err, result))' },
+    { name: 'insert', isFunc: true, info:'(data, callback(err, result))' },
+    { name: 'update', isFunc: true, info:'(data, callback(err, result))' }
 ];
 
 export { propertyType, propertyMap };
