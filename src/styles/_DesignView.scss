@@ -8,14 +8,36 @@
         top: 60px;
         left: 0;
         line-height: 0.74;
-        .h_ruler{
-            background: url('./img/h_line.jpg') repeat-x;
-            width:100%;
-            height: 14px;
+        .rulerWLine{
+            width: 100%;
+            border-bottom: 1px solid red;
             position: absolute;
             left: 0;
+            top: 0;
+        }
+        .h_ruler_wraper{
+            position: absolute;
+            width: 100%;
+            height: 14px;
+            overflow: hidden;
+            left: 0;
             top: -14px;
+        }
+        .h_ruler{
+            background: url('./img/h_line.jpg') repeat-x;
+            width: 130%;
+            height: 100%;
             cursor: n-resize;
+            li{
+                width: 100px;
+                height: 100%;
+                text-align: left;
+                float: left;
+                font-size: 10px;
+                color: #535353;
+                line-height: 1.3;
+                padding-left: 4px;
+            }
         }
         .v_ruler{
             background: url('./img/v_line.jpg') repeat-y;
@@ -25,6 +47,19 @@
             left: -13px;
             top: 0;
             cursor: e-resize;
+            overflow: hidden;
+            li{
+                width: 100%;
+                height: 100px;
+                span{
+                    font-size: 10px;
+                    color: #535353;
+                    transform: rotate(90deg);
+                    -webkit-transform: rotate(90deg);
+                    display: block;
+                    padding-left: 5px;
+                }
+            }
         }
         canvas {
             background: #fff;

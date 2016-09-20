@@ -27,7 +27,6 @@ export default class DrawRect {
     start() {
         this.addDrawRectEventListener();
     }
-
     cleanUp() {
         this.startX = 0;
         this.startY = 0;
@@ -41,7 +40,6 @@ export default class DrawRect {
             document.body.removeChild(document.getElementById('drawRect'));
         }
     }
-
     end() {
         this.removeDrawRectEventListener();
     }
@@ -66,6 +64,7 @@ export default class DrawRect {
         div.style.opacity = '0.2';
         div.style.border = '1px solid #000';
         document.body.appendChild(div);
+
     }
 
     onMouseUp(e)  {
@@ -105,6 +104,7 @@ export default class DrawRect {
             drawRectDiv.style.width = this.rectWidth;
             drawRectDiv.style.height = this.rectHeight;
         }
+        console.log('tag');
     }
 
     addDrawRectEventListener() {

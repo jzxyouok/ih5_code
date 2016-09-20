@@ -208,7 +208,7 @@ class TimelineView extends React.Component {
     formatter(value){
         let data = value;
         //data = data.toFixed(4);
-        console.log(2,data);
+       //   console.log(2,data);
         if(this.state.isPlaying && this.state.timerNode){
             let totalTime = this.state.timerNode.node['totalTime'];
             if(data == totalTime){

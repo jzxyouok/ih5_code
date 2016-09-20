@@ -340,6 +340,7 @@ export default Reflux.createStore({
         } else {
             bridge.selectWidget(widget.node);
         }
+
         if (render)
           this.render();
     },
@@ -468,6 +469,8 @@ export default Reflux.createStore({
           obj =newObj;
           prevNewObj =cpJson(newObj);
       }
+
+
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;
