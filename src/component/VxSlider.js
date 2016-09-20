@@ -145,7 +145,7 @@ class VxRcSlider extends RcSlider {
         if(bool){
             if(value){
                 this.setState({
-                    changeKeyBool : bool,
+                    //changeKeyBool : bool,
                     changeKeyValue : value
                 });
             }
@@ -252,7 +252,8 @@ class VxRcSlider extends RcSlider {
             currentHandle : handle.props.handleIndex,
             changeKeyValue : null,
             changeKey : handle.props.handleIndex,
-            isChooseKey : true
+            isChooseKey : true,
+            changeKeyBool : true
         },()=>{
             TimelineAction['ChangeKeyframe'](true);
             WidgetActions['syncTrack']();
@@ -262,7 +263,7 @@ class VxRcSlider extends RcSlider {
     }
 
     onMove(e, position) {
-        TimelineAction['ChangeKeyframe'](false);
+        //TimelineAction['ChangeKeyframe'](false);
         this.setState({
             changeKeyBool : false
         });
@@ -281,9 +282,10 @@ class VxRcSlider extends RcSlider {
             this.props.refTimer.node['seek'](value);
             //this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
             this.setState({
-                points: points
+                points: points,
+                changeKeyBool : true
             },()=>{
-                TimelineAction['ChangeKeyframe'](true);
+                //TimelineAction['ChangeKeyframe'](true);
             });
         }
     }
