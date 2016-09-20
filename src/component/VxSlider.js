@@ -230,8 +230,8 @@ class VxRcSlider extends RcSlider {
     }
 
     selectTrack(){
-        WidgetActions['selectWidget'](this.props.refTrack.parent, true);
         TimelineAction['ChangeKeyframe'](false);
+        WidgetActions['selectWidget'](this.props.refTrack.parent, true);
         this.setState({
             currentHandle: -1,
             changeKey : null,
@@ -255,9 +255,9 @@ class VxRcSlider extends RcSlider {
             isChooseKey : true,
             changeKeyBool : true
         },()=>{
-            TimelineAction['ChangeKeyframe'](true);
             WidgetActions['syncTrack']();
             this.isHaveTrunBtn(true,this.props.refTrack.props.data.length -1);
+            TimelineAction['ChangeKeyframe'](true);
             this.forceUpdate();
         });
     }
@@ -500,6 +500,8 @@ class VxRcSlider extends RcSlider {
                             //children
                         }
 					</div>
+
+                    <div className="slider-right" onClick={ this.selectTrack.bind(this) }></div>
 				</div>
 			</li>
 		);
