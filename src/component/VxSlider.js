@@ -145,7 +145,7 @@ class VxRcSlider extends RcSlider {
         if(bool){
             if(value){
                 this.setState({
-                    changeKeyBool : bool,
+                    //changeKeyBool : bool,
                     changeKeyValue : value
                 });
             }
@@ -230,8 +230,8 @@ class VxRcSlider extends RcSlider {
     }
 
     selectTrack(){
-        WidgetActions['selectWidget'](this.props.refTrack.parent, true);
         TimelineAction['ChangeKeyframe'](false);
+        WidgetActions['selectWidget'](this.props.refTrack.parent, true);
         this.setState({
             currentHandle: -1,
             changeKey : null,
@@ -243,7 +243,7 @@ class VxRcSlider extends RcSlider {
     }
 
     onHandleClick(handle) {
-        //console.log(handle);
+        //console.log(this.props.refTrack.props['data']);
         this.props.refTimer.node['pause']();
         this.props.refTimer.node['seek'](
             this.props.refTrack.props['data'][handle.props.handleIndex][0]
@@ -252,47 +252,23 @@ class VxRcSlider extends RcSlider {
             currentHandle : handle.props.handleIndex,
             changeKeyValue : null,
             changeKey : handle.props.handleIndex,
-            isChooseKey : true
+            isChooseKey : true,
+            changeKeyBool : true
         },()=>{
-            TimelineAction['ChangeKeyframe'](true);
             WidgetActions['syncTrack']();
             this.isHaveTrunBtn(true,this.props.refTrack.props.data.length -1);
+            TimelineAction['ChangeKeyframe'](true);
             this.forceUpdate();
         });
-        //if (this.props.isCurrent) {
-        //    this.props.refTimer.node['pause']();
-        //    this.props.refTimer.node['seek'](
-        //        this.props.refTrack.props['data'][handle.props.handleIndex][0]
-        //        * this.props.refTimer.node['totalTime']
-        //    );
-        //    this.state.currentHandle = handle.props.handleIndex;
-        //    //WidgetActions['activeHandle'](true);
-        //
-        //    WidgetActions['syncTrack']();
-        //    this.setState({
-        //        changeKeyValue : null,
-        //        changeKey : handle.props.handleIndex,
-        //        isChooseKey : true
-        //    })
-        //}
-        //else {
-        //    this.setState({
-        //        currentHandle: -1,
-        //        changeKey : null,
-        //        changeKeyBool : false,
-        //        changeKeyValue : null
-        //    })
-        //}
     }
 
     onMove(e, position) {
-        TimelineAction['ChangeKeyframe'](false);
+        //TimelineAction['ChangeKeyframe'](false);
         this.setState({
             changeKeyBool : false
         });
         pauseEvent(e);
         const props = this.props;
-
         if (this.state.currentHandle >= 0) {
             let diffPosition = position - this.startPosition;
             diffPosition = this.props.vertical ? -diffPosition : diffPosition;
@@ -300,15 +276,16 @@ class VxRcSlider extends RcSlider {
 
             const value = this.trimAlignValue(this.startValue + diffValue);
 
-            let points = this.state.points;
+            let points = this.props.points;
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
             this.props.refTimer.node['seek'](value);
             //this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
             this.setState({
-                points: points
+                points: points,
+                changeKeyBool : true
             },()=>{
-                TimelineAction['ChangeKeyframe'](true);
+                //TimelineAction['ChangeKeyframe'](true);
             });
         }
     }
@@ -320,7 +297,7 @@ class VxRcSlider extends RcSlider {
         }
         if (widget.updateProperties !== undefined && widget.skipRender === undefined && this.state.currentHandle >= 0) {
             let obj = widget.updateProperties;
-            let points = this.state.points;
+            let points = this.props.points;
             let props = this.props.refTrack.props['prop'];
             for (let i = 0; i < props.length; i++) {
                 if (obj[props[i]] !== undefined)
@@ -335,7 +312,7 @@ class VxRcSlider extends RcSlider {
             }
             WidgetActions['updateProperties'](obj, true);
         }
-        if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.state.points.length >= 2) {
+        if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.props.points.length >= 2) {
             let points = this.state.points;
             points.splice(this.state.currentHandle, 1);
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
@@ -383,12 +360,13 @@ class VxRcSlider extends RcSlider {
 		const isNoTip = (step === null) || (tipFormatter === null);
 
         let handles = [];
-        const lowerBound = points[0][0];
-        const upperBound = points[points.length - 1][0];
+
+        const lowerBound = points[0] ?  points[0][0] : 0;
+        const upperBound = points[points.length - 1] ? points[points.length - 1][0] : 0;
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
 
-        for (let i = 1; i < points.length; i++) {
+        for (let i = 0; i < points.length; i++) {
             let offset = this.calcOffset(points[i][0]);
             let which = this.state.changeKey;
             let isCurrentBool = false;
@@ -441,6 +419,7 @@ class VxRcSlider extends RcSlider {
 
         const style = {};
         style['width']= this.props.width;
+        //console.log(this.props.width);
         if (this.props.isCurrent){
             style['borderColor'] = '#CCC';
         }
@@ -521,6 +500,8 @@ class VxRcSlider extends RcSlider {
                             //children
                         }
 					</div>
+
+                    <div className="slider-right" onClick={ this.selectTrack.bind(this) }></div>
 				</div>
 			</li>
 		);

@@ -14,15 +14,12 @@
         //height: 100%;
         overflow: scroll;
 
-        .item {
-            outline: 0;
-        }
-
         .stage-title ,
         .item-title{
+            float: left;
             position: relative;
-            width: 244px;
-            min-width: 244px;
+            width: 220px;//244px;
+            min-width: 220px;//244px;
             padding: 2px 2px 2px 22px;
             font-size: 12px;
             color: #adadad;
@@ -88,11 +85,43 @@
                 background: none;
             }
 
-            .event-icon {
+            .lock-icon {
                 position: absolute;
-                right: 10px;
+                right: 2px;
                 width: 14px;
                 height: 14px;
+                background: url("img/button-icon.svg") no-repeat -360px -200px;
+                &:active {
+                    background: url("img/button-icon.svg") no-repeat -360px -200px;
+                }
+            }
+        }
+
+        .clearfix {
+            &:before,
+            &:after {
+                content: " ";
+                display: table;
+            }
+            &:after {
+                clear: both;
+            }
+        }
+
+        .item-event {
+            float: left;
+            cursor: pointer;
+            position: relative;
+            height: 25px;
+            width: 24px;
+            border-bottom: 1px solid #151515;
+
+            .event-icon {
+                position: absolute;
+                right: 6px;
+                width: 14px;
+                height: 14px;
+                top: 3.5px;
             }
             .event-icon-normal {
                 background: url("img/button-icon.svg") no-repeat -760px 0;
@@ -106,16 +135,18 @@
                     background: url("img/button-icon.svg") no-repeat -760px -160px;
                 }
             }
+        }
 
-            .lock-icon {
-                position: absolute;
-                right: 29px;
-                width: 14px;
-                height: 14px;
-                background: url("img/button-icon.svg") no-repeat -360px -200px;
-                &:active {
-                    background: url("img/button-icon.svg") no-repeat -360px -200px;
-                }
+        .item {
+            outline: 0;
+            .item-event {
+                height: 23px;
+            }
+        }
+
+        .stage-title-wrap {
+            .event-icon {
+                top: 4.5px;
             }
         }
 

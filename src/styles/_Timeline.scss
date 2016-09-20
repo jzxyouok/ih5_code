@@ -319,19 +319,29 @@ $size: 25px;
 
 	#TimlineNodeContent {
 		position: relative;
-		$num: 6;
+		$num: 4;
 		width: 100%;
-		height: #{24 * $num}px;
+		height: #{25 * $num}px;
 
 		#TimlineNodeList {
 			height: #{25 * $num}px;
+            position: absolute;
+            left: 0;
+            right: -20px;
 			display: block;
-			width: 100%;
+			//width: 100%;
 			overflow-y: scroll;
-			padding-right: 20px;
+            overflow-x: hidden;
 			box-sizing: initial;
 
+            ul{
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
             li{
+                width: 100%;
                 border-bottom: none !important;
 
                 .timline-column-left{
@@ -343,9 +353,12 @@ $size: 25px;
                     @include flexbox;
                     @include align-items(stretch);
 
-                    &:after{
+                    .slider-right{
                         @include flex(1);
                         content: "";
+                        height: 25px;
+                        border-bottom: 1px solid #151515;
+                        cursor: pointer;
                     }
                 }
             }
@@ -388,6 +401,10 @@ $size: 25px;
 				//background-color: #1f4240;
                 opacity: 1;
 			}
+
+            .timline-column-right .slider-right{
+                background: #2c2c2c;
+            }
 		}
 	}
 	.timeline-node-track {
@@ -479,4 +496,64 @@ $size: 25px;
 		cursor: pointer;
 	}
 
+    .overall-zoom {
+        width: 100%;
+        height: 14px;
+        background: #2c2c2c;
+        position: relative;
+        z-index: inherit;
+
+        .zoom {
+            width: 169px;
+            height: 14px;
+
+            .left-btn, .right-btn {
+                width: 33px;
+                height: 14px;
+                @include btn();
+                @include bg(12, 0);
+            }
+            .right-btn {
+                @include bg(13, 0);
+            }
+
+            .zoom-slider {
+                position: relative;
+                height: 14px;
+
+                .line {
+                    width: 100%;
+                    height: 2px;
+                    background: #424242;
+                }
+
+                .btn {
+                    @include btn();
+                    @include bg(14, 0);
+                    position: absolute;
+                    left: 47px;
+                    width: 9px;
+                    height: 14px;
+                    z-index: 1;
+                    cursor: pointer;
+
+                    &:hover {
+                        @include bg(14, 1);
+                    }
+                }
+            }
+        }
+
+        .overall {
+            height: 14px;
+
+            span {
+                background: #424242;
+                border: 1px solid #232323;
+                height: 12px;
+                display: block;
+                cursor: pointer;
+            }
+        }
+    }
 }
