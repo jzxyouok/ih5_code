@@ -22,6 +22,7 @@ class ObjectView extends React.Component {
             width : null,
             parentID : null,
             parentData : null,
+            currentWidget : null,
             canLock: false, //是否可有锁
             locked: false,  //是否已锁
             canHaveEvent: false,    //是否可有事件
@@ -53,10 +54,13 @@ class ObjectView extends React.Component {
     onStatusChange(widget) {
         //获取选中图层的父级id
         if(widget.selectWidget){
+            this.setState({
+                currentWidget : widget.selectWidget
+            });
             if(widget.selectWidget.parent){
                 this.setState({
                     parentID : widget.selectWidget.parent.key,
-                    parentData : widget.selectWidget.parent
+                    parentData : widget.selectWidget.parent,
                 });
             }
             this.onInitLock(widget.selectWidget);
@@ -126,8 +130,14 @@ class ObjectView extends React.Component {
     }
 
     delete(){
-        WidgetActions['removeWidget']();
-        this.refs.ObjectTree.chooseBtn(this.state.parentID, this.state.parentData);
+        if(this.state.hasActiveEvent) {
+            WidgetActions['removeEvent']();
+            WidgetActions['selectWidget'](this.state.currentWidget);
+        } else {
+            WidgetActions['removeWidget']();
+            this.refs.ObjectTree.chooseBtn(this.state.parentID, this.state.parentData);
+        }
+
     }
 
     dragLeftBtn(){
