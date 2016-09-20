@@ -358,7 +358,7 @@ class TimelineView extends React.Component {
                         pic = v1.icon;
                     }
                 });
-                //console.log(totalTime);
+                //console.log(node);
                 //console.log(this.state.currentTrack);
                 tracks.push(
                     <VxSlider

@@ -358,12 +358,13 @@ class VxRcSlider extends RcSlider {
 		const isNoTip = (step === null) || (tipFormatter === null);
 
         let handles = [];
-        const lowerBound = points[0][0];
-        const upperBound = points[points.length - 1][0];
+
+        const lowerBound = points[0] ?  points[0][0] : 0;
+        const upperBound = points[points.length - 1] ? points[points.length - 1][0] : 0;
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
 
-        for (let i = 1; i < points.length; i++) {
+        for (let i = 0; i < points.length; i++) {
             let offset = this.calcOffset(points[i][0]);
             let which = this.state.changeKey;
             let isCurrentBool = false;
