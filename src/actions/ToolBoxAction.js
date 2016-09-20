@@ -9,4 +9,5 @@ export default Reflux.createActions([
     'selectSecondary',
     'openSecondary',
     'deselect',
+    'changeToolBoxItems',
 ]);

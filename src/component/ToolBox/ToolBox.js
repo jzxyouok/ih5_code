@@ -3,6 +3,7 @@ import cls from 'classnames';
 import ToolBoxGroup from './ToolBoxGroup';
 import config from './DEFAUL_TOOLBOX';
 import ToolBoxStore from '../../stores/ToolBoxStore';
+import WidgetStore from '../../stores/WidgetStore';
 
 // 左侧工具菜单
 class ToolBox extends Component {
@@ -17,11 +18,13 @@ class ToolBox extends Component {
 
     componentDidMount() {
         this.unsubscribe = ToolBoxStore.listen(this.onStatusChange.bind(this));
+        this.unsubscribeWidget = WidgetStore.listen(this.onWidgetStatusChange.bind(this));
         window.addEventListener('click', this.onBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+        this.unsubscribeWidget();
         window.removeEventListener('click', this.onBlur);
     }
 
@@ -30,6 +33,13 @@ class ToolBox extends Component {
             this.setState({
                 data: bundle.data
             });
+        }
+    }
+
+    onWidgetStatusChange(widget){
+        //检查元素并更新enable字段
+        if(widget.selectWidget){
+            ToolBoxStore['changeToolBoxItems'](widget.selectWidget);
         }
     }
 
