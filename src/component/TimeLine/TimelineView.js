@@ -138,7 +138,7 @@ class TimelineView extends React.Component {
 	}
 
 	onTimerChange(value) {
-        console.log(3,value);
+        //console.log(value);
 		WidgetActions['resetTrack']();
 		this.state.timerNode.node['seek'](value);
 		WidgetActions['syncTrack']();
@@ -208,7 +208,7 @@ class TimelineView extends React.Component {
     formatter(value){
         let data = value;
         //data = data.toFixed(4);
-        console.log(2,data);
+        //console.log(data);
         if(this.state.isPlaying && this.state.timerNode){
             let totalTime = this.state.timerNode.node['totalTime'];
             if(data == totalTime){
@@ -222,7 +222,7 @@ class TimelineView extends React.Component {
 
     timeInput(){
         let data = this.refs.TimeInput.value;
-        console.log(1,data);
+        //console.log(data);
         this.setState({
             inputState : true,
             inputTime : data

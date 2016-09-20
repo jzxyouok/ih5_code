@@ -89,6 +89,7 @@ function getMousePosition(vertical, e) {
 function pauseEvent(e) {
   e.stopPropagation();
   e.preventDefault();
+  TimelineAction['ChangeKeyframe'](true);
 }
 
 // 轨迹 的 组件
@@ -308,7 +309,7 @@ class VxRcSlider extends RcSlider {
             this.setState({
                 points: points
             },()=>{
-                TimelineAction['ChangeKeyframe'](true);
+                //TimelineAction['ChangeKeyframe'](true);
             });
         }
     }
