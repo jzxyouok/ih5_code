@@ -398,6 +398,8 @@ class TimelineView extends React.Component {
             });
         };
 
+        let scrollwidth = window.innerWidth-318 + "px";
+
         return (
             <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })}>
                 <div className="hidden">
@@ -481,17 +483,19 @@ class TimelineView extends React.Component {
                     </div>
                 </div>
                 <div id='TimlineNodeContent'>
-                    <ul id='TimlineNodeList'>
-                        {
-                            tracks
-                        }
+                    <div id="TimlineNodeList">
+                        <ul style={{ width : scrollwidth }} >
+                            {
+                                tracks
+                            }
 
-                        {
-                            // this.state.timerNode.map((node, index)=> {
-                            // 	return <TimelineTrack track={node} key={index} />
-                            // })
-                        }
-                    </ul>
+                            {
+                                // this.state.timerNode.map((node, index)=> {
+                                // 	return <TimelineTrack track={node} key={index} />
+                                // })
+                            }
+                        </ul>
+                    </div>
                 </div>
             </div>
 		);
