@@ -493,8 +493,10 @@ export default Reflux.createStore({
             p.skipRender = true;
             bridge.updateSelector(this.currentWidget.node);
         }
-        if (skipProperty)
+        if (skipProperty) {
             p.skipProperty = true;
+            bridge.updateSelector(this.currentWidget.node);
+        }
         this.trigger(p);
     },
     addEvent: function(className, props) {
