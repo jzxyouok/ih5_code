@@ -120,6 +120,9 @@ class TimelineView extends React.Component {
 	onTimer(p) {
 		this.setState({currentTime:p});
 		WidgetActions['syncTrack']();
+        if(p === this.state.timerNode.node['totalTime'] ){
+            this.onPause(true);
+        }
 	}
 
 	onPlay() {
@@ -128,9 +131,19 @@ class TimelineView extends React.Component {
 		this.setState({isPlaying:true});
 	}
 
-	onPause() {
+	onPause(bool) {
 		this.state.timerNode.node['pause']();
-		this.setState({isPlaying:false});
+		this.setState({
+            isPlaying:false
+        });
+        if(bool){
+            WidgetActions['resetTrack']();
+            this.state.timerNode.node['seek'](0);
+            WidgetActions['syncTrack']();
+            this.setState({
+                currentTime:0
+            });
+        }
 	}
 
 	onPlayOrPause() {
@@ -138,7 +151,6 @@ class TimelineView extends React.Component {
 	}
 
 	onTimerChange(value) {
-        //console.log(value);
 		WidgetActions['resetTrack']();
 		this.state.timerNode.node['seek'](value);
 		WidgetActions['syncTrack']();
@@ -209,14 +221,14 @@ class TimelineView extends React.Component {
         let data = value;
         //data = data.toFixed(4);
         //console.log(data);
-        if(this.state.isPlaying && this.state.timerNode){
-            let totalTime = this.state.timerNode.node['totalTime'];
-            if(data == totalTime){
-                this.setState({
-                    isPlaying: false
-                })
-            }
-        }
+        //if(this.state.isPlaying && this.state.timerNode){
+        //    let totalTime = this.state.timerNode.node['totalTime'];
+        //    if(data == totalTime){
+        //        this.setState({
+        //            isPlaying: false
+        //        })
+        //    }
+        //}
         return data.toFixed(2);
     }
 
@@ -367,10 +379,12 @@ class TimelineView extends React.Component {
         };
 
         if (this.state.timerNode && this.refs.ComponentPanel) {
-            getTracks(this.state.timerNode);
-
             if(this.state.timerNode.props.totalTime){
                 totalTime = this.state.timerNode.props.totalTime;
+                getTracks(this.state.timerNode);
+            }
+            else {
+                getTracks(this.state.timerNode);
             }
         }
 

@@ -89,7 +89,6 @@ function getMousePosition(vertical, e) {
 function pauseEvent(e) {
   e.stopPropagation();
   e.preventDefault();
-  TimelineAction['ChangeKeyframe'](true);
 }
 
 // 轨迹 的 组件
@@ -146,7 +145,7 @@ class VxRcSlider extends RcSlider {
         if(bool){
             if(value){
                 this.setState({
-                    changeKeyBool : bool,
+                    //changeKeyBool : bool,
                     changeKeyValue : value
                 });
             }
@@ -253,7 +252,8 @@ class VxRcSlider extends RcSlider {
             currentHandle : handle.props.handleIndex,
             changeKeyValue : null,
             changeKey : handle.props.handleIndex,
-            isChooseKey : true
+            isChooseKey : true,
+            changeKeyBool : true
         },()=>{
             TimelineAction['ChangeKeyframe'](true);
             WidgetActions['syncTrack']();
@@ -263,13 +263,12 @@ class VxRcSlider extends RcSlider {
     }
 
     onMove(e, position) {
-        TimelineAction['ChangeKeyframe'](false);
+        //TimelineAction['ChangeKeyframe'](false);
         this.setState({
             changeKeyBool : false
         });
         pauseEvent(e);
         const props = this.props;
-
         if (this.state.currentHandle >= 0) {
             let diffPosition = position - this.startPosition;
             diffPosition = this.props.vertical ? -diffPosition : diffPosition;
@@ -283,7 +282,8 @@ class VxRcSlider extends RcSlider {
             this.props.refTimer.node['seek'](value);
             //this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
             this.setState({
-                points: points
+                points: points,
+                changeKeyBool : true
             },()=>{
                 //TimelineAction['ChangeKeyframe'](true);
             });
@@ -297,7 +297,7 @@ class VxRcSlider extends RcSlider {
         }
         if (widget.updateProperties !== undefined && widget.skipRender === undefined && this.state.currentHandle >= 0) {
             let obj = widget.updateProperties;
-            let points = this.state.points;
+            let points = this.props.points;
             let props = this.props.refTrack.props['prop'];
             for (let i = 0; i < props.length; i++) {
                 if (obj[props[i]] !== undefined)
@@ -312,7 +312,7 @@ class VxRcSlider extends RcSlider {
             }
             WidgetActions['updateProperties'](obj, true);
         }
-        if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.state.points.length >= 2) {
+        if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.props.points.length >= 2) {
             let points = this.state.points;
             points.splice(this.state.currentHandle, 1);
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
@@ -360,12 +360,13 @@ class VxRcSlider extends RcSlider {
 		const isNoTip = (step === null) || (tipFormatter === null);
 
         let handles = [];
-        const lowerBound = points[0][0];
-        const upperBound = points[points.length - 1][0];
+
+        const lowerBound = points[0] ?  points[0][0] : 0;
+        const upperBound = points[points.length - 1] ? points[points.length - 1][0] : 0;
         const upperOffset = this.calcOffset(upperBound);
         const lowerOffset = this.calcOffset(lowerBound);
 
-        for (let i = 1; i < points.length; i++) {
+        for (let i = 0; i < points.length; i++) {
             let offset = this.calcOffset(points[i][0]);
             let which = this.state.changeKey;
             let isCurrentBool = false;
@@ -418,6 +419,7 @@ class VxRcSlider extends RcSlider {
 
         const style = {};
         style['width']= this.props.width;
+        //console.log(this.props.width);
         if (this.props.isCurrent){
             style['borderColor'] = '#CCC';
         }
