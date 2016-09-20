@@ -81,10 +81,15 @@ class DesignView extends React.Component {
             ref='container'
             onWheel={this.scroll}>
 
+           <div>
             <div id='canvas-dom'
                 className="DesignView"
                 ref='view'
-                style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}></div>
+                style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
+               <div className='h_ruler'></div>
+               <div className='v_ruler'></div>
+            </div>
+           </div>
         </div>
         );
     }
