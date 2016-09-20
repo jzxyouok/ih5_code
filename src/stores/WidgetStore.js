@@ -345,6 +345,7 @@ export default Reflux.createStore({
         } else {
             bridge.selectWidget(widget.node);
         }
+
         if (render)
           this.render();
     },

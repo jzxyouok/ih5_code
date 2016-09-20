@@ -113,7 +113,21 @@ class PropertyView extends React.Component {
                     v = parseFloat(value);
                     break;
                 case propertyType.Integer:
-                    v = parseInt(value);
+                    if(prop.name=='size'){
+
+                        v = parseInt(value);
+
+                        const obj = {};
+                        obj[prop.name] = v;
+                        obj.scaleY = obj.scaleX=1;
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties'](obj, false, true);
+
+
+                        bTag=false;
+                    }else{
+                        v = parseInt(value);
+                    }
                     break;
                 case propertyType.Float:
                     if(this.selectNode.props.isLock){
@@ -122,8 +136,6 @@ class PropertyView extends React.Component {
                             let h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.selectNode.node.defaultData.height;
                            //获取scaleX的值
                             let w =parseFloat(value) /this.selectNode.node.defaultData.width;
-
-
                             //调用更新
                             const obj = {};
 
@@ -194,7 +206,7 @@ class PropertyView extends React.Component {
            const obj = {};
            obj[prop.name] = v;
            this.onStatusChange({updateProperties: obj});
-           WidgetActions['updateProperties'](obj, false, true);//reflux模式,調用actions
+           WidgetActions['updateProperties'](obj, false, true);
        }
     }
 
