@@ -32,7 +32,8 @@ class TimelineView extends React.Component {
             selectLayerData : null,
             inputState : false,
             inputTime : null,
-            isChangeKey : false
+            isChangeKey : false,
+            changSwitch : false
 		};
 		this.onTimer = this.onTimer.bind(this);
 		//this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -50,6 +51,8 @@ class TimelineView extends React.Component {
         this.timeInput = this.timeInput.bind(this);
         this.timeInputSure = this.timeInputSure.bind(this);
         this.inputOnBlur = this.inputOnBlur.bind(this);
+        this.changSwitchState = this.changSwitchState.bind(this);
+        this.onTimerClick = this.onTimerClick.bind(this);
 	}
 
 	componentDidMount() {
@@ -135,16 +138,20 @@ class TimelineView extends React.Component {
 	}
 
 	onTimerChange(value) {
+        console.log(3,value);
 		WidgetActions['resetTrack']();
-		this.state.timerNode.node['seek'](value * this.state.timerNode.node['totalTime']);
+		this.state.timerNode.node['seek'](value);
 		WidgetActions['syncTrack']();
-        //console.log(value);
 		this.setState({
             currentTime:value
         });
         TimelineAction['ChangeKeyframe'](false,value);
-        changeKeyAction['ChangeKey'](false);
 	}
+
+    onTimerClick(){
+        changeKeyAction['ChangeKey'](false);
+        this.changSwitchState(0);
+    }
 
     ChangeKeyframe(data){
         //console.log(data);
@@ -189,6 +196,7 @@ class TimelineView extends React.Component {
 		// 如果没有活动的轨迹
 		if(this.state.currentTrack===null) return;
 
+        this.changSwitchState(0);
 		// 如果有活动的时间断点
 		if(this.state.isChangeKey) {
 			this.onDelete();
@@ -200,19 +208,21 @@ class TimelineView extends React.Component {
     formatter(value){
         let data = value;
         //data = data.toFixed(4);
+        console.log(2,data);
         if(this.state.isPlaying && this.state.timerNode){
             let totalTime = this.state.timerNode.node['totalTime'];
-            if(data == totalTime/10){
+            if(data == totalTime){
                 this.setState({
                     isPlaying: false
                 })
             }
         }
-        return (data * 10).toFixed(2);
+        return data.toFixed(2);
     }
 
     timeInput(){
         let data = this.refs.TimeInput.value;
+        console.log(1,data);
         this.setState({
             inputState : true,
             inputTime : data
@@ -229,10 +239,10 @@ class TimelineView extends React.Component {
             }
             this.setState({
                 inputState : false,
-                currentTime : parseFloat(data) / 10
+                currentTime : parseFloat(data)
             });
             if(this.state.isChangeKey){
-                TimelineAction['ChangeKeyframe'](true,parseFloat(data) / 10);
+                TimelineAction['ChangeKeyframe'](true,parseFloat(data));
             }
         }
         else if(event.key == "ArrowUp"){
@@ -257,22 +267,33 @@ class TimelineView extends React.Component {
         }
         this.setState({
             inputState : false,
-            currentTime : parseFloat(data) / 10
+            currentTime : parseFloat(data)
         });
         if(this.state.isChangeKey){
-            TimelineAction['ChangeKeyframe'](true,parseFloat(data) / 10);
+            TimelineAction['ChangeKeyframe'](true,parseFloat(data));
         }
     }
 
 	selectNextBreakpoint() {
-        TimelineAction['ChangeKeyframe'](false);
-        changeKeyAction['ChangeKey'](true,1);
+        if(this.state.changSwitch === -1 || this.state.changSwitch === 2){
+            //console.log("next");
+            changeKeyAction['ChangeKey'](true,1);
+        }
 	}
 
 	selectPrevBreakpoint() {
-        TimelineAction['ChangeKeyframe'](false);
-        changeKeyAction['ChangeKey'](true,-1);
+        if(this.state.changSwitch === 1 || this.state.changSwitch === 2){
+            //console.log("last");
+            changeKeyAction['ChangeKey'](true,-1);
+        }
 	}
+
+    changSwitchState(state){
+        //console.log(state);
+        this.setState({
+            changSwitch: state
+        })
+    }
 
 	//onWidgetClick(event) {
 	//	event.preventDefault();
@@ -330,8 +351,8 @@ class TimelineView extends React.Component {
                 tracks.push(
                     <VxSlider
                         key={index++}
-                        max={1}
-                        step={0.001}
+                        max={totalTime}
+                        step={0.01}
                         refTrack={node}
                         pic={pic}
                         width={61 * totalTime}
@@ -339,6 +360,7 @@ class TimelineView extends React.Component {
                         points={node.props.data}
                         myID = { node.parent.key }
                         ref="VxSlider"
+                        changSwitchState={ this.changSwitchState }
                         isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));
@@ -378,7 +400,7 @@ class TimelineView extends React.Component {
                                   className={cls({'active': this.state.isChangeKey})} />
 
                             <input type='text'
-                                   value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
+                                   value={ this.state.inputState ?  this.state.inputTime :this.state.currentTime.toFixed(2) }
                                    onChange={ this.timeInput.bind(this) }
                                    onKeyDown = { this.timeInputSure.bind(this)}
                                    onBlur={ this.inputOnBlur.bind(this) }
@@ -391,6 +413,7 @@ class TimelineView extends React.Component {
                     <div className='timline-column-right flex-1' id='TimelineNodeAction'>
                         <div>
                             <button id='TimelineNodeActionPrev'
+                                    className={ cls({"active": this.state.changSwitch !== 1 && this.state.changSwitch !== 2}) }
                                     onClick={this.selectPrevBreakpoint.bind(this)} />
                             <button id='TimelineNodeActionModify'
                                     className={cls(
@@ -399,6 +422,7 @@ class TimelineView extends React.Component {
                                     )}
                                     onClick={this.onAddOrDelete.bind(this)} />
                             <button id='TimelineNodeActionNext'
+                                    className={ cls({"active": this.state.changSwitch !== -1 && this.state.changSwitch !== 2}) }
                                     onClick={this.selectNextBreakpoint.bind(this)} />
                         </div>
                     </div>
@@ -431,9 +455,9 @@ class TimelineView extends React.Component {
                             { unit(totalTime) }
                         </ul>
 
-                        <div style={{ width : 61 * totalTime +"px" }}>
-                            <Slider max={1}
-                                    step={0.001}
+                        <div style={{ width : 61 * totalTime +"px" }} onClick={this.onTimerClick.bind(this)}>
+                            <Slider max={totalTime}
+                                    step={0.01}
                                     value={this.state.currentTime}
                                     tipFormatter={  this.formatter  }
                                     onChange={this.onTimerChange.bind(this)} />

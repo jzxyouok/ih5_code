@@ -110,6 +110,7 @@ class VxRcSlider extends RcSlider {
         this.selectTrack = this.selectTrack.bind(this);
         this.lastOrNext = this.lastOrNext.bind(this);
         this.initializationState= this.initializationState.bind(this);
+        this.isHaveTrunBtn = this.isHaveTrunBtn.bind(this);
     }
 
     componentDidMount() {
@@ -156,10 +157,42 @@ class VxRcSlider extends RcSlider {
             this.props.refTimer.node['pause']();
             this.props.refTimer.node['seek'](
                 this.props.refTrack.props['data'][this.state.currentHandle][0]
-                * this.props.refTimer.node['totalTime']
             );
-            TimelineAction['ChangeKeyframe'](true);
+            //TimelineAction['ChangeKeyframe'](true);
             changeKeyAction['ChangeKey'](false);
+        }
+    }
+
+    isHaveTrunBtn(bool,num){
+        if(bool){
+            if(num === 1){
+                this.props.changSwitchState(0);
+            }
+            else if(this.state.currentHandle === num){
+                this.props.changSwitchState(1);
+            }
+            else if(this.state.currentHandle === 1){
+                this.props.changSwitchState(-1);
+            }
+            else {
+                this.props.changSwitchState(2);
+            }
+        }
+        else {
+            if(this.props.myID === this.state.nowLayer){
+                if(num === 1){
+                    this.props.changSwitchState(0);
+                }
+                else if(this.state.currentHandle === num){
+                    this.props.changSwitchState(1);
+                }
+                else if(this.state.currentHandle === 1){
+                    this.props.changSwitchState(-1);
+                }
+                else {
+                    this.props.changSwitchState(2);
+                }
+            }
         }
     }
 
@@ -173,6 +206,7 @@ class VxRcSlider extends RcSlider {
                     changeKeyBool : false
                 },()=>{
                     this.lastOrNext();
+                    this.isHaveTrunBtn(false,num);
                 })
             }
             else if(value == -1 &&this.state.currentHandle > 1){
@@ -182,13 +216,15 @@ class VxRcSlider extends RcSlider {
                     changeKeyBool : false
                 },()=>{
                     this.lastOrNext();
+                    this.isHaveTrunBtn(false,num);
                 })
             }
             else {
+                this.isHaveTrunBtn(false,num);
                 this.setState({
                     changeKeyBool : true
                 });
-                TimelineAction['ChangeKeyframe'](true);
+                //TimelineAction['ChangeKeyframe'](true);
             }
         }
     }
@@ -201,6 +237,8 @@ class VxRcSlider extends RcSlider {
             changeKey : null,
             changeKeyBool : false,
             changeKeyValue : null
+        },()=>{
+            this.isHaveTrunBtn(false,1);
         });
     }
 
@@ -209,7 +247,6 @@ class VxRcSlider extends RcSlider {
         this.props.refTimer.node['pause']();
         this.props.refTimer.node['seek'](
             this.props.refTrack.props['data'][handle.props.handleIndex][0]
-            * this.props.refTimer.node['totalTime']
         );
         this.setState({
             currentHandle : handle.props.handleIndex,
@@ -219,6 +256,7 @@ class VxRcSlider extends RcSlider {
         },()=>{
             TimelineAction['ChangeKeyframe'](true);
             WidgetActions['syncTrack']();
+            this.isHaveTrunBtn(true,this.props.refTrack.props.data.length -1);
             this.forceUpdate();
         });
         //if (this.props.isCurrent) {
@@ -265,7 +303,8 @@ class VxRcSlider extends RcSlider {
             let points = this.state.points;
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
-            this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
+            this.props.refTimer.node['seek'](value);
+            //this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
             this.setState({
                 points: points
             },()=>{
@@ -309,7 +348,7 @@ class VxRcSlider extends RcSlider {
                 this.setState({
                     isChooseKey : false,
                     lastLayer : test
-                })
+                });
             }
             this.setState({
                 nowLayer : widget.selectWidget.key
@@ -317,6 +356,15 @@ class VxRcSlider extends RcSlider {
                 if(this.state.lastLayer !== this.state.nowLayer ){
                     this.setState({
                         currentHandle: -1
+                    });
+                    TimelineAction['ChangeKeyframe'](false);
+                    this.setState({
+                        currentHandle: -1,
+                        changeKey : null,
+                        changeKeyBool : false,
+                        changeKeyValue : null
+                    },()=>{
+                        this.isHaveTrunBtn(false,1);
                     });
                 }
             });
@@ -482,7 +530,7 @@ class VxRcSlider extends RcSlider {
 class VxSlider extends React.Component {
 	render() {
         //console.log('props: ', this.props);
-		return <VxRcSlider {...this.props} ref="VxRcSlider" />;
+		return <VxRcSlider {...this.props} ref="VxRcSlider" changSwitchState={ this.props.changSwitchState } />;
 	}
 }
 

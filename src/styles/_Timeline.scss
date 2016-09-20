@@ -95,7 +95,7 @@ $size: 25px;
                 height: 16px;
                 margin: 0 10px 0 8px;
                 display: block;
-                background-position: -324px -1px;
+                background-position: 2px 1px;
 
                 &.active{
                     background-position: 0 -40px;
@@ -135,6 +135,10 @@ $size: 25px;
 			}
 			#TimelineNodeActionPrev {
 				@include bg(1, 1);
+
+                &.active{
+                    @include bg(1, 2);
+                }
 			}
 			#TimelineNodeActionModify {
 				@include bg(2, 2);
@@ -148,6 +152,10 @@ $size: 25px;
 			}
 			#TimelineNodeActionNext {
 				@include bg(3, 1);
+
+                &.active{
+                    @include bg(3, 2);
+                }
 			}
 		}
 	}
@@ -259,6 +267,7 @@ $size: 25px;
 				@include btn();
 				@include bg(8, 0);
                 z-index: 4;
+                pointer-events:none;
 				//transform: translateX(-4px);
 
 				&:active {

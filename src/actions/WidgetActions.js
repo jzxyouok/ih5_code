@@ -15,6 +15,7 @@ export default Reflux.createActions([
   'updateProperties',             //更新属性
   'addEvent',                     //添加事件
   'removeEvent',                  //删除事件
+  'enableEvent',                  //事件的可执行与否
   'resetTrack',
   'syncTrack',
   'deletePoint',

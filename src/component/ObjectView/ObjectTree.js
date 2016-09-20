@@ -29,6 +29,7 @@ class ObjectTree extends React.Component {
         this.addOpenId = this.addOpenId.bind(this);
         this.showHideBtn = this.showHideBtn.bind(this);
         this.lockBtn = this.lockBtn.bind(this);
+        this.eventBtn = this.eventBtn.bind(this);
 
         //对象的复制/剪切/黏贴
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
@@ -87,7 +88,7 @@ class ObjectTree extends React.Component {
             this.setState({
                 selectWidget : widget.selectWidget
                 , nid : widget.selectWidget.key
-                ,activeEvent: false
+                , activeEvent: false
             });
             this.addOpenId();
             //触发聚焦
@@ -225,17 +226,46 @@ class ObjectTree extends React.Component {
         //console.log(data);
     }
 
-    showHideBtn(data,bool){
+    showHideBtn(data,bool, event){
+        event.stopPropagation();
         //console.log(data);
         data.props['visible'] = bool;
         data.node['visible'] = bool;
         WidgetActions['render']();
     }
 
-    lockBtn(key) {
+    lockBtn(key, data, event) {
+        event.stopPropagation();
         if(key === this.state.nid){
             WidgetActions['lockWidget']();
             WidgetActions['render']();
+        }
+    }
+
+    eventBtn(nid, data, event) {
+        event.stopPropagation();
+        //分情况处理
+        //已经有触发的activeEvent
+        if(this.state.activeEvent) {
+            if(this.state.nid === nid) {
+                //相同id，修改data的的enableEvent属性
+                WidgetActions['enableEvent']();
+                WidgetActions['render']();
+            } else {
+                //不是选中的话，就选中这个对象，activeEvent,data的的enableEvent属性不变
+                this.chooseBtn(nid, data);
+            }
+        } else {
+            this.setState({
+                activeEvent: !this.state.activeEvent
+            });
+            if(this.state.nid != nid) {
+                this.setState({
+                    nid : nid
+                },()=>{
+                    WidgetActions['selectWidget'](data, true);
+                });
+            }
         }
     }
 
@@ -374,14 +404,13 @@ class ObjectTree extends React.Component {
             }
         };
 
-        let eventBtn = (data)=> {
+        let enableEventBtn = (nid,data)=> {
             //0为没有事件, 1为有事件正常状态
-            let btn = null;
-            if (data.props.enableEvent) {
-                btn = <div className={$class('event-icon event-icon-normal', {'active':this.state.activeEvent})}></div>;
-            } else {
-                btn = <div className={$class('event-icon event-icon-disable', {'active':this.state.activeEvent})}></div>;
-            }
+            let btn = <div className={$class('event-icon',
+                    {'event-icon-normal':data.props['enableEvent']},
+                    {'event-icon-disable':!data.props['enableEvent']},
+                    {'active':this.state.activeEvent&&nid === this.state.nid})}
+                           onClick={this.eventBtn.bind(this,nid,data)}></div>;
             return btn;
         };
 
@@ -455,7 +484,7 @@ class ObjectTree extends React.Component {
                             }
                             {
                                 Object.keys(v.events).length > 0
-                                    ? eventBtn(v)
+                                    ? enableEventBtn(v.key, v)
                                     : null
                             }
                         </div>

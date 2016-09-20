@@ -26,7 +26,7 @@ function onSelect() {
   WidgetActions['selectWidget'](this);
 }
 
-const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext'];
+const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext', 'qrcode'];
 
 function loadTree(parent, node) {
   let current = {};
@@ -312,6 +312,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
+        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
     },
     selectWidget: function(widget) {
@@ -328,13 +329,13 @@ export default Reflux.createStore({
             }
           }
         }
-        if(widget.props.locked === undefined) {
-            widget.props.locked = false;
+        if(widget.props['locked'] === undefined) {
+            widget.props['locked'] = false;
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
         //判断是否是可选择的，是否加锁
-        if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props.locked) {
+        if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
             bridge.selectWidget(widget.node, this.updateProperties.bind(this));
         } else {
             bridge.selectWidget(widget.node);
@@ -412,9 +413,9 @@ export default Reflux.createStore({
     },
     lockWidget: function () {
         if (this.currentWidget) {
-            this.currentWidget.props.locked = !this.currentWidget.props.locked;
-            this.updateProperties({'locked':this.currentWidget.props.locked});
-            if (!this.currentWidget.props.locked) {
+            this.currentWidget.props['locked'] = !this.currentWidget.props['locked'];
+            this.updateProperties({'locked':this.currentWidget.props['locked']});
+            if (!this.currentWidget.props['locked']) {
                 bridge.selectWidget(this.currentWidget.node, this.updateProperties.bind(this));
             } else {
                 bridge.selectWidget(this.currentWidget.node);
@@ -480,8 +481,8 @@ export default Reflux.createStore({
     },
     addEvent: function(className, props) {
         if (this.currentWidget) {
-            this.currentWidget.events.test = {func:'this is testing func'};
-            this.currentWidget.props.enableEvent = true;
+            this.currentWidget.events['test'] = {func:'this is testing func'};
+            this.currentWidget.props['enableEvent'] = true;
         }
         this.render();
         this.trigger({redrawTree: true});
@@ -489,6 +490,13 @@ export default Reflux.createStore({
     removeEvent: function() {
         if (this.currentWidget) {
             this.currentWidget.events = {};
+        }
+        this.render();
+        this.trigger({redrawTree: true});
+    },
+    enableEvent: function () {
+        if (this.currentWidget) {
+            this.currentWidget.props['enableEvent'] = !this.currentWidget.props['enableEvent'];
         }
         this.render();
         this.trigger({redrawTree: true});
