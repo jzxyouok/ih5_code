@@ -146,6 +146,7 @@ class TimelineView extends React.Component {
         });
         TimelineAction['ChangeKeyframe'](false,value);
         changeKeyAction['ChangeKey'](false);
+        this.changSwitchState(0);
 	}
 
     ChangeKeyframe(data){
@@ -191,6 +192,7 @@ class TimelineView extends React.Component {
 		// 如果没有活动的轨迹
 		if(this.state.currentTrack===null) return;
 
+        this.changSwitchState(0);
 		// 如果有活动的时间断点
 		if(this.state.isChangeKey) {
 			this.onDelete();
