@@ -349,7 +349,7 @@ class VxRcSlider extends RcSlider {
                 this.setState({
                     isChooseKey : false,
                     lastLayer : test
-                })
+                });
             }
             this.setState({
                 nowLayer : widget.selectWidget.key
@@ -357,6 +357,15 @@ class VxRcSlider extends RcSlider {
                 if(this.state.lastLayer !== this.state.nowLayer ){
                     this.setState({
                         currentHandle: -1
+                    });
+                    TimelineAction['ChangeKeyframe'](false);
+                    this.setState({
+                        currentHandle: -1,
+                        changeKey : null,
+                        changeKeyBool : false,
+                        changeKeyValue : null
+                    },()=>{
+                        this.isHaveTrunBtn(false,1);
                     });
                 }
             });
