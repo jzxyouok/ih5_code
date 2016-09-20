@@ -93,6 +93,7 @@ class ObjectTree extends React.Component {
                 , nid : widget.selectWidget.key
                 , activeEvent: activeEvent
             }, ()=> {
+                this.props.triggerEventActive(activeEvent);
                 this.fromEventBtn = false;
             });
             this.addOpenId();
@@ -254,6 +255,7 @@ class ObjectTree extends React.Component {
             this.setState({
                 activeEvent: true
             }, ()=>{
+                this.props.triggerEventActive(true);
                 this.chooseBtn(nid, data);
             });
         } else  {
@@ -265,6 +267,7 @@ class ObjectTree extends React.Component {
                 this.setState({
                     activeEvent: !this.state.activeEvent
                 }, ()=>{
+                    this.props.triggerEventActive(this.state.activeEvent);
                     this.fromEventBtn=false;
                 });
             }
@@ -456,7 +459,7 @@ class ObjectTree extends React.Component {
                          onBlur={this.itemRemoveKeyListener.bind(this)}
                          onDragStart={this.itemDragStart.bind(this,v.key, v)}
                          onDragEnd={this.itemDragEnd}>
-                <div className='clearfix'>
+                <div className='item-title-wrap clearfix'>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
                          onClick={this.chooseBtn.bind(this,v.key, v)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
@@ -510,7 +513,7 @@ class ObjectTree extends React.Component {
                     !objectData
                         ? null
                         : <div className='stage'>
-                        <div className='clearfix'>
+                        <div className='stage-title-wrap clearfix'>
                             <div className={$class('stage-title f--h f--hlc',{'active': objectData.tree.key === this.state.nid})}
                                  style={{ width : this.props.width - 36 - 24 }}
                                  onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}

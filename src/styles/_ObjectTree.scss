@@ -121,7 +121,7 @@
                 right: 6px;
                 width: 14px;
                 height: 14px;
-                top: 3px;
+                top: 3.5px;
             }
             .event-icon-normal {
                 background: url("img/button-icon.svg") no-repeat -760px 0;
@@ -141,6 +141,12 @@
             outline: 0;
             .item-event {
                 height: 23px;
+            }
+        }
+
+        .stage-title-wrap {
+            .event-icon {
+                top: 4.5px;
             }
         }
 
