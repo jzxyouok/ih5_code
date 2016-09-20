@@ -468,8 +468,6 @@ export default Reflux.createStore({
           obj =newObj;
           prevNewObj =cpJson(newObj);
       }
-
-
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;

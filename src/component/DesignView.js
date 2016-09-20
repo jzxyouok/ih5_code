@@ -75,6 +75,7 @@ class DesignView extends React.Component {
     }
 
     render() {
+        console.log('aaaaa');
         return (
         <div className='f--hlt'
             id='DesignView-Container'
