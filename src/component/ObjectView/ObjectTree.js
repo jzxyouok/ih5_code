@@ -93,6 +93,7 @@ class ObjectTree extends React.Component {
                 , nid : widget.selectWidget.key
                 , activeEvent: activeEvent
             }, ()=> {
+                this.props.triggerEventActive(activeEvent);
                 this.fromEventBtn = false;
             });
             this.addOpenId();
@@ -254,6 +255,7 @@ class ObjectTree extends React.Component {
             this.setState({
                 activeEvent: true
             }, ()=>{
+                this.props.triggerEventActive(true);
                 this.chooseBtn(nid, data);
             });
         } else  {
@@ -265,6 +267,7 @@ class ObjectTree extends React.Component {
                 this.setState({
                     activeEvent: !this.state.activeEvent
                 }, ()=>{
+                    this.props.triggerEventActive(this.state.activeEvent);
                     this.fromEventBtn=false;
                 });
             }

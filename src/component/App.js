@@ -17,12 +17,14 @@ class App extends React.Component {
         super(props);
         this.state = {
             stageZoom : 100,
-            expendedToolbox: false
+            expendedToolbox: false,
+            hasActiveEvent: false
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
         this.stageZoomEdit = this.stageZoomEdit.bind(this);
         this.toolboxExpanded = this.toolboxExpanded.bind(this);
+        this.triggerEventActive = this.triggerEventActive.bind(this);
     }
 
     componentDidMount() {
@@ -78,6 +80,12 @@ class App extends React.Component {
         })
     }
 
+    triggerEventActive(active) {
+        this.setState({
+            hasActiveEvent: active
+        })
+    }
+
     render() {
 
         return (
@@ -91,11 +99,11 @@ class App extends React.Component {
 
                 <ToolBox expendedToolBox={this.toolboxExpanded}/>
 
-                <PropertyView expended={this.state.expendedToolbox}/>
+                <PropertyView expended={this.state.expendedToolbox} isHidden={this.state.hasActiveEvent} />
 
-                <EventBox expended={this.state.expendedToolbox}/>
+                <EventBox expended={this.state.expendedToolbox} isHidden={!this.state.hasActiveEvent} />
 
-                <ObjectView />
+                <ObjectView triggerEventActive={this.triggerEventActive} />
 
                 <TimelineView />
 

@@ -25,13 +25,15 @@ class ObjectView extends React.Component {
             canLock: false, //是否可有锁
             locked: false,  //是否已锁
             canHaveEvent: false,    //是否可有事件
-            hasEvent: false //是否有事件
+            hasEvent: false, //是否有事件
+            hasActiveEvent: false //是否有激活的事件
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);
         this.lock = this.lock.bind(this);
         this.addEvent = this.addEvent.bind(this);
+        this.triggerEventActive = this.triggerEventActive.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onInitLock = this.onInitLock.bind(this);
@@ -108,6 +110,14 @@ class ObjectView extends React.Component {
         });
     }
 
+    triggerEventActive(active){
+        this.setState({
+            hasActiveEvent: active
+        }, ()=>{
+            this.props.triggerEventActive(active);
+        });
+    }
+
     lock() {
         WidgetActions['lockWidget']();
         this.setState({
@@ -146,7 +156,7 @@ class ObjectView extends React.Component {
         let content;
         switch (this.state.whichContent){
             case 0 :
-                content = <ObjectTree width = { this.state.width } ref='ObjectTree' />;
+                content = <ObjectTree width = { this.state.width } ref='ObjectTree' triggerEventActive={this.triggerEventActive}/>;
                 break;
             case 1 :
                 content = <Resource />;
