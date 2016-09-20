@@ -330,7 +330,10 @@ function checkChildClass(selected, className) {
     var provides = propertyFlags[selected.className].provides;
     if ((provides & widgetFlags.Leaf) != 0)
         return false;
-    debugger;
+    //TODO: FIX ME!!!对未实现功能的暂时处理
+    if(propertyFlags[className] == undefined) {
+        return true;
+    }
     var requires = propertyFlags[className].requires;
     if ((~(provides & widgetFlags.FLAG_MASK) & (requires & widgetFlags.FLAG_MASK)) != 0)
         return false;

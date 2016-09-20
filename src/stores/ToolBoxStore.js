@@ -5,6 +5,7 @@
 import Reflux from 'reflux';
 import Actions from '../actions/ToolBoxAction';
 import defaultTool from '../component/ToolBox/DEFAUL_TOOLBOX';
+import {checkChildClass} from '../component/PropertyMap';
 
 // 响应 点击二级（默认隐藏）工具菜单的事件
 var selectSecondary = function(config, gid, cid) {
@@ -48,10 +49,12 @@ var hasSecondary = function(config, gid) {
     return (group.secondary.length>1);
 };
 
+var toolBoxItem = defaultTool;
+
 var toolBoxConfig = {
     activeButtonId: null,
     openSecondaryId: null,
-    data: defaultTool
+    data: toolBoxItem
 };
 
 
@@ -61,6 +64,22 @@ export default Reflux.createStore({
         this.listenTo(Actions['selectSecondary'], this.selectSecondary);
         this.listenTo(Actions['openSecondary'], this.openSecondary);
         this.listenTo(Actions['deselect'], this.deselect);
+        this.listenTo(Actions['changeToolBoxItems'], this.changeToolBoxItems);
+    },
+
+    changeToolBoxItems: function(widget) {
+        //change items here 用secondary的去比对；
+        for (var i = 0; i < toolBoxItem.data.length; i++) {
+            for (var j = 0; j < toolBoxItem.data[i]['secondary'].length; j++) {
+                if (checkChildClass(widget, toolBoxItem.data[i]['secondary'][j].className)) {
+                    toolBoxItem.data[i]['secondary'][j]['disabled'] = false;
+                } else {
+                    toolBoxItem.data[i]['secondary'][j]['disabled'] = true;
+                }
+            }
+        }
+        toolBoxConfig.data = toolBoxItem;
+        this.trigger(toolBoxConfig);
     },
 
     selectPrimary: function(buttonId, groupId, boxId) {
@@ -110,7 +129,7 @@ export default Reflux.createStore({
     deselect: function(){
         toolBoxConfig.activeButtonId = null;
         toolBoxConfig.openSecondaryId = null;
-        toolBoxConfig.data = defaultTool;
+        toolBoxConfig.data = toolBoxItem;
         this.trigger(toolBoxConfig);
     }
 

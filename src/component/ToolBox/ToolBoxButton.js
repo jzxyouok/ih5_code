@@ -13,7 +13,6 @@ class ToolBoxButton extends Component {
         super(props);
         this.state = {
             selected: isActiveButton(this.props.cid),
-            enabled: true,
             modal: {
                 isVisible: false,
                 value: ''
@@ -227,7 +226,7 @@ class ToolBoxButton extends Component {
                 {'ToolBoxButtonPrimary': this.props.isPrimary},
                 {'active': this.state.selected})}
                 title={this.props.name}
-                disabled={!this.state.enabled}
+                disabled={this.props.disabled}
                 onClick={this.onClick.bind(this)}
                 onContextMenu={this.onRightClick.bind(this)}>
                 <img src={this.props.icon} />
