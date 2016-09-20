@@ -1,3 +1,5 @@
+import bridge from 'bridge';
+
 const propertyType = {
     Integer: 0,
     Number: 1,
@@ -11,7 +13,29 @@ const propertyType = {
     Color2:9
 };
 
+var level;
+
+const widgetFlags = {
+    // provides
+    Root: level = 1,
+    Box: level <<= 1,
+    Container: level <<= 1,
+    Leaf: level <<= 1,
+
+    // provides (recursive)
+    Timer: level <<= 1,
+    World: level <<= 1,
+
+    // requires
+    Unique: level <<= 1,
+    DomOnly: level <<= 1,
+    CanvasOnly: level <<= 1,
+};
+
+widgetFlags.FLAG_MASK = widgetFlags.Root | widgetFlags.Box | widgetFlags.Container;
+
 const propertyMap = {};
+const propertyFlags = {};
 
 propertyMap['widget'] = [
     { name: 'ID', type: propertyType.String, default: '', isProperty: true},
@@ -21,6 +45,7 @@ propertyMap['widget'] = [
 
 propertyMap['root'] = [
     ...propertyMap['widget'],
+    { addProvides: widgetFlags.Root | widgetFlags.Container},
     { name: 'width',showName:'w', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'h',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
@@ -47,6 +72,7 @@ propertyMap['root'] = [
 
 propertyMap['wechat'] = [
     ...propertyMap['widget'],
+    { addRequires: widgetFlags.Root},
     { name: 'title', type: propertyType.String, default: '', isProperty: true },
     { name: 'desc', type: propertyType.String, default: '', isProperty: true },
     { name: 'imgUrl', type: propertyType.String, default: '', isProperty: true }
@@ -54,6 +80,7 @@ propertyMap['wechat'] = [
 
 propertyMap['box'] = [
     ...propertyMap['widget'],
+    { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
     { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'positionY',showName:'y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 100, group:'display', isProperty: true },
@@ -90,6 +117,7 @@ propertyMap['video'] = [
 
 propertyMap['audio'] = [
     ...propertyMap['widget'],
+    { addRequires: widgetFlags.Root},
     { name: 'url', type: propertyType.String, default: '', isProperty: true },
     { name: 'play', isFunc: true },
     { name: 'pause', isFunc: true }
@@ -144,6 +172,7 @@ propertyMap['rect'] = [
 
 propertyMap['slidetimer'] = [
     ...propertyMap['box'],
+    { addProvidesRecursive: widgetFlags.Timer},
     { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty: true },
     { name: 'originY', type: propertyType.Number, default: 0, group:'position', isProperty: true },
     { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
@@ -169,6 +198,7 @@ propertyMap['path'] = [
 
 propertyMap['container'] = [
     ...propertyMap['box'],
+    { addProvides: widgetFlags.Container},
     { name: 'create', info:'(class,id,props,bottom)', isFunc: true }
 ];
 
@@ -180,6 +210,7 @@ propertyMap['canvas'] = [
 
 propertyMap['page'] = [
     ...propertyMap['container'],
+    { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
     { name: 'forwardTransition', type: propertyType.Integer, default: -1, isProperty: true },
     { name: 'backwardTransition', type: propertyType.Integer, default: -1, isProperty: true },
     { name: 'bgColor', type: propertyType.Color, default: '', isProperty: true }
@@ -194,10 +225,9 @@ propertyMap['class'] = [
 
 propertyMap['timer'] = [
     ...propertyMap['container'],
-    { name: 'totalTime',showName:'总时长', type: propertyType.Number, default: 10, isProperty: true},
-    { name: 'loop',showName:'循环播放', type: propertyType.Boolean, default: false, isProperty: true},
-    { name: 'scaleX',showName:'scaleX', type: propertyType.Number, default: 1, group:'position', isProperty: true },
-    { name: 'scaleY',showName:'scaleY', type: propertyType.Number, default: 1, group:'position', isProperty: true },
+    { addProvides: widgetFlags.Timer},
+    { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true},
+    { name: 'loop', type: propertyType.Boolean, default: false, isProperty: true},
     { name: 'play', isFunc: true },
     { name: 'pause', isFunc: true },
     { name: 'seek', info: '(time)', isFunc: true },
@@ -207,6 +237,7 @@ propertyMap['timer'] = [
 
 propertyMap['world'] = [
     ...propertyMap['widget'],
+    { addRequires: widgetFlags.Root | widgetFlags.CanvasOnly},
     { name: 'autoGravity', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'gravityX', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'gravityY', type: propertyType.Number, default: 100, isProperty: true },
@@ -222,6 +253,7 @@ propertyMap['world'] = [
 
 propertyMap['body'] = [
     ...propertyMap['widget'],
+    { addRequires: widgetFlags.Box | widgetFlags.CanvasOnly},
     { name: 'mass', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'globalVx', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'globalVy', type: propertyType.Number, default: 0, isProperty: true },
@@ -243,6 +275,7 @@ propertyMap['body'] = [
 
 propertyMap['easing'] = [
     ...propertyMap['widget'],
+    { addRequires: widgetFlags.Box, addProvides:widgetFlags.Leaf},
     { name: 'type', type: propertyType.String, default: '', isProperty: true },
     { name: 'radius', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'angle', type: propertyType.Number, default: 0, isProperty: true },
@@ -254,6 +287,7 @@ propertyMap['easing'] = [
 
 propertyMap['effect'] = [
     ...propertyMap['widget'],
+    { addRequires: widgetFlags.Box | widgetFlags.DomOnly, addProvides:widgetFlags.Leaf},
     { name: 'type', type: propertyType.String, default: '', isProperty: true },
     { name: 'duration', type: propertyType.Number, default: 1, isProperty: true },
     { name: 'count', type: propertyType.Integer, default: 1, isProperty: true },
@@ -263,14 +297,56 @@ propertyMap['effect'] = [
 
 propertyMap['track'] = [
     ...propertyMap['widget'],
+    { addRequires: widgetFlags.Timer | widgetFlags.Unique, addProvides:widgetFlags.Leaf},
     { name: 'type', type: propertyType.String, default: '', isProperty: true }
 ];
 
 propertyMap['db'] = [
     ...propertyMap['widget'],
+    { addRequires: widgetFlags.Root},
     { name: 'find', isFunc: true, info:'(option, callback(err, result))' },
     { name: 'insert', isFunc: true, info:'(data, callback(err, result))' },
     { name: 'update', isFunc: true, info:'(data, callback(err, result))' }
 ];
 
-export { propertyType, propertyMap };
+propertyMap['sock'] = [
+    ...propertyMap['widget'],
+    { addRequires: widgetFlags.Root},
+    { name: 'listened', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'message', isEvent: true, info:'data'},
+];
+
+for (var n in propertyMap) {
+    propertyFlags[n] = {provides: 0, requires: 0};
+    for (var index in propertyMap[n]) {
+        if (propertyMap[n][index].addProvides !== undefined)
+            propertyFlags[n].provides |= propertyMap[n][index].addProvides;
+        if (propertyMap[n][index].addRequires !== undefined)
+            propertyFlags[n].requires |= propertyMap[n][index].addRequires;
+    }
+}
+
+function checkChildClass(selected, className) {
+    var provides = propertyFlags[selected.className].provides;
+    if ((provides & widgetFlags.Leaf) != 0)
+        return false;
+    debugger;
+    var requires = propertyFlags[className].requires;
+    if ((~(provides & widgetFlags.FLAG_MASK) & (requires & widgetFlags.FLAG_MASK)) != 0)
+        return false;
+    if ((requires & widgetFlags.Timer) != 0 && !selected.timerWidget)
+        return false;
+    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selected.node) != 1)
+        return false;
+    if ((requires & widgetFlags.CanvasOnly) != 0 && bridge.getRendererType(selected.node) != 2)
+        return false;
+    if ((requires & widgetFlags.Unique) != 0) {
+        for (var index in selected.children) {
+            if (selected.children[index].className == className)
+                return false;
+        }
+    }
+    return true;
+}
+
+export { propertyType, propertyMap, checkChildClass };
