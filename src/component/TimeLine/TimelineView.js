@@ -358,7 +358,7 @@ class TimelineView extends React.Component {
                         pic = v1.icon;
                     }
                 });
-                //console.log(node);
+                //console.log(totalTime);
                 //console.log(this.state.currentTrack);
                 tracks.push(
                     <VxSlider
@@ -379,10 +379,12 @@ class TimelineView extends React.Component {
         };
 
         if (this.state.timerNode && this.refs.ComponentPanel) {
-            getTracks(this.state.timerNode);
-
             if(this.state.timerNode.props.totalTime){
                 totalTime = this.state.timerNode.props.totalTime;
+                getTracks(this.state.timerNode);
+            }
+            else {
+                getTracks(this.state.timerNode);
             }
         }
 

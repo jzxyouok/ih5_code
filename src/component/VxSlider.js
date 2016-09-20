@@ -416,6 +416,7 @@ class VxRcSlider extends RcSlider {
 
         const style = {};
         style['width']= this.props.width;
+        //console.log(this.props.width);
         if (this.props.isCurrent){
             style['borderColor'] = '#CCC';
         }
