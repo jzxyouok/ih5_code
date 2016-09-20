@@ -30,7 +30,7 @@ class ObjectTree extends React.Component {
         this.showHideBtn = this.showHideBtn.bind(this);
         this.lockBtn = this.lockBtn.bind(this);
         this.eventBtn = this.eventBtn.bind(this);
-        this.fromEventBtn=false;
+        this.fromEventBtn=false;    //statusChange事件的触发是否来源于事件按钮
 
         //对象的复制/剪切/黏贴
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
@@ -239,8 +239,7 @@ class ObjectTree extends React.Component {
         WidgetActions['render']();
     }
 
-    lockBtn(key, data, event) {
-        event.stopPropagation();
+    lockBtn(key, data) {
         if(key === this.state.nid){
             WidgetActions['lockWidget']();
             WidgetActions['render']();
