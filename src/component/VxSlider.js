@@ -165,7 +165,7 @@ class VxRcSlider extends RcSlider {
 
     isHaveTrunBtn(bool,num){
         if(bool){
-            if(num === 1){
+            if(num === 0){
                 this.props.changSwitchState(0);
             }
             else if(this.state.currentHandle === num){
@@ -180,7 +180,7 @@ class VxRcSlider extends RcSlider {
         }
         else {
             if(this.props.myID === this.state.nowLayer){
-                if(num === 1){
+                if(num === 0){
                     this.props.changSwitchState(0);
                 }
                 else if(this.state.currentHandle === num){
@@ -232,6 +232,7 @@ class VxRcSlider extends RcSlider {
     selectTrack(){
         TimelineAction['ChangeKeyframe'](false);
         WidgetActions['selectWidget'](this.props.refTrack.parent, true);
+
         this.setState({
             currentHandle: -1,
             changeKey : null,
