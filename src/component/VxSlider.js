@@ -171,7 +171,7 @@ class VxRcSlider extends RcSlider {
             else if(this.state.currentHandle === num){
                 this.props.changSwitchState(1);
             }
-            else if(this.state.currentHandle === 1){
+            else if(this.state.currentHandle === 0){
                 this.props.changSwitchState(-1);
             }
             else {
@@ -186,7 +186,7 @@ class VxRcSlider extends RcSlider {
                 else if(this.state.currentHandle === num){
                     this.props.changSwitchState(1);
                 }
-                else if(this.state.currentHandle === 1){
+                else if(this.state.currentHandle === 0){
                     this.props.changSwitchState(-1);
                 }
                 else {
@@ -209,7 +209,7 @@ class VxRcSlider extends RcSlider {
                     this.isHaveTrunBtn(false,num);
                 })
             }
-            else if(value == -1 &&this.state.currentHandle > 1){
+            else if(value == -1 &&this.state.currentHandle > 0){
                 this.setState({
                     currentHandle: this.state.currentHandle -1,
                     changeKey: this.state.currentHandle -1,
