@@ -3,6 +3,7 @@ import WidgetActions from '../actions/WidgetActions';
 
 var bridge = require('bridge');
 bridge.create();
+var globalToken;
 
 var rootDiv;
 var rootElm;
@@ -150,6 +151,8 @@ function saveTree(data, node) {
 bridge.setGenerateText(function(widget, callback) {
   var xhr = new XMLHttpRequest();
   xhr.open('POST', 'app/generateText');
+  if (globalToken)
+      xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
   var form = new FormData();
   form.append('font', widget['font']);
   form.append('text', widget['text']);
@@ -254,6 +257,8 @@ function chooseFileCallback(w) {
       if (w.userUpload) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'app/uploadFile');
+        if (globalToken)
+            xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
         var form = new FormData();
         form.append('type', w.userType);
         form.append('file', w.files[0]);
@@ -652,7 +657,7 @@ export default Reflux.createStore({
     },
     ajaxSend(token, method, url, type, data, callback, binary) {
         if (token)
-          this.token = token;
+          globalToken = token;
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
             if (binary)
@@ -665,8 +670,8 @@ export default Reflux.createStore({
           xhr.responseType = "arraybuffer";
         if (type)
             xhr.setRequestHeader('Content-Type', type);
-        if (this.token) {
-            xhr.setRequestHeader('Authorization', 'Bearer {' + this.token + '}');
+        if (globalToken) {
+            xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
         }
         xhr.send(data);
     },
