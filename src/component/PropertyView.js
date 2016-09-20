@@ -71,6 +71,16 @@ class PropertyView extends React.Component {
                 }} {...defaultProp}   className='color-input' />
                     <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
                 </div>;
+            case propertyType.Color2:
+                return  <Input ref={(inputDom) => {
+                if (inputDom) {
+                    var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                    if (!dom.jscolor) {
+                        dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                        dom.jscolor.onFineChange = defaultProp.onChange;
+                    }
+                }
+                }} {...defaultProp}  /> ;
 
             case propertyType.Boolean:
 
@@ -171,17 +181,9 @@ class PropertyView extends React.Component {
                   }else{
                       v = parseInt(value);
                   }
-
                     break;
                 case propertyType.Boolean:
                     v = (value === prop.default) ? null : value;
-                    break;
-                case propertyType.Color:
-
-
-
-                    v =value;
-
                     break;
                 default:
                     v = value;
@@ -199,7 +201,7 @@ class PropertyView extends React.Component {
 
 
     onChangePropDom(item, value) {
-        if(item.type === propertyType.String || item.type === propertyType.Text ){
+        if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
             this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
         }else if(item.type === propertyType.Color){
             if(typeof value == 'boolean'){
@@ -239,6 +241,10 @@ class PropertyView extends React.Component {
         let  oLock=  document.getElementsByClassName('ant-lock')[0];
        if(this.selectNode.props.isLock){
            oLock.classList.add('ant-lock-checked');
+           let k =this.selectNode.props.scaleX;
+           //设定原始宽高比
+           // WidgetActions['updateProperties']({scaleX:1,scaleY:1}, false, false);
+           WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
        }else{
            oLock.classList.remove('ant-lock-checked');
        }
@@ -283,7 +289,7 @@ class PropertyView extends React.Component {
                 defaultValue = node.node[str];
                 if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
                 if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}
-            }else if(item.type==propertyType.Color){
+            }else if(item.type==propertyType.Color || item.type==propertyType.Color2){
                if( item.name == 'color' &&  !node.props.color){ //只执行一次
                    node.props.color='#FFFFFF';
                }
@@ -292,10 +298,6 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue =node.props[item.name];
                 }
-
-
-
-
             } else {
                 if (node.props[item.name] === undefined){
                     defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
