@@ -89,7 +89,6 @@ function getMousePosition(vertical, e) {
 function pauseEvent(e) {
   e.stopPropagation();
   e.preventDefault();
-  TimelineAction['ChangeKeyframe'](true);
 }
 
 // 轨迹 的 组件
@@ -269,7 +268,6 @@ class VxRcSlider extends RcSlider {
         });
         pauseEvent(e);
         const props = this.props;
-
         if (this.state.currentHandle >= 0) {
             let diffPosition = position - this.startPosition;
             diffPosition = this.props.vertical ? -diffPosition : diffPosition;
@@ -285,7 +283,7 @@ class VxRcSlider extends RcSlider {
             this.setState({
                 points: points
             },()=>{
-                //TimelineAction['ChangeKeyframe'](true);
+                TimelineAction['ChangeKeyframe'](true);
             });
         }
     }
@@ -297,7 +295,7 @@ class VxRcSlider extends RcSlider {
         }
         if (widget.updateProperties !== undefined && widget.skipRender === undefined && this.state.currentHandle >= 0) {
             let obj = widget.updateProperties;
-            let points = this.state.points;
+            let points = this.props.points;
             let props = this.props.refTrack.props['prop'];
             for (let i = 0; i < props.length; i++) {
                 if (obj[props[i]] !== undefined)
@@ -312,7 +310,7 @@ class VxRcSlider extends RcSlider {
             }
             WidgetActions['updateProperties'](obj, true);
         }
-        if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.state.points.length >= 2) {
+        if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.props.points.length >= 2) {
             let points = this.state.points;
             points.splice(this.state.currentHandle, 1);
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
