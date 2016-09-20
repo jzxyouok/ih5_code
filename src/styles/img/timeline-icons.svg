@@ -1,4 +1,4 @@
-<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="480" height="160" viewBox="0 0 480 160">
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="600" height="160" viewBox="0 0 600 160">
   <defs>
     <style>
       .cls-1, .cls-2 {
@@ -50,7 +50,7 @@
       }
     </style>
   </defs>
-  <title>3324234</title>
+  <title>32432</title>
   <rect class="cls-1" x="2.05" y="42.05" width="9.9" height="9.9" transform="translate(-31.18 18.72) rotate(-45)"/>
   <path class="cls-2" d="M93,6l-7,7,7,7,7-7Zm1,8v2H92V14H90V12h2V10h2v2h2v2H94Z"/>
   <path class="cls-2" d="M93,46l-7,7,7,7,7-7Zm-1,8H90V52H96v2H92Z"/>
@@ -124,4 +124,14 @@
     <rect class="cls-17" x="447.99" y="126" width="3" height="12" rx="1.5" ry="1.5"/>
     <rect class="cls-17" x="454.01" y="126" width="3" height="12" rx="1.5" ry="1.5"/>
   </g>
+  <g>
+    <path class="cls-9" d="M494.39,10l4.72-5,4.72,5h-9.44Z"/>
+    <polygon class="cls-9" points="489.17 9.99 493.3 9.99 495.95 7.21 493.89 5.04 489.17 9.99"/>
+  </g>
+  <g>
+    <polygon class="cls-9" points="536.4 9.99 541.12 5.04 545.84 9.99 536.4 9.99"/>
+    <polygon class="cls-9" points="527.16 9.99 531.88 5.04 536.6 9.99 527.16 9.99"/>
+  </g>
+  <path class="cls-9" d="M569,6.31L564.5,2,560,6.31h0v4.74a2,2,0,0,0,2,2h5a2,2,0,0,0,2-2V6.31h0Z"/>
+  <path class="cls-7" d="M569,46.31L564.5,42,560,46.31h0v4.74a2,2,0,0,0,2,2h5a2,2,0,0,0,2-2V46.31h0Z"/>
 </svg>

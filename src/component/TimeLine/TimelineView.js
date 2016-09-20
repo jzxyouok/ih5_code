@@ -399,6 +399,11 @@ class TimelineView extends React.Component {
         };
 
         let scrollwidth = window.innerWidth-318 + "px";
+        let overallWidth = 100 + '%' ;
+        if( 61 * totalTime > scrollwidth-170 ){
+            let percentage = 61 * totalTime / (scrollwidth-170 );
+            overallWidth = (scrollwidth-170) / percentage + '%';
+        }
 
         return (
             <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })}>
@@ -495,6 +500,21 @@ class TimelineView extends React.Component {
                                 // })
                             }
                         </ul>
+                    </div>
+                </div>
+
+                <div className="overall-zoom f--h">
+                    <div className="zoom f--h">
+                        <span className="left-btn" />
+                        <div className="zoom-slider flex-1 f--hlc">
+                            <span className="line" />
+                            <span className="btn" />
+                        </div>
+                        <span className="right-btn" />
+                    </div>
+
+                    <div className="overall flex-1 f--hlc">
+                        <span style={{width : overallWidth}} />
                     </div>
                 </div>
             </div>
