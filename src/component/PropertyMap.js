@@ -110,6 +110,12 @@ propertyMap['text'] = [
     { name: 'text',showName:'内容', type: propertyType.Text, default: '', isProperty: true }
 ];
 
+propertyMap['counter'] = [
+    ...propertyMap['sprite'],
+    { name: 'value', type: propertyType.Number, default: 0, isProperty: true },
+    { name: 'precision', type: propertyType.Integer, default: 0, isProperty: true }
+];
+
 propertyMap['video'] = [
     ...propertyMap['sprite'],
     { name: 'url', type: propertyType.String, default: '', isProperty: true }
@@ -168,6 +174,11 @@ propertyMap['graphics'] = [
 
 propertyMap['rect'] = [
     ...propertyMap['graphics']
+];
+
+propertyMap['button'] = [
+    ...propertyMap['rect'],
+    { name: 'value', type: propertyType.Text, default: '', isProperty: true }
 ];
 
 propertyMap['slidetimer'] = [

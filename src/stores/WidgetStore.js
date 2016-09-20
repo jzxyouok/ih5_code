@@ -27,7 +27,7 @@ function onSelect() {
   WidgetActions['selectWidget'](this);
 }
 
-const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext', 'qrcode'];
+const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext', 'qrcode', 'counter', 'button'];
 
 function loadTree(parent, node) {
   let current = {};
@@ -425,20 +425,17 @@ export default Reflux.createStore({
             } else {
                 bridge.selectWidget(this.currentWidget.node);
             }
-            //树遍历锁
+            //递归遍历加锁
             let parentLock = this.currentWidget.props['locked'];
-            let loopLock = (node, i) => {
-                let children = node.children;
-                if (children.length>0) {
+            let loopLock = (children) => {
+                for(let i=0; i<children.length; i++) {
                     children[i].props['locked'] = parentLock;
-                    if (i == children.length - 1) {
-                        loopLock(children[0], 0);
-                    } else {
-                        loopLock(node, i + 1);
+                    if(children[i].children&&children[i].children.length>0) {
+                        loopLock(children[i].children);
                     }
                 }
             };
-            loopLock(this.currentWidget, 0);
+            loopLock(this.currentWidget.children);
 
             this.trigger({redrawTree: true});
             this.render();
