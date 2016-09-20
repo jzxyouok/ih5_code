@@ -246,31 +246,21 @@ class ObjectTree extends React.Component {
         }
     }
 
-    eventBtn(nid, data, event) {
-        event.stopPropagation();
+    eventBtn(nid, data) {
         //分情况处理
         //已经有触发的activeEvent
         this.fromEventBtn=true;
-        if(this.state.activeEvent) {
-            if(this.state.nid === nid) {
-                //相同id，修改data的的enableEvent属性
+        if(this.state.nid != nid) {
+            this.setState({
+                activeEvent: true
+            }, ()=>{
+                this.chooseBtn(nid, data);
+            });
+        } else  {
+            if(this.state.activeEvent) {
                 WidgetActions['enableEvent']();
                 WidgetActions['render']();
                 this.fromEventBtn=false;
-            } else {
-                this.setState({
-                    activeEvent: true
-                }, ()=>{
-                    this.chooseBtn(nid, data);
-                });
-            }
-        } else {
-            if(this.state.nid != nid) {
-                this.setState({
-                    activeEvent: true
-                }, ()=>{
-                    this.chooseBtn(nid, data);
-                });
             } else {
                 this.setState({
                     activeEvent: !this.state.activeEvent
