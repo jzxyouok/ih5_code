@@ -52,6 +52,7 @@ class TimelineView extends React.Component {
         this.timeInputSure = this.timeInputSure.bind(this);
         this.inputOnBlur = this.inputOnBlur.bind(this);
         this.changSwitchState = this.changSwitchState.bind(this);
+        this.onTimerClick = this.onTimerClick.bind(this);
 	}
 
 	componentDidMount() {
@@ -145,9 +146,12 @@ class TimelineView extends React.Component {
             currentTime:value
         });
         TimelineAction['ChangeKeyframe'](false,value);
+	}
+
+    onTimerClick(){
         changeKeyAction['ChangeKey'](false);
         this.changSwitchState(0);
-	}
+    }
 
     ChangeKeyframe(data){
         //console.log(data);
@@ -449,7 +453,7 @@ class TimelineView extends React.Component {
                             { unit(totalTime) }
                         </ul>
 
-                        <div style={{ width : 61 * totalTime +"px" }}>
+                        <div style={{ width : 61 * totalTime +"px" }} onClick={this.onTimerClick.bind(this)}>
                             <Slider max={1}
                                     step={0.001}
                                     value={this.state.currentTime}

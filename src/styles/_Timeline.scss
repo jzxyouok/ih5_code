@@ -95,7 +95,7 @@ $size: 25px;
                 height: 16px;
                 margin: 0 10px 0 8px;
                 display: block;
-                background-position: -324px -1px;
+                background-position: 2px 1px;
 
                 &.active{
                     background-position: 0 -40px;
@@ -267,6 +267,7 @@ $size: 25px;
 				@include btn();
 				@include bg(8, 0);
                 z-index: 4;
+                pointer-events:none;
 				//transform: translateX(-4px);
 
 				&:active {
