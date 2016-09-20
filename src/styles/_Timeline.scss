@@ -531,7 +531,7 @@ $size: 25px;
                     @include btn();
                     @include bg(14, 0);
                     position: absolute;
-                    left: 47px;
+                    left: 0;
                     width: 9px;
                     height: 14px;
                     z-index: 1;
@@ -546,6 +546,7 @@ $size: 25px;
 
         .overall {
             height: 14px;
+            overflow: hidden;
 
             span {
                 background: #424242;

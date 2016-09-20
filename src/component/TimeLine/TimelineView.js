@@ -1,6 +1,7 @@
 import React from 'react';
 import cls from 'classnames';
 import bridge from 'bridge';
+import $ from 'jquery';
 
 import { Slider, Row, Col, Card, Button } from 'antd';
 import WidgetStore from '../../stores/WidgetStore';
@@ -33,7 +34,11 @@ class TimelineView extends React.Component {
             inputState : false,
             inputTime : null,
             isChangeKey : false,
-            changSwitch : false
+            changSwitch : false,
+            overallWidth : 100 + "%",
+            percentage : null,
+            movableDistance : 0,
+            marginLeft : 0
 		};
 		this.onTimer = this.onTimer.bind(this);
 		//this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -53,6 +58,7 @@ class TimelineView extends React.Component {
         this.inputOnBlur = this.inputOnBlur.bind(this);
         this.changSwitchState = this.changSwitchState.bind(this);
         this.onTimerClick = this.onTimerClick.bind(this);
+        this.scrollBtn = this.scrollBtn.bind(this);
 	}
 
 	componentDidMount() {
@@ -106,6 +112,36 @@ class TimelineView extends React.Component {
 				changed.timerNode = node;
 			}
 			this.setState(changed);
+
+            let totalTime = 10;
+            let data = changed.timerNode ? changed.timerNode : this.state.timerNode;
+            if(data){
+                if(data.timerWidget){
+                    totalTime = data.timerWidget.props.totalTime ? data.timerWidget.props.totalTime : 10;
+                    let maxWidth  =  window.innerWidth-318-170;
+                    //console.log(61 * totalTime,maxWidth);
+                    if( 61 * totalTime > maxWidth ){
+                        let percentage = 61 * totalTime / maxWidth;
+                        percentage.toFixed(3);
+                        //console.log(percentage);
+                        let width =  maxWidth / percentage;
+                        width.toFixed(3);
+                        this.setState({
+                            percentage : percentage,
+                            overallWidth : width + "px",
+                            movableDistance : maxWidth - width
+                        });
+                        this.scrollBtn();
+                    }
+                    else {
+                        this.setState({
+                            percentage : null,
+                            movableDistance : 0,
+                            overallWidth : 100 + "%"
+                        });
+                    }
+                }
+            }
 		}
 		if (widget.updateTrack !== undefined) {
             //console.log(widget.updateTrack );
@@ -307,6 +343,40 @@ class TimelineView extends React.Component {
         })
     }
 
+    scrollBtn(){
+        if(this.state.percentage !== null){
+            let move = false;
+            let _x;
+            let self = this;
+            let initialmarginLeft = 0;
+            let movableDistance = self.state.movableDistance;
+            $(".overall-zoom .overall span").mousedown(function(e){
+                move=true;
+                _x=e.pageX;
+            });
+            $(document).mousemove(function(e){
+                if(move){
+                    let x =  e.pageX - _x;
+                    let value = initialmarginLeft + x;
+                    let result;
+                    if(value<0){
+                        result = 0;
+                    }
+                    else {
+                        result = value >= movableDistance ? movableDistance : value
+                    }
+                    self.setState({
+                        marginLeft : result
+                    });
+                }
+            }).mouseup(function(){
+                move=false;
+                initialmarginLeft = self.state.marginLeft >= movableDistance
+                                     ? movableDistance : self.state.marginLeft;
+            });
+        }
+    }
+
 	//onWidgetClick(event) {
 	//	event.preventDefault();
 	//	event.stopPropagation();
@@ -399,11 +469,6 @@ class TimelineView extends React.Component {
         };
 
         let scrollwidth = window.innerWidth-318 + "px";
-        let overallWidth = 100 + '%' ;
-        if( 61 * totalTime > scrollwidth-170 ){
-            let percentage = 61 * totalTime / (scrollwidth-170 );
-            overallWidth = (scrollwidth-170) / percentage + '%';
-        }
 
         return (
             <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })}>
@@ -461,7 +526,7 @@ class TimelineView extends React.Component {
                         <span className="line" />
                     </div>
 
-                    <div id='TimelineRuler' className='timline-column-right'>
+                    <div id='TimelineRuler' className='timline-column-right' style={{ width : scrollwidth }}>
                         {
                             // <div id="TimelineRulerNumbers">
                             // </div>
@@ -472,11 +537,14 @@ class TimelineView extends React.Component {
                         }
                         <span className="unit-0">0s</span>
 
-                        <ul className="unit" style={{ width : 61 * totalTime +"px" }}>
+                        <ul className="unit"
+                            style={{ width : 61 * totalTime +"px" }}>
                             { unit(totalTime) }
                         </ul>
 
-                        <div style={{ width : 61 * totalTime +"px" }} onClick={this.onTimerClick.bind(this)}>
+                        <div style={{ width : 61 * totalTime +"px"}}
+                             onClick={this.onTimerClick.bind(this)}>
+
                             <Slider max={totalTime}
                                     step={0.01}
                                     value={this.state.currentTime}
@@ -514,7 +582,7 @@ class TimelineView extends React.Component {
                     </div>
 
                     <div className="overall flex-1 f--hlc">
-                        <span style={{width : overallWidth}} />
+                        <span style={{ width : this.state.overallWidth, marginLeft : this.state.marginLeft }} />
                     </div>
                 </div>
             </div>
