@@ -138,10 +138,10 @@ class TimelineView extends React.Component {
 	}
 
 	onTimerChange(value) {
-		WidgetActions['resetTrack']();
-		this.state.timerNode.node['seek'](value * this.state.timerNode.node['totalTime']);
-		WidgetActions['syncTrack']();
         //console.log(value);
+		WidgetActions['resetTrack']();
+		this.state.timerNode.node['seek'](value);
+		WidgetActions['syncTrack']();
 		this.setState({
             currentTime:value
         });
@@ -208,19 +208,21 @@ class TimelineView extends React.Component {
     formatter(value){
         let data = value;
         //data = data.toFixed(4);
+        //console.log(data);
         if(this.state.isPlaying && this.state.timerNode){
             let totalTime = this.state.timerNode.node['totalTime'];
-            if(data == totalTime/10){
+            if(data == totalTime){
                 this.setState({
                     isPlaying: false
                 })
             }
         }
-        return (data * 10).toFixed(2);
+        return data.toFixed(2);
     }
 
     timeInput(){
         let data = this.refs.TimeInput.value;
+        //console.log(data);
         this.setState({
             inputState : true,
             inputTime : data
@@ -237,10 +239,10 @@ class TimelineView extends React.Component {
             }
             this.setState({
                 inputState : false,
-                currentTime : parseFloat(data) / 10
+                currentTime : parseFloat(data)
             });
             if(this.state.isChangeKey){
-                TimelineAction['ChangeKeyframe'](true,parseFloat(data) / 10);
+                TimelineAction['ChangeKeyframe'](true,parseFloat(data));
             }
         }
         else if(event.key == "ArrowUp"){
@@ -265,10 +267,10 @@ class TimelineView extends React.Component {
         }
         this.setState({
             inputState : false,
-            currentTime : parseFloat(data) / 10
+            currentTime : parseFloat(data)
         });
         if(this.state.isChangeKey){
-            TimelineAction['ChangeKeyframe'](true,parseFloat(data) / 10);
+            TimelineAction['ChangeKeyframe'](true,parseFloat(data));
         }
     }
 
@@ -349,8 +351,8 @@ class TimelineView extends React.Component {
                 tracks.push(
                     <VxSlider
                         key={index++}
-                        max={1}
-                        step={0.001}
+                        max={totalTime}
+                        step={0.01}
                         refTrack={node}
                         pic={pic}
                         width={61 * totalTime}
@@ -398,7 +400,7 @@ class TimelineView extends React.Component {
                                   className={cls({'active': this.state.isChangeKey})} />
 
                             <input type='text'
-                                   value={ this.state.inputState ?  this.state.inputTime :(this.state.currentTime * 10).toFixed(2) }
+                                   value={ this.state.inputState ?  this.state.inputTime :this.state.currentTime.toFixed(2) }
                                    onChange={ this.timeInput.bind(this) }
                                    onKeyDown = { this.timeInputSure.bind(this)}
                                    onBlur={ this.inputOnBlur.bind(this) }
@@ -454,8 +456,8 @@ class TimelineView extends React.Component {
                         </ul>
 
                         <div style={{ width : 61 * totalTime +"px" }} onClick={this.onTimerClick.bind(this)}>
-                            <Slider max={1}
-                                    step={0.001}
+                            <Slider max={totalTime}
+                                    step={0.01}
                                     value={this.state.currentTime}
                                     tipFormatter={  this.formatter  }
                                     onChange={this.onTimerChange.bind(this)} />

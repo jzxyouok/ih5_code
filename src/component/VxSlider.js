@@ -89,6 +89,7 @@ function getMousePosition(vertical, e) {
 function pauseEvent(e) {
   e.stopPropagation();
   e.preventDefault();
+  TimelineAction['ChangeKeyframe'](true);
 }
 
 // 轨迹 的 组件
@@ -157,7 +158,6 @@ class VxRcSlider extends RcSlider {
             this.props.refTimer.node['pause']();
             this.props.refTimer.node['seek'](
                 this.props.refTrack.props['data'][this.state.currentHandle][0]
-                * this.props.refTimer.node['totalTime']
             );
             //TimelineAction['ChangeKeyframe'](true);
             changeKeyAction['ChangeKey'](false);
@@ -244,11 +244,10 @@ class VxRcSlider extends RcSlider {
     }
 
     onHandleClick(handle) {
-        //console.log(handle);
+        //console.log(this.props.refTrack.props['data']);
         this.props.refTimer.node['pause']();
         this.props.refTimer.node['seek'](
             this.props.refTrack.props['data'][handle.props.handleIndex][0]
-            * this.props.refTimer.node['totalTime']
         );
         this.setState({
             currentHandle : handle.props.handleIndex,
@@ -261,30 +260,6 @@ class VxRcSlider extends RcSlider {
             this.isHaveTrunBtn(true,this.props.refTrack.props.data.length -1);
             this.forceUpdate();
         });
-        //if (this.props.isCurrent) {
-        //    this.props.refTimer.node['pause']();
-        //    this.props.refTimer.node['seek'](
-        //        this.props.refTrack.props['data'][handle.props.handleIndex][0]
-        //        * this.props.refTimer.node['totalTime']
-        //    );
-        //    this.state.currentHandle = handle.props.handleIndex;
-        //    //WidgetActions['activeHandle'](true);
-        //
-        //    WidgetActions['syncTrack']();
-        //    this.setState({
-        //        changeKeyValue : null,
-        //        changeKey : handle.props.handleIndex,
-        //        isChooseKey : true
-        //    })
-        //}
-        //else {
-        //    this.setState({
-        //        currentHandle: -1,
-        //        changeKey : null,
-        //        changeKeyBool : false,
-        //        changeKeyValue : null
-        //    })
-        //}
     }
 
     onMove(e, position) {
@@ -302,14 +277,15 @@ class VxRcSlider extends RcSlider {
 
             const value = this.trimAlignValue(this.startValue + diffValue);
 
-            let points = this.state.points;
+            let points = this.props.points;
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
-            this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
+            this.props.refTimer.node['seek'](value);
+            //this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
             this.setState({
                 points: points
             },()=>{
-                TimelineAction['ChangeKeyframe'](true);
+                //TimelineAction['ChangeKeyframe'](true);
             });
         }
     }

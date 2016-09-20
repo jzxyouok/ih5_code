@@ -7,7 +7,8 @@ const propertyType = {
     Percentage: 5,
     Color: 6,
     Select:7,
-    Float:8
+    Float:8,
+    Color2:9
 };
 
 const propertyMap = {};
@@ -25,7 +26,7 @@ propertyMap['root'] = [
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
 
     { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
-    { name: 'color',showName:'舞台颜色',showClipped:'hide', type: propertyType.Color, default: '', group:'tools', isProperty: true },
+    { name: 'color',showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools', isProperty: true },
     { name: 'init', isEvent: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
