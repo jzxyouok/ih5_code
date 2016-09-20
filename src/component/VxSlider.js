@@ -157,7 +157,6 @@ class VxRcSlider extends RcSlider {
             this.props.refTimer.node['pause']();
             this.props.refTimer.node['seek'](
                 this.props.refTrack.props['data'][this.state.currentHandle][0]
-                * this.props.refTimer.node['totalTime']
             );
             //TimelineAction['ChangeKeyframe'](true);
             changeKeyAction['ChangeKey'](false);
@@ -248,7 +247,6 @@ class VxRcSlider extends RcSlider {
         this.props.refTimer.node['pause']();
         this.props.refTimer.node['seek'](
             this.props.refTrack.props['data'][handle.props.handleIndex][0]
-            * this.props.refTimer.node['totalTime']
         );
         this.setState({
             currentHandle : handle.props.handleIndex,
@@ -305,7 +303,8 @@ class VxRcSlider extends RcSlider {
             let points = this.state.points;
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
-            this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
+            this.props.refTimer.node['seek'](value);
+            //this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
             this.setState({
                 points: points
             },()=>{
