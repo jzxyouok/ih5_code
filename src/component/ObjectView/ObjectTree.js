@@ -30,6 +30,7 @@ class ObjectTree extends React.Component {
         this.showHideBtn = this.showHideBtn.bind(this);
         this.lockBtn = this.lockBtn.bind(this);
         this.eventBtn = this.eventBtn.bind(this);
+        this.fromEventBtn=false;    //statusChange事件的触发是否来源于事件按钮
 
         //对象的复制/剪切/黏贴
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
@@ -85,10 +86,14 @@ class ObjectTree extends React.Component {
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
             }
+            //是否来自于点击event按钮
+            let activeEvent = this.fromEventBtn;
             this.setState({
                 selectWidget : widget.selectWidget
                 , nid : widget.selectWidget.key
-                , activeEvent: false
+                , activeEvent: activeEvent
+            }, ()=> {
+                this.fromEventBtn = false;
             });
             this.addOpenId();
             //触发聚焦
@@ -192,7 +197,8 @@ class ObjectTree extends React.Component {
     chooseBtn(nid, data){
         //console.log(data);
         this.setState({
-            nid : nid
+            nid : nid,
+            activeEvent: false
         },()=>{
             WidgetActions['selectWidget'](data, true);
         });
@@ -226,44 +232,40 @@ class ObjectTree extends React.Component {
         //console.log(data);
     }
 
-    showHideBtn(data,bool, event){
-        event.stopPropagation();
+    showHideBtn(data,bool){
         //console.log(data);
         data.props['visible'] = bool;
         data.node['visible'] = bool;
         WidgetActions['render']();
     }
 
-    lockBtn(key, data, event) {
-        event.stopPropagation();
+    lockBtn(key, data) {
         if(key === this.state.nid){
             WidgetActions['lockWidget']();
             WidgetActions['render']();
         }
     }
 
-    eventBtn(nid, data, event) {
-        event.stopPropagation();
+    eventBtn(nid, data) {
         //分情况处理
         //已经有触发的activeEvent
-        if(this.state.activeEvent) {
-            if(this.state.nid === nid) {
-                //相同id，修改data的的enableEvent属性
+        this.fromEventBtn=true;
+        if(this.state.nid != nid) {
+            this.setState({
+                activeEvent: true
+            }, ()=>{
+                this.chooseBtn(nid, data);
+            });
+        } else  {
+            if(this.state.activeEvent) {
                 WidgetActions['enableEvent']();
                 WidgetActions['render']();
+                this.fromEventBtn=false;
             } else {
-                //不是选中的话，就选中这个对象，activeEvent,data的的enableEvent属性不变
-                this.chooseBtn(nid, data);
-            }
-        } else {
-            this.setState({
-                activeEvent: !this.state.activeEvent
-            });
-            if(this.state.nid != nid) {
                 this.setState({
-                    nid : nid
-                },()=>{
-                    WidgetActions['selectWidget'](data, true);
+                    activeEvent: !this.state.activeEvent
+                }, ()=>{
+                    this.fromEventBtn=false;
                 });
             }
         }
@@ -454,80 +456,91 @@ class ObjectTree extends React.Component {
                          onBlur={this.itemRemoveKeyListener.bind(this)}
                          onDragStart={this.itemDragStart.bind(this,v.key, v)}
                          onDragEnd={this.itemDragEnd}>
-                        <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
-                             onClick={this.chooseBtn.bind(this,v.key, v)}
-                             style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36  }}>
+                <div className='clearfix'>
+                    <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
+                         onClick={this.chooseBtn.bind(this,v.key, v)}
+                         style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
 
-                            {
-                                v.className =='track' || v.className=='effect'
-                                || v.className=='easing'||v.className=='world'
-                                ||v.className=='body'||v.className=='audio'
-                                    ? btn(-2, v)
-                                    : v.props.visible === false
-                                        ? btn(0, v)
-                                        : btn(1, v)
-                            }
+                        {
+                            v.className =='track' || v.className=='effect'
+                            || v.className=='easing'||v.className=='world'
+                            ||v.className=='body'||v.className=='audio'
+                                ? btn(-2, v)
+                                : v.props.visible === false
+                                ? btn(0, v)
+                                : btn(1, v)
+                        }
 
-                            {
-                                v.children.length > 0
-                                    ? icon( 1 , v.key)
-                                    : icon( 0 , v.key)
-                            }
+                        {
+                            v.children.length > 0
+                                ? icon( 1 , v.key)
+                                : icon( 0 , v.key)
+                        }
 
-                            <img src={ pic } />
+                        <img src={ pic } />
 
-                            <p>{v.className}</p>
-                            {
-                                v.props.locked!==undefined && v.props.locked
-                                    ? <span className='lock-icon' onClick={ this.lockBtn.bind(this, v.key, v) }/>
-                                    : null
-                            }
-                            {
-                                Object.keys(v.events).length > 0
-                                    ? enableEventBtn(v.key, v)
-                                    : null
-                            }
-                        </div>
-
-                        <div className={$class({'hidden': this.state.openData.indexOf(v.key) < 0 }) }>
-                            {
-                                v.children.length === 0
-                                    ? null
-                                    : stageContent(v.children)
-                            }
-                        </div>
-                    </div>;
+                        <p>{v.className}</p>
+                        {
+                            v.props.locked!==undefined && v.props.locked
+                                ? <span className='lock-icon' onClick={ this.lockBtn.bind(this, v.key, v) }/>
+                                : null
+                        }
+                    </div>
+                    <div className={$class('item-event')}>
+                        {
+                            Object.keys(v.events).length > 0
+                                ? enableEventBtn(v.key, v)
+                                : null
+                        }
+                    </div>
+                </div>
+                <div className={$class({'hidden': this.state.openData.indexOf(v.key) < 0 }) }>
+                    {
+                        v.children.length === 0
+                            ? null
+                            : stageContent(v.children)
+                    }
+                </div>
+            </div>;
         };
 
         return (
             <div className='ObjectTree'>
                 {
                     !objectData
-                    ? null
-                    : <div className='stage'>
-                        <div className={$class('stage-title f--h f--hlc',{'active': objectData.tree.key === this.state.nid})}
-                             style={{ width : this.props.width - 36 }}
-                             onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}
-                             onFocus={this.itemAddKeyListener.bind(this)}
-                             onBlur={this.itemRemoveKeyListener.bind(this)}
-                             tabIndex={objectData.tree.key}
-                             id={'tree-item-'+ objectData.tree.key}>
-                            { btn(-1, objectData.tree) }
-                            {
-                                objectData.tree.children.length > 0
-                                    ? icon( 1 , objectData.tree.key)
-                                    : icon( 0 , objectData.tree.key)
-                            }
-                            <span className='stage-icon' />
-                            <p>{ objectData.name }</p>
+                        ? null
+                        : <div className='stage'>
+                        <div className='clearfix'>
+                            <div className={$class('stage-title f--h f--hlc',{'active': objectData.tree.key === this.state.nid})}
+                                 style={{ width : this.props.width - 36 - 24 }}
+                                 onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}
+                                 onFocus={this.itemAddKeyListener.bind(this)}
+                                 onBlur={this.itemRemoveKeyListener.bind(this)}
+                                 tabIndex={objectData.tree.key}
+                                 id={'tree-item-'+ objectData.tree.key}>
+                                { btn(-1, objectData.tree) }
+                                {
+                                    objectData.tree.children.length > 0
+                                        ? icon( 1 , objectData.tree.key)
+                                        : icon( 0 , objectData.tree.key)
+                                }
+                                <span className='stage-icon' />
+                                <p>{ objectData.name }</p>
+                            </div>
+                            <div className={$class('item-event')}>
+                                {
+                                    Object.keys(objectData.tree.events).length > 0
+                                        ? enableEventBtn(objectData.tree.key, objectData.tree)
+                                        : null
+                                }
+                            </div>
                         </div>
-
                         <div className={$class('stage-content', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}
                              onDragOver={this.itemDragOver}>
                             {
                                 objectData.tree.children.length === 0
-                                ? null
-                                : stageContent(objectData.tree.children)
+                                    ? null
+                                    : stageContent(objectData.tree.children)
                                 //this.state.widgetTreeChildren
                                 //    ?  this.state.widgetTreeChildren.length === 0
                                 //            ? null

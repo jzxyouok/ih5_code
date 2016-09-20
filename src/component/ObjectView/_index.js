@@ -65,10 +65,11 @@ class ObjectView extends React.Component {
     onInitHasEvent(selectWidget){
         let hasEvent = false;
         let canHaveEvent = true;
-        if(selectWidget.className === 'root') {
-            canHaveEvent = false;
-            hasEvent = false;
-        } else if (Object.keys(selectWidget.events).length > 0) {
+        // if(selectWidget.className === 'root') {
+        //     canHaveEvent = false;
+        //     hasEvent = false;
+        // } else
+        if (Object.keys(selectWidget.events).length > 0) {
             hasEvent = true;
         }
         this.setState({
@@ -79,7 +80,6 @@ class ObjectView extends React.Component {
 
     onInitLock(selectWidget) {
         let canLock = false;
-        // let locked = false;
         if(selectWidget.className === 'root') {
             canLock = false;
         } else {
@@ -182,9 +182,6 @@ class ObjectView extends React.Component {
                 </div>
 
                 <div className='ov--footer f--h f--hlc'>
-                    {
-                        // not-allowed 为不可点击
-                    }
                     <button className={$class(
                         'btn btn-clear lock-btn',
                         {'not-allowed': !this.state.canLock||this.state.whichContent===1, 'locked': this.state.locked})}
