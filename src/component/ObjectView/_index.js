@@ -65,10 +65,11 @@ class ObjectView extends React.Component {
     onInitHasEvent(selectWidget){
         let hasEvent = false;
         let canHaveEvent = true;
-        if(selectWidget.className === 'root') {
-            canHaveEvent = false;
-            hasEvent = false;
-        } else if (Object.keys(selectWidget.events).length > 0) {
+        // if(selectWidget.className === 'root') {
+        //     canHaveEvent = false;
+        //     hasEvent = false;
+        // } else
+        if (Object.keys(selectWidget.events).length > 0) {
             hasEvent = true;
         }
         this.setState({
