@@ -69,8 +69,8 @@ export default Reflux.createStore({
 
     changeToolBoxItems: function(widget) {
         //change items here 用secondary的去比对；
-        for (var i = 0; i < toolBoxItem.data.length; i++) {
-            for (var j = 0; j < toolBoxItem.data[i]['secondary'].length; j++) {
+        for (let i = 0; i < toolBoxItem.data.length; i++) {
+            for (let j = 0; j < toolBoxItem.data[i]['secondary'].length; j++) {
                 if (checkChildClass(widget, toolBoxItem.data[i]['secondary'][j].className)) {
                     toolBoxItem.data[i]['secondary'][j]['disabled'] = false;
                 } else {

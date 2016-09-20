@@ -425,6 +425,21 @@ export default Reflux.createStore({
             } else {
                 bridge.selectWidget(this.currentWidget.node);
             }
+            //树遍历锁
+            let parentLock = this.currentWidget.props['locked'];
+            let loopLock = (node, i) => {
+                let children = node.children;
+                if (children.length>0) {
+                    children[i].props['locked'] = parentLock;
+                    if (i == children.length - 1) {
+                        loopLock(children[0], 0);
+                    } else {
+                        loopLock(node, i + 1);
+                    }
+                }
+            };
+            loopLock(this.currentWidget, 0);
+
             this.trigger({redrawTree: true});
             this.render();
         }
