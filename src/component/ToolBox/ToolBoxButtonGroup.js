@@ -39,6 +39,7 @@ class ToolBoxButtonGroup extends Component {
                 <ToolBoxButton
                     level={1}
                     isPrimary={true}
+                    expanded={this.props.expanded}
                     gid={this.props.gid}
                     {...this.props.secondary[this.props.primary]}/>
                 {
@@ -49,6 +50,7 @@ class ToolBoxButtonGroup extends Component {
                                 <ToolBoxButton
                                     level={2}
                                     key={index}
+                                    expanded={this.props.expanded}
                                     isPrimary={index===this.props.primary}
                                     gid={this.props.gid}
                                     {...item} />)

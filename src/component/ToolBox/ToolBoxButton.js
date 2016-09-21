@@ -66,8 +66,8 @@ class ToolBoxButton extends Component {
         //点击的时候清除一下overlay
         new DrawRect().cleanUp();
 
-        //选择了的话可以再点击取消选择
-        if(this.state.selected&&this.props.level==1) {
+        //第一层已经选择了或者打开了，被选了的话，再点击取消选择
+        if(this.state.selected&&(this.props.level==1||(this.props.expanded&&this.props.level==2))) {
             ToolBoxAction['deselect']();
         } else {
             if(this.props.drawRect || this.props.drawRectText){
@@ -83,8 +83,8 @@ class ToolBoxButton extends Component {
     onRightClick(event) {
         event.preventDefault();
         event.stopPropagation();
-
-        if(this.props.isPrimary) {
+        //第一层的时候点击右键，还原所有画框并弹出第二菜单
+        if(this.props.level === 1) {
             //点击的时候清除一下overlay
             new DrawRect().cleanUp();
             ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
@@ -232,7 +232,8 @@ class ToolBoxButton extends Component {
             <button
                 className={cls('ToolBoxButton',
                 {'ToolBoxButtonPrimary': this.props.isPrimary},
-                {'active': this.state.selected})}
+                {'active': this.state.selected},
+                {'tool-expanded':this.props.expanded})}
                 title={this.props.name}
                 disabled={this.props.disabled}
                 onClick={this.onClick.bind(this)}
