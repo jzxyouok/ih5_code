@@ -108,7 +108,9 @@ export default Reflux.createStore({
         }
         if(!hasSecondary(toolBoxConfig.data, groupId) && !update) {
             //看是否有多于2个按钮
-            this.deselect();
+            // this.deselect();
+            toolBoxConfig.openSecondaryId = null;
+            this.trigger(toolBoxConfig);
             return;
         }
         toolBoxConfig.openSecondaryId = groupId;

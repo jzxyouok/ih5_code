@@ -78,8 +78,6 @@ class ToolBoxButton extends Component {
                 ToolBoxAction['deselect']();
             }
         }
-
-
     }
 
     onRightClick(event) {
