@@ -39,7 +39,11 @@ class TimelineView extends React.Component {
             percentage : null,
             movableDistance : 0,
             marginLeft : 0,
-            isScroll : false
+            isScroll : false,
+            multiple : 1,
+            zoomOrLessNUm : 0,
+            allWidth : null,
+            dragZoomLeft : 45.5
 		};
 		this.onTimer = this.onTimer.bind(this);
 		//this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -60,11 +64,15 @@ class TimelineView extends React.Component {
         this.changSwitchState = this.changSwitchState.bind(this);
         this.onTimerClick = this.onTimerClick.bind(this);
         this.scrollBtn = this.scrollBtn.bind(this);
+        this.zoomOrLess = this.zoomOrLess.bind(this);
+        this.changeAllWidth = this.changeAllWidth.bind(this);
+        this.dragZoom = this.dragZoom.bind(this);
 	}
 
 	componentDidMount() {
 		this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         TimelineStores.listen(this.ChangeKeyframe.bind(this));
+        this.dragZoom();
 	}
 
 	componentWillUnmount() {
@@ -113,36 +121,7 @@ class TimelineView extends React.Component {
 				changed.timerNode = node;
 			}
 			this.setState(changed);
-
-            let totalTime = 10;
-            let data = changed.timerNode ? changed.timerNode : this.state.timerNode;
-            if(data){
-                if(data.timerWidget){
-                    totalTime = data.timerWidget.props.totalTime ? data.timerWidget.props.totalTime : 10;
-                    let maxWidth  =  window.innerWidth-318-170;
-                    //console.log(61 * totalTime,maxWidth);
-                    if( 61 * totalTime > maxWidth ){
-                        let percentage = (61 * totalTime + 20) / maxWidth;
-                        percentage.toFixed(3);
-                        //console.log(percentage);
-                        let width =  maxWidth / percentage;
-                        width.toFixed(3);
-                        this.setState({
-                            percentage : percentage,
-                            overallWidth : width + "px",
-                            movableDistance : maxWidth - width
-                        });
-                        this.scrollBtn();
-                    }
-                    else {
-                        this.setState({
-                            percentage : null,
-                            movableDistance : 0,
-                            overallWidth : 100 + "%"
-                        });
-                    }
-                }
-            }
+            this.changeAllWidth(true, changed);
 		}
 		if (widget.updateTrack !== undefined) {
             //console.log(widget.updateTrack );
@@ -364,7 +343,8 @@ class TimelineView extends React.Component {
                         result = 0;
                     }
                     else {
-                        result = value >= movableDistance ? movableDistance : value
+                        result = value >= movableDistance ? movableDistance : value;
+                        //console.log(result,movableDistance);
                     }
                     self.setState({
                         marginLeft : result
@@ -380,6 +360,154 @@ class TimelineView extends React.Component {
                 })
             });
         }
+    }
+
+    zoomOrLess(num){
+        let index = this.state.zoomOrLessNUm;
+        if(num == -1 && index !== -1){
+            let multiple;
+            if(index - 1 == 0){
+                multiple = 1;
+            }
+            else {
+                multiple = -10;
+            }
+            this.setState({
+                zoomOrLessNUm : index-1,
+                multiple : multiple,
+                marginLeft : 0
+            },()=>{
+                console.log('xxx',this.state.zoomOrLessNUm,this.state.multiple);
+                this.changeAllWidth(false);
+            })
+        }
+        else if(num == 1 && index !== 1){
+            let multiple;
+            if(index + 1 == 1){
+                multiple = 10;
+            }
+            else {
+                multiple = 1;
+            }
+            this.setState({
+                zoomOrLessNUm : index + 1,
+                multiple : multiple,
+                marginLeft : 0
+            },()=>{
+                this.changeAllWidth(false);
+                console.log('+++',this.state.zoomOrLessNUm,this.state.multiple);
+            })
+        }
+    }
+
+    changeAllWidth(bool,changed){
+        let totalTime = 10;
+        let data;
+        if(bool){
+            data = changed.timerNode ? changed.timerNode : this.state.timerNode;
+        }
+        else {
+            data = this.state.timerNode;
+        }
+
+        if(data){
+            if(data.timerWidget){
+                totalTime = data.timerWidget.props.totalTime ? data.timerWidget.props.totalTime : 10;
+                let maxWidth  =  window.innerWidth-318-170;
+                let multiple = this.state.multiple;
+                let allWidth;
+                if(multiple == -10){
+                    allWidth = 61 * totalTime / (- this.state.multiple)
+                }
+                else {
+                    allWidth = 61 * totalTime * this.state.multiple
+                }
+                //console.log('ooo',allWidth,this.state.multiple, maxWidth);
+                if( allWidth > maxWidth ){
+                    let percentage = (allWidth + 20) / maxWidth;
+                    percentage.toFixed(3);
+                    //console.log(percentage);
+                    if(percentage <=0){
+                        this.setState({
+                            percentage : null,
+                            movableDistance : 0,
+                            overallWidth : 100 + "%",
+                            allWidth : allWidth
+                        });
+                    }
+                    else {
+                        let width =  maxWidth / percentage;
+                        width.toFixed(3);
+                        this.setState({
+                            percentage : percentage,
+                            overallWidth : width + "px",
+                            movableDistance : maxWidth - width,
+                            allWidth : allWidth
+                        },()=>{
+                            //console.log(width,this.state.movableDistance);
+                            this.scrollBtn();
+                        });
+                    }
+                }
+                else {
+                    this.setState({
+                        percentage : null,
+                        movableDistance : 0,
+                        overallWidth : 100 + "%",
+                        allWidth : allWidth
+                    });
+                }
+            }
+        }
+    }
+
+    dragZoom(){
+        let move = false;
+        let _x;
+        let self = this;
+        let left = 45.5;
+        let p = 0;
+        $(".overall-zoom .zoom-slider .btn").mousedown(function(e){
+            move=true;
+            _x=e.pageX;
+        });
+        $(document).mousemove(function(e){
+            if(move){
+                let x =  e.pageX - _x;
+                let multiple;
+                p = left + x;
+                let a = p /10;
+                a.toFixed(2);
+                //console.log(left,  x , p);
+                if(p>=91){
+                    p = 91;
+                    multiple = 10;
+                }
+                else if( p <= 0){
+                    p = 0;
+                    multiple = -10;
+                }
+                else if( p == 45.5){
+                    multiple = 1;
+                }
+                //else if(p>0 && p<45.5){
+                //    multiple = -a;
+                //}
+                //else{
+                //    multiple = a;
+                //}
+                console.log(multiple,p);
+                self.setState({
+                    dragZoomLeft : p
+                    //multiple : multiple
+                },()=>{
+                    //self.changeAllWidth(false);
+                })
+            }
+        }).mouseup(function(){
+            move=false;
+            left = self.state.dragZoomLeft;
+        });
     }
 
 	//onWidgetClick(event) {
@@ -442,7 +570,7 @@ class TimelineView extends React.Component {
                         step={0.01}
                         refTrack={node}
                         pic={pic}
-                        width={61 * totalTime}
+                        width={this.state.allWidth}
                         refTimer={this.state.timerNode}
                         points={node.props.data}
                         myID = { node.parent.key }
@@ -467,11 +595,29 @@ class TimelineView extends React.Component {
 
         let unit = (data)=>{
             let arry = [];
-            for(let i=1; i<=data; i++){
+            let multiple = this.state.multiple;
+            let totalTime;
+            if(multiple == -10){
+                totalTime = data / (- this.state.multiple)
+            }
+            else {
+                totalTime = data * this.state.multiple
+            }
+            for(let i=1; i<=totalTime; i++){
                 arry.push(i);
             }
             return arry.map((v,i)=>{
-                return <li key={i}><span>{ v >= 10 || v == 0 ? v + 's' : '0'+ v + 's' }</span></li>;
+                return <li key={i}>
+                            <span>
+                                {
+                                    multiple == 10
+                                        ? v/10 + 's'
+                                        : multiple == -10
+                                            ? v*10 + 's'
+                                            : v >= 10 || v == 0 ? v + 's' : '0'+ v + 's'
+                                }
+                            </span>
+                        </li>;
             });
         };
 
@@ -547,13 +693,14 @@ class TimelineView extends React.Component {
 
                         <div className="unit">
                             <ul className="f--h"
-                                style={{ width : 61 * totalTime + 20 +"px", left : - (this.state.marginLeft * this.state.percentage) }}>
+                                style={{ width : this.state.allWidth + 20 +"px",
+                                            left : - (this.state.marginLeft * this.state.percentage) }}>
                                 { unit(totalTime) }
                             </ul>
                         </div>
 
                         <div className={ cls("time-ruler-layer",{ "time-ruler-hidden" : this.state.marginLeft !==0 && this.state.isScroll})}>
-                            <div style={{ width : 61 * totalTime + 20 +"px",
+                            <div style={{ width : this.state.allWidth + 20 +"px",
                                             marginLeft : - (this.state.marginLeft * this.state.percentage) ,
                                             paddingRight : 20 + "px"
                                         }}
@@ -587,12 +734,16 @@ class TimelineView extends React.Component {
 
                 <div className="overall-zoom f--h">
                     <div className="zoom f--h">
-                        <span className="left-btn" />
-                        <div className="zoom-slider flex-1 f--hlc">
+                        <span className={ cls("left-btn",{ "active": this.state.multiple == -10  })}
+                              onClick={ this.zoomOrLess.bind(this, -1) } />
+
+                        <div className="zoom-slider f--hlc">
                             <span className="line" />
-                            <span className="btn" />
+                            <span className="btn" style={{ left : this.state.dragZoomLeft + 'px' }} />
                         </div>
-                        <span className="right-btn" />
+
+                        <span className={ cls("right-btn" ,{ "active": this.state.multiple ===10  })}
+                              onClick={ this.zoomOrLess.bind(this, 1) } />
                     </div>
 
                     <div className="overall flex-1 f--hlc">
