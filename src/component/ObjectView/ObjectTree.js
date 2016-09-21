@@ -514,9 +514,13 @@ class ObjectTree extends React.Component {
             let pic = null;
             this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
                 if (v1.className === v.className){
-                    if(v.props.link !== undefined &&v.rootWidget.imageList&&v.rootWidget.imageList.length>v.props.link){
-                        pic = v.rootWidget.imageList[v.props.link];
-                        // pic = v1.icon;
+                    if(v.className === 'image' || v.className === 'imagelist') {
+                        if(v.props.link !== undefined &&v.rootWidget.imageList&&v.rootWidget.imageList.length>v.props.link){
+                            pic = v.rootWidget.imageList[v.props.link];
+                            // pic = v1.icon;
+                        } else {
+                            pic = v1.icon;
+                        }
                     } else {
                         pic = v1.icon;
                     }
