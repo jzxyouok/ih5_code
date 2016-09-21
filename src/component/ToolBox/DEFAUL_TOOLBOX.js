@@ -26,7 +26,7 @@ let imageIcon = img('image.svg');
 let igroupIcon = img('imageGroup.svg');
 
 let buttonIcon = img('button.svg');
-let transbuttonIcon = img('transButton.svg');
+let tapAreaIcon = img('tapArea.svg');
 let qrcodeIcon = img('qrCode.svg');
 let fileIcon = img('file.svg');
 let counterIcon = img('counter.svg');
@@ -61,7 +61,7 @@ var TOOL_ID = {
     BITMAPTEXT: 20,
 
     BUTTON: 21,
-    TRANSBUTTON: 22,
+    TAPAREA: 22,
     QRCODE: 23,
     FILE: 24,
     COUNTER: 25,
@@ -89,7 +89,7 @@ var DEFAULT_TOOLBOX = {
         gid:2,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', drawRectText:true, param: {'text': 'Text'}},
+            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', drawRectText:true, param: {'value': 'Text'}},
             {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
     },{
         name:'几何图形',
@@ -106,15 +106,17 @@ var DEFAULT_TOOLBOX = {
         gid:5,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.BUTTON,name:'按钮',icon:buttonIcon, className:'button'},
-            {cid:TOOL_ID.TRANSBUTTON,name:'透明按钮',icon:transbuttonIcon, className:'transbutton'}]
+            {cid:TOOL_ID.BUTTON,name:'按钮',icon:buttonIcon, className:'button', drawRect:true,
+                param: {'value': 'Text', 'fillColor':'#2187F3', 'lineColor':'#2187F3'}}, //, 'fontFill':'#000000', 'radius':'20'
+            {cid:TOOL_ID.TAPAREA,name:'透明按钮',icon:tapAreaIcon, className:'taparea', drawRect:true,
+                param: {'fillColor':'transparent', 'lineColor': 'transparent'}}]
     },{
         name:'二维码',
         key:6,
         gid:6,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.QRCODE,name:'二维码',icon:qrcodeIcon, className:'qrcode', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100, 'data': '0'}}]
+            {cid:TOOL_ID.QRCODE,name:'二维码',icon:qrcodeIcon, className:'qrcode', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100, 'value': '0'}}]
     },{
         name:'多媒体',
         key:7,
@@ -166,7 +168,7 @@ var DEFAULT_TOOLBOX = {
         gid:15,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter'}]
+            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRectText:true, param: {'value':1}}]
     },{
         name:'数据库',
         key:16,

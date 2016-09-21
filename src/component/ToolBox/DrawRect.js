@@ -12,6 +12,8 @@ export default class DrawRect {
         this.result = {};
         this.def = $.Deferred();
 
+        this.designerView = document.getElementById('iH5-App');
+
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
@@ -22,26 +24,52 @@ export default class DrawRect {
         this.start = this.start.bind(this);
         this.end = this.end.bind(this);
         this.cleanUp = this.cleanUp.bind(this);
+
+        this.addDrawRectOverlay = this.addDrawRectOverlay.bind(this);
+        this.addDrawRect = this.addDrawRect.bind(this);
     }
 
     start() {
+        this.addDrawRectOverlay();
         this.addDrawRectEventListener();
     }
+
     cleanUp() {
-        this.startX = 0;
-        this.startY = 0;
-        this.rectLeft = '0px';
-        this.rectTop = '0px';
-        this.rectHeight = '0px';
-        this.rectWidth = '0px';
-        this.flag = false;
-        this.result = {};
-        if (document.getElementById('drawRect')) {
-            document.body.removeChild(document.getElementById('drawRect'));
+        if (document.getElementById('drawRectOverlay')) {
+            this.designerView.removeChild(document.getElementById('drawRectOverlay'));
         }
     }
     end() {
         this.removeDrawRectEventListener();
+    }
+
+    addDrawRectOverlay() {
+        var drawRectOverlay = document.createElement('div');
+        drawRectOverlay.id = 'drawRectOverlay';
+        drawRectOverlay.style.position = 'fixed';
+        drawRectOverlay.style.left = 0;
+        drawRectOverlay.style.right = 0;
+        drawRectOverlay.style.bottom = 0;
+        drawRectOverlay.style.top = 0;
+        drawRectOverlay.backgroundColor = 'black';
+        drawRectOverlay.tabIndex = 'drawRectOverlay';
+        drawRectOverlay.style.zIndex = 111;
+        this.designerView.appendChild(drawRectOverlay);
+    }
+
+    addDrawRect() {
+        var div = document.createElement('div');
+        div.id = 'drawRect';
+        div.className = 'div';
+        div.style.position = 'absolute';
+        div.style.left = this.startX + 'px';
+        div.style.top = this.startY + 'px';
+        div.style.backgroundColor = '#a0a0a0';
+        div.style.opacity = '0.2';
+        div.style.border = '1px solid #000';
+
+        var drawRectOverlay = document.getElementById('drawRectOverlay');
+        drawRectOverlay.appendChild(div);
     }
 
     onMouseDown(e) {
@@ -54,17 +82,7 @@ export default class DrawRect {
         var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
         this.startX = evt.clientX + scrollLeft;
         this.startY = evt.clientY + scrollTop;
-        var div = document.createElement('div');
-        div.id = 'drawRect';
-        div.className = 'div';
-        div.style.position = 'absolute';
-        div.style.left = this.startX + 'px';
-        div.style.top = this.startY + 'px';
-        div.style.backgroundColor = '#a0a0a0';
-        div.style.opacity = '0.2';
-        div.style.border = '1px solid #000';
-        document.body.appendChild(div);
-
+        this.addDrawRect();
     }
 
     onMouseUp(e)  {
@@ -104,23 +122,28 @@ export default class DrawRect {
             drawRectDiv.style.width = this.rectWidth;
             drawRectDiv.style.height = this.rectHeight;
         }
-        console.log('tag');
     }
 
     addDrawRectEventListener() {
         //添加listener
-        document.body.style.cursor = 'crosshair';
-        document.body.addEventListener('mousedown', this.onMouseDown);
-        document.body.addEventListener('mouseup', this.onMouseUp);
-        document.body.addEventListener('mousemove', this.onMouseMove);
+        var overlay = document.getElementById('drawRectOverlay');
+        if(overlay) {
+            overlay.style.cursor = 'crosshair';
+            overlay.addEventListener('mousedown', this.onMouseDown);
+            overlay.addEventListener('mouseup', this.onMouseUp);
+            overlay.addEventListener('mousemove', this.onMouseMove);
+        }
     }
 
     removeDrawRectEventListener() {
         //移除listener
-        document.body.style.cursor = 'auto';
-        document.body.removeEventListener('mousedown', this.onMouseDown);
-        document.body.removeEventListener('mouseup', this.onMouseUp);
-        document.body.removeEventListener('mousemove', this.onMouseMove);
+        var overlay = document.getElementById('drawRectOverlay');
+        if(overlay) {
+            overlay.style.cursor = 'auto';
+            overlay.removeEventListener('mousedown', this.onMouseDown);
+            overlay.removeEventListener('mouseup', this.onMouseUp);
+            overlay.removeEventListener('mousemove', this.onMouseMove);
+        }
     }
 }
 

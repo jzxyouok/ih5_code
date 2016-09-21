@@ -438,7 +438,7 @@ class VxRcSlider extends RcSlider {
         else if(trackClass == "rect" || trackClass == "ellipse" || trackClass == "path"){
             style['backgroundColor'] = '#9c5454';
         }
-        else if(trackClass == "button" || trackClass == "transbutton"){
+        else if(trackClass == "button" || trackClass == "taparea"){
             style['backgroundColor'] = '#405b83';
         }
         else {
