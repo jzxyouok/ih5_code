@@ -294,7 +294,7 @@ class PropertyView extends React.Component {
         const getInput = (item, index) => {
              //item,propertyMap中的元素;node,当前选中的属性面板,node.node中存储了属性值,props中存储了用于回填的值
 
-            //设置默认值
+            //设置默认值,用于展示
             let defaultValue;
 
             if (item.readOnly ) {
@@ -315,7 +315,14 @@ class PropertyView extends React.Component {
                 }
             } else {
                 if (node.props[item.name] === undefined){
-                    defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
+                    if(item.type === propertyType.Boolean ){
+                        defaultValue = item.default
+                    }else if(item.type === propertyType.Percentage && item.name=='alpha'){
+                        defaultValue = item.default*100;
+                    }else{
+                        defaultValue='';
+                    }
+                   // defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
                 }  else{
                     defaultValue = node.props[item.name];
                     if(item.name == 'originX'){

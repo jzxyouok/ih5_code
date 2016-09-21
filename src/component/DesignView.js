@@ -3,9 +3,8 @@ import React from 'react';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 
-var oDiv=null;
-var domTop =null;
-var dragTag=false;
+
+
 
 class DesignView extends React.Component {
     constructor(props) {
@@ -14,9 +13,14 @@ class DesignView extends React.Component {
 
         };
 
-        
         this.isDraging =false;
-        
+        this.pointX=null;
+        this.pointY=null;
+        this.canvas_x=null;
+        this.canvas_y=null;
+        this.canvas_w=null;
+        this.canvas_h=null;
+
         
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
@@ -53,8 +57,6 @@ class DesignView extends React.Component {
                 document.getElementById('canvas-dom').lastElementChild.addEventListener('mousemove',this.mouseMove)
 
                 document.getElementById('canvas-dom').lastElementChild.addEventListener('mouseup',this.mouseUp)
-
-
 
                 this.setRuler(6,10);
 
@@ -133,24 +135,30 @@ class DesignView extends React.Component {
     }
 
     mouseDown(event){
+        let oDiv =  document.createElement('div');
+        let oCanvas = document.getElementById('canvas-dom');
+        let oCanvasRect =oCanvas.getBoundingClientRect();
 
-        oDiv =  document.createElement('div');
         oDiv.setAttribute('class','rulerWLine');
-        document.getElementById('canvas-dom').appendChild(oDiv);
-        domTop =document.getElementById('canvas-dom').offsetTop;
-        dragTag=true;
+
+        oCanvas.appendChild(oDiv);
+
+         this.isDraging=true;
+
+         console.log(oCanvasRect);
+
     }
 
     mouseMove(event){
-
-        if(oDiv){
-            oDiv.style.top = (event.pageY-domTop)+'px';
-        }
-
+        //if(oDiv){
+        //    oDiv.style.top = (event.pageY-domTop)+'px';
+        //}
     }
     mouseUp(event){
+        this.isDraging=false;
+        //在canvas中,把线固定下来
 
-
+        //不在convas中,把线取消
     }
 
 
