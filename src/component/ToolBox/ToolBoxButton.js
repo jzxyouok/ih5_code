@@ -64,8 +64,7 @@ class ToolBoxButton extends Component {
         }
 
         //点击的时候清除一下overlay
-        this.drawRect = new DrawRect();
-        this.drawRect.cleanUp();
+        new DrawRect().cleanUp();
 
         //选择了的话可以再点击取消选择
         if(this.state.selected) {
@@ -90,6 +89,7 @@ class ToolBoxButton extends Component {
     }
 
     onDrawRect() {
+        this.drawRect = new DrawRect();
         this.drawRect.start();
         this.drawRect.def.promise().then(data => {
             if(this.props.param) {
