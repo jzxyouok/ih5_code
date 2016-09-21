@@ -67,7 +67,7 @@ class ToolBoxButton extends Component {
         new DrawRect().cleanUp();
 
         //选择了的话可以再点击取消选择
-        if(this.state.selected) {
+        if(this.state.selected&&this.props.level==1) {
             ToolBoxAction['deselect']();
         } else {
             if(this.props.drawRect || this.props.drawRectText){
@@ -83,9 +83,13 @@ class ToolBoxButton extends Component {
     onRightClick(event) {
         event.preventDefault();
         event.stopPropagation();
-        //点击的时候清除一下overlay
-        new DrawRect().cleanUp();
-        ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
+
+        if(this.props.isPrimary) {
+            //点击的时候清除一下overlay
+            new DrawRect().cleanUp();
+            ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
+        }
+
     }
 
     onDrawRect() {

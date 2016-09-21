@@ -113,8 +113,8 @@ export default Reflux.createStore({
                 this.trigger(toolBoxConfig);
             } else {
                 this.deselect();
+                return;
             }
-            return;
         }
         toolBoxConfig.openSecondaryId = groupId;
         if(arguments.length>=2 && update) {
