@@ -63,9 +63,8 @@ class ToolBoxButton extends Component {
             ToolBoxAction['selectSecondary'](this.props.cid, this.props.gid);
         }
 
-        //点击的时候清除一下
+        //点击的时候清除一下overlay
         this.drawRect = new DrawRect();
-        this.drawRect.end();
         this.drawRect.cleanUp();
 
         //选择了的话可以再点击取消选择

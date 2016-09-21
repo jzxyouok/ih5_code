@@ -151,8 +151,8 @@ propertyMap['bitmaptext'] = [
 propertyMap['qrcode'] = [
     ...propertyMap['box'],
     { name: 'data', type: propertyType.String, default:'', isProperty: true },
-    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'shapeWidth', showName:'shapeW', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', showName:'shapeH', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
 
 propertyMap['graphics'] = [
