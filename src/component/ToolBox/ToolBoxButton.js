@@ -83,6 +83,8 @@ class ToolBoxButton extends Component {
     onRightClick(event) {
         event.preventDefault();
         event.stopPropagation();
+        //点击的时候清除一下overlay
+        new DrawRect().cleanUp();
         ToolBoxAction['selectPrimary'](this.props.cid, this.props.gid);
     }
 
