@@ -154,7 +154,7 @@ bridge.setGenerateText(function(widget, callback) {
       xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
   var form = new FormData();
   form.append('font', widget['font']);
-  form.append('text', widget['text']);
+  form.append('text', widget['value']);
   form.append('size', widget['size']);
   form.append('color', widget['color']);
   form.append('lineHeight', widget['lineHeight']);
