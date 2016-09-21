@@ -107,7 +107,11 @@ class PropertyView extends React.Component {
         } else {
             switch (prop.type) {
                 case propertyType.Percentage:
-                    v = parseFloat(value);
+                    if(prop.name =='alpha'){
+                        v = parseFloat(value)/100;
+                    }else{
+                        v = parseFloat(value);
+                    }
                     break;
                 case propertyType.Number:
                     v = parseFloat(value);
@@ -264,7 +268,6 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;//当前舞台选中的对象
-       //console.log(node);
 
         if (!node)
             return null;
@@ -319,9 +322,13 @@ class PropertyView extends React.Component {
                         this.originPos.x=defaultValue;
                     }else if(item.name == 'originY'){
                         this.originPos.y=defaultValue;
+                    }else if(item.name == 'alpha'){
+                        defaultValue=defaultValue*100;
                     }
                 }
             }
+
+
 
 
             //设置通用默认参数和事件
@@ -437,7 +444,7 @@ class PropertyView extends React.Component {
                         selectNode.props[item.name] = obj[item.name];
                         //用于更新
                         if (needRender)
-                            selectNode.node[item.name] = item.name == 'alpha' ? obj[item.name] / 100 : obj[item.name];
+                            selectNode.node[item.name] =obj[item.name];
                     }
                 }
             });
