@@ -57,7 +57,6 @@ class ToolBoxButton extends Component {
     }
 
     onClick() {
-        //console.log(this.props);
         if(this.props.isPrimary) {
             ToolBoxAction['selectPrimary'](this.props.cid, null);
         } else {
