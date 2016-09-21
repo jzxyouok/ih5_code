@@ -31,7 +31,6 @@ const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse
 
 function loadTree(parent, node) {
   let current = {};
-
   current.parent = parent;
   current.key = _keyCount++;
   current.className = node['cls'];
@@ -319,6 +318,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
+        this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -352,6 +352,9 @@ export default Reflux.createStore({
     addWidget: function(className, props, link) {
       if (!this.currentWidget)
           return;
+
+      props = this.addWidgetDefaultName(className, props);
+
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
             (this.currentWidget.className !== 'image'
@@ -453,6 +456,30 @@ export default Reflux.createStore({
             this.trigger({redrawTree: true});
           }
       }
+    },
+    addWidgetDefaultName: function(className, props) {
+        if (!this.currentWidget)
+            return;
+
+        if(props === undefined) {
+            props = {};
+        }
+        if ((className === 'text' || className === 'bitmaptext') && props.value){
+            props.name = props.value;
+        } else {
+            let cOrder = 1;
+            //查找当前widget有多少个相同className的，然后＋1处理名字
+            for(let i = 0; i<this.currentWidget.children.length; i++){
+                if(this.currentWidget.children[i].className === className){
+                    cOrder+=1;
+                }
+            }
+            props.name = className + cOrder;
+        }
+        return props;
+    },
+    renameWidget: function (widget) {
+
     },
     updateProperties: function(obj, skipRender, skipProperty) {
       if(this.currentWidget.props.isLock){
