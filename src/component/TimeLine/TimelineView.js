@@ -121,7 +121,7 @@ class TimelineView extends React.Component {
                     let maxWidth  =  window.innerWidth-318-170;
                     //console.log(61 * totalTime,maxWidth);
                     if( 61 * totalTime > maxWidth ){
-                        let percentage = 61 * totalTime / maxWidth;
+                        let percentage = (61 * totalTime + 20) / maxWidth;
                         percentage.toFixed(3);
                         //console.log(percentage);
                         let width =  maxWidth / percentage;
@@ -355,7 +355,7 @@ class TimelineView extends React.Component {
                 _x=e.pageX;
             });
             $(document).mousemove(function(e){
-                if(move){
+                if(move && self.state.percentage !== null){
                     let x =  e.pageX - _x;
                     let value = initialmarginLeft + x;
                     let result;
@@ -535,24 +535,31 @@ class TimelineView extends React.Component {
                             // 	left: `${this.state.currentTime * 100 - 13}px`
                             // }}></div>
                         }
-                        <span className="unit-0">0s</span>
+                        <span className={ cls("unit-0",{ "hidden" : this.state.marginLeft !==0 })}>0s</span>
+                        <span className={ cls("icon",{ "hidden" : this.state.percentage !== null })} />
 
-                        <ul className="unit"
-                            style={{ width : 61 * totalTime +"px" }}>
-                            { unit(totalTime) }
-                        </ul>
-
-                        <div style={{ width : 61 * totalTime +"px"}}
-                             onClick={this.onTimerClick.bind(this)}>
-
-                            <Slider max={totalTime}
-                                    step={0.01}
-                                    value={this.state.currentTime}
-                                    tipFormatter={  this.formatter  }
-                                    onChange={this.onTimerChange.bind(this)} />
+                        <div className="unit">
+                            <ul className="f--h"
+                                style={{ width : 61 * totalTime + 20 +"px", left : - (this.state.marginLeft * this.state.percentage) }}>
+                                { unit(totalTime) }
+                            </ul>
                         </div>
 
-                        <span className="flex-1" />
+                        <div className={ cls("time-ruler-layer",{ "time-ruler-hidden" : this.state.marginLeft !==0 })}>
+                            <div style={{ width : 61 * totalTime + 20 +"px",
+                                            marginLeft : - (this.state.marginLeft * this.state.percentage) ,
+                                            paddingRight : 20 + "px"
+                                        }}
+                                 className="time-ruler-div"
+                                 onClick={this.onTimerClick.bind(this)}>
+
+                                <Slider max={totalTime}
+                                        step={0.01}
+                                        value={this.state.currentTime}
+                                        tipFormatter={  this.formatter  }
+                                        onChange={this.onTimerChange.bind(this)} />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id='TimlineNodeContent'>
