@@ -17,12 +17,6 @@ class DesignView extends React.Component {
         this.aODiv=[];
         this.curODiv=null;
         this.isDraging =false;
-        this.pointX=null;
-        this.pointY=null;
-        this.canvas_x=null;
-        this.canvas_y=null;
-        this.canvas_w=null;
-        this.canvas_h=null;
 
         
         this.scroll = this.scroll.bind(this);
@@ -38,8 +32,6 @@ class DesignView extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
-
-
         this.onStatusChange(WidgetStore.getStore());
     }
 
@@ -56,10 +48,16 @@ class DesignView extends React.Component {
                 document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
                 document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
                 this.setRuler(6,10);
-            }
-            else {
+
+            }  else {
                 document.body.removeEventListener('keyup', this.onKeyScroll);
             }
+
+
+            if(widget.selectWidget.props.rulerArr){
+                this.drawLine(widget.selectWidget.props.rulerArr);
+            }
+
         }
 
         if(widget.updateProperties && (widget.updateProperties .width || widget.updateProperties .height)){
@@ -106,6 +104,7 @@ class DesignView extends React.Component {
 
         this.refs.view.style.top = t+'px';
         this.refs.line_top.style.top= t+'px';
+
         this.aODiv.map(item =>{
             item.oDiv.style.top=(t-item.offsetTop)+'px';
         });
@@ -122,7 +121,8 @@ class DesignView extends React.Component {
             let left = window.getComputedStyle(this.refs.view,null).getPropertyValue("left");
             let l = parseFloat(left.replace(/(px)?/, ''));
             l += STEP * (isEvent(37) ? -1 : 1);
-            this.refs.view.style.left = l+'px';
+           // this.refs.view.style.left = l+'px';
+            this.refs.canvas_wraper.style.left= l+'px';
             return;
         }
         // up or down
@@ -135,7 +135,49 @@ class DesignView extends React.Component {
             return;
         }
     }
+    drawLine(aODiv){
+        let $this =this;
+        //清空
+        let offsetTop =this.refs.view.offsetTop;
+        this.aODiv=[];
 
+        let oRulerWLine = document.getElementById('DesignView-Container').getElementsByClassName('rulerWLine');
+
+        for(let i=0; i< oRulerWLine.length;i++){
+            $this.refs.container.removeChild(oRulerWLine[i]);
+            console.log('a');
+        }
+ 
+        aODiv.map(item=>{
+            console.log('b');
+            let curODiv =  document.createElement('div');
+            curODiv.appendChild(document.createElement('div'));
+            curODiv.setAttribute('class','rulerWLine');
+            curODiv.style.top=(offsetTop-item.offsetTop)+'px';
+
+            curODiv.flag=this.count++;
+
+            curODiv.onmousedown=function(){
+                $this.isDraging=true;
+                $this.curODiv=this;
+                //清除aODiv中的存储
+                $this.aODiv.map((item,index) =>{
+                    if(item.oDiv.flag == this.flag){
+                        $this.aODiv.splice(index,1);
+                    }
+                });
+                //解绑事件
+                this.onmousedown=null;
+            }
+
+            this.refs.container.appendChild(curODiv);
+            this.aODiv.push({
+                oDiv:curODiv,
+                offsetTop:item.offsetTop
+            });
+        });
+
+    }
     mouseDown(event){
         this.curODiv =  document.createElement('div');
         this.curODiv.appendChild(document.createElement('div'));
@@ -175,14 +217,16 @@ class DesignView extends React.Component {
                     oDiv:this.curODiv,
                     offsetTop:this.refs.view.offsetTop -event.pageY
                 });
+
+
+                WidgetStore.currentWidget.props.rulerArr =this.aODiv;
+
             }
         }
         document.body.style.cursor='auto';
         this.isDraging=false;
         this.curODiv=null;
     }
-
-
 
     render() {
         return (
@@ -191,7 +235,7 @@ class DesignView extends React.Component {
             ref='container'
             onWheel={this.scroll}>
             <div  ref='line_top' id='line_top'></div>
-            <div className='canvas-wraper'>
+            <div ref='canvas_wraper' className='canvas-wraper'>
             <div id='canvas-dom'
                 className="DesignView"
                 ref='view'

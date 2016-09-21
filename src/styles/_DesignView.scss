@@ -1,7 +1,7 @@
 $lineColor:red;
 
 #DesignView-Container{
-    .canvas-wraper{border-left:1px solid $lineColor; }
+    .canvas-wraper{border-left:1px solid $lineColor;position: relative; }
     #line_top{
         width: 100%;
         height: 0;
@@ -9,7 +9,7 @@ $lineColor:red;
         position: absolute;
         left: 0;
         top: 60px;
-        z-index: 499;
+        z-index: 49;
     }
     .rulerWLine{
         width: 100%;
@@ -39,7 +39,7 @@ $lineColor:red;
             position: absolute;
             left: -1px;
             top: 0;
-            z-index: 499;
+            z-index: 49;
         }
         .h_ruler_wraper{
             position: absolute;

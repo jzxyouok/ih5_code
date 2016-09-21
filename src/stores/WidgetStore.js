@@ -37,6 +37,8 @@ function loadTree(parent, node) {
   current.props = node['props'] || {};
   current.events = node['events'] || {};
 
+
+
   current.varList = [];
   if (node['vars']) {
     for (let n in node['vars']) {
@@ -561,6 +563,8 @@ export default Reflux.createStore({
         classList = [];
         bridge.resetClass();
         stageTree = [];
+
+
 
         if (data['defs']) {
             for (let n in data['defs']) {
