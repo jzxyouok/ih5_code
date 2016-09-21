@@ -276,7 +276,6 @@ class VxRcSlider extends RcSlider {
             const diffValue = diffPosition / this.getSliderLength() * (props.max - props.min);
 
             const value = this.trimAlignValue(this.startValue + diffValue);
-
             let points = this.props.points;
             points[this.state.currentHandle][0] = value;
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
@@ -419,8 +418,8 @@ class VxRcSlider extends RcSlider {
 		const isIncluded = included || range;
 
         const style = {};
-        style['width']= this.props.width;
         //console.log(this.props.width);
+        style['width'] = '100%';
         if (this.props.isCurrent){
             style['borderColor'] = '#CCC';
         }
@@ -463,46 +462,65 @@ class VxRcSlider extends RcSlider {
 				</div>
 
 				<div className='timeline-node-track timline-column-right'>
-					<div ref="slider" className={sliderClassName} style={style}>
-                        <div className="locus-layer" onClick={ this.selectTrack.bind(this) }></div>
+                    <div className={cls("slider-right-layer",
+                                        {"slider-right-hidden" : this.props.marginLeft !== 0},
+                                        {"f--h" : this.props.percentage === null}) }>
+                        <div style={{ width : this.props.width + 20 ,
+                                        marginLeft: -(this.props.marginLeft * this.props.percentage),
+                                        paddingRight: "20px",
+                                        position: "relative"
+                                    }}>
+                            <div ref="slider" className={sliderClassName} style={style}>
+                                <div className="locus-layer" onClick={ this.selectTrack.bind(this) }></div>
 
-                        <div onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
-                             onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
-						    {handles}
+                                <div onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
+                                     onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
+                                    {handles}
+                                </div>
+
+                                <Track className={prefixCls + '-track'}
+                                       vertical = {vertical}
+                                       included={isIncluded}
+                                       offset={lowerOffset}
+                                       length={upperOffset - lowerOffset}/>
+
+                                <Steps prefixCls={prefixCls}
+                                       vertical = {vertical}
+                                       marks={marks}
+                                       dots={dots}
+                                       step={step}
+                                       included={isIncluded}
+                                       lowerBound={lowerBound}
+                                       upperBound={upperBound}
+                                       max={max}
+                                       min={min}/>
+
+                                <Marks className={prefixCls + '-mark'}
+                                       vertical = {vertical}
+                                       marks={marks}
+                                       included={isIncluded}
+                                       lowerBound={lowerBound}
+                                       upperBound={upperBound}
+                                       max={max}
+                                       min={min}/>
+
+                                {
+                                    //children
+                                }
+                            </div>
+
+                            <div className="slider-right"
+                                 style={{   minWidth : "20px" ,
+                                            height: "25px",
+                                            cursor: "pointer",
+                                            position: "absolute",
+                                            top: "0",
+                                            right: "0"
+                                       }}
+                                 onClick={ this.selectTrack.bind(this) }></div>
                         </div>
-
-						<Track className={prefixCls + '-track'}
-                               vertical = {vertical}
-                               included={isIncluded}
-                               offset={lowerOffset}
-                               length={upperOffset - lowerOffset}/>
-
-						<Steps prefixCls={prefixCls}
-                               vertical = {vertical}
-                               marks={marks}
-                               dots={dots}
-                               step={step}
-                               included={isIncluded}
-                               lowerBound={lowerBound}
-                               upperBound={upperBound}
-                               max={max}
-                               min={min}/>
-
-						<Marks className={prefixCls + '-mark'}
-                               vertical = {vertical}
-                               marks={marks}
-                               included={isIncluded}
-                               lowerBound={lowerBound}
-                               upperBound={upperBound}
-                               max={max}
-                               min={min}/>
-
-						{
-                            //children
-                        }
-					</div>
-
-                    <div className="slider-right" onClick={ this.selectTrack.bind(this) }></div>
+                        <div className="slider-right flex-1" onClick={ this.selectTrack.bind(this) }></div>
+                    </div>
 				</div>
 			</li>
 		);

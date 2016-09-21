@@ -19,7 +19,8 @@ class ObjectTree extends React.Component {
             isLoadTree : true,
             selectedLayer : -1,
             selectWidget : null,
-            activeEvent: false //事件按钮是否被激活激活
+            activeEvent: false, //事件按钮是否被激活激活
+            editMode:false   //处于更改名字状态
             //widgetTreeChildren :null
         };
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -37,6 +38,10 @@ class ObjectTree extends React.Component {
         this.itemRemoveKeyListener = this.itemRemoveKeyListener.bind(this);
         this.itemKeyAction = this.itemKeyAction.bind(this);
         this.itemPaste = this.itemPaste.bind(this);
+
+        this.startEditObjName = this.startEditObjName.bind(this);
+        this.endEditObjName = this.endEditObjName.bind(this);
+
         //拖动对象的方法
         this.itemDragStart = this.itemDragStart.bind(this);
         this.itemDragEnd = this.itemDragEnd.bind(this);
@@ -274,22 +279,17 @@ class ObjectTree extends React.Component {
         }
     }
 
-    dragWithTip(x, y, isShow) {
-        this.dragTip.style.top = y+15+'px';
-        this.dragTip.style.left = x+10+'px';
-        isShow?this.dragTip.style.display='block':this.dragTip.style.display='none';
+    startEditObjName(e) {
+        this.setState({
+            editMode: true
+        });
     }
 
-    initialDragTip(content, isShow){
-        this.dragTip.innerHTML = content;
-        document.getElementById('iH5-App').appendChild(this.dragTip);
-        isShow?this.dragTip.style.display='block':this.dragTip.style.display='none';
-    }
-
-    destroyDragTip(){
-        this.dragTip.innerHTML = '';
-        this.dragTip.style.display = 'none';
-        this.dragTip.parentNode.removeChild(this.dragTip);
+    endEditObjName(e) {
+        debugger;
+        this.setState({
+            editMode: false
+        });
     }
 
     itemAddKeyListener(event){
@@ -347,6 +347,24 @@ class ObjectTree extends React.Component {
             this.chooseBtn(parentWidget.key, parentWidget);
             window.macKeys.reset();
         }
+    }
+
+    dragWithTip(x, y, isShow) {
+        this.dragTip.style.top = y+15+'px';
+        this.dragTip.style.left = x+10+'px';
+        isShow?this.dragTip.style.display='block':this.dragTip.style.display='none';
+    }
+
+    initialDragTip(content, isShow){
+        this.dragTip.innerHTML = content;
+        document.getElementById('iH5-App').appendChild(this.dragTip);
+        isShow?this.dragTip.style.display='block':this.dragTip.style.display='none';
+    }
+
+    destroyDragTip(){
+        this.dragTip.innerHTML = '';
+        this.dragTip.style.display = 'none';
+        this.dragTip.parentNode.removeChild(this.dragTip);
     }
 
     itemDragStart(nid, data, e){
@@ -449,7 +467,7 @@ class ObjectTree extends React.Component {
                     pic = v1.icon;
                 }
             });
-            return  <div className="item"
+            return  <div className='item'
                          key={i}
                          id={'tree-item-'+ v.key}
                          data-keyId={i}
@@ -482,7 +500,11 @@ class ObjectTree extends React.Component {
 
                         <img src={ pic } />
 
-                        <p>{v.className}</p>
+                        <div className='item-name-wrap'>
+                            <p>{v.props.name}</p>
+                            {/*<input id={'tree-name-input-'+v.key} type="text"*/}
+                            {/*className={$class({'hidden':!(v.key === this.state.nid)||!this.state.editMode})} onBlur={this.endEditObjName} />*/}
+                        </div>
                         {
                             v.props.locked!==undefined && v.props.locked
                                 ? <span className='lock-icon' onClick={ this.lockBtn.bind(this, v.key, v) }/>
@@ -528,7 +550,9 @@ class ObjectTree extends React.Component {
                                         : icon( 0 , objectData.tree.key)
                                 }
                                 <span className='stage-icon' />
-                                <p>{ objectData.name }</p>
+                                <div className='stage-name-wrap'>
+                                    <p>{ objectData.name }</p>
+                                </div>
                             </div>
                             <div className={$class('item-event')}>
                                 {

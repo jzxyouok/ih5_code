@@ -81,7 +81,7 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:tapAreaIcon, className:'taparea', drawRect:true, param: {'fillColor':'transparent'}},
                 {cid:this.cid++,icon:qrcodeIcon, className:'qrcode', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100, 'data': '0'}},
                 {cid:this.cid++,icon:fileIcon, className:'file'},
-                {cid:this.cid++,icon:counterIcon, className:'counter'},
+                {cid:this.cid++,icon:counterIcon, className:'counter', drawRect:true, param: {'value':0}},
                 {cid:this.cid++,icon:databaseIcon, className:'database'},
                 {cid:this.cid++,icon:remotedeviceIcon, className:'remotedevice'},
                 {cid:this.cid++,icon:pcdeviceIcon, className:'pcdevice'},
@@ -93,69 +93,7 @@ class ComponentPanel extends React.Component {
     }
 
     render() {
-
-        // var panels = [
-        //     {name:'基础组件',key:1,cplist: [
-        //         {cid:'1',icon:testicon},
-        //         {cid:'3',icon:testicon2},
-        //         {cid:'4',icon:testicon3},
-        //         {cid:'5',icon:testicon4}
-        //         ]
-        //     },
-        //     {name:'排版容器',key:2,cplist:[
-        //         {cid:'1',icon:testicon},
-        //         {cid:'2',icon:testicon1},
-        //         {cid:'3',icon:testicon2},
-        //         {cid:'4',icon:testicon3},
-        //         {cid:'5',icon:testicon4}
-        //         ]
-        //     },
-        //     {name:'动效动画',key:3,cplist:[{cid:'3',icon:'http://img.zcool.cn/community/014abe557e8ed50000002d5c19e576.jpg'}]},
-        //     {name:'交互组件',key:4,cplist:[{cid:'4',icon:'http://img.zcool.cn/community/014abe557e8ed50000002d5c19e576.jpg'}]},
-        //     {name:'物理组件',key:5,cplist:[{cid:'5',icon:'http://img.zcool.cn/community/014abe557e8ed50000002d5c19e576.jpg'}]},
-        //     {name:'数据组件',key:6,cplist:[{cid:'6',icon:'http://img.zcool.cn/community/014abe557e8ed50000002d5c19e576.jpg'}]},
-        //     {name:'应用组件',key:7,cplist:[{cid:'7',icon:'http://img.zcool.cn/community/014abe557e8ed50000002d5c19e576.jpg'}]}
-        // ];
-        // var cid = 1;
-        // var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
         var panels = this.panels;
-        //     {name:'基础组件',key:1,cplist: [
-        //         {cid:cid++,icon:imageIcon, className:'image', upload:true},
-        //         {cid:cid++,icon:igroupIcon, className:'imagelist', upload:true},
-        //         {cid:cid++,icon:timerIcon, className:'timer'},
-        //         {cid:cid++,icon:containerIcon, className:'container'},
-        //         {cid:cid++,icon:rectIcon, className:'rect', param: shapeParam},
-        //         {cid:cid++,icon:ellipseIcon, className:'ellipse', param: shapeParam},
-        //         {cid:cid++,icon:curveIcon, className:'path', param: shapeParam},
-        //         {cid:cid++,icon:slidetimerIcon, className:'slidetimer', param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}},
-        //         {cid:cid++,icon:textIcon, className:'text', param: {'text': 'Text'}},
-        //         {cid:cid++,icon:videoIcon, className:'video'},
-        //         {cid:cid++,icon:audioIcon, className:'audio'},
-        //         {cid:cid++,icon:trackIcon, className:'track'},
-        //         {cid:cid++,icon:worldIcon, className:'world'},
-        //         {cid:cid++,icon:bodyIcon, className:'body'},
-        //         {cid:cid++,icon:easingIcon, className:'easing'},
-        //         {cid:cid++,icon:pageIcon, className:'page'},
-        //         {cid:cid++,icon:effectIcon, className:'effect'},
-        //         {cid:cid++,icon:canvasIcon, className:'canvas', param: {'width': 300, 'height': 300}},
-        //         {cid:cid++,icon:wechatIcon, className:'wechat'},
-        //         {cid:cid++,icon:bitmaptextIcon, className:'bitmaptext', param:{'shapeWidth': 100, 'shapeHeight': 100}},
-        //         {cid:cid++,icon:folderIcon, className:'folder'},
-        //
-        //         {cid:cid++,icon:buttonIcon, className:'button'},
-        //         {cid:cid++,icon:transbuttonIcon, className:'transbutton'},
-        //         {cid:cid++,icon:qrcodeIcon, className:'qrcode'},
-        //         {cid:cid++,icon:fileIcon, className:'file'},
-        //         {cid:cid++,icon:counterIcon, className:'counter'},
-        //         {cid:cid++,icon:databaseIcon, className:'database'},
-        //         {cid:cid++,icon:remotedeviceIcon, className:'remotedevice'},
-        //         {cid:cid++,icon:pcdeviceIcon, className:'pcdevice'},
-        //         {cid:cid++,icon:twodvarIcon, className:'twodvar'},
-        //         {cid:cid++,icon:composingcontainerIcon, className:'composingcontainer'},
-        //         {cid:cid++,icon:cominterfaceIcon, className:'cominterface'}
-        //         ]
-        //     }
-        // ];
 
         var items = [];
         for (var i = 0; i < panels.length; i++) {
