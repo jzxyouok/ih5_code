@@ -461,7 +461,7 @@ export default Reflux.createStore({
         if (!this.currentWidget)
             return;
 
-        if(props === undefined) {
+        if(props === undefined || props === null) {
             props = {};
         }
         if ((className === 'text' || className === 'bitmaptext') && props.value){
