@@ -149,7 +149,9 @@ propertyMap['bitmaptext'] = [
 ];
 
 propertyMap['qrcode'] = [
-    ...propertyMap['sprite'],
+    ...propertyMap['box'],
+    // ...propertyMap['sprite'],
+    { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
     { name: 'data', type: propertyType.String, default:'', isProperty: true },
     { name: 'shapeWidth', showName:'shapeW', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'shapeHeight', showName:'shapeH', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
