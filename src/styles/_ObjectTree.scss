@@ -76,6 +76,12 @@
                 }
             }
 
+            .item-img {
+                max-height: 18px;
+                filter: Gray;
+                -webkit-filter: grayscale(100%);
+            }
+
             .stage-name-wrap,
             .item-name-wrap {
                 @extend %font-omitted;

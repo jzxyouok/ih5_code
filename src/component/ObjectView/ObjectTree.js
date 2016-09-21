@@ -514,7 +514,12 @@ class ObjectTree extends React.Component {
             let pic = null;
             this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
                 if (v1.className === v.className){
-                    pic = v1.icon;
+                    if(v.props.link !== undefined &&v.rootWidget.imageList&&v.rootWidget.imageList.length>v.props.link){
+                        pic = v.rootWidget.imageList[v.props.link];
+                        // pic = v1.icon;
+                    } else {
+                        pic = v1.icon;
+                    }
                 }
             });
             return  <div className='item'
@@ -548,7 +553,7 @@ class ObjectTree extends React.Component {
                                 : icon( 0 , v.key)
                         }
 
-                        <img src={ pic } />
+                        <img className="item-img" src={ pic } />
 
                         <div className='item-name-wrap' onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>
                             <p className={$class({'hidden':((v.key === this.state.nid)&&this.state.editMode)})} >{v.props.name}</p>
