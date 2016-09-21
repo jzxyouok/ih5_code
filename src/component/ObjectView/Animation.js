@@ -16,7 +16,6 @@ class Animation extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            className : 'root',
             data: animationData
         };
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -46,10 +45,8 @@ class Animation extends React.Component {
             }
 
             this.setState({
-                className : widget.selectWidget.className,
                 data: data
             });
-            //console.log(widget.selectWidget.className);
         }
     }
 
