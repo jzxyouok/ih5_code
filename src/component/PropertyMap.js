@@ -355,7 +355,7 @@ function checkChildClass(selected, className) {
         return false;
     //TODO: FIX ME!!!对未实现功能的暂时处理
     if(propertyFlags[className] == undefined) {
-        return true;
+        return false;
     }
     var requires = propertyFlags[className].requires;
     if ((~(provides & widgetFlags.FLAG_MASK) & (requires & widgetFlags.FLAG_MASK)) != 0)

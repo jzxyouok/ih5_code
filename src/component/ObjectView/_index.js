@@ -213,7 +213,7 @@ class ObjectView extends React.Component {
                         {'not-allowed': !this.state.canHaveEvent||this.state.hasEvent}
                         )} title='事件' disabled={!this.state.canHaveEvent||this.state.hasEvent}
                             onClick={ this.addEvent.bind(this, 'event', null)}/>
-                    <button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />
+                    {/*<button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />*/}
                     <button className='btn btn-clear delete-btn' title='删除' onClick={ this.delete } />
                 </div>
 

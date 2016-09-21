@@ -3,12 +3,21 @@ import React from 'react';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
+import {checkChildClass} from '../PropertyMap';
+
+const animationData = [
+    {name:'变量fx', class:'fx-btn', className:'fx', disabled:false},
+    {name:'轨迹', class:'locus-btn', className:'track', disabled:false},
+    {name:'缓动', class:'easing-btn', className:'easing', disabled:false},
+    {name:'物体', class:'object-btn', className:'body', disabled:false}
+];
 
 class Animation extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            className : 'root'
+            className : 'root',
+            data: animationData
         };
         this.onStatusChange = this.onStatusChange.bind(this);
         this.addWidgetBtn = this.addWidgetBtn.bind(this);
@@ -26,8 +35,19 @@ class Animation extends React.Component {
     onStatusChange(widget) {
         //是否选中图层或者舞台上的组件
         if(widget.selectWidget){
+            //过滤可选的功能组件
+            let data = animationData;
+            for(let i = 0; i<data.length; i++) {
+                if (checkChildClass(widget.selectWidget, data[i].className)) {
+                    data[i].disabled = false;
+                } else {
+                    data[i].disabled = true;
+                }
+            }
+
             this.setState({
-                className : widget.selectWidget.className
+                className : widget.selectWidget.className,
+                data: data
             });
             //console.log(widget.selectWidget.className);
         }
@@ -38,65 +58,13 @@ class Animation extends React.Component {
     }
 
     render() {
-        let btnData = [];
-        switch (this.state.className){
-            // , {'name':'动效','class':'dx-btn', className:'effect'}
-            case 'root':
-                btnData = [
-                    {'name':'物理世界','class':'physical-btn', className:'world'}
-                ];
-                break;
-            case 'image':
-            case 'imagelist':
-            case 'text':
-            case 'bitmaptext':
-            case 'rect':
-            case 'ellipse':
-            case 'path':
-            case 'qrcode':
-            case 'counter':
-                btnData = [
-                    {'name':'轨迹','class':'locus-btn', className:'track'},
-                    {'name':'缓动','class':'easing-btn', className:'easing'},
-                    {'name':'物体','class':'object-btn', className:'body'}
-                ];
-                break;
-            case 'container':
-                btnData = [
-                    {'name':'轨迹','class':'locus-btn', className:'track'},
-                    {'name':'缓动','class':'easing-btn', className:'easing'}
-                ];
-                break;
-            case 'video':
-            case 'slidetimer':
-                btnData = [
-                    {'name':'缓动','class':'easing-btn', className:'easing'}
-                ];
-                break;
-            case 'audio':
-            case 'file':
-            case 'composingcontainer':
-            case 'timer':
-            case 'database':
-            case 'cominterface':
-            case 'remotedevice':
-            case 'pcdevice':
-            case 'wechat':
-                btnData = [];
-                break;
-            default : btnData = [];
-        }
-        //添加fx变量
-        if (this.state.className !== 'text' || this.state.className !== 'counter'|| this.state.className !== 'twodvar') {
-            btnData.unshift({'name':'变量fx','class':'fx-btn', className:'fx'});
-        }
-
         return (
             <div className='Animation'>
                 {
-                    btnData.map((v,i)=>{
+                    this.state.data.map((v,i)=>{
                         return <button key={i}
-                                       className={ 'btn btn-clear ' + v.class }
+                                       className={ 'btn btn-clear btn-animation ' + v.class }
+                                       disabled={v.disabled}
                                        title={v.name}
                                        onClick={ this.addWidgetBtn.bind(this, v.className, v.param)} />
                     })
