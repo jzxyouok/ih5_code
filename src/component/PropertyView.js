@@ -107,7 +107,11 @@ class PropertyView extends React.Component {
         } else {
             switch (prop.type) {
                 case propertyType.Percentage:
-                    v = parseFloat(value);
+                    if(prop.name =='alpha'){
+                        v = parseFloat(value)/100;
+                    }else{
+                        v = parseFloat(value);
+                    }
                     break;
                 case propertyType.Number:
                     v = parseFloat(value);
@@ -264,7 +268,6 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;//当前舞台选中的对象
-       //console.log(node);
 
         if (!node)
             return null;
@@ -291,7 +294,7 @@ class PropertyView extends React.Component {
         const getInput = (item, index) => {
              //item,propertyMap中的元素;node,当前选中的属性面板,node.node中存储了属性值,props中存储了用于回填的值
 
-            //设置默认值
+            //设置默认值,用于展示
             let defaultValue;
 
             if (item.readOnly ) {
@@ -312,16 +315,27 @@ class PropertyView extends React.Component {
                 }
             } else {
                 if (node.props[item.name] === undefined){
-                    defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
+                    if(item.type === propertyType.Boolean ){
+                        defaultValue = item.default
+                    }else if(item.type === propertyType.Percentage && item.name=='alpha'){
+                        defaultValue = item.default*100;
+                    }else{
+                        defaultValue='';
+                    }
+                   // defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
                 }  else{
                     defaultValue = node.props[item.name];
                     if(item.name == 'originX'){
                         this.originPos.x=defaultValue;
                     }else if(item.name == 'originY'){
                         this.originPos.y=defaultValue;
+                    }else if(item.name == 'alpha'){
+                        defaultValue=defaultValue*100;
                     }
                 }
             }
+
+
 
 
             //设置通用默认参数和事件
@@ -437,7 +451,7 @@ class PropertyView extends React.Component {
                         selectNode.props[item.name] = obj[item.name];
                         //用于更新
                         if (needRender)
-                            selectNode.node[item.name] = item.name == 'alpha' ? obj[item.name] / 100 : obj[item.name];
+                            selectNode.node[item.name] =obj[item.name];
                     }
                 }
             });

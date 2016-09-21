@@ -3,9 +3,8 @@ import React from 'react';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 
-var oDiv=null;
-var domTop =null;
-var dragTag=false;
+
+
 
 class DesignView extends React.Component {
     constructor(props) {
@@ -14,14 +13,23 @@ class DesignView extends React.Component {
 
         };
 
+        this.isDraging =false;
+        this.pointX=null;
+        this.pointY=null;
+        this.canvas_x=null;
+        this.canvas_y=null;
+        this.canvas_w=null;
+        this.canvas_h=null;
+
+        
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
 
-        this.dragTopLine = this.dragTopLine.bind(this);
-        this.moveTopLine = this.moveTopLine.bind(this);
-        this.releaseTopLine = this.releaseTopLine.bind(this);
+        this.mouseDown = this.mouseDown.bind(this);
+        this.mouseMove = this.mouseMove.bind(this);
+        this.mouseUp = this.mouseUp.bind(this);
 
     }
 
@@ -44,13 +52,11 @@ class DesignView extends React.Component {
 
                 document.body.addEventListener('keyup', this.onKeyScroll);
 
-                document.getElementsByClassName('h_ruler')[0].addEventListener('mousedown',this.dragTopLine);
+                document.getElementsByClassName('h_ruler')[0].addEventListener('mousedown',this.mouseDown);
 
-                document.getElementById('canvas-dom').lastElementChild.addEventListener('mousemove',this.moveTopLine)
+                document.getElementById('canvas-dom').lastElementChild.addEventListener('mousemove',this.mouseMove)
 
-                document.getElementById('canvas-dom').lastElementChild.addEventListener('mouseup',this.releaseTopLine)
-
-
+                document.getElementById('canvas-dom').lastElementChild.addEventListener('mouseup',this.mouseUp)
 
                 this.setRuler(6,10);
 
@@ -61,7 +67,7 @@ class DesignView extends React.Component {
         }
 
         if(widget.updateProperties && (widget.updateProperties .width || widget.updateProperties .height)){
-              //��߸ı�
+
             let iWidthSum =Math.floor(widget.updateProperties .width/100);
             let iHeightSum=Math.floor(widget.updateProperties .height/100);
             this.setRuler(iWidthSum,iHeightSum);
@@ -103,30 +109,6 @@ class DesignView extends React.Component {
         t -= y/4;
         this.refs.view.style.top = t+'px';
     }
-
-    dragTopLine(event){
-
-       oDiv =  document.createElement('div');
-       oDiv.setAttribute('class','rulerWLine');
-        document.getElementById('canvas-dom').appendChild(oDiv);
-        domTop =document.getElementById('canvas-dom').offsetTop;
-        dragTag=true;
-    }
-
-
-
-    moveTopLine(event){
-
-        if(oDiv){
-            oDiv.style.top = (event.pageY-domTop)+'px';
-        }
-
-    }
-    releaseTopLine(event){
-
-
-    }
-
     onKeyScroll(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -151,6 +133,35 @@ class DesignView extends React.Component {
             return;
         }
     }
+
+    mouseDown(event){
+        let oDiv =  document.createElement('div');
+        let oCanvas = document.getElementById('canvas-dom');
+        let oCanvasRect =oCanvas.getBoundingClientRect();
+
+        oDiv.setAttribute('class','rulerWLine');
+
+        oCanvas.appendChild(oDiv);
+
+         this.isDraging=true;
+
+         console.log(oCanvasRect);
+
+    }
+
+    mouseMove(event){
+        //if(oDiv){
+        //    oDiv.style.top = (event.pageY-domTop)+'px';
+        //}
+    }
+    mouseUp(event){
+        this.isDraging=false;
+        //在canvas中,把线固定下来
+
+        //不在convas中,把线取消
+    }
+
+
 
     render() {
         return (
