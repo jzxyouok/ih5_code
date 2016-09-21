@@ -207,15 +207,6 @@ $size: 25px;
             background: #424242;
             position: relative;
 
-            &:after{
-                content: '';
-                width: 5px;
-                height: 24px;
-                background: #737373;
-                border-top-right-radius: 2px;
-                border-bottom-right-radius: 2px;
-            }
-
 			//&.timline-column-right {
 			//	padding-right: 20px;
 			//}
@@ -228,14 +219,35 @@ $size: 25px;
                 font-size: 12px;
                 color: #aeaeae;
             }
+            .icon {
+                position: absolute;
+                right: 0;
+                top: 0;
+                content: '';
+                width: 5px;
+                height: 24px;
+                background: #737373;
+                border-top-right-radius: 2px;
+                border-bottom-right-radius: 2px;
+            }
             .unit {
                 @include flexbox;
-                @include align-items(stretch);
                 position: absolute;
+                left: 0;
+                right: 0;
                 z-index: 2;
+                height: 100%;
                 margin: 0;
                 font-size: 12px;
                 color: #aeaeae;
+                overflow: hidden;
+
+                ul{
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    padding-right: 20px;
+                }
 
                 li{
                     @include flex(1);
@@ -250,6 +262,44 @@ $size: 25px;
                     }
                 }
             }
+
+            .time-ruler-layer {
+                position: absolute;
+                left: 0;
+                right: 0;
+                z-index: 3;
+                margin: 0;
+
+                .time-ruler-div:after{
+                    display: none;
+                }
+            }
+
+            .time-ruler-hidden {
+                height: 99999999px;
+                overflow: hidden;
+
+                .time-ruler-div:after{
+                    display: block;
+                }
+            }
+
+            .time-ruler-div {
+                position: relative;
+
+                &:after{
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    content: '';
+                    width: 5px;
+                    height: 24px;
+                    background: #737373;
+                    border-top-right-radius: 2px;
+                    border-bottom-right-radius: 2px;
+                }
+            }
+
 			.ant-slider {
                 //@include flex(1);
 				background: none;
@@ -258,6 +308,7 @@ $size: 25px;
                 margin: 0;
                 padding: 0;
 			}
+
 			.ant-slider-handle {
 				width: 24px;
 				height: 24px;
