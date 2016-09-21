@@ -478,8 +478,11 @@ export default Reflux.createStore({
         }
         return props;
     },
-    renameWidget: function (widget) {
-
+    renameWidget: function (newname) {
+        this.currentWidget.props['name'] = newname;
+        this.updateProperties({'name':this.currentWidget.props['name']});
+        this.render();
+        this.trigger({redrawTree: true});
     },
     updateProperties: function(obj, skipRender, skipProperty) {
       if(this.currentWidget.props.isLock){

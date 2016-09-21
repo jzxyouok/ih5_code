@@ -41,6 +41,8 @@ class ObjectTree extends React.Component {
 
         this.startEditObjName = this.startEditObjName.bind(this);
         this.endEditObjName = this.endEditObjName.bind(this);
+        this.editStopPropagation = this.editStopPropagation.bind(this);
+        this.onRename = this.onRename.bind(this);
 
         //拖动对象的方法
         this.itemDragStart = this.itemDragStart.bind(this);
@@ -204,7 +206,8 @@ class ObjectTree extends React.Component {
         //console.log(data);
         this.setState({
             nid : nid,
-            activeEvent: false
+            activeEvent: false,
+            editMode: false
         },()=>{
             WidgetActions['selectWidget'](data, true);
         });
@@ -279,17 +282,39 @@ class ObjectTree extends React.Component {
         }
     }
 
-    startEditObjName(e) {
+    startEditObjName(id, data, event) {
+        event.stopPropagation();
+        var editItem = document.getElementById('item-name-input-'+ id);
+        editItem.value = data.props.name;
         this.setState({
             editMode: true
+        }, ()=>{
+            let temp = ()=>{
+                editItem.focus();
+            };
+            setTimeout(()=> {
+                temp();
+            }, 100);
+
         });
     }
 
-    endEditObjName(e) {
-        debugger;
+    endEditObjName(event) {
+        event.stopPropagation();
+        this.onRename(event);
+    }
+
+    onRename(event){
         this.setState({
             editMode: false
         });
+        if(event.target.value) {
+            WidgetActions['renameWidget'](event.target.value);
+        }
+    }
+
+    editStopPropagation(event) {
+        event.stopPropagation();
     }
 
     itemAddKeyListener(event){
@@ -323,6 +348,14 @@ class ObjectTree extends React.Component {
     itemKeyAction(event){
         event.preventDefault();
         event.stopPropagation();
+        //如果是edit模式，不做任何事情
+        if(this.state.editMode){
+            if(event.keyCode == 13) {
+                this.onRename(event);
+            }
+            return;
+        }
+
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
         //复制 67
@@ -368,6 +401,12 @@ class ObjectTree extends React.Component {
     }
 
     itemDragStart(nid, data, e){
+        //如果是edit模式，不做任何事情
+        if(this.state.editMode){
+            e.preventDefault();
+            return;
+        }
+
         this.initialDragTip('拖拽对象到此', false);
         //拖动同时把item设为被选中
         this.chooseBtn(nid, data);
@@ -376,7 +415,13 @@ class ObjectTree extends React.Component {
         e.dataTransfer.setData('text/html', this.dragged);
     }
 
-    itemDragEnd(){
+    itemDragEnd(e){
+        //如果是edit模式，不做任何事情
+        if(this.state.editMode){
+            e.preventDefault();
+            return;
+        }
+
         this.destroyDragTip();
         this.dragged.style.display = 'block';
         this.dragged.parentNode.removeChild(this.placeholder);
@@ -389,7 +434,12 @@ class ObjectTree extends React.Component {
     }
 
     itemDragOver(e){
-        e.preventDefault();
+        //如果是edit模式，不做任何事情
+        if(this.state.editMode){
+            e.preventDefault();
+            return;
+        }
+
         this.dragWithTip(e.clientX, e.clientY, true);
         this.dragged.style.display = 'none';
         if(e.target.className === 'placeholder') return;
@@ -500,10 +550,12 @@ class ObjectTree extends React.Component {
 
                         <img src={ pic } />
 
-                        <div className='item-name-wrap'>
-                            <p>{v.props.name}</p>
-                            {/*<input id={'tree-name-input-'+v.key} type="text"*/}
-                            {/*className={$class({'hidden':!(v.key === this.state.nid)||!this.state.editMode})} onBlur={this.endEditObjName} />*/}
+                        <div className='item-name-wrap' onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>
+                            <p className={$class({'hidden':((v.key === this.state.nid)&&this.state.editMode)})} >{v.props.name}</p>
+                            <input id={'item-name-input-'+v.key} type="text"
+                                   onBlur={this.endEditObjName}
+                                   onClick={this.editStopPropagation}
+                                   className={$class('item-name-input',{'hidden':!((v.key === this.state.nid)&&this.state.editMode)})}/>
                         </div>
                         {
                             v.props.locked!==undefined && v.props.locked

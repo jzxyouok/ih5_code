@@ -82,6 +82,16 @@
                 width: 100%;
                 padding-right: 18px;
                 margin: 0 0 0 10px;
+
+                .item-name-input {
+                    outline: 0;
+                    height: 18px;
+                    margin: 0;
+                    width: 100%;
+                    border: none;
+                    padding: 0 5px;
+                    background-color: #151515;
+                }
             }
 
             p{
