@@ -572,15 +572,23 @@ $size: 25px;
             .left-btn, .right-btn {
                 width: 33px;
                 height: 14px;
+                cursor: pointer;
                 @include btn();
                 @include bg(12, 0);
+
+                &:hover {@include bg(12, 1);}
+                &.active {@include bg(12, 2); cursor: not-allowed;}
             }
             .right-btn {
                 @include bg(13, 0);
+                &:hover {@include bg(13, 1);}
+                &.active {@include bg(13, 2);}
             }
 
             .zoom-slider {
                 position: relative;
+                width: 100px;
+                margin:  0 1.5px;
                 height: 14px;
 
                 .line {
@@ -593,7 +601,7 @@ $size: 25px;
                     @include btn();
                     @include bg(14, 0);
                     position: absolute;
-                    left: 0;
+                    //left: 45.5px;
                     width: 9px;
                     height: 14px;
                     z-index: 1;
