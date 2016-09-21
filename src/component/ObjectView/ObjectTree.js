@@ -517,7 +517,6 @@ class ObjectTree extends React.Component {
                     if(v.className === 'image' || v.className === 'imagelist') {
                         if(v.props.link !== undefined &&v.rootWidget.imageList&&v.rootWidget.imageList.length>v.props.link){
                             pic = v.rootWidget.imageList[v.props.link];
-                            // pic = v1.icon;
                         } else {
                             pic = v1.icon;
                         }
