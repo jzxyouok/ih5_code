@@ -33,7 +33,7 @@ let igroupIcon = require('../images/igroupNormal.png');
 
 let folderIcon = require('../images/folder.svg');
 let buttonIcon = require('../images/base/button.svg');
-let transbuttonIcon = require('../images/base/transButton.svg');
+let tapAreaIcon = require('../images/base/tapArea.svg');
 let qrcodeIcon = require('../images/base/qrCode.svg');
 let fileIcon = require('../images/base/file.svg');
 let counterIcon = require('../images/base/counter.svg');
@@ -77,8 +77,8 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:bitmaptextIcon, className:'bitmaptext', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100}},
                 {cid:this.cid++,icon:folderIcon, className:'folder'},
 
-                {cid:this.cid++,icon:buttonIcon, className:'button'},
-                {cid:this.cid++,icon:transbuttonIcon, className:'transbutton'},
+                {cid:this.cid++,icon:buttonIcon, className:'button', drawRect:true, param: {'value': 'Text', 'fillColor':'#2187F3', 'lineColor':'#2187F3'}},
+                {cid:this.cid++,icon:tapAreaIcon, className:'taparea', drawRect:true, param: {'fillColor':'transparent'}},
                 {cid:this.cid++,icon:qrcodeIcon, className:'qrcode', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100, 'data': '0'}},
                 {cid:this.cid++,icon:fileIcon, className:'file'},
                 {cid:this.cid++,icon:counterIcon, className:'counter'},

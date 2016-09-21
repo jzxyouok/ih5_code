@@ -150,13 +150,16 @@ propertyMap['bitmaptext'] = [
 
 propertyMap['qrcode'] = [
     ...propertyMap['box'],
+    // ...propertyMap['sprite'],
+    { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
     { name: 'data', type: propertyType.String, default:'', isProperty: true },
-    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'shapeWidth', showName:'shapeW', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', showName:'shapeH', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
 
 propertyMap['graphics'] = [
     ...propertyMap['widget'],
+    { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
     { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'positionY',showName:'y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleX', showName:'w',type: propertyType.Float, default: 0, group:'position', isProperty: true },
@@ -174,6 +177,15 @@ propertyMap['graphics'] = [
 
 propertyMap['rect'] = [
     ...propertyMap['graphics']
+];
+
+propertyMap['taparea'] = [
+    ...propertyMap['box'],
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'fillColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
 ];
 
 propertyMap['button'] = [

@@ -63,10 +63,8 @@ class ToolBoxButton extends Component {
             ToolBoxAction['selectSecondary'](this.props.cid, this.props.gid);
         }
 
-        //点击的时候清除一下
-        this.drawRect = new DrawRect();
-        this.drawRect.end();
-        this.drawRect.cleanUp();
+        //点击的时候清除一下overlay
+        new DrawRect().cleanUp();
 
         //选择了的话可以再点击取消选择
         if(this.state.selected) {
@@ -91,6 +89,7 @@ class ToolBoxButton extends Component {
     }
 
     onDrawRect() {
+        this.drawRect = new DrawRect();
         this.drawRect.start();
         this.drawRect.def.promise().then(data => {
             if(this.props.param) {
@@ -186,7 +185,7 @@ class ToolBoxButton extends Component {
 
     // modal的一些操作
     onModalOK() {
-        this.props.param.text = this.state.modal.value;
+        this.props.param.value = this.state.modal.value;
         WidgetActions['addWidget'](this.props.className, this.props.param);
         this.onModalClear();
     }

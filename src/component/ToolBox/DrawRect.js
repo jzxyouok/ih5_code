@@ -12,7 +12,7 @@ export default class DrawRect {
         this.result = {};
         this.def = $.Deferred();
 
-        this.designerView = document.getElementById('DesignView-Container');
+        this.designerView = document.getElementById('iH5-App');
 
         this.onMouseUp = this.onMouseUp.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -24,7 +24,9 @@ export default class DrawRect {
         this.start = this.start.bind(this);
         this.end = this.end.bind(this);
         this.cleanUp = this.cleanUp.bind(this);
+
         this.addDrawRectOverlay = this.addDrawRectOverlay.bind(this);
+        this.addDrawRect = this.addDrawRect.bind(this);
     }
 
     start() {
@@ -51,19 +53,11 @@ export default class DrawRect {
         drawRectOverlay.style.top = 0;
         drawRectOverlay.backgroundColor = 'black';
         drawRectOverlay.tabIndex = 'drawRectOverlay';
+        drawRectOverlay.style.zIndex = 111;
         this.designerView.appendChild(drawRectOverlay);
     }
 
-    onMouseDown(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.flag = true;
-        //创建临时的方框div
-        var evt = window.event || e;
-        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-        this.startX = evt.clientX + scrollLeft;
-        this.startY = evt.clientY + scrollTop;
+    addDrawRect() {
         var div = document.createElement('div');
         div.id = 'drawRect';
         div.className = 'div';
@@ -76,6 +70,19 @@ export default class DrawRect {
 
         var drawRectOverlay = document.getElementById('drawRectOverlay');
         drawRectOverlay.appendChild(div);
+    }
+
+    onMouseDown(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.flag = true;
+        //创建临时的方框div
+        var evt = window.event || e;
+        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+        this.startX = evt.clientX + scrollLeft;
+        this.startY = evt.clientY + scrollTop;
+        this.addDrawRect();
     }
 
     onMouseUp(e)  {
