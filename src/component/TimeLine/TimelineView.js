@@ -38,7 +38,8 @@ class TimelineView extends React.Component {
             overallWidth : 100 + "%",
             percentage : null,
             movableDistance : 0,
-            marginLeft : 0
+            marginLeft : 0,
+            isScroll : false
 		};
 		this.onTimer = this.onTimer.bind(this);
 		//this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -156,7 +157,7 @@ class TimelineView extends React.Component {
 	onTimer(p) {
 		this.setState({currentTime:p});
 		WidgetActions['syncTrack']();
-        if(p === this.state.timerNode.node['totalTime'] ){
+        if(this.state.isPlaying && p === this.state.timerNode.node['totalTime'] ){
             this.onPause(true);
         }
 	}
@@ -367,12 +368,16 @@ class TimelineView extends React.Component {
                     }
                     self.setState({
                         marginLeft : result
+                        , isScroll : true
                     });
                 }
             }).mouseup(function(){
                 move=false;
                 initialmarginLeft = self.state.marginLeft >= movableDistance
                                      ? movableDistance : self.state.marginLeft;
+                self.setState({
+                    isScroll : false
+                })
             });
         }
     }
@@ -442,6 +447,8 @@ class TimelineView extends React.Component {
                         points={node.props.data}
                         myID = { node.parent.key }
                         ref="VxSlider"
+                        marginLeft = { this.state.marginLeft }
+                        percentage = { this.state.percentage }
                         changSwitchState={ this.changSwitchState }
                         isCurrent={node === this.state.currentTrack} />);
             }
@@ -545,7 +552,7 @@ class TimelineView extends React.Component {
                             </ul>
                         </div>
 
-                        <div className={ cls("time-ruler-layer",{ "time-ruler-hidden" : this.state.marginLeft !==0 })}>
+                        <div className={ cls("time-ruler-layer",{ "time-ruler-hidden" : this.state.marginLeft !==0 && this.state.isScroll})}>
                             <div style={{ width : 61 * totalTime + 20 +"px",
                                             marginLeft : - (this.state.marginLeft * this.state.percentage) ,
                                             paddingRight : 20 + "px"

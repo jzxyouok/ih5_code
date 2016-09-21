@@ -276,7 +276,7 @@ $size: 25px;
             }
 
             .time-ruler-hidden {
-                height: 99999999px;
+                //height: 99999999px;
                 overflow: hidden;
 
                 .time-ruler-div:after{
@@ -403,6 +403,17 @@ $size: 25px;
                 .timline-column-right {
                     @include flexbox;
                     @include align-items(stretch);
+                    position: relative;
+
+                    .slider-right-layer {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        height: 100%;
+                    }
+                    .slider-right-hidden {
+                        overflow: hidden;
+                    }
 
                     .slider-right{
                         @include flex(1);
