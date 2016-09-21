@@ -17,14 +17,15 @@ class DesignView extends React.Component {
         this.aODiv=[];
         this.curODiv=null;
         this.isDraging =false;
-
+        this.whichDrag=null;
         
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
 
-        this.mouseDown = this.mouseDown.bind(this);
+        this.mouseDown_top = this.mouseDown_top.bind(this);
+        this.mouseDown_left = this.mouseDown_left.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
 
@@ -44,7 +45,8 @@ class DesignView extends React.Component {
         if(widget.selectWidget){
             if(widget.selectWidget.className == "root"){
                 document.body.addEventListener('keyup', this.onKeyScroll);
-                document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown);
+                document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown_top);
+                document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);
                 document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
                 document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
                 this.setRuler(6,10);
@@ -106,7 +108,11 @@ class DesignView extends React.Component {
         this.refs.line_top.style.top= t+'px';
 
         this.aODiv.map(item =>{
-            item.oDiv.style.top=(t-item.offsetTop)+'px';
+            if(item.oDiv.whichDrag =='top'){
+                item.oDiv.style.top=(t-item.offsetTop)+'px';
+            }else{
+                item.oDiv.style.left=   item.offsetLeft+'px';
+            }
         });
     }
     onKeyScroll(event) {
@@ -141,19 +147,28 @@ class DesignView extends React.Component {
         let offsetTop =this.refs.view.offsetTop;
         this.aODiv=[];
 
-        let oRulerWLine = document.getElementById('DesignView-Container').getElementsByClassName('rulerWLine');
-
-        for(let i=0; i< oRulerWLine.length;i++){
-            $this.refs.container.removeChild(oRulerWLine[i]);
-            console.log('a');
+        let oContainer =document.getElementById('DesignView-Container');
+        let oRulerWLine = oContainer.getElementsByClassName('rulerWLine');
+        let oRulerHLine = oContainer.getElementsByClassName('rulerHLine');
+        for(let i=oRulerWLine.length-1; i>=0;i--){
+            oContainer.removeChild(oRulerWLine[i]);
         }
- 
+        for(let i=oRulerHLine.length-1; i>=0;i--){
+            oContainer.removeChild(oRulerHLine[i]);
+        }
         aODiv.map(item=>{
             console.log('b');
             let curODiv =  document.createElement('div');
             curODiv.appendChild(document.createElement('div'));
-            curODiv.setAttribute('class','rulerWLine');
-            curODiv.style.top=(offsetTop-item.offsetTop)+'px';
+
+            if(item.whichDrag=='top'){
+                curODiv.setAttribute('class','rulerWLine');
+                curODiv.style.top=(offsetTop-item.offsetTop)+'px';
+            }else{
+                curODiv.setAttribute('class','rulerHLine');
+                curODiv.style.left=item.offsetLeft+'px';
+            }
+
 
             curODiv.flag=this.count++;
 
@@ -173,25 +188,45 @@ class DesignView extends React.Component {
             this.refs.container.appendChild(curODiv);
             this.aODiv.push({
                 oDiv:curODiv,
+                offsetLeft:item.offsetLeft,
                 offsetTop:item.offsetTop
             });
         });
 
     }
-    mouseDown(event){
+    mouseDown_top(event){
+
         this.curODiv =  document.createElement('div');
         this.curODiv.appendChild(document.createElement('div'));
         this.curODiv.setAttribute('class','rulerWLine');
         this.refs.container.appendChild(this.curODiv);
         this.isDraging=true;
+        this.whichDrag='top';
+    }
+    mouseDown_left(event){
+
+        this.curODiv =  document.createElement('div');
+        this.curODiv.appendChild(document.createElement('div'));
+        this.curODiv.setAttribute('class','rulerHLine');
+        this.refs.container.appendChild(this.curODiv);
+        this.isDraging=true;
+        this.whichDrag='left';
     }
 
     mouseMove(event){
         if(this.curODiv &&  this.isDraging){
-            this.curODiv.style.top = (event.pageY)+'px';
-            document.body.style.cursor=' n-resize';
+
+            if(this.whichDrag=='top'){
+                this.curODiv.style.top = (event.pageY)+'px';
+                document.body.style.cursor=' n-resize';
+            }else{
+                this.curODiv.style.left = (event.pageX)+'px';
+                document.body.style.cursor='e-resize';
+            }
+
         }
     }
+
     mouseUp(event){
         let $this =this;
         if(this.curODiv) {
@@ -213,8 +248,10 @@ class DesignView extends React.Component {
                     this.onmousedown=null;
                 };
                 this.curODiv.flag=this.count++;
+                this.curODiv.whichDrag=this.whichDrag;
                 this.aODiv.push({
                     oDiv:this.curODiv,
+                    offsetLeft:event.pageX,
                     offsetTop:this.refs.view.offsetTop -event.pageY
                 });
 
@@ -226,6 +263,7 @@ class DesignView extends React.Component {
         document.body.style.cursor='auto';
         this.isDraging=false;
         this.curODiv=null;
+        this.whichDrag=null;
     }
 
     render() {

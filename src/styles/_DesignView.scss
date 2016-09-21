@@ -24,7 +24,19 @@ $lineColor:red;
             border-bottom: 1px solid $lineColor;
         }
     }
-
+    .rulerHLine{
+        width:3px;
+        height: 100%;
+        cursor: e-resize;
+        position: absolute;
+        left: 0;
+        top: 0;
+        div{
+            width:2px;
+            height:100%;
+            border-right: 1px solid $lineColor;
+        }
+    }
     .DesignView {
         margin: 0;
         padding: 0;

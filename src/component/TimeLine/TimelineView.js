@@ -81,7 +81,7 @@ class TimelineView extends React.Component {
 	}
 
 	onStatusChange(widget) {
-		//console.log('w2', widget);
+		console.log('w2', widget);
 		//if(widget.hasOwnProperty('hasHandle')) {
 		//	this.setState({
 		//		hasHandle: widget.hasHandle
@@ -123,6 +123,11 @@ class TimelineView extends React.Component {
 			this.setState(changed);
             this.changeAllWidth(true, changed);
 		}
+        if(widget.skipProperty){
+            if(widget.updateProperties.totalTime){
+                this.changeAllWidth(false);
+            }
+        }
 		if (widget.updateTrack !== undefined) {
             //console.log(widget.updateTrack );
 			if (widget.updateTrack !== null && widget.updateTrack.timerWidget === this.state.timerNode) {
