@@ -64,13 +64,25 @@ class ToolBoxButton extends Component {
             ToolBoxAction['selectSecondary'](this.props.cid, this.props.gid);
         }
 
-        if(this.props.drawRect || this.props.drawRectText){
-            //点击时才清除原来有的，再创建drawRect对象
-            this.onDrawRect();
-        } else {
-            WidgetActions['addWidget'](this.props.className, this.props.param);
+        //点击的时候清除一下
+        this.drawRect = new DrawRect();
+        this.drawRect.end();
+        this.drawRect.cleanUp();
+
+        //选择了的话可以再点击取消选择
+        if(this.state.selected) {
             ToolBoxAction['deselect']();
+        } else {
+            if(this.props.drawRect || this.props.drawRectText){
+                //点击时才清除原来有的，再创建drawRect对象
+                this.onDrawRect();
+            } else {
+                WidgetActions['addWidget'](this.props.className, this.props.param);
+                ToolBoxAction['deselect']();
+            }
         }
+
+
     }
 
     onRightClick(event) {
@@ -80,12 +92,6 @@ class ToolBoxButton extends Component {
     }
 
     onDrawRect() {
-        if(this.drawRect) {
-            this.drawRect.end();
-            this.drawRect.cleanUp();
-            this.drawRect = null;
-        }
-        this.drawRect = new DrawRect();
         this.drawRect.start();
         this.drawRect.def.promise().then(data => {
             if(this.props.param) {
