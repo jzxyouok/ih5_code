@@ -65,7 +65,8 @@
             }
 
             .icon {
-                width: 8px;
+                //width: 8px;
+                width: 10px;
                 height: 6px;
                 background: url("img/button-icon.svg") no-repeat -1280px 0;
                 margin-right: 3px;
@@ -75,11 +76,17 @@
                 }
             }
 
+            .stage-name-wrap,
+            .item-name-wrap {
+                @extend %font-omitted;
+                width: 100%;
+                padding-right: 18px;
+                margin: 0 0 0 10px;
+            }
+
             p{
                 @extend %font-omitted;
-                margin: 0 0 0 10px;
                 //max-width: 95px;
-                padding-right: 18px;
             }
 
             .not-icon{
@@ -157,7 +164,8 @@
             outline: none;
 
             .stage-icon {
-                width: 14px;
+                //width: 14px;
+                width: 18px;
                 height: 14px;
                 margin-left: 3px;
                 background: url("img/button-icon.svg") no-repeat -720px 0;

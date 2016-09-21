@@ -81,7 +81,7 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:tapAreaIcon, className:'taparea', drawRect:true, param: {'fillColor':'transparent'}},
                 {cid:this.cid++,icon:qrcodeIcon, className:'qrcode', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100, 'data': '0'}},
                 {cid:this.cid++,icon:fileIcon, className:'file'},
-                {cid:this.cid++,icon:counterIcon, className:'counter'},
+                {cid:this.cid++,icon:counterIcon, className:'counter', drawRect:true, param: {'value':0}},
                 {cid:this.cid++,icon:databaseIcon, className:'database'},
                 {cid:this.cid++,icon:remotedeviceIcon, className:'remotedevice'},
                 {cid:this.cid++,icon:pcdeviceIcon, className:'pcdevice'},

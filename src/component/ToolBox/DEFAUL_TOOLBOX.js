@@ -107,7 +107,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.BUTTON,name:'按钮',icon:buttonIcon, className:'button', drawRect:true,
-                param: {'value': 'Text', 'fillColor':'#2187F3', 'lineColor':'#2187F3','fontFill':'#000000', 'radius':'20'}}, //, 'fontFill':'#000000', 'radius':'20'
+                param: {'value': 'Text', 'fillColor':'#2187F3', 'lineColor':'#2187F3','fontFill':'#FFFFFF', 'radius':'20'}}, //, 'fontFill':'#000000', 'radius':'20'
             {cid:TOOL_ID.TAPAREA,name:'透明按钮',icon:tapAreaIcon, className:'taparea', drawRect:true,
                 param: {'fillColor':'transparent', 'lineColor': 'transparent'}}]
     },{
@@ -168,7 +168,7 @@ var DEFAULT_TOOLBOX = {
         gid:15,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRectText:true, param: {'value':1}}]
+            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0}}]
     },{
         name:'数据库',
         key:16,
