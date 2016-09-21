@@ -482,7 +482,7 @@ class ObjectTree extends React.Component {
 
                         <img src={ pic } />
 
-                        <p>{v.className}</p>
+                        <p>{v.props.name}</p>
                         {
                             v.props.locked!==undefined && v.props.locked
                                 ? <span className='lock-icon' onClick={ this.lockBtn.bind(this, v.key, v) }/>

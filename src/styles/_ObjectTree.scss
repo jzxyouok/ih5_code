@@ -78,7 +78,8 @@
             p{
                 @extend %font-omitted;
                 margin: 0 0 0 10px;
-                max-width: 95px;
+                //max-width: 95px;
+                padding-right: 18px;
             }
 
             .not-icon{
