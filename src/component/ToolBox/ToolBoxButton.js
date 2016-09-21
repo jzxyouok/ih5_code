@@ -185,7 +185,7 @@ class ToolBoxButton extends Component {
 
     // modal的一些操作
     onModalOK() {
-        this.props.param.text = this.state.modal.value;
+        this.props.param.value = this.state.modal.value;
         WidgetActions['addWidget'](this.props.className, this.props.param);
         this.onModalClear();
     }

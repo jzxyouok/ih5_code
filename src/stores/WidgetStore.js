@@ -27,7 +27,7 @@ function onSelect() {
   WidgetActions['selectWidget'](this);
 }
 
-const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext', 'qrcode', 'counter', 'button'];
+const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext', 'qrcode', 'counter', 'button', 'taparea'];
 
 function loadTree(parent, node) {
   let current = {};

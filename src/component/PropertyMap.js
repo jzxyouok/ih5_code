@@ -179,6 +179,15 @@ propertyMap['rect'] = [
     ...propertyMap['graphics']
 ];
 
+propertyMap['taparea'] = [
+    ...propertyMap['box'],
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'fillColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
+];
+
 propertyMap['button'] = [
     ...propertyMap['rect'],
     { name: 'value', type: propertyType.Text, default: '', isProperty: true }
