@@ -1,5 +1,29 @@
+$lineColor:red;
 
 #DesignView-Container{
+    .canvas-wraper{border-left:1px solid $lineColor;position: relative; }
+    #line_top{
+        width: 100%;
+        height: 0;
+        border-bottom: 1px solid $lineColor;
+        position: absolute;
+        left: 0;
+        top: 60px;
+        z-index: 49;
+    }
+    .rulerWLine{
+        width: 100%;
+        height: 3px;
+        cursor: n-resize;
+        position: absolute;
+        left: 0;
+        top: 0;
+        div{
+            width:100%;
+            height:1px;
+            border-bottom: 1px solid $lineColor;
+        }
+    }
 
     .DesignView {
         margin: 0;
@@ -8,12 +32,14 @@
         top: 60px;
         left: 0;
         line-height: 0.74;
-        .rulerWLine{
-            width: 100%;
-            border-bottom: 1px solid red;
+        #line_left{
+            width: 0;
+            height: 100%;
+            border-right: 1px solid $lineColor;
             position: absolute;
-            left: 0;
+            left: -1px;
             top: 0;
+            z-index: 49;
         }
         .h_ruler_wraper{
             position: absolute;
@@ -23,7 +49,7 @@
             left: 0;
             top: -14px;
         }
-        .h_ruler{
+        #h_ruler{
             background: url('./img/h_line.jpg') repeat-x;
             width: 130%;
             height: 100%;
@@ -39,7 +65,7 @@
                 padding-left: 4px;
             }
         }
-        .v_ruler{
+        #v_ruler{
             background: url('./img/v_line.jpg') repeat-y;
             width:13px;
             height:100% ;

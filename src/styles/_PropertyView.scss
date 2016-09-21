@@ -18,7 +18,7 @@
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-
+    z-index: 50;
 	#PropertyViewHeader {
 		@include title();
 		font-size: 14px;

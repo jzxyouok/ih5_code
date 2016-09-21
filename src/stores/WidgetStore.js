@@ -37,6 +37,8 @@ function loadTree(parent, node) {
   current.props = node['props'] || {};
   current.events = node['events'] || {};
 
+
+
   current.varList = [];
   if (node['vars']) {
     for (let n in node['vars']) {
@@ -154,7 +156,7 @@ bridge.setGenerateText(function(widget, callback) {
       xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
   var form = new FormData();
   form.append('font', widget['font']);
-  form.append('text', widget['text']);
+  form.append('text', widget['value']);
   form.append('size', widget['size']);
   form.append('color', widget['color']);
   form.append('lineHeight', widget['lineHeight']);
@@ -478,8 +480,11 @@ export default Reflux.createStore({
         }
         return props;
     },
-    renameWidget: function (widget) {
-
+    renameWidget: function (newname) {
+        this.currentWidget.props['name'] = newname;
+        this.updateProperties({'name':this.currentWidget.props['name']});
+        this.render();
+        this.trigger({redrawTree: true});
     },
     updateProperties: function(obj, skipRender, skipProperty) {
       if(this.currentWidget.props.isLock){
@@ -561,6 +566,8 @@ export default Reflux.createStore({
         classList = [];
         bridge.resetClass();
         stageTree = [];
+
+
 
         if (data['defs']) {
             for (let n in data['defs']) {

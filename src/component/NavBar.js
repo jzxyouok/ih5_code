@@ -97,10 +97,12 @@ class NavBar extends React.Component {
             let result = [{'id': id, 'name': wname}, ...this.state.workList];
             this.setState({workList: result});
         }
+
         this.workid = id;
         if (this.isPlay) {
             window.open(this.playUrl + 'work/' + id, '_blank');
         }
+
     }
 
     onPlaySave(isPlay) {
