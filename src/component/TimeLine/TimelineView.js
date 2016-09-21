@@ -355,7 +355,7 @@ class TimelineView extends React.Component {
                 _x=e.pageX;
             });
             $(document).mousemove(function(e){
-                if(move){
+                if(move && self.state.percentage !== null){
                     let x =  e.pageX - _x;
                     let value = initialmarginLeft + x;
                     let result;
@@ -536,6 +536,7 @@ class TimelineView extends React.Component {
                             // }}></div>
                         }
                         <span className={ cls("unit-0",{ "hidden" : this.state.marginLeft !==0 })}>0s</span>
+                        <span className={ cls("icon",{ "hidden" : this.state.percentage !== null })} />
 
                         <div className="unit">
                             <ul className="f--h"
@@ -559,9 +560,6 @@ class TimelineView extends React.Component {
                                         onChange={this.onTimerChange.bind(this)} />
                             </div>
                         </div>
-                        {
-                            //<span className="flex-1" />
-                        }
                     </div>
                 </div>
                 <div id='TimlineNodeContent'>
