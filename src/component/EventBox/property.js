@@ -78,7 +78,7 @@ class Property extends React.Component {
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
-                                <span className="p--icon" />
+                                <button className="p--icon"></button>
 
                                 <div className="p--dropDown short">
                                     <div className="title f--hlc">
