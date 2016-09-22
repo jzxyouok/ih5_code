@@ -23,7 +23,7 @@ class PropertyView extends React.Component {
         this.state = {fields: null};
         this.selectNode = null;
         this.currentPage = null;
-        this.defaultWidth = null;
+
         this.defaultData = {
             width: null,
             height: null
@@ -33,8 +33,6 @@ class PropertyView extends React.Component {
             y:null
         };
     }
-
-
 
      //获取封装的form组件
      getInputBox(type, defaultProp) {
@@ -95,8 +93,6 @@ class PropertyView extends React.Component {
                 return <Input {...defaultProp} />;
         }
     }
-
-
 
     onChangeProp(prop, value) {
         let v;
@@ -214,8 +210,6 @@ class PropertyView extends React.Component {
        }
     }
 
-
-
     onChangePropDom(item, value) {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
             this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
@@ -243,9 +237,10 @@ class PropertyView extends React.Component {
             this.onChangeProp(item,value);
         }
     }
+
    //获取下拉框默认值
     getSelectDefault(originPos,options){
-        for(var i in options){
+        for(let i in options){
              if(options[i][0]==originPos.x && options[i][1]==originPos.y  ){
                  return i;
              }
@@ -267,43 +262,41 @@ class PropertyView extends React.Component {
     }
 
     getFields() {
-        let node = this.selectNode;//当前舞台选中的对象
+        let node = this.selectNode;
 
-        if (!node)
-            return null;
+        if (!node)  return null;
 
-        if( node.props.isLock ===undefined){ node.props.isLock=false;}
+        if( node.props.isLock ===undefined){ node.props.isLock=false;} //应该写到涉及到锁定概念的代码中
 
-        let className = node.className;
-        if (className.charAt(0) == '_')
-            className = 'class';
+        //let className = node.className;
+        //if (className.charAt(0) == '_')   className = 'class';
 
-        if (!propertyMap[className])
-            return null;
+        let className = node.className.charAt(0) == '_'?'class':node.className;
+        if (!propertyMap[className])    return null;
+
+
 
         //暂未被使用
-        const formItemLayout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 16 }
-        };
+        //const formItemLayout = {
+        //    labelCol: { span: 8 },
+        //    wrapperCol: { span: 16 }
+        //};
 
         const groups = {};
 
-
-
         const getInput = (item, index) => {
-             //item,propertyMap中的元素;node,当前选中的属性面板,node.node中存储了属性值,props中存储了用于回填的值
 
             //设置默认值,用于展示
             let defaultValue;
-
             if (item.readOnly ) {
                 defaultValue = node.node[item.name];
             }else if(item.type==propertyType.Float) {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
                 defaultValue = node.node[str];
+
                 if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
-                if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}
+                if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置
+
             }else if(item.type==propertyType.Color || item.type==propertyType.Color2){
                if( item.name == 'color' &&  !node.props.color){ //只执行一次
                    node.props.color='#FFFFFF';
@@ -440,18 +433,19 @@ class PropertyView extends React.Component {
             if (className.charAt(0) == '_')
                 className = 'class';
 
-             propertyMap[className].map(item => {
+            propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
-                    if ( obj[item.name]=== null) {
+                    if (obj[item.name] === null) {
                         delete(selectNode.props[item.name]);
                         if (needRender)
-                            selectNode.node[item.name] = item.default;
+                            selectNode.node[item.name] = undefined;
                     } else {
                         //用于回填
                         selectNode.props[item.name] = obj[item.name];
                         //用于更新
-                        if (needRender)
-                            selectNode.node[item.name] =obj[item.name];
+                        if (needRender){
+                            selectNode.node[item.name] = obj[item.name];
+                        }
                     }
                 }
             });

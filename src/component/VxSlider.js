@@ -6,6 +6,7 @@ import Track from 'rc-slider/src/Track';
 import Steps from 'rc-slider/src/Steps';
 import Marks from 'rc-slider/src/Marks';
 import cls from 'classnames';
+import $ from 'jquery';
 
 import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -103,7 +104,9 @@ class VxRcSlider extends RcSlider {
             changeKeyValue : null,
             isChooseKey : false,
             lastLayer : null,
-            nowLayer:null
+            nowLayer:null,
+            dragLeft : 0,
+            dragRight : 0
         };
         this.onHandleClick = this.onHandleClick.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -111,6 +114,8 @@ class VxRcSlider extends RcSlider {
         this.lastOrNext = this.lastOrNext.bind(this);
         this.initializationState= this.initializationState.bind(this);
         this.isHaveTrunBtn = this.isHaveTrunBtn.bind(this);
+        this.dragLeftBtn = this.dragLeftBtn.bind(this);
+        this.dragRightBtn = this.dragRightBtn.bind(this);
     }
 
     componentDidMount() {
@@ -119,6 +124,8 @@ class VxRcSlider extends RcSlider {
         TimelineStores.listen(this.ChangeKeyframe.bind(this));
         ChangeKeyStore.listen(this.ChangeKey.bind(this));
         this.initializationState();
+        this.dragLeftBtn();
+        this.dragRightBtn();
     }
 
     componentWillUnmount() {
@@ -241,6 +248,9 @@ class VxRcSlider extends RcSlider {
         },()=>{
             this.isHaveTrunBtn(false,1);
         });
+
+        this.dragLeftBtn();
+        this.dragRightBtn();
     }
 
     onHandleClick(handle) {
@@ -351,6 +361,53 @@ class VxRcSlider extends RcSlider {
     componentWillReceiveProps() {
     }
 
+    dragLeftBtn(){
+        let move = false;
+        let _x;
+        let self = this;
+        let left = self.state.dragLeft;
+        console.log(".drag-locus-"+ self.props.myID + " .drag-left");
+        $(".drag-locus-"+ self.props.myID + " .drag-left" ).mousedown(function(e){
+            move=true;
+            _x=e.pageX;
+        });
+        $(document).mousemove(function(e){
+            if(move){
+                let x =  e.pageX - _x;
+                self.setState({
+                    dragLeft: left + x <= 0 ? 0 : left + x
+                });
+                console.log(left + x);
+            }
+        }).mouseup(function(){
+            move=false;
+            left = self.state.dragLeft
+        });
+    }
+
+    dragRightBtn(){
+        let move = false;
+        let _x;
+        let self = this;
+        let right = self.state.dragRight;
+        $(".drag-locus-"+ self.props.myID + " .drag-right" ).mousedown(function(e){
+            move=true;
+            _x=e.pageX;
+        });
+        $(document).mousemove(function(e){
+            if(move){
+                let x =  -(e.pageX - _x);
+                self.setState({
+                    dragRight: right + x <= 0 ? 0 : right + x
+                });
+                console.log(right + x);
+            }
+        }).mouseup(function(){
+            move=false;
+            right = self.state.dragRight
+        });
+    }
+
   	render() {
         const points = this.props.points;
 		const {className, prefixCls, disabled, vertical, dots, included, range, step,
@@ -425,23 +482,29 @@ class VxRcSlider extends RcSlider {
         }
         //console.log(this.props.refTrack);
 
+        const dragLocusStyle = {};
+        const dragLocusClass = 'drag-locus-layer f--h drag-locus-' + this.props.myID;
+        //console.log(dragLocusClass);
+
         let track = this.props.refTrack;
         let trackClass = track.parent.className;
 
+        dragLocusStyle['left'] = this.state.dragLeft;
+        dragLocusStyle['right'] = this.state.dragRight;
         if(trackClass == "image" || trackClass == "imagelist"){
-            style['backgroundColor'] = '#386d6a';
+            dragLocusStyle['backgroundColor'] = '#386d6a';
         }
         else if(trackClass == "text" || trackClass == "bitmaptext"){
-            style['backgroundColor'] = '#937c3f';
+            dragLocusStyle['backgroundColor'] = '#937c3f';
         }
         else if(trackClass == "rect" || trackClass == "ellipse" || trackClass == "path"){
-            style['backgroundColor'] = '#9c5454';
+            dragLocusStyle['backgroundColor'] = '#9c5454';
         }
         else if(trackClass == "button" || trackClass == "taparea"){
-            style['backgroundColor'] = '#405b83';
+            dragLocusStyle['backgroundColor'] = '#405b83';
         }
         else {
-            style['backgroundColor'] = '#764a8f';
+            dragLocusStyle['backgroundColor'] = '#764a8f';
         }
 
         //console.log(track);
@@ -471,7 +534,15 @@ class VxRcSlider extends RcSlider {
                                         position: "relative"
                                     }}>
                             <div ref="slider" className={sliderClassName} style={style}>
+
                                 <div className="locus-layer" onClick={ this.selectTrack.bind(this) }></div>
+
+                                <div className={dragLocusClass} style={ dragLocusStyle }>
+                                    <span className="drag-left" />
+                                    <span className="flex-1"  onClick={ this.selectTrack.bind(this) } />
+                                    <span className="drag-right" />
+                                    <spam className="mark-line" />
+                                </div>
 
                                 <div onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
                                      onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
