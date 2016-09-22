@@ -3,9 +3,6 @@ import React from 'react';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 
-
-
-
 class DesignView extends React.Component {
     constructor(props) {
         super(props);
@@ -53,9 +50,11 @@ class DesignView extends React.Component {
 
             }  else {
                 document.body.removeEventListener('keyup', this.onKeyScroll);
+                document.getElementById('h_ruler').removeEventListener('mousedown',this.mouseDown_top);
+                document.getElementById('v_ruler').removeEventListener('mousedown',this.mouseDown_left);
+                document.getElementById('DesignView-Container').removeEventListener('mousemove',this.mouseMove);
+                document.getElementById('DesignView-Container').removeEventListener('mouseup',this.mouseUp);
             }
-
-
             if(widget.selectWidget.props.rulerArr){
                 this.drawLine(widget.selectWidget.props.rulerArr);
             }
@@ -111,7 +110,7 @@ class DesignView extends React.Component {
             if(item.oDiv.whichDrag =='top'){
                 item.oDiv.style.top=(t-item.offsetTop)+'px';
             }else{
-                item.oDiv.style.left=   item.offsetLeft+'px';
+                item.oDiv.style.left= item.offsetLeft+'px';
             }
         });
     }
@@ -127,7 +126,6 @@ class DesignView extends React.Component {
             let left = window.getComputedStyle(this.refs.view,null).getPropertyValue("left");
             let l = parseFloat(left.replace(/(px)?/, ''));
             l += STEP * (isEvent(37) ? -1 : 1);
-           // this.refs.view.style.left = l+'px';
             this.refs.canvas_wraper.style.left= l+'px';
             return;
         }
@@ -157,21 +155,17 @@ class DesignView extends React.Component {
             oContainer.removeChild(oRulerHLine[i]);
         }
         aODiv.map(item=>{
-            console.log('b');
             let curODiv =  document.createElement('div');
             curODiv.appendChild(document.createElement('div'));
 
-            if(item.whichDrag=='top'){
+            if(item.oDiv.whichDrag=='top'){
                 curODiv.setAttribute('class','rulerWLine');
                 curODiv.style.top=(offsetTop-item.offsetTop)+'px';
             }else{
                 curODiv.setAttribute('class','rulerHLine');
                 curODiv.style.left=item.offsetLeft+'px';
             }
-
-
             curODiv.flag=this.count++;
-
             curODiv.onmousedown=function(){
                 $this.isDraging=true;
                 $this.curODiv=this;
@@ -216,6 +210,7 @@ class DesignView extends React.Component {
     mouseMove(event){
         if(this.curODiv &&  this.isDraging){
 
+
             if(this.whichDrag=='top'){
                 this.curODiv.style.top = (event.pageY)+'px';
                 document.body.style.cursor=' n-resize';
@@ -244,11 +239,13 @@ class DesignView extends React.Component {
                             $this.aODiv.splice(index,1);
                         }
                     });
+                    $this.whichDrag = this.whichDrag;
                     //解绑事件
                     this.onmousedown=null;
                 };
                 this.curODiv.flag=this.count++;
                 this.curODiv.whichDrag=this.whichDrag;
+
                 this.aODiv.push({
                     oDiv:this.curODiv,
                     offsetLeft:event.pageX,
@@ -268,22 +265,22 @@ class DesignView extends React.Component {
 
     render() {
         return (
-        <div className='f--hlt'
-            id='DesignView-Container'
-            ref='container'
-            onWheel={this.scroll}>
-            <div  ref='line_top' id='line_top'></div>
-            <div ref='canvas_wraper' className='canvas-wraper'>
-            <div id='canvas-dom'
-                className="DesignView"
-                ref='view'
-                style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
-                <div  ref='line_left'  id='line_left'></div>
-                <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
-                <ul id='v_ruler'></ul>
+            <div className='f--hlt'
+                 id='DesignView-Container'
+                 ref='container'
+                 onWheel={this.scroll}>
+                <div  ref='line_top' id='line_top'></div>
+                <div ref='canvas_wraper' className='canvas-wraper'>
+                    <div id='canvas-dom'
+                         className="DesignView"
+                         ref='view'
+                         style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
+                        <div  ref='line_left'  id='line_left'></div>
+                        <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
+                        <ul id='v_ruler'></ul>
+                    </div>
+                </div>
             </div>
-           </div>
-        </div>
         );
     }
 }
