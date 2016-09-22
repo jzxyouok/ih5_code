@@ -233,7 +233,7 @@ function drop(e) {
   }
 }
 
-function chooseFileCallback(w) {
+function chooseFileCallback(w) {  //tag
   if (w.files.length > 0) {
     var allowExt = null;
     if (w.userType == 'font') {
@@ -314,6 +314,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
+        this.listenTo(WidgetActions['saveFontList'], this.saveFontList);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
 
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
@@ -400,6 +401,10 @@ export default Reflux.createStore({
         this.render();
       }
     },
+    saveFontList:function(fontList){
+          this.trigger({fontListObj:{'fontList':fontList}});
+    },
+
     removeWidget: function() {
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;

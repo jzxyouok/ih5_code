@@ -47,6 +47,7 @@ class TimelineView extends React.Component {
             startTime : 0,
             endTime : 10,
             nowLayerId : null
+            //isCanAdd : true
 		};
 		this.onTimer = this.onTimer.bind(this);
 		//this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -70,6 +71,7 @@ class TimelineView extends React.Component {
         this.zoomOrLess = this.zoomOrLess.bind(this);
         this.changeAllWidth = this.changeAllWidth.bind(this);
         this.dragZoom = this.dragZoom.bind(this);
+        //this.changeIsCanAdd = this.changeIsCanAdd.bind(this);
 	}
 
 	componentDidMount() {
@@ -110,12 +112,12 @@ class TimelineView extends React.Component {
                         if(item.node.startTime || item.node.endTime){
                             if(item.node.startTime){
                                 this.setState({
-                                    startTime : item.node.startTime
+                                    startTime : parseFloat(item.node.startTime)
                                 })
                             }
                             if(item.node.endTime){
                                 this.setState({
-                                    endTime : item.node.endTime
+                                    endTime : parseFloat(item.node.endTime)
                                 })
                             }
                         }
@@ -135,12 +137,12 @@ class TimelineView extends React.Component {
                     if(node.node.startTime || node.node.endTime){
                         if(node.node.startTime){
                             this.setState({
-                                startTime : node.node.startTime
+                                startTime : parseFloat(node.node.startTime)
                             })
                         }
                         if(node.node.endTime){
                             this.setState({
-                                endTime : node.node.endTime
+                                endTime : parseFloat(node.node.endTime)
                             })
                         }
                     }
@@ -188,6 +190,19 @@ class TimelineView extends React.Component {
 				this.setState({currentTrack: null});
 			}
 		}
+
+        if(widget.updateProperties){
+            if(widget.updateProperties.startTime){
+                this.setState({
+                    startTime : parseFloat(widget.updateProperties.startTime)
+                })
+            }
+            if(widget.updateProperties.endTime) {
+                this.setState({
+                    endTime : parseFloat(widget.updateProperties.endTime)
+                })
+            }
+        }
 	}
 
 	onTimer(p) {
@@ -229,6 +244,8 @@ class TimelineView extends React.Component {
 		WidgetActions['syncTrack']();
 		this.setState({
             currentTime:value
+        },()=>{
+            //this.changeIsCanAdd();
         });
         TimelineAction['ChangeKeyframe'](false,value);
 	}
@@ -247,6 +264,7 @@ class TimelineView extends React.Component {
 
 	// 添加时间断点
 	onAdd() {
+        //console.log(this.state.currentTime,this.state.startTime,this.state.endTime)
         if(this.state.currentTime < this.state.startTime
             || this.state.currentTime> this.state.endTime){
             return;
@@ -297,16 +315,6 @@ class TimelineView extends React.Component {
 
     formatter(value){
         let data = value;
-        //data = data.toFixed(4);
-        //console.log(data);
-        //if(this.state.isPlaying && this.state.timerNode){
-        //    let totalTime = this.state.timerNode.node['totalTime'];
-        //    if(data == totalTime){
-        //        this.setState({
-        //            isPlaying: false
-        //        })
-        //    }
-        //}
         return data.toFixed(2);
     }
 
@@ -327,12 +335,29 @@ class TimelineView extends React.Component {
             if(data > max){
                 data = max;
             }
+            if(data < 0){
+                data = 0
+            }
             this.setState({
                 inputState : false,
                 currentTime : parseFloat(data)
+            },()=>{
+                //this.changeIsCanAdd();
             });
             //console.log(5446,this.state.isChangeKey);
             if(this.state.isChangeKey){
+                //console.log(this.state.startTime,this.state.endTime);
+                //if(data < this.state.startTime){
+                //    WidgetActions['updateProperties']({startTime:data}, false, false);
+                //    this.state.currentTrack.props['startTime'] = data;
+                //    this.state.currentTrack.node['startTime'] = data;
+                //
+                //}
+                //else if(data > this.state.endTime){
+                //    WidgetActions['updateProperties']({endTime:data}, false, false);
+                //    this.state.currentTrack.props['endTime'] = data;
+                //    this.state.currentTrack.node['endTime'] = data;
+                //}
                 TimelineAction['ChangeKeyframe'](true,parseFloat(data));
             }
         }
@@ -356,11 +381,27 @@ class TimelineView extends React.Component {
         if(data > max){
             data = max;
         }
+        if(data < 0){
+            data = 0
+        }
         this.setState({
             inputState : false,
             currentTime : parseFloat(data)
+        },()=>{
+            //this.changeIsCanAdd();
         });
         if(this.state.isChangeKey){
+            //console.log(this.state.startTime,this.state.endTime);
+            //if(data < this.state.startTime){
+            //    WidgetActions['updateProperties']({startTime:data}, false, false);
+            //    this.state.currentTrack.props['startTime'] = data;
+            //    this.state.currentTrack.node['startTime'] = data;
+            //}
+            //else if(data > this.state.endTime){
+            //    WidgetActions['updateProperties']({endTime:data}, false, false);
+            //    this.state.currentTrack.props['endTime'] = data;
+            //    this.state.currentTrack.node['endTime'] = data;
+            //}
             TimelineAction['ChangeKeyframe'](true,parseFloat(data));
         }
     }
@@ -573,6 +614,22 @@ class TimelineView extends React.Component {
         });
     }
 
+    //changeIsCanAdd(){
+    //    //console.log(this.state.currentTime,this.state.startTime,this.state.endTime);
+    //    let bool = true;
+    //    if(this.state.currentTime < this.state.startTime
+    //        || this.state.currentTime> this.state.endTime){
+    //        bool = false;
+    //    }
+    //    else {
+    //        bool = true;
+    //    }
+    //    //console.log(bool);
+    //    this.setState({
+    //        isCanAdd : bool
+    //    })
+    //}
+
 	//onWidgetClick(event) {
 	//	event.preventDefault();
 	//	event.stopPropagation();
@@ -615,6 +672,7 @@ class TimelineView extends React.Component {
         let index = 0;
         let totalTime = 10;
         //console.log('timerNode', this.state.timerNode);
+        //console.log(this.state.currentTrack)
 
         const getTracks = (node) => {
             if (node.className === 'track') {
@@ -640,7 +698,8 @@ class TimelineView extends React.Component {
                         ref="VxSlider"
                         totalTime = { totalTime }
                         marginLeft = { this.state.marginLeft }
-                        percentage = { this.state.percentage == null ? 1 : this.state.percentage  }
+                        percentage = { this.state.percentage}
+                        multiple = { this.state.multiple}
                         changSwitchState={ this.changSwitchState }
                         isCurrent={node === this.state.currentTrack} />);
             }
@@ -722,6 +781,7 @@ class TimelineView extends React.Component {
                                     className={cls(
                                         {'active': this.state.currentTrack!=null},
                                         {'delete': this.state.isChangeKey}
+                                        //{'none': !this.state.isCanAdd }
                                     )}
                                     onClick={this.onAddOrDelete.bind(this)} />
                             <button id='TimelineNodeActionNext'

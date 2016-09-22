@@ -30,4 +30,5 @@ export default Reflux.createActions([
   'setFont',
   'setImageText',
   'ajaxSend',
+    'saveFontList',
   'activeHandle']);

@@ -54,7 +54,7 @@
       }
     </style>
   </defs>
-  <title>234234</title>
+  <title>32342</title>
   <rect class="cls-1" x="2.05" y="42.05" width="9.9" height="9.9" transform="translate(-31.18 18.72) rotate(-45)"/>
   <path class="cls-2" d="M93,6l-7,7,7,7,7-7Zm1,8v2H92V14H90V12h2V10h2v2h2v2H94Z"/>
   <path class="cls-2" d="M93,46l-7,7,7,7,7-7Zm-1,8H90V52H96v2H92Z"/>
@@ -82,12 +82,12 @@
   <rect class="cls-8" x="200" y="80" width="25" height="24"/>
   <path class="cls-9" d="M208.18,97.33V86.67a0.64,0.64,0,0,1,1-.57L218,91.42a0.68,0.68,0,0,1,0,1.16c-0.48.29-8.3,5-8.86,5.33A0.63,0.63,0,0,1,208.18,97.33Z"/>
   <g>
-    <rect class="cls-10" x="288.11" y="8.11" width="7.78" height="7.78" transform="translate(77.04 209.99) rotate(-45)"/>
-    <polygon class="cls-11" points="292 6.5 292 17.5 297.5 12 292 6.5"/>
+    <rect class="cls-10" x="286.11" y="6.11" width="7.78" height="7.78" transform="translate(77.87 207.99) rotate(-45)"/>
+    <polygon class="cls-11" points="290 4.5 290 15.5 295.5 10 290 4.5"/>
   </g>
   <g>
-    <rect class="cls-1" x="288.11" y="48.11" width="7.78" height="7.78" transform="translate(48.76 221.71) rotate(-45)"/>
-    <polygon class="cls-12" points="292 46.5 292 57.5 297.5 52 292 46.5"/>
+    <rect class="cls-1" x="286.11" y="46.11" width="7.78" height="7.78" transform="translate(49.58 219.71) rotate(-45)"/>
+    <polygon class="cls-12" points="290 44.5 290 55.5 295.5 50 290 44.5"/>
   </g>
   <g>
     <path class="cls-2" d="M336,2H328a1.47,1.47,0,0,0-1.47,1.47V10l5.5,5.45L337.5,10V3.47A1.47,1.47,0,0,0,336,2Z"/>

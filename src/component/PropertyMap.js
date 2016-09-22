@@ -109,7 +109,7 @@ propertyMap['text'] = [
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text, default: '', isProperty: true } ,
     { name: 'fontSize', type: propertyType.Number, default: 26, isProperty: true },
-    { name: 'fontFamily', type: propertyType.String, default: '', isProperty: true },
+    { name: 'fontFamily', type: propertyType.Select, default: '上传字体',options:{'上传字体':0,'微软雅黑':1,'徐静蕾字体':2}, isProperty: true },
     { name: 'fontFill', type: propertyType.Color, default: '#000000', isProperty: true },
 ];
 

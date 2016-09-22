@@ -149,6 +149,9 @@ $size: 25px;
 				&.active.delete {
 					@include bg(2, 1);
 				}
+                &.none{
+                    @include bg(2, 2);
+                }
 			}
 			#TimelineNodeActionNext {
 				@include bg(3, 1);
@@ -488,8 +491,7 @@ $size: 25px;
                 position: absolute;
                 left: 0;
                 right: 0;
-                top: 0;
-                bottom: 0;
+                height: 25px;
                 z-index: 2;
                 //background: #000;
                 border-bottom: 1px solid #151515;
@@ -499,9 +501,9 @@ $size: 25px;
                 position: absolute;
                 left: 0;
                 right: 0;
-                top: 0;
-                bottom: 0;
+                height: 25px;
                 z-index: 3;
+                border-bottom: 1px solid #151515;
 
                 .drag-left,
                 .drag-right {
@@ -523,9 +525,10 @@ $size: 25px;
 
             .ant-slider-handle {
                 position: absolute;
+                top: 2px;
                 z-index: 5;
-				width: 24px;
-				height: 24px;
+				width: 20px;
+				height: 20px;
 				@include bg-btn2(7);
 				cursor: pointer;
 				border: none !important;

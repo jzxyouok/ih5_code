@@ -23,6 +23,7 @@ class PropertyView extends React.Component {
         this.state = {fields: null};
         this.selectNode = null;
         this.currentPage = null;
+        this.fontList=[];
 
         this.defaultData = {
             width: null,
@@ -172,10 +173,7 @@ class PropertyView extends React.Component {
                       let x = parseFloat(arr[0]);
                       let y = parseFloat(arr[1]);
                       this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
-
-
                       const obj = {};
-
                        prop.name='originX';
                        obj[prop.name] =x;
                       this.onStatusChange({updateProperties: obj});
@@ -183,19 +181,22 @@ class PropertyView extends React.Component {
                       prop.name='originY';
                       obj[prop.name] = y;
                       this.onStatusChange({updateProperties: obj});
-
                       WidgetActions['updateProperties']({originX:x,originY:y}, false, true);
-
                       prop.name='originPos';
-
                        bTag=false;
-
                   }else if(prop.name == 'scaleType'){
-
                       this.selectNode.props.scaleTypeKey=this.getScaleTypeDefault(value,prop.options);
-
                       v = parseInt(value);
+                  }else if(prop.name == 'fontFamily'){
+                      this.selectNode.props.fontFamilyKey=this.getScaleTypeFontFamily(value,prop.options);
 
+                      if(this.selectNode.props.fontFamilyKey == '上传字体'){
+                          WidgetActions['chooseFile']('font', true, function(){
+                                console.log(arguments[1]);
+                          });
+                          bTag=false;
+                      }
+                      v = parseInt(value);
                   } else{
                       v = parseInt(value);
                   }
@@ -251,6 +252,13 @@ class PropertyView extends React.Component {
             }
         }
     }
+    getScaleTypeFontFamily(value ,options){
+        for(let i in options){
+            if(value == options[i]){
+                return i;
+            }
+        }
+    }
    //获取下拉框默认值
     getSelectDefault(originPos,options){
         for(let i in options){
@@ -285,6 +293,7 @@ class PropertyView extends React.Component {
             node.props.isLock = node.node.class=='qrcode' ? true:false;
         }
 
+
         //let className = node.className;
         //if (className.charAt(0) == '_')   className = 'class';
 
@@ -300,7 +309,7 @@ class PropertyView extends React.Component {
         //};
 
 
-        console.log(node);
+
 
         const groups = {};
 
@@ -313,7 +322,7 @@ class PropertyView extends React.Component {
             }else if(item.type==propertyType.Float) {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
                 defaultValue = node.node[str];
-                console.log(node);
+
                 if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
                 if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置初始宽高,便于计算放大缩小的系数
 
@@ -328,15 +337,15 @@ class PropertyView extends React.Component {
                 }
             } else if(item.type==propertyType.Select ){
                 defaultValue = item.default;
-
-
                 if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) { //当originY时才会激活,而不是originPos
-
                     defaultValue = node.props.originPosKey;
-
                 }else if(item.name=='scaleType' && node.props.scaleTypeKey){
                     defaultValue = node.props.scaleTypeKey;
+                }else if( item.name=='fontFamily' && node.props.fontFamilyKey){
+                    defaultValue = node.props.fontFamilyKey;
                 }
+
+
 
             } else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
@@ -372,6 +381,15 @@ class PropertyView extends React.Component {
               let selectClassName='';
               if(item.name=='originY' ||item.name=='originPos') {
                   selectClassName='originIcon';
+              }else if(item.name=='fontFamily'){
+
+
+
+
+                 // item.options=this.fontList;
+
+                  console.log(this.fontList);
+
               }
                 //拼接children元素
                 defaultProp.options=[];
@@ -434,6 +452,12 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
+
+        if(widget.fontListObj){
+
+           this.fontList =  widget.fontListObj.fontList;
+        }
+
         if (widget.selectWidget !== undefined){
 
             this.selectNode = widget.selectWidget;
