@@ -15,7 +15,8 @@ export default Reflux.createActions([
   'updateProperties',             //更新属性
   'initEventTree',                //初始化事件树
   'removeEventTree',              //删除事件树
-  'enableEventTree',              //事件树内全部事件的可执行与否,
+  'enableEventTree',              //事件树内全部事件的可执行与否
+  'activeEventTree',              //激活事件树
   'addEvent',                     //添加事件
   'removeEvent',                  //删除事件
   'enableEvent',                  //单个事件的可执行与否

@@ -19,7 +19,7 @@ class ObjectTree extends React.Component {
             isLoadTree : true,
             selectedLayer : -1,
             selectWidget : null,
-            activeEventTree: false, //事件按钮是否被激活激活
+            activeEventTreeKey: null, //组件对应事件按钮被激活
             editMode:false   //处于更改名字状态
             //widgetTreeChildren :null
         };
@@ -31,7 +31,6 @@ class ObjectTree extends React.Component {
         this.showHideBtn = this.showHideBtn.bind(this);
         this.lockBtn = this.lockBtn.bind(this);
         this.eventBtn = this.eventBtn.bind(this);
-        this.fromEventBtn=false;    //statusChange事件的触发是否来源于事件按钮
 
         //对象的复制/剪切/黏贴
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
@@ -93,21 +92,21 @@ class ObjectTree extends React.Component {
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
             }
-            //是否来自于点击event按钮
-            let activeEventTree = this.fromEventBtn;
             this.setState({
                 selectWidget : widget.selectWidget
                 , nid : widget.selectWidget.key
-                , activeEventTree: activeEventTree
-            }, ()=> {
-                this.props.triggerEventActive(activeEventTree);
-                this.fromEventBtn = false;
             });
             this.addOpenId();
             //触发聚焦
             if(document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).focus();
             }
+        }
+
+        else if(widget.activeEventTreeKey) {
+            this.setState({
+                activeEventTreeKey: widget.activeEventTreeKey.key
+            })
         }
 
         //selectWidget : 选择工具创建相应图层
@@ -206,10 +205,10 @@ class ObjectTree extends React.Component {
         //console.log(data);
         this.setState({
             nid : nid,
-            activeEventTree: false,
             editMode: false
         },()=>{
             WidgetActions['selectWidget'](data, true);
+            WidgetActions['activeEventTree'](null);
         });
     }
 
@@ -257,27 +256,19 @@ class ObjectTree extends React.Component {
 
     eventBtn(nid, data) {
         //分情况处理
-        //已经有触发的activeEventTree
-        this.fromEventBtn=true;
         if(this.state.nid != nid) {
             this.setState({
-                activeEventTree: true
-            }, ()=>{
-                this.props.triggerEventActive(true);
-                this.chooseBtn(nid, data);
+                nid : nid,
+                editMode: false
+            },()=>{
+                WidgetActions['selectWidget'](data, true);
+                WidgetActions['activeEventTree'](nid);
             });
         } else  {
-            if(this.state.activeEventTree) {
+            if(this.state.activeEventTreeKey!=null) {
                 WidgetActions['enableEventTree']();
-                WidgetActions['render']();
-                this.fromEventBtn=false;
             } else {
-                this.setState({
-                    activeEventTree: !this.state.activeEventTree
-                }, ()=>{
-                    this.props.triggerEventActive(this.state.activeEventTree);
-                    this.fromEventBtn=false;
-                });
+                WidgetActions['activeEventTree'](nid);
             }
         }
     }
@@ -483,7 +474,7 @@ class ObjectTree extends React.Component {
             let btn = <div className={$class('event-icon',
                     {'event-icon-normal':data.props['enableEventTree']},
                     {'event-icon-disable':!data.props['enableEventTree']},
-                    {'active':this.state.activeEventTree&&nid === this.state.nid})}
+                    {'active':this.state.activeEventTreeKey==nid})}
                            onClick={this.eventBtn.bind(this,nid,data)}></div>;
             return btn;
         };

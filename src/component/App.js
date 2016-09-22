@@ -12,28 +12,40 @@ import EventBox from './EventBox/_index';
 import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
 
+import WidgetStore from '../stores/WidgetStore';
+
+
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             stageZoom : 100,
             expendedToolbox: false,
-            hasActiveEvent: false
+            hasActiveEvent: false,
+            activeEventTreeKey: null
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
         this.stageZoomEdit = this.stageZoomEdit.bind(this);
         this.toolboxExpanded = this.toolboxExpanded.bind(this);
-        this.triggerEventActive = this.triggerEventActive.bind(this);
+        this.onStatusChange = this.onStatusChange.bind(this);
     }
 
     componentDidMount() {
-
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
     }
 
-
     componentWillUnmount() {
+        this.unsubscribe();
+    }
 
+    onStatusChange(widget) {
+        if(widget.activeEventTreeKey) {
+            this.setState({
+                activeEventTreeKey: widget.activeEventTreeKey.key
+            })
+        }
     }
 
     stageZoomPlus(){
@@ -80,12 +92,6 @@ class App extends React.Component {
         })
     }
 
-    triggerEventActive(active) {
-        this.setState({
-            hasActiveEvent: active
-        })
-    }
-
     render() {
 
         return (
@@ -99,11 +105,11 @@ class App extends React.Component {
 
                 <ToolBox expendedToolBox={this.toolboxExpanded}/>
 
-                <PropertyView expended={this.state.expendedToolbox} isHidden={this.state.hasActiveEvent} />
+                <PropertyView expended={this.state.expendedToolbox} isHidden={this.state.activeEventTreeKey != null} />
 
-                <EventBox expended={this.state.expendedToolbox} isHidden={!this.state.hasActiveEvent} />
+                <EventBox expended={this.state.expendedToolbox} isHidden={!(this.state.activeEventTreeKey != null)} />
 
-                <ObjectView triggerEventActive={this.triggerEventActive} />
+                <ObjectView />
 
                 <TimelineView />
 

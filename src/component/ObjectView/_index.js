@@ -27,14 +27,13 @@ class ObjectView extends React.Component {
             locked: false,  //是否已锁
             canHaveEventTree: false,    //是否可有事件树
             hasEventTree: false, //是否有事件树
-            hasActiveEventTree: false //是否有激活的事件数
+            activeEventTreeKey: null //激活事件的key
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);
         this.lock = this.lock.bind(this);
         this.initEvent = this.initEvent.bind(this);
-        this.triggerEventActive = this.triggerEventActive.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onInitLock = this.onInitLock.bind(this);
@@ -65,6 +64,12 @@ class ObjectView extends React.Component {
             }
             this.onInitLock(widget.selectWidget);
             this.onInitHasEventTree(widget.selectWidget);
+        }
+
+        else if(widget.activeEventTreeKey) {
+            this.setState({
+                activeEventTreeKey: widget.activeEventTreeKey.key
+            })
         }
     }
 
@@ -114,14 +119,6 @@ class ObjectView extends React.Component {
         });
     }
 
-    triggerEventActive(active){
-        this.setState({
-            hasActiveEventTree: active
-        }, ()=>{
-            this.props.triggerEventActive(active);
-        });
-    }
-
     lock() {
         WidgetActions['lockWidget']();
         this.setState({
@@ -130,7 +127,7 @@ class ObjectView extends React.Component {
     }
 
     delete(){
-        if(this.state.hasActiveEventTree) {
+        if(this.state.activeEventTreeKey != null) {
             WidgetActions['removeEventTree']();
             WidgetActions['selectWidget'](this.state.currentWidget);
         } else {
@@ -166,7 +163,7 @@ class ObjectView extends React.Component {
         let content;
         switch (this.state.whichContent){
             case 0 :
-                content = <ObjectTree width = { this.state.width } ref='ObjectTree' triggerEventActive={this.triggerEventActive}/>;
+                content = <ObjectTree width = { this.state.width } ref='ObjectTree'/>;
                 break;
             case 1 :
                 content = <Resource />;
