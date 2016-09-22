@@ -81,7 +81,7 @@ class TimelineView extends React.Component {
 	}
 
 	onStatusChange(widget) {
-		console.log('w2', widget);
+		//console.log('w2', widget);
 		//if(widget.hasOwnProperty('hasHandle')) {
 		//	this.setState({
 		//		hasHandle: widget.hasHandle
@@ -382,7 +382,7 @@ class TimelineView extends React.Component {
                 multiple : multiple,
                 marginLeft : 0
             },()=>{
-                console.log('xxx',this.state.zoomOrLessNUm,this.state.multiple);
+                //console.log('xxx',this.state.zoomOrLessNUm,this.state.multiple);
                 this.changeAllWidth(false);
             })
         }
@@ -400,7 +400,7 @@ class TimelineView extends React.Component {
                 marginLeft : 0
             },()=>{
                 this.changeAllWidth(false);
-                console.log('+++',this.state.zoomOrLessNUm,this.state.multiple);
+                //console.log('+++',this.state.zoomOrLessNUm,this.state.multiple);
             })
         }
     }
@@ -479,29 +479,29 @@ class TimelineView extends React.Component {
         $(document).mousemove(function(e){
             if(move){
                 let x =  e.pageX - _x;
-                let multiple;
+                //let multiple;
                 p = left + x;
-                let a = p /10;
-                a.toFixed(2);
+                //let a = p /10;
+                //a.toFixed(2);
                 //console.log(left,  x , p);
                 if(p>=91){
                     p = 91;
-                    multiple = 10;
+                    //multiple = 10;
                 }
                 else if( p <= 0){
                     p = 0;
-                    multiple = -10;
+                    //multiple = -10;
                 }
-                else if( p == 45.5){
-                    multiple = 1;
-                }
+                //else if( p == 45.5){
+                //    multiple = 1;
+                //}
                 //else if(p>0 && p<45.5){
                 //    multiple = -a;
                 //}
                 //else{
                 //    multiple = a;
                 //}
-                console.log(multiple,p);
+                //console.log(multiple,p);
                 self.setState({
                     dragZoomLeft : p
                     //multiple : multiple
