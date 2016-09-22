@@ -14,6 +14,12 @@ class Event extends React.Component {
         this.expandedBtn = this.expandedBtn.bind(this);
     }
 
+    componentDidMount() {
+    }
+
+    componentWillUnmount() {
+    }
+
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);
     }
@@ -45,69 +51,6 @@ class Event extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                            {
-                                v.children.length === 0 || !v.children
-                                    ? null
-                                    : <div className='zhong'>
-                                    {
-                                        v.children.map((v1,i1)=>{
-                                            return  <div className='list f--hlc' key={i1}>
-                                                <span className='supplement-line' />
-                                                <div className='dropDown-layer short'>
-                                                    <div className='title f--hlc'>
-                                                        { v1.bind }
-                                                        <span className='icon' />
-                                                    </div>
-                                                    <div className='dropDown'></div>
-                                                </div>
-
-                                                <div className='dropDown-layer long'>
-                                                    <div className='title f--hlc'>
-                                                        { v1.object }
-                                                        <span className='icon' />
-                                                    </div>
-                                                    <div className='dropDown'></div>
-                                                </div>
-
-                                                <div className='dropDown-layer long'>
-                                                    <div className='title f--hlc'>
-                                                        { v1.action }
-                                                        <span className='icon' />
-                                                    </div>
-                                                    <div className='dropDown'></div>
-                                                </div>
-
-                                                <div className='dropDown-layer short'>
-                                                    <div className='title f--hlc'>
-                                                        { v1.judgment }
-                                                        <span className='icon' />
-                                                    </div>
-                                                    <div className='dropDown'></div>
-                                                </div>
-                                                {
-                                                    v1.calculator
-                                                        ? <div className='number f--hlc'>
-                                                        <input />
-                                                        <div className='number-icon flex-1'>
-                                                            <div className='shang-btn'><span/></div>
-                                                            <div className='xia-btn'><span/></div>
-                                                        </div>
-                                                    </div>
-
-                                                        : <div className='dropDown-layer middle'>
-                                                        <div className='title f--hlc'>
-                                                            { v1.value }
-                                                            <span className='icon' />
-                                                        </div>
-                                                        <div className='dropDown'></div>
-                                                    </div>
-                                                }
-                                                <span className='close-btn' />
-                                            </div>
-                                        })
-                                    }
-                                </div>
-                            }
                             <div className='right flex-1'>
                                 <div className='right-layer'>
                                     <div className='plus-btn'>

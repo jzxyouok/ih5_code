@@ -6,8 +6,23 @@ class Property extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-
+            expanded: true
         };
+
+        this.expandBtn = this.expandBtn.bind(this);
+    }
+
+    componentDidMount() {
+    }
+
+    componentWillUnmount() {
+    }
+
+    expandBtn(expanded, event) {
+        event.stopPropagation();
+        this.setState({
+            expanded: expanded
+        });
     }
 
     render() {
@@ -88,36 +103,42 @@ class Property extends React.Component {
                                 ? null
                                 : this.props.children.map((v,i)=>{
                                     return  <div className="p--property" key={i}>
-                                                <div className="p--dropDown long">
-                                                    <div className="title f--hlc">
-                                                        <span className="pp--icon" />
-                                                        { v.action }
-                                                        <span className="icon" />
-                                                    </div>
-                                                    <div className="dropDown"></div>
-                                                </div>
-
-                                                <div className="pp-content f--h">
+                                        <div className="p--dropDown long">
+                                            <div className="title f--hlc">
+                                                <span className="pp--icon" />
+                                                { v.action }
+                                                <span className="icon" />
+                                            </div>
+                                            <div className="dropDown"></div>
+                                        </div>
+                                        {/*是否展开属性内容*/}
+                                        <div className={$class("pp-content f--h", {'hidden': !this.state.expanded} )}>
+                                            {
+                                                v.property.length === 0
+                                                    ? null
+                                                    : <div className="pp--list-layer flex-1">
                                                     {
-                                                        v.property.length === 0
-                                                        ? null
-                                                        : <div className="pp--list-layer flex-1">
-                                                            {
-                                                                v.property.map(content)
-                                                            }
-                                                        </div>
+                                                        v.property.map(content)
                                                     }
                                                 </div>
+                                            }
+                                        </div>
+
+                                        <button className={$class("up-btn", {'expanded-props': this.state.expanded})}
+                                                onClick={this.expandBtn.bind(this, false)}
+                                                disabled={v.property.length==0}>
+                                            <div className="btn-layer">
                                             </div>
+                                        </button>
+                                        <button className={$class("down-btn", {'expanded-props': (this.state.expanded)})}
+                                                onClick={this.expandBtn.bind(this, true)}
+                                                disabled={v.property.length==0}>
+                                            <div className="btn-layer">
+                                            </div>
+                                        </button>
+                                    </div>
                                 })
                             }
-
-                            <div className="add-btn">
-                                <div className="btn-layer">
-                                    <span className="heng"/>
-                                    <span className="shu"/>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

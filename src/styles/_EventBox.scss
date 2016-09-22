@@ -473,7 +473,9 @@
                     &.long { width: 100% }
                 }
 
-                .add-btn {
+                .add-btn,
+                .up-btn,
+                .down-btn {
                     width: 100%;
                     height: 18px;
                     cursor: pointer;
@@ -506,6 +508,72 @@
                             top: 3px;
                             width: 2px;
                             height: 10px;
+                        }
+                    }
+                }
+
+                .down-btn,
+                .up-btn {
+                    background-color: inherit;
+                    border: none;
+                    outline: 0;
+                }
+
+                .down-btn {
+                    display: block;
+                    .btn-layer {
+                        background: url("img/button-icon.svg") no-repeat -1960px 0;
+                    }
+                    &:hover {
+                        .btn-layer {
+                            background: url("img/button-icon.svg") no-repeat -1960px -40px;
+                        }
+                    }
+                    &:active {
+                        .btn-layer {
+                            background: url("img/button-icon.svg") no-repeat -1960px -80px;
+                        }
+                    }
+                    &.expanded-props {
+                        display: none;
+                    }
+                }
+
+                .up-btn {
+                    display: none;
+                    &.expanded-props {
+                        display: block;
+                        .btn-layer {
+                            background: url("img/button-icon.svg") no-repeat -1920px 0;
+                        }
+                        &:hover {
+                            .btn-layer {
+                                background: url("img/button-icon.svg") no-repeat -1920px -40px;
+                            }
+                        }
+                        &:active {
+                            .btn-layer {
+                                background: url("img/button-icon.svg") no-repeat -1920px -80px;
+                            }
+                        }
+                    }
+                }
+                .up-btn,
+                .down-btn {
+                    &:disabled {
+                        cursor: not-allowed;
+                        .btn-layer {
+                            background: url("img/button-icon.svg") no-repeat -1960px 0;
+                        }
+                        &:hover {
+                            .btn-layer {
+                                background: url("img/button-icon.svg") no-repeat -1960px 0;
+                            }
+                        }
+                        &:active {
+                            .btn-layer {
+                                background: url("img/button-icon.svg") no-repeat -1960px 0;
+                            }
                         }
                     }
                 }

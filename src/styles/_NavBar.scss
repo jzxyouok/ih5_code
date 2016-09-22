@@ -374,7 +374,7 @@
         .home-btn {
             width: 30px;
             height: 30px;
-            margin: 0 2px 0 7px;
+            margin: 7px -1px 0 7px;
             background: url("img/button-icon.svg") no-repeat -680px 0;
             &:hover{ background-position: -680px -40px; }
             &:active{ background-position: -680px -80px; }
