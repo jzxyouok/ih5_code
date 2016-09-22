@@ -316,11 +316,12 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
 
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
-        this.listenTo(WidgetActions['addEvent'], this.addEvent);
-        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
-        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
         this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
+
+        this.listenTo(WidgetActions['addEvent'], this.addEvent);
+        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
+        this.listenTo(WidgetActions['enableEvents'], this.enableEvents);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -536,7 +537,7 @@ export default Reflux.createStore({
     addEvent: function(className, props) {
         if (this.currentWidget) {
             this.currentWidget.events['test'] = {func:'this is testing func'};
-            this.currentWidget.props['enableEvent'] = true;
+            this.currentWidget.props['enableEvents'] = true;
         }
         this.render();
         this.trigger({redrawTree: true});
@@ -548,9 +549,9 @@ export default Reflux.createStore({
         this.render();
         this.trigger({redrawTree: true});
     },
-    enableEvent: function () {
+    enableEvents: function () {
         if (this.currentWidget) {
-            this.currentWidget.props['enableEvent'] = !this.currentWidget.props['enableEvent'];
+            this.currentWidget.props['enableEvents'] = !this.currentWidget.props['enableEvents'];
         }
         this.render();
         this.trigger({redrawTree: true});
