@@ -433,18 +433,19 @@ class PropertyView extends React.Component {
             if (className.charAt(0) == '_')
                 className = 'class';
 
-             propertyMap[className].map(item => {
+            propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
-                    if ( obj[item.name]=== null) {
+                    if (obj[item.name] === null) {
                         delete(selectNode.props[item.name]);
                         if (needRender)
-                            selectNode.node[item.name] = item.default;
+                            selectNode.node[item.name] = undefined;
                     } else {
                         //用于回填
                         selectNode.props[item.name] = obj[item.name];
                         //用于更新
-                        if (needRender)
-                            selectNode.node[item.name] =obj[item.name];
+                        if (needRender){
+                            selectNode.node[item.name] = obj[item.name];
+                        }
                     }
                 }
             });
