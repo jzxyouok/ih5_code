@@ -355,7 +355,7 @@ export default Reflux.createStore({
       if (!this.currentWidget)
           return;
 
-      props = this.addWidgetDefaultName(className, props);
+      props = this.addWidgetDefaultName(className, props, true);
 
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
@@ -413,6 +413,8 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
+        // 重命名要黏贴的widget
+        copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false);
         loadTree(this.currentWidget, copyObj);
         this.trigger({selectWidget: null, redrawTree: true});
         this.render();
@@ -459,14 +461,14 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, props) {
+    addWidgetDefaultName: function(className, props, valueAsTextName) {
         if (!this.currentWidget)
             return;
 
         if(props === undefined || props === null) {
             props = {};
         }
-        if ((className === 'text' || className === 'bitmaptext') && props.value){
+        if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
             props.name = props.value;
         } else {
             let cOrder = 1;
