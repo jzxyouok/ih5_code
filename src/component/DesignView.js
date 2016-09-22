@@ -20,6 +20,7 @@ class DesignView extends React.Component {
         this.onKeyScroll = this.onKeyScroll.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
+
         this.isShowRulerLine = this.isShowRulerLine.bind(this);
         this.mouseDown_top = this.mouseDown_top.bind(this);
         this.mouseDown_left = this.mouseDown_left.bind(this);
@@ -72,8 +73,6 @@ class DesignView extends React.Component {
     }
 
     isShowRulerLine(bIsShow){
-
-
         let oContainer =document.getElementById('DesignView-Container');
         let oRulerWLine = oContainer.getElementsByClassName('rulerWLine');
         let oRulerHLine = oContainer.getElementsByClassName('rulerHLine');
@@ -83,7 +82,6 @@ class DesignView extends React.Component {
         for(let i=oRulerHLine.length-1; i>=0;i--){
             oRulerHLine[i].style.display =bIsShow?'block':'none';
         }
-
     }
 
     setRuler(iWidthSum,iHeightSum){
@@ -157,6 +155,7 @@ class DesignView extends React.Component {
         }
     }
     drawLine(aODiv){
+
         let $this =this;
         //清空
         let offsetTop =this.refs.view.offsetTop;
@@ -183,7 +182,9 @@ class DesignView extends React.Component {
                 curODiv.style.left=item.offsetLeft+'px';
             }
             curODiv.flag=this.count++;
-            curODiv.onmousedown=function(){
+            curODiv.whichDrag =item.oDiv.whichDrag;
+
+            curODiv.onmousedown= function(){
                 $this.isDraging=true;
                 $this.curODiv=this;
                 //清除aODiv中的存储
@@ -192,9 +193,10 @@ class DesignView extends React.Component {
                         $this.aODiv.splice(index,1);
                     }
                 });
+                $this.whichDrag =this.whichDrag;
                 //解绑事件
                 this.onmousedown=null;
-            }
+            };
 
             this.refs.container.appendChild(curODiv);
             this.aODiv.push({
@@ -224,9 +226,10 @@ class DesignView extends React.Component {
         this.whichDrag='left';
     }
 
+
+
     mouseMove(event){
         if(this.curODiv &&  this.isDraging){
-
 
             if(this.whichDrag=='top'){
                 this.curODiv.style.top = (event.pageY)+'px';
@@ -235,6 +238,7 @@ class DesignView extends React.Component {
                 this.curODiv.style.left = (event.pageX)+'px';
                 document.body.style.cursor='e-resize';
             }
+
             if((event.pageY<=this.refs.view.offsetTop && this.refs.view.offsetTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft && this.refs.canvas_wraper.offsetLeft-13 <=event.pageX)){
                 this.curODiv.style.display='none';
             }else{
@@ -251,8 +255,10 @@ class DesignView extends React.Component {
             if((event.pageY<=this.refs.view.offsetTop && this.refs.view.offsetTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft && this.refs.canvas_wraper.offsetLeft-13 <=event.pageX) ){
                 this.refs.container.removeChild(this.curODiv);
             }else{
+
+
                 //存在,则修改;不存在,则添加
-                this.curODiv.onmousedown=function(){
+                this.curODiv.onmousedown= function(){
                     $this.isDraging=true;
                     $this.curODiv=this;
                     //清除aODiv中的存储
@@ -261,18 +267,20 @@ class DesignView extends React.Component {
                             $this.aODiv.splice(index,1);
                         }
                     });
-                    $this.whichDrag = this.whichDrag;
+                    $this.whichDrag =this.whichDrag;
                     //解绑事件
                     this.onmousedown=null;
                 };
+
                 this.curODiv.flag=this.count++;
                 this.curODiv.whichDrag=this.whichDrag;
-
                 this.aODiv.push({
                     oDiv:this.curODiv,
                     offsetLeft:event.pageX,
                     offsetTop:this.refs.view.offsetTop -event.pageY
                 });
+
+
 
 
                 WidgetStore.currentWidget.props.rulerArr =this.aODiv;

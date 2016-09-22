@@ -233,7 +233,7 @@ function drop(e) {
   }
 }
 
-function chooseFileCallback(w) {
+function chooseFileCallback(w) {  //tag
   if (w.files.length > 0) {
     var allowExt = null;
     if (w.userType == 'font') {
