@@ -699,7 +699,7 @@ class TimelineView extends React.Component {
                         totalTime = { totalTime }
                         marginLeft = { this.state.marginLeft }
                         percentage = { this.state.percentage}
-                        multiple = { this.state.multiple > 0 ? this.state.multiple : -this.state.multiple}
+                        multiple = { this.state.multiple}
                         changSwitchState={ this.changSwitchState }
                         isCurrent={node === this.state.currentTrack} />);
             }

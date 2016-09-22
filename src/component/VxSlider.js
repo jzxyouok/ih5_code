@@ -402,7 +402,12 @@ class VxRcSlider extends RcSlider {
             //self.selectTrack();
             let startTime = self.props.refTrack.node.startTime;
             if(startTime){
-                dragLocusLeft = startTime * 61 * self.props.multiple
+                if(self.props.multiple > 0){
+                    dragLocusLeft = startTime * 61 * self.props.multiple
+                }
+                else {
+                    dragLocusLeft = startTime * 61 / (-self.props.multiple)
+                }
             }
             else {
                 dragLocusLeft = 0
@@ -436,7 +441,13 @@ class VxRcSlider extends RcSlider {
 
             if(self.state.isDragTrackLeft){
                 //console.log(4);
-                let startTime = self.state.dragLeft / 61 / self.props.multiple;
+                let startTime;
+                if(self.props.multiple > 0){
+                    startTime = self.state.dragLeft / 61 / self.props.multiple;
+                }
+                else {
+                    startTime = self.state.dragLeft / 61 * (-self.props.multiple);
+                }
                 WidgetActions['updateProperties']({startTime:startTime}, false, false);
                 self.props.refTrack.props['startTime'] = startTime;
                 self.props.refTrack.node['startTime'] = startTime;
@@ -456,12 +467,18 @@ class VxRcSlider extends RcSlider {
             _x=e.pageX;
             let endTime = self.props.refTrack.node.endTime;
             if(endTime){
-                dragLocusRight =  (self.props.totalTime - endTime) * 61 * self.props.multiple
+                if( self.props.multiple > 0){
+                    dragLocusRight =  (self.props.totalTime - endTime) * 61 * self.props.multiple
+                }
+                else {
+                    dragLocusRight =  (self.props.totalTime - endTime) * 61 / (-self.props.multiple)
+                }
             }
             else {
                 dragLocusRight = 0
             }
             right = dragLocusRight;
+            console.log(self.props.totalTime, endTime,dragLocusRight);
             self.setState({dragRight:dragLocusRight});
         });
         $(document).mousemove(function(e){
@@ -491,8 +508,15 @@ class VxRcSlider extends RcSlider {
             right = self.state.dragRight;
 
             if(self.state.isDragTrackRight){
-                //console.log(6);
-                let endTime = self.props.totalTime - (self.state.dragRight / 61 / self.props.multiple);
+                //console.log(self.props.totalTime);
+                let endTime;
+                if(self.props.multiple > 0){
+                    endTime = self.props.totalTime - (self.state.dragRight / 61 / self.props.multiple);
+                }
+                else {
+                    endTime = self.props.totalTime - (self.state.dragRight / 61 * (-self.props.multiple));
+                }
+                //console.log(endTime);
                 self.props.refTrack.props['endTime'] = endTime;
                 self.props.refTrack.node['endTime'] = endTime;
                 WidgetActions['updateProperties']({endTime:endTime}, false, false);
@@ -583,14 +607,24 @@ class VxRcSlider extends RcSlider {
         //console.log(this.props.multiple);
 
         if(startTime){
-            dragLocusLeft = startTime * 61 * this.props.multiple
+            if(this.props.multiple > 0){
+                dragLocusLeft = startTime * 61 * this.props.multiple
+            }
+            else {
+                dragLocusLeft = startTime * 61 / (-this.props.multiple)
+            }
         }
         else {
             dragLocusLeft = 0
         }
 
         if(endTime){
-            dragLocusRight =  (this.props.totalTime - endTime) * 61 * this.props.multiple
+            if(this.props.multiple > 0){
+                dragLocusRight = (this.props.totalTime - endTime) * 61 * this.props.multiple
+            }
+            else {
+                dragLocusRight =  (this.props.totalTime - endTime) * 61 / (-this.props.multiple)
+            }
         }
         else {
             dragLocusRight = 0
