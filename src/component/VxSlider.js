@@ -478,7 +478,7 @@ class VxRcSlider extends RcSlider {
                 dragLocusRight = 0
             }
             right = dragLocusRight;
-            console.log(self.props.totalTime, endTime,dragLocusRight);
+            //console.log(self.props.totalTime, endTime,dragLocusRight);
             self.setState({dragRight:dragLocusRight});
         });
         $(document).mousemove(function(e){
