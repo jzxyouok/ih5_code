@@ -367,8 +367,14 @@ export default Reflux.createStore({
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
             (this.currentWidget.className !== 'image'
-              && this.currentWidget.className !== 'rect'
+              && this.currentWidget.className !== 'imagelist'
               && this.currentWidget.className !== 'text'
+              && this.currentWidget.className !== 'bitmaptext'
+              && this.currentWidget.className !== 'ellipse'
+              && this.currentWidget.className !== 'path'
+              && this.currentWidget.className !== 'qrcode'
+              && this.currentWidget.className !== 'counter'
+              && this.currentWidget.className !== 'rect'
               && this.currentWidget.className !== 'container'))
           return;
         let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
