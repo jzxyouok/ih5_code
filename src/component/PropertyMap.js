@@ -107,13 +107,19 @@ propertyMap['sprite'] = [
 
 propertyMap['text'] = [
     ...propertyMap['sprite'],
-    { name: 'text',showName:'内容', type: propertyType.Text, default: '', isProperty: true }
+    { name: 'value',showName:'内容', type: propertyType.Text, default: '', isProperty: true } ,
+    { name: 'fontSize', type: propertyType.Number, default: 26, isProperty: true },
+    { name: 'fontFamily', type: propertyType.String, default: '', isProperty: true },
+    { name: 'fontFill', type: propertyType.Color, default: '#000000', isProperty: true },
 ];
 
 propertyMap['counter'] = [
     ...propertyMap['sprite'],
     { name: 'value', type: propertyType.Number, default: 0, isProperty: true },
-    { name: 'precision', type: propertyType.Integer, default: 0, isProperty: true }
+    { name: 'precision', type: propertyType.Integer, default: 0, isProperty: true },
+    { name: 'fontSize', type: propertyType.Number, default: 26, isProperty: true },
+    { name: 'fontFamily', type: propertyType.String, default: '', isProperty: true },
+    { name: 'fontFill', type: propertyType.Color, default: '#000000', isProperty: true },
 ];
 
 propertyMap['video'] = [
@@ -136,25 +142,22 @@ propertyMap['image'] = [
 
 propertyMap['imagelist'] = [
     ...propertyMap['sprite'],
-    { name: 'delay', type: propertyType.Number, default: 0.2, isProperty: true }
+    { name: 'delay', type: propertyType.Number, default: 0.2, isProperty: true },
 ];
 
 propertyMap['bitmaptext'] = [
     ...propertyMap['sprite'],
-    { name: 'text', type: propertyType.Text, default:'', isProperty: true },
+    { name: 'value', type: propertyType.Text, default:'', isProperty: true },
     { name: 'font', type: propertyType.String, default:'', isProperty: true },
-    { name: 'size', type: propertyType.Integer, default:20, isProperty: true },
+    { name: 'size', type: propertyType.Integer, default:26, isProperty: true },
     { name: 'color', type: propertyType.Color, default:'', isProperty: true },
     { name: 'lineHeight', type: propertyType.Integer, default:10, isProperty: true }
 ];
 
 propertyMap['qrcode'] = [
-    ...propertyMap['box'],
-    // ...propertyMap['sprite'],
+    ...propertyMap['sprite'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
-    { name: 'data', type: propertyType.String, default:'', isProperty: true },
-    { name: 'shapeWidth', showName:'shapeW', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'shapeHeight', showName:'shapeH', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'value', type: propertyType.String, default:'', isProperty: true }
 ];
 
 propertyMap['graphics'] = [
@@ -176,7 +179,8 @@ propertyMap['graphics'] = [
 ];
 
 propertyMap['rect'] = [
-    ...propertyMap['graphics']
+    ...propertyMap['graphics'],
+    { name: 'radius', type: propertyType.Integer, default: 0, isProperty: true }
 ];
 
 propertyMap['taparea'] = [
@@ -190,7 +194,10 @@ propertyMap['taparea'] = [
 
 propertyMap['button'] = [
     ...propertyMap['rect'],
-    { name: 'value', type: propertyType.Text, default: '', isProperty: true }
+    { name: 'value', type: propertyType.Text, default: '', isProperty: true },
+    { name: 'fontSize', type: propertyType.Number, default: 26, isProperty: true },
+    { name: 'fontFamily', type: propertyType.String, default: '', isProperty: true },
+    { name: 'fontFill', type: propertyType.Color, default: '#000000', isProperty: true },
 ];
 
 propertyMap['slidetimer'] = [
@@ -207,7 +214,16 @@ propertyMap['slidetimer'] = [
     { name: 'vertical', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'sliderScale', type: propertyType.Number, default: 1, isProperty: true},
     { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true}
+];
 
+propertyMap['html'] = [
+    ...propertyMap['box'],
+    { addRequires: widgetFlags.DomOnly},
+    { name: 'src', type: propertyType.String, default:'', isProperty: true },
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
 
 propertyMap['ellipse'] = [
@@ -321,7 +337,9 @@ propertyMap['effect'] = [
 propertyMap['track'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Timer | widgetFlags.Unique, addProvides:widgetFlags.Leaf},
-    { name: 'type', type: propertyType.String, default: '', isProperty: true }
+    { name: 'type', type: propertyType.String, default: '', isProperty: true },
+    { name: 'startTime', type: propertyType.Number, default: 0, isProperty: true },
+    { name: 'endTime', type: propertyType.Number, default: 0, isProperty: true }
 ];
 
 propertyMap['db'] = [
@@ -375,4 +393,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass };
+export { propertyType, propertyMap, checkChildClass, propertyFlags };
