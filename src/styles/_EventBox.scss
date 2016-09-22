@@ -4,7 +4,8 @@
     top: 37px;
     //bottom: 201px;
     width: 733px;
-    height: 716px;
+    //height: 716px;
+    bottom: 0;
     background: #232323;
     overflow: hidden;
     z-index: 50;
@@ -63,10 +64,10 @@
                 background: #343434;
                 cursor: pointer;
 
-                .title-content:hover span,
-                .title-content:hover span{
-                    background: #ffa800;
-                }
+                //.title-content:hover span,
+                //.title-content:hover span{
+                //    background: #ffa800;
+                //}
 
                 .close-btn ,
                 .open-btn {
@@ -78,6 +79,25 @@
 
                     span {
                         background: #b5b5b5;
+                    }
+
+                    &:hover {
+                        span {
+                            background: #ffa800;
+                        }
+                    }
+                }
+
+                .close-btn{
+                    display: none;
+                    &.expanded-btn {
+                        display: block;
+                    }
+                }
+                .open-btn{
+                    display: block;
+                    &.expanded-btn {
+                        display: none;
                     }
                 }
 
@@ -97,8 +117,8 @@
                     height: 10px;
                 }
 
-                .close-btn { display: none; }
-                .open-btn { display: block; }
+                //.close-btn { display: none; }
+                //.open-btn { display: block; }
 
                 .name {
                     font-size: 14px;
@@ -137,10 +157,10 @@
             &.active {
                 border: 1px solid #7b5815;
 
-                .E--title {
-                    .close-btn { display: block; }
-                    .open-btn { display: none; }
-                }
+                //.E--title {
+                //    .close-btn { display: block; }
+                //    .open-btn { display: none; }
+                //}
             }
 
             .E--content {
