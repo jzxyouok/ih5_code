@@ -68,7 +68,7 @@ class ToolBox extends Component {
             <ul className='toolbox-list'>
             {
                 (this.state === null || this.state.data === null) ? null :
-                <ToolBoxGroup {...this.state.data}/>
+                <ToolBoxGroup expanded={this.state.expanded} {...this.state.data}/>
             }
             </ul>
             </div>);

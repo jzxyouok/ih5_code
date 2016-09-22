@@ -106,17 +106,17 @@ export default Reflux.createStore({
         if(groupId===toolBoxConfig.openSecondaryId) {
             return;
         }
+        //没有第二层菜单时
         if(!hasSecondary(toolBoxConfig.data, groupId) && !update) {
-            //看是否有多于2个按钮
-            if (toolBoxConfig.openSecondaryId !== null) {
-                toolBoxConfig.openSecondaryId = null;
-                this.trigger(toolBoxConfig);
-            } else {
-                this.deselect();
+            //右键点击只有一层的菜单时
+            if (groupId !== null) {
+                toolBoxConfig.activeButtonId = null;
             }
-            return;
+            toolBoxConfig.openSecondaryId = null;
+        } else {
+            //点击了当前组件有二层菜单后记录groupId
+            toolBoxConfig.openSecondaryId = groupId;
         }
-        toolBoxConfig.openSecondaryId = groupId;
         if(arguments.length>=2 && update) {
             //console.log('trigger: openSecondary');
             //没有点击相关按钮

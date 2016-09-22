@@ -16,6 +16,7 @@ class ToolBoxGroup extends Component {
                 {
                     this.props.data.map((item, index)=>
                         <ToolBoxButtonGroup key={index}
+                                            expanded={this.props.expanded}
                             {...item }/>)
                 }
                 </center>

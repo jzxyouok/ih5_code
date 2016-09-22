@@ -51,6 +51,14 @@
 					&:hover {
 						background-color: #262626;
 					}
+					&.tool-expanded {
+						&:hover {
+							background-color: $colorNavBackground !important;
+						}
+						&.active {
+							background-color: #282828 !important;
+						}
+					}
 				}
 				&.hasSecondaryMenu {
 					> .ToolBoxButtonPrimary {
@@ -67,8 +75,13 @@
 							width: 28px;
 							padding-left: 0;
 							float: left;
+							&.tool-expanded {
+								&:hover {
+									background-color: $colorNavBackground !important;
+								}
+							}
 							&.ToolBoxButtonPrimary.active {
-								background-color: #282828; 
+								background-color: #282828 !important;
 							}
 							&:after {
 								display: none;

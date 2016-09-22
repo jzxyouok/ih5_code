@@ -289,8 +289,9 @@ class ObjectTree extends React.Component {
         this.setState({
             editMode: true
         }, ()=>{
-            let temp = ()=>{
+            let temp = () =>{
                 editItem.focus();
+                editItem.select();
             };
             setTimeout(()=> {
                 temp();
