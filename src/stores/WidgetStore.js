@@ -233,7 +233,7 @@ function drop(e) {
   }
 }
 
-function chooseFileCallback(w) {
+function chooseFileCallback(w) {  //tag
   if (w.files.length > 0) {
     var allowExt = null;
     if (w.userType == 'font') {
@@ -309,6 +309,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['syncTrack'], this.syncTrack);
         this.listenTo(WidgetActions['deletePoint'], this.deletePoint);
         this.listenTo(WidgetActions['saveNode'], this.saveNode);
+        this.listenTo(WidgetActions['setRulerLine'], this.setRulerLine);
         this.listenTo(WidgetActions['chooseFile'], this.chooseFile);
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
@@ -618,6 +619,10 @@ export default Reflux.createStore({
       if (this.currentWidget) {
         process.nextTick(() => bridge.render(this.currentWidget.rootWidget.node));
       }
+    },
+    setRulerLine:function(bIsShow){
+
+        this.trigger({setRulerLine:{isShow:bIsShow}});
     },
     saveNode: function(wid, wname, callback) {
       // let appendArray = function(a1, a2) {

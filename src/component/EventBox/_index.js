@@ -61,10 +61,7 @@ class EventBox extends React.Component {
                     },{
                         eid:3,
                         condition:'触发条件',
-                        children:[
-                            {bind:'and',object:'判断对象',action:'判断条件',judgment:'=',value:'true'},
-                            {bind:'and',object:'判断对象',action:'判断条件',judgment:'=',value:'true'}
-                        ],
+
                         specific:[
                             {
                                 sid:3,
@@ -106,9 +103,6 @@ class EventBox extends React.Component {
                                 object:'目标对象',
                                 children: [
                                     {   action:'目标动作',
-                                        property:[]
-                                    },
-                                    { action:'目标动作',
                                         property:[]
                                     }
                                 ]
