@@ -33,6 +33,7 @@ class NavBar extends React.Component {
         this.onLogout = this.onLogout.bind(this);
         this.onOpen = this.onOpen.bind(this);
         this.onSave = this.onSave.bind(this);
+        this.onHideRulerLine=this.onHideRulerLine.bind(this);
         this.onPlay = this.onPlay.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.saveCallback = this.saveCallback.bind(this);
@@ -117,7 +118,16 @@ class NavBar extends React.Component {
     onSave() {
         this.onPlaySave(false);
     }
-
+    onHideRulerLine(value){
+        console.log();
+        if(value.target.title == '隐藏参考线'){
+            value.target.title='显示参考线';
+            WidgetActions['setRulerLine'](false) ;
+        }else{
+            value.target.title='隐藏参考线'
+            WidgetActions['setRulerLine'](true) ;
+        }
+    }
     onPlay() {
         this.onPlaySave(true);
     }
@@ -266,7 +276,7 @@ class NavBar extends React.Component {
                         <button className='btn btn-clear save-btn' title='保存' onClick={this.onSave} />
                         <button className='btn btn-clear saveAs-btn'  title='另存为'  />
                         <button className='btn btn-clear history-btn' title='历史'  />
-                        <button className='btn btn-clear hide-btn' title='隐藏准基线'  />
+                        <button className='btn btn-clear hide-btn' title='隐藏参考线'  onClick={this.onHideRulerLine} />
 
                         <div className='dropDown-btn'>
                             <button className={$class('btn btn-clear align-btn dropDownBtn',{'active':1 === this.state.dropDownState})}

@@ -110,13 +110,21 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Number:
-                    v = parseFloat(value);
+                    if(prop.name='fontSize'){
+                        const obj = {};
+                        obj[prop.name] = parseInt(value);
+                        obj.scaleY = obj.scaleX=1;
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties'](obj, false, true);
+
+                        bTag=false;
+                    }else{
+                        v = parseFloat(value);
+                    }
                     break;
                 case propertyType.Integer:
                     if(prop.name=='size'){
-
                         v = parseInt(value);
-
                         const obj = {};
                         obj[prop.name] = v;
                         obj.scaleY = obj.scaleX=1;
@@ -131,34 +139,23 @@ class PropertyView extends React.Component {
                     break;
                 case propertyType.Float:
                     if(this.selectNode.props.isLock){
+                        let h;
+                        let w;
+                        const obj = {};
                         if('scaleX'== prop.name) {
-                            //获取scaleY的值
-                            let h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.selectNode.node.defaultData.height;
-                           //获取scaleX的值
-                            let w =parseFloat(value) /this.selectNode.node.defaultData.width;
-                            //调用更新
-                            const obj = {};
 
-                            obj[prop.name] =w;
-                            obj['scaleY']=h;
-                            this.onStatusChange({updateProperties: obj});
+                              h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.selectNode.node.defaultData.height;
 
-                            WidgetActions['updateProperties'](obj, false, true);
+                              w =parseFloat(value) /this.selectNode.node.defaultData.width;
+                        }else if('scaleY'== prop.name) {
+                            w = parseFloat(value) * (this.selectNode.node.width / this.selectNode.node.height) / this.selectNode.node.defaultData.width;
 
-                        }else if('scaleY'== prop.name){
-                            //获取scaleX的值
-                             let w  =parseFloat(value)*(this.selectNode.node.width/this.selectNode.node.height)/this.selectNode.node.defaultData.width;
-                            //获取scaleY的值
-                            let h =parseFloat(value) /this.selectNode.node.defaultData.height;
-
-                            //调用更新
-                            const obj = {};
-
-                            obj[prop.name] =h;
-                            obj['scaleX']=w;
-                            this.onStatusChange({updateProperties: obj});
-                            WidgetActions['updateProperties'](obj, false, true);
+                            h = parseFloat(value) / this.selectNode.node.defaultData.height;
                         }
+                        obj['scaleY'] =h;
+                        obj['scaleX']=w;
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties'](obj, false, true);
                         bTag=false;
                     }else{
                         if('scaleX'== prop.name) {
@@ -169,28 +166,37 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
-
                   if(prop.name == 'originPos'){
                       //数组
                       let arr=value.split(',');
+                      let x = parseFloat(arr[0]);
+                      let y = parseFloat(arr[1]);
+                      this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
+
 
                       const obj = {};
 
                        prop.name='originX';
-                       obj[prop.name] = parseFloat(arr[0]);
+                       obj[prop.name] =x;
                       this.onStatusChange({updateProperties: obj});
-                      WidgetActions['updateProperties'](obj, false, true);//reflux模式,調用actions
 
                       prop.name='originY';
-                      obj[prop.name] = parseFloat(arr[1]);
+                      obj[prop.name] = y;
                       this.onStatusChange({updateProperties: obj});
-                      WidgetActions['updateProperties'](obj, false, true);//reflux模式,調用actions
+
+                      WidgetActions['updateProperties']({originX:x,originY:y}, false, true);
 
                       prop.name='originPos';
 
                        bTag=false;
 
-                  }else{
+                  }else if(prop.name == 'scaleType'){
+
+                      this.selectNode.props.scaleTypeKey=this.getScaleTypeDefault(value,prop.options);
+
+                      v = parseInt(value);
+
+                  } else{
                       v = parseInt(value);
                   }
                     break;
@@ -238,6 +244,13 @@ class PropertyView extends React.Component {
         }
     }
 
+    getScaleTypeDefault(value ,options){
+        for(let i in options){
+            if(value == options[i]){
+                return i;
+            }
+        }
+    }
    //获取下拉框默认值
     getSelectDefault(originPos,options){
         for(let i in options){
@@ -248,17 +261,19 @@ class PropertyView extends React.Component {
     }
     //锁定
     antLock(){
-        this.selectNode.props.isLock=!this.selectNode.props.isLock;
-        let  oLock=  document.getElementsByClassName('ant-lock')[0];
-       if(this.selectNode.props.isLock){
-           oLock.classList.add('ant-lock-checked');
-           let k =this.selectNode.props.scaleX;
-           //设定原始宽高比
-           // WidgetActions['updateProperties']({scaleX:1,scaleY:1}, false, false);
-           WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
-       }else{
-           oLock.classList.remove('ant-lock-checked');
-       }
+        if(this.selectNode.node.class != 'qrcode'){
+            this.selectNode.props.isLock=!this.selectNode.props.isLock;
+            let  oLock=  document.getElementsByClassName('ant-lock')[0];
+            if(this.selectNode.props.isLock){
+                oLock.classList.add('ant-lock-checked');
+                let k =this.selectNode.props.scaleX;
+                //设定原始宽高比
+                // WidgetActions['updateProperties']({scaleX:1,scaleY:1}, false, false);
+                WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
+            }else{
+                oLock.classList.remove('ant-lock-checked');
+            }
+        }
     }
 
     getFields() {
@@ -266,7 +281,9 @@ class PropertyView extends React.Component {
 
         if (!node)  return null;
 
-        if( node.props.isLock ===undefined){ node.props.isLock=false;} //应该写到涉及到锁定概念的代码中
+        if( node.props.isLock ===undefined){
+            node.props.isLock = node.node.class=='qrcode' ? true:false;
+        }
 
         //let className = node.className;
         //if (className.charAt(0) == '_')   className = 'class';
@@ -282,6 +299,9 @@ class PropertyView extends React.Component {
         //    wrapperCol: { span: 16 }
         //};
 
+
+        console.log(node);
+
         const groups = {};
 
         const getInput = (item, index) => {
@@ -293,7 +313,7 @@ class PropertyView extends React.Component {
             }else if(item.type==propertyType.Float) {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
                 defaultValue = node.node[str];
-
+                console.log(node);
                 if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
                 if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置初始宽高,便于计算放大缩小的系数
 
@@ -306,6 +326,18 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue =node.props[item.name];
                 }
+            } else if(item.type==propertyType.Select ){
+                defaultValue = item.default;
+
+
+                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) { //当originY时才会激活,而不是originPos
+
+                    defaultValue = node.props.originPosKey;
+
+                }else if(item.name=='scaleType' && node.props.scaleTypeKey){
+                    defaultValue = node.props.scaleTypeKey;
+                }
+
             } else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default
@@ -316,15 +348,11 @@ class PropertyView extends React.Component {
                 }
             } else {
                 defaultValue = node.props[item.name];
-                if (item.name == 'originX') {
-                    this.originPos.x = defaultValue;
-                } else if (item.name == 'originY') {
-                    this.originPos.y = defaultValue;
-                } else if (item.name == 'alpha') {
+                if (item.name == 'alpha') {
                     defaultValue = defaultValue * 100;
                 }
-
             }
+
 
 
 
@@ -343,7 +371,6 @@ class PropertyView extends React.Component {
             }else if(item.type ==propertyType.Select ){
               let selectClassName='';
               if(item.name=='originY' ||item.name=='originPos') {
-                  defaultProp.defaultValue = this.getSelectDefault(this.originPos, item.options);
                   selectClassName='originIcon';
               }
                 //拼接children元素
@@ -351,12 +378,17 @@ class PropertyView extends React.Component {
                 for(var i in  item.options){
                     defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
                 }
+
+                defaultProp.value = defaultValue;
+
             }else if(item.type ==propertyType.Color){
                     defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
                     defaultProp.value = defaultValue;
             } else {
                 defaultProp.value = defaultValue;
             }
+
+
 
             let groupName = item.group || 'basic';
             if (groups[groupName] === undefined)   groups[groupName] = [];

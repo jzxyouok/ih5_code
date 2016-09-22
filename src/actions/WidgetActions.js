@@ -24,6 +24,7 @@ export default Reflux.createActions([
   'syncTrack',
   'deletePoint',
   'saveNode',                     //保存文件
+  'setRulerLine',               //设置对齐线的显现
   'chooseFile',
   'setFont',
   'setImageText',

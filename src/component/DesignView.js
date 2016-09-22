@@ -20,7 +20,7 @@ class DesignView extends React.Component {
         this.onKeyScroll = this.onKeyScroll.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
-
+        this.isShowRulerLine = this.isShowRulerLine.bind(this);
         this.mouseDown_top = this.mouseDown_top.bind(this);
         this.mouseDown_left = this.mouseDown_left.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
@@ -47,13 +47,9 @@ class DesignView extends React.Component {
                 document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
                 document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
                 this.setRuler(6,10);
-
+                console.log(1);
             }  else {
                 document.body.removeEventListener('keyup', this.onKeyScroll);
-                document.getElementById('h_ruler').removeEventListener('mousedown',this.mouseDown_top);
-                document.getElementById('v_ruler').removeEventListener('mousedown',this.mouseDown_left);
-                document.getElementById('DesignView-Container').removeEventListener('mousemove',this.mouseMove);
-                document.getElementById('DesignView-Container').removeEventListener('mouseup',this.mouseUp);
             }
             if(widget.selectWidget.props.rulerArr){
                 this.drawLine(widget.selectWidget.props.rulerArr);
@@ -61,12 +57,33 @@ class DesignView extends React.Component {
 
         }
 
+        if(widget.setRulerLine){
+            this.isShowRulerLine(widget.setRulerLine.isShow);
+        }
+
+
+
         if(widget.updateProperties && (widget.updateProperties .width || widget.updateProperties .height)){
 
             let iWidthSum =Math.floor(widget.updateProperties .width/100);
             let iHeightSum=Math.floor(widget.updateProperties .height/100);
             this.setRuler(iWidthSum,iHeightSum);
         }
+    }
+
+    isShowRulerLine(bIsShow){
+
+
+        let oContainer =document.getElementById('DesignView-Container');
+        let oRulerWLine = oContainer.getElementsByClassName('rulerWLine');
+        let oRulerHLine = oContainer.getElementsByClassName('rulerHLine');
+        for(let i=oRulerWLine.length-1; i>=0;i--){
+            oRulerWLine[i].style.display= bIsShow?'block':'none';
+        }
+        for(let i=oRulerHLine.length-1; i>=0;i--){
+            oRulerHLine[i].style.display =bIsShow?'block':'none';
+        }
+
     }
 
     setRuler(iWidthSum,iHeightSum){
@@ -218,6 +235,11 @@ class DesignView extends React.Component {
                 this.curODiv.style.left = (event.pageX)+'px';
                 document.body.style.cursor='e-resize';
             }
+            if((event.pageY<=this.refs.view.offsetTop && this.refs.view.offsetTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft && this.refs.canvas_wraper.offsetLeft-13 <=event.pageX)){
+                this.curODiv.style.display='none';
+            }else{
+                this.curODiv.style.display='block';
+            }
 
         }
     }
@@ -226,7 +248,7 @@ class DesignView extends React.Component {
         let $this =this;
         if(this.curODiv) {
             //在x_ruler ,则消失,否则存储
-            if(event.pageY<=this.refs.view.offsetTop && this.refs.view.offsetTop-14 <=event.pageY){
+            if((event.pageY<=this.refs.view.offsetTop && this.refs.view.offsetTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft && this.refs.canvas_wraper.offsetLeft-13 <=event.pageX) ){
                 this.refs.container.removeChild(this.curODiv);
             }else{
                 //存在,则修改;不存在,则添加
