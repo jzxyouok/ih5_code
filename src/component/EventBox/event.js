@@ -132,23 +132,25 @@ class Event extends React.Component {
         });
 
         return (
-            <div className={$class('Event',{'active' :this.props.nowID === this.props.id })}
+            <div className={$class('Event',{'active' :this.props.currentId === this.props.id })}
                  onClick={this.chooseEventBtn.bind(this, this.props.id)}>
                 <div className='E--title f--h'>
                     <div className='title-content f--hlc flex-1'>
-                        <div className='close-btn'><span className='heng' /></div>
-                        <div className='open-btn'><span  className='heng'  /><span  className='shu' /></div>
+                        <div className='close-btn'><span className='heng'/></div>
+                        <div className='open-btn'>
+                            <span className='heng'/><span className='shu'/>
+                        </div>
 
                         <div className='name flex-1'>{ this.props.name }</div>
                     </div>
 
-                    <div className={$class('btn f--hlc',{'hidden' :this.props.nowID !== this.props.id })}>
+                    <div className={$class('btn f--hlc',{'hidden' :this.props.currentId !== this.props.id })}>
                         <div className='btn-name'>添加事件</div>
                         <div className='btn-icon'><span  className='heng'  /><span  className='shu' /></div>
                     </div>
                 </div>
 
-                <div className={$class('E--content',{'hidden' :this.props.nowID !== this.props.id })}>
+                <div className={$class('E--content',{'hidden' :this.props.currentId !== this.props.id })}>
                     {
                         this.props.event.map(content)
                     }

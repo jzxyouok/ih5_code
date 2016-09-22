@@ -131,7 +131,7 @@ class ObjectView extends React.Component {
 
     delete(){
         if(this.state.hasActiveEvent) {
-            WidgetActions['removeEvent']();
+            WidgetActions['removeEvents']();
             WidgetActions['selectWidget'](this.state.currentWidget);
         } else {
             WidgetActions['removeWidget']();

@@ -1,13 +1,13 @@
 .EventBox {
     position: fixed;
-    left: 296px;
+    left: 36px;//296px;
     top: 37px;
     //bottom: 201px;
     width: 733px;
     height: 716px;
     background: #232323;
-    transition: 0.5s;
     overflow: hidden;
+    z-index: 50;
 
     &.keep {
         height: 30px;
@@ -21,7 +21,8 @@
 
         span {
             font-size: 12px;
-            color: #fffefe;
+            //color: #fffefe;
+            color: #b5b5b5;
             padding-left: 12px;
         }
 

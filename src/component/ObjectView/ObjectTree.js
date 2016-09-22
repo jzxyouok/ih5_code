@@ -268,7 +268,7 @@ class ObjectTree extends React.Component {
             });
         } else  {
             if(this.state.activeEvent) {
-                WidgetActions['enableEvent']();
+                WidgetActions['enableEvents']();
                 WidgetActions['render']();
                 this.fromEventBtn=false;
             } else {
@@ -478,11 +478,11 @@ class ObjectTree extends React.Component {
             }
         };
 
-        let enableEventBtn = (nid,data)=> {
+        let enableEventsBtn = (nid,data)=> {
             //0为没有事件, 1为有事件正常状态
             let btn = <div className={$class('event-icon',
-                    {'event-icon-normal':data.props['enableEvent']},
-                    {'event-icon-disable':!data.props['enableEvent']},
+                    {'event-icon-normal':data.props['enableEvents']},
+                    {'event-icon-disable':!data.props['enableEvents']},
                     {'active':this.state.activeEvent&&nid === this.state.nid})}
                            onClick={this.eventBtn.bind(this,nid,data)}></div>;
             return btn;
@@ -575,7 +575,7 @@ class ObjectTree extends React.Component {
                     <div className={$class('item-event')}>
                         {
                             Object.keys(v.events).length > 0
-                                ? enableEventBtn(v.key, v)
+                                ? enableEventsBtn(v.key, v)
                                 : null
                         }
                     </div>
@@ -618,7 +618,7 @@ class ObjectTree extends React.Component {
                             <div className={$class('item-event')}>
                                 {
                                     Object.keys(objectData.tree.events).length > 0
-                                        ? enableEventBtn(objectData.tree.key, objectData.tree)
+                                        ? enableEventsBtn(objectData.tree.key, objectData.tree)
                                         : null
                                 }
                             </div>

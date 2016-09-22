@@ -8,11 +8,10 @@ class EventBox extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            keepIt : true
+            keepIt : false,
+            activeEventId: 1,
         };
-        this.eventData = {
-            nowId: 2,
-            data: [
+        this.eventData = [
                 {id: 1,name:'aaaa',
                     event:[
                         {eid:1 , condition:'触发条件', children:[],
@@ -112,18 +111,16 @@ class EventBox extends React.Component {
                             ]
                         }
                     ]}
-            ]
-        };
+            ];
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.keepBtn = this.keepBtn.bind(this);
     }
 
     chooseEventBtn(nid){
-        //console.log(nid);
-        this.eventData.nowId = nid;
-        this.forceUpdate();
-        //console.log(this.eventData.nowId);
+        this.setState({
+            activeEventId: nid
+        });
     }
 
     keepBtn(){
@@ -135,7 +132,7 @@ class EventBox extends React.Component {
     render() {
         return (
             <div className={$class('EventBox',{'keep':this.state.keepIt}, {'hidden':this.props.isHidden})}
-                 style={{ left : this.props.expended? '64px':'36px'}}>
+                 style={{ left : this.props.expended? '65px':'37px'}}>
                 <div className='EB--title f--hlc'>
                     <span className='flex-1'>事件属性</span>
                     <button className='btn btn-clear' title='收起' onClick={this.keepBtn} />
@@ -144,8 +141,8 @@ class EventBox extends React.Component {
                 <div className='EB--content-layer'>
                     <div className='EB--content'>
                         {
-                            this.eventData.data.map((v,i)=>{
-                                return <Event key={i} {...v} nowID={this.eventData.nowId} chooseEventBtn={this.chooseEventBtn} />
+                            this.eventData.map((v,i)=>{
+                                return <Event key={i} {...v} currentId={this.state.activeEventId} chooseEventBtn={this.chooseEventBtn} />
                             })
                         }
                     </div>

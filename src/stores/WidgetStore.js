@@ -316,11 +316,14 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
 
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
-        this.listenTo(WidgetActions['addEvent'], this.addEvent);
-        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
-        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
         this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
+
+        this.listenTo(WidgetActions['addEvent'], this.addEvent);
+        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
+        this.listenTo(WidgetActions['removeEvents'], this.removeEvents);
+        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
+        this.listenTo(WidgetActions['enableEvents'], this.enableEvents);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -355,7 +358,7 @@ export default Reflux.createStore({
       if (!this.currentWidget)
           return;
 
-      props = this.addWidgetDefaultName(className, props);
+      props = this.addWidgetDefaultName(className, props, true);
 
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
@@ -413,6 +416,8 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
+        // 重命名要黏贴的widget
+        copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false);
         loadTree(this.currentWidget, copyObj);
         this.trigger({selectWidget: null, redrawTree: true});
         this.render();
@@ -459,14 +464,14 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, props) {
+    addWidgetDefaultName: function(className, props, valueAsTextName) {
         if (!this.currentWidget)
             return;
 
         if(props === undefined || props === null) {
             props = {};
         }
-        if ((className === 'text' || className === 'bitmaptext') && props.value){
+        if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
             props.name = props.value;
         } else {
             let cOrder = 1;
@@ -534,12 +539,15 @@ export default Reflux.createStore({
     addEvent: function(className, props) {
         if (this.currentWidget) {
             this.currentWidget.events['test'] = {func:'this is testing func'};
-            this.currentWidget.props['enableEvent'] = true;
+            this.currentWidget.props['enableEvents'] = true;
         }
         this.render();
         this.trigger({redrawTree: true});
     },
-    removeEvent: function() {
+    removeEvent: function () {
+        //TODO:  单个事件的删除
+    },
+    removeEvents: function() {
         if (this.currentWidget) {
             this.currentWidget.events = {};
         }
@@ -547,8 +555,11 @@ export default Reflux.createStore({
         this.trigger({redrawTree: true});
     },
     enableEvent: function () {
+        //TODO:  单个事件的可执行开关
+    },
+    enableEvents: function () {
         if (this.currentWidget) {
-            this.currentWidget.props['enableEvent'] = !this.currentWidget.props['enableEvent'];
+            this.currentWidget.props['enableEvents'] = !this.currentWidget.props['enableEvents'];
         }
         this.render();
         this.trigger({redrawTree: true});
