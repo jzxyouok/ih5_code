@@ -25,20 +25,20 @@ class ObjectView extends React.Component {
             currentWidget : null,
             canLock: false, //是否可有锁
             locked: false,  //是否已锁
-            canHaveEvent: false,    //是否可有事件
-            hasEvent: false, //是否有事件
-            hasActiveEvent: false //是否有激活的事件
+            canHaveEventTree: false,    //是否可有事件树
+            hasEventTree: false, //是否有事件树
+            hasActiveEventTree: false //是否有激活的事件数
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);
         this.lock = this.lock.bind(this);
-        this.addEvent = this.addEvent.bind(this);
+        this.initEvent = this.initEvent.bind(this);
         this.triggerEventActive = this.triggerEventActive.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onInitLock = this.onInitLock.bind(this);
-        this.onInitHasEvent = this.onInitHasEvent.bind(this);
+        this.onInitHasEventTree = this.onInitHasEventTree.bind(this);
     }
 
     componentDidMount() {
@@ -64,23 +64,23 @@ class ObjectView extends React.Component {
                 });
             }
             this.onInitLock(widget.selectWidget);
-            this.onInitHasEvent(widget.selectWidget);
+            this.onInitHasEventTree(widget.selectWidget);
         }
     }
 
-    onInitHasEvent(selectWidget){
-        let hasEvent = false;
-        let canHaveEvent = true;
+    onInitHasEventTree(selectWidget){
+        let hasEventTree = false;
+        let canHaveEventTree = true;
         // if(selectWidget.className === 'root') {
-        //     canHaveEvent = false;
-        //     hasEvent = false;
+        //     canHaveEventTree = false;
+        //     hasEventTree = false;
         // } else
-        if (Object.keys(selectWidget.events).length > 0) {
-            hasEvent = true;
+        if (selectWidget.props.eventTree) {
+            hasEventTree = true;
         }
         this.setState({
-            hasEvent: hasEvent,
-            canHaveEvent: canHaveEvent
+            hasEventTree: hasEventTree,
+            canHaveEventTree: canHaveEventTree
         });
     }
 
@@ -107,16 +107,16 @@ class ObjectView extends React.Component {
         WidgetActions['addWidget'](className,param);
     }
 
-    addEvent(className,param) {
-        WidgetActions['addEvent'](className,param);
+    initEvent(className,param) {
+        WidgetActions['initEventTree'](className,param);
         this.setState({
-            hasEvent: !this.state.hasEvent
+            hasEventTree: !this.state.hasEventTree
         });
     }
 
     triggerEventActive(active){
         this.setState({
-            hasActiveEvent: active
+            hasActiveEventTree: active
         }, ()=>{
             this.props.triggerEventActive(active);
         });
@@ -130,8 +130,8 @@ class ObjectView extends React.Component {
     }
 
     delete(){
-        if(this.state.hasActiveEvent) {
-            WidgetActions['removeEvents']();
+        if(this.state.hasActiveEventTree) {
+            WidgetActions['removeEventTree']();
             WidgetActions['selectWidget'](this.state.currentWidget);
         } else {
             WidgetActions['removeWidget']();
@@ -210,9 +210,9 @@ class ObjectView extends React.Component {
                     <button className='btn btn-clear container-btn' title='容器' onClick={ this.create.bind(this,'container',null)} />
                     <button className={$class(
                         'btn btn-clear event-btn',
-                        {'not-allowed': !this.state.canHaveEvent||this.state.hasEvent}
-                        )} title='事件' disabled={!this.state.canHaveEvent||this.state.hasEvent}
-                            onClick={ this.addEvent.bind(this, 'event', null)}/>
+                        {'not-allowed': !this.state.canHaveEventTree||this.state.hasEventTree}
+                        )} title='事件' disabled={!this.state.canHaveEventTree||this.state.hasEventTree}
+                            onClick={ this.initEvent.bind(this, 'event', null)}/>
                     {/*<button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />*/}
                     <button className='btn btn-clear delete-btn' title='删除' onClick={ this.delete } />
                 </div>

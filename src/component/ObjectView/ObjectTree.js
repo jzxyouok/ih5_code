@@ -19,7 +19,7 @@ class ObjectTree extends React.Component {
             isLoadTree : true,
             selectedLayer : -1,
             selectWidget : null,
-            activeEvent: false, //事件按钮是否被激活激活
+            activeEventTree: false, //事件按钮是否被激活激活
             editMode:false   //处于更改名字状态
             //widgetTreeChildren :null
         };
@@ -94,13 +94,13 @@ class ObjectTree extends React.Component {
                 document.getElementById('tree-item-'+this.state.nid).blur();
             }
             //是否来自于点击event按钮
-            let activeEvent = this.fromEventBtn;
+            let activeEventTree = this.fromEventBtn;
             this.setState({
                 selectWidget : widget.selectWidget
                 , nid : widget.selectWidget.key
-                , activeEvent: activeEvent
+                , activeEventTree: activeEventTree
             }, ()=> {
-                this.props.triggerEventActive(activeEvent);
+                this.props.triggerEventActive(activeEventTree);
                 this.fromEventBtn = false;
             });
             this.addOpenId();
@@ -206,7 +206,7 @@ class ObjectTree extends React.Component {
         //console.log(data);
         this.setState({
             nid : nid,
-            activeEvent: false,
+            activeEventTree: false,
             editMode: false
         },()=>{
             WidgetActions['selectWidget'](data, true);
@@ -257,25 +257,25 @@ class ObjectTree extends React.Component {
 
     eventBtn(nid, data) {
         //分情况处理
-        //已经有触发的activeEvent
+        //已经有触发的activeEventTree
         this.fromEventBtn=true;
         if(this.state.nid != nid) {
             this.setState({
-                activeEvent: true
+                activeEventTree: true
             }, ()=>{
                 this.props.triggerEventActive(true);
                 this.chooseBtn(nid, data);
             });
         } else  {
-            if(this.state.activeEvent) {
-                WidgetActions['enableEvents']();
+            if(this.state.activeEventTree) {
+                WidgetActions['enableEventTree']();
                 WidgetActions['render']();
                 this.fromEventBtn=false;
             } else {
                 this.setState({
-                    activeEvent: !this.state.activeEvent
+                    activeEventTree: !this.state.activeEventTree
                 }, ()=>{
-                    this.props.triggerEventActive(this.state.activeEvent);
+                    this.props.triggerEventActive(this.state.activeEventTree);
                     this.fromEventBtn=false;
                 });
             }
@@ -478,12 +478,12 @@ class ObjectTree extends React.Component {
             }
         };
 
-        let enableEventsBtn = (nid,data)=> {
+        let enableEventTreeBtn = (nid,data)=> {
             //0为没有事件, 1为有事件正常状态
             let btn = <div className={$class('event-icon',
-                    {'event-icon-normal':data.props['enableEvents']},
-                    {'event-icon-disable':!data.props['enableEvents']},
-                    {'active':this.state.activeEvent&&nid === this.state.nid})}
+                    {'event-icon-normal':data.props['enableEventTree']},
+                    {'event-icon-disable':!data.props['enableEventTree']},
+                    {'active':this.state.activeEventTree&&nid === this.state.nid})}
                            onClick={this.eventBtn.bind(this,nid,data)}></div>;
             return btn;
         };
@@ -574,8 +574,8 @@ class ObjectTree extends React.Component {
                     </div>
                     <div className={$class('item-event')}>
                         {
-                            Object.keys(v.events).length > 0
-                                ? enableEventsBtn(v.key, v)
+                            v.props.eventTree
+                                ? enableEventTreeBtn(v.key, v)
                                 : null
                         }
                     </div>
@@ -617,8 +617,8 @@ class ObjectTree extends React.Component {
                             </div>
                             <div className={$class('item-event')}>
                                 {
-                                    Object.keys(objectData.tree.events).length > 0
-                                        ? enableEventsBtn(objectData.tree.key, objectData.tree)
+                                    objectData.tree.props.eventTree
+                                        ? enableEventTreeBtn(objectData.tree.key, objectData.tree)
                                         : null
                                 }
                             </div>

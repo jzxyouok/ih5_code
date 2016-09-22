@@ -319,11 +319,13 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
         this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
+        this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
+        this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
+        this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
-        this.listenTo(WidgetActions['removeEvents'], this.removeEvents);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
-        this.listenTo(WidgetActions['enableEvents'], this.enableEvents);
+
     },
     selectWidget: function(widget) {
         var render = false;
@@ -536,33 +538,37 @@ export default Reflux.createStore({
         }
         this.trigger(p);
     },
-    addEvent: function(className, props) {
+    initEventTree: function(className, props) {
         if (this.currentWidget) {
-            this.currentWidget.events['test'] = {func:'this is testing func'};
-            this.currentWidget.props['enableEvents'] = true;
+            this.currentWidget.props['enableEventTree'] = true;
+            this.currentWidget.props['eventTree'] = [];
         }
         this.render();
         this.trigger({redrawTree: true});
+    },
+    removeEventTree: function() {
+        if (this.currentWidget) {
+            this.currentWidget.props['eventTree'] = undefined;
+            this.currentWidget.props['enableEventTree'] = undefined;
+        }
+        this.render();
+        this.trigger({redrawTree: true});
+    },
+    enableEventTree: function () {
+        if (this.currentWidget) {
+            this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+        }
+        this.render();
+        this.trigger({redrawTree: true});
+    },
+    addEvent: function () {
+        //TODO: 添加事件
     },
     removeEvent: function () {
-        //TODO:  单个事件的删除
-    },
-    removeEvents: function() {
-        if (this.currentWidget) {
-            this.currentWidget.events = {};
-        }
-        this.render();
-        this.trigger({redrawTree: true});
+        //TODO: 单个事件的删除
     },
     enableEvent: function () {
-        //TODO:  单个事件的可执行开关
-    },
-    enableEvents: function () {
-        if (this.currentWidget) {
-            this.currentWidget.props['enableEvents'] = !this.currentWidget.props['enableEvents'];
-        }
-        this.render();
-        this.trigger({redrawTree: true});
+        //TODO: 单个事件的可执行开关
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});

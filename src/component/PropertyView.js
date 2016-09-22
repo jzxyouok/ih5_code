@@ -1,5 +1,5 @@
 /**
- * 属性面板
+ * 属性面板 zAl968uo
  */
 
 import React from 'react';
@@ -295,37 +295,35 @@ class PropertyView extends React.Component {
                 defaultValue = node.node[str];
 
                 if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
-                if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置
+                if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置初始宽高,便于计算放大缩小的系数
 
             }else if(item.type==propertyType.Color || item.type==propertyType.Color2){
                if( item.name == 'color' &&  !node.props.color){ //只执行一次
                    node.props.color='#FFFFFF';
                }
-                if(node.props[item.name+'_originColor']){
+                if(node.props[item.name+'_originColor']){  //舞台颜色隐藏后保存的颜色
                     defaultValue =node.props[item.name+'_originColor'];
                 }else{
                     defaultValue =node.props[item.name];
                 }
-            } else {
-                if (node.props[item.name] === undefined){
-                    if(item.type === propertyType.Boolean ){
-                        defaultValue = item.default
-                    }else if(item.type === propertyType.Percentage && item.name=='alpha'){
-                        defaultValue = item.default*100;
-                    }else{
-                        defaultValue='';
-                    }
-                   // defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
-                }  else{
-                    defaultValue = node.props[item.name];
-                    if(item.name == 'originX'){
-                        this.originPos.x=defaultValue;
-                    }else if(item.name == 'originY'){
-                        this.originPos.y=defaultValue;
-                    }else if(item.name == 'alpha'){
-                        defaultValue=defaultValue*100;
-                    }
+            } else  if (node.props[item.name] === undefined){
+                if(item.type === propertyType.Boolean ){
+                    defaultValue = item.default
+                }else if(item.type === propertyType.Percentage && item.name=='alpha'){
+                    defaultValue = item.default*100;
+                }else{
+                    defaultValue='';
                 }
+            } else {
+                defaultValue = node.props[item.name];
+                if (item.name == 'originX') {
+                    this.originPos.x = defaultValue;
+                } else if (item.name == 'originY') {
+                    this.originPos.y = defaultValue;
+                } else if (item.name == 'alpha') {
+                    defaultValue = defaultValue * 100;
+                }
+
             }
 
 
@@ -361,8 +359,7 @@ class PropertyView extends React.Component {
             }
 
             let groupName = item.group || 'basic';
-            if (groups[groupName] === undefined)
-                groups[groupName] = [];
+            if (groups[groupName] === undefined)   groups[groupName] = [];
 
             //设置布局结构和图标
             let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY'].indexOf(item.showName) >= 0;//左右结构显示
@@ -405,13 +402,12 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
-
         if (widget.selectWidget !== undefined){
-            //加载后被调用,数据的更改激活change
+
             this.selectNode = widget.selectWidget;
 
             this.setState({fields: this.getFields()});
-            let node = this.selectNode; //当前加载的对象
+            let node = this.selectNode;
 
             while (node != null) {
                 if (node.className == 'page') {
@@ -430,8 +426,7 @@ class PropertyView extends React.Component {
             let selectNode = this.selectNode;
             let obj = widget.updateProperties;
             let className = selectNode.className;
-            if (className.charAt(0) == '_')
-                className = 'class';
+            if (className.charAt(0) == '_')  className = 'class';
 
             propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {

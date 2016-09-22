@@ -56,7 +56,7 @@ class Property extends React.Component {
         };
 
         return (
-            <div className="Property f--h">
+            <div className="Property f--h" id={'spec-item-'+ this.props.sid}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
                     <span className="p--close-line" />
