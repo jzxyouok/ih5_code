@@ -64,7 +64,6 @@ class NavBar extends React.Component {
     getWorks(token) {
         WidgetActions['ajaxSend'](token, 'GET', PREFIX + 'userInfo', null, null, function(text) {
             let result = JSON.parse(text);
-            //console.log(result);
             if (result['name']) {
                 this.playUrl = result['playUrl'];
                 this.setState({
@@ -73,11 +72,14 @@ class NavBar extends React.Component {
                     workList: result['list'].reverse(),
                     fontList: result['font']
                 });
+                WidgetActions['saveFontList'](result['font']);
             } else {
                 this.setState({loginVisible: true});
             }
         }.bind(this));
     }
+
+
 
     login(name, pass) {
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'login',
@@ -118,6 +120,7 @@ class NavBar extends React.Component {
     onSave() {
         this.onPlaySave(false);
     }
+
     onHideRulerLine(value){
         console.log();
         if(value.target.title == '隐藏参考线'){
@@ -128,6 +131,7 @@ class NavBar extends React.Component {
             WidgetActions['setRulerLine'](true) ;
         }
     }
+
     onPlay() {
         this.onPlaySave(true);
     }
