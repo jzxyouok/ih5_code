@@ -394,20 +394,21 @@ class VxRcSlider extends RcSlider {
         let _x;
         let self = this;
         let dragLocusLeft = null;
-        let startTime = this.props.refTrack.node.startTime;
-        if(startTime){
-            dragLocusLeft = startTime * 61 * this.props.percentage
-        }
-        else {
-            dragLocusLeft = 0
-        }
-        let left = dragLocusLeft;
-        this.setState({dragLeft:dragLocusLeft});
+        let left = 0;
 
         $(".drag-locus-"+ self.props.myID + " .drag-left" ).mousedown(function(e){
             move=true;
             _x=e.pageX;
             //self.selectTrack();
+            let startTime = self.props.refTrack.node.startTime;
+            if(startTime){
+                dragLocusLeft = startTime * 61 * self.props.multiple
+            }
+            else {
+                dragLocusLeft = 0
+            }
+            left = dragLocusLeft;
+            self.setState({dragLeft:dragLocusLeft});
         });
         $(document).mousemove(function(e){
             if(move){
@@ -435,7 +436,7 @@ class VxRcSlider extends RcSlider {
 
             if(self.state.isDragTrackLeft){
                 //console.log(4);
-                let startTime = self.state.dragLeft / 61 / self.props.percentage;
+                let startTime = self.state.dragLeft / 61 / self.props.multiple;
                 WidgetActions['updateProperties']({startTime:startTime}, false, false);
                 self.props.refTrack.props['startTime'] = startTime;
                 self.props.refTrack.node['startTime'] = startTime;
@@ -448,20 +449,20 @@ class VxRcSlider extends RcSlider {
         let _x;
         let self = this;
         let dragLocusRight = null;
-        let endTime = this.props.refTrack.node.endTime;
-        if(endTime){
-            dragLocusRight =  (this.props.totalTime - endTime) * 61 * this.props.percentage
-        }
-        else {
-            dragLocusRight = 0
-        }
-        let right = dragLocusRight;
-        this.setState({dragRight:dragLocusRight});
+        let right = 0;
 
         $(".drag-locus-"+ self.props.myID + " .drag-right" ).mousedown(function(e){
             move=true;
             _x=e.pageX;
-            //self.selectTrack();
+            let endTime = self.props.refTrack.node.endTime;
+            if(endTime){
+                dragLocusRight =  (self.props.totalTime - endTime) * 61 * self.props.multiple
+            }
+            else {
+                dragLocusRight = 0
+            }
+            right = dragLocusRight;
+            self.setState({dragRight:dragLocusRight});
         });
         $(document).mousemove(function(e){
             if(move){
@@ -491,7 +492,7 @@ class VxRcSlider extends RcSlider {
 
             if(self.state.isDragTrackRight){
                 //console.log(6);
-                let endTime = self.props.totalTime - (self.state.dragRight / 61 / self.props.percentage);
+                let endTime = self.props.totalTime - (self.state.dragRight / 61 / self.props.multiple);
                 self.props.refTrack.props['endTime'] = endTime;
                 self.props.refTrack.node['endTime'] = endTime;
                 WidgetActions['updateProperties']({endTime:endTime}, false, false);
@@ -579,17 +580,17 @@ class VxRcSlider extends RcSlider {
         let dragLocusRight = null;
         let startTime = this.props.refTrack.node.startTime;
         let endTime = this.props.refTrack.node.endTime;
-        //console.log(dragLocusClass);
+        //console.log(this.props.multiple);
 
         if(startTime){
-            dragLocusLeft = startTime * 61 * this.props.percentage
+            dragLocusLeft = startTime * 61 * this.props.multiple
         }
         else {
             dragLocusLeft = 0
         }
 
         if(endTime){
-            dragLocusRight =  (this.props.totalTime - endTime) * 61 * this.props.percentage
+            dragLocusRight =  (this.props.totalTime - endTime) * 61 * this.props.multiple
         }
         else {
             dragLocusRight = 0
@@ -637,7 +638,7 @@ class VxRcSlider extends RcSlider {
 				<div className='timeline-node-track timline-column-right'>
                     <div className={cls("slider-right-layer",
                                         {"slider-right-hidden" : this.props.marginLeft !== 0},
-                                        {"f--h" : this.props.percentage === 1}) }>
+                                        {"f--h" : this.props.percentage === null}) }>
                         <div style={{ width : this.props.width + 20 ,
                                         marginLeft: -(this.props.marginLeft * this.props.percentage),
                                         paddingRight: "20px",
@@ -700,7 +701,8 @@ class VxRcSlider extends RcSlider {
                                        }}
                                  onClick={ this.selectTrack.bind(this) }></div>
                         </div>
-                        <div className="slider-right flex-1" onClick={ this.selectTrack.bind(this) }></div>
+                        <div className={cls( "slider-right flex-1",{"hidden" : this.props.percentage !== null})}
+                             onClick={ this.selectTrack.bind(this) }></div>
                     </div>
 				</div>
 			</li>

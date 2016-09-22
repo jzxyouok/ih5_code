@@ -698,7 +698,8 @@ class TimelineView extends React.Component {
                         ref="VxSlider"
                         totalTime = { totalTime }
                         marginLeft = { this.state.marginLeft }
-                        percentage = { this.state.percentage == null ? 1 : this.state.percentage  }
+                        percentage = { this.state.percentage}
+                        multiple = { this.state.multiple > 0 ? this.state.multiple : -this.state.multiple}
                         changSwitchState={ this.changSwitchState }
                         isCurrent={node === this.state.currentTrack} />);
             }
