@@ -319,11 +319,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
         this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
-        this.listenTo(WidgetActions['addEvent'], this.addEvent);
+        this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
-        this.listenTo(WidgetActions['removeEvents'], this.removeEvents);
+        this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
-        this.listenTo(WidgetActions['enableEvents'], this.enableEvents);
+        this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
     },
     selectWidget: function(widget) {
         var render = false;
@@ -536,10 +536,10 @@ export default Reflux.createStore({
         }
         this.trigger(p);
     },
-    addEvent: function(className, props) {
+    initEventTree: function(className, props) {
         if (this.currentWidget) {
-            this.currentWidget.events['test'] = {func:'this is testing func'};
-            this.currentWidget.props['enableEvents'] = true;
+            this.currentWidget.props['eventTree'] = [];
+            this.currentWidget.props['enableEventTree'] = true;
         }
         this.render();
         this.trigger({redrawTree: true});
@@ -547,9 +547,9 @@ export default Reflux.createStore({
     removeEvent: function () {
         //TODO:  单个事件的删除
     },
-    removeEvents: function() {
+    removeEventTree: function() {
         if (this.currentWidget) {
-            this.currentWidget.events = {};
+            this.currentWidget.props['eventTree'] = undefined;
         }
         this.render();
         this.trigger({redrawTree: true});
@@ -557,9 +557,9 @@ export default Reflux.createStore({
     enableEvent: function () {
         //TODO:  单个事件的可执行开关
     },
-    enableEvents: function () {
+    enableEventTree: function () {
         if (this.currentWidget) {
-            this.currentWidget.props['enableEvents'] = !this.currentWidget.props['enableEvents'];
+            this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
         }
         this.render();
         this.trigger({redrawTree: true});
