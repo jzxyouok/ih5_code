@@ -401,8 +401,6 @@ class PropertyView extends React.Component {
 
 
 
-
-
                 defaultProp.value = defaultValue;
 
             }else if(item.type ==propertyType.Color){
