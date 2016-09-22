@@ -295,37 +295,37 @@ class PropertyView extends React.Component {
                 defaultValue = node.node[str];
 
                 if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
-                if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置
+                if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置初始宽高,便于计算放大缩小的系数
 
             }else if(item.type==propertyType.Color || item.type==propertyType.Color2){
                if( item.name == 'color' &&  !node.props.color){ //只执行一次
                    node.props.color='#FFFFFF';
                }
-                if(node.props[item.name+'_originColor']){
+                if(node.props[item.name+'_originColor']){  //舞台颜色隐藏后保存的颜色
                     defaultValue =node.props[item.name+'_originColor'];
                 }else{
                     defaultValue =node.props[item.name];
                 }
-            } else {
-                if (node.props[item.name] === undefined){
-                    if(item.type === propertyType.Boolean ){
-                        defaultValue = item.default
-                    }else if(item.type === propertyType.Percentage && item.name=='alpha'){
-                        defaultValue = item.default*100;
-                    }else{
-                        defaultValue='';
-                    }
-                   // defaultValue = (item.type === propertyType.Boolean || item.type === propertyType.Percentage) ? item.default : '';
-                }  else{
-                    defaultValue = node.props[item.name];
-                    if(item.name == 'originX'){
-                        this.originPos.x=defaultValue;
-                    }else if(item.name == 'originY'){
-                        this.originPos.y=defaultValue;
-                    }else if(item.name == 'alpha'){
-                        defaultValue=defaultValue*100;
-                    }
+            } else  if (node.props[item.name] === undefined){
+                if(item.type === propertyType.Boolean ){
+                    defaultValue = item.default
+                }else if(item.type === propertyType.Percentage && item.name=='alpha'){
+                    defaultValue = item.default*100;
+                }else{
+                    defaultValue='';
                 }
+
+            } else {
+
+                defaultValue = node.props[item.name];
+                if (item.name == 'originX') {
+                    this.originPos.x = defaultValue;
+                } else if (item.name == 'originY') {
+                    this.originPos.y = defaultValue;
+                } else if (item.name == 'alpha') {
+                    defaultValue = defaultValue * 100;
+                }
+
             }
 
 
