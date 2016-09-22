@@ -323,6 +323,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
         this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
         this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
+        this.listenTo(WidgetActions['activeEventTree'], this.activeEventTree);
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
@@ -561,6 +562,15 @@ export default Reflux.createStore({
         }
         this.render();
         this.trigger({redrawTree: true});
+    },
+    activeEventTree: function (nid) {
+        if (nid) {
+            this.currentActiveEventTreeKey = nid;
+        } else {
+            this.currentActiveEventTreeKey = null;
+        }
+        this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey}});
+        this.render();
     },
     addEvent: function () {
         //TODO: 添加事件
