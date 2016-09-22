@@ -106,7 +106,9 @@ class VxRcSlider extends RcSlider {
             lastLayer : null,
             nowLayer:null,
             dragLeft : 0,
-            dragRight : 0
+            dragRight : 0,
+            isDragTrackLeft : false,
+            isDragTrackRight : false
         };
         this.onHandleClick = this.onHandleClick.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -152,7 +154,7 @@ class VxRcSlider extends RcSlider {
         if(bool){
             if(value){
                 this.setState({
-                    //changeKeyBool : bool,
+                    changeKeyBool : bool,
                     changeKeyValue : value
                 });
             }
@@ -165,7 +167,8 @@ class VxRcSlider extends RcSlider {
             this.props.refTimer.node['seek'](
                 this.props.refTrack.props['data'][this.state.currentHandle][0]
             );
-            //TimelineAction['ChangeKeyframe'](true);
+            //console.log(1,true)
+            TimelineAction['ChangeKeyframe'](true);
             changeKeyAction['ChangeKey'](false);
         }
     }
@@ -237,6 +240,7 @@ class VxRcSlider extends RcSlider {
     }
 
     selectTrack(){
+        //console.log(2,false);
         TimelineAction['ChangeKeyframe'](false);
         WidgetActions['selectWidget'](this.props.refTrack.parent, true);
 
@@ -246,7 +250,7 @@ class VxRcSlider extends RcSlider {
             changeKeyBool : false,
             changeKeyValue : null
         },()=>{
-            this.isHaveTrunBtn(false,1);
+            this.isHaveTrunBtn(false,0);
         });
 
         this.dragLeftBtn();
@@ -268,16 +272,18 @@ class VxRcSlider extends RcSlider {
         },()=>{
             WidgetActions['syncTrack']();
             this.isHaveTrunBtn(true,this.props.refTrack.props.data.length -1);
+            //console.log(3,true);
             TimelineAction['ChangeKeyframe'](true);
             this.forceUpdate();
         });
     }
 
     onMove(e, position) {
-        //TimelineAction['ChangeKeyframe'](false);
-        this.setState({
-            changeKeyBool : false
-        });
+        //console.log(4,false);
+        TimelineAction['ChangeKeyframe'](false);
+        //this.setState({
+        //    changeKeyBool : false
+        //});
         pauseEvent(e);
         const props = this.props;
         if (this.state.currentHandle >= 0) {
@@ -291,19 +297,31 @@ class VxRcSlider extends RcSlider {
             this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
             this.props.refTimer.node['seek'](value);
             //this.props.refTimer.node['seek'](value * this.props.refTimer.node['totalTime']);
-            this.setState({
-                points: points,
-                changeKeyBool : true
-            },()=>{
-                //TimelineAction['ChangeKeyframe'](true);
-            });
+            this.setState({changeKeyBool : true});
         }
+        //console.log(5,true);
+        //this.setState({
+        //    changeKeyBool : true
+        //});
+        TimelineAction['ChangeKeyframe'](true);
     }
 
     onStatusChange(widget) {
         //console.log(widget);
         if (widget.resetTrack !== undefined) {
             this.setState({currentHandle: -1});
+        }
+        if(widget.updateProperties){
+            if(widget.updateProperties.startTime){
+                this.setState({
+                    isDragTrackLeft : false
+                })
+            }
+            if(widget.updateProperties.endTime){
+                this.setState({
+                    isDragTrackRight : false
+                })
+            }
         }
         if (widget.updateProperties !== undefined && widget.skipRender === undefined && this.state.currentHandle >= 0) {
             let obj = widget.updateProperties;
@@ -342,16 +360,12 @@ class VxRcSlider extends RcSlider {
             },()=>{
                 if(this.state.lastLayer !== this.state.nowLayer ){
                     this.setState({
-                        currentHandle: -1
-                    });
-                    TimelineAction['ChangeKeyframe'](false);
-                    this.setState({
                         currentHandle: -1,
                         changeKey : null,
                         changeKeyBool : false,
                         changeKeyValue : null
                     },()=>{
-                        this.isHaveTrunBtn(false,1);
+                        this.isHaveTrunBtn(false,0);
                     });
                 }
             });
@@ -365,23 +379,54 @@ class VxRcSlider extends RcSlider {
         let move = false;
         let _x;
         let self = this;
-        let left = self.state.dragLeft;
-        console.log(".drag-locus-"+ self.props.myID + " .drag-left");
+        let dragLocusLeft = null;
+        let startTime = this.props.refTrack.node.startTime;
+        if(startTime){
+            dragLocusLeft = startTime * 61 * this.props.percentage
+        }
+        else {
+            dragLocusLeft = 0
+        }
+        let left = dragLocusLeft;
+        this.setState({dragLeft:dragLocusLeft});
+
         $(".drag-locus-"+ self.props.myID + " .drag-left" ).mousedown(function(e){
             move=true;
             _x=e.pageX;
+            //self.selectTrack();
         });
         $(document).mousemove(function(e){
             if(move){
                 let x =  e.pageX - _x;
+                let value = left + x;
+                if(value <= 0){
+                    value = 0
+                }
+                if(self.props.refTrack.props.data[0]){
+                    let max = self.props.refTrack.props.data[0][0] * 61 * self.props.percentage;
+                    if(value >= max){
+                        value = max
+                    }
+                }
                 self.setState({
-                    dragLeft: left + x <= 0 ? 0 : left + x
+                    isDragTrackLeft : true,
+                    isDragTrackRight : false,
+                    dragLeft: value
                 });
-                console.log(left + x);
+                //console.log(left + x);
             }
         }).mouseup(function(){
             move=false;
-            left = self.state.dragLeft
+            left = self.state.dragLeft;
+
+            if(self.state.isDragTrackLeft){
+                //console.log(4);
+                let startTime = self.state.dragLeft / 61 / self.props.percentage;
+                //WidgetActions['updateProperties']({startTime:startTime}, false, false);
+                self.props.refTrack.props['startTime'] = startTime;
+                self.props.refTrack.node['startTime'] = startTime;
+                //WidgetActions['render']();
+            }
         });
     }
 
@@ -389,22 +434,56 @@ class VxRcSlider extends RcSlider {
         let move = false;
         let _x;
         let self = this;
-        let right = self.state.dragRight;
+        let dragLocusRight = null;
+        let endTime = this.props.refTrack.node.endTime;
+        if(endTime){
+            dragLocusRight =  (this.props.totalTime - endTime) * 61 * this.props.percentage
+        }
+        else {
+            dragLocusRight = 0
+        }
+        let right = dragLocusRight;
+        this.setState({dragRight:dragLocusRight});
+
         $(".drag-locus-"+ self.props.myID + " .drag-right" ).mousedown(function(e){
             move=true;
             _x=e.pageX;
+            //self.selectTrack();
         });
         $(document).mousemove(function(e){
             if(move){
                 let x =  -(e.pageX - _x);
+                let value = right + x;
+                if(value <= 0){
+                    value = 0
+                }
+                if(self.props.refTrack.props.data[0]){
+                    let data = self.props.refTrack.props.data;
+                    let totalTime = self.props.totalTime;
+                    let max = (totalTime - data[data.length - 1][0]) * 61 * self.props.percentage;
+                    if(value >= max){
+                        value = max
+                    }
+                }
                 self.setState({
-                    dragRight: right + x <= 0 ? 0 : right + x
+                    isDragTrackRight : true,
+                    isDragTrackLeft : false,
+                    dragRight: value
                 });
-                console.log(right + x);
+                //console.log(right + x);
             }
         }).mouseup(function(){
             move=false;
-            right = self.state.dragRight
+            right = self.state.dragRight;
+
+            if(self.state.isDragTrackRight){
+                //console.log(6);
+                let endTime = self.props.totalTime - (self.state.dragRight / 61 / self.props.percentage);
+                self.props.refTrack.props['endTime'] = endTime;
+                self.props.refTrack.node['endTime'] = endTime;
+                //WidgetActions['updateProperties']({endTime:endTime}, false, false);
+                //WidgetActions['render']();
+            }
         });
     }
 
@@ -475,22 +554,41 @@ class VxRcSlider extends RcSlider {
 		const isIncluded = included || range;
 
         const style = {};
-        //console.log(this.props.width);
         style['width'] = '100%';
         if (this.props.isCurrent){
             style['borderColor'] = '#CCC';
         }
+
         //console.log(this.props.refTrack);
 
         const dragLocusStyle = {};
         const dragLocusClass = 'drag-locus-layer f--h drag-locus-' + this.props.myID;
+        let dragLocusLeft = null;
+        let dragLocusRight = null;
+        let startTime = this.props.refTrack.node.startTime;
+        let endTime = this.props.refTrack.node.endTime;
         //console.log(dragLocusClass);
+
+        if(startTime){
+            dragLocusLeft = startTime * 61 * this.props.percentage
+        }
+        else {
+            dragLocusLeft = 0
+        }
+
+        if(endTime){
+            dragLocusRight =  (this.props.totalTime - endTime) * 61 * this.props.percentage
+        }
+        else {
+            dragLocusRight = 0
+        }
 
         let track = this.props.refTrack;
         let trackClass = track.parent.className;
 
-        dragLocusStyle['left'] = this.state.dragLeft;
-        dragLocusStyle['right'] = this.state.dragRight;
+        dragLocusStyle['left'] = this.state.isDragTrackLeft ? this.state.dragLeft : dragLocusLeft;
+        dragLocusStyle['right'] = this.state.isDragTrackRight ? this.state.dragRight : dragLocusRight;
+
         if(trackClass == "image" || trackClass == "imagelist"){
             dragLocusStyle['backgroundColor'] = '#386d6a';
         }
@@ -527,7 +625,7 @@ class VxRcSlider extends RcSlider {
 				<div className='timeline-node-track timline-column-right'>
                     <div className={cls("slider-right-layer",
                                         {"slider-right-hidden" : this.props.marginLeft !== 0},
-                                        {"f--h" : this.props.percentage === null}) }>
+                                        {"f--h" : this.props.percentage === 1}) }>
                         <div style={{ width : this.props.width + 20 ,
                                         marginLeft: -(this.props.marginLeft * this.props.percentage),
                                         paddingRight: "20px",

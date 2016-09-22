@@ -43,7 +43,10 @@ class TimelineView extends React.Component {
             multiple : 1,
             zoomOrLessNUm : 0,
             allWidth : null,
-            dragZoomLeft : 45.5
+            dragZoomLeft : 45.5,
+            startTime : 0,
+            endTime : 10,
+            nowLayerId : null
 		};
 		this.onTimer = this.onTimer.bind(this);
 		//this.onWidgetClick = this.onWidgetClick.bind(this);
@@ -81,7 +84,7 @@ class TimelineView extends React.Component {
 	}
 
 	onStatusChange(widget) {
-		//console.log('w2', widget);
+		console.log('w2', widget);
 		//if(widget.hasOwnProperty('hasHandle')) {
 		//	this.setState({
 		//		hasHandle: widget.hasHandle
@@ -98,14 +101,55 @@ class TimelineView extends React.Component {
 			const changed = {currentTrack:null};
 			let node = widget.selectWidget;
 			if (node) {
+                //console.log(node);
 				node.children.map(item => {
 					if (item.className === 'track') {
 						changed.currentTrack = item;
+                        //console.log(item);
+
+                        if(item.node.startTime || item.node.endTime){
+                            if(item.node.startTime){
+                                this.setState({
+                                    startTime : item.node.startTime
+                                })
+                            }
+                            if(item.node.endTime){
+                                this.setState({
+                                    endTime : item.node.endTime
+                                })
+                            }
+                        }
+                        else {
+                            //console.log(item);
+                            this.setState({
+                                startTime : 0,
+                                endTime : item.timerWidget.props.totalTime ? item.timerWidget.props.totalTime : 10
+                            })
+                        }
 					}
 				});
 
                 if(node.className === 'track'){
                     changed.currentTrack = node;
+
+                    if(node.node.startTime || node.node.endTime){
+                        if(node.node.startTime){
+                            this.setState({
+                                startTime : node.node.startTime
+                            })
+                        }
+                        if(node.node.endTime){
+                            this.setState({
+                                endTime : node.node.endTime
+                            })
+                        }
+                    }
+                    else {
+                        this.setState({
+                            startTime : 0,
+                            endTime : node.timerWidget.props.totalTime ? node.timerWidget.props.totalTime : 10
+                        })
+                    }
                 }
                 //console.log(changed.currentTrack);
 			}
@@ -122,6 +166,14 @@ class TimelineView extends React.Component {
 			}
 			this.setState(changed);
             this.changeAllWidth(true, changed);
+
+            let nowID = widget.selectWidget.key;
+            if(this.state.nowLayerId !== nowID){
+                this.setState({
+                    isChangeKey : false,
+                    nowLayerId : nowID
+                })
+            }
 		}
         if(widget.skipProperty){
             if(widget.updateProperties.totalTime){
@@ -195,6 +247,11 @@ class TimelineView extends React.Component {
 
 	// 添加时间断点
 	onAdd() {
+        if(this.state.currentTime < this.state.startTime
+            || this.state.currentTime> this.state.endTime){
+            return;
+        }
+
 		if (this.state.currentTrack) {
             //console.log(this.state.currentTrack);
 			let p = this.state.currentTime;
@@ -274,6 +331,7 @@ class TimelineView extends React.Component {
                 inputState : false,
                 currentTime : parseFloat(data)
             });
+            //console.log(5446,this.state.isChangeKey);
             if(this.state.isChangeKey){
                 TimelineAction['ChangeKeyframe'](true,parseFloat(data));
             }
@@ -580,8 +638,9 @@ class TimelineView extends React.Component {
                         points={node.props.data}
                         myID = { node.parent.key }
                         ref="VxSlider"
+                        totalTime = { totalTime }
                         marginLeft = { this.state.marginLeft }
-                        percentage = { this.state.percentage }
+                        percentage = { this.state.percentage == null ? 1 : this.state.percentage  }
                         changSwitchState={ this.changSwitchState }
                         isCurrent={node === this.state.currentTrack} />);
             }
