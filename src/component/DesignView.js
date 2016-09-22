@@ -48,7 +48,6 @@ class DesignView extends React.Component {
                 document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
                 document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
                 this.setRuler(6,10);
-                console.log(1);
             }  else {
                 document.body.removeEventListener('keyup', this.onKeyScroll);
             }
@@ -110,7 +109,6 @@ class DesignView extends React.Component {
     scroll(event) {
         event.preventDefault();
         event.stopPropagation();
-        //console.log(event);
         let y  = event.deltaY;
         //let x  = event.deltaX;
         if(y===0 || y===-0) return;
