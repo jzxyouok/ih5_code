@@ -525,9 +525,10 @@ $size: 25px;
 
             .ant-slider-handle {
                 position: absolute;
+                top: 2px;
                 z-index: 5;
-				width: 24px;
-				height: 24px;
+				width: 20px;
+				height: 20px;
 				@include bg-btn2(7);
 				cursor: pointer;
 				border: none !important;
