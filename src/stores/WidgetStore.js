@@ -321,6 +321,8 @@ export default Reflux.createStore({
 
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
+        this.listenTo(WidgetActions['removeEvents'], this.removeEvents);
+        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['enableEvents'], this.enableEvents);
     },
     selectWidget: function(widget) {
@@ -542,12 +544,18 @@ export default Reflux.createStore({
         this.render();
         this.trigger({redrawTree: true});
     },
-    removeEvent: function() {
+    removeEvent: function () {
+        //TODO:  单个事件的删除
+    },
+    removeEvents: function() {
         if (this.currentWidget) {
             this.currentWidget.events = {};
         }
         this.render();
         this.trigger({redrawTree: true});
+    },
+    enableEvent: function () {
+        //TODO:  单个事件的可执行开关
     },
     enableEvents: function () {
         if (this.currentWidget) {

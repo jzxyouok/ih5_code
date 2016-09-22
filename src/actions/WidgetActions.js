@@ -14,8 +14,10 @@ export default Reflux.createActions([
   'render',                       //重新加载数据
   'updateProperties',             //更新属性
   'addEvent',                     //添加默认事件
-  'removeEvent',                  //删除事件
-  'enableEvents',                  //所有事件的可执行与否,
+  'removeEvent',                  //删除单个事件
+  'removeEvents',                 //删除全部事件
+  'enableEvent',                  //单个事件的可执行与否
+  'enableEvents',                 //所有事件的可执行与否,
   'renameWidget',                 //重命名组件
   'resetTrack',
   'syncTrack',
