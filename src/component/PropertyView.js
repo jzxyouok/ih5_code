@@ -188,7 +188,8 @@ class PropertyView extends React.Component {
                       this.selectNode.props.scaleTypeKey=this.getScaleTypeDefault(value,prop.options);
                       v = parseInt(value);
                   }else if(prop.name == 'fontFamily'){
-                      this.selectNode.props.fontFamilyKey=this.getScaleTypeFontFamily(value,prop.options);
+
+                      this.selectNode.props.fontFamilyKey=this.getScaleTypeFontFamily(value);
 
                       if(this.selectNode.props.fontFamilyKey == '上传字体'){
                           WidgetActions['chooseFile']('font', true, function(){
@@ -252,10 +253,10 @@ class PropertyView extends React.Component {
             }
         }
     }
-    getScaleTypeFontFamily(value ,options){
-        for(let i in options){
-            if(value == options[i]){
-                return i;
+    getScaleTypeFontFamily(value){
+        for(let i in this.fontList){
+            if(value == this.fontList[i].file){
+                return  this.fontList[i].name;
             }
         }
     }
@@ -384,18 +385,21 @@ class PropertyView extends React.Component {
               }else if(item.name=='fontFamily'){
 
 
-
-
-                 // item.options=this.fontList;
-
-                  console.log(this.fontList);
-
               }
-                //拼接children元素
                 defaultProp.options=[];
-                for(var i in  item.options){
-                    defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
+                if(item.name=='fontFamily'){
+                    defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
+                    for(let i in this.fontList){
+                        defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                    }
+                }else{
+                    //拼接children元素
+                    for(var i in  item.options){
+                        defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
+                    }
                 }
+
+
 
                 defaultProp.value = defaultValue;
 
