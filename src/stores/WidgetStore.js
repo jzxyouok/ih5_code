@@ -385,7 +385,7 @@ export default Reflux.createStore({
         //  dataList[0].push(d);
         //  //dataList[1].push(d);
         //}
-        let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList}});
+        let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList, 'name':props['name']}});
         this.trigger({redrawTree: true, updateTrack: track});
       } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
         let p;
