@@ -320,10 +320,12 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
         this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
-        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
-        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
+        this.listenTo(WidgetActions['addEvent'], this.addEvent);
+        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
+        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
+
     },
     selectWidget: function(widget) {
         var render = false;
@@ -538,24 +540,19 @@ export default Reflux.createStore({
     },
     initEventTree: function(className, props) {
         if (this.currentWidget) {
-            this.currentWidget.props['eventTree'] = [];
             this.currentWidget.props['enableEventTree'] = true;
+            this.currentWidget.props['eventTree'] = [];
         }
         this.render();
         this.trigger({redrawTree: true});
-    },
-    removeEvent: function () {
-        //TODO:  单个事件的删除
     },
     removeEventTree: function() {
         if (this.currentWidget) {
             this.currentWidget.props['eventTree'] = undefined;
+            this.currentWidget.props['enableEventTree'] = undefined;
         }
         this.render();
         this.trigger({redrawTree: true});
-    },
-    enableEvent: function () {
-        //TODO:  单个事件的可执行开关
     },
     enableEventTree: function () {
         if (this.currentWidget) {
@@ -563,6 +560,15 @@ export default Reflux.createStore({
         }
         this.render();
         this.trigger({redrawTree: true});
+    },
+    addEvent: function () {
+        //TODO: 添加事件
+    },
+    removeEvent: function () {
+        //TODO: 单个事件的删除
+    },
+    enableEvent: function () {
+        //TODO: 单个事件的可执行开关
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});
