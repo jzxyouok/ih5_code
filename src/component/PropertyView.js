@@ -314,9 +314,7 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue='';
                 }
-
             } else {
-
                 defaultValue = node.props[item.name];
                 if (item.name == 'originX') {
                     this.originPos.x = defaultValue;
@@ -361,8 +359,7 @@ class PropertyView extends React.Component {
             }
 
             let groupName = item.group || 'basic';
-            if (groups[groupName] === undefined)
-                groups[groupName] = [];
+            if (groups[groupName] === undefined)   groups[groupName] = [];
 
             //设置布局结构和图标
             let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY'].indexOf(item.showName) >= 0;//左右结构显示
@@ -405,13 +402,12 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
-
         if (widget.selectWidget !== undefined){
-            //加载后被调用,数据的更改激活change
+
             this.selectNode = widget.selectWidget;
 
             this.setState({fields: this.getFields()});
-            let node = this.selectNode; //当前加载的对象
+            let node = this.selectNode;
 
             while (node != null) {
                 if (node.className == 'page') {
@@ -430,8 +426,7 @@ class PropertyView extends React.Component {
             let selectNode = this.selectNode;
             let obj = widget.updateProperties;
             let className = selectNode.className;
-            if (className.charAt(0) == '_')
-                className = 'class';
+            if (className.charAt(0) == '_')  className = 'class';
 
             propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
