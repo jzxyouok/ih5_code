@@ -149,6 +149,9 @@ $size: 25px;
 				&.active.delete {
 					@include bg(2, 1);
 				}
+                &.none{
+                    @include bg(2, 2);
+                }
 			}
 			#TimelineNodeActionNext {
 				@include bg(3, 1);
