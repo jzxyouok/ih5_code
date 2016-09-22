@@ -267,7 +267,7 @@ $size: 25px;
                 position: absolute;
                 left: 0;
                 right: 0;
-                z-index: 3;
+                z-index: 4;
                 margin: 0;
 
                 .time-ruler-div:after{
@@ -464,7 +464,8 @@ $size: 25px;
                 opacity: 1;
 			}
 
-            .timline-column-right .slider-right{
+            .timline-column-right .slider-right,
+            .timline-column-right .locus-layer {
                 background: #2c2c2c;
             }
 		}
@@ -478,7 +479,7 @@ $size: 25px;
             position: relative;
 			background: none;
 			border: none!important;
-			height: 24px;
+			height: 25px;
 			margin: 0;
 			border-radius: 0;
             opacity: 0.6;
@@ -491,11 +492,38 @@ $size: 25px;
                 bottom: 0;
                 z-index: 2;
                 //background: #000;
+                border-bottom: 1px solid #151515;
             }
 
-			.ant-slider-handle {
+            .drag-locus-layer {
                 position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
                 z-index: 3;
+
+                .drag-left,
+                .drag-right {
+                    width: 5px;
+                    height: 100%;
+                    cursor: w-resize;
+                }
+
+                .mark-line {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    top: 12px;
+                    z-index: 0;
+                    height: 1px;
+                    background: #151515;
+                }
+            }
+
+            .ant-slider-handle {
+                position: absolute;
+                z-index: 5;
 				width: 24px;
 				height: 24px;
 				@include bg-btn2(7);
@@ -514,12 +542,12 @@ $size: 25px;
 				background: none;
 				margin: 0;
 				height: 25px;
-                border-bottom: 1px solid #151515;
+                //border-bottom: 1px solid #151515;
 			}
 
 			.ant-slider-mark {
 				height: 1px;
-				background: #151515;
+				//background: #151515;
 				top: 12px;
 				z-index: 0;
 			}
