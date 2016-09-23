@@ -252,7 +252,7 @@ class NavBar extends React.Component {
         return (
             <div className='NavBar f--h'>
                 <div className='nb--left f--h'>
-                    <div className='import f--hcc'>
+                    <div className='import'>
                         <span className='icon' />
                     </div>
 
@@ -267,35 +267,35 @@ class NavBar extends React.Component {
                             <span className="title">模板</span>
                         </button>
 
-                        <div className='dropDown-btn'>
+                        <div className='dropDown-btn f--hlc'>
                             <button className='btn btn-clear module-btn' title='组件'>
                                 <span className="icon" />
                                 <span className="title">组件</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn'>
+                        <div className='dropDown-btn f--hlc'>
                             <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }}>
                                 <span className="icon" />
                                 <span className="title">数据库</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn'>
+                        <div className='dropDown-btn f--hlc'>
                             <button className='btn btn-clear link-btn' title='连接'>
                                 <span className="icon" />
                                 <span className="title">连接</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn'>
+                        <div className='dropDown-btn f--hlc'>
                             <button className='btn btn-clear shape-btn' title='形状'>
                                 <span className="icon" />
                                 <span className="title">形状</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn dropDown-btn2'>
+                        <div className='dropDown-btn dropDown-btn2 f--hlc'>
                             <button className='btn btn-clear open-btn' title='作品' >
                                 <span className="icon" />
                                 <span className="title">作品</span>
@@ -322,20 +322,22 @@ class NavBar extends React.Component {
                 </div>
 
                 <div className='nb--content flex-1 f--hcc f--hlc'>
-                    <button className='btn btn-clear preview-btn' title='预览' onClick={this.onPlay} >
-                        <span className='icon' />
-                        预览
-                    </button>
+                    <div className="damndesigner f--hcc f--hlc">
+                        <button className='btn btn-clear preview-btn' title='预览' onClick={this.onPlay} >
+                            <span className='icon' />
+                            预览
+                        </button>
 
-                    <button className='btn btn-clear qrCode-btn' title='二维码' >
-                        <span className='icon' />
-                        二维码
-                    </button>
+                        <button className='btn btn-clear qrCode-btn' title='二维码' >
+                            <span className='icon' />
+                            二维码
+                        </button>
 
-                    <button className='btn btn-clear release-btn' title='发布' >
-                        <span className='icon' />
-                        发布
-                    </button>
+                        <button className='btn btn-clear release-btn' title='发布' >
+                            <span className='icon' />
+                            发布
+                        </button>
+                    </div>
                 </div>
 
                 <div className='nb-right f--hlc'>

@@ -3,7 +3,7 @@
 #ToolBox {
 	position: absolute;
 	left: 0;
-	top: 36px;
+	top: 37px;
 	bottom: 0;
 	width: 36px;
 	background-color: $colorNavBackground;
@@ -99,13 +99,13 @@
             height: 40px;
 
             .less-btn{
-                top: 24px;
-                left: 10px;
+                bottom: 0;
+                left: 38px;
             }
 
             .plus-btn {
-                bottom: 0;
-                left: 38px;
+                top: 24px;
+                left: 10px;
             }
 
             .size-input {
@@ -252,12 +252,12 @@
         height: 56px;
 
         .less-btn{
-            top: 0;
+            bottom: 0;
             left: 10px;
         }
 
         .plus-btn {
-            bottom: 0;
+            top: 0;
             left: 10px;
         }
 

@@ -46,18 +46,18 @@ class TimelineView extends React.Component {
             dragZoomLeft : 45.5,
             startTime : 0,
             endTime : 10,
-            nowLayerId : null
+            nowLayerId : null,
             //isCanAdd : true
+            dragTimelineLeft : 37,
+            dragTimelineRight : 281,
+            dragTimelineBottom : 0
 		};
-		this.onTimer = this.onTimer.bind(this);
-		//this.onWidgetClick = this.onWidgetClick.bind(this);
-		//this.onWidgetMouseUp = this.onWidgetMouseUp.bind(this);
-		//this.onWidgetMouseDown = this.onWidgetMouseDown.bind(this);
-		//this.onWidgetMouseMove = this.onWidgetMouseMove.bind(this);
-		this.flag = 0;
-		this.stepX = null;
-		this.stepY = null;
 
+        this.flag = 0;
+        this.stepX = null;
+        this.stepY = null;
+
+		this.onTimer = this.onTimer.bind(this);
         this.onPlay = this.onPlay.bind(this);
         this.onPause = this.onPause.bind(this);
         this.onPlayOrPause = this.onPlayOrPause.bind(this);
@@ -72,12 +72,14 @@ class TimelineView extends React.Component {
         this.changeAllWidth = this.changeAllWidth.bind(this);
         this.dragZoom = this.dragZoom.bind(this);
         //this.changeIsCanAdd = this.changeIsCanAdd.bind(this);
+        this.dragTimeline = this.dragTimeline.bind(this);
 	}
 
 	componentDidMount() {
 		this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         TimelineStores.listen(this.ChangeKeyframe.bind(this));
         this.dragZoom();
+        this.dragTimeline();
 	}
 
 	componentWillUnmount() {
@@ -614,58 +616,38 @@ class TimelineView extends React.Component {
         });
     }
 
-    //changeIsCanAdd(){
-    //    //console.log(this.state.currentTime,this.state.startTime,this.state.endTime);
-    //    let bool = true;
-    //    if(this.state.currentTime < this.state.startTime
-    //        || this.state.currentTime> this.state.endTime){
-    //        bool = false;
-    //    }
-    //    else {
-    //        bool = true;
-    //    }
-    //    //console.log(bool);
-    //    this.setState({
-    //        isCanAdd : bool
-    //    })
-    //}
+    dragTimeline(){
+        let move = false;
+        let _x;
+        let _y;
+        let self = this;
 
-	//onWidgetClick(event) {
-	//	event.preventDefault();
-	//	event.stopPropagation();
-	//}
-    //
-	//onWidgetMouseUp(event) {
-	//	event.preventDefault();
-	//	event.stopPropagation();
-	//	if(this.flag===1) {
-	//		this.flag = 0;
-	//		this.stepX = 0;
-	//		this.stepY = 0;
-	//	}
-	//}
-    //
-	//onWidgetMouseDown(event) {
-	//	event.preventDefault();
-	//	event.stopPropagation();
-	//	if(this.flag===0) {
-	//		this.flag = 1;
-	//		this.stepX = event.clientX;
-	//		this.stepY = event.clientY;
-	//	}
-	//}
-    //
-	//onWidgetMouseMove(event) {
-	//	if(this.flag===1) {
-	//		let x = event.clientX - this.stepX;
-	//		let y = event.clientY - this.stepY;
-	//		// console.log(x, y);
-	//		this.setState({
-	//			stepX: x > 37 ? x: 37,
-	//			stepY: y < 0 ? y: 0
-	//		});
-	//	}
-	//}
+        let left = 37;
+        let right = 281;
+        let bottom = 0;
+
+        $(".dragTimeline").mousedown(function(e){
+            move=true;
+            _x= e.pageX;
+            _y= e.pageY;
+        });
+        $(document).mousemove(function(e){
+            if(move){
+                let x = e.pageX - _x;
+                let y = e.pageY - _y;
+                self.setState({
+                    dragTimelineLeft : left + x,
+                    dragTimelineRight : right - x,
+                    dragTimelineBottom : bottom - y
+                })
+            }
+        }).mouseup(function(){
+            move=false;
+            left = self.state.dragTimelineLeft;
+            right = self.state.dragTimelineRight;
+            bottom = self.state.dragTimelineBottom;
+        });
+    }
 
 	render() {
         let tracks = [];
@@ -746,8 +728,13 @@ class TimelineView extends React.Component {
 
         let scrollwidth = window.innerWidth-318 + "px";
 
+        let TimelineViewStyle= {};
+        TimelineViewStyle['left'] = this.state.dragTimelineLeft;
+        TimelineViewStyle['right'] = this.state.dragTimelineRight;
+        TimelineViewStyle['bottom'] = this.state.dragTimelineBottom;
+
         return (
-            <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })}>
+            <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })} style={TimelineViewStyle}>
                 <div className="hidden">
                     <ComponentPanel ref="ComponentPanel" />
                 </div>
@@ -772,7 +759,7 @@ class TimelineView extends React.Component {
                         </div>
                     </div>
 
-                    <div className='timline-column-right flex-1' id='TimelineNodeAction'>
+                    <div className='timline-column-right flex-1 f--h' id='TimelineNodeAction'>
                         <div>
                             <button id='TimelineNodeActionPrev'
                                     className={ cls({"active": this.state.changSwitch !== 1 && this.state.changSwitch !== 2}) }
@@ -788,6 +775,8 @@ class TimelineView extends React.Component {
                                     className={ cls({"active": this.state.changSwitch !== -1 && this.state.changSwitch !== 2}) }
                                     onClick={this.selectNextBreakpoint.bind(this)} />
                         </div>
+
+                        <div className="flex-1 dragTimeline" style={{cursor:"move"}}></div>
                     </div>
                 </div>
 
