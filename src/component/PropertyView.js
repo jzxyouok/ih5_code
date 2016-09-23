@@ -25,6 +25,7 @@ class PropertyView extends React.Component {
         this.selectNode = null;
         this.currentPage = null;
         this.fontList=[];
+        this.textSizeObj=null;
 
         this.defaultData = {
             width: null,
@@ -324,7 +325,9 @@ class PropertyView extends React.Component {
                 defaultValue = node.node[item.name];
             }else if(item.type==propertyType.Float) {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
-                defaultValue = node.node[str];
+
+                console.log('textSizeObj',this.textSizeObj);
+                defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
 
                 if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
                 if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置初始宽高,便于计算放大缩小的系数
@@ -375,12 +378,14 @@ class PropertyView extends React.Component {
             //单独设置默认参数
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;
+
             }else if(item.type ==propertyType.Select ){
               let selectClassName='';
                 defaultProp.options=[];
                 defaultProp.value = defaultValue;
               if(item.name=='originY' ||item.name=='originPos') {
                   selectClassName='originIcon';
+
               }else if(item.name=='fontFamily'){
                   for(let i in this.fontList){
                       defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
@@ -396,7 +401,6 @@ class PropertyView extends React.Component {
                         defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
                     }
                 }
-
             }else if(item.type ==propertyType.Color){
                     defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
                     defaultProp.value = defaultValue;
@@ -453,6 +457,10 @@ class PropertyView extends React.Component {
 
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
+        }
+
+        if(widget.imageTextSizeObj){
+            this.textSizeObj=widget.imageTextSizeObj;
         }
 
         if (widget.selectWidget !== undefined){

@@ -257,55 +257,66 @@ class NavBar extends React.Component {
                     </div>
 
                     <div className='left-group f--hlc'>
+                        <button className='btn btn-clear save-btn' title='保存' onClick={this.onSave} >
+                            <span className="icon" />
+                            <span className="title">保存</span>
+                        </button>
+
+                        <button className='btn btn-clear template-btn' title='模板'>
+                            <span className="icon" />
+                            <span className="title">模板</span>
+                        </button>
+
+                        <div className='dropDown-btn'>
+                            <button className='btn btn-clear module-btn' title='组件'>
+                                <span className="icon" />
+                                <span className="title">组件</span>
+                            </button>
+                        </div>
+
+                        <div className='dropDown-btn'>
+                            <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }}>
+                                <span className="icon" />
+                                <span className="title">数据库</span>
+                            </button>
+                        </div>
+
+                        <div className='dropDown-btn'>
+                            <button className='btn btn-clear link-btn' title='连接'>
+                                <span className="icon" />
+                                <span className="title">连接</span>
+                            </button>
+                        </div>
+
+                        <div className='dropDown-btn'>
+                            <button className='btn btn-clear shape-btn' title='形状'>
+                                <span className="icon" />
+                                <span className="title">形状</span>
+                            </button>
+                        </div>
+
                         <div className='dropDown-btn dropDown-btn2'>
-                            <button className={$class('btn btn-clear open-btn dropDownBtn',{'active':3 === this.state.dropDownState})}
-                                    title='最近打开'
-                                    onClick={this.dropDownShow.bind(this, 3)} />
+                            <button className='btn btn-clear open-btn' title='作品' >
+                                <span className="icon" />
+                                <span className="title">作品</span>
+                            </button>
 
-                            <ul className={$class('dropDownToggle', { 'hide': 3 !== this.state.dropDownState })}>
-                                <li>最近打开</li>
-                                {
-                                    this.state.workList.length === 0
-                                    ? <li>你还没创建文件!</li>
-                                    : this.state.workList.map((v,i)=>{
-                                        return  <li key={i}
-                                                    className={$class({'hidden': i >= 10})}
-                                                    onClick={ this.onOpen.bind(this, v.id)}>
-                                                    { i >= 10 ? null : v.name}
-                                                </li>
-                                    })
-                                }
-                            </ul>
-                        </div>
-                        <button className='btn btn-clear save-btn' title='保存' onClick={this.onSave} />
-                        <button className='btn btn-clear saveAs-btn'  title='另存为'  />
-                        <button className='btn btn-clear history-btn' title='历史'  />
-                        <button className='btn btn-clear hide-btn' title='隐藏参考线'  onClick={this.onHideRulerLine} />
-
-                        <div className='dropDown-btn'>
-                            <button className={$class('btn btn-clear align-btn dropDownBtn',{'active':1 === this.state.dropDownState})}
-                                    title='对齐'
-                                    onClick={this.dropDownShow.bind(this, 1)} />
-
-                            <ul className={$class('dropDownToggle', { 'hide': 1 !== this.state.dropDownState })}>
-                                <li className='left-icon'><span className='icon' />左对齐</li>
-                                <li className='zhong-icon'><span className='icon zhong-icon' />左右居中</li>
-                                <li className='right-icon' ><span className='icon right-icon' />右对齐</li>
-                                <li className='top-icon'><span className='icon top-icon' />底部对齐</li>
-                                <li className='middle-icon'><span className='icon middle-icon' />上下居中</li>
-                                <li className='bottom-icon'><span className='icon bottom-icon' />顶部对齐</li>
-                            </ul>
-                        </div>
-
-                        <div className='dropDown-btn'>
-                            <button className={$class('btn btn-clear distributed-btn dropDownBtn',{'active':2 === this.state.dropDownState})}
-                                    title='分布'
-                                    onClick={this.dropDownShow.bind(this, 2)} />
-
-                            <ul className={$class('dropDownToggle', { 'hide': 2 !== this.state.dropDownState })}>
-                                <li className='stretch-icon'><span className='icon' />水平分布</li>
-                                <li className='vertical-icon'><span className='icon' />垂直分布</li>
-                            </ul>
+                            <div className='dropDownToggle'>
+                                <ul>
+                                    <li>最近打开</li>
+                                    {
+                                        this.state.workList.length === 0
+                                            ? <li>你还没创建文件!</li>
+                                            : this.state.workList.map((v,i)=>{
+                                            return  <li key={i}
+                                                        className={$class({'hidden': i >= 10})}
+                                                        onClick={ this.onOpen.bind(this, v.id)}>
+                                                { i >= 10 ? null : v.name}
+                                            </li>
+                                        })
+                                    }
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -330,28 +341,37 @@ class NavBar extends React.Component {
                 <div className='nb-right f--hlc'>
                     <button className='btn-clear che-btn'  title='撤销' />
                     <button className='btn-clear hui-btn'  title='恢复' />
-                    <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
-                        <span className='heng' />
-                    </button>
-                    <div className={$class('size-input', {'size-input-focus': this.state.zoomInputState }, {'size-input-blur':!this.state.zoomInputState})}>
-                        <InputNumber step={1}
-                                     min={10}
-                                     size='small'
-                                     defaultValue={this.props.stageZoom}
-                                     value={this.props.stageZoom}
-                                     onFocus={this.focusOrBlurZoomInput}
-                                     onBlur={this.focusOrBlurZoomInput}
-                                     onChange={this.props.stageZoomEdit}
-                                     onKeyDown={this.props.stageZoomEdit}/>
-                        <div className='input-percentage'>
-                            %
-                        </div>
+
+                    <div className='dropDown-btn'>
+                        <button className={$class('btn btn-clear align-btn dropDownBtn',{'active':1 === this.state.dropDownState})}
+                                title='对齐'
+                                onClick={this.dropDownShow.bind(this, 1)} />
+
+                        <ul className={$class('dropDownToggle', { 'hide': 1 !== this.state.dropDownState })}>
+                            <li className='left-icon'><span className='icon' />左对齐</li>
+                            <li className='zhong-icon'><span className='icon zhong-icon' />左右居中</li>
+                            <li className='right-icon' ><span className='icon right-icon' />右对齐</li>
+                            <li className='top-icon'><span className='icon top-icon' />底部对齐</li>
+                            <li className='middle-icon'><span className='icon middle-icon' />上下居中</li>
+                            <li className='bottom-icon'><span className='icon bottom-icon' />顶部对齐</li>
+                        </ul>
                     </div>
-                    {/*<div className='size'>{ this.props.stageZoom }%</div>*/}
-                    <button className='btn-clear plus-btn'  title='放大' onClick={ this.props.stageZoomPlus }>
-                        <span className='heng' />
-                        <span className='shu' />
-                    </button>
+
+                    <div className='dropDown-btn'>
+                        <button className={$class('btn btn-clear distributed-btn dropDownBtn',{'active':2 === this.state.dropDownState})}
+                                title='分布'
+                                onClick={this.dropDownShow.bind(this, 2)} />
+
+                        <ul className={$class('dropDownToggle', { 'hide': 2 !== this.state.dropDownState })}>
+                            <li className='stretch-icon'><span className='icon' />水平分布</li>
+                            <li className='vertical-icon'><span className='icon' />垂直分布</li>
+                        </ul>
+                    </div>
+
+                    <button className='btn btn-clear hide-btn' title='隐藏参考线'  onClick={this.onHideRulerLine} />
+
+                    <button className='btn btn-clear history-btn' title='历史'  />
+
                     <button className='btn-clear home-btn'  title='在线课程'  />
                 </div>
 
@@ -372,51 +392,133 @@ class NavBar extends React.Component {
                      editText2={null}
                      onEditDone={this.onLoginDone.bind(this)} />
 
-                {
-                    //    <Row type='flex' justify='start' align='middle'>
-                    //        <Col span={15}>
-                    //            <VxMenu works={this.state.workList}
-                    //                    onOpen={this.onOpen}
-                    //                    classList={this.state.classList}
-                    //                    fontList={this.state.fontList}
-                    //                    onUploadFont={this.onUploadFont.bind(this)} />
-                    //        </Col>
-                    //
-                    //        <Col span={6}>
-                    //            <Button onClick={this.onSave}>保存</Button>
-                    //            <Button onClick={this.onPlay}>播放</Button>
-                    //            <Button onClick={this.onImport}>导入</Button>
-                    //            <Button onClick={this.onDelete}>删除</Button>
-                    //            <Button onClick={this.onLogout}>登出</Button>
-                    //        </Col>
-                    //
-                    //        <Col span={3}><AccountArea username={this.state.username}/></Col>
-                    //    </Row>
-                    //
-                    //    <LoginDialog title='登录'
-                    //                 visible={this.state.loginVisible}
-                    //                 editText={null}
-                    //                 editText2={null}
-                    //                 onEditDone={this.onLoginDone.bind(this)} />
-                    //
-                    //    <InputText title='作品名字'
-                    //               visible={this.state.saveVisible}
-                    //               editText={null}
-                    //               onEditDone={this.onSaveDone.bind(this)} />
-                    //
-                    //    <InputText title='导入网址'
-                    //               visible={this.state.importVisible}
-                    //               editText={null}
-                    //               onEditDone={this.onImportDone.bind(this)} />
-                    //
-                    //    <input id='upload-box'
-                    //           style={{'display':'none'}}
-                    //           onChange={this.onUploadChange}
-                    //           type='file' />
-                }
             </div>
         );
     }
 }
 
 module.exports = NavBar;
+
+{
+    //    <Row type='flex' justify='start' align='middle'>
+    //        <Col span={15}>
+    //            <VxMenu works={this.state.workList}
+    //                    onOpen={this.onOpen}
+    //                    classList={this.state.classList}
+    //                    fontList={this.state.fontList}
+    //                    onUploadFont={this.onUploadFont.bind(this)} />
+    //        </Col>
+    //
+    //        <Col span={6}>
+    //            <Button onClick={this.onSave}>保存</Button>
+    //            <Button onClick={this.onPlay}>播放</Button>
+    //            <Button onClick={this.onImport}>导入</Button>
+    //            <Button onClick={this.onDelete}>删除</Button>
+    //            <Button onClick={this.onLogout}>登出</Button>
+    //        </Col>
+    //
+    //        <Col span={3}><AccountArea username={this.state.username}/></Col>
+    //    </Row>
+    //
+    //    <LoginDialog title='登录'
+    //                 visible={this.state.loginVisible}
+    //                 editText={null}
+    //                 editText2={null}
+    //                 onEditDone={this.onLoginDone.bind(this)} />
+    //
+    //    <InputText title='作品名字'
+    //               visible={this.state.saveVisible}
+    //               editText={null}
+    //               onEditDone={this.onSaveDone.bind(this)} />
+    //
+    //    <InputText title='导入网址'
+    //               visible={this.state.importVisible}
+    //               editText={null}
+    //               onEditDone={this.onImportDone.bind(this)} />
+    //
+    //    <input id='upload-box'
+    //           style={{'display':'none'}}
+    //           onChange={this.onUploadChange}
+    //           type='file' />
+}
+
+
+{
+//<div>
+//    <div className='dropDown-btn dropDown-btn2'>
+//        <button className={$class('btn btn-clear open-btn dropDownBtn',{'active':3 === this.state.dropDownState})}
+//                title='最近打开'
+//                onClick={this.dropDownShow.bind(this, 3)} />
+//
+//        <ul className={$class('dropDownToggle', { 'hide': 3 !== this.state.dropDownState })}>
+//            <li>最近打开</li>
+//            {
+//                this.state.workList.length === 0
+//                    ? <li>你还没创建文件!</li>
+//                    : this.state.workList.map((v,i)=>{
+//                    return  <li key={i}
+//                                className={$class({'hidden': i >= 10})}
+//                                onClick={ this.onOpen.bind(this, v.id)}>
+//                        { i >= 10 ? null : v.name}
+//                    </li>
+//                })
+//            }
+//        </ul>
+//    </div>
+//    <button className='btn btn-clear save-btn' title='保存' onClick={this.onSave} />
+//    <button className='btn btn-clear saveAs-btn'  title='另存为'  />
+//    <button className='btn btn-clear history-btn' title='历史'  />
+//    <button className='btn btn-clear hide-btn' title='隐藏参考线'  onClick={this.onHideRulerLine} />
+//
+//    <div className='dropDown-btn'>
+//        <button className={$class('btn btn-clear align-btn dropDownBtn',{'active':1 === this.state.dropDownState})}
+//                title='对齐'
+//                onClick={this.dropDownShow.bind(this, 1)} />
+//
+//        <ul className={$class('dropDownToggle', { 'hide': 1 !== this.state.dropDownState })}>
+//            <li className='left-icon'><span className='icon' />左对齐</li>
+//            <li className='zhong-icon'><span className='icon zhong-icon' />左右居中</li>
+//            <li className='right-icon' ><span className='icon right-icon' />右对齐</li>
+//            <li className='top-icon'><span className='icon top-icon' />底部对齐</li>
+//            <li className='middle-icon'><span className='icon middle-icon' />上下居中</li>
+//            <li className='bottom-icon'><span className='icon bottom-icon' />顶部对齐</li>
+//        </ul>
+//    </div>
+//
+//    <div className='dropDown-btn'>
+//        <button className={$class('btn btn-clear distributed-btn dropDownBtn',{'active':2 === this.state.dropDownState})}
+//                title='分布'
+//                onClick={this.dropDownShow.bind(this, 2)} />
+//
+//        <ul className={$class('dropDownToggle', { 'hide': 2 !== this.state.dropDownState })}>
+//            <li className='stretch-icon'><span className='icon' />水平分布</li>
+//            <li className='vertical-icon'><span className='icon' />垂直分布</li>
+//        </ul>
+//    </div>
+//</div>
+
+//<div>
+//    <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
+//        <span className='heng' />
+//    </button>
+//    <div className={$class('size-input', {'size-input-focus': this.state.zoomInputState }, {'size-input-blur':!this.state.zoomInputState})}>
+//        <InputNumber step={1}
+//                     min={10}
+//                     size='small'
+//                     defaultValue={this.props.stageZoom}
+//                     value={this.props.stageZoom}
+//                     onFocus={this.focusOrBlurZoomInput}
+//                     onBlur={this.focusOrBlurZoomInput}
+//                     onChange={this.props.stageZoomEdit}
+//                     onKeyDown={this.props.stageZoomEdit}/>
+//        <div className='input-percentage'>
+//            %
+//        </div>
+//    </div>
+//    {/*<div className='size'>{ this.props.stageZoom }%</div>*/}
+//    <button className='btn-clear plus-btn'  title='放大' onClick={ this.props.stageZoomPlus }>
+//        <span className='heng' />
+//        <span className='shu' />
+//    </button>
+//</div>
+}

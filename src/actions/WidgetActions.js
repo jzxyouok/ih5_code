@@ -28,6 +28,7 @@ export default Reflux.createActions([
   'setRulerLine',               //设置对齐线的显现
   'setFont',
   'setImageText',
+  'imageTextSize',             //用于实时获取字体图片的宽高
   'ajaxSend',
   'saveFontList',
   'activeHandle']);

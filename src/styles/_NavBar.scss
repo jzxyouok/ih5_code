@@ -7,6 +7,7 @@
     height: 36px;
     background: #353535;
     z-index:51;
+
     .nb--left {
         .import {
             width: 36px;
@@ -26,144 +27,129 @@
             padding-left: 6px;
 
             .btn {
-                width: 24px;
+                @include border-radius(2px);
+                width: 60px;
                 height: 24px;
-                margin-left: 8px;
-                background: url("img/button-icon.svg") no-repeat;
+                margin-left: 4px;
+                font-size: 12px;
+                color: #b5b5b5;
+                //background: #1b1b1b;
                 display: block;
+                overflow: hidden;
+
+                &.save-btn{
+                    .icon{ background-position: -40px 0 ; }
+                    &:hover .icon{ background-position: -40px -40px; }
+                    &:active .icon{ background-position: -40px 0; }
+                }
+                &.template-btn {
+                    .icon{ background-position: -80px 0 ; }
+                    &:hover .icon{ background-position: -80px -40px; }
+                    &:active .icon{ background-position: -80px 0; }
+                }
+                &.module-btn{
+                    .icon{ background-position: -400px -200px; }
+                    &:hover .icon{ background-position: -400px -240px; }
+                    &:active .icon{ background-position: -400px -280; }
+                }
+                &.data-btn{
+                    .icon{ background-position: -440px -200px; }
+                    &:hover .icon{ background-position: -440px -240px; }
+                    &:active .icon{ background-position: -440px -280; }
+                }
+                &.link-btn{
+                    .icon{ background-position: -480px -200px; }
+                    &:hover .icon{ background-position: -480px -240px; }
+                    &:active .icon{ background-position: -480px -280; }
+                }
+                &.shape-btn{
+                    .icon{ background-position: -520px -200px; }
+                    &:hover .icon{ background-position: -520px -240px; }
+                    &:active .icon{ background-position: -520px -280; }
+                }
 
                 &.open-btn {
-                    background-position: 0 -200px;
-                    &:hover{ background-position: 0 -240px; }
-                    &:active{ background-position: 0 -280px; }
+                    .icon{background-position: 0 -200px;}
+                    &:hover .icon{ background-position: 0 -240px; }
+                    &:active .icon{ background-position: 0 -280px; }
                 }
 
-                &.save-btn {
-                    background-position: -40px 0 ;
-                    &:hover{ background-position: -40px -40px; }
-                    &:active{ background-position: -40px -80px; }
+                .icon {
+                    width: 24px;
+                    height: 24px;
+                    background: url("img/button-icon.svg") no-repeat;
+                    display: block;
+                    margin-right: 4px;
+                    float: left;
                 }
-                &.saveAs-btn {
-                    background-position: -80px 0 ;
-                    &:hover{ background-position: -80px -40px; }
-                    &:active{ background-position: -80px -80px; }
+
+                .title{
+                    height: 24px;
+                    line-height: 24px;
+                    display: block;
+                    float: left;
                 }
-                &.history-btn {
-                    background-position: -120px 0 ;
-                    &:hover{ background-position: -120px -40px; }
-                    &:active{ background-position: -120px -80px; }
+
+                &:hover{
+                    background: #282828;
+                    color: #fff;
                 }
-                &.hide-btn {
-                    background-position: -160px 0 ;
-                    &:hover{ background-position: -160px -40px; }
-                    &:active{ background-position: -160px -80px; }
-                }
-                &.align-btn {
-                    background-position: -200px 0 ;
-                    &:hover{ background-position: -200px -40px; }
-                    &:active{ background-position: -200px -80px; }
-                    &.active{ background-position: -200px -80px; }
-                }
-                &.distributed-btn {
-                    background-position: -240px 0 ;
-                    &:hover{ background-position: -240px -40px; }
-                    &:active{ background-position: -240px -80px; }
-                    &.active{ background-position: -240px -80px; }
+
+                &:active{
+                    background: #1b1b1b;
+                    color: #b5b5b5;
                 }
             }
 
             .dropDown-btn {
                 position: relative;
 
-                &.dropDown-btn2 ul{
-                    width: 120px;
-
-                    li{
-                        @extend %font-omitted;
-                        line-height: 30px;
-                        padding: 0 10px;
-                        display: block;
-
-                        &:nth-child(1){
-                            text-align: center;
-                            background: #4f4f4f;
-                            color: #fff;
-                        }
-
-                        &:nth-child(3){ border: none; }
+                .btn {
+                    &:hover , &:active{
+                        background: #1b1b1b;
+                        color: #fff;
                     }
                 }
 
-                ul {
+                &:hover .dropDownToggle{
+                    height: 330px;
+                    transition: 1s;
+                }
+
+                .dropDownToggle{
                     position: absolute;
                     top: 29px;
                     z-index: 99;
-                    width: 112px;
-                    margin: 0;
-                    background: #353535;
-                    border: 1px solid #1b1b1b;
+                    width: 120px;
+                    height: 0;
+                    overflow: hidden;
 
-                    li{
-                        @include flexbox;
-                        @include flex-direction(row);
-                        @include align-items(center);
-                        height: 32px;
-                        overflow: hidden;
-                        font-size: 12px;
-                        color: #b5b5b5;
-                        cursor: pointer;
+                    ul{
+                        position: absolute;
+                        top: 0;
+                        width: 120px;
+                        margin: 0;
+                        background: #353535;
+                        border: 1px solid #1b1b1b;
 
-                        &:hover {
-                            background: #232323;
-                        }
-
-                        &:active {
-                            color: #fff;
-                        }
-
-                        &:nth-child(3){
-                            border-bottom: 1px solid #454545;
-                        }
-
-                        .icon {
-                            width: 24px;
-                            height: 24px;
-                            margin: 0 11px 0 7px;
+                        li{
+                            @extend %font-omitted;
+                            height: 30px;
+                            line-height: 30px;
+                            padding: 0 10px;
                             display: block;
-                            background: url("img/button-icon.svg") no-repeat;
-                        }
+                            overflow: hidden;
+                            font-size: 12px;
+                            color: #b5b5b5;
+                            cursor: pointer;
 
-                        &.left-icon {
-                            .icon{ background-position: -920px 0 ; }
-                            &:active .icon{ background-position: -920px -40px; }
-                        }
-                        &.zhong-icon {
-                            .icon{ background-position: -960px 0 ; }
-                            &:active .icon{ background-position: -960px -40px; }
-                        }
-                        &.right-icon {
-                            .icon{ background-position: -1000px 0 ; }
-                            &:active .icon{ background-position: -1000px -40px; }
-                        }
-                        &.top-icon {
-                            .icon{ background-position: -1040px 0 ; }
-                            &:active .icon{ background-position: -1040px -40px; }
-                        }
-                        &.middle-icon {
-                            .icon{ background-position: -1080px 0 ; }
-                            &:active .icon{ background-position: -1080px -40px; }
-                        }
-                        &.bottom-icon {
-                            .icon{ background-position: -1120px 0 ; }
-                            &:active .icon{ background-position: -1120px -40px; }
-                        }
-                        &.stretch-icon{
-                            .icon{ background-position: -1160px 0 ; }
-                            &:active .icon{ background-position: -1160px -40px; }
-                        }
-                        &.vertical-icon{
-                            .icon{ background-position: -1200px 0 ; }
-                            &:active .icon{ background-position: -1200px -40px; }
+                            &:nth-child(1){
+                                text-align: center;
+                                background: #4f4f4f;
+                                color: #fff;
+                            }
+
+                            &:nth-child(3){ border: none; }
                         }
                     }
                 }
@@ -258,48 +244,48 @@
         }
 
         .hui-btn{
-            margin: 0 14px 0 14px;
+            margin: 0 11px 0 11px;
             background-position: -640px 0;
             &:hover{ background-position: -640px -40px; }
             &:active{ background-position: -640px -80px; }
         }
 
-        .less-btn ,
-        .plus-btn{
-            @include border-radius(8px);
-            position: relative;
-            width: 16px;
-            height: 16px;
-            background: #b5b5b5;
-
-            &:hover {
-                background: #fff;
-            }
-
-            &:active {
-                background: #b5b5b5;
-            }
-
-            span {
-                position: absolute;
-                background: #353535;
-                display: block;
-            }
-
-            .heng {
-                width: 10px;
-                height: 2px;
-                left: 3px;
-                top: 7px;
-            }
-
-            .shu {
-                width: 2px;
-                height: 10px;
-                left: 7px;
-                top: 3px;
-            }
-        }
+        //.less-btn ,
+        //.plus-btn{
+        //    @include border-radius(8px);
+        //    position: relative;
+        //    width: 16px;
+        //    height: 16px;
+        //    background: #b5b5b5;
+        //
+        //    &:hover {
+        //        background: #fff;
+        //    }
+        //
+        //    &:active {
+        //        background: #b5b5b5;
+        //    }
+        //
+        //    span {
+        //        position: absolute;
+        //        background: #353535;
+        //        display: block;
+        //    }
+        //
+        //    .heng {
+        //        width: 10px;
+        //        height: 2px;
+        //        left: 3px;
+        //        top: 7px;
+        //    }
+        //
+        //    .shu {
+        //        width: 2px;
+        //        height: 10px;
+        //        left: 7px;
+        //        top: 3px;
+        //    }
+        //}
 
         //.size {
         //    width: 43px;
@@ -308,76 +294,185 @@
         //    color: #b5b5b5;
         //}
 
-        .size-input {
-            margin: 0 2px;
-            color: #b5b5b5;
-            width: 41px;
-            border-radius: 2px;
-            -webkit-transition:background-color 0.5s ease-in-out;
-            -moz-transition:background-color 0.5s ease-in-out;
-            -o-transition:background-color 0.5s ease-in-out;
-            transition:background-color 0.5s ease-in-out;
-
-            &:hover {
-                background-color: #232323;
-            }
-            .ant-input-number {
-                border: none;
-                background: none;
-                width: 24px;
-                height: 24px;
-                margin-left: 2px;
-                .ant-input-number-handler-wrap {
-                    display: none;
-                    height: 24px;
-                }
-                .ant-input-number-input {
-                    margin-top: 0;
-                    width: 24px;
-                    height: 24px;
-                    line-height: 24px;
-                    background: none;
-                    padding: 0;
-                    color: #b5b5b5;
-                    border: none;
-                    text-align: right;
-                    &:focus {
-                        color: #fefefe;
-                    }
-                }
-            }
-            .ant-input-number-focused {
-                outline: none;
-                border: none;
-                box-shadow: none;
-            }
-            .input-percentage {
-                line-height: 26px;
-                display: inline-block;
-                vertical-align: middle;
-                -webkit-transition:color 0.5s ease-in-out;
-                -moz-transition:color 0.5s ease-in-out;
-                -o-transition:color 0.5s ease-in-out;
-                transition:color 0.5s ease-in-out;
-            }
-        }
-        .size-input-focus {
-            background-color: #1b1b1b !important;
-            .input-percentage {
-                color: #fefefe;
-            }
-        }
-        .size-input-blur {
-            background-color: inherit;
-        }
+        //.size-input {
+        //    margin: 0 2px;
+        //    color: #b5b5b5;
+        //    width: 41px;
+        //    border-radius: 2px;
+        //    -webkit-transition:background-color 0.5s ease-in-out;
+        //    -moz-transition:background-color 0.5s ease-in-out;
+        //    -o-transition:background-color 0.5s ease-in-out;
+        //    transition:background-color 0.5s ease-in-out;
+        //
+        //    &:hover {
+        //        background-color: #232323;
+        //    }
+        //    .ant-input-number {
+        //        border: none;
+        //        background: none;
+        //        width: 24px;
+        //        height: 24px;
+        //        margin-left: 2px;
+        //        .ant-input-number-handler-wrap {
+        //            display: none;
+        //            height: 24px;
+        //        }
+        //        .ant-input-number-input {
+        //            margin-top: 0;
+        //            width: 24px;
+        //            height: 24px;
+        //            line-height: 24px;
+        //            background: none;
+        //            padding: 0;
+        //            color: #b5b5b5;
+        //            border: none;
+        //            text-align: right;
+        //            &:focus {
+        //                color: #fefefe;
+        //            }
+        //        }
+        //    }
+        //    .ant-input-number-focused {
+        //        outline: none;
+        //        border: none;
+        //        box-shadow: none;
+        //    }
+        //    .input-percentage {
+        //        line-height: 26px;
+        //        display: inline-block;
+        //        vertical-align: middle;
+        //        -webkit-transition:color 0.5s ease-in-out;
+        //        -moz-transition:color 0.5s ease-in-out;
+        //        -o-transition:color 0.5s ease-in-out;
+        //        transition:color 0.5s ease-in-out;
+        //    }
+        //}
+        //.size-input-focus {
+        //    background-color: #1b1b1b !important;
+        //    .input-percentage {
+        //        color: #fefefe;
+        //    }
+        //}
+        //.size-input-blur {
+        //    background-color: inherit;
+        //}
 
         .home-btn {
-            width: 30px;
-            height: 30px;
-            margin: 7px -1px 0 7px;
+            width: 24px;
+            height: 24px;
+            margin-right: 5px;
             background: url("img/button-icon.svg") no-repeat -680px 0;
             &:hover{ background-position: -680px -40px; }
             &:active{ background-position: -680px -80px; }
+        }
+
+        .btn {
+            width: 24px;
+            height: 24px;
+            margin-right: 11px;
+            background: url("img/button-icon.svg") no-repeat;
+            display: block;
+
+            &.history-btn {
+                background-position: -120px 0 ;
+                &:hover{ background-position: -120px -40px; }
+                &:active{ background-position: -120px -80px; }
+            }
+            &.hide-btn {
+                background-position: -160px 0 ;
+                &:hover{ background-position: -160px -40px; }
+                &:active{ background-position: -160px -80px; }
+            }
+            &.align-btn {
+                background-position: -200px 0 ;
+                &:hover{ background-position: -200px -40px; }
+                &:active{ background-position: -200px -80px; }
+                &.active{ background-position: -200px -80px; }
+            }
+            &.distributed-btn {
+                background-position: -240px 0 ;
+                &:hover{ background-position: -240px -40px; }
+                &:active{ background-position: -240px -80px; }
+                &.active{ background-position: -240px -80px; }
+            }
+        }
+
+        .dropDown-btn {
+            position: relative;
+
+            ul {
+                position: absolute;
+                top: 29px;
+                z-index: 99;
+                width: 112px;
+                margin: 0;
+                background: #353535;
+                border: 1px solid #1b1b1b;
+
+                li{
+                    @include flexbox;
+                    @include flex-direction(row);
+                    @include align-items(center);
+                    height: 32px;
+                    overflow: hidden;
+                    font-size: 12px;
+                    color: #b5b5b5;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #232323;
+                    }
+
+                    &:active {
+                        color: #fff;
+                    }
+
+                    &:nth-child(3){
+                        border-bottom: 1px solid #454545;
+                    }
+
+                    .icon {
+                        width: 24px;
+                        height: 24px;
+                        margin: 0 11px 0 7px;
+                        display: block;
+                        background: url("img/button-icon.svg") no-repeat;
+                    }
+
+                    &.left-icon {
+                        .icon{ background-position: -920px 0 ; }
+                        &:active .icon{ background-position: -920px -40px; }
+                    }
+                    &.zhong-icon {
+                        .icon{ background-position: -960px 0 ; }
+                        &:active .icon{ background-position: -960px -40px; }
+                    }
+                    &.right-icon {
+                        .icon{ background-position: -1000px 0 ; }
+                        &:active .icon{ background-position: -1000px -40px; }
+                    }
+                    &.top-icon {
+                        .icon{ background-position: -1040px 0 ; }
+                        &:active .icon{ background-position: -1040px -40px; }
+                    }
+                    &.middle-icon {
+                        .icon{ background-position: -1080px 0 ; }
+                        &:active .icon{ background-position: -1080px -40px; }
+                    }
+                    &.bottom-icon {
+                        .icon{ background-position: -1120px 0 ; }
+                        &:active .icon{ background-position: -1120px -40px; }
+                    }
+                    &.stretch-icon{
+                        .icon{ background-position: -1160px 0 ; }
+                        &:active .icon{ background-position: -1160px -40px; }
+                    }
+                    &.vertical-icon{
+                        .icon{ background-position: -1200px 0 ; }
+                        &:active .icon{ background-position: -1200px -40px; }
+                    }
+                }
+            }
         }
     }
 }
