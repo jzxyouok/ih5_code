@@ -403,9 +403,6 @@ $toBottom:14px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   box-shadow: 2px 2px 5px #1d1d1d;
-  .ant-select-dropdown-menu-item{
-	text-overflow:initial;
-  }
 
   .ant-select-dropdown-menu-item:nth-child(1) .originIcon{	background-position: -4px -8px;}
   .ant-select-dropdown-menu-item:nth-child(2) .originIcon{	background-position: -36px -8px;}
@@ -437,7 +434,7 @@ $toBottom:14px;
 	color: white;
   }
   >div{
-	overflow: visible !important;
+	 width: 200px;
   }
   .ant-select-dropdown-menu{
 	overflow: visible;

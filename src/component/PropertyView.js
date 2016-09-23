@@ -323,7 +323,7 @@ class PropertyView extends React.Component {
             }else if(item.type==propertyType.Float) {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
 
-                console.log('textSizeObj',this.textSizeObj);
+
 
                 defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
 
