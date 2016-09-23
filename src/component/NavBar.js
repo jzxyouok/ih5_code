@@ -26,8 +26,8 @@ class NavBar extends React.Component {
             workList:[],
             classList:[],
             fontList:[],
-            dropDownState : 0,
-            zoomInputState: 0
+            dropDownState : 0
+            //, zoomInputState: 0
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -40,7 +40,7 @@ class NavBar extends React.Component {
         this.onImport = this.onImport.bind(this);
         this.dropDownShow = this.dropDownShow.bind(this);
         this.clickOthersHide = this.clickOthersHide.bind(this);
-        this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
+        //this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -237,15 +237,15 @@ class NavBar extends React.Component {
         }
     }
 
-    focusOrBlurZoomInput(e) {
-        let currentState = 0;
-        if (e.type == 'focus') {
-            currentState = 1;
-        }
-        this.setState({
-            zoomInputState: currentState
-        });
-    }
+    //focusOrBlurZoomInput(e) {
+    //    let currentState = 0;
+    //    if (e.type == 'focus') {
+    //        currentState = 1;
+    //    }
+    //    this.setState({
+    //        zoomInputState: currentState
+    //    });
+    //}
 
     render() {
         //console.log(this.state.workList);
