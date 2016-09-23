@@ -14,6 +14,7 @@ import TimelineView from './Timeline/TimelineView';
 import FunctionView from './FunctionView/FunctionView';
 
 import WidgetStore from '../stores/WidgetStore';
+import ToolBoxStore from '../stores/ToolBoxStore';
 
 class App extends React.Component {
     constructor(props) {
@@ -21,7 +22,8 @@ class App extends React.Component {
         this.state = {
             stageZoom : 100,
             expandedToolbox: false,
-            activeEventTreeKey: null
+            activeEventTreeKey: null,
+
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -33,11 +35,13 @@ class App extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.unsubscribeToolbox = ToolBoxStore.listen(this.onToolBoxStatusChange);
         this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+        this.unsubscribeToolbox();
     }
 
     onStatusChange(widget) {
@@ -113,7 +117,7 @@ class App extends React.Component {
 
                 <EventBox expanded={this.state.expandedToolbox} isHidden={!(this.state.activeEventTreeKey != null)} />
 
-                <FunctionView expanded={this.state.expandedToolbox} isHidden={true}/>
+                <FunctionView expanded={this.state.expandedToolbox} isHidden={false}/>
 
                 <ObjectView />
 
