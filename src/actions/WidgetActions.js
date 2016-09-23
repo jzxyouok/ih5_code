@@ -21,6 +21,14 @@ export default Reflux.createActions([
   'removeEvent',                  //删除事件
   'enableEvent',                  //单个事件的可执行与否
   'renameWidget',                 //重命名组件
+  'selectFunction',               //选择函数
+  'addFunction',                  //添加函数
+  'changeFunction',               //添加函数
+  'deleteFunction',               //添加函数
+  'selectVariable',               //选择变量
+  'addVariable',                  //添加变量
+  'changeVariable',               //添加变量
+  'deleteVariable',               //添加变量
   'resetTrack',
   'syncTrack',
   'deletePoint',
