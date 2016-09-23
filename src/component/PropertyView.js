@@ -329,10 +329,14 @@ class PropertyView extends React.Component {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
 
                 console.log('textSizeObj',this.textSizeObj);
+
                 defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
 
-                if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
-                if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置初始宽高,便于计算放大缩小的系数
+                this.textSizeObj =null;
+
+                if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={}; }//只执行一次
+
+                if(!this.selectNode.node.defaultData[str]) {     this.selectNode.node.defaultData[str] = defaultValue   }//设置初始宽高,便于计算放大缩小的系数
 
             }else if(item.type==propertyType.Color || item.type==propertyType.Color2){
                if( item.name == 'color' &&  !node.props.color){ //只执行一次

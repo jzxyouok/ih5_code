@@ -750,3 +750,5 @@ export default Reflux.createStore({
         this.trigger({hasHandle: status});
     }
 });
+
+export {globalToken}
