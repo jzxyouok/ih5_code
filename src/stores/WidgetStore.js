@@ -46,7 +46,7 @@ function loadTree(parent, node) {
         temp['value'] = node['vars'][i].__value;
         temp['className'] = node['vars'][i].__className;
         temp['props'] = node['vars'][i].__props;
-        temp['widgetKey'] = current.__key;
+        temp['widgetKey'] = current.key;
         current.varList.unshift(temp);
       // if (n.length >= 3 && n.substr(0, 2) == '__') {
       //     current.varList.unshift({n.substr(2) : node['vars'][n]});
@@ -61,7 +61,7 @@ function loadTree(parent, node) {
         temp['value'] = node['funcs'][i].__value;
         temp['className'] = node['funcs'][i].__className;
         temp['props'] = node['funcs'][i].__props;
-        temp['widgetKey'] = node['funcs'][i].__key;
+        temp['widgetKey'] = current.key;
         current.funcList.unshift(temp);
     }
 
