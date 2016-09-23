@@ -13,6 +13,7 @@ import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
 
 import {propertyType, propertyMap} from './PropertyMap';
+import {chooseFile} from  '../utils/upload';
 
 require("jscolor/jscolor");
 
@@ -192,7 +193,7 @@ class PropertyView extends React.Component {
                       v = value;
                   }else if(prop.name == 'font'){
                       if(value == 0){
-                          WidgetActions['chooseFile']('font', true, function(){
+                          chooseFile('font', true, function(){
                               console.log(arguments[1]);
                           });
                           bTag=false;

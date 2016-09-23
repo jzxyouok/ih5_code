@@ -267,7 +267,6 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['deletePoint'], this.deletePoint);
         this.listenTo(WidgetActions['saveNode'], this.saveNode);
         this.listenTo(WidgetActions['setRulerLine'], this.setRulerLine);
-        // this.listenTo(WidgetActions['chooseFile'], this.chooseFile);
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['imageTextSize'], this.imageTextSize);
@@ -676,15 +675,6 @@ export default Reflux.createStore({
         this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname), 'application/octet-stream', data, cb);
       }
     },
-    // chooseFile: function(type, upload, callback) {
-    //   var w = document.getElementById('upload-box');
-    //   w.value = '';
-    //   w.userType = type;
-    //   w.userUpload = upload;
-    //   w.userCallback = callback;
-    //   w.sysCallback = chooseFileCallback;
-    //   w.click();
-    // },
     setFont: function(font) {
       if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
         this.updateProperties({'font':font});

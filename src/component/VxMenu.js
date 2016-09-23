@@ -7,6 +7,7 @@ import WidgetStore from '../stores/WidgetStore';
 import InputText from './InputText';
 //import DbDialog from './DbDialog';
 import JSZip from 'jszip';
+import {chooseFile} from  '../utils/upload';
 
 import { Menu, Icon } from 'antd';
 const SubMenu = Menu.SubMenu;
@@ -59,7 +60,7 @@ class  VxMenu extends React.Component {
         } else if (key.substr(0, 6) === 'class_') {
             WidgetActions['addWidget'](key.substr(5));
         } else if (key === 'uploadFont') {
-            WidgetActions['chooseFile']('font', true, (w, text) => {
+            chooseFile('font', true, (w, text) => {
                 this.props.onUploadFont(text);
             });
         } else if (key.substr(0, 5) === 'font_') {
