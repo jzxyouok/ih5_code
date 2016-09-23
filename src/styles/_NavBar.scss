@@ -10,15 +10,15 @@
 
     .nb--left {
         .import {
-            width: 36px;
-            height: 36px;
+            width: 37px;
+            height: 37px;
             background: #1b1b1b;
 
             .icon {
-                width: 24px;
-                height: 24px;
+                width: 37px;
+                height: 37px;
                 display: block;
-                background: url("img/button-icon.svg") no-repeat 0 0 ;
+                background: url("img/button-icon.svg") no-repeat 0  -80px ;
             }
         }
 
@@ -103,6 +103,7 @@
 
             .dropDown-btn {
                 position: relative;
+                height: 36px;
 
                 .btn {
                     &:hover , &:active{
@@ -118,7 +119,7 @@
 
                 .dropDownToggle{
                     position: absolute;
-                    top: 29px;
+                    top: 36px;
                     z-index: 99;
                     width: 120px;
                     height: 0;
@@ -158,6 +159,14 @@
     }
 
     .nb--content {
+        .damndesigner{
+            position: absolute;
+            left: 50%;
+            width: 237px;
+            height: 100%;
+            margin-left: -118.5px;
+        }
+
         .btn {
             @include border-radius(2px);
             width: 75px;
