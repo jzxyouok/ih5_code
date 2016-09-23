@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import cls from 'classnames';
 import ToolBoxGroup from './ToolBoxGroup';
 import config from './DEFAUL_TOOLBOX';
+import { InputNumber } from 'antd';
 import ToolBoxStore from '../../stores/ToolBoxStore';
 import WidgetStore from '../../stores/WidgetStore';
 
@@ -14,8 +15,10 @@ class ToolBox extends Component {
         super(props);
         this.state = {
             data: config,
-            expanded: false
+            expanded: false,
+            zoomInputState: 0
         };
+        this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
     }
 
     componentDidMount() {
@@ -69,17 +72,55 @@ class ToolBox extends Component {
         });
     }
 
+    focusOrBlurZoomInput(e) {
+        let currentState = 0;
+        if (e.type == 'focus') {
+            currentState = 1;
+        }
+        this.setState({
+            zoomInputState: currentState
+        });
+    }
+
     render() {
         return (
             <div id='ToolBox' onClick={ (event)=>{event.stopPropagation()} }
                 className={cls({'expanded': this.state.expanded})}>
-            <div id='ToolBoxHeader'><button id='ToolBoxHeaderExpanedButton' onClick={this.toggleExpaned.bind(this)}></button></div>
-            <ul className='toolbox-list'>
-            {
-                (this.state === null || this.state.data === null) ? null :
-                <ToolBoxGroup expanded={this.state.expanded} {...this.state.data}/>
-            }
-            </ul>
+                    <div id='ToolBoxHeader'>
+                        <button id='ToolBoxHeaderExpanedButton' onClick={this.toggleExpaned.bind(this)} />
+                    </div>
+
+                    <ul className='toolbox-list'>
+                        {
+                            (this.state === null || this.state.data === null) ? null :
+                            <ToolBoxGroup expanded={this.state.expanded} {...this.state.data}/>
+                        }
+                    </ul>
+
+                    <div className="stage-zoom">
+                        <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
+                            <span className='heng' />
+                        </button>
+
+                        <div className={cls('size-input', {'size-input-focus': this.state.zoomInputState },
+                                                             {'size-input-blur':!this.state.zoomInputState})}>
+
+                                <InputNumber step={1}
+                                             min={10}
+                                             size='small'
+                                             defaultValue={this.props.stageZoom + "%"}
+                                             value={this.props.stageZoom  + "%"}
+                                             onFocus={this.focusOrBlurZoomInput}
+                                             onBlur={this.focusOrBlurZoomInput}
+                                             onChange={this.props.stageZoomEdit}
+                                             onKeyDown={this.props.stageZoomEdit} />
+                        </div>
+
+                        <button className='btn-clear plus-btn'  title='放大' onClick={ this.props.stageZoomPlus }>
+                            <span className='heng' />
+                            <span className='shu' />
+                        </button>
+                    </div>
             </div>);
     }
 }
