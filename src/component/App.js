@@ -59,9 +59,6 @@ class App extends React.Component {
     }
 
     stageZoomPlus(){
-        // this.setState({
-        //     stageZoom : this.state.stageZoom + 10
-        // });
         if(this.state.stageZoom <=190 ){
            this.setState({
                stageZoom : this.state.stageZoom + 10
@@ -88,7 +85,6 @@ class App extends React.Component {
     }
 
     stageZoomLess(){
-        //minimum:10
         if(this.state.stageZoom >20 ){
             this.setState({
                 stageZoom : this.state.stageZoom - 10
@@ -112,7 +108,6 @@ class App extends React.Component {
                         stageZoomEdit={this.stageZoomEdit}
                         stageZoomPlus={this.stageZoomPlus}
                         stageZoomLess={this.stageZoomLess} />
-
                 <ToolBox/>
 
                 <PropertyView expanded={this.state.expandedToolbox} isHidden={this.state.activeEventTreeKey != null} />

@@ -442,6 +442,8 @@ module.exports = NavBar;
     //           type='file' />
 }
 
+
+{
 //<div>
 //    <div className='dropDown-btn dropDown-btn2'>
 //        <button className={$class('btn btn-clear open-btn dropDownBtn',{'active':3 === this.state.dropDownState})}
@@ -519,3 +521,4 @@ module.exports = NavBar;
 //        <span className='shu' />
 //    </button>
 //</div>
+}

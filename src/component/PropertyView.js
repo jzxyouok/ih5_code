@@ -377,12 +377,14 @@ class PropertyView extends React.Component {
             //单独设置默认参数
             if (item.type === propertyType.Boolean) {
                 defaultProp.checked = defaultValue;
+
             }else if(item.type ==propertyType.Select ){
               let selectClassName='';
                 defaultProp.options=[];
                 defaultProp.value = defaultValue;
               if(item.name=='originY' ||item.name=='originPos') {
                   selectClassName='originIcon';
+
               }else if(item.name=='fontFamily'){
                   for(let i in this.fontList){
                       defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
@@ -398,7 +400,6 @@ class PropertyView extends React.Component {
                         defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
                     }
                 }
-
             }else if(item.type ==propertyType.Color){
                     defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
                     defaultProp.value = defaultValue;
