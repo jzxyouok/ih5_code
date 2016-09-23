@@ -702,6 +702,10 @@ export default Reflux.createStore({
         this.currentWidget.props['link'] = this.currentWidget.node['link'] = link;
         process.nextTick(() => {
           bridge.updateSelector(this.currentWidget.node);
+
+            //tag:
+            console.log(this.currentWidget.node);
+
           this.render();
         });
       }
