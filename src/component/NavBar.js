@@ -322,20 +322,22 @@ class NavBar extends React.Component {
                 </div>
 
                 <div className='nb--content flex-1 f--hcc f--hlc'>
-                    <button className='btn btn-clear preview-btn' title='预览' onClick={this.onPlay} >
-                        <span className='icon' />
-                        预览
-                    </button>
+                    <div className="damndesigner f--hcc f--hlc">
+                        <button className='btn btn-clear preview-btn' title='预览' onClick={this.onPlay} >
+                            <span className='icon' />
+                            预览
+                        </button>
 
-                    <button className='btn btn-clear qrCode-btn' title='二维码' >
-                        <span className='icon' />
-                        二维码
-                    </button>
+                        <button className='btn btn-clear qrCode-btn' title='二维码' >
+                            <span className='icon' />
+                            二维码
+                        </button>
 
-                    <button className='btn btn-clear release-btn' title='发布' >
-                        <span className='icon' />
-                        发布
-                    </button>
+                        <button className='btn btn-clear release-btn' title='发布' >
+                            <span className='icon' />
+                            发布
+                        </button>
+                    </div>
                 </div>
 
                 <div className='nb-right f--hlc'>

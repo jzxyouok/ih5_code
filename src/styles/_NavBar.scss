@@ -158,6 +158,13 @@
     }
 
     .nb--content {
+        .damndesigner{
+            position: absolute;
+            left: 50%;
+            width: 237px;
+            margin-left: -118.5px;
+        }
+
         .btn {
             @include border-radius(2px);
             width: 75px;
