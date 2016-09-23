@@ -10,4 +10,5 @@ export default Reflux.createActions([
     'openSecondary',
     'deselect',
     'changeToolBoxItems',
+    'expandToolBox'
 ]);

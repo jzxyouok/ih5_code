@@ -13,6 +13,7 @@ import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
 
 import WidgetStore from '../stores/WidgetStore';
+import ToolBoxStore from '../stores/ToolBoxStore';
 
 
 class App extends React.Component {
@@ -20,8 +21,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             stageZoom : 100,
-            expendedToolbox: false,
-            hasActiveEvent: false,
+            expandedToolbox: false,
             activeEventTreeKey: null
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
@@ -29,11 +29,13 @@ class App extends React.Component {
         this.stageZoomEdit = this.stageZoomEdit.bind(this);
         this.toolboxExpanded = this.toolboxExpanded.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
+        this.onToolBoxStatusChange = this.onToolBoxStatusChange.bind(this);
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+        this.unsubscribeToolBox = ToolBoxStore.listen(this.onToolBoxStatusChange);
     }
 
     componentWillUnmount() {
@@ -44,6 +46,14 @@ class App extends React.Component {
         if(widget.activeEventTreeKey) {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
+            })
+        }
+    }
+
+    onToolBoxStatusChange(toolbox) {
+        if(toolbox.expanded) {
+            this.setState({
+                expandedToolbox: toolbox.expanded.value
             })
         }
     }
@@ -88,7 +98,7 @@ class App extends React.Component {
 
     toolboxExpanded(expanded) {
         this.setState({
-            expendedToolbox : expanded
+            expandedToolbox : expanded
         })
     }
 
@@ -103,11 +113,11 @@ class App extends React.Component {
                         stageZoomPlus={this.stageZoomPlus}
                         stageZoomLess={this.stageZoomLess} />
 
-                <ToolBox expendedToolBox={this.toolboxExpanded}/>
+                <ToolBox/>
 
-                <PropertyView expended={this.state.expendedToolbox} isHidden={this.state.activeEventTreeKey != null} />
+                <PropertyView expanded={this.state.expandedToolbox} isHidden={this.state.activeEventTreeKey != null} />
 
-                <EventBox expended={this.state.expendedToolbox} isHidden={!(this.state.activeEventTreeKey != null)} />
+                <EventBox expanded={this.state.expandedToolbox} isHidden={!(this.state.activeEventTreeKey != null)} />
 
                 <ObjectView />
 
