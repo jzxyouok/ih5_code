@@ -14,8 +14,6 @@ import TimelineView from './Timeline/TimelineView';
 import FunctionView from './FunctionView/FunctionView';
 
 import WidgetStore from '../stores/WidgetStore';
-import ToolBoxStore from '../stores/ToolBoxStore';
-
 
 class App extends React.Component {
     constructor(props) {
@@ -36,7 +34,6 @@ class App extends React.Component {
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
-        this.unsubscribeToolBox = ToolBoxStore.listen(this.onToolBoxStatusChange);
     }
 
     componentWillUnmount() {
