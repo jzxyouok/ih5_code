@@ -117,7 +117,7 @@ class App extends React.Component {
 
                 <EventBox expanded={this.state.expandedToolbox} isHidden={!(this.state.activeEventTreeKey != null)} />
 
-                <FunctionView expanded={this.state.expandedToolbox} isHidden={false}/>
+                <FunctionView expanded={this.state.expandedToolbox} isHidden={true}/>
 
                 <ObjectView />
 
