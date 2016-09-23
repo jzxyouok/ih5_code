@@ -6,7 +6,8 @@ import WidgetStore from '../../stores/WidgetStore';
 import {checkChildClass} from '../PropertyMap';
 
 const animationData = [
-    {name:'变量fx', class:'fx-btn', className:'fx', disabled:false},
+    {name:'函数', class:'func-btn', className:'func', disabled:false},
+    {name:'变量', class:'var-btn', className:'var', disabled:false},
     {name:'轨迹', class:'locus-btn', className:'track', disabled:false},
     {name:'缓动', class:'easing-btn', className:'easing', disabled:false},
     {name:'物体', class:'object-btn', className:'body', disabled:false}
@@ -37,10 +38,18 @@ class Animation extends React.Component {
             //过滤可选的功能组件
             let data = animationData;
             for(let i = 0; i<data.length; i++) {
-                if (checkChildClass(widget.selectWidget, data[i].className)) {
+                if(data[i].className === 'func') {
+                    data[i].disabled = false;
+                } else if((data[i].className === 'var')
+                    &&(widget.selectWidget.className !== 'twodvar'&&
+                        widget.selectWidget.className !== 'counter')) {
                     data[i].disabled = false;
                 } else {
-                    data[i].disabled = true;
+                    if (checkChildClass(widget.selectWidget, data[i].className)) {
+                        data[i].disabled = false;
+                    } else {
+                        data[i].disabled = true;
+                    }
                 }
             }
 
