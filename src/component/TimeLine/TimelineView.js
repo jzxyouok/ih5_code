@@ -623,19 +623,20 @@ class TimelineView extends React.Component {
         let right = 281;
         let bottom = 0;
 
-        //$("").mousedown(function(e){
-        //    move=true;
-        //    _x= e.pageX;
-        //    _y= e.pageY;
-        //});
-        //$(document).mousemove(function(e){
-        //    if(move){
-        //        let x = e.pageX - _x;
-        //        let y = e.pageY - _y;
-        //    }
-        //}).mouseup(function(){
-        //    move=false;
-        //});
+        $(".dragTimeline").mousedown(function(e){
+            move=true;
+            _x= e.pageX;
+            _y= e.pageY;
+        });
+        $(document).mousemove(function(e){
+            if(move){
+                let x = e.pageX - _x;
+                let y = e.pageY - _y;
+                console.log(x,y);
+            }
+        }).mouseup(function(){
+            move=false;
+        });
     }
 
 	render() {

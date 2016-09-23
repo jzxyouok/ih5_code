@@ -267,35 +267,35 @@ class NavBar extends React.Component {
                             <span className="title">模板</span>
                         </button>
 
-                        <div className='dropDown-btn'>
+                        <div className='dropDown-btn f--hlc'>
                             <button className='btn btn-clear module-btn' title='组件'>
                                 <span className="icon" />
                                 <span className="title">组件</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn'>
+                        <div className='dropDown-btn f--hlc'>
                             <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }}>
                                 <span className="icon" />
                                 <span className="title">数据库</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn'>
+                        <div className='dropDown-btn f--hlc'>
                             <button className='btn btn-clear link-btn' title='连接'>
                                 <span className="icon" />
                                 <span className="title">连接</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn'>
+                        <div className='dropDown-btn f--hlc'>
                             <button className='btn btn-clear shape-btn' title='形状'>
                                 <span className="icon" />
                                 <span className="title">形状</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn dropDown-btn2'>
+                        <div className='dropDown-btn dropDown-btn2 f--hlc'>
                             <button className='btn btn-clear open-btn' title='作品' >
                                 <span className="icon" />
                                 <span className="title">作品</span>
