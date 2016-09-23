@@ -15,7 +15,8 @@ class DesignView extends React.Component {
         this.curODiv=null;
         this.isDraging =false;
         this.whichDrag=null;
-        
+        this.selectNode=null;
+
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -41,6 +42,8 @@ class DesignView extends React.Component {
 
     onStatusChange(widget) {
         if(widget.selectWidget){
+            this.selectNode =widget.selectWidget;
+
             if(widget.selectWidget.className == "root"){
                 document.body.addEventListener('keyup', this.onKeyScroll);
                 document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown_top);
@@ -51,7 +54,7 @@ class DesignView extends React.Component {
             }  else {
                 document.body.removeEventListener('keyup', this.onKeyScroll);
             }
-            if(widget.selectWidget.props.rulerArr){
+            if(widget.selectWidget.props.rulerArr && this.selectNode.props.isShow){
                 this.drawLine(widget.selectWidget.props.rulerArr);
             }
 
@@ -72,6 +75,7 @@ class DesignView extends React.Component {
     }
 
     isShowRulerLine(bIsShow){
+        this.selectNode.props.isShow =bIsShow;
         let oContainer =document.getElementById('DesignView-Container');
         let oRulerWLine = oContainer.getElementsByClassName('rulerWLine');
         let oRulerHLine = oContainer.getElementsByClassName('rulerHLine');
@@ -81,6 +85,7 @@ class DesignView extends React.Component {
         for(let i=oRulerHLine.length-1; i>=0;i--){
             oRulerHLine[i].style.display =bIsShow?'block':'none';
         }
+
     }
 
     setRuler(iWidthSum,iHeightSum){
