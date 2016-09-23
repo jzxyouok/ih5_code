@@ -28,6 +28,7 @@ function onSelect() {
 }
 
 const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer', 'bitmaptext', 'qrcode', 'counter', 'button', 'taparea'];
+var currentLoading;
 
 function loadTree(parent, node) {
   let current = {};
@@ -357,7 +358,9 @@ export default Reflux.createStore({
           if (link)
             p['link'] = this.currentWidget.rootWidget.imageList.push(link) - 1;
         }
-        loadTree(this.currentWidget, {'cls':className, 'props': p});
+          var o = loadTree(this.currentWidget, {'cls':className, 'props': p});
+          if (className == 'bitmaptext')
+              currentLoading = o;
         var cmd = {redrawTree: true};
         if (className == 'body')
           cmd.updateProperties = {'originX':0.5, 'originY':0.5};
@@ -681,24 +684,37 @@ export default Reflux.createStore({
       }
     },
     setImageText:function(data) {
-      if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
-        var link = this.currentWidget.props['link'];
-        if (link === undefined) {
-          link = this.currentWidget.rootWidget.imageList.push(data) - 1;
-        } else {
-          this.currentWidget.rootWidget.imageList[link] = data;
-        }
-        this.currentWidget.props['link'] = this.currentWidget.node['link'] = link;
-        process.nextTick(() => {
+        var current;
+        if (currentLoading) {
+            current = currentLoading;
+            currentLoading = null;
+        } else if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
+
+            current = this.currentWidget;
             WidgetActions['imageTextSize']({
-                width:this.currentWidget.node.width,
-                height:this.currentWidget.node.height
+                width:current.node.width,
+                height:current.node.height
             });
-          bridge.updateSelector(this.currentWidget.node);
-            console.log('tag',this.currentWidget.node);
-          this.render();
-        });
-      }
+        }
+
+        if (current) {
+          //  isModified = true;
+            var link = current.props['link'];
+            if (link === undefined) {
+                link = current.rootWidget.imageList.push(data) - 1;
+            } else {
+                current.rootWidget.imageList[link] = data;
+            }
+            current.props['link'] = current.node['link'] = link;
+            process.nextTick(() => {
+                WidgetActions['imageTextSize']({
+                    width:current.node.width,
+                    height:current.node.height
+                });
+                bridge.updateSelector(current.node);
+                this.render();
+            });
+        }
     },
     imageTextSize:function(sizeObj){
         this.trigger({ imageTextSizeObj:sizeObj});
