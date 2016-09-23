@@ -66,6 +66,7 @@
         border-color: #444;
         border-radius: 2px;
         color: #858585;
+        width: 340px;
         &:hover {
           border-color: #1a1a1a;
         }
@@ -78,6 +79,16 @@
 
       .function-body {
         .ant-form-item-control {
+          position: relative;
+          .ReactCodeMirror {
+            position: fixed;
+            width: 700px;
+            bottom: 20px;
+            top: 195px;
+            .CodeMirror {
+              height: 100%;
+            }
+          }
           .ReactCodeMirror--focused {
             border-color: #444;
             outline: 0;
@@ -93,12 +104,29 @@
           .ReactCodeMirror {
             border:1px solid #444;
             border-radius: 2px;
+
             &:hover {
               border-color: #1a1a1a;
             }
-
             .CodeMirror {
               background-color: #353535;
+
+              .cm-variable {
+                color: #ffa800;
+              }
+              .cm-keyword {
+                color: #9876aa;
+              }
+              .cm-def {
+                color: #6297bb;
+              }
+              .cm-number {
+                color: #83c060;
+              }
+              .cm-error {
+                color: #bc3f3c;
+              }
+
               .CodeMirror-linenumber {
                 text-align: center;
                 padding: 0 4px;
@@ -107,6 +135,9 @@
               }
               .CodeMirror-scroll {
                 color: #b5b5b5;
+              }
+              .CodeMirror-cursor {
+                border-left: 1px solid #b5b5b5;
               }
               .CodeMirror-gutters {
                 color: #b5b5b5;
@@ -122,8 +153,8 @@
               .CodeMirror-vscrollbar,
               .CodeMirror-hscrollbar {
                 &::-webkit-scrollbar {
-                  width: 16px;
-                  height: 16px;
+                  width: 14px;
+                  height: 14px;
                   background-color: #2d2d2d;
                 }
               }

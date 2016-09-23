@@ -36,10 +36,6 @@ class FunctionView extends React.Component {
                             <Input type="text" size="large" placeholder="请输入名称" />
                         </FormItem>
                         <FormItem label="函数体" className="function-body">
-                            {/*<div className="line-number clearfix">*/}
-                                {/*<textarea disabled value={'123456789'}></textarea>*/}
-                            {/*</div>*/}
-                            {/*<Input type="textarea" autosize={false}/>*/}
                             <CodeMirror options={{'lineNumbers': true}}></CodeMirror>
                         </FormItem>
                     </Form>
