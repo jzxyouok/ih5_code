@@ -78,73 +78,69 @@
 
       .function-body {
         .ant-form-item-control {
-          height: 200px;
-          border: 1px solid #444;
-          border-radius: 2px;
-
-          &:hover {
-            border-color: #1a1a1a;
+          .ReactCodeMirror--focused {
+            border-color: #444;
+            outline: 0;
+            box-shadow: 0 0 0 2px rgba(255, 168, 0, 0.4);
           }
-
-          .line-number {
-            position: absolute;
-            z-index: 1;
-            padding: 0;
-            margin: 0;
-            border: none;
-            top: 0;
-            left: 0;
-            background: #2d2d2d;
-            width: 30px;
-            text-align: left;
-            height: 100%;
-            textarea {
-              background-color: inherit;
-              color: #858585;
-              margin: 0;
-              width: 30px;
-              border: none;
-              resize: none;
-              line-height: 1.5;
-              height: 100%;
-              overflow: hidden;
-              text-align: center;
-              padding: 7px 10px;
+          .CodeMirror-focused .CodeMirror-selected,
+          .CodeMirror-line::selection,
+          .CodeMirror-line>span::selection,
+          .CodeMirror-line>span>span::selection {
+            background: #2db7f5 !important;
+            color: #ffffff !important;
+          }
+          .ReactCodeMirror {
+            border:1px solid #444;
+            border-radius: 2px;
+            &:hover {
+              border-color: #1a1a1a;
             }
-          }
 
-          .ant-input-wrapper {
-            textarea {
-              padding-left: 37px;
-              padding-right: 25px;
-              resize: none;
-
-              &::-webkit-scrollbar {
-                width: 16px;
-                height: 16px;
+            .CodeMirror {
+              background-color: #353535;
+              .CodeMirror-linenumber {
+                text-align: center;
+                padding: 0 4px;
+                color: #b5b5b5;
+                line-height: 1.5;
+              }
+              .CodeMirror-scroll {
+                color: #b5b5b5;
+              }
+              .CodeMirror-gutters {
+                color: #b5b5b5;
+                background-color: #2d2d2d;
+                border-right: 1px solid #2d2d2d;
+              }
+              .CodeMirror-line {
+                line-height: 1.5;
+              }
+              .CodeMirror-scrollbar-filler {
                 background-color: #2d2d2d;
               }
-              &::-webkit-scrollbar-track {
-                background-color: #2d2d2d;
+              .CodeMirror-vscrollbar,
+              .CodeMirror-hscrollbar {
+                &::-webkit-scrollbar {
+                  width: 16px;
+                  height: 16px;
+                  background-color: #2d2d2d;
+                }
               }
-              &::-webkit-scrollbar-thumb {
-                cursor: pointer;
-                border-radius: 2px;
-                background-color: #858585;
+              .CodeMirror-vscrollbar,
+              .CodeMirror-hscrollbar {
+                &::-webkit-scrollbar-track {
+                  background-color: #2d2d2d;
+                }
               }
-            }
-          }
-
-          .ant-input {
-            background-color: #353535;
-            border: none;
-            color: #858585;
-            height: 100%;
-
-            &:focus {
-              border-radius: 2px;
-              outline: 0;
-              box-shadow: 0 0 0 2px rgba(255, 168, 0, 0.4);
+              .CodeMirror-vscrollbar,
+              .CodeMirror-hscrollbar {
+                &::-webkit-scrollbar-thumb {
+                  cursor: pointer;
+                  border-radius: 2px;
+                  background-color: #858585;
+                }
+              }
             }
           }
         }
