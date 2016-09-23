@@ -330,7 +330,7 @@ class NavBar extends React.Component {
                 <div className='nb-right f--hlc'>
                     <button className='btn-clear che-btn'  title='撤销' />
                     <button className='btn-clear hui-btn'  title='恢复' />
-                    <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
+                    <button className='btn-clear less-btn'  title='缩小' onClick={this.props.stageZoomLess }>
                         <span className='heng' />
                     </button>
                     <div className={$class('size-input', {'size-input-focus': this.state.zoomInputState }, {'size-input-blur':!this.state.zoomInputState})}>
