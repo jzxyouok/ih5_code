@@ -20,11 +20,11 @@ require("jscolor/jscolor");
 class PropertyView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {fields: null};
+        this.state = {fields: null,textSizeObj:null};
         this.selectNode = null;
         this.currentPage = null;
         this.fontList=[];
-        this.textSizeObj=null;
+
 
         this.defaultData = {
             width: null,
@@ -325,8 +325,8 @@ class PropertyView extends React.Component {
             }else if(item.type==propertyType.Float) {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
 
-                console.log('textSizeObj',this.textSizeObj);
-                defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
+                console.log('textSizeObj',this.state.textSizeObj);
+                defaultValue=(node.node.class=='bitmaptext' && this.state.textSizeObj)?this.state.textSizeObj[str]: node.node[str];
 
                 if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={};}//只执行一次
                 if(!this.selectNode.node.defaultData[str]){this.selectNode.node.defaultData[str]=defaultValue}//设置初始宽高,便于计算放大缩小的系数
@@ -459,7 +459,7 @@ class PropertyView extends React.Component {
         }
 
         if(widget.imageTextSizeObj){
-            this.textSizeObj=widget.imageTextSizeObj;
+            this.setState({textSizeObj: widget.imageTextSizeObj});
         }
 
         if (widget.selectWidget !== undefined){
