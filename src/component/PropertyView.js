@@ -450,7 +450,11 @@ class PropertyView extends React.Component {
                 if(item.name=='visible' || item.name=='initVisible' ){
                     saveArr.push(item);
                 }else{
-                    getInput(item, index);
+                    if((className == 'timer' || className == 'container') && ( item.name=='scaleX' ||  item.name=='scaleY')){
+                        ;
+                    }else{
+                        getInput(item, index);
+                    }
                 }
             }
         });

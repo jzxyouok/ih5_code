@@ -1,7 +1,7 @@
 $lineColor:#4AFFFF;
 
 #DesignView-Container{
-    .canvas-wraper{border-left:1px solid $lineColor;position: relative; }
+    .canvas-wraper{position: relative; }
     #line_top{
         width: 100%;
         height: 0;
@@ -37,6 +37,15 @@ $lineColor:#4AFFFF;
             border-right: 1px solid $lineColor;
         }
     }
+    #line_left{
+        width: 0;
+        height: 100%;
+        border-right: 1px solid $lineColor;
+        position: absolute;
+        left: -1px;
+        top: 0;
+        z-index: 49;
+    }
     .DesignView {
         margin: 0;
         padding: 0;
@@ -44,15 +53,7 @@ $lineColor:#4AFFFF;
         top: 60px;
         left: 0;
         line-height: 0.74;
-        #line_left{
-            width: 0;
-            height: 100%;
-            border-right: 1px solid $lineColor;
-            position: absolute;
-            left: -1px;
-            top: 0;
-            z-index: 49;
-        }
+
         .h_ruler_wraper{
             position: absolute;
             width: 100%;
