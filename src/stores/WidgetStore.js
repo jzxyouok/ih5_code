@@ -602,7 +602,6 @@ export default Reflux.createStore({
       }
     },
     setRulerLine:function(bIsShow){
-
         this.trigger({setRulerLine:{isShow:bIsShow}});
     },
     saveNode: function(wid, wname, callback) {

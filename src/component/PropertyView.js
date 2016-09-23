@@ -6,6 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Form, Input, InputNumber, Slider, Switch, Collapse,Select } from 'antd';
+const Option = Select.Option;
 const Panel = Collapse.Panel;
 import cls from 'classnames';
 
@@ -196,6 +197,13 @@ class PropertyView extends React.Component {
                       if(value == 0){
                           chooseFile('font', true, function(){
                               console.log(arguments[1]);
+                              //设置默认值
+                              this.selectNode.props.fontKey=arguments[1].name;
+                              //更新属性面板
+                              const obj = {};
+                              obj[prop.name] = arguments[1].file;
+                              this.onStatusChange({updateProperties: obj});
+                              WidgetActions['updateProperties'](obj, false, true);
                           });
                           bTag=false;
                       }else{
@@ -470,7 +478,6 @@ class PropertyView extends React.Component {
             console.log('imageTextSizeObj', this.textSizeObj);
             WidgetActions['render']();
             this.setState({fields: this.getFields()});
-
         }
 
         if (widget.selectWidget !== undefined){

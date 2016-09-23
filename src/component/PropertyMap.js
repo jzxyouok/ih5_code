@@ -38,8 +38,8 @@ const propertyMap = {};
 const propertyFlags = {};
 
 propertyMap['widget'] = [
-    { name: 'ID', type: propertyType.String, default: '', isProperty: true},
-    { name: 'getRoot', isFunc: true }
+    { name: 'id', type: propertyType.String, default: '', isProperty: true },
+    { name: 'getRoot', isFunc: true },
 ];
 
 
@@ -49,7 +49,6 @@ propertyMap['root'] = [
     { name: 'width',showName:'w', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'h',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
-
     { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
     { name: 'color',showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools', isProperty: true },
     { name: 'init', isEvent: true },
@@ -84,7 +83,7 @@ propertyMap['box'] = [
     { name: 'positionX',showName:'x', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'positionY',showName:'y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
-    { name: 'visible',showName:'初始可见', type: propertyType.Boolean, default: true, group:'display', isProperty: true },
+    { name: 'visible',showName:'初始可见', type: propertyType.Boolean, default: true, group:'tools', isProperty: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchUp', isEvent: true, info:'{globalX, globalY}'},
@@ -93,7 +92,7 @@ propertyMap['box'] = [
     { name: 'swipeUp', isEvent: true },
     { name: 'swipeDown', isEvent: true },
     { name: 'show', isEvent: true },
-    { name: 'hide', isEvent: true }
+    { name: 'hide', isEvent: true },
 ];
 
 propertyMap['sprite'] = [
@@ -101,16 +100,18 @@ propertyMap['sprite'] = [
     { name: 'scaleX', showName:'w',type: propertyType.Float, default: 0, group:'position', isProperty: true },
     { name: 'scaleY',showName:'h',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
     { name: 'originPos', showName:'originPosImgTag',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
-    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true }
+    { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
 
 ];
 
+
 propertyMap['text'] = [
     ...propertyMap['sprite'],
-    { name: 'value',showName:'内容', type: propertyType.Text, default: '', isProperty: true } ,
-    { name: 'fontSize', type: propertyType.Number, default: 26, isProperty: true },
-    { name: 'fontFamily', type: propertyType.Select, default: '选择字体', isProperty: true },
-    { name: 'fontFill', type: propertyType.Color, default: '#000000', isProperty: true },
+    { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
+    { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true },
+    { name: 'fontSize',showName:'字体大小', type: propertyType.Number,group:'tools', default: 26, isProperty: true },
+    { name: 'fontFill',showName:'字体颜色', type: propertyType.Color,group:'tools', default: '#000000', isProperty: true },
+
 ];
 
 propertyMap['counter'] = [
