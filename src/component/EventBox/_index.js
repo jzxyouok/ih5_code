@@ -172,7 +172,7 @@ class EventBox extends React.Component {
     render() {
         return (
             <div className={$class('EventBox',{'keep':this.state.keepIt}, {'hidden':this.props.isHidden})}
-                 style={{ left : this.props.expended? '65px':'37px'}}>
+                 style={{ left : this.props.expanded? '65px':'37px'}}>
                 <div className='EB--title f--hlc'>
                     <span className='flex-1'>事件属性</span>
                     <button className='btn btn-clear' title='收起' onClick={this.keepBtn} />

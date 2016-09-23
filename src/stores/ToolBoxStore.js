@@ -65,6 +65,8 @@ export default Reflux.createStore({
         this.listenTo(Actions['openSecondary'], this.openSecondary);
         this.listenTo(Actions['deselect'], this.deselect);
         this.listenTo(Actions['changeToolBoxItems'], this.changeToolBoxItems);
+        this.listenTo(Actions['expandToolBox'], this.expandToolBox);
+        this.expandedToolbox = false;
     },
 
     changeToolBoxItems: function(widget) {
@@ -80,6 +82,11 @@ export default Reflux.createStore({
         }
         toolBoxConfig.data = toolBoxItem;
         this.trigger(toolBoxConfig);
+    },
+
+    expandToolBox: function (expanded) {
+        this.expandedToolbox = expanded;
+        this.trigger({expanded:{value:this.expandedToolbox}});
     },
 
     selectPrimary: function(buttonId, groupId, boxId) {

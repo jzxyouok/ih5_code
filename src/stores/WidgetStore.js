@@ -575,6 +575,7 @@ export default Reflux.createStore({
         this.trigger({redrawTree: true});
     },
     activeEventTree: function (nid) {
+        //激活事件树，无则为
         if (nid) {
             this.currentActiveEventTreeKey = nid;
         } else {

@@ -34,6 +34,12 @@ class ToolBox extends Component {
                 data: bundle.data
             });
         }
+
+        if(bundle.expandedToolbox) {
+            this.setState({
+                expanded: bundle.expandedToolbox
+            })
+        }
     }
 
     onWidgetStatusChange(widget){
@@ -54,9 +60,8 @@ class ToolBox extends Component {
         this.setState({
             expanded: newStatus
         }, ()=>{
-            this.props.expendedToolBox(this.state.expanded);
+            ToolBoxStore['expandToolBox'](newStatus);
         });
-
         ToolBoxStore['openSecondary'](null, true);
     }
 
