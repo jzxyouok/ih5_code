@@ -41,6 +41,7 @@ class DesignView extends React.Component {
 
 
     onStatusChange(widget) {
+        console.log(1);
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
 
@@ -59,6 +60,8 @@ class DesignView extends React.Component {
             }
 
         }
+
+
 
         if(widget.setRulerLine){
             this.isShowRulerLine(widget.setRulerLine.isShow);
@@ -212,6 +215,8 @@ class DesignView extends React.Component {
     }
     mouseDown_top(event){
 
+        console.log(this.refs.view.offsetTop);
+
         this.curODiv =  document.createElement('div');
         this.curODiv.appendChild(document.createElement('div'));
         this.curODiv.setAttribute('class','rulerWLine');
@@ -295,6 +300,7 @@ class DesignView extends React.Component {
     }
 
     render() {
+
         return (
             <div className='f--hlt'
                  id='DesignView-Container'
@@ -302,11 +308,11 @@ class DesignView extends React.Component {
                  onWheel={this.scroll}>
                 <div  ref='line_top' id='line_top'></div>
                 <div ref='canvas_wraper' className='canvas-wraper'>
+                    <div  ref='line_left'  id='line_left'></div>
                     <div id='canvas-dom'
                          className="DesignView"
                          ref='view'
                          style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
-                        <div  ref='line_left'  id='line_left'></div>
                         <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
                         <ul id='v_ruler'></ul>
                     </div>
