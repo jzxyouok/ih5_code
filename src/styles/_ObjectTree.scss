@@ -16,7 +16,8 @@
 
         .stage-title ,
         .item-title,
-        .func-title{
+        .func-title,
+        .var-title{
             float: left;
             position: relative;
             width: 220px; //244px;
@@ -130,6 +131,14 @@
             width: 24px;
             border-bottom: 1px solid #151515;
 
+            .item-event-empty {
+                width: 100%;
+                height: 100%;
+            }
+            .active {
+                background: #39311f;
+            }
+
             .event-icon {
                 position: absolute;
                 right: 5.5px;
@@ -164,9 +173,16 @@
             }
         }
 
+        .var-title-wrap,
         .func-title-wrap {
             .item-event {
                 height: 23px;
+            }
+            .var-icon {
+                width: 18px;
+                height: 14px;
+                margin-left: 11px;
+                background: url("img/object-tree.svg") no-repeat -800px 0px;
             }
             .func-icon {
                 width: 18px;
@@ -174,8 +190,9 @@
                 margin-left: 11px;
                 background: url("img/object-tree.svg") no-repeat -760px 0;
             }
+            .var-name-wrap,
             .func-name-wrap {
-                margin: 0 0 0 10px;
+                margin: 0 0 0 9px;
             }
         }
 

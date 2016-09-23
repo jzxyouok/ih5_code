@@ -285,15 +285,15 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
 
-        this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
-        this.listenTo(WidgetActions['addFunction'], this.addFunction);
-        this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
-        this.listenTo(WidgetActions['deleteFunction'], this.deleteFunction);
-
-        this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
-        this.listenTo(WidgetActions['addVariable'], this.addVariable);
-        this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
-        this.listenTo(WidgetActions['deleteVariable'], this.deleteVariable);
+        // this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
+        // this.listenTo(WidgetActions['addFunction'], this.addFunction);
+        // this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
+        // this.listenTo(WidgetActions['deleteFunction'], this.deleteFunction);
+        //
+        // this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
+        // this.listenTo(WidgetActions['addVariable'], this.addVariable);
+        // this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
+        // this.listenTo(WidgetActions['deleteVariable'], this.deleteVariable);
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
@@ -354,6 +354,12 @@ export default Reflux.createStore({
         //}
         let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList, 'name':props['name']}});
         this.trigger({redrawTree: true, updateTrack: track});
+      } else if (className === 'func' || className === 'var') {
+          if(className === 'func') {
+              this.addFunction(className, props);
+          } else if(className === 'var') {
+              this.addVariable(className, props);
+          }
       } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
         let p;
         if (props || link) {
@@ -376,7 +382,6 @@ export default Reflux.createStore({
         this.render();
       }
     },
-
 
     removeWidget: function() {
         if (this.currentWidget && this.currentWidget.parent) {
@@ -570,7 +575,8 @@ export default Reflux.createStore({
             func['className']  = className;
             func['props']['cls'] = 'func';
             func['props']['name'] = 'function' + (this.currentWidget['funcList'].length + 1);
-            func['props']['oid'] = this.currentWidget['funcList'].length +1;
+            func['props']['fid'] = this.currentWidget['funcList'].length +1;
+            func['widget'] = this.currentWidget;
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
@@ -584,8 +590,18 @@ export default Reflux.createStore({
     selectVariable: function () {
         //TODO: 选择变量
     },
-    addVariable: function () {
-        //TODO: 添加变量
+    addVariable: function (className, param) {
+        if(this.currentWidget) {
+            let func = {};
+            func['props'] = param['props']||{};
+            func['className']  = className;
+            func['props']['cls'] = 'func';
+            func['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
+            func['props']['vid'] = this.currentWidget['varList'].length +1;
+            func['widget'] = this.currentWidget;
+            this.currentWidget['varList'].unshift(func);
+        }
+        this.trigger({redrawTree: true});
     },
     changeVariable: function () {
         //TODO: 改变变量

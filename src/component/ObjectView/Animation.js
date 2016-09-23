@@ -59,11 +59,7 @@ class Animation extends React.Component {
     }
 
     addWidgetBtn(className,param){
-        if(className == 'func') {
-            WidgetActions['addFunction'](className, param);
-        } else {
-            WidgetActions['addWidget'](className, param);
-        }
+        WidgetActions['addWidget'](className, param);
     }
 
     render() {

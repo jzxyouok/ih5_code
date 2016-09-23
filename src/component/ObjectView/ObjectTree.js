@@ -482,11 +482,28 @@ class ObjectTree extends React.Component {
 
         let funcList = (data, num)=> {
             let content = data.map((item, i)=> {
-                return <div className="func-title-wrap" key={i}>
+                return <div className="func-title-wrap clearfix" key={i}>
                     <div className={$class('func-title f--h f--hlc')}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className='func-icon' />
                         <div className='func-name-wrap'>
+                            <p>{ item.props.name }</p>
+                        </div>
+                    </div>
+                    <div className={$class('item-event')}>
+                    </div>
+                </div>
+            });
+            return content
+        };
+
+        let varList = (data, num)=> {
+            let content = data.map((item, i)=> {
+                return <div className="var-title-wrap clearfix" key={i}>
+                    <div className={$class('func-title f--h f--hlc')}
+                         style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
+                        <span className='var-icon' />
+                        <div className='var-name-wrap'>
                             <p>{ item.props.name }</p>
                         </div>
                     </div>
@@ -585,9 +602,22 @@ class ObjectTree extends React.Component {
                         {
                             v.props.eventTree
                                 ? enableEventTreeBtn(v.key, v)
-                                : null
+                                : <div className={$class('item-event-empty',{'active': v.key === this.state.nid})}
+                                       onClick={this.chooseBtn.bind(this,v.key, v)}></div>
                         }
                     </div>
+                </div>
+                <div className={$class('item-var-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                    {v.varList.length === 0
+                        ? null
+                        : varList(v.varList, num+1)
+                    }
+                </div>
+                <div className={$class('item-function-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                    {v.funcList.length === 0
+                        ? null
+                        : funcList(v.funcList, num+1)
+                    }
                 </div>
                 <div className={$class({'hidden': this.state.openData.indexOf(v.key) < 0 }) }>
                     {
@@ -628,17 +658,24 @@ class ObjectTree extends React.Component {
                                 {
                                     objectData.tree.props.eventTree
                                         ? enableEventTreeBtn(objectData.tree.key, objectData.tree)
-                                        : null
+                                        : <div className={$class('item-event-empty',{'active': objectData.tree.key === this.state.nid})}
+                                               onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}></div>
                                 }
                             </div>
                         </div>
-                        <div className={$class('item-function-content')}>
+                        <div className={$class('stage-var-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}>
+                            {objectData.tree.varList.length === 0
+                                ? null
+                                : varList(objectData.tree.varList, 1)
+                            }
+                        </div>
+                        <div className={$class('stage-function-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}>
                             {objectData.tree.funcList.length === 0
                                 ? null
                                 : funcList(objectData.tree.funcList, 1)
                             }
                         </div>
-                        <div className={$class('stage-content', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}
+                        <div className={$class('stage-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}
                              onDragOver={this.itemDragOver}>
                             {
                                 objectData.tree.children.length === 0
