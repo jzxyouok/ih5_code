@@ -188,16 +188,18 @@ class PropertyView extends React.Component {
                       this.selectNode.props.scaleTypeKey=this.getScaleTypeDefault(value,prop.options);
                       v = parseInt(value);
                   }else if(prop.name == 'fontFamily'){
-
-                      this.selectNode.props.fontFamilyKey=this.getScaleTypeFontFamily(value);
-
-                      if(this.selectNode.props.fontFamilyKey == '上传字体'){
+                      this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
+                      v = value;
+                  }else if(prop.name == 'font'){
+                      if(value == 0){
                           WidgetActions['chooseFile']('font', true, function(){
-                                console.log(arguments[1]);
+                              console.log(arguments[1]);
                           });
                           bTag=false;
+                      }else{
+                          this.selectNode.props.fontKey=this.getFontDefault(value);
+                          v = value;
                       }
-                      v = parseInt(value);
                   } else{
                       v = parseInt(value);
                   }
@@ -253,7 +255,7 @@ class PropertyView extends React.Component {
             }
         }
     }
-    getScaleTypeFontFamily(value){
+    getFontDefault(value){
         for(let i in this.fontList){
             if(value == this.fontList[i].file){
                 return  this.fontList[i].name;
@@ -342,12 +344,11 @@ class PropertyView extends React.Component {
                     defaultValue = node.props.originPosKey;
                 }else if(item.name=='scaleType' && node.props.scaleTypeKey){
                     defaultValue = node.props.scaleTypeKey;
-                }else if( item.name=='fontFamily' && node.props.fontFamilyKey){
-                    defaultValue = node.props.fontFamilyKey;
+                }else if( item.name=='font' && node.props.fontKey){
+                    defaultValue = node.props.fontKey;
+                }else if( item.name=='fontFamily'  && node.props.fontFamilyKey){
+                    defaultValue = node.props.fontFamily;
                 }
-
-
-
             } else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default
@@ -363,10 +364,6 @@ class PropertyView extends React.Component {
                 }
             }
 
-
-
-
-
             //设置通用默认参数和事件
             const defaultProp = {
                 size: 'small',
@@ -380,28 +377,25 @@ class PropertyView extends React.Component {
                 defaultProp.checked = defaultValue;
             }else if(item.type ==propertyType.Select ){
               let selectClassName='';
+                defaultProp.options=[];
+                defaultProp.value = defaultValue;
               if(item.name=='originY' ||item.name=='originPos') {
                   selectClassName='originIcon';
               }else if(item.name=='fontFamily'){
-
-
+                  for(let i in this.fontList){
+                      defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                  }
+              }else if(item.name=='font'){
+                  defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
+                  for(let i in this.fontList){
+                      defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                  }
               }
-                defaultProp.options=[];
-                if(item.name=='fontFamily'){
-                    defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
-                    for(let i in this.fontList){
-                        defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
-                    }
-                }else{
-                    //拼接children元素
+                if(defaultProp.options.length==0){
                     for(var i in  item.options){
                         defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
                     }
                 }
-
-
-
-                defaultProp.value = defaultValue;
 
             }else if(item.type ==propertyType.Color){
                     defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
@@ -458,7 +452,6 @@ class PropertyView extends React.Component {
     onStatusChange(widget) {
 
         if(widget.fontListObj){
-
            this.fontList =  widget.fontListObj.fontList;
         }
 
