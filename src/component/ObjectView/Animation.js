@@ -6,8 +6,8 @@ import WidgetStore from '../../stores/WidgetStore';
 import {checkChildClass} from '../PropertyMap';
 
 const animationData = [
-    {name:'函数', class:'func-btn', className:'func', disabled:false},
-    {name:'变量', class:'var-btn', className:'var', disabled:false},
+    {name:'变量', class:'var-btn', className:'var', disabled:false, param:{key:'', value:''}},
+    {name:'函数', class:'func-btn', className:'func', disabled:false, param:{key:'',value:''}},
     {name:'轨迹', class:'locus-btn', className:'track', disabled:false},
     {name:'缓动', class:'easing-btn', className:'easing', disabled:false},
     {name:'物体', class:'object-btn', className:'body', disabled:false}
@@ -52,7 +52,6 @@ class Animation extends React.Component {
                     }
                 }
             }
-
             this.setState({
                 data: data
             });
@@ -60,7 +59,11 @@ class Animation extends React.Component {
     }
 
     addWidgetBtn(className,param){
-        WidgetActions['addWidget'](className, param);
+        if(className == 'func') {
+            WidgetActions['addFunction'](className, param);
+        } else {
+            WidgetActions['addWidget'](className, param);
+        }
     }
 
     render() {

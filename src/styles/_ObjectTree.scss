@@ -15,7 +15,8 @@
         overflow: scroll;
 
         .stage-title ,
-        .item-title {
+        .item-title,
+        .func-title{
             float: left;
             position: relative;
             width: 220px; //244px;
@@ -160,6 +161,21 @@
         .stage-title-wrap {
             .event-icon {
                 top: 4.5px;
+            }
+        }
+
+        .func-title-wrap {
+            .item-event {
+                height: 23px;
+            }
+            .func-icon {
+                width: 18px;
+                height: 14px;
+                margin-left: 11px;
+                background: url("img/object-tree.svg") no-repeat -760px 0;
+            }
+            .func-name-wrap {
+                margin: 0 0 0 10px;
             }
         }
 

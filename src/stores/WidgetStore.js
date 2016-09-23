@@ -38,8 +38,6 @@ function loadTree(parent, node) {
   current.props = node['props'] || {};
   current.events = node['events'] || {};
 
-
-
   current.varList = [];
   if (node['vars']) {
     for (let n in node['vars']) {
@@ -286,6 +284,16 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
+
+        this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
+        this.listenTo(WidgetActions['addFunction'], this.addFunction);
+        this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
+        this.listenTo(WidgetActions['deleteFunction'], this.deleteFunction);
+
+        this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
+        this.listenTo(WidgetActions['addVariable'], this.addVariable);
+        this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
+        this.listenTo(WidgetActions['deleteVariable'], this.deleteVariable);
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
@@ -552,6 +560,39 @@ export default Reflux.createStore({
     enableEvent: function () {
         //TODO: 单个事件的可执行开关
     },
+    selectFunction: function () {
+        //TODO: 选择函数
+    },
+    addFunction: function (className, param) {
+        if(this.currentWidget) {
+            let func = {};
+            func['props'] = param['props']||{};
+            func['className']  = className;
+            func['props']['cls'] = 'func';
+            func['props']['name'] = 'function' + (this.currentWidget['funcList'].length + 1);
+            func['props']['oid'] = this.currentWidget['funcList'].length +1;
+            this.currentWidget['funcList'].unshift(func);
+        }
+        this.trigger({redrawTree: true});
+    },
+    changeFunction: function () {
+        //TODO: 改变函数
+    },
+    deleteFunction: function () {
+        //TODO: 删除函数
+    },
+    selectVariable: function () {
+        //TODO: 选择变量
+    },
+    addVariable: function () {
+        //TODO: 添加变量
+    },
+    changeVariable: function () {
+        //TODO: 改变变量
+    },
+    deleteVariable: function () {
+        ///TODO: 删除变量
+    },
     resetTrack: function() {
       this.trigger({resetTrack: true});
     },
@@ -565,8 +606,6 @@ export default Reflux.createStore({
         classList = [];
         bridge.resetClass();
         stageTree = [];
-
-
 
         if (data['defs']) {
             for (let n in data['defs']) {

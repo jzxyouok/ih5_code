@@ -480,6 +480,23 @@ class ObjectTree extends React.Component {
             return btn;
         };
 
+        let funcList = (data, num)=> {
+            let content = data.map((item, i)=> {
+                return <div className="func-title-wrap" key={i}>
+                    <div className={$class('func-title f--h f--hlc')}
+                         style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
+                        <span className='func-icon' />
+                        <div className='func-name-wrap'>
+                            <p>{ item.props.name }</p>
+                        </div>
+                    </div>
+                    <div className={$class('item-event')}>
+                    </div>
+                </div>
+            });
+            return content
+        };
+
         let icon = (open, nid)=>{
             // 0是该图层下不包含任何内容，1有内容，但是内容收起来， 2有内容，且展开内容
             if(open === 0){
@@ -614,6 +631,12 @@ class ObjectTree extends React.Component {
                                         : null
                                 }
                             </div>
+                        </div>
+                        <div className={$class('item-function-content')}>
+                            {objectData.tree.funcList.length === 0
+                                ? null
+                                : funcList(objectData.tree.funcList, 1)
+                            }
                         </div>
                         <div className={$class('stage-content', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}
                              onDragOver={this.itemDragOver}>

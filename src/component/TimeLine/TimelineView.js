@@ -50,7 +50,8 @@ class TimelineView extends React.Component {
             //isCanAdd : true
             dragTimelineLeft : 37,
             dragTimelineRight : 281,
-            dragTimelineBottom : 0
+            dragTimelineBottom : 0,
+            leftAddRight:37 + 281
 		};
 
         this.flag = 0;
@@ -519,7 +520,7 @@ class TimelineView extends React.Component {
         if(data){
             if(data.timerWidget){
                 totalTime = data.timerWidget.props.totalTime ? data.timerWidget.props.totalTime : 10;
-                let maxWidth  =  window.innerWidth-318-170;
+                let maxWidth  =  window.innerWidth-this.state.leftAddRight-170;
                 let multiple = this.state.multiple;
                 let allWidth;
                 if(multiple == -10){
@@ -636,9 +637,9 @@ class TimelineView extends React.Component {
                 let x = e.pageX - _x;
                 let y = e.pageY - _y;
                 self.setState({
-                    dragTimelineLeft : left + x,
-                    dragTimelineRight : right - x,
-                    dragTimelineBottom : bottom - y
+                    dragTimelineLeft : left + x <=0 ? 0 :left + x,
+                    dragTimelineRight : right - x <=0 ? 0 :right - x,
+                    dragTimelineBottom : bottom - y <=0 ? 0 :bottom - y
                 })
             }
         }).mouseup(function(){
@@ -646,6 +647,13 @@ class TimelineView extends React.Component {
             left = self.state.dragTimelineLeft;
             right = self.state.dragTimelineRight;
             bottom = self.state.dragTimelineBottom;
+            if((window.innerWidth-left-right) < (window.innerWidth-self.state.leftAddRight)){
+                self.setState({
+                    leftAddRight : left + right
+                },()=>{
+                    self.changeAllWidth(false);
+                })
+            }
         });
     }
 
@@ -726,7 +734,7 @@ class TimelineView extends React.Component {
             });
         };
 
-        let scrollwidth = window.innerWidth-318 + "px";
+        let scrollwidth = window.innerWidth-this.state.leftAddRight + "px";
 
         let TimelineViewStyle= {};
         TimelineViewStyle['left'] = this.state.dragTimelineLeft;
@@ -812,7 +820,13 @@ class TimelineView extends React.Component {
                             </ul>
                         </div>
 
-                        <div className={ cls("time-ruler-layer",{ "time-ruler-hidden" : this.state.marginLeft !==0 && this.state.isScroll})}>
+                        <div className={ cls("time-ruler-layer",{ "time-ruler-hidden" :
+                                            (this.state.marginLeft !==0 && this.state.isScroll)
+                                            || (this.state.currentTime * 61 * this.state.multiple
+                                                < this.state.marginLeft* this.state.percentage
+                                                && !this.state.isScroll)
+                                        })}>
+
                             <div style={{ width : this.state.allWidth + 20 +"px",
                                             marginLeft : - (this.state.marginLeft * this.state.percentage) ,
                                             paddingRight : 20 + "px"
