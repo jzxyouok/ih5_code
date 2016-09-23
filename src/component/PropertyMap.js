@@ -88,7 +88,6 @@ propertyMap['box'] = [
     { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
     { name: 'visible',showName:'初始可见', type: propertyType.Boolean, default: true, group:'tools', isProperty: true },
-    { name: 'initVisible', type: propertyType.Boolean, default: true, group:'tools', isProperty: true },
     { name: 'click', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchUp', isEvent: true, info:'{globalX, globalY}'},
@@ -190,17 +189,11 @@ propertyMap['button'] = [
 propertyMap['slidetimer'] = [
     ...propertyMap['box'],
     { addProvidesRecursive: widgetFlags.Timer},
-    { name: 'originX', type: propertyType.Number, default: 0, group:'position', isProperty: true },
-    { name: 'originY', type: propertyType.Number, default: 0, group:'position', isProperty: true },
-    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
-    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
-    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'fillColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
-    { name: 'loop', type: propertyType.Boolean, default: false, isProperty: true},
-    { name: 'vertical', type: propertyType.Boolean, default: false, isProperty: true },
-    { name: 'sliderScale', type: propertyType.Number, default: 1, isProperty: true},
-    { name: 'totalTime', type: propertyType.Number, default: 10, isProperty: true}
+    { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
+    { name: 'vertical', type: propertyType.Boolean,group:'tools', default: false, isProperty: true },
+    { name: 'sliderScale', type: propertyType.Number,group:'tools', default: 1, isProperty: true},
+    { name: 'totalTime',showName:'总时长', type: propertyType.Number, group:'tools',default: 10, isProperty: true}
 ];
 
 propertyMap['html'] = [
@@ -219,7 +212,7 @@ propertyMap['ellipse'] = [
 
 propertyMap['path'] = [
     ...propertyMap['graphics'],
-    { name: 'path', type: propertyType.String, default: '', isProperty: true }
+    { name: 'path',showName:'路径', type: propertyType.String, default: '', isProperty: true }
 ];
 
 propertyMap['container'] = [
@@ -252,8 +245,8 @@ propertyMap['class'] = [
 propertyMap['timer'] = [
     ...propertyMap['container'],
     { addProvides: widgetFlags.Timer},
-    { name: 'totalTime', type: propertyType.Number,group:'tools', default: 10, isProperty: true},
-    { name: 'loop', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
+    { name: 'totalTime',showName:'总时长', type: propertyType.Number,group:'tools', default: 10, isProperty: true},
+    { name: 'loop',showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
     { name: 'play', isFunc: true },
     { name: 'pause', isFunc: true },
     { name: 'seek', info: '(time)', isFunc: true },
