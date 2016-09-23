@@ -5,6 +5,7 @@
 	background-color: #353535;
 	color: #b5b5b5;
 }
+$toBottom:14px;
 
 #PropertyView {
 	position: absolute;
@@ -19,6 +20,18 @@
 	display: flex;
 	flex-direction: column;
     z-index: 50;
+    .form_basic{
+
+	}
+    .form_position{
+
+	}
+    .form_display{
+
+	}
+    .form_tools{
+
+	}
 	#PropertyViewHeader {
 		@include title();
 		font-size: 14px;
@@ -32,23 +45,36 @@
 		overflow-y: auto;
 	}
    .ant-form-full {
+	  margin-bottom:$toBottom;
+	 &:last-child{
+	   margin-bottom: 0;
+	 }
 	 .ant-input-number.ant-input-number-sm{width: 100%;}
    }
 
 	.ant-form-horizontal {
-		padding:10px 10px 5px 5px;
+	  padding-left: 5px;
+	  padding-right:10px ;
+	  padding-top: 10px;
+	  padding-bottom: 10px;
 		border-bottom: 1px solid #161616;
 		overflow: hidden;
 		&:last-child {
 			margin-bottom: 0;
 			border-bottom: none;
 		}
-		> .ant-form-item:last-child {
-			margin-bottom: 0;
-		}
+	   >.ant-form-half {
+		 margin-bottom: $toBottom;
+	   }
 	    >.ant-form-half:last-child{
+		   margin-bottom: 0;
 		   .ant-input-number{margin-right: 0;}
 		}
+	  >.ant-form-half:nth-last-child(2){
+		margin-bottom: 0;
+	  }
+
+
 	    >.ant-form-half:nth-child(odd) ,>.ant-form-full{
 		  .ant-form-item-label label{
 			width: 60px;
@@ -127,19 +153,25 @@
    .ant-switch{
 	 border: 1px solid #151515;
 	 background-color: #151515;
+	 height: 16px !important;
+	 width: 32px !important;
    }
+  .ant-switch-small:after{height: 14px !important;width: 14px !important;}
+
   .ant-switch:after{
 	background-color: #858585;
   }
 	.ant-switch-checked {
 		border-color: #ffa800;
-		background-color: #ffa800; 
+		background-color: #ffa800;
+	    &:after{
+		  left: 15px;
+		}
 	}
 
 	// input
 
 	.ant-form-item {
-		margin-bottom: 0px;
 
 		&.ant-form-half {
 			width: 120px;
@@ -157,6 +189,7 @@
 
 
 		.ant-form-item-label {
+		    padding: 0;
 			label {
 				text-overflow: ellipsis;
 				overflow: hidden;
@@ -295,6 +328,7 @@
 
 	// slide
 	.ant-form-item-control {
+	  line-height: 14px;
 	  .color-input{
 		width: 125px !important;
 		float: left;
@@ -337,6 +371,7 @@
 		width: 53%;
 		float: left;
 	  }
+
 		.ant-slider {
 			background-color: #151515;
 			border-color: #232323;
@@ -368,9 +403,6 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   box-shadow: 2px 2px 5px #1d1d1d;
-  .ant-select-dropdown-menu-item{
-	text-overflow:initial;
-  }
 
   .ant-select-dropdown-menu-item:nth-child(1) .originIcon{	background-position: -4px -8px;}
   .ant-select-dropdown-menu-item:nth-child(2) .originIcon{	background-position: -36px -8px;}
@@ -402,7 +434,7 @@
 	color: white;
   }
   >div{
-	overflow: visible !important;
+	 width: 200px;
   }
   .ant-select-dropdown-menu{
 	overflow: visible;
