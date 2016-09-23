@@ -144,7 +144,6 @@ class PropertyView extends React.Component {
                         let w;
                         const obj = {};
                         if('scaleX'== prop.name) {
-
                               h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.selectNode.node.defaultData.height;
 
                               w =parseFloat(value) /this.selectNode.node.defaultData.width;
@@ -205,7 +204,7 @@ class PropertyView extends React.Component {
                   }
                     break;
                 case propertyType.Boolean:
-                    v = (value === prop.default) ? null : value;
+                    v =value;
                     break;
                 default:
                     v = value;

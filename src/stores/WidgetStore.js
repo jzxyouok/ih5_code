@@ -746,7 +746,7 @@ export default Reflux.createStore({
           bridge.updateSelector(this.currentWidget.node);
 
             //tag:
-            console.log(this.currentWidget.node);
+            console.log('tag',this.currentWidget.node);
 
           this.render();
         });
