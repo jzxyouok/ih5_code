@@ -252,7 +252,7 @@ class NavBar extends React.Component {
         return (
             <div className='NavBar f--h'>
                 <div className='nb--left f--h'>
-                    <div className='import f--hcc'>
+                    <div className='import'>
                         <span className='icon' />
                     </div>
 

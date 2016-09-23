@@ -46,8 +46,11 @@ class TimelineView extends React.Component {
             dragZoomLeft : 45.5,
             startTime : 0,
             endTime : 10,
-            nowLayerId : null
+            nowLayerId : null,
             //isCanAdd : true
+            dragTimelineLeft : 37,
+            dragTimelineRight : 281,
+            dragTimelineBottom : 0
 		};
 
         this.flag = 0;
@@ -632,10 +635,17 @@ class TimelineView extends React.Component {
             if(move){
                 let x = e.pageX - _x;
                 let y = e.pageY - _y;
-                console.log(x,y);
+                self.setState({
+                    dragTimelineLeft : left + x,
+                    dragTimelineRight : right - x,
+                    dragTimelineBottom : bottom - y
+                })
             }
         }).mouseup(function(){
             move=false;
+            left = self.state.dragTimelineLeft;
+            right = self.state.dragTimelineRight;
+            bottom = self.state.dragTimelineBottom;
         });
     }
 
@@ -718,8 +728,13 @@ class TimelineView extends React.Component {
 
         let scrollwidth = window.innerWidth-318 + "px";
 
+        let TimelineViewStyle= {};
+        TimelineViewStyle['left'] = this.state.dragTimelineLeft;
+        TimelineViewStyle['right'] = this.state.dragTimelineRight;
+        TimelineViewStyle['bottom'] = this.state.dragTimelineBottom;
+
         return (
-            <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })}>
+            <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })} style={TimelineViewStyle}>
                 <div className="hidden">
                     <ComponentPanel ref="ComponentPanel" />
                 </div>
@@ -761,7 +776,7 @@ class TimelineView extends React.Component {
                                     onClick={this.selectNextBreakpoint.bind(this)} />
                         </div>
 
-                        <div className="flex-1 dragTimeline" onClick={ this.dragTimeline} style={{cursor:"crosshair"}}></div>
+                        <div className="flex-1 dragTimeline" style={{cursor:"move"}}></div>
                     </div>
                 </div>
 
