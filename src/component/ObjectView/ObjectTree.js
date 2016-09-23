@@ -624,8 +624,7 @@ class ObjectTree extends React.Component {
                                 //this.state.widgetTreeChildren
                                 //    ?  this.state.widgetTreeChildren.length === 0
                                 //            ? null
-                                //            : stageContent(this.state.widgetTreeChildren)
-                                //    : null
+                                //            : stageContent(this.state.widgetTreeChildren)//    : null
                             }
                         </div>
                     </div>

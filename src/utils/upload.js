@@ -1,3 +1,5 @@
+import {globalToken} from '../stores/WidgetStore'
+
 var chooseFileCallback = (w)=> {  //tag
     if (w.files.length > 0) {
         var allowExt = null;
