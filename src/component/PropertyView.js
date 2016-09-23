@@ -192,24 +192,25 @@ class PropertyView extends React.Component {
                   }else if(prop.name == 'fontFamily'){
                       this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
                       v = value;
-                      console.log('fontFamily',v);
+
                   }else if(prop.name == 'font'){
                       if(value == 0){
                           chooseFile('font', true, function(){
-                              console.log(arguments[1]);
+                              console.log(arguments);
                               //设置默认值
                               this.selectNode.props.fontKey=arguments[1].name;
+                              console.log(this.selectNode.props);
+                              console.log(prop);
                               //更新属性面板
                               const obj = {};
                               obj[prop.name] = arguments[1].file;
                               this.onStatusChange({updateProperties: obj});
                               WidgetActions['updateProperties'](obj, false, true);
-                          });
+                          }.bind(this));
                           bTag=false;
                       }else{
                           this.selectNode.props.fontKey=this.getFontDefault(value);
                           v = value;
-                          console.log('font',v);
                       }
                   } else{
                       v = parseInt(value);
@@ -308,22 +309,8 @@ class PropertyView extends React.Component {
         }
 
 
-        //let className = node.className;
-        //if (className.charAt(0) == '_')   className = 'class';
-
         let className = node.className.charAt(0) == '_'?'class':node.className;
         if (!propertyMap[className])    return null;
-
-
-
-        //暂未被使用
-        //const formItemLayout = {
-        //    labelCol: { span: 8 },
-        //    wrapperCol: { span: 16 }
-        //};
-
-
-
 
         const groups = {};
 
@@ -456,13 +443,23 @@ class PropertyView extends React.Component {
             );
         };
 
+
+        const saveArr = []; //给部分属性排序用
         propertyMap[className].forEach((item, index) => {
-            if (item.isProperty)
-                getInput(item, index);
+            if (item.isProperty) {
+                if(item.name=='visible' || item.name=='initVisible' ){
+                    saveArr.push(item);
+                }else{
+                    getInput(item, index);
+                }
+            }
+        });
+        saveArr.map(item=>{
+            getInput(item);
         });
 
         return Object.keys(groups).map((name,index)=> 
-                <Form horizontal key={index}>
+                <Form horizontal key={index} className={'form_'+name}>
                     {groups[name].map((input, i) => input)}
                 </Form>);
     }
@@ -475,7 +472,7 @@ class PropertyView extends React.Component {
 
         if(widget.imageTextSizeObj){
            this.textSizeObj = widget.imageTextSizeObj;
-            console.log('imageTextSizeObj', this.textSizeObj);
+
             WidgetActions['render']();
             this.setState({fields: this.getFields()});
         }

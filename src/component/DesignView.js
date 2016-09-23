@@ -279,8 +279,6 @@ class DesignView extends React.Component {
                 });
 
 
-
-
                 WidgetStore.currentWidget.props.rulerArr =this.aODiv;
 
             }
