@@ -189,7 +189,7 @@ propertyMap['button'] = [
 propertyMap['slidetimer'] = [
     ...propertyMap['box'],
     { addProvidesRecursive: widgetFlags.Timer},
-    { name: 'fillColor', type: propertyType.Color, default: '', group:'position', isProperty: true },
+    { name: 'fillColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
     { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
     { name: 'vertical', type: propertyType.Boolean,group:'tools', default: false, isProperty: true },
     { name: 'sliderScale', type: propertyType.Number,group:'tools', default: 1, isProperty: true},
