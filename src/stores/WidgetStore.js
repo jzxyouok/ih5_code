@@ -270,6 +270,7 @@ export default Reflux.createStore({
         // this.listenTo(WidgetActions['chooseFile'], this.chooseFile);
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
+        this.listenTo(WidgetActions['imageTextSize'], this.imageTextSize);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
         this.listenTo(WidgetActions['saveFontList'], this.saveFontList);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
@@ -365,9 +366,7 @@ export default Reflux.createStore({
         this.render();
       }
     },
-    saveFontList:function(fontList){
-          this.trigger({fontListObj:{'fontList':fontList}});
-    },
+
 
     removeWidget: function() {
         if (this.currentWidget && this.currentWidget.parent) {
@@ -701,14 +700,22 @@ export default Reflux.createStore({
         }
         this.currentWidget.props['link'] = this.currentWidget.node['link'] = link;
         process.nextTick(() => {
+            WidgetActions['imageTextSize']({
+                width:this.currentWidget.node.width,
+                height:this.currentWidget.node.height
+            });
           bridge.updateSelector(this.currentWidget.node);
-
-            //tag:
             console.log('tag',this.currentWidget.node);
 
           this.render();
         });
       }
+    },
+    imageTextSize:function(sizeObj){
+        this.trigger({ imageTextSizeObj:sizeObj});
+    },
+    saveFontList:function(fontList){
+        this.trigger({fontListObj:{'fontList':fontList}});
     },
     ajaxSend(token, method, url, type, data, callback, binary) {
         if (token)
