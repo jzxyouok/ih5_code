@@ -109,7 +109,7 @@ propertyMap['text'] = [
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text, default: '', isProperty: true } ,
     { name: 'fontSize', type: propertyType.Number, default: 26, isProperty: true },
-    { name: 'fontFamily', type: propertyType.Select, default: '上传字体',options:{'上传字体':0,'微软雅黑':1,'徐静蕾字体':2}, isProperty: true },
+    { name: 'fontFamily', type: propertyType.Select, default: '选择字体', isProperty: true },
     { name: 'fontFill', type: propertyType.Color, default: '#000000', isProperty: true },
 ];
 
@@ -148,7 +148,7 @@ propertyMap['imagelist'] = [
 propertyMap['bitmaptext'] = [
     ...propertyMap['sprite'],
     { name: 'value', type: propertyType.Text, default:'', isProperty: true },
-    { name: 'font', type: propertyType.String, default:'', isProperty: true },
+    { name: 'font', type: propertyType.Select, default:'上传字体', isProperty: true },
     { name: 'size', type: propertyType.Integer, default:26, isProperty: true },
     { name: 'color', type: propertyType.Color, default:'', isProperty: true },
     { name: 'lineHeight', type: propertyType.Integer, default:10, isProperty: true }

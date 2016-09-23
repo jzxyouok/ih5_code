@@ -233,49 +233,6 @@ function drop(e) {
   }
 }
 
-function chooseFileCallback(w) {  //tag
-  if (w.files.length > 0) {
-    var allowExt = null;
-    if (w.userType == 'font') {
-      allowExt = ['ttf', 'otf'];
-    } else if (w.userType == 'image') {
-      allowExt = ['png', 'jpg', 'jpeg', 'gif'];
-    } else if (w.userType == 'imagelist') {
-      allowExt = ['zip'];
-    } else if (w.userType == 'zip') {
-      allowExt = ['zip'];
-    } else if (w.userType == 'video') {
-      allowExt = ['mov', 'mp4', 'avi'];
-    } else {
-      return;
-    }
-    var name = w.files[0]['name'];
-    var dot = name.lastIndexOf('.');
-    if (dot <= 0)
-      return;
-    var ext = name.substr(dot + 1);
-    if (!allowExt || allowExt.indexOf(ext) >= 0) {
-      if (w.userUpload) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'app/uploadFile');
-        if (globalToken)
-            xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
-        var form = new FormData();
-        form.append('type', w.userType);
-        form.append('file', w.files[0]);
-        xhr.send(form);
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState == 4) {
-              w.userCallback(w, xhr.responseText);
-          }
-        };
-      } else {
-        w.userCallback(w, ext);
-      }
-    }
-  }
-}
-
 /*
 function downloadFile(filename, text) {
     var pom = document.createElement('a');
@@ -310,9 +267,10 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['deletePoint'], this.deletePoint);
         this.listenTo(WidgetActions['saveNode'], this.saveNode);
         this.listenTo(WidgetActions['setRulerLine'], this.setRulerLine);
-        this.listenTo(WidgetActions['chooseFile'], this.chooseFile);
+        // this.listenTo(WidgetActions['chooseFile'], this.chooseFile);
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
+        this.listenTo(WidgetActions['imageTextSize'], this.imageTextSize);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
         this.listenTo(WidgetActions['saveFontList'], this.saveFontList);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
@@ -329,6 +287,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
 
+        this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
     selectWidget: function(widget) {
         var render = false;
@@ -407,9 +366,7 @@ export default Reflux.createStore({
         this.render();
       }
     },
-    saveFontList:function(fontList){
-          this.trigger({fontListObj:{'fontList':fontList}});
-    },
+
 
     removeWidget: function() {
         if (this.currentWidget && this.currentWidget.parent) {
@@ -575,7 +532,8 @@ export default Reflux.createStore({
         this.trigger({redrawTree: true});
     },
     activeEventTree: function (nid) {
-        if (nid) {
+        //激活事件树，无则为
+        if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
         } else {
             this.currentActiveEventTreeKey = null;
@@ -718,15 +676,15 @@ export default Reflux.createStore({
         this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname), 'application/octet-stream', data, cb);
       }
     },
-    chooseFile: function(type, upload, callback) {
-      var w = document.getElementById('upload-box');
-      w.value = '';
-      w.userType = type;
-      w.userUpload = upload;
-      w.userCallback = callback;
-      w.sysCallback = chooseFileCallback;
-      w.click();
-    },
+    // chooseFile: function(type, upload, callback) {
+    //   var w = document.getElementById('upload-box');
+    //   w.value = '';
+    //   w.userType = type;
+    //   w.userUpload = upload;
+    //   w.userCallback = callback;
+    //   w.sysCallback = chooseFileCallback;
+    //   w.click();
+    // },
     setFont: function(font) {
       if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
         this.updateProperties({'font':font});
@@ -742,10 +700,22 @@ export default Reflux.createStore({
         }
         this.currentWidget.props['link'] = this.currentWidget.node['link'] = link;
         process.nextTick(() => {
+            WidgetActions['imageTextSize']({
+                width:this.currentWidget.node.width,
+                height:this.currentWidget.node.height
+            });
           bridge.updateSelector(this.currentWidget.node);
+            console.log('tag',this.currentWidget.node);
+
           this.render();
         });
       }
+    },
+    imageTextSize:function(sizeObj){
+        this.trigger({ imageTextSizeObj:sizeObj});
+    },
+    saveFontList:function(fontList){
+        this.trigger({fontListObj:{'fontList':fontList}});
     },
     ajaxSend(token, method, url, type, data, callback, binary) {
         if (token)

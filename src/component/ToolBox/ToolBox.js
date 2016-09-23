@@ -5,6 +5,8 @@ import config from './DEFAUL_TOOLBOX';
 import ToolBoxStore from '../../stores/ToolBoxStore';
 import WidgetStore from '../../stores/WidgetStore';
 
+import DrawRect from './DrawRect';
+
 // 左侧工具菜单
 class ToolBox extends Component {
 
@@ -34,6 +36,12 @@ class ToolBox extends Component {
                 data: bundle.data
             });
         }
+
+        if(bundle.expandedToolbox) {
+            this.setState({
+                expanded: bundle.expandedToolbox
+            })
+        }
     }
 
     onWidgetStatusChange(widget){
@@ -50,14 +58,15 @@ class ToolBox extends Component {
     }
 
     toggleExpaned() {
+        //清除
+        new DrawRect().cleanUp();
         let newStatus = !this.state.expanded;
         this.setState({
             expanded: newStatus
         }, ()=>{
-            this.props.expendedToolBox(this.state.expanded);
+            ToolBoxStore['expandToolBox'](newStatus);
+            ToolBoxStore['openSecondary'](null, true);
         });
-
-        ToolBoxStore['openSecondary'](null, true);
     }
 
     render() {

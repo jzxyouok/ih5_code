@@ -103,7 +103,8 @@ class ObjectTree extends React.Component {
             }
         }
 
-        else if(widget.activeEventTreeKey) {
+        //激活对象key对应对象的事件树
+        if(widget.activeEventTreeKey) {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
