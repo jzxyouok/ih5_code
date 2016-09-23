@@ -191,6 +191,7 @@ class PropertyView extends React.Component {
                   }else if(prop.name == 'fontFamily'){
                       this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
                       v = value;
+                      console.log('fontFamily',v);
                   }else if(prop.name == 'font'){
                       if(value == 0){
                           chooseFile('font', true, function(){
@@ -200,6 +201,7 @@ class PropertyView extends React.Component {
                       }else{
                           this.selectNode.props.fontKey=this.getFontDefault(value);
                           v = value;
+                          console.log('font',v);
                       }
                   } else{
                       v = parseInt(value);
