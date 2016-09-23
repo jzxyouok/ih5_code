@@ -554,15 +554,14 @@ class ObjectTree extends React.Component {
             });
             return  <div className='item'
                          key={i}
-                         id={'tree-item-'+ v.key}
-                         data-keyId={i}
-                         tabIndex={v.key}
                          draggable='true'
-                         onFocus={this.itemAddKeyListener.bind(this)}
-                         onBlur={this.itemRemoveKeyListener.bind(this)}
                          onDragStart={this.itemDragStart.bind(this,v.key, v)}
                          onDragEnd={this.itemDragEnd}>
-                <div className='item-title-wrap clearfix'>
+                <div className='item-title-wrap clearfix'
+                     id={'tree-item-'+ v.key}
+                     tabIndex={v.key}
+                     onFocus={this.itemAddKeyListener.bind(this)}
+                     onBlur={this.itemRemoveKeyListener.bind(this)}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
                          onClick={this.chooseBtn.bind(this,v.key, v)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
@@ -579,6 +578,8 @@ class ObjectTree extends React.Component {
 
                         {
                             v.children.length > 0
+                            ||v.funcList.length > 0
+                            ||v.varList.length > 0
                                 ? icon( 1 , v.key)
                                 : icon( 0 , v.key)
                         }
@@ -646,6 +647,8 @@ class ObjectTree extends React.Component {
                                 { btn(-1, objectData.tree) }
                                 {
                                     objectData.tree.children.length > 0
+                                    ||objectData.tree.funcList.length > 0
+                                    ||objectData.tree.varList.length > 0
                                         ? icon( 1 , objectData.tree.key)
                                         : icon( 0 , objectData.tree.key)
                                 }

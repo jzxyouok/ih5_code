@@ -40,17 +40,36 @@ function loadTree(parent, node) {
 
   current.varList = [];
   if (node['vars']) {
-    for (let n in node['vars']) {
-      if (n.length >= 3 && n.substr(0, 2) == '__')
-        current.varList.unshift({key:n.substr(2), value: node['vars'][n]});
+    for (let i = 0; i<node['vars'].length; i++) {
+        let temp = {};
+        temp['key'] = node['vars'][i].__key;
+        temp['value'] = node['vars'][i].__value;
+        temp['className'] = node['vars'][i].__className;
+        temp['props'] = node['vars'][i].__props;
+        temp['widgetKey'] = current.__key;
+        current.varList.unshift(temp);
+      // if (n.length >= 3 && n.substr(0, 2) == '__') {
+      //     current.varList.unshift({n.substr(2) : node['vars'][n]});
+      // }
     }
   }
   current.funcList = [];
   if (node['funcs']) {
-    for (let n in node['funcs']) {
-      if (n.length >= 3 && n.substr(0, 2) == '__')
-        current.funcList.unshift({key:n.substr(2), value:node['funcs'][n]});
+    for (let i = 0; i<node['funcs'].length; i++) {
+        let temp = {};
+        temp['key'] = node['funcs'][i].__key;
+        temp['value'] = node['funcs'][i].__value;
+        temp['className'] = node['funcs'][i].__className;
+        temp['props'] = node['funcs'][i].__props;
+        temp['widgetKey'] = node['funcs'][i].__key;
+        current.funcList.unshift(temp);
     }
+
+      // if (n.length >= 3 && n.substr(0, 2) == '__') {
+      //
+      // }
+        // current.funcList.unshift({key:n.substr(2), value:node['funcs'][n]});
+    // }
   }
 
   if (node['id'])
@@ -119,18 +138,31 @@ function saveTree(data, node) {
   if (node.events)
     data['events'] = node.events;
   if (node.varList.length > 0) {
-    let o = {};
-    for (let i = node.varList.length; i >0; i--) {
-      o['__' + node.varList[i].key] = node.varList[i].value;
+    data['vars'] = [];
+    for (let i = node.varList.length-1; i >=0 ; i--) {
+        let o = {};
+        o['__key'] = node.varList[i].key;
+        o['__value'] = node.varList[i].value;
+        o['__className'] = node.varList[i].className;
+        o['__props'] = node.varList[i].props;
+        o['__widgetKey'] = node.varList[i].widgetKey;
+        data['vars'].push(o);
     }
-    data['vars'] = o;
+    // data['vars'] = o;
   }
   if (node.funcList.length > 0) {
-    let o = {};
-    for (let i = node.funcList.length; i >0; i--) {
-      o['__' + node.funcList[i].key] = node.funcList[i].value;
+    data['funcs'] = [];
+    for (let i = node.funcList.length-1; i >=0 ; i--) {
+        var o = {};
+      // o['__' + node.funcList[i].key] = node.funcList[i].key;
+        o['__key'] = node.funcList[i].key;
+        o['__value'] = node.funcList[i].value;
+        o['__className'] = node.funcList[i].className;
+        o['__props'] = node.funcList[i].props;
+        o['__widgetKey'] = node.funcList[i].widgetKey;
+        data['funcs'].push(o);
     }
-    data['funcs'] = o;
+    // data['funcs'] = o;
   }
   if (node.children.length > 0) {
     data['children'] = [];
@@ -404,8 +436,9 @@ export default Reflux.createStore({
     pasteWidget: function() {
       if (this.currentWidget) {
         // 重命名要黏贴的widget
-        copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false);
-        loadTree(this.currentWidget, copyObj);
+        let temp = cpJson(copyObj);
+        temp.props = this.addWidgetDefaultName(temp.cls, temp.props, false);
+        loadTree(this.currentWidget, temp);
         this.trigger({selectWidget: null, redrawTree: true});
         this.render();
       }
@@ -451,15 +484,15 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, props, valueAsTextName) {
+    addWidgetDefaultName: function(className, properties, valueAsTextName) {
         if (!this.currentWidget)
             return;
-
+        let props = cpJson(properties);
         if(props === undefined || props === null) {
             props = {};
         }
         if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
-            props.name = props.value;
+            props['name'] = props.value;
         } else {
             let cOrder = 1;
             //查找当前widget有多少个相同className的，然后＋1处理名字
@@ -468,7 +501,7 @@ export default Reflux.createStore({
                     cOrder+=1;
                 }
             }
-            props.name = className + cOrder;
+            props['name'] = className + cOrder;
         }
         return props;
     },
@@ -571,12 +604,13 @@ export default Reflux.createStore({
     addFunction: function (className, param) {
         if(this.currentWidget) {
             let func = {};
-            func['props'] = param['props']||{};
+            func['value'] = param.value||'';
+            func['key'] = param.key||'';
             func['className']  = className;
-            func['props']['cls'] = 'func';
+            func['props'] = {};
             func['props']['name'] = 'function' + (this.currentWidget['funcList'].length + 1);
             func['props']['fid'] = this.currentWidget['funcList'].length +1;
-            func['widget'] = this.currentWidget;
+            func['widgetKey'] = this.currentWidget.key;
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
@@ -592,14 +626,15 @@ export default Reflux.createStore({
     },
     addVariable: function (className, param) {
         if(this.currentWidget) {
-            let func = {};
-            func['props'] = param['props']||{};
-            func['className']  = className;
-            func['props']['cls'] = 'func';
-            func['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
-            func['props']['vid'] = this.currentWidget['varList'].length +1;
-            func['widget'] = this.currentWidget;
-            this.currentWidget['varList'].unshift(func);
+            let vars = {};
+            vars['value'] = param.value||'';
+            vars['key'] = param.key||'';
+            vars['className']  = className;
+            vars['props'] = {};
+            vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
+            vars['props']['vid'] = this.currentWidget['varList'].length +1;
+            vars['widgetKey'] = this.currentWidget.key;
+            this.currentWidget['varList'].unshift(vars);
         }
         this.trigger({redrawTree: true});
     },

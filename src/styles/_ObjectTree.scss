@@ -162,6 +162,9 @@
 
         .item {
             outline: 0;
+            .item-title-wrap {
+                outline: 0;
+            }
             .item-event {
                 height: 23px;
             }
