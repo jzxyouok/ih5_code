@@ -13,6 +13,8 @@ import Animation from './Animation';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
+import {checkChildClass} from '../PropertyMap';
+
 class ObjectView extends React.Component {
     constructor (props) {
         super(props);
@@ -27,7 +29,8 @@ class ObjectView extends React.Component {
             locked: false,  //是否已锁
             canHaveEventTree: false,    //是否可有事件树
             hasEventTree: false, //是否有事件树
-            activeEventTreeKey: null //激活事件的key
+            activeEventTreeKey: null, //激活事件的key
+            enableContainer: true
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
@@ -54,7 +57,8 @@ class ObjectView extends React.Component {
         //获取选中图层的父级id
         if(widget.selectWidget){
             this.setState({
-                currentWidget : widget.selectWidget
+                currentWidget : widget.selectWidget,
+                enableContainer: checkChildClass(widget.selectWidget, 'container')
             });
             if(widget.selectWidget.parent){
                 this.setState({
@@ -66,7 +70,7 @@ class ObjectView extends React.Component {
             this.onInitHasEventTree(widget.selectWidget);
         }
 
-        else if(widget.activeEventTreeKey) {
+        if(widget.activeEventTreeKey) {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
@@ -130,11 +134,11 @@ class ObjectView extends React.Component {
         if(this.state.activeEventTreeKey != null) {
             WidgetActions['removeEventTree']();
             WidgetActions['selectWidget'](this.state.currentWidget);
+            WidgetActions['activeEventTree'](null);
         } else {
             WidgetActions['removeWidget']();
             this.refs.ObjectTree.chooseBtn(this.state.parentID, this.state.parentData);
         }
-
     }
 
     dragLeftBtn(){
@@ -199,16 +203,21 @@ class ObjectView extends React.Component {
                 </div>
 
                 <div className='ov--footer f--h f--hlc'>
-                    <button className={$class(
-                        'btn btn-clear lock-btn',
-                        {'not-allowed': !this.state.canLock||this.state.whichContent===1, 'locked': this.state.locked})}
-                            onClick={this.lock.bind(this)} title='锁住' disabled={!this.state.canLock}/>
+                    <button className={$class('btn btn-clear lock-btn',
+                            {'not-allowed': !this.state.canLock||this.state.whichContent===1, 'locked': this.state.locked})}
+                            onClick={this.lock.bind(this)}
+                            title='锁住'
+                            disabled={!this.state.canLock}/>
                     {/*<button className="btn btn-clear folder-btn" title="文件夹"  onClick={ this.create.bind(this,"folder",null)}  />*/}
-                    <button className='btn btn-clear container-btn' title='容器' onClick={ this.create.bind(this,'container',null)} />
-                    <button className={$class(
-                        'btn btn-clear event-btn',
-                        {'not-allowed': !this.state.canHaveEventTree||this.state.hasEventTree}
-                        )} title='事件' disabled={!this.state.canHaveEventTree||this.state.hasEventTree}
+                    <button className={$class('btn btn-clear container-btn',
+                            {'not-allowed':!this.state.enableContainer})}
+                            title='容器'
+                            disabled={!this.state.enableContainer}
+                            onClick={ this.create.bind(this,'container',null)} />
+                    <button className={$class('btn btn-clear event-btn',
+                            {'not-allowed': !this.state.canHaveEventTree||this.state.hasEventTree})}
+                            title='事件'
+                            disabled={!this.state.canHaveEventTree||this.state.hasEventTree}
                             onClick={ this.initEvent.bind(this, 'event', null)}/>
                     {/*<button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />*/}
                     <button className='btn btn-clear delete-btn' title='删除' onClick={ this.delete } />
