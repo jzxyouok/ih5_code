@@ -1,4 +1,4 @@
-import {globalToken} from '../store/WidgetStore'
+import {globalToken} from '../stores/WidgetStore'
 
 var chooseFileCallback = (w)=> {  //tag
     if (w.files.length > 0) {
