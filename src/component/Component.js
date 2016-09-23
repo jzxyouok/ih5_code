@@ -1,6 +1,7 @@
 import React,{PropTypes} from 'react';
 import WidgetActions from '../actions/WidgetActions';
 import JSZip from 'jszip';
+import {chooseFile} from  '../utils/upload';
 
 class Component extends React.Component {
 
@@ -13,7 +14,7 @@ class Component extends React.Component {
 
     onClick() {
         if (this.props.upload) {
-            WidgetActions['chooseFile'](this.props.className, false, (w) => {
+            chooseFile(this.props.className, false, (w) => {
                 if (w.files.length) {
                     var self = this;
                     if (this.props.className == 'image') {

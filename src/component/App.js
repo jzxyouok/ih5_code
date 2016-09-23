@@ -11,6 +11,7 @@ import ToolBox from './ToolBox/ToolBox';
 import EventBox from './EventBox/_index';
 import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
+import FunctionView from './FunctionView/FunctionView';
 
 import WidgetStore from '../stores/WidgetStore';
 import ToolBoxStore from '../stores/ToolBoxStore';
@@ -118,6 +119,8 @@ class App extends React.Component {
                 <PropertyView expanded={this.state.expandedToolbox} isHidden={this.state.activeEventTreeKey != null} />
 
                 <EventBox expanded={this.state.expandedToolbox} isHidden={!(this.state.activeEventTreeKey != null)} />
+
+                <FunctionView expanded={this.state.expandedToolbox} isHidden={true}/>
 
                 <ObjectView />
 
