@@ -46,6 +46,7 @@ function loadTree(parent, node) {
         temp['value'] = node['vars'][i].__value;
         temp['className'] = node['vars'][i].__className;
         temp['props'] = node['vars'][i].__props;
+        temp['keyId'] = _keyCount++;
         temp['widgetKey'] = current.key;
         current.varList.unshift(temp);
       // if (n.length >= 3 && n.substr(0, 2) == '__') {
@@ -61,6 +62,7 @@ function loadTree(parent, node) {
         temp['value'] = node['funcs'][i].__value;
         temp['className'] = node['funcs'][i].__className;
         temp['props'] = node['funcs'][i].__props;
+        temp['keyId'] = _keyCount++;
         temp['widgetKey'] = current.key;
         current.funcList.unshift(temp);
     }
@@ -145,6 +147,7 @@ function saveTree(data, node) {
         o['__value'] = node.varList[i].value;
         o['__className'] = node.varList[i].className;
         o['__props'] = node.varList[i].props;
+        o['__keyId'] = _keyCount++;
         o['__widgetKey'] = node.varList[i].widgetKey;
         data['vars'].push(o);
     }
@@ -159,7 +162,8 @@ function saveTree(data, node) {
         o['__value'] = node.funcList[i].value;
         o['__className'] = node.funcList[i].className;
         o['__props'] = node.funcList[i].props;
-        o['__widgetKey'] = node.funcList[i].widgetKey;
+        o['__keyId'] = _keyCount++;
+        o['__widgetKey'] = node.varList[i].widgetKey;
         data['funcs'].push(o);
     }
     // data['funcs'] = o;
@@ -317,15 +321,15 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
 
-        // this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
-        // this.listenTo(WidgetActions['addFunction'], this.addFunction);
-        // this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
-        // this.listenTo(WidgetActions['deleteFunction'], this.deleteFunction);
-        //
-        // this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
-        // this.listenTo(WidgetActions['addVariable'], this.addVariable);
-        // this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
-        // this.listenTo(WidgetActions['deleteVariable'], this.deleteVariable);
+        this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
+        this.listenTo(WidgetActions['addFunction'], this.addFunction);
+        this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
+        this.listenTo(WidgetActions['deleteFunction'], this.deleteFunction);
+
+        this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
+        this.listenTo(WidgetActions['addVariable'], this.addVariable);
+        this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
+        this.listenTo(WidgetActions['deleteVariable'], this.deleteVariable);
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
@@ -342,9 +346,12 @@ export default Reflux.createStore({
               rootDiv.appendChild(rootElm);
             }
           }
-        }
-        if(widget.props['locked'] === undefined) {
+          if(widget.props['locked'] === undefined) {
             widget.props['locked'] = false;
+          }
+
+          //取选func
+          this.selectFunction(null);
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
@@ -598,8 +605,17 @@ export default Reflux.createStore({
     enableEvent: function () {
         //TODO: 单个事件的可执行开关
     },
-    selectFunction: function () {
-        //TODO: 选择函数
+    selectFunction: function (data) {
+        if (data!=null) {
+            // TODO: 重选widget
+            this.currentFunction = data;
+            this.currentFunction['widget'] = this.currentWidget;
+        } else {
+            this.currentFunction = null;
+        }
+        this.activeEventTree(null);
+        this.trigger({selectFunction: this.currentFunction});
+        this.render();
     },
     addFunction: function (className, param) {
         if(this.currentWidget) {
@@ -609,11 +625,12 @@ export default Reflux.createStore({
             func['className']  = className;
             func['props'] = {};
             func['props']['name'] = 'function' + (this.currentWidget['funcList'].length + 1);
-            func['props']['fid'] = this.currentWidget['funcList'].length +1;
+            func['keyId'] = _keyCount++;
             func['widgetKey'] = this.currentWidget.key;
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
+        this.render();
     },
     changeFunction: function () {
         //TODO: 改变函数
@@ -632,7 +649,7 @@ export default Reflux.createStore({
             vars['className']  = className;
             vars['props'] = {};
             vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
-            vars['props']['vid'] = this.currentWidget['varList'].length +1;
+            vars['keyId'] = _keyCount++;
             vars['widgetKey'] = this.currentWidget.key;
             this.currentWidget['varList'].unshift(vars);
         }

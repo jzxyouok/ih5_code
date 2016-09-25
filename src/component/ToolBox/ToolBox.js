@@ -52,6 +52,9 @@ class ToolBox extends Component {
         if(widget.selectWidget){
             ToolBoxStore['changeToolBoxItems'](widget.selectWidget);
         }
+        if(widget.selectFunction) {
+            ToolBoxStore['changeToolBoxItems'](widget.selectFunction);
+        }
     }
 
     // 点击窗口其他区域，关闭已打开的工具菜单

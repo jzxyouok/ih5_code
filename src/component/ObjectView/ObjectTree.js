@@ -38,6 +38,9 @@ class ObjectTree extends React.Component {
         this.itemKeyAction = this.itemKeyAction.bind(this);
         this.itemPaste = this.itemPaste.bind(this);
 
+        //函数相关
+        this.funcBtn = this.funcBtn.bind(this);
+
         this.startEditObjName = this.startEditObjName.bind(this);
         this.endEditObjName = this.endEditObjName.bind(this);
         this.editStopPropagation = this.editStopPropagation.bind(this);
@@ -101,6 +104,10 @@ class ObjectTree extends React.Component {
             if(document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).focus();
             }
+        } else if(widget.selectFunction) {
+            this.setState({
+                nid : widget.selectFunction.keyId
+            });
         }
 
         //激活对象key对应对象的事件树
@@ -272,6 +279,15 @@ class ObjectTree extends React.Component {
                 WidgetActions['activeEventTree'](nid);
             }
         }
+    }
+
+    funcBtn(nid, data) {
+        this.setState({
+            nid : nid,
+            editMode: false
+        },()=>{
+            WidgetActions['selectFunction'](data);
+        });
     }
 
     startEditObjName(id, data, event) {
@@ -482,8 +498,10 @@ class ObjectTree extends React.Component {
 
         let funcList = (data, num)=> {
             let content = data.map((item, i)=> {
-                return <div className="func-title-wrap clearfix" key={i}>
-                    <div className={$class('func-title f--h f--hlc')}
+                return <div className={"func-title-wrap clearfix"} key={i}>
+                    <div className={$class('func-title f--h f--hlc',
+                         {'active': item.keyId === this.state.nid})}
+                         onClick={this.funcBtn.bind(this, item.keyId, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className='func-icon' />
                         <div className='func-name-wrap'>
@@ -491,6 +509,8 @@ class ObjectTree extends React.Component {
                         </div>
                     </div>
                     <div className={$class('item-event')}>
+                        <div className={$class('item-event-empty',{'active': item.keyId === this.state.nid})}
+                             onClick={this.funcBtn.bind(this, item.keyId, item)}></div>
                     </div>
                 </div>
             });
@@ -508,6 +528,8 @@ class ObjectTree extends React.Component {
                         </div>
                     </div>
                     <div className={$class('item-event')}>
+                        <div className={$class('item-event-empty',{'active': item.keyId === this.state.nid})}
+                             onClick={this.funcBtn.bind(this, item.keyId, item)}></div>
                     </div>
                 </div>
             });

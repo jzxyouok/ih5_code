@@ -23,7 +23,7 @@ class App extends React.Component {
             stageZoom : 100,
             expandedToolbox: false,
             activeEventTreeKey: null,
-
+            activeFunc: null
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -48,6 +48,11 @@ class App extends React.Component {
         if(widget.activeEventTreeKey) {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
+            })
+        }
+        if(widget.selectFunction !== undefined) {
+            this.setState({
+                activeFunc: widget.selectFunction
             })
         }
     }
@@ -113,15 +118,18 @@ class App extends React.Component {
                          stageZoomPlus={this.stageZoomPlus}
                          stageZoomLess={this.stageZoomLess} />
 
-                <PropertyView expanded={this.state.expandedToolbox} isHidden={this.state.activeEventTreeKey != null} />
+                <PropertyView expanded={this.state.expandedToolbox}
+                              isHidden={this.state.activeEventTreeKey != null || this.state.activeFunc != null} />
 
-                <EventBox expanded={this.state.expandedToolbox} isHidden={!(this.state.activeEventTreeKey != null)} />
+                <EventBox expanded={this.state.expandedToolbox}
+                          isHidden={!(this.state.activeEventTreeKey != null)} />
 
-                <FunctionView expanded={this.state.expandedToolbox} isHidden={false}/>
+                <FunctionView expanded={this.state.expandedToolbox}
+                              isHidden={!(this.state.activeFunc != null)}/>
 
                 <ObjectView />
 
-                <TimelineView />
+                <TimelineView isHidden={this.state.activeFunc != null}/>
 
                 {
                     //<Row gutter={5}>
