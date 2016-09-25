@@ -350,7 +350,7 @@ export default Reflux.createStore({
             widget.props['locked'] = false;
           }
           //取选func
-          this.currentFunction = null;
+          this.selectFunction(null);
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
@@ -644,7 +644,6 @@ export default Reflux.createStore({
             }
             if(index>-1){
                 this.currentWidget.funcList.splice(index,1);
-                this.selectFunction(null);
                 this.selectWidget(this.currentWidget);
             }
         }
