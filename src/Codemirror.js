@@ -21,6 +21,7 @@ const CodeMirror = React.createClass({
 	getInitialState () {
 		return {
 			isFocused: false,
+			nid: false,
 		};
 	},
 	componentDidMount () {
@@ -40,9 +41,13 @@ const CodeMirror = React.createClass({
 		}
 	},
 	componentWillReceiveProps: debounce(function (nextProps) {
-		if (this.codeMirror) {
-			//刷新一下
-			this.codeMirror.refresh();
+		if ((this.state.nid != nextProps.nid) && nextProps.nid!=null) {
+			this.setState({
+				nid: nextProps.nid
+			}, ()=> {
+				//当有nid时，刷新一下
+				this.codeMirror.refresh();
+			});
 		}
 		if (this.codeMirror && nextProps.value !== undefined && this.codeMirror['getValue']() != nextProps.value) {
 			this.codeMirror['setValue'](nextProps.value);

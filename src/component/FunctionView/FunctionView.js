@@ -95,6 +95,7 @@ class FunctionView extends React.Component {
                             <CodeMirror options={{'lineNumbers': true}}
                                         onChange={this.onEditChange.bind(this, 'value')}
                                         onFocusChange={this.endEdit.bind(this, 'value')}
+                                        nid={this.state.nid}
                                         value={this.state.value} />
                         </FormItem>
                     </Form>
