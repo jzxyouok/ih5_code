@@ -349,7 +349,6 @@ export default Reflux.createStore({
           if(widget.props['locked'] === undefined) {
             widget.props['locked'] = false;
           }
-
           //取选func
           this.selectFunction(null);
         }
@@ -393,12 +392,6 @@ export default Reflux.createStore({
         //}
         let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList, 'name':props['name']}});
         this.trigger({redrawTree: true, updateTrack: track});
-      } else if (className === 'func' || className === 'var') {
-          if(className === 'func') {
-              this.addFunction(className, props);
-          } else if(className === 'var') {
-              this.addVariable(className, props);
-          }
       } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
         let p;
         if (props || link) {
@@ -610,6 +603,7 @@ export default Reflux.createStore({
             // TODO: 重选widget
             this.currentFunction = data;
             this.currentFunction['widget'] = this.currentWidget;
+            bridge.selectWidget(this.currentWidget.node);
         } else {
             this.currentFunction = null;
         }

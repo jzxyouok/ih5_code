@@ -1,6 +1,9 @@
 import React from 'react';
 import $class from 'classnames';
 import {Form, Input} from 'antd';
+import WidgetActions from '../../actions/WidgetActions';
+import WidgetStore from '../../stores/WidgetStore';
+
 var CodeMirror = require('codemirror/CodeMirror');
 
 const FormItem = Form.Item;
@@ -10,15 +13,64 @@ class FunctionView extends React.Component {
         super(props);
         this.state = {
             minSize: false,
+            nid: null,
+            // func: null,
+            key: '',
+            value: ''
         };
 
         this.toggle = this.toggle.bind(this);
+        this.onStatusChange = this.onStatusChange.bind(this);
+        this.onEditChange = this.onEditChange.bind(this);
+        this.endEdit = this.endEdit.bind(this);
     }
 
     toggle(){
         this.setState({
             minSize: !this.state.minSize
         })
+    }
+
+    componentDidMount() {
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onStatusChange(widget) {
+        if(widget.selectFunction) {
+            this.setState({
+                nid: widget.selectFunction.keyId,
+                // func: widget.selectFunction,
+                key: widget.selectFunction.key,
+                value: widget.selectFunction.value
+            });
+        }
+    }
+
+    onEditChange(type, v) {
+        if(type === 'key') {
+            this.setState({
+                key: v.target.value
+            })
+        } else if(type === 'value') {
+            this.setState({
+                value: v
+            })
+        }
+    }
+
+    endEdit(type, v) {
+        if(type === 'key') {
+            console.log('key end'+this.state.key);
+        } else if(type === 'value') {
+            if(v === false){
+                console.log('value end'+this.state.value);
+            }
+        }
     }
 
     render() {
@@ -33,10 +85,16 @@ class FunctionView extends React.Component {
                 <div className="function-body-layer">
                     <Form>
                         <FormItem label="名称">
-                            <Input type="text" size="large" placeholder="请输入名称" />
+                            <Input type="text" size="large" placeholder="请输入名称"
+                                   onChange={this.onEditChange.bind(this, 'key')}
+                                   onBlur={this.endEdit.bind(this, 'key')}
+                                   value={this.state.key}/>
                         </FormItem>
                         <FormItem label="函数体" className="function-body">
-                            <CodeMirror options={{'lineNumbers': true}}></CodeMirror>
+                            <CodeMirror options={{'lineNumbers': true}}
+                                        onChange={this.onEditChange.bind(this, 'value')}
+                                        onFocusChange={this.endEdit.bind(this, 'value')}
+                                        value={this.state.value} />
                         </FormItem>
                     </Form>
                 </div>

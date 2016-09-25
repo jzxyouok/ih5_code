@@ -69,8 +69,14 @@ class Animation extends React.Component {
         });
     };
 
-    addWidgetBtn(className,param){
-        WidgetActions['addWidget'](className, param);
+    addWidgetBtn(className, param){
+        if(className === 'func') {
+            WidgetActions['addFunction'](className, param);
+        } else if(className === 'var') {
+            WidgetActions['addVariable'](className, param);
+        } else {
+            WidgetActions['addWidget'](className, param);
+        }
     }
 
     render() {
