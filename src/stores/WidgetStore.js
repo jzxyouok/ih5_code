@@ -349,8 +349,14 @@ export default Reflux.createStore({
           if(widget.props['locked'] === undefined) {
             widget.props['locked'] = false;
           }
-          //取选func
-          this.selectFunction(null);
+          //取选激活的树
+          if(this.currentActiveEventTreeKey!==null || this.currentActiveEventTreeKey!==undefined){
+            this.activeEventTree(null);
+          }
+          //取选func状态
+          if(this.currentFunction!==null || this.currentFunction!==undefined) {
+            this.selectFunction(null);
+          }
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
@@ -600,13 +606,12 @@ export default Reflux.createStore({
     },
     selectFunction: function (data) {
         if (data!=null) {
-            this.selectWidget(data.widget);
+            //取消在canvas上的widget选择
             bridge.selectWidget(this.currentWidget.node);
             this.currentFunction = data;
         } else {
             this.currentFunction = null;
         }
-        this.activeEventTree(null);
         this.trigger({selectFunction: this.currentFunction});
         this.render();
     },

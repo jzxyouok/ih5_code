@@ -40,7 +40,6 @@ const CodeMirror = React.createClass({
 		}
 	},
 	componentWillReceiveProps: debounce(function (nextProps) {
-
 		if (this.codeMirror) {
 			//刷新一下
 			this.codeMirror.refresh();

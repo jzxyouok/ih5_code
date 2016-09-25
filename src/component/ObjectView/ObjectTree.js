@@ -221,7 +221,6 @@ class ObjectTree extends React.Component {
             editMode: false
         },()=>{
             WidgetActions['selectWidget'](data, true);
-            WidgetActions['activeEventTree'](null);
         });
     }
 
@@ -291,6 +290,7 @@ class ObjectTree extends React.Component {
             nid : nid,
             editMode: false
         },()=>{
+            WidgetActions['selectWidget'](data.widget, true);
             WidgetActions['selectFunction'](data);
         });
     }
