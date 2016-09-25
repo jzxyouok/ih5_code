@@ -90,24 +90,29 @@ class ObjectTree extends React.Component {
             this.forceUpdate();
         }
 
-        else if(widget.selectWidget){
+        else if(widget.selectWidget || widget.selectFunction){
             //触发失焦
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
             }
-            this.setState({
-                selectWidget : widget.selectWidget
-                , nid : widget.selectWidget.key
-            });
-            this.addOpenId();
+
+            if(widget.selectWidget){
+                this.setState({
+                    selectWidget : widget.selectWidget
+                    , nid : widget.selectWidget.key
+                });
+                this.addOpenId();
+            } else if (widget.selectFunction) {
+                this.setState({
+                    selectWidget: null,
+                    nid: widget.selectFunction.keyId
+                });
+            }
+
             //触发聚焦
             if(document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).focus();
             }
-        } else if(widget.selectFunction) {
-            this.setState({
-                nid : widget.selectFunction.keyId
-            });
         }
 
         //激活对象key对应对象的事件树
@@ -576,6 +581,7 @@ class ObjectTree extends React.Component {
             });
             return  <div className='item'
                          key={i}
+                         data-keyId={i}
                          draggable='true'
                          onDragStart={this.itemDragStart.bind(this,v.key, v)}
                          onDragEnd={this.itemDragEnd}>

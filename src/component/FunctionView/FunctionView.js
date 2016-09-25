@@ -43,6 +43,7 @@ class FunctionView extends React.Component {
     onStatusChange(widget) {
         if(widget.selectFunction) {
             this.setState({
+                minSize: false,
                 nid: widget.selectFunction.keyId,
                 // func: widget.selectFunction,
                 key: widget.selectFunction.key,
