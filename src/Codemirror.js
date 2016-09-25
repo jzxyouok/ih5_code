@@ -40,6 +40,11 @@ const CodeMirror = React.createClass({
 		}
 	},
 	componentWillReceiveProps: debounce(function (nextProps) {
+
+		if (this.codeMirror) {
+			//刷新一下
+			this.codeMirror.refresh();
+		}
 		if (this.codeMirror && nextProps.value !== undefined && this.codeMirror['getValue']() != nextProps.value) {
 			this.codeMirror['setValue'](nextProps.value);
 		}
