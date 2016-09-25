@@ -324,12 +324,12 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
         this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
-        this.listenTo(WidgetActions['deleteFunction'], this.deleteFunction);
+        this.listenTo(WidgetActions['removeFunction'], this.removeFunction);
 
         this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
         this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
-        this.listenTo(WidgetActions['deleteVariable'], this.deleteVariable);
+        this.listenTo(WidgetActions['removeVariable'], this.removeVariable);
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
@@ -350,7 +350,7 @@ export default Reflux.createStore({
             widget.props['locked'] = false;
           }
           //取选func
-          this.selectFunction(null);
+          this.currentFunction = null;
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
@@ -601,8 +601,8 @@ export default Reflux.createStore({
     selectFunction: function (data) {
         if (data!=null) {
             this.selectWidget(data.widget);
-            this.currentFunction = data;
             bridge.selectWidget(this.currentWidget.node);
+            this.currentFunction = data;
         } else {
             this.currentFunction = null;
         }
@@ -625,11 +625,29 @@ export default Reflux.createStore({
         this.trigger({redrawTree: true});
         this.render();
     },
-    changeFunction: function () {
-        //TODO: 改变函数
+    changeFunction: function (props) {
+        if(props) {
+            if(props['key']) {
+                this.currentFunction['key'] = props['key'];
+            } else if(props['value']) {
+                this.currentFunction['value'] = props['value'];
+            }
+        }
     },
-    deleteFunction: function () {
-        //TODO: 删除函数
+    removeFunction: function (data) {
+        if(this.currentFunction) {
+            let index = -1;
+            for(let i=0; i<this.currentWidget.funcList.length; i++) {
+                if(this.currentFunction.widget.funcList[i].keyId == data.keyId) {
+                    index = i;
+                }
+            }
+            if(index>-1){
+                this.currentWidget.funcList.splice(index,1);
+                this.selectFunction(null);
+                this.selectWidget(this.currentWidget);
+            }
+        }
     },
     selectVariable: function () {
         //TODO: 选择变量
@@ -651,7 +669,7 @@ export default Reflux.createStore({
     changeVariable: function () {
         //TODO: 改变变量
     },
-    deleteVariable: function () {
+    removeVariable: function () {
         ///TODO: 删除变量
     },
     resetTrack: function() {

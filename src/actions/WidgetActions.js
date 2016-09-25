@@ -24,11 +24,11 @@ export default Reflux.createActions([
   'selectFunction',               //选择函数
   'addFunction',                  //添加函数
   'changeFunction',               //添加函数
-  'deleteFunction',               //添加函数
+  'removeFunction',               //添加函数
   'selectVariable',               //选择变量
   'addVariable',                  //添加变量
   'changeVariable',               //添加变量
-  'deleteVariable',               //添加变量
+  'removeVariable',               //添加变量
   'resetTrack',
   'syncTrack',
   'deletePoint',

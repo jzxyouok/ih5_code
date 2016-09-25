@@ -143,6 +143,8 @@ class ObjectView extends React.Component {
             WidgetActions['removeEventTree']();
             WidgetActions['selectWidget'](this.state.currentWidget);
             WidgetActions['activeEventTree'](null);
+        } else if(this.state.currentWidget.className == 'func'){
+            WidgetActions['removeFunction'](this.state.currentWidget);
         } else {
             WidgetActions['removeWidget']();
             this.refs.ObjectTree.chooseBtn(this.state.parentID, this.state.parentData);
