@@ -47,7 +47,7 @@ function loadTree(parent, node) {
         temp['className'] = node['vars'][i].__className;
         temp['props'] = node['vars'][i].__props;
         temp['keyId'] = _keyCount++;
-        temp['widgetKey'] = current.key;
+        temp['widget'] = current;
         current.varList.unshift(temp);
       // if (n.length >= 3 && n.substr(0, 2) == '__') {
       //     current.varList.unshift({n.substr(2) : node['vars'][n]});
@@ -63,7 +63,7 @@ function loadTree(parent, node) {
         temp['className'] = node['funcs'][i].__className;
         temp['props'] = node['funcs'][i].__props;
         temp['keyId'] = _keyCount++;
-        temp['widgetKey'] = current.key;
+        temp['widget'] = current;
         current.funcList.unshift(temp);
     }
 
@@ -147,8 +147,8 @@ function saveTree(data, node) {
         o['__value'] = node.varList[i].value;
         o['__className'] = node.varList[i].className;
         o['__props'] = node.varList[i].props;
-        o['__keyId'] = _keyCount++;
-        o['__widgetKey'] = node.varList[i].widgetKey;
+        // o['__keyId'] = _keyCount++;
+        // o['__widgetKey'] = node.varList[i].widgetKey;
         data['vars'].push(o);
     }
     // data['vars'] = o;
@@ -162,8 +162,8 @@ function saveTree(data, node) {
         o['__value'] = node.funcList[i].value;
         o['__className'] = node.funcList[i].className;
         o['__props'] = node.funcList[i].props;
-        o['__keyId'] = _keyCount++;
-        o['__widgetKey'] = node.varList[i].widgetKey;
+        // o['__keyId'] = _keyCount++;
+        // o['__widgetKey'] = node.varList[i].widgetKey;
         data['funcs'].push(o);
     }
     // data['funcs'] = o;
@@ -600,9 +600,8 @@ export default Reflux.createStore({
     },
     selectFunction: function (data) {
         if (data!=null) {
-            // TODO: 重选widget
+            this.selectWidget(data.widget);
             this.currentFunction = data;
-            this.currentFunction['widget'] = this.currentWidget;
             bridge.selectWidget(this.currentWidget.node);
         } else {
             this.currentFunction = null;
@@ -620,7 +619,7 @@ export default Reflux.createStore({
             func['props'] = {};
             func['props']['name'] = 'function' + (this.currentWidget['funcList'].length + 1);
             func['keyId'] = _keyCount++;
-            func['widgetKey'] = this.currentWidget.key;
+            func['widget'] = this.currentWidget;
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
@@ -644,7 +643,7 @@ export default Reflux.createStore({
             vars['props'] = {};
             vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
             vars['keyId'] = _keyCount++;
-            vars['widgetKey'] = this.currentWidget.key;
+            vars['widget'] = this.currentWidget;
             this.currentWidget['varList'].unshift(vars);
         }
         this.trigger({redrawTree: true});
