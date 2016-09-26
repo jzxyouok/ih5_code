@@ -70,7 +70,7 @@ class NavBar extends React.Component {
 
     onStatusChange(widget) {
         if (widget.classList !== undefined) {
-            console.log(widget);
+            //console.log(widget);
             this.setState({classList: widget.classList});
         }
     }
