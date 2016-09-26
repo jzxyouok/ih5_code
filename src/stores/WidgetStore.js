@@ -560,7 +560,6 @@ export default Reflux.createStore({
           prevNewObj =cpJson(newObj);
       }
 
-
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;
@@ -577,23 +576,23 @@ export default Reflux.createStore({
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
         }
-        this.render();
         this.trigger({redrawTree: true});
+        this.render();
     },
     removeEventTree: function() {
         if (this.currentWidget) {
             this.currentWidget.props['eventTree'] = undefined;
             this.currentWidget.props['enableEventTree'] = undefined;
         }
-        this.render();
         this.trigger({redrawTree: true});
+        this.render();
     },
     enableEventTree: function () {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
         }
-        this.render();
         this.trigger({redrawTree: true});
+        this.render();
     },
     activeEventTree: function (nid) {
         //激活事件树，无则为
