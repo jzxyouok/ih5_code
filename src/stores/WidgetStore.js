@@ -20,6 +20,13 @@ var dragTag;
 
 var copyObj = {};
 
+function isEmptyString( str ){
+    if ( str == "" ) return true;
+    var regu = "^[ ]+$";
+    var re = new RegExp(regu);
+    return re.test(str);
+}
+
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
 
@@ -719,13 +726,13 @@ export default Reflux.createStore({
     changeName: function (type) {
         switch (type){
             case 'func':
-                if(this.currentFunction&&!(this.currentFunction.name.replace(/(^s*)|(s*$)/g, "").length === 0)){
+                if(this.currentFunction&&!isEmptyString(this.currentFunction.name)){
                     this.currentFunction.props.name = this.currentFunction.name;
                     this.trigger({redrawTree: true});
                 }
                 break;
             case 'var':
-                if(this.currentVariable&&!(this.currentVariable.name.replace(/(^s*)|(s*$)/g, "").length === 0)) {
+                if(this.currentVariable&&!isEmptyString(this.currentVariable.name)) {
                     this.currentVariable.props.name = this.currentVariable.name;
                     this.trigger({redrawTree: true});
                 }

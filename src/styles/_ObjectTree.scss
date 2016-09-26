@@ -189,18 +189,21 @@
             //}
             .var-str-icon {
                 width: 18px;
+                min-width: 18px;
                 height: 14px;
                 margin-left: 11px;
                 background: url("img/object-tree.svg") no-repeat -920px 0px;
             }
             .var-num-icon {
                 width: 18px;
+                min-width: 18px;
                 height: 14px;
                 margin-left: 11px;
                 background: url("img/object-tree.svg") no-repeat -960px 0px;
             }
             .func-icon {
                 width: 18px;
+                min-width: 18px;
                 height: 14px;
                 margin-left: 11px;
                 background: url("img/object-tree.svg") no-repeat -760px 0;
@@ -208,6 +211,10 @@
             .var-name-wrap,
             .func-name-wrap {
                 margin: 0 0 0 9px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                width: 100%;
             }
         }
 
