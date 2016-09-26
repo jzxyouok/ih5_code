@@ -4,19 +4,17 @@ import {Form, Input} from 'antd';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
-var CodeMirror = require('codemirror/CodeMirror');
-
 const FormItem = Form.Item;
 
-class FunctionView extends React.Component {
+class VariableView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             minSize: false,
             nid: null,
-            // func: null,
             name: '',
-            value: ''
+            value: '',
+            type: '',
         };
 
         this.toggle = this.toggle.bind(this);
@@ -41,13 +39,13 @@ class FunctionView extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.selectFunction) {
+        if(widget.selectVariable) {
             this.setState({
                 minSize: false,
-                nid: widget.selectFunction.key,
-                // func: widget.selectFunction,
-                name: widget.selectFunction.name,
-                value: widget.selectFunction.value
+                nid: widget.selectVariable.key,
+                name: widget.selectVariable.name,
+                value: widget.selectVariable.value,
+                type: widget.selectVariable.type
             });
         }
     }
@@ -59,31 +57,39 @@ class FunctionView extends React.Component {
             })
         } else if(type === 'value') {
             this.setState({
-                value: v
+                value: v.target.value
+            })
+        } else if(type === 'type') {
+            this.setState({
+                type: v.target.value
             })
         }
     }
 
     endEdit(type, v) {
         if(type === 'name') {
-            WidgetActions['changeFunction']({'name': this.state.name});
+            WidgetActions['changeVariable']({'name': this.state.name});
         } else if(type === 'value') {
             if(v === false){
-                WidgetActions['changeFunction']({'value': this.state.value});
+                WidgetActions['changeVariable']({'value': this.state.value});
+            }
+        } else if(type === 'type') {
+            if(v === false){
+                WidgetActions['changeVariable']({'type': this.state.value});
             }
         }
     }
 
     render() {
-        return <div id="FunctionView"
+        return <div id="VariableView"
                     className={$class({'keep':this.state.minSize}, {'hidden':this.props.isHidden})}
                     style={{ left : this.props.expanded? '65px':'37px'}}>
-            <div id='FunctionViewHeader' className="f--hlc">
-                <span className="flex-1">函数</span>
+            <div id='VariableViewHeader' className="f--hlc">
+                <span className="flex-1">变量</span>
                 <button className='btn btn-clear' title='收起' onClick={this.toggle}/>
             </div>
-            <div id='FunctionViewBody' className="clearfix">
-                <div className="function-body-layer">
+            <div id='VariableViewBody' className="clearfix">
+                <div className="variable-body-layer">
                     <Form>
                         <FormItem label="名称">
                             <Input type="text" size="large" placeholder="请输入名称"
@@ -91,12 +97,9 @@ class FunctionView extends React.Component {
                                    onBlur={this.endEdit.bind(this, 'name')}
                                    value={this.state.name}/>
                         </FormItem>
-                        <FormItem label="函数体" className="function-body">
-                            <CodeMirror options={{'lineNumbers': true}}
-                                        onChange={this.onEditChange.bind(this, 'value')}
-                                        onFocusChange={this.endEdit.bind(this, 'value')}
-                                        nid={this.state.nid}
-                                        value={this.state.value} />
+                        <FormItem label="类别">
+                        </FormItem>
+                        <FormItem label="值">
                         </FormItem>
                     </Form>
                 </div>
@@ -105,4 +108,4 @@ class FunctionView extends React.Component {
     }
 }
 
-module.exports = FunctionView;
+module.exports = VariableView;

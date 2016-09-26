@@ -24,7 +24,7 @@ class ObjectView extends React.Component {
             width : null,
             parentID : null,
             parentData : null,
-            currentWidget : null,
+            currentNode : null, //当前的节点，可以为function，widget或variable
             canLock: false, //是否可有锁
             locked: false,  //是否已锁
             canHaveEventTree: false,    //是否可有事件树
@@ -57,7 +57,7 @@ class ObjectView extends React.Component {
         //获取选中图层的父级id
         if(widget.selectWidget){
             this.setState({
-                currentWidget : widget.selectWidget,
+                currentNode : widget.selectWidget,
                 enableContainer: checkChildClass(widget.selectWidget, 'container')
             });
             if(widget.selectWidget.parent){
@@ -68,9 +68,22 @@ class ObjectView extends React.Component {
             }
             this.onInitLock(widget.selectWidget);
             this.onInitHasEventTree(widget.selectWidget);
-        }
 
-        if(widget.activeEventTreeKey) {
+        } else if (widget.selectFunction) {
+            this.setState({
+                currentNode : widget.selectFunction,
+                enableContainer: checkChildClass(widget.selectFunction, 'container')
+            });
+            this.onInitLock(widget.selectFunction);
+            this.onInitHasEventTree(widget.selectFunction);
+        } else if (widget.selectVariable) {
+            this.setState({
+                currentNode : widget.selectVariable,
+                enableContainer: checkChildClass(widget.selectVariable, 'container')
+            });
+            this.onInitLock(widget.selectVariable);
+            this.onInitHasEventTree(widget.selectVariable);
+        } else if(widget.activeEventTreeKey) {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
@@ -80,10 +93,10 @@ class ObjectView extends React.Component {
     onInitHasEventTree(selectWidget){
         let hasEventTree = false;
         let canHaveEventTree = true;
-        // if(selectWidget.className === 'root') {
-        //     canHaveEventTree = false;
-        //     hasEventTree = false;
-        // } else
+        if(selectWidget.className === 'func'|| selectWidget.className === 'var') {
+            canHaveEventTree = false;
+            hasEventTree = false;
+        } else
         if (selectWidget.props.eventTree) {
             hasEventTree = true;
         }
@@ -95,7 +108,7 @@ class ObjectView extends React.Component {
 
     onInitLock(selectWidget) {
         let canLock = false;
-        if(selectWidget.className === 'root') {
+        if(selectWidget.className === 'root'||selectWidget.className === 'func'|| selectWidget.className === 'var') {
             canLock = false;
         } else {
             canLock = true;
@@ -133,8 +146,11 @@ class ObjectView extends React.Component {
     delete(){
         if(this.state.activeEventTreeKey != null) {
             WidgetActions['removeEventTree']();
-            WidgetActions['selectWidget'](this.state.currentWidget);
-            WidgetActions['activeEventTree'](null);
+            WidgetActions['selectWidget'](this.state.currentNode);
+        } else if(this.state.currentNode.className == 'func'){
+            WidgetActions['removeFunction'](this.state.currentNode);
+        } else if(this.state.currentNode.className == 'var') {
+            WidgetActions['removeVariable'](this.state.currentNode);
         } else {
             WidgetActions['removeWidget']();
             this.refs.ObjectTree.chooseBtn(this.state.parentID, this.state.parentData);

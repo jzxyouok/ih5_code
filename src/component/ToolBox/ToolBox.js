@@ -51,6 +51,10 @@ class ToolBox extends Component {
         //检查元素并更新enable字段
         if(widget.selectWidget){
             ToolBoxStore['changeToolBoxItems'](widget.selectWidget);
+        } else if(widget.selectFunction) {
+            ToolBoxStore['changeToolBoxItems'](widget.selectFunction);
+        } else if(widget.selectVariable) {
+            ToolBoxStore['changeToolBoxItems'](widget.selectVariable);
         }
     }
 

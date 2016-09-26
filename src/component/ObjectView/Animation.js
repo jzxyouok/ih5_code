@@ -6,7 +6,8 @@ import WidgetStore from '../../stores/WidgetStore';
 import {checkChildClass} from '../PropertyMap';
 
 const animationData = [
-    {name:'变量', class:'var-btn', className:'var', disabled:false, param:{key:'', value:''}},
+    {name:'数字变量', class:'var-num-btn', className:'var', disabled:false, param:{name:'', value:'', type:'number'}},
+    {name:'文本变量', class:'var-str-btn', className:'var', disabled:false, param:{name:'', value:'', type:'string'}},
     {name:'函数', class:'func-btn', className:'func', disabled:false, param:{key:'',value:''}},
     {name:'轨迹', class:'locus-btn', className:'track', disabled:false},
     {name:'缓动', class:'easing-btn', className:'easing', disabled:false},
@@ -20,6 +21,7 @@ class Animation extends React.Component {
             data: animationData
         };
         this.onStatusChange = this.onStatusChange.bind(this);
+        this.checkAnimationEnable = this.checkAnimationEnable.bind(this);
         this.addWidgetBtn = this.addWidgetBtn.bind(this);
     }
 
@@ -35,32 +37,46 @@ class Animation extends React.Component {
     onStatusChange(widget) {
         //是否选中图层或者舞台上的组件
         if(widget.selectWidget){
-            //过滤可选的功能组件
-            let data = animationData;
-            for(let i = 0; i<data.length; i++) {
-                if(data[i].className === 'func') {
-                    data[i].disabled = false;
-                } else if((data[i].className === 'var')
-                    &&(widget.selectWidget.className !== 'twodvar'&&
-                        widget.selectWidget.className !== 'counter')) {
-                    data[i].disabled = false;
-                } else {
-                    if (checkChildClass(widget.selectWidget, data[i].className)) {
-                        data[i].disabled = false;
-                    } else {
-                        data[i].disabled = true;
-                    }
-                }
-            }
-            this.setState({
-                data: data
-            });
+            this.checkAnimationEnable(widget.selectWidget);
+        } else if (widget.selectFunction) {
+            this.checkAnimationEnable(widget.selectFunction);
+        } else if (widget.selectVariable) {
+            this.checkAnimationEnable(widget.selectVariable);
         }
     }
 
-    addWidgetBtn(className,param){
-        if(className == 'func') {
+    checkAnimationEnable(widget) {
+        //过滤可选的功能组件
+        let data = animationData;
+        for(let i = 0; i<data.length; i++) {
+            if(data[i].className === 'func'&&
+                (widget.className !== 'func'&&
+                widget.className !== 'var')) {
+                data[i].disabled = false;
+            } else if((data[i].className === 'var')
+                &&(widget.className !== 'twodvar'&&
+                widget.className !== 'counter' &&
+                widget.className !== 'func' &&
+                widget.className !== 'var')) {
+                data[i].disabled = false;
+            } else {
+                if (checkChildClass(widget, data[i].className)) {
+                    data[i].disabled = false;
+                } else {
+                    data[i].disabled = true;
+                }
+            }
+        }
+        this.setState({
+            data: data
+        });
+    };
+
+    addWidgetBtn(className, param){
+        if(className === 'func') {
             WidgetActions['addFunction'](className, param);
+        } else if(className === 'var') {
+            WidgetActions['addVariable'](className, param);
         } else {
             WidgetActions['addWidget'](className, param);
         }

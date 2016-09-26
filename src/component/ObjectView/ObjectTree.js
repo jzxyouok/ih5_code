@@ -38,6 +38,10 @@ class ObjectTree extends React.Component {
         this.itemKeyAction = this.itemKeyAction.bind(this);
         this.itemPaste = this.itemPaste.bind(this);
 
+        //函数相关
+        this.funcBtn = this.funcBtn.bind(this);
+        this.varBtn = this.varBtn.bind(this);
+
         this.startEditObjName = this.startEditObjName.bind(this);
         this.endEditObjName = this.endEditObjName.bind(this);
         this.editStopPropagation = this.editStopPropagation.bind(this);
@@ -87,24 +91,36 @@ class ObjectTree extends React.Component {
             this.forceUpdate();
         }
 
-        else if(widget.selectWidget){
+        else if(widget.selectWidget || widget.selectFunction || widget.selectVariable){
             //触发失焦
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
             }
-            this.setState({
-                selectWidget : widget.selectWidget
-                , nid : widget.selectWidget.key
-            });
-            this.addOpenId();
+
+            if(widget.selectWidget){
+                this.setState({
+                    selectWidget : widget.selectWidget
+                    , nid : widget.selectWidget.key
+                });
+                this.addOpenId();
+            } else if (widget.selectFunction) {
+                this.setState({
+                    selectWidget: null,
+                    nid: widget.selectFunction.key
+                });
+            } else if (widget.selectVariable) {
+                this.setState({
+                    selectWidget: null,
+                    nid: widget.selectVariable.key
+                });
+            }
+
             //触发聚焦
             if(document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).focus();
             }
-        }
-
-        //激活对象key对应对象的事件树
-        if(widget.activeEventTreeKey) {
+        } else if(widget.activeEventTreeKey) {
+            //激活对象key对应对象的事件树
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
@@ -209,7 +225,6 @@ class ObjectTree extends React.Component {
             editMode: false
         },()=>{
             WidgetActions['selectWidget'](data, true);
-            WidgetActions['activeEventTree'](null);
         });
     }
 
@@ -272,6 +287,26 @@ class ObjectTree extends React.Component {
                 WidgetActions['activeEventTree'](nid);
             }
         }
+    }
+
+    funcBtn(nid, data) {
+        this.setState({
+            nid : nid,
+            editMode: false
+        },()=>{
+            WidgetActions['selectWidget'](data.widget, true);
+            WidgetActions['selectFunction'](data);
+        });
+    }
+
+    varBtn(nid, data) {
+        this.setState({
+            nid : nid,
+            editMode: false
+        },()=>{
+            WidgetActions['selectWidget'](data.widget, true);
+            WidgetActions['selectVariable'](data);
+        });
     }
 
     startEditObjName(id, data, event) {
@@ -482,8 +517,10 @@ class ObjectTree extends React.Component {
 
         let funcList = (data, num)=> {
             let content = data.map((item, i)=> {
-                return <div className="func-title-wrap" key={i}>
-                    <div className={$class('func-title f--h f--hlc')}
+                return <div className={"func-title-wrap clearfix"} key={i}>
+                    <div className={$class('func-title f--h f--hlc',
+                         {'active': item.key === this.state.nid})}
+                         onClick={this.funcBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className='func-icon' />
                         <div className='func-name-wrap'>
@@ -491,6 +528,30 @@ class ObjectTree extends React.Component {
                         </div>
                     </div>
                     <div className={$class('item-event')}>
+                        <div className={$class('item-event-empty',{'active': item.key === this.state.nid})}
+                             onClick={this.funcBtn.bind(this, item.key, item)}></div>
+                    </div>
+                </div>
+            });
+            return content
+        };
+
+        let varList = (data, num)=> {
+            let content = data.map((item, i)=> {
+                return <div className="var-title-wrap clearfix" key={i}>
+                    <div className={$class('func-title f--h f--hlc',
+                        {'active': item.key === this.state.nid})}
+                         onClick={this.varBtn.bind(this, item.key, item)}
+                         style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
+                        <span className={$class({'var-num-icon': item.type==='number'},
+                            {'var-str-icon': item.type==='string'})} />
+                        <div className='var-name-wrap'>
+                            <p>{ item.props.name }</p>
+                        </div>
+                    </div>
+                    <div className={$class('item-event')}>
+                        <div className={$class('item-event-empty',{'active': item.key === this.state.nid})}
+                             onClick={this.varBtn.bind(this, item.key, item)}></div>
                     </div>
                 </div>
             });
@@ -537,15 +598,15 @@ class ObjectTree extends React.Component {
             });
             return  <div className='item'
                          key={i}
-                         id={'tree-item-'+ v.key}
                          data-keyId={i}
-                         tabIndex={v.key}
                          draggable='true'
-                         onFocus={this.itemAddKeyListener.bind(this)}
-                         onBlur={this.itemRemoveKeyListener.bind(this)}
                          onDragStart={this.itemDragStart.bind(this,v.key, v)}
                          onDragEnd={this.itemDragEnd}>
-                <div className='item-title-wrap clearfix'>
+                <div className='item-title-wrap clearfix'
+                     id={'tree-item-'+ v.key}
+                     tabIndex={v.key}
+                     onFocus={this.itemAddKeyListener.bind(this)}
+                     onBlur={this.itemRemoveKeyListener.bind(this)}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
                          onClick={this.chooseBtn.bind(this,v.key, v)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
@@ -562,6 +623,8 @@ class ObjectTree extends React.Component {
 
                         {
                             v.children.length > 0
+                            ||v.funcList.length > 0
+                            ||v.varList.length > 0
                                 ? icon( 1 , v.key)
                                 : icon( 0 , v.key)
                         }
@@ -585,9 +648,22 @@ class ObjectTree extends React.Component {
                         {
                             v.props.eventTree
                                 ? enableEventTreeBtn(v.key, v)
-                                : null
+                                : <div className={$class('item-event-empty',{'active': v.key === this.state.nid})}
+                                       onClick={this.chooseBtn.bind(this,v.key, v)}></div>
                         }
                     </div>
+                </div>
+                <div className={$class('item-var-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                    {v.varList.length === 0
+                        ? null
+                        : varList(v.varList, num+1)
+                    }
+                </div>
+                <div className={$class('item-function-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                    {v.funcList.length === 0
+                        ? null
+                        : funcList(v.funcList, num+1)
+                    }
                 </div>
                 <div className={$class({'hidden': this.state.openData.indexOf(v.key) < 0 }) }>
                     {
@@ -616,6 +692,8 @@ class ObjectTree extends React.Component {
                                 { btn(-1, objectData.tree) }
                                 {
                                     objectData.tree.children.length > 0
+                                    ||objectData.tree.funcList.length > 0
+                                    ||objectData.tree.varList.length > 0
                                         ? icon( 1 , objectData.tree.key)
                                         : icon( 0 , objectData.tree.key)
                                 }
@@ -628,17 +706,24 @@ class ObjectTree extends React.Component {
                                 {
                                     objectData.tree.props.eventTree
                                         ? enableEventTreeBtn(objectData.tree.key, objectData.tree)
-                                        : null
+                                        : <div className={$class('item-event-empty',{'active': objectData.tree.key === this.state.nid})}
+                                               onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}></div>
                                 }
                             </div>
                         </div>
-                        <div className={$class('item-function-content')}>
+                        <div className={$class('stage-var-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}>
+                            {objectData.tree.varList.length === 0
+                                ? null
+                                : varList(objectData.tree.varList, 1)
+                            }
+                        </div>
+                        <div className={$class('stage-function-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}>
                             {objectData.tree.funcList.length === 0
                                 ? null
                                 : funcList(objectData.tree.funcList, 1)
                             }
                         </div>
-                        <div className={$class('stage-content', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}
+                        <div className={$class('stage-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}
                              onDragOver={this.itemDragOver}>
                             {
                                 objectData.tree.children.length === 0
