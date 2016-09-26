@@ -29,6 +29,23 @@ app.get('/ih5core.js', function(req, res) {
   res.sendFile(path.join(__dirname, 'ih5core.js'));
 });
 
+app.get('/ih5core.js', function(req, res) {
+  res.sendFile(path.join(__dirname, 'ih5core.js'));
+});
+
+//codr mirror
+app.get('/codemirror.min.js', function(req, res) {
+  res.sendFile(path.join(__dirname, 'lib', 'codemirrorLib', 'codemirror.min.js'));
+});
+
+app.get('/codemirror.min.css', function(req, res) {
+  res.sendFile(path.join(__dirname, 'lib', 'codemirrorLib', 'codemirror.min.css'));
+});
+
+app.get('/javascript.min.js', function(req, res) {
+  res.sendFile(path.join(__dirname, 'lib', 'codemirrorLib', 'javascript.min.js'));
+});
+
 route(app);
 
 app.listen(process.env.PORT || 10000, 'localhost');

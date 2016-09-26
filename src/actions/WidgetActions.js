@@ -29,6 +29,7 @@ export default Reflux.createActions([
   'addVariable',                  //添加变量
   'changeVariable',               //添加变量
   'removeVariable',               //添加变量
+  'changeName',                   //修改名字(暂时可以用作函数和变量的名字修改)
   'resetTrack',
   'syncTrack',
   'deletePoint',
