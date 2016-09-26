@@ -101,10 +101,10 @@
                 }
             }
 
-            .dropDown-btn {
+            .dropDown-btn ,
+            .dropDown-btn2 {
                 position: relative;
                 height: 36px;
-
                 .btn {
                     &:hover , &:active{
                         background: #1b1b1b;
@@ -113,17 +113,184 @@
                 }
 
                 &:hover .dropDownToggle{
-                    height: 330px;
-                    transition: 1s;
+                    transition: 500ms;
                 }
 
                 .dropDownToggle{
                     position: absolute;
                     top: 36px;
+                    z-index: 98;
+                    overflow: hidden;
+                }
+            }
+
+            .dropDown-btn{
+                &:hover {
+                    &:before{
+                        display: block;
+                    }
+
+                    .dropDownToggle{
+                        height: 183px;
+                    }
+                }
+
+                &:before{
+                    @include triangle(24px, #454545 ,up);
+                    content: "";
+                    position: absolute;
+                    top: 19px;
+                    left: 23px;
                     z-index: 99;
+                    display: none;
+                }
+
+                .dropDownToggle{
+                    @include border-radius(2px);
+                    @include shadow(0,5px,20px,0.3);
+                    top: 42px;
+                    left: -38px;
+                    width: 375px;
+                    height: 0;
+                    background: #454545;
+                    padding: 0 8px;
+                }
+
+                .dropDown-title {
+                    height: 29px;
+                    font-size: 12px;
+                    color: #b5b5b5;
+
+                    .set-btn {
+                        width: 20px;
+                        height: 20px;
+                        display: block;
+                        cursor: pointer;
+                        background: url("img/button-icon.svg") no-repeat -160px -200px;
+
+                        &:hover { background-position: -160px -280px;}
+                        &:active { background-position: -160px -320px;}
+                    }
+                }
+
+                .dropDown-main {
+                    position: relative;
+                    width: 100%;
+                    height: 146px;
+                    background: #383838;
+                    border: 1px solid #272727;
+                    overflow: hidden;
+                }
+
+                .dropDown-scroll {
+                    position: absolute;
+                    left: 0;
+                    right: -20px;
+                    height: 146px;
+                    overflow: scroll;
+                    overflow-x: hidden;
+                }
+
+                .dropDown-content{
+                    width: 356px;
+                    margin: 0;
+                    padding: 0;
+                    clear: both;
+
+                    li{
+                        width: 119px;
+                        height: 29px;
+                        border-right: 1px solid #292929;
+                        border-bottom: 1px solid #292929;
+                        cursor: pointer;
+                        float: left;
+
+                        &:nth-child(3n){
+                            width: 118px;
+                            border-right: none;
+                        }
+
+                        .title{
+                            height: 28px;
+                        }
+
+                        .title:hover {
+                            color: #fff;
+                        }
+
+                        .title:active {
+                            background: #232323;
+                            color: #b5b5b5;
+                        }
+
+                        &.not-active:active{
+                            background: none;
+                        }
+
+                        &.add-btn {
+                            &:hover .icon span{background: #fff;}
+
+                            &:active {
+                                background: #232323;
+                                .icon span{ background: #b5b5b5;}
+                            }
+
+                            .icon{
+                                position: relative;
+                                width: 14px;
+                                height: 14px;
+
+                                span{
+                                    position: absolute;
+                                    background: #151515;
+                                }
+
+                                .heng{
+                                    left: 0;
+                                    top: 6px;
+                                    width: 14px;
+                                    height: 2px;
+                                }
+
+                                .shu {
+                                    left: 6px;
+                                    top: 0;
+                                    width: 2px;
+                                    height: 14px;
+                                }
+                            }
+                        }
+
+                        .li-icon {
+                            width: 24px;
+                            height: 24px;
+                            background: url("img/button-icon.svg") no-repeat -400px -280px;
+                            display: block;
+                            margin: 0 2px 0 1px;
+                        }
+
+                        .title:hover .li-icon{ background-position: -400px -240px; }
+                        .title:active .li-icon{ background-position: -400px -200px; }
+
+                        .edit-btn {
+                            width: 20px;
+                            height: 28px;
+                            background: url("img/button-icon.svg") no-repeat -600px -200px;
+                            &:hover{ background-position: -600px -280px; }
+                            &:active{ background-position: -600px -240px; }
+                        }
+                    }
+                }
+            }
+
+            .dropDown-btn2 {
+                &:hover .dropDownToggle{
+                    height: 330px;
+                }
+
+                .dropDownToggle{
                     width: 120px;
                     height: 0;
-                    overflow: hidden;
 
                     ul{
                         position: absolute;

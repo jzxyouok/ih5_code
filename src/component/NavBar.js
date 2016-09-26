@@ -26,7 +26,8 @@ class NavBar extends React.Component {
             workList:[],
             classList:[],
             fontList:[],
-            dropDownState : 0
+            dropDownState : 0,
+            addClassData : []
             //, zoomInputState: 0
         };
 
@@ -44,7 +45,7 @@ class NavBar extends React.Component {
 
         this.token = null;
         this.playUrl = null;
-        var name = Cookies.get('ih5token')
+        var name = Cookies.get('ih5token');
         //console.log(name);
         if (name) {
             this.state.loginVisible = false;
@@ -249,6 +250,32 @@ class NavBar extends React.Component {
 
     render() {
         //console.log(this.state.workList);
+        let moduleFuc = (num)=>{
+            let a = 14 - num;
+            let fuc = [];
+            if(a >= 0){
+                for(let index = 0; index < a; index++){
+                    fuc[index] = index;
+                }
+            }
+            if(a < 0){
+                let b = num % 3;
+                if(3-b == 0){
+                    return;
+                }
+                else{
+                    for(let index = 0; index < 3-b; index++){
+                        fuc[index] = index;
+                    }
+                }
+            }
+            return fuc.map((v,i)=>{
+                return <li key={i} className="not-active"> </li>
+            })
+        };
+
+
+
         return (
             <div className='NavBar f--h'>
                 <div className='nb--left f--h'>
@@ -267,11 +294,47 @@ class NavBar extends React.Component {
                             <span className="title">模板</span>
                         </button>
 
-                        <div className='dropDown-btn f--hlc'>
+                        <div className='dropDown-btn module-dropDown f--hlc'>
                             <button className='btn btn-clear module-btn' title='组件'>
                                 <span className="icon" />
                                 <span className="title">组件</span>
                             </button>
+
+                            <div className='dropDownToggle'>
+                                <div className="dropDown-title f--hlc">
+                                    <span className="flex-1">全部组件：</span>
+                                    <span className="set-btn" />
+                                </div>
+
+                                <div className="dropDown-main">
+                                    <div className="dropDown-scroll">
+                                        <ul className="dropDown-content">
+                                            {
+                                                this.state.addClassData.length > 0
+                                                ? this.state.addClassData.map((v,i)=>{
+                                                    return  <li className="f--hlc" key={i}>
+                                                                <div className="flex-1 f--hlc title">
+                                                                    <span className="li-icon" />
+                                                                    <span className="flex-1">{v}</span>
+                                                                </div>
+                                                                <span className="edit-btn" />
+                                                            </li>
+                                                  })
+                                                : null
+                                            }
+                                            <li className="add-btn f--hcc">
+                                                <div className="icon">
+                                                    <span className="heng" />
+                                                    <span className="shu" />
+                                                </div>
+                                            </li>
+                                            {
+                                                moduleFuc(this.state.addClassData.length)
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className='dropDown-btn f--hlc'>
@@ -295,7 +358,7 @@ class NavBar extends React.Component {
                             </button>
                         </div>
 
-                        <div className='dropDown-btn dropDown-btn2 f--hlc'>
+                        <div className='dropDown-btn2 f--hlc'>
                             <button className='btn btn-clear open-btn' title='作品' >
                                 <span className="icon" />
                                 <span className="title">作品</span>

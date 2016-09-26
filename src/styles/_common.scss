@@ -147,3 +147,13 @@
         clear: both;
     }
 }
+
+/******************* 阴影 **************************/
+// 阴影
+@mixin shadow($size, $size1, $size3, $alpha) {
+    box-shadow: $size $size1 $size3 0 rgba(0, 0, 0, $alpha);
+    -webkit-box-shadow: $size $size1 $size3 0 rgba(0, 0, 0, $alpha);
+    -moz-box-shadow: $size $size1 $size3 0 rgba(0, 0, 0, $alpha);
+    -ms-box-shadow: $size $size1 $size3 0 rgba(0, 0, 0, $alpha);
+    -o-box-shadow: $size $size1 $size3 0 rgba(0, 0, 0, $alpha);
+}
