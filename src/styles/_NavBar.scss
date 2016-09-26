@@ -2,11 +2,10 @@
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 99;
+    z-index: 100;
     width: 100%;
     height: 36px;
     background: #353535;
-    z-index:51;
 
     .nb--left {
         .import {
@@ -131,7 +130,7 @@
                     }
 
                     .dropDownToggle{
-                        height: 183px;
+                        height: 189px;
                     }
                 }
 
@@ -148,10 +147,18 @@
                 .dropDownToggle{
                     @include border-radius(2px);
                     @include shadow(0,5px,20px,0.3);
-                    top: 42px;
+                    top: 36px;
                     left: -38px;
                     width: 375px;
                     height: 0;
+                    padding-top: 6px;
+                }
+
+                .dropDownToggle-main {
+                    @include border-radius(2px);
+                    @include shadow(0,5px,20px,0.3);
+                    width: 375px;
+                    height: 183px;
                     background: #454545;
                     padding: 0 8px;
                 }
@@ -271,6 +278,13 @@
 
                         .title:hover .li-icon{ background-position: -400px -240px; }
                         .title:active .li-icon{ background-position: -400px -200px; }
+
+                        .TitleName {
+                            max-width: 60px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            white-space: nowrap;
+                        }
 
                         .edit-btn {
                             width: 20px;
