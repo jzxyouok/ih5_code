@@ -306,7 +306,7 @@ class ObjectTree extends React.Component {
             nid : nid,
             editMode: false
         },()=>{
-            WidgetActions['selectWidget'](data.widget, true);
+            WidgetActions['selectWidget'](data.widget, false);
             WidgetActions['selectFunction'](data);
         });
     }
@@ -316,7 +316,7 @@ class ObjectTree extends React.Component {
             nid : nid,
             editMode: false
         },()=>{
-            WidgetActions['selectWidget'](data.widget, true);
+            WidgetActions['selectWidget'](data.widget, false);
             WidgetActions['selectVariable'](data);
         });
     }

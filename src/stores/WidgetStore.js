@@ -339,7 +339,7 @@ export default Reflux.createStore({
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
-    selectWidget: function(widget) {
+    selectWidget: function(widget, shouldTrigger) {
         var render = false;
         if (widget) {
           if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -368,12 +368,15 @@ export default Reflux.createStore({
           }
         }
         this.currentWidget = widget;
-        this.trigger({selectWidget: widget});
-        //判断是否是可选择的，是否加锁
-        if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
-            bridge.selectWidget(widget.node, this.updateProperties.bind(this));
-        } else {
-            bridge.selectWidget(widget.node);
+        //是否触发（为定义或者是true就触发）
+        if(shouldTrigger===true||shouldTrigger===undefined) {
+            this.trigger({selectWidget: widget});
+            //判断是否是可选择的，是否加锁
+            if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
+                bridge.selectWidget(widget.node, this.updateProperties.bind(this));
+            } else {
+                bridge.selectWidget(widget.node);
+            }
         }
 
         if (render)
