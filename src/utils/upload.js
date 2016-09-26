@@ -25,13 +25,21 @@ var chooseFileCallback = (w)=> {  //tag
             if (w.userUpload) {
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', 'app/uploadFile');
-                if (globalToken)
+                if (globalToken){
                     xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
+                }
+
                 var form = new FormData();
                 form.append('type', w.userType);
                 form.append('file', w.files[0]);
                 xhr.send(form);
+
+                if(w.showProgress){
+                    xhr.upload.addEventListener("progress", w.showProgress, false);
+                }
+
                 xhr.onreadystatechange = function() {
+                    console.log(xhr.readyState);
                     if (xhr.readyState == 4) {
                         w.userCallback(w, xhr.responseText);
                     }
@@ -43,12 +51,13 @@ var chooseFileCallback = (w)=> {  //tag
     }
 };
 
-var chooseFile = (type, upload, callback) => {
+var chooseFile = (type, upload, callback,showProgress) => {
     var w = document.getElementById('upload-box');
     w.value = '';
     w.userType = type;
     w.userUpload = upload;
     w.userCallback = callback;
+    w.showProgress=showProgress; //显示进度条
     w.sysCallback = chooseFileCallback;
     w.click();
 };
