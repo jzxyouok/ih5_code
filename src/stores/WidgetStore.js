@@ -723,17 +723,17 @@ export default Reflux.createStore({
             }
         }
     },
-    changeName: function (type) {
+    changeName: function (type, name) {
         switch (type){
             case 'func':
-                if(this.currentFunction&&!isEmptyString(this.currentFunction.name)){
-                    this.currentFunction.props.name = this.currentFunction.name;
+                if(this.currentFunction&&!isEmptyString(name)){
+                    this.currentFunction.props.name = name;
                     this.trigger({redrawTree: true});
                 }
                 break;
             case 'var':
-                if(this.currentVariable&&!isEmptyString(this.currentVariable.name)) {
-                    this.currentVariable.props.name = this.currentVariable.name;
+                if(this.currentVariable&&!isEmptyString(name)) {
+                    this.currentVariable.props.name = name;
                     this.trigger({redrawTree: true});
                 }
                 break;

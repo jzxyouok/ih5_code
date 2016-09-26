@@ -65,7 +65,7 @@ class FunctionView extends React.Component {
     endEdit(type, v) {
         if(type === 'name') {
             WidgetActions['changeFunction']({'name': this.state.name});
-            WidgetActions['changeName']('func');
+            WidgetActions['changeName']('func', this.state.name);
         } else if(type === 'value') {
             if(v === false){
                 WidgetActions['changeFunction']({'value': this.state.value});

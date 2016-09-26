@@ -44,6 +44,7 @@ class ObjectTree extends React.Component {
 
         this.startEditObjName = this.startEditObjName.bind(this);
         this.endEditObjName = this.endEditObjName.bind(this);
+        this.endEditFuncOrVarName = this.endEditFuncOrVarName.bind(this);
         this.editStopPropagation = this.editStopPropagation.bind(this);
         this.onRename = this.onRename.bind(this);
 
@@ -309,6 +310,23 @@ class ObjectTree extends React.Component {
         });
     }
 
+    endEditFuncOrVarName(type, event){
+        event.stopPropagation();
+        this.setState({
+            editMode: false
+        });
+        if(event.target.value) {
+            switch(type){
+                case 'func':
+                    WidgetActions['changeName'](type, event.target.value);
+                case 'var':
+                    WidgetActions['changeName'](type, event.target.value);
+                default:
+                    break;
+            }
+        }
+    }
+
     startEditObjName(id, data, event) {
         event.stopPropagation();
         var editItem = document.getElementById('item-name-input-'+ id);
@@ -523,8 +541,12 @@ class ObjectTree extends React.Component {
                          onClick={this.funcBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className='func-icon' />
-                        <div className='func-name-wrap'>
-                            <p>{ item.props.name }</p>
+                        <div className='func-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
+                            <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
+                            <input id={'item-name-input-'+item.key} type="text"
+                                   onBlur={this.endEditFuncOrVarName.bind(this, 'func')}
+                                   onClick={this.editStopPropagation}
+                                   className={$class('item-name-input',{'hidden':!((item.key === this.state.nid)&&this.state.editMode)})}/>
                         </div>
                     </div>
                     <div className={$class('item-event')}>
@@ -545,8 +567,12 @@ class ObjectTree extends React.Component {
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className={$class({'var-num-icon': item.type==='number'},
                             {'var-str-icon': item.type==='string'})} />
-                        <div className='var-name-wrap'>
-                            <p>{ item.props.name }</p>
+                        <div className='var-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
+                            <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
+                            <input id={'item-name-input-'+item.key} type="text"
+                                   onBlur={this.endEditFuncOrVarName.bind(this, 'var')}
+                                   onClick={this.editStopPropagation}
+                                   className={$class('item-name-input',{'hidden':!((item.key === this.state.nid)&&this.state.editMode)})}/>
                         </div>
                     </div>
                     <div className={$class('item-event')}>

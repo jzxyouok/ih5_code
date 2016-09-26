@@ -85,7 +85,9 @@
             }
 
             .stage-name-wrap,
-            .item-name-wrap {
+            .item-name-wrap,
+            .var-name-wrap,
+            .func-name-wrap {
                 @extend %font-omitted;
                 width: 100%;
                 padding-right: 18px;
