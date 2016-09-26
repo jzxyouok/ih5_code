@@ -41,7 +41,6 @@ class DesignView extends React.Component {
 
 
     onStatusChange(widget) {
-        console.log(1);
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
 
