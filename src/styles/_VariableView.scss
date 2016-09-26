@@ -2,8 +2,9 @@
   position: fixed;
   left: 37px;
   top: 37px;
-  width: 740px;
-  bottom: 1px;
+  width: 400px;
+  //bottom: 1px;
+  //height: 600px;
   background: #232323;
   overflow: hidden;
   z-index: 50;
@@ -37,14 +38,14 @@
   #VariableViewBody {
     position: relative;
     height: 100%;
-    .function-body-layer {
-      position: absolute;
-      left: 0;
-      right: -20px;
-      top: 0;
-      bottom: 0;
-      overflow: scroll;
-    }
+    //.function-body-layer {
+    //  position: absolute;
+    //  left: 0;
+    //  right: -20px;
+    //  top: 0;
+    //  bottom: 0;
+    //  overflow: scroll;
+    //}
 
     .ant-form {
       padding: 20px;
