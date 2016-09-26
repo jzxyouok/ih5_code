@@ -81,7 +81,7 @@ export default Reflux.createStore({
             }
         }
         toolBoxConfig.data = toolBoxItem;
-        this.trigger(toolBoxConfig);
+        this.trigger(toolBoxConfig, true);
     },
 
     expandToolBox: function (expanded) {

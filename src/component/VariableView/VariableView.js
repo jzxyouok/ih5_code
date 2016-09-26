@@ -12,7 +12,7 @@ class VariableView extends React.Component {
         this.state = {
             minSize: false,
             nid: null,
-            key: '',
+            name: '',
             value: '',
             type: '',
         };
@@ -42,8 +42,8 @@ class VariableView extends React.Component {
         if(widget.selectVariable) {
             this.setState({
                 minSize: false,
-                nid: widget.selectVariable.keyId,
-                key: widget.selectVariable.key,
+                nid: widget.selectVariable.key,
+                name: widget.selectVariable.name,
                 value: widget.selectVariable.value,
                 type: widget.selectVariable.type
             });
@@ -51,9 +51,9 @@ class VariableView extends React.Component {
     }
 
     onEditChange(type, v) {
-        if(type === 'key') {
+        if(type === 'name') {
             this.setState({
-                key: v.target.value
+                name: v.target.value
             })
         } else if(type === 'value') {
             this.setState({
@@ -67,8 +67,8 @@ class VariableView extends React.Component {
     }
 
     endEdit(type, v) {
-        if(type === 'key') {
-            WidgetActions['changeVariable']({'key': this.state.key});
+        if(type === 'name') {
+            WidgetActions['changeVariable']({'name': this.state.name});
         } else if(type === 'value') {
             if(v === false){
                 WidgetActions['changeVariable']({'value': this.state.value});
@@ -93,9 +93,9 @@ class VariableView extends React.Component {
                     <Form>
                         <FormItem label="名称">
                             <Input type="text" size="large" placeholder="请输入名称"
-                                   onChange={this.onEditChange.bind(this, 'key')}
-                                   onBlur={this.endEdit.bind(this, 'key')}
-                                   value={this.state.key}/>
+                                   onChange={this.onEditChange.bind(this, 'name')}
+                                   onBlur={this.endEdit.bind(this, 'name')}
+                                   value={this.state.name}/>
                         </FormItem>
                         <FormItem label="类别">
                         </FormItem>

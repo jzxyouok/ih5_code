@@ -50,13 +50,13 @@ class Animation extends React.Component {
         for(let i = 0; i<data.length; i++) {
             if(data[i].className === 'func'&&
                 (widget.className !== 'func'&&
-                widget.className != 'vars')) {
+                widget.className !== 'var')) {
                 data[i].disabled = false;
             } else if((data[i].className === 'var')
                 &&(widget.className !== 'twodvar'&&
                 widget.className !== 'counter' &&
                 widget.className !== 'func' &&
-                widget.className != 'vars')) {
+                widget.className !== 'var')) {
                 data[i].disabled = false;
             } else {
                 if (checkChildClass(widget, data[i].className)) {

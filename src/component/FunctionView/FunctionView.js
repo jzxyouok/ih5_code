@@ -15,7 +15,7 @@ class FunctionView extends React.Component {
             minSize: false,
             nid: null,
             // func: null,
-            key: '',
+            name: '',
             value: ''
         };
 
@@ -44,18 +44,18 @@ class FunctionView extends React.Component {
         if(widget.selectFunction) {
             this.setState({
                 minSize: false,
-                nid: widget.selectFunction.keyId,
+                nid: widget.selectFunction.key,
                 // func: widget.selectFunction,
-                key: widget.selectFunction.key,
+                name: widget.selectFunction.name,
                 value: widget.selectFunction.value
             });
         }
     }
 
     onEditChange(type, v) {
-        if(type === 'key') {
+        if(type === 'name') {
             this.setState({
-                key: v.target.value
+                name: v.target.value
             })
         } else if(type === 'value') {
             this.setState({
@@ -65,8 +65,8 @@ class FunctionView extends React.Component {
     }
 
     endEdit(type, v) {
-        if(type === 'key') {
-            WidgetActions['changeFunction']({'key': this.state.key});
+        if(type === 'name') {
+            WidgetActions['changeFunction']({'name': this.state.name});
         } else if(type === 'value') {
             if(v === false){
                 WidgetActions['changeFunction']({'value': this.state.value});
@@ -87,9 +87,9 @@ class FunctionView extends React.Component {
                     <Form>
                         <FormItem label="名称">
                             <Input type="text" size="large" placeholder="请输入名称"
-                                   onChange={this.onEditChange.bind(this, 'key')}
-                                   onBlur={this.endEdit.bind(this, 'key')}
-                                   value={this.state.key}/>
+                                   onChange={this.onEditChange.bind(this, 'name')}
+                                   onBlur={this.endEdit.bind(this, 'name')}
+                                   value={this.state.name}/>
                         </FormItem>
                         <FormItem label="函数体" className="function-body">
                             <CodeMirror options={{'lineNumbers': true}}

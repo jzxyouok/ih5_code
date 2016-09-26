@@ -106,12 +106,12 @@ class ObjectTree extends React.Component {
             } else if (widget.selectFunction) {
                 this.setState({
                     selectWidget: null,
-                    nid: widget.selectFunction.keyId
+                    nid: widget.selectFunction.key
                 });
             } else if (widget.selectVariable) {
                 this.setState({
                     selectWidget: null,
-                    nid: widget.selectVariable.keyId
+                    nid: widget.selectVariable.key
                 });
             }
 
@@ -519,8 +519,8 @@ class ObjectTree extends React.Component {
             let content = data.map((item, i)=> {
                 return <div className={"func-title-wrap clearfix"} key={i}>
                     <div className={$class('func-title f--h f--hlc',
-                         {'active': item.keyId === this.state.nid})}
-                         onClick={this.funcBtn.bind(this, item.keyId, item)}
+                         {'active': item.key === this.state.nid})}
+                         onClick={this.funcBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className='func-icon' />
                         <div className='func-name-wrap'>
@@ -528,8 +528,8 @@ class ObjectTree extends React.Component {
                         </div>
                     </div>
                     <div className={$class('item-event')}>
-                        <div className={$class('item-event-empty',{'active': item.keyId === this.state.nid})}
-                             onClick={this.funcBtn.bind(this, item.keyId, item)}></div>
+                        <div className={$class('item-event-empty',{'active': item.key === this.state.nid})}
+                             onClick={this.funcBtn.bind(this, item.key, item)}></div>
                     </div>
                 </div>
             });
@@ -540,8 +540,8 @@ class ObjectTree extends React.Component {
             let content = data.map((item, i)=> {
                 return <div className="var-title-wrap clearfix" key={i}>
                     <div className={$class('func-title f--h f--hlc',
-                        {'active': item.keyId === this.state.nid})}
-                         onClick={this.varBtn.bind(this, item.keyId, item)}
+                        {'active': item.key === this.state.nid})}
+                         onClick={this.varBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className='var-icon' />
                         <div className='var-name-wrap'>
@@ -549,8 +549,8 @@ class ObjectTree extends React.Component {
                         </div>
                     </div>
                     <div className={$class('item-event')}>
-                        <div className={$class('item-event-empty',{'active': item.keyId === this.state.nid})}
-                             onClick={this.varBtn.bind(this, item.keyId, item)}></div>
+                        <div className={$class('item-event-empty',{'active': item.key === this.state.nid})}
+                             onClick={this.varBtn.bind(this, item.key, item)}></div>
                     </div>
                 </div>
             });

@@ -42,12 +42,12 @@ function loadTree(parent, node) {
   if (node['vars']) {
     for (let i = 0; i<node['vars'].length; i++) {
         let temp = {};
-        temp['key'] = node['vars'][i].__key;
+        temp['name'] = node['vars'][i].__name;
         temp['value'] = node['vars'][i].__value;
         temp['className'] = node['vars'][i].__className;
         temp['props'] = node['vars'][i].__props;
         temp['type'] = node['vars'][i].__type;
-        temp['keyId'] = _keyCount++;
+        temp['key'] = _keyCount++;
         temp['widget'] = current;
         current.varList.unshift(temp);
       // if (n.length >= 3 && n.substr(0, 2) == '__') {
@@ -59,11 +59,11 @@ function loadTree(parent, node) {
   if (node['funcs']) {
     for (let i = 0; i<node['funcs'].length; i++) {
         let temp = {};
-        temp['key'] = node['funcs'][i].__key;
+        temp['name'] = node['funcs'][i].__name;
         temp['value'] = node['funcs'][i].__value;
         temp['className'] = node['funcs'][i].__className;
         temp['props'] = node['funcs'][i].__props;
-        temp['keyId'] = _keyCount++;
+        temp['key'] = _keyCount++;
         temp['widget'] = current;
         current.funcList.unshift(temp);
     }
@@ -144,13 +144,11 @@ function saveTree(data, node) {
     data['vars'] = [];
     for (let i = node.varList.length-1; i >=0 ; i--) {
         let o = {};
-        o['__key'] = node.varList[i].key;
+        o['__name'] = node.varList[i].name;
         o['__value'] = node.varList[i].value;
         o['__className'] = node.varList[i].className;
         o['__props'] = node.varList[i].props;
         o['__type'] = node.varList[i].type;
-        // o['__keyId'] = _keyCount++;
-        // o['__widgetKey'] = node.varList[i].widgetKey;
         data['vars'].push(o);
     }
     // data['vars'] = o;
@@ -160,12 +158,10 @@ function saveTree(data, node) {
     for (let i = node.funcList.length-1; i >=0 ; i--) {
         var o = {};
       // o['__' + node.funcList[i].key] = node.funcList[i].key;
-        o['__key'] = node.funcList[i].key;
+        o['__name'] = node.funcList[i].name;
         o['__value'] = node.funcList[i].value;
         o['__className'] = node.funcList[i].className;
         o['__props'] = node.funcList[i].props;
-        // o['__keyId'] = _keyCount++;
-        // o['__widgetKey'] = node.varList[i].widgetKey;
         data['funcs'].push(o);
     }
     // data['funcs'] = o;
@@ -624,11 +620,11 @@ export default Reflux.createStore({
         if(this.currentWidget) {
             let func = {};
             func['value'] = param.value||'';
-            func['key'] = param.key||'';
+            func['name'] = param.key||'';
             func['className']  = className;
             func['props'] = {};
             func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
-            func['keyId'] = _keyCount++;
+            func['key'] = _keyCount++;
             func['widget'] = this.currentWidget;
             this.currentWidget['funcList'].unshift(func);
         }
@@ -637,8 +633,8 @@ export default Reflux.createStore({
     },
     changeFunction: function (props) {
         if(props) {
-            if(props['key']) {
-                this.currentFunction['key'] = props['key'];
+            if(props['name']) {
+                this.currentFunction['name'] = props['name'];
             } else if(props['value']) {
                 this.currentFunction['value'] = props['value'];
             }
@@ -648,7 +644,7 @@ export default Reflux.createStore({
         if(this.currentFunction) {
             let index = -1;
             for(let i=0; i<this.currentWidget.funcList.length; i++) {
-                if(this.currentFunction.widget.funcList[i].keyId == data.keyId) {
+                if(this.currentFunction.widget.funcList[i].key == data.key) {
                     index = i;
                 }
             }
@@ -673,11 +669,11 @@ export default Reflux.createStore({
         if(this.currentWidget) {
             let vars = {};
             vars['value'] = param.value||'';
-            vars['key'] = param.key||'';
+            vars['name'] = param.name||'';
             vars['className']  = className;
             vars['props'] = {};
             vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
-            vars['keyId'] = _keyCount++;
+            vars['key'] = _keyCount++;
             vars['type'] = 'NUMBER';
             vars['widget'] = this.currentWidget;
             this.currentWidget['varList'].unshift(vars);
@@ -686,8 +682,8 @@ export default Reflux.createStore({
     },
     changeVariable: function (props) {
         if(props) {
-            if(props['key']) {
-                this.currentVariable['key'] = props['key'];
+            if(props['name']) {
+                this.currentVariable['name'] = props['name'];
             } else if(props['value']) {
                 this.currentVariable['value'] = props['value'];
             } else if (props['type']) {
@@ -699,7 +695,7 @@ export default Reflux.createStore({
         if(this.currentVariable) {
             let index = -1;
             for(let i=0; i<this.currentWidget.varList.length; i++) {
-                if(this.currentVariable.widget.varList[i].keyId == data.keyId) {
+                if(this.currentVariable.widget.varList[i].key == data.key) {
                     index = i;
                 }
             }
