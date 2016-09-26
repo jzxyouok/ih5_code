@@ -742,7 +742,7 @@ class TimelineView extends React.Component {
         TimelineViewStyle['bottom'] = this.state.dragTimelineBottom;
 
         return (
-            <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode })} style={TimelineViewStyle}>
+            <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode||this.props.isHidden })} style={TimelineViewStyle}>
                 <div className="hidden">
                     <ComponentPanel ref="ComponentPanel" />
                 </div>

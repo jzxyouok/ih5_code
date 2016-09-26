@@ -40,6 +40,7 @@ class ObjectTree extends React.Component {
 
         //函数相关
         this.funcBtn = this.funcBtn.bind(this);
+        this.varBtn = this.varBtn.bind(this);
 
         this.startEditObjName = this.startEditObjName.bind(this);
         this.endEditObjName = this.endEditObjName.bind(this);
@@ -90,7 +91,7 @@ class ObjectTree extends React.Component {
             this.forceUpdate();
         }
 
-        else if(widget.selectWidget || widget.selectFunction){
+        else if(widget.selectWidget || widget.selectFunction || widget.selectVariable){
             //触发失焦
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
@@ -107,16 +108,19 @@ class ObjectTree extends React.Component {
                     selectWidget: null,
                     nid: widget.selectFunction.keyId
                 });
+            } else if (widget.selectVariable) {
+                this.setState({
+                    selectWidget: null,
+                    nid: widget.selectVariable.keyId
+                });
             }
 
             //触发聚焦
             if(document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).focus();
             }
-        }
-
-        //激活对象key对应对象的事件树
-        if(widget.activeEventTreeKey) {
+        } else if(widget.activeEventTreeKey) {
+            //激活对象key对应对象的事件树
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
@@ -292,6 +296,16 @@ class ObjectTree extends React.Component {
         },()=>{
             WidgetActions['selectWidget'](data.widget, true);
             WidgetActions['selectFunction'](data);
+        });
+    }
+
+    varBtn(nid, data) {
+        this.setState({
+            nid : nid,
+            editMode: false
+        },()=>{
+            WidgetActions['selectWidget'](data.widget, true);
+            WidgetActions['selectVariable'](data);
         });
     }
 
@@ -525,7 +539,9 @@ class ObjectTree extends React.Component {
         let varList = (data, num)=> {
             let content = data.map((item, i)=> {
                 return <div className="var-title-wrap clearfix" key={i}>
-                    <div className={$class('func-title f--h f--hlc')}
+                    <div className={$class('func-title f--h f--hlc',
+                        {'active': item.keyId === this.state.nid})}
+                         onClick={this.varBtn.bind(this, item.keyId, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className='var-icon' />
                         <div className='var-name-wrap'>
@@ -534,7 +550,7 @@ class ObjectTree extends React.Component {
                     </div>
                     <div className={$class('item-event')}>
                         <div className={$class('item-event-empty',{'active': item.keyId === this.state.nid})}
-                             onClick={this.funcBtn.bind(this, item.keyId, item)}></div>
+                             onClick={this.varBtn.bind(this, item.keyId, item)}></div>
                     </div>
                 </div>
             });

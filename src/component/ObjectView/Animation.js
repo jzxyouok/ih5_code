@@ -39,6 +39,8 @@ class Animation extends React.Component {
             this.checkAnimationEnable(widget.selectWidget);
         } else if (widget.selectFunction) {
             this.checkAnimationEnable(widget.selectFunction);
+        } else if (widget.selectVariable) {
+            this.checkAnimationEnable(widget.selectVariable);
         }
     }
 

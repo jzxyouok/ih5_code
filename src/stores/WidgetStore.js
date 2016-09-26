@@ -46,6 +46,7 @@ function loadTree(parent, node) {
         temp['value'] = node['vars'][i].__value;
         temp['className'] = node['vars'][i].__className;
         temp['props'] = node['vars'][i].__props;
+        temp['type'] = node['vars'][i].__type;
         temp['keyId'] = _keyCount++;
         temp['widget'] = current;
         current.varList.unshift(temp);
@@ -147,6 +148,7 @@ function saveTree(data, node) {
         o['__value'] = node.varList[i].value;
         o['__className'] = node.varList[i].className;
         o['__props'] = node.varList[i].props;
+        o['__type'] = node.varList[i].type;
         // o['__keyId'] = _keyCount++;
         // o['__widgetKey'] = node.varList[i].widgetKey;
         data['vars'].push(o);
@@ -356,6 +358,9 @@ export default Reflux.createStore({
           //取选func状态
           if(this.currentFunction!==null || this.currentFunction!==undefined) {
             this.selectFunction(null);
+          }
+          if(this.currentVariable!==null || this.currentVariable!==undefined) {
+              this.selectVariable(null);
           }
         }
         this.currentWidget = widget;
@@ -622,7 +627,7 @@ export default Reflux.createStore({
             func['key'] = param.key||'';
             func['className']  = className;
             func['props'] = {};
-            func['props']['name'] = 'function' + (this.currentWidget['funcList'].length + 1);
+            func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
             func['keyId'] = _keyCount++;
             func['widget'] = this.currentWidget;
             this.currentWidget['funcList'].unshift(func);
@@ -653,8 +658,16 @@ export default Reflux.createStore({
             }
         }
     },
-    selectVariable: function () {
-        //TODO: 选择变量
+    selectVariable: function (data) {
+        if (data!=null) {
+            //取消在canvas上的widget选择
+            bridge.selectWidget(this.currentWidget.node);
+            this.currentVariable = data;
+        } else {
+            this.currentVariable = null;
+        }
+        this.trigger({selectVariable: this.currentVariable});
+        this.render();
     },
     addVariable: function (className, param) {
         if(this.currentWidget) {
@@ -665,16 +678,36 @@ export default Reflux.createStore({
             vars['props'] = {};
             vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
             vars['keyId'] = _keyCount++;
+            vars['type'] = 'NUMBER';
             vars['widget'] = this.currentWidget;
             this.currentWidget['varList'].unshift(vars);
         }
         this.trigger({redrawTree: true});
     },
-    changeVariable: function () {
-        //TODO: 改变变量
+    changeVariable: function (props) {
+        if(props) {
+            if(props['key']) {
+                this.currentVariable['key'] = props['key'];
+            } else if(props['value']) {
+                this.currentVariable['value'] = props['value'];
+            } else if (props['type']) {
+                this.currentVariable['type'] = props['type'];
+            }
+        }
     },
-    removeVariable: function () {
-        ///TODO: 删除变量
+    removeVariable: function (data) {
+        if(this.currentVariable) {
+            let index = -1;
+            for(let i=0; i<this.currentWidget.varList.length; i++) {
+                if(this.currentVariable.widget.varList[i].keyId == data.keyId) {
+                    index = i;
+                }
+            }
+            if(index>-1){
+                this.currentWidget.varList.splice(index,1);
+                this.selectWidget(this.currentWidget);
+            }
+        }
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});

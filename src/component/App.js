@@ -12,6 +12,7 @@ import EventBox from './EventBox/_index';
 import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
 import FunctionView from './FunctionView/FunctionView';
+import VariableView from './VariableView/VariableView';
 
 import WidgetStore from '../stores/WidgetStore';
 import ToolBoxStore from '../stores/ToolBoxStore';
@@ -23,7 +24,8 @@ class App extends React.Component {
             stageZoom : 100,
             expandedToolbox: false,
             activeEventTreeKey: null,
-            activeFunc: null
+            activeFunc: null,
+            activeVar: null
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -45,16 +47,20 @@ class App extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.activeEventTreeKey) {
-            this.setState({
-                activeEventTreeKey: widget.activeEventTreeKey.key
-            })
-        }
         if(widget.selectFunction !== undefined) {
             this.setState({
                 activeFunc: widget.selectFunction
             })
+        } else if(widget.selectVariable !== undefined) {
+            this.setState({
+                activeVar: widget.selectVariable
+            })
+        } else if(widget.activeEventTreeKey) {
+            this.setState({
+                activeEventTreeKey: widget.activeEventTreeKey.key
+            })
         }
+
     }
 
     onToolBoxStatusChange(toolbox) {
@@ -106,7 +112,6 @@ class App extends React.Component {
     }
 
     render() {
-
         return (
             <div id="iH5-App">
                 <DesignView stageZoom={this.state.stageZoom} />
@@ -119,7 +124,9 @@ class App extends React.Component {
                          stageZoomLess={this.stageZoomLess} />
 
                 <PropertyView expanded={this.state.expandedToolbox}
-                              isHidden={this.state.activeEventTreeKey != null || this.state.activeFunc != null} />
+                              isHidden={this.state.activeEventTreeKey != null
+                              || this.state.activeFunc != null
+                              || this.state.activeVar != null} />
 
                 <EventBox expanded={this.state.expandedToolbox}
                           isHidden={!(this.state.activeEventTreeKey != null)} />
@@ -127,9 +134,13 @@ class App extends React.Component {
                 <FunctionView expanded={this.state.expandedToolbox}
                               isHidden={!(this.state.activeFunc != null)}/>
 
+                <VariableView expanded={this.state.expandedToolbox}
+                              isHidden={!(this.state.activeVar != null)}/>
+
                 <ObjectView />
 
-                <TimelineView isHidden={this.state.activeFunc != null}/>
+                <TimelineView isHidden={this.state.activeFunc != null
+                              || this.state.activeVar != null}/>
 
                 {
                     //<Row gutter={5}>
