@@ -580,7 +580,7 @@ export default Reflux.createStore({
             this.currentWidget.props['eventTree'] = [];
         }
         this.trigger({redrawTree: true});
-        this.render();
+        // this.render();
     },
     removeEventTree: function() {
         if (this.currentWidget) {
@@ -588,14 +588,14 @@ export default Reflux.createStore({
             this.currentWidget.props['enableEventTree'] = undefined;
         }
         this.trigger({redrawTree: true});
-        this.render();
+        // this.render();
     },
     enableEventTree: function () {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
         }
         this.trigger({redrawTree: true});
-        this.render();
+        // this.render();
     },
     activeEventTree: function (nid) {
         //激活事件树，无则为
@@ -605,7 +605,7 @@ export default Reflux.createStore({
             this.currentActiveEventTreeKey = null;
         }
         this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey}});
-        this.render();
+        // this.render();
     },
     addEvent: function () {
         //TODO: 添加事件
@@ -625,7 +625,7 @@ export default Reflux.createStore({
             this.currentFunction = null;
         }
         this.trigger({selectFunction: this.currentFunction});
-        this.render();
+        // this.render();
     },
     addFunction: function (className, param) {
         if(this.currentWidget) {
@@ -640,7 +640,7 @@ export default Reflux.createStore({
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
-        this.render();
+        // this.render();
     },
     changeFunction: function (props) {
         if(props) {
@@ -674,7 +674,7 @@ export default Reflux.createStore({
             this.currentVariable = null;
         }
         this.trigger({selectVariable: this.currentVariable});
-        this.render();
+        // this.render();
     },
     addVariable: function (className, param) {
         if(this.currentWidget) {
