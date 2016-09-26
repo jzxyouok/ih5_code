@@ -494,10 +494,11 @@ export default Reflux.createStore({
     addWidgetDefaultName: function(className, properties, valueAsTextName) {
         if (!this.currentWidget)
             return;
-        let props = cpJson(properties);
-        if(props === undefined || props === null) {
-            props = {};
+
+        if(properties === undefined || properties === null) {
+            properties = {};
         }
+        let props = cpJson(properties);
         if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
             props['name'] = props.value;
         } else {
@@ -674,7 +675,7 @@ export default Reflux.createStore({
             vars['props'] = {};
             vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
             vars['key'] = _keyCount++;
-            vars['type'] = 'NUMBER';
+            vars['type'] = param.type;
             vars['widget'] = this.currentWidget;
             this.currentWidget['varList'].unshift(vars);
         }

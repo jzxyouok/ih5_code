@@ -181,11 +181,23 @@
             .item-event {
                 height: 23px;
             }
-            .var-icon {
+            //.var-icon {
+            //    width: 18px;
+            //    height: 14px;
+            //    margin-left: 11px;
+            //    background: url("img/object-tree.svg") no-repeat -800px 0px;
+            //}
+            .var-str-icon {
                 width: 18px;
                 height: 14px;
                 margin-left: 11px;
-                background: url("img/object-tree.svg") no-repeat -800px 0px;
+                background: url("img/object-tree.svg") no-repeat -920px 0px;
+            }
+            .var-num-icon {
+                width: 18px;
+                height: 14px;
+                margin-left: 11px;
+                background: url("img/object-tree.svg") no-repeat -960px 0px;
             }
             .func-icon {
                 width: 18px;

@@ -543,7 +543,8 @@ class ObjectTree extends React.Component {
                         {'active': item.key === this.state.nid})}
                          onClick={this.varBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
-                        <span className='var-icon' />
+                        <span className={$class({'var-num-icon': item.type==='number'},
+                            {'var-str-icon': item.type==='string'})} />
                         <div className='var-name-wrap'>
                             <p>{ item.props.name }</p>
                         </div>
