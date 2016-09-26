@@ -20,6 +20,13 @@ var dragTag;
 
 var copyObj = {};
 
+function isEmptyString( str ){
+    if ( str == "" ) return true;
+    var regu = "^[ ]+$";
+    var re = new RegExp(regu);
+    return re.test(str);
+}
+
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
 
@@ -106,7 +113,6 @@ function loadTree(parent, node) {
       loadTree(current, children[i]);
     }
   }
-
   return current;
 }
 
@@ -329,9 +335,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
         this.listenTo(WidgetActions['removeVariable'], this.removeVariable);
 
+        this.listenTo(WidgetActions['changeName'], this.changeName);
+
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
-    selectWidget: function(widget) {
+    selectWidget: function(widget, shouldTrigger) {
         var render = false;
         if (widget) {
           if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -360,12 +368,15 @@ export default Reflux.createStore({
           }
         }
         this.currentWidget = widget;
-        this.trigger({selectWidget: widget});
-        //判断是否是可选择的，是否加锁
-        if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
-            bridge.selectWidget(widget.node, this.updateProperties.bind(this));
-        } else {
-            bridge.selectWidget(widget.node);
+        //是否触发（为定义或者是true就触发）
+        if(shouldTrigger===true||shouldTrigger===undefined) {
+            this.trigger({selectWidget: widget});
+            //判断是否是可选择的，是否加锁
+            if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
+                bridge.selectWidget(widget.node, this.updateProperties.bind(this));
+            } else {
+                bridge.selectWidget(widget.node);
+            }
         }
 
         if (render)
@@ -552,7 +563,6 @@ export default Reflux.createStore({
           prevNewObj =cpJson(newObj);
       }
 
-
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;
@@ -569,23 +579,23 @@ export default Reflux.createStore({
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
         }
-        this.render();
         this.trigger({redrawTree: true});
+        // this.render();
     },
     removeEventTree: function() {
         if (this.currentWidget) {
             this.currentWidget.props['eventTree'] = undefined;
             this.currentWidget.props['enableEventTree'] = undefined;
         }
-        this.render();
         this.trigger({redrawTree: true});
+        // this.render();
     },
     enableEventTree: function () {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
         }
-        this.render();
         this.trigger({redrawTree: true});
+        // this.render();
     },
     activeEventTree: function (nid) {
         //激活事件树，无则为
@@ -595,7 +605,7 @@ export default Reflux.createStore({
             this.currentActiveEventTreeKey = null;
         }
         this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey}});
-        this.render();
+        // this.render();
     },
     addEvent: function () {
         //TODO: 添加事件
@@ -615,7 +625,7 @@ export default Reflux.createStore({
             this.currentFunction = null;
         }
         this.trigger({selectFunction: this.currentFunction});
-        this.render();
+        // this.render();
     },
     addFunction: function (className, param) {
         if(this.currentWidget) {
@@ -630,7 +640,7 @@ export default Reflux.createStore({
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
-        this.render();
+        // this.render();
     },
     changeFunction: function (props) {
         if(props) {
@@ -641,11 +651,11 @@ export default Reflux.createStore({
             }
         }
     },
-    removeFunction: function (data) {
+    removeFunction: function (key) {
         if(this.currentFunction) {
             let index = -1;
             for(let i=0; i<this.currentWidget.funcList.length; i++) {
-                if(this.currentFunction.widget.funcList[i].key == data.key) {
+                if(this.currentFunction.widget.funcList[i].key == key) {
                     index = i;
                 }
             }
@@ -664,18 +674,28 @@ export default Reflux.createStore({
             this.currentVariable = null;
         }
         this.trigger({selectVariable: this.currentVariable});
-        this.render();
+        // this.render();
     },
     addVariable: function (className, param) {
         if(this.currentWidget) {
             let vars = {};
-            vars['value'] = param.value||'';
+            vars['value'] = param.value||null;
             vars['name'] = param.name||'';
             vars['className']  = className;
             vars['props'] = {};
-            vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
-            vars['key'] = _keyCount++;
             vars['type'] = param.type;
+            switch (vars['type']) {
+                case 'number':
+                    vars['props']['name'] = 'intVar' + (this.currentWidget['varList'].length + 1);
+                    break;
+                case 'string':
+                    vars['props']['name'] = 'strVar' + (this.currentWidget['varList'].length + 1);
+                    break;
+                default:
+                    vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
+                    break;
+            }
+            vars['key'] = _keyCount++;
             vars['widget'] = this.currentWidget;
             this.currentWidget['varList'].unshift(vars);
         }
@@ -687,16 +707,14 @@ export default Reflux.createStore({
                 this.currentVariable['name'] = props['name'];
             } else if(props['value']) {
                 this.currentVariable['value'] = props['value'];
-            } else if (props['type']) {
-                this.currentVariable['type'] = props['type'];
             }
         }
     },
-    removeVariable: function (data) {
+    removeVariable: function (key) {
         if(this.currentVariable) {
             let index = -1;
             for(let i=0; i<this.currentWidget.varList.length; i++) {
-                if(this.currentVariable.widget.varList[i].key == data.key) {
+                if(this.currentVariable.widget.varList[i].key == key) {
                     index = i;
                 }
             }
@@ -704,6 +722,24 @@ export default Reflux.createStore({
                 this.currentWidget.varList.splice(index,1);
                 this.selectWidget(this.currentWidget);
             }
+        }
+    },
+    changeName: function (type, name) {
+        switch (type){
+            case 'func':
+                if(this.currentFunction&&!isEmptyString(name)){
+                    this.currentFunction.props.name = name;
+                    this.trigger({redrawTree: true});
+                }
+                break;
+            case 'var':
+                if(this.currentVariable&&!isEmptyString(name)) {
+                    this.currentVariable.props.name = name;
+                    this.trigger({redrawTree: true});
+                }
+                break;
+            default:
+                break;
         }
     },
     resetTrack: function() {
@@ -716,6 +752,7 @@ export default Reflux.createStore({
       this.trigger({deletePoint: true});
     },
     initTree: function(data) {
+        console.log(data);
         classList = [];
         bridge.resetClass();
         stageTree = [];
@@ -742,11 +779,32 @@ export default Reflux.createStore({
 
         this.selectWidget(stageTree[0].tree);
     },
-    addClass: function(name) {
-      stageTree.push({name: name, tree: loadTree(null, {'cls': 'root', 'type': bridge.getRendererType(this.currentWidget.node), 'props': {'width': 640, 'height': 1040}})});
-      classList.push(name);
-      bridge.addClass(name);
-      this.trigger({initTree: stageTree, classList: classList});
+    addClass: function(name, bool) {
+        if(bool){
+            classList.unshift(name);
+            stageTree.splice(
+                1,
+                0,
+                { name: name,
+                    tree: loadTree(null, { 'cls': 'root',
+                        'type': bridge.getRendererType(this.currentWidget.node),
+                        'props': {'width': 640, 'height': 1040}})
+                }
+            );
+        }
+        else {
+            classList.push(name);
+            stageTree.push(
+                { name: name,
+                    tree: loadTree(null, { 'cls': 'root',
+                        'type': bridge.getRendererType(this.currentWidget.node),
+                        'props': {'width': 640, 'height': 1040}})
+                }
+            );
+        }
+
+        bridge.addClass(name,bool);
+        this.trigger({initTree: stageTree, classList: classList});
     },
     render: function() {
       if (this.currentWidget) {

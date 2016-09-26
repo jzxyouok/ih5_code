@@ -7,7 +7,8 @@
 }
 $toBottom:14px;
 
-#PropertyView {
+#PropertyView,
+.propretyView{
 	position: absolute;
 	top: 36px;
 	left: 36px;
@@ -40,7 +41,8 @@ $toBottom:14px;
 		padding: 4px 12px;
 		height: 30px;
 	}
-	#PropertyViewBody {
+	#PropertyViewBody,
+	.propretyViewBody{
 		flex: 1;
 		overflow-y: auto;
 	}
@@ -144,10 +146,6 @@ $toBottom:14px;
 		background-position: -100px -40px;
 	  }
 	}
-
-
-
-
 
 	// switch
    .ant-switch{

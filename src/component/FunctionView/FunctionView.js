@@ -14,7 +14,6 @@ class FunctionView extends React.Component {
         this.state = {
             minSize: false,
             nid: null,
-            // func: null,
             name: '',
             value: ''
         };
@@ -45,7 +44,6 @@ class FunctionView extends React.Component {
             this.setState({
                 minSize: false,
                 nid: widget.selectFunction.key,
-                // func: widget.selectFunction,
                 name: widget.selectFunction.name,
                 value: widget.selectFunction.value
             });
@@ -67,6 +65,7 @@ class FunctionView extends React.Component {
     endEdit(type, v) {
         if(type === 'name') {
             WidgetActions['changeFunction']({'name': this.state.name});
+            WidgetActions['changeName']('func', this.state.name);
         } else if(type === 'value') {
             if(v === false){
                 WidgetActions['changeFunction']({'value': this.state.value});

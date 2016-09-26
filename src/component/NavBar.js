@@ -3,16 +3,18 @@ import VxMenu from  './VxMenu';
 import AccountArea from './AccountArea';
 import { Button, InputNumber } from 'antd';
 import { Row, Col } from 'antd';
-import WidgetActions from '../actions/WidgetActions';
 import Cookies  from 'js-cookie';
 import InputText from './InputText';
 import LoginDialog from './LoginDialog';
 import $ from 'jquery'
 import $class from 'classnames'
 
-import bridge from 'bridge';
+import CreateModule from './create-module/index'
 
+import bridge from 'bridge';
 const PREFIX = 'app/';
+import WidgetActions from '../actions/WidgetActions';
+import WidgetStore from '../stores/WidgetStore';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -27,8 +29,7 @@ class NavBar extends React.Component {
             classList:[],
             fontList:[],
             dropDownState : 0,
-            addClassData : []
-            //, zoomInputState: 0
+            createClass : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -41,7 +42,8 @@ class NavBar extends React.Component {
         this.onImport = this.onImport.bind(this);
         this.dropDownShow = this.dropDownShow.bind(this);
         this.clickOthersHide = this.clickOthersHide.bind(this);
-        //this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
+        this.createClassBtn = this.createClassBtn.bind(this);
+        this.closeClassBtn = this.closeClassBtn.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -55,6 +57,22 @@ class NavBar extends React.Component {
         }
         this.newWork();
         this.workid = null;
+    }
+
+    componentDidMount() {
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.onStatusChange(WidgetStore.getStore());
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onStatusChange(widget) {
+        if (widget.classList !== undefined) {
+            //console.log(widget);
+            this.setState({classList: widget.classList});
+        }
     }
 
     newWork() {
@@ -79,8 +97,6 @@ class NavBar extends React.Component {
             }
         }.bind(this));
     }
-
-
 
     login(name, pass) {
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'login',
@@ -238,15 +254,17 @@ class NavBar extends React.Component {
         }
     }
 
-    //focusOrBlurZoomInput(e) {
-    //    let currentState = 0;
-    //    if (e.type == 'focus') {
-    //        currentState = 1;
-    //    }
-    //    this.setState({
-    //        zoomInputState: currentState
-    //    });
-    //}
+    createClassBtn(){
+        this.setState({
+            createClass : true
+        })
+    }
+
+    closeClassBtn(){
+        this.setState({
+            createClass : false
+        })
+    }
 
     render() {
         //console.log(this.state.workList);
@@ -301,37 +319,39 @@ class NavBar extends React.Component {
                             </button>
 
                             <div className='dropDownToggle'>
-                                <div className="dropDown-title f--hlc">
-                                    <span className="flex-1">全部组件：</span>
-                                    <span className="set-btn" />
-                                </div>
+                                <div className="dropDownToggle-main">
+                                    <div className="dropDown-title f--hlc">
+                                        <span className="flex-1">全部组件：</span>
+                                        <span className="set-btn" />
+                                    </div>
 
-                                <div className="dropDown-main">
-                                    <div className="dropDown-scroll">
-                                        <ul className="dropDown-content">
-                                            {
-                                                this.state.addClassData.length > 0
-                                                ? this.state.addClassData.map((v,i)=>{
-                                                    return  <li className="f--hlc" key={i}>
-                                                                <div className="flex-1 f--hlc title">
-                                                                    <span className="li-icon" />
-                                                                    <span className="flex-1">{v}</span>
-                                                                </div>
-                                                                <span className="edit-btn" />
-                                                            </li>
-                                                  })
-                                                : null
-                                            }
-                                            <li className="add-btn f--hcc">
-                                                <div className="icon">
-                                                    <span className="heng" />
-                                                    <span className="shu" />
-                                                </div>
-                                            </li>
-                                            {
-                                                moduleFuc(this.state.addClassData.length)
-                                            }
-                                        </ul>
+                                    <div className="dropDown-main">
+                                        <div className="dropDown-scroll">
+                                            <ul className="dropDown-content">
+                                                {
+                                                    this.state.classList.length > 0
+                                                    ? this.state.classList.map((v,i)=>{
+                                                        return  <li className="f--hlc" key={i}>
+                                                                    <div className="flex-1 f--hlc title">
+                                                                        <span className="li-icon" />
+                                                                        <div className="TitleName">{v}</div>
+                                                                    </div>
+                                                                    <span className="edit-btn" />
+                                                                </li>
+                                                      })
+                                                    : null
+                                                }
+                                                <li className="add-btn f--hcc" onClick={ this.createClassBtn }>
+                                                    <div className="icon">
+                                                        <span className="heng" />
+                                                        <span className="shu" />
+                                                    </div>
+                                                </li>
+                                                {
+                                                    moduleFuc(this.state.classList.length)
+                                                }
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -456,6 +476,10 @@ class NavBar extends React.Component {
                      editText={null}
                      editText2={null}
                      onEditDone={this.onLoginDone.bind(this)} />
+
+                <div className={$class({"hidden": !this.state.createClass}) }>
+                    <CreateModule closeClassBtn={ this.closeClassBtn }  />
+                </div>
 
             </div>
         );
