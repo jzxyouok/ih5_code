@@ -29,6 +29,7 @@ class CreateModule extends React.Component {
     onStatusChange(widget) {
         if (widget.classList !== undefined) {
             this.props.closeClassBtn();
+            this.refs.name.value = ""
         }
     }
 
@@ -47,7 +48,7 @@ class CreateModule extends React.Component {
             })
         }
         else {
-            console.log(name, this.state.isTop);
+            //console.log(name, this.state.isTop);
             WidgetActions['addClass'](name, this.state.isTop);
         }
     }

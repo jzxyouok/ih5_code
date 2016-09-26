@@ -22,6 +22,7 @@ class ObjectTree extends React.Component {
             activeEventTreeKey: null, //组件对应事件按钮被激活
             editMode:false   //处于更改名字状态
             //widgetTreeChildren :null
+            , allTreeData : []
         };
         this.chooseBtn = this.chooseBtn.bind(this);
         this.openBtn = this.openBtn.bind(this);
@@ -77,7 +78,8 @@ class ObjectTree extends React.Component {
         //initTree : 初始化对象树
         if (widget.initTree !== undefined){
             this.setState({
-                widgetTree: widget.initTree[0]
+                widgetTree: widget.initTree[0] ,
+                allTreeData : widget.initTree
             });
             this.addOpenId();
         }
@@ -502,7 +504,8 @@ class ObjectTree extends React.Component {
 
     render() {
         //console.log(this.state.widgetTree);
-        let objectData = this.state.widgetTree;
+        //let objectData = this.state.widgetTree;
+        let allTreeData = this.state.allTreeData;
         let num = 0;
 
         let btn = (show,data)=>{
@@ -703,66 +706,71 @@ class ObjectTree extends React.Component {
 
         return (
             <div className='ObjectTree'>
+                <div className="stage">
                 {
-                    !objectData
+                     !allTreeData
                         ? null
-                        : <div className='stage'>
-                        <div className='stage-title-wrap clearfix'>
-                            <div className={$class('stage-title f--h f--hlc',{'active': objectData.tree.key === this.state.nid})}
-                                 style={{ width : this.props.width - 36 - 24 }}
-                                 onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}
-                                 onFocus={this.itemAddKeyListener.bind(this)}
-                                 onBlur={this.itemRemoveKeyListener.bind(this)}
-                                 tabIndex={objectData.tree.key}
-                                 id={'tree-item-'+ objectData.tree.key}>
-                                { btn(-1, objectData.tree) }
-                                {
-                                    objectData.tree.children.length > 0
-                                    ||objectData.tree.funcList.length > 0
-                                    ||objectData.tree.varList.length > 0
-                                        ? icon( 1 , objectData.tree.key)
-                                        : icon( 0 , objectData.tree.key)
-                                }
-                                <span className='stage-icon' />
-                                <div className='stage-name-wrap'>
-                                    <p>{ objectData.name }</p>
-                                </div>
-                            </div>
-                            <div className={$class('item-event')}>
-                                {
-                                    objectData.tree.props.eventTree
-                                        ? enableEventTreeBtn(objectData.tree.key, objectData.tree)
-                                        : <div className={$class('item-event-empty',{'active': objectData.tree.key === this.state.nid})}
-                                               onClick={this.chooseBtn.bind(this, objectData.tree.key, objectData.tree)}></div>
-                                }
-                            </div>
-                        </div>
-                        <div className={$class('stage-var-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}>
-                            {objectData.tree.varList.length === 0
-                                ? null
-                                : varList(objectData.tree.varList, 1)
-                            }
-                        </div>
-                        <div className={$class('stage-function-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}>
-                            {objectData.tree.funcList.length === 0
-                                ? null
-                                : funcList(objectData.tree.funcList, 1)
-                            }
-                        </div>
-                        <div className={$class('stage-content clearfix', {'hidden':  this.state.openData.indexOf(objectData.tree.key) < 0 })}
-                             onDragOver={this.itemDragOver}>
-                            {
-                                objectData.tree.children.length === 0
-                                    ? null
-                                    : stageContent(objectData.tree.children)
-                                //this.state.widgetTreeChildren
-                                //    ?  this.state.widgetTreeChildren.length === 0
-                                //            ? null
-                                //            : stageContent(this.state.widgetTreeChildren)//    : null
-                            }
-                        </div>
-                    </div>
+                        : allTreeData.map((v,i)=>{
+                             return  <div className='stage-item' key={i}>
+                                 <div className='stage-title-wrap clearfix'>
+                                     <div className={$class('stage-title f--h f--hlc',{'active': v.tree.key === this.state.nid})}
+                                          style={{ width : this.props.width - 36 - 24 }}
+                                          onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}
+                                          onFocus={this.itemAddKeyListener.bind(this)}
+                                          onBlur={this.itemRemoveKeyListener.bind(this)}
+                                          tabIndex={v.tree.key}
+                                          id={'tree-item-'+ v.tree.key}>
+                                         { btn(-1, v.tree) }
+                                         {
+                                             v.tree.children.length > 0
+                                             ||v.tree.funcList.length > 0
+                                             ||v.tree.varList.length > 0
+                                                 ? icon( 1 , v.tree.key)
+                                                 : icon( 0 , v.tree.key)
+                                         }
+                                         <span className={$class('stage-icon',{"module-icon": i !== 0})} />
+                                         <div className='stage-name-wrap'>
+                                             <p>{ v.name }</p>
+                                         </div>
+                                     </div>
+                                     <div className={$class('item-event')}>
+                                         {
+                                             v.tree.props.eventTree
+                                                 ? enableEventTreeBtn(v.tree.key, v.tree)
+                                                 : <div className={$class('item-event-empty',{'active': v.tree.key === this.state.nid})}
+                                                        onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}></div>
+                                         }
+                                     </div>
+                                 </div>
+                                 <div className={$class('stage-var-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
+                                     {v.tree.varList.length === 0
+                                         ? null
+                                         : varList(v.tree.varList, 1)
+                                     }
+                                 </div>
+                                 <div className={$class('stage-function-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
+                                     {v.tree.funcList.length === 0
+                                         ? null
+                                         : funcList(v.tree.funcList, 1)
+                                     }
+                                 </div>
+                                 <div className={$class('stage-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}
+                                      onDragOver={this.itemDragOver}>
+                                     {
+                                         v.tree.children.length === 0
+                                             ? null
+                                             : stageContent(v.tree.children)
+                                         //this.state.widgetTreeChildren
+                                         //    ?  this.state.widgetTreeChildren.length === 0
+                                         //            ? null
+                                         //            : stageContent(this.state.widgetTreeChildren)//    : null
+                                     }
+                                 </div>
+                             </div>
+                          })
                 }
+                </div>
+
                 <div className='hidden'>
                     <ComponentPanel ref='ComponentPanel' />
                 </div>

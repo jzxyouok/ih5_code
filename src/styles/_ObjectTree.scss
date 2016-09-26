@@ -231,6 +231,10 @@
                 height: 14px;
                 margin-left: 3px;
                 background: url("img/button-icon.svg") no-repeat -720px 0;
+
+                &.module-icon{
+                    background-position: -280px -200px;
+                }
             }
         }
 
