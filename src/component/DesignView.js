@@ -286,7 +286,7 @@ class DesignView extends React.Component {
     mouseMove(event){
         if(this.curODiv &&  this.isDraging){
             if(this.whichDrag=='top'){
-               this.curODiv.style.top = (event.pageY-17)+'px';
+               this.curODiv.style.top = (event.pageY)+'px';
                 document.body.style.cursor=' n-resize';
             }else{
                 this.curODiv.style.left = (event.pageX)+'px';
@@ -340,7 +340,6 @@ class DesignView extends React.Component {
     }
 
     render() {
-
         //缩放后设置参考线位置
         this.stageZoomChange();
 
@@ -348,19 +347,16 @@ class DesignView extends React.Component {
             <div className='f--hlt'
                  id='DesignView-Container'
                  ref='container'
-                 onWheel={this.scroll}
-               >
+                 onWheel={this.scroll}  >
                 <div  ref='line_top' id='line_top'></div>
-                <div ref='canvas_wraper' className='canvas-wraper'    >
+                <div ref='canvas_wraper' className='canvas-wraper' >
                     <div  ref='line_left'  id='line_left'></div>
                     <div id='canvas-dom'
                          className="DesignView"
-                         ref='view'
+                          ref='view'
                              style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }} >
-
                         <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
                         <ul id='v_ruler'></ul>
-
                     </div>
                 </div>
             </div>

@@ -1,7 +1,10 @@
 $lineColor:#4AFFFF;
 
+#iH5-App-Container{
+    position: relative;
+    top:-17px;
+}
 #DesignView-Container{
-    position: relative;;
     .canvas-wraper{position: relative; }
     #line_top{
         width: 100%;
