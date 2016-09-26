@@ -348,6 +348,10 @@ for (var n in propertyMap) {
 }
 
 function checkChildClass(selected, className) {
+    // 对函数和变量的处理
+    if (selected.className === 'func' || selected.className === 'var') {
+        return false;
+    }
     var provides = propertyFlags[selected.className].provides;
     if ((provides & widgetFlags.Leaf) != 0)
         return false;

@@ -40,17 +40,39 @@ function loadTree(parent, node) {
 
   current.varList = [];
   if (node['vars']) {
-    for (let n in node['vars']) {
-      if (n.length >= 3 && n.substr(0, 2) == '__')
-        current.varList.unshift({key:n.substr(2), value: node['vars'][n]});
+    for (let i = 0; i<node['vars'].length; i++) {
+        let temp = {};
+        temp['name'] = node['vars'][i].__name;
+        temp['value'] = node['vars'][i].__value;
+        temp['className'] = node['vars'][i].__className;
+        temp['props'] = node['vars'][i].__props;
+        temp['type'] = node['vars'][i].__type;
+        temp['key'] = _keyCount++;
+        temp['widget'] = current;
+        current.varList.unshift(temp);
+      // if (n.length >= 3 && n.substr(0, 2) == '__') {
+      //     current.varList.unshift({n.substr(2) : node['vars'][n]});
+      // }
     }
   }
   current.funcList = [];
   if (node['funcs']) {
-    for (let n in node['funcs']) {
-      if (n.length >= 3 && n.substr(0, 2) == '__')
-        current.funcList.unshift({key:n.substr(2), value:node['funcs'][n]});
+    for (let i = 0; i<node['funcs'].length; i++) {
+        let temp = {};
+        temp['name'] = node['funcs'][i].__name;
+        temp['value'] = node['funcs'][i].__value;
+        temp['className'] = node['funcs'][i].__className;
+        temp['props'] = node['funcs'][i].__props;
+        temp['key'] = _keyCount++;
+        temp['widget'] = current;
+        current.funcList.unshift(temp);
     }
+
+      // if (n.length >= 3 && n.substr(0, 2) == '__') {
+      //
+      // }
+        // current.funcList.unshift({key:n.substr(2), value:node['funcs'][n]});
+    // }
   }
 
   if (node['id'])
@@ -119,18 +141,30 @@ function saveTree(data, node) {
   if (node.events)
     data['events'] = node.events;
   if (node.varList.length > 0) {
-    let o = {};
-    for (let i = node.varList.length; i >0; i--) {
-      o['__' + node.varList[i].key] = node.varList[i].value;
+    data['vars'] = [];
+    for (let i = node.varList.length-1; i >=0 ; i--) {
+        let o = {};
+        o['__name'] = node.varList[i].name;
+        o['__value'] = node.varList[i].value;
+        o['__className'] = node.varList[i].className;
+        o['__props'] = node.varList[i].props;
+        o['__type'] = node.varList[i].type;
+        data['vars'].push(o);
     }
-    data['vars'] = o;
+    // data['vars'] = o;
   }
   if (node.funcList.length > 0) {
-    let o = {};
-    for (let i = node.funcList.length; i >0; i--) {
-      o['__' + node.funcList[i].key] = node.funcList[i].value;
+    data['funcs'] = [];
+    for (let i = node.funcList.length-1; i >=0 ; i--) {
+        var o = {};
+      // o['__' + node.funcList[i].key] = node.funcList[i].key;
+        o['__name'] = node.funcList[i].name;
+        o['__value'] = node.funcList[i].value;
+        o['__className'] = node.funcList[i].className;
+        o['__props'] = node.funcList[i].props;
+        data['funcs'].push(o);
     }
-    data['funcs'] = o;
+    // data['funcs'] = o;
   }
   if (node.children.length > 0) {
     data['children'] = [];
@@ -288,12 +322,12 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
         this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
-        this.listenTo(WidgetActions['deleteFunction'], this.deleteFunction);
+        this.listenTo(WidgetActions['removeFunction'], this.removeFunction);
 
         this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
         this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
-        this.listenTo(WidgetActions['deleteVariable'], this.deleteVariable);
+        this.listenTo(WidgetActions['removeVariable'], this.removeVariable);
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
@@ -310,9 +344,20 @@ export default Reflux.createStore({
               rootDiv.appendChild(rootElm);
             }
           }
-        }
-        if(widget.props['locked'] === undefined) {
+          if(widget.props['locked'] === undefined) {
             widget.props['locked'] = false;
+          }
+          //取选激活的树
+          if(this.currentActiveEventTreeKey!==null || this.currentActiveEventTreeKey!==undefined){
+            this.activeEventTree(null);
+          }
+          //取选func状态
+          if(this.currentFunction!==null || this.currentFunction!==undefined) {
+            this.selectFunction(null);
+          }
+          if(this.currentVariable!==null || this.currentVariable!==undefined) {
+              this.selectVariable(null);
+          }
         }
         this.currentWidget = widget;
         this.trigger({selectWidget: widget});
@@ -377,7 +422,6 @@ export default Reflux.createStore({
       }
     },
 
-
     removeWidget: function() {
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;
@@ -399,8 +443,9 @@ export default Reflux.createStore({
     pasteWidget: function() {
       if (this.currentWidget) {
         // 重命名要黏贴的widget
-        copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false);
-        loadTree(this.currentWidget, copyObj);
+        let temp = cpJson(copyObj);
+        temp.props = this.addWidgetDefaultName(temp.cls, temp.props, false);
+        loadTree(this.currentWidget, temp);
         this.trigger({selectWidget: null, redrawTree: true});
         this.render();
       }
@@ -446,15 +491,16 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, props, valueAsTextName) {
+    addWidgetDefaultName: function(className, properties, valueAsTextName) {
         if (!this.currentWidget)
             return;
 
-        if(props === undefined || props === null) {
-            props = {};
+        if(properties === undefined || properties === null) {
+            properties = {};
         }
+        let props = cpJson(properties);
         if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
-            props.name = props.value;
+            props['name'] = props.value;
         } else {
             let cOrder = 1;
             //查找当前widget有多少个相同className的，然后＋1处理名字
@@ -463,7 +509,7 @@ export default Reflux.createStore({
                     cOrder+=1;
                 }
             }
-            props.name = className + cOrder;
+            props['name'] = className + cOrder;
         }
         return props;
     },
@@ -560,38 +606,105 @@ export default Reflux.createStore({
     enableEvent: function () {
         //TODO: 单个事件的可执行开关
     },
-    selectFunction: function () {
-        //TODO: 选择函数
+    selectFunction: function (data) {
+        if (data!=null) {
+            //取消在canvas上的widget选择
+            bridge.selectWidget(this.currentWidget.node);
+            this.currentFunction = data;
+        } else {
+            this.currentFunction = null;
+        }
+        this.trigger({selectFunction: this.currentFunction});
+        this.render();
     },
     addFunction: function (className, param) {
         if(this.currentWidget) {
             let func = {};
-            func['props'] = param['props']||{};
+            func['value'] = param.value||'';
+            func['name'] = param.key||'';
             func['className']  = className;
-            func['props']['cls'] = 'func';
-            func['props']['name'] = 'function' + (this.currentWidget['funcList'].length + 1);
-            func['props']['oid'] = this.currentWidget['funcList'].length +1;
+            func['props'] = {};
+            func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
+            func['key'] = _keyCount++;
+            func['widget'] = this.currentWidget;
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
+        this.render();
     },
-    changeFunction: function () {
-        //TODO: 改变函数
+    changeFunction: function (props) {
+        if(props) {
+            if(props['name']) {
+                this.currentFunction['name'] = props['name'];
+            } else if(props['value']) {
+                this.currentFunction['value'] = props['value'];
+            }
+        }
     },
-    deleteFunction: function () {
-        //TODO: 删除函数
+    removeFunction: function (data) {
+        if(this.currentFunction) {
+            let index = -1;
+            for(let i=0; i<this.currentWidget.funcList.length; i++) {
+                if(this.currentFunction.widget.funcList[i].key == data.key) {
+                    index = i;
+                }
+            }
+            if(index>-1){
+                this.currentWidget.funcList.splice(index,1);
+                this.selectWidget(this.currentWidget);
+            }
+        }
     },
-    selectVariable: function () {
-        //TODO: 选择变量
+    selectVariable: function (data) {
+        if (data!=null) {
+            //取消在canvas上的widget选择
+            bridge.selectWidget(this.currentWidget.node);
+            this.currentVariable = data;
+        } else {
+            this.currentVariable = null;
+        }
+        this.trigger({selectVariable: this.currentVariable});
+        this.render();
     },
-    addVariable: function () {
-        //TODO: 添加变量
+    addVariable: function (className, param) {
+        if(this.currentWidget) {
+            let vars = {};
+            vars['value'] = param.value||'';
+            vars['name'] = param.name||'';
+            vars['className']  = className;
+            vars['props'] = {};
+            vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
+            vars['key'] = _keyCount++;
+            vars['type'] = param.type;
+            vars['widget'] = this.currentWidget;
+            this.currentWidget['varList'].unshift(vars);
+        }
+        this.trigger({redrawTree: true});
     },
-    changeVariable: function () {
-        //TODO: 改变变量
+    changeVariable: function (props) {
+        if(props) {
+            if(props['name']) {
+                this.currentVariable['name'] = props['name'];
+            } else if(props['value']) {
+                this.currentVariable['value'] = props['value'];
+            } else if (props['type']) {
+                this.currentVariable['type'] = props['type'];
+            }
+        }
     },
-    deleteVariable: function () {
-        ///TODO: 删除变量
+    removeVariable: function (data) {
+        if(this.currentVariable) {
+            let index = -1;
+            for(let i=0; i<this.currentWidget.varList.length; i++) {
+                if(this.currentVariable.widget.varList[i].key == data.key) {
+                    index = i;
+                }
+            }
+            if(index>-1){
+                this.currentWidget.varList.splice(index,1);
+                this.selectWidget(this.currentWidget);
+            }
+        }
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});

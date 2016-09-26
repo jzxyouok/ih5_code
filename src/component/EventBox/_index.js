@@ -61,7 +61,7 @@ class EventBox extends React.Component {
                     },{
                         eid:3,
                         condition:'触发条件',
-
+                        children:[],
                         specific:[
                             {
                                 sid:3,

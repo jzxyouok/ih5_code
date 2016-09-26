@@ -42,6 +42,7 @@ module.exports = {
             'bridge': `${defaultSettings.srcPath}/bridge`,
             'jscolor/jscolor': `${defaultSettings.srcPath}/../lib/jscolor`,
             'macKeys': `${defaultSettings.srcPath}/../lib/macKeys`,
+            'codemirror/CodeMirror': `${defaultSettings.srcPath}/Codemirror`
         }
     },
     module: {}
