@@ -6,6 +6,12 @@ import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
+var nodeType = {
+    widget: 0,  //树对象
+    func: 1,    //函数
+    var: 2      //属性
+};
+
 class ObjectTree extends React.Component {
     constructor (props) {
         super(props);
@@ -22,7 +28,8 @@ class ObjectTree extends React.Component {
             activeEventTreeKey: null, //组件对应事件按钮被激活
             editMode:false   //处于更改名字状态
             //widgetTreeChildren :null
-            , allTreeData : []
+            , allTreeData : [],
+            nodeType: nodeType[0]
         };
         this.chooseBtn = this.chooseBtn.bind(this);
         this.openBtn = this.openBtn.bind(this);
@@ -102,18 +109,21 @@ class ObjectTree extends React.Component {
             if(widget.selectWidget){
                 this.setState({
                     selectWidget : widget.selectWidget
-                    , nid : widget.selectWidget.key
+                    , nid : widget.selectWidget.key,
+                    nodeType: nodeType.widget
                 });
                 this.addOpenId();
             } else if (widget.selectFunction) {
                 this.setState({
                     selectWidget: null,
-                    nid: widget.selectFunction.key
+                    nid: widget.selectFunction.key,
+                    nodeType: nodeType.func
                 });
             } else if (widget.selectVariable) {
                 this.setState({
                     selectWidget: null,
-                    nid: widget.selectVariable.key
+                    nid: widget.selectVariable.key,
+                    nodeType: nodeType.var
                 });
             }
 
@@ -339,7 +349,17 @@ class ObjectTree extends React.Component {
             editMode: false
         });
         if(event.target.value) {
-            WidgetActions['renameWidget'](event.target.value);
+            switch(this.state.nodeType){
+                case nodeType.func:
+                    WidgetActions['changeName']('func', event.target.value);
+                    break;
+                case nodeType.var:
+                    WidgetActions['changeName']('var', event.target.value);
+                    break;
+                default:
+                    WidgetActions['renameWidget'](event.target.value);
+                    break;
+            }
         }
     }
 
@@ -371,7 +391,14 @@ class ObjectTree extends React.Component {
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
         //黏贴
         if (didPressCtrl && event.keyCode == 86) {
-            WidgetActions['pasteWidget']();
+            switch(this.state.nodeType){
+                case nodeType.func:
+                case nodeType.var:
+                    break;
+                default:
+                    WidgetActions['pasteWidget']();
+                    break;
+            }
         }
     }
 
@@ -390,24 +417,55 @@ class ObjectTree extends React.Component {
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
         //复制 67
         if (didPressCtrl && event.keyCode == 67) {
-            WidgetActions['copyWidget']();
+            switch(this.state.nodeType){
+                case nodeType.func:
+                case nodeType.var:
+                    break;
+                default:
+                    WidgetActions['copyWidget']();
+                    break;
+            }
             window.macKeys.reset();
         }
         //黏贴 86
         if (didPressCtrl && event.keyCode == 86) {
-            WidgetActions['pasteWidget']();
+            switch(this.state.nodeType){
+                case nodeType.func:
+                case nodeType.var:
+                    break;
+                default:
+                    WidgetActions['pasteWidget']();
+                    break;
+            }
             window.macKeys.reset();
         }
         //剪切 88
         if (didPressCtrl && event.keyCode == 88) {
-            WidgetActions['cutWidget']();
+            switch(this.state.nodeType){
+                case nodeType.func:
+                case nodeType.var:
+                    break;
+                default:
+                    WidgetActions['cutWidget']();
+                    break;
+            }
             window.macKeys.reset();
         }
         //删除 delete
         if (!didPressCtrl && event.keyCode == 8) {
-            WidgetActions['removeWidget']();
-            let parentWidget = this.state.selectWidget.parent ? this.state.selectWidget.parent: this.state.selectWidget.rootWidget;
-            this.chooseBtn(parentWidget.key, parentWidget);
+            switch(this.state.nodeType){
+                case nodeType.func:
+                    WidgetActions['removeFunction'](this.state.nid);
+                    break;
+                case nodeType.var:
+                    WidgetActions['removeVariable'](this.state.nid);
+                    break;
+                default:
+                    WidgetActions['removeWidget']();
+                    let parentWidget = this.state.selectWidget.parent ? this.state.selectWidget.parent: this.state.selectWidget.rootWidget;
+                    this.chooseBtn(parentWidget.key, parentWidget);
+                    break;
+            }
             window.macKeys.reset();
         }
     }
@@ -520,14 +578,22 @@ class ObjectTree extends React.Component {
 
         let funcList = (data, num)=> {
             let content = data.map((item, i)=> {
-                return <div className={"func-title-wrap clearfix"} key={i}>
+                return <div className={"func-title-wrap clearfix"} key={i}
+                            id={'tree-item-'+ item.key}
+                            tabIndex={item.key}
+                            onFocus={this.itemAddKeyListener.bind(this)}
+                            onBlur={this.itemRemoveKeyListener.bind(this)}>
                     <div className={$class('func-title f--h f--hlc',
                          {'active': item.key === this.state.nid})}
                          onClick={this.funcBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className='func-icon' />
-                        <div className='func-name-wrap'>
-                            <p>{ item.props.name }</p>
+                        <div className='func-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
+                            <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
+                            <input id={'item-name-input-'+item.key} type="text"
+                                   onBlur={this.endEditObjName}
+                                   onClick={this.editStopPropagation}
+                                   className={$class('item-name-input',{'hidden':!((item.key === this.state.nid)&&this.state.editMode)})}/>
                         </div>
                     </div>
                     <div className={$class('item-event')}>
@@ -541,15 +607,23 @@ class ObjectTree extends React.Component {
 
         let varList = (data, num)=> {
             let content = data.map((item, i)=> {
-                return <div className="var-title-wrap clearfix" key={i}>
+                return <div className="var-title-wrap clearfix" key={i}
+                            id={'tree-item-'+ item.key}
+                            tabIndex={item.key}
+                            onFocus={this.itemAddKeyListener.bind(this)}
+                            onBlur={this.itemRemoveKeyListener.bind(this)}>
                     <div className={$class('func-title f--h f--hlc',
                         {'active': item.key === this.state.nid})}
                          onClick={this.varBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className={$class({'var-num-icon': item.type==='number'},
                             {'var-str-icon': item.type==='string'})} />
-                        <div className='var-name-wrap'>
-                            <p>{ item.props.name }</p>
+                        <div className='var-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
+                            <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
+                            <input id={'item-name-input-'+item.key} type="text"
+                                   onBlur={this.endEditObjName}
+                                   onClick={this.editStopPropagation}
+                                   className={$class('item-name-input',{'hidden':!((item.key === this.state.nid)&&this.state.editMode)})}/>
                         </div>
                     </div>
                     <div className={$class('item-event')}>

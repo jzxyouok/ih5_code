@@ -85,7 +85,9 @@
             }
 
             .stage-name-wrap,
-            .item-name-wrap {
+            .item-name-wrap,
+            .var-name-wrap,
+            .func-name-wrap {
                 @extend %font-omitted;
                 width: 100%;
                 padding-right: 18px;
@@ -170,6 +172,11 @@
             }
         }
 
+        .var-title-wrap,
+        .func-title-wrap {
+            outline: 0;
+        }
+
         .stage-title-wrap {
             .event-icon {
                 top: 4.5px;
@@ -221,7 +228,7 @@
         .stage-title{
             height: 25px;
             padding-left: 28px;
-            outline: none;
+            outline: 0;
 
             .stage-icon {
                 //width: 14px;
