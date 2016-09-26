@@ -339,7 +339,7 @@ export default Reflux.createStore({
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
-    selectWidget: function(widget) {
+    selectWidget: function(widget, shouldTrigger) {
         var render = false;
         if (widget) {
           if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -368,12 +368,15 @@ export default Reflux.createStore({
           }
         }
         this.currentWidget = widget;
-        this.trigger({selectWidget: widget});
-        //判断是否是可选择的，是否加锁
-        if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
-            bridge.selectWidget(widget.node, this.updateProperties.bind(this));
-        } else {
-            bridge.selectWidget(widget.node);
+        //是否触发（为定义或者是true就触发）
+        if(shouldTrigger===true||shouldTrigger===undefined) {
+            this.trigger({selectWidget: widget});
+            //判断是否是可选择的，是否加锁
+            if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
+                bridge.selectWidget(widget.node, this.updateProperties.bind(this));
+            } else {
+                bridge.selectWidget(widget.node);
+            }
         }
 
         if (render)
@@ -561,7 +564,6 @@ export default Reflux.createStore({
           prevNewObj =cpJson(newObj);
       }
 
-
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;
@@ -578,23 +580,23 @@ export default Reflux.createStore({
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
         }
-        this.render();
         this.trigger({redrawTree: true});
+        // this.render();
     },
     removeEventTree: function() {
         if (this.currentWidget) {
             this.currentWidget.props['eventTree'] = undefined;
             this.currentWidget.props['enableEventTree'] = undefined;
         }
-        this.render();
         this.trigger({redrawTree: true});
+        // this.render();
     },
     enableEventTree: function () {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
         }
-        this.render();
         this.trigger({redrawTree: true});
+        // this.render();
     },
     activeEventTree: function (nid) {
         //激活事件树，无则为
@@ -604,7 +606,7 @@ export default Reflux.createStore({
             this.currentActiveEventTreeKey = null;
         }
         this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey}});
-        this.render();
+        // this.render();
     },
     addEvent: function () {
         //TODO: 添加事件
@@ -624,7 +626,7 @@ export default Reflux.createStore({
             this.currentFunction = null;
         }
         this.trigger({selectFunction: this.currentFunction});
-        this.render();
+        // this.render();
     },
     addFunction: function (className, param) {
         if(this.currentWidget) {
@@ -639,7 +641,7 @@ export default Reflux.createStore({
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
-        this.render();
+        // this.render();
     },
     changeFunction: function (props) {
         if(props) {
@@ -673,7 +675,7 @@ export default Reflux.createStore({
             this.currentVariable = null;
         }
         this.trigger({selectVariable: this.currentVariable});
-        this.render();
+        // this.render();
     },
     addVariable: function (className, param) {
         if(this.currentWidget) {

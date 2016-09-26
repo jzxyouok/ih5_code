@@ -5,7 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Form, Input, InputNumber, Slider, Switch, Collapse,Select } from 'antd';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select} from 'antd';
 const Option = Select.Option;
 const Panel = Collapse.Panel;
 import cls from 'classnames';
@@ -89,9 +89,12 @@ class PropertyView extends React.Component {
                 return <Switch   {...defaultProp} />;
 
             case propertyType.Select:
-                return  <Select   {...defaultProp}  >
-                    {defaultProp.options}
-                </Select>;
+                return <div>
+                    <Select   {...defaultProp} >
+                        {defaultProp.options}
+                    </Select>
+                    <div id={cls({'ant-progress':defaultProp.name=='font'})}><div></div></div>
+                </div>;
 
             default:
                 return <Input {...defaultProp} />;
@@ -195,18 +198,36 @@ class PropertyView extends React.Component {
 
                   }else if(prop.name == 'font'){
                       if(value == 0){
+
+                          let oProgress=document.getElementById('ant-progress');
                           chooseFile('font', true, function(){
-                              console.log(arguments);
+                              //回调完成
+                              oProgress.style.display='none';
+
                               //设置默认值
                               this.selectNode.props.fontKey=arguments[1].name;
                               console.log(this.selectNode.props);
-                              console.log(prop);
                               //更新属性面板
-                              const obj = {};
-                              obj[prop.name] = arguments[1].file;
-                              this.onStatusChange({updateProperties: obj});
-                              WidgetActions['updateProperties'](obj, false, true);
-                          }.bind(this));
+                              WidgetActions['render']();
+                              this.setState({fields: this.getFields()});
+
+                          }.bind(this),function(evt){
+                              oProgress.style.display='block';
+                              //显示进度条
+                              if (evt.lengthComputable) {
+
+                                  var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+
+                                  console.log(percentComplete);
+
+                                  oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
+
+                                  oProgress.childNodes[0].style.width=percentComplete+'%';
+
+                              }else {
+                                  console.log('failed');
+                              }
+                          });
                           bTag=false;
                       }else{
                           this.selectNode.props.fontKey=this.getFontDefault(value);
@@ -305,7 +326,7 @@ class PropertyView extends React.Component {
         if (!node)  return null;
 
         if( node.props.isLock ===undefined){
-            node.props.isLock = node.node.class=='qrcode' ? true:false;
+            node.props.isLock =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
         }
 
 
@@ -322,8 +343,6 @@ class PropertyView extends React.Component {
                 defaultValue = node.node[item.name];
             }else if(item.type==propertyType.Float) {
                 let str = item.name == 'scaleX' ? 'width' : 'height'
-
-
 
                 defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
 
@@ -392,6 +411,7 @@ class PropertyView extends React.Component {
                       defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
                   }
               }else if(item.name=='font'){
+                  defaultProp.name=item.name;
                   defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
                   for(let i in this.fontList){
                       defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
