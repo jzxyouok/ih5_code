@@ -742,11 +742,24 @@ export default Reflux.createStore({
 
         this.selectWidget(stageTree[0].tree);
     },
-    addClass: function(name) {
-      stageTree.push({name: name, tree: loadTree(null, {'cls': 'root', 'type': bridge.getRendererType(this.currentWidget.node), 'props': {'width': 640, 'height': 1040}})});
-      classList.push(name);
-      bridge.addClass(name);
-      this.trigger({initTree: stageTree, classList: classList});
+    addClass: function(name, bool) {
+        stageTree.push(
+            { name: name,
+              tree: loadTree(null, { 'cls': 'root',
+                                    'type': bridge.getRendererType(this.currentWidget.node),
+                                    'props': {'width': 640, 'height': 1040}})
+            }
+        );
+
+        if(bool){
+            classList.unshift(name);
+        }
+        else {
+            classList.push(name);
+        }
+
+        bridge.addClass(name);
+        this.trigger({initTree: stageTree, classList: classList});
     },
     render: function() {
       if (this.currentWidget) {
