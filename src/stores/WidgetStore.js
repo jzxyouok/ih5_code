@@ -380,6 +380,7 @@ export default Reflux.createStore({
           this.render();
     },
     addWidget: function(className, props, link) {
+
       if (!this.currentWidget)
           return;
 
@@ -750,7 +751,7 @@ export default Reflux.createStore({
       this.trigger({deletePoint: true});
     },
     initTree: function(data) {
-        console.log(data);
+        //console.log(data);
         classList = [];
         bridge.resetClass();
         stageTree = [];

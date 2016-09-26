@@ -44,6 +44,7 @@ class NavBar extends React.Component {
         this.clickOthersHide = this.clickOthersHide.bind(this);
         this.createClassBtn = this.createClassBtn.bind(this);
         this.closeClassBtn = this.closeClassBtn.bind(this);
+        this.addClass = this.addClass.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -71,7 +72,9 @@ class NavBar extends React.Component {
     onStatusChange(widget) {
         if (widget.classList !== undefined) {
             //console.log(widget);
-            this.setState({classList: widget.classList});
+            this.setState({
+                classList: widget.classList
+            });
         }
     }
 
@@ -139,7 +142,7 @@ class NavBar extends React.Component {
     }
 
     onHideRulerLine(value){
-        console.log();
+        //console.log();
         if(value.target.title == '隐藏参考线'){
             value.target.title='显示参考线';
             WidgetActions['setRulerLine'](false) ;
@@ -266,6 +269,11 @@ class NavBar extends React.Component {
         })
     }
 
+    addClass(name){
+        //console.log(key);
+        WidgetActions['addWidget'](name);
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num)=>{
@@ -331,8 +339,9 @@ class NavBar extends React.Component {
                                                 {
                                                     this.state.classList.length > 0
                                                     ? this.state.classList.map((v,i)=>{
+                                                        let name = "_" + v;
                                                         return  <li className="f--hlc" key={i}>
-                                                                    <div className="flex-1 f--hlc title">
+                                                                    <div className="flex-1 f--hlc title" onClick={ this.addClass.bind(this, name) }>
                                                                         <span className="li-icon" />
                                                                         <div className="TitleName">{v}</div>
                                                                     </div>
