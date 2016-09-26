@@ -16,6 +16,10 @@ class DesignView extends React.Component {
         this.isDraging =false;
         this.whichDrag=null;
         this.selectNode=null;
+        this.stageZoom=100;
+        this.stageZoomRate=1;
+        this.stageZoomTop=0;
+        this.stageZoomLeft=0;
 
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
@@ -27,12 +31,12 @@ class DesignView extends React.Component {
         this.mouseDown_left = this.mouseDown_left.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
-
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+
     }
 
     componentWillUnmount() {
@@ -41,7 +45,6 @@ class DesignView extends React.Component {
 
 
     onStatusChange(widget) {
-        console.log(1);
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
 
@@ -61,13 +64,9 @@ class DesignView extends React.Component {
 
         }
 
-
-
         if(widget.setRulerLine){
             this.isShowRulerLine(widget.setRulerLine.isShow);
         }
-
-
 
         if(widget.updateProperties && (widget.updateProperties .width || widget.updateProperties .height)){
 
@@ -77,18 +76,20 @@ class DesignView extends React.Component {
         }
     }
 
-    isShowRulerLine(bIsShow){
-        this.selectNode.props.isShow =bIsShow;
-        let oContainer =document.getElementById('DesignView-Container');
-        let oRulerWLine = oContainer.getElementsByClassName('rulerWLine');
-        let oRulerHLine = oContainer.getElementsByClassName('rulerHLine');
-        for(let i=oRulerWLine.length-1; i>=0;i--){
-            oRulerWLine[i].style.display= bIsShow?'block':'none';
-        }
-        for(let i=oRulerHLine.length-1; i>=0;i--){
-            oRulerHLine[i].style.display =bIsShow?'block':'none';
-        }
+    stageZoomChange(){
 
+        if(this.selectNode && this.stageZoom != this.props.stageZoom){
+
+            this.stageZoom = this.props.stageZoom;
+            this.stageZoomRate =this.stageZoom/100;
+
+            let k= (100-this.props.stageZoom)/200;
+            this.stageZoomTop=  this.selectNode.node.height*k;
+            this.stageZoomLeft=this.selectNode.node.width*k;
+
+            let aODiv =this.aODiv;
+            this.drawLine(aODiv);
+        }
     }
 
     setRuler(iWidthSum,iHeightSum){
@@ -125,16 +126,15 @@ class DesignView extends React.Component {
         t -= y/4;
 
         this.refs.view.style.top = t+'px';
-        this.refs.line_top.style.top= t+'px';
+        this.refs.line_top.style.top= t+this.stageZoomTop+'px';
 
         this.aODiv.map(item =>{
             if(item.oDiv.whichDrag =='top'){
-                item.oDiv.style.top=(t-item.offsetTop)+'px';
-            }else{
-                item.oDiv.style.left= item.offsetLeft+'px';
+                item.oDiv.style.top=(t+this.stageZoomTop-item.offsetTop*this.stageZoomRate)+'px';
             }
         });
     }
+
     onKeyScroll(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -148,6 +148,12 @@ class DesignView extends React.Component {
             let l = parseFloat(left.replace(/(px)?/, ''));
             l += STEP * (isEvent(37) ? -1 : 1);
             this.refs.canvas_wraper.style.left= l+'px';
+
+            this.aODiv.map(item =>{
+                if(item.oDiv.whichDrag =='left'){
+                    item.oDiv.style.left= (this.refs.canvas_wraper.offsetLeft + this.stageZoomLeft+item.offsetLeft*this.stageZoomRate)+'px';
+                }
+            });
             return;
         }
         // up or down
@@ -155,37 +161,72 @@ class DesignView extends React.Component {
             let top = window.getComputedStyle(this.refs.view,null).getPropertyValue("top");
             let t = parseFloat(top.replace(/(px)?/, ''));
             t += STEP * (isEvent(38) ? -1 : 1);
+
             this.refs.view.style.top = t+'px';
-            this.refs.line_top.style.top= t+'px';
+            this.refs.line_top.style.top= t+this.stageZoomTop+'px';
+
+            this.aODiv.map(item =>{
+                if(item.oDiv.whichDrag =='top'){
+                    item.oDiv.style.top=(t+this.stageZoomTop-item.offsetTop*this.stageZoomRate)+'px';
+                }else{
+                    item.oDiv.style.left= (this.refs.canvas_wraper.offsetLeft + this.stageZoomLeft+item.offsetLeft*this.stageZoomRate)+'px';
+                }
+            });
+
             return;
         }
     }
+
+    isShowRulerLine(bIsShow){
+        this.selectNode.props.isShow =bIsShow;
+        let oContainer =document.getElementById('DesignView-Container');
+        let oRulerWLine = oContainer.getElementsByClassName('rulerWLine');
+        let oRulerHLine = oContainer.getElementsByClassName('rulerHLine');
+        for(let i=oRulerWLine.length-1; i>=0;i--){
+            oRulerWLine[i].style.display= bIsShow?'block':'none';
+        }
+        for(let i=oRulerHLine.length-1; i>=0;i--){
+            oRulerHLine[i].style.display =bIsShow?'block':'none';
+        }
+
+    }
+
     drawLine(aODiv){
 
         let $this =this;
+
         //清空
-        let offsetTop =this.refs.view.offsetTop;
+        let offsetTop =this.refs.view.offsetTop+this.stageZoomTop;
+        let offsetLeft =this.refs.canvas_wraper.offsetLeft + this.stageZoomLeft;
+
+        //设置主对齐线
+        this.refs.line_top.style.top=offsetTop+'px';
+        this.refs.line_left.style.left=this.stageZoomLeft+'px';
+
+
         this.aODiv=[];
 
         let oContainer =document.getElementById('DesignView-Container');
         let oRulerWLine = oContainer.getElementsByClassName('rulerWLine');
         let oRulerHLine = oContainer.getElementsByClassName('rulerHLine');
+
         for(let i=oRulerWLine.length-1; i>=0;i--){
             oContainer.removeChild(oRulerWLine[i]);
         }
         for(let i=oRulerHLine.length-1; i>=0;i--){
             oContainer.removeChild(oRulerHLine[i]);
         }
+
         aODiv.map(item=>{
             let curODiv =  document.createElement('div');
             curODiv.appendChild(document.createElement('div'));
 
             if(item.oDiv.whichDrag=='top'){
                 curODiv.setAttribute('class','rulerWLine');
-                curODiv.style.top=(offsetTop-item.offsetTop)+'px';
+                curODiv.style.top=(offsetTop-item.offsetTop*this.stageZoomRate)+'px';
             }else{
                 curODiv.setAttribute('class','rulerHLine');
-                curODiv.style.left=item.offsetLeft+'px';
+                curODiv.style.left=(offsetLeft+item.offsetLeft*this.stageZoomRate)+'px';
             }
             curODiv.flag=this.count++;
             curODiv.whichDrag =item.oDiv.whichDrag;
@@ -213,9 +254,9 @@ class DesignView extends React.Component {
         });
 
     }
+
     mouseDown_top(event){
 
-        console.log(this.refs.view.offsetTop);
 
         this.curODiv =  document.createElement('div');
         this.curODiv.appendChild(document.createElement('div'));
@@ -224,6 +265,7 @@ class DesignView extends React.Component {
         this.isDraging=true;
         this.whichDrag='top';
     }
+
     mouseDown_left(event){
 
         this.curODiv =  document.createElement('div');
@@ -234,11 +276,8 @@ class DesignView extends React.Component {
         this.whichDrag='left';
     }
 
-
-
     mouseMove(event){
         if(this.curODiv &&  this.isDraging){
-
             if(this.whichDrag=='top'){
                 this.curODiv.style.top = (event.pageY)+'px';
                 document.body.style.cursor=' n-resize';
@@ -246,7 +285,6 @@ class DesignView extends React.Component {
                 this.curODiv.style.left = (event.pageX)+'px';
                 document.body.style.cursor='e-resize';
             }
-
             if((event.pageY<=this.refs.view.offsetTop && this.refs.view.offsetTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft && this.refs.canvas_wraper.offsetLeft-13 <=event.pageX)){
                 this.curODiv.style.display='none';
             }else{
@@ -284,10 +322,9 @@ class DesignView extends React.Component {
                 this.curODiv.whichDrag=this.whichDrag;
                 this.aODiv.push({
                     oDiv:this.curODiv,
-                    offsetLeft:event.pageX,
+                    offsetLeft:event.pageX-this.refs.canvas_wraper.offsetLeft,
                     offsetTop:this.refs.view.offsetTop -event.pageY
                 });
-
 
                 WidgetStore.currentWidget.props.rulerArr =this.aODiv;
 
@@ -301,20 +338,26 @@ class DesignView extends React.Component {
 
     render() {
 
+        //缩放后设置参考线位置
+        this.stageZoomChange();
+
         return (
             <div className='f--hlt'
                  id='DesignView-Container'
                  ref='container'
-                 onWheel={this.scroll}>
+                 onWheel={this.scroll}
+               >
                 <div  ref='line_top' id='line_top'></div>
-                <div ref='canvas_wraper' className='canvas-wraper'>
+                <div ref='canvas_wraper' className='canvas-wraper'    >
                     <div  ref='line_left'  id='line_left'></div>
                     <div id='canvas-dom'
                          className="DesignView"
                          ref='view'
-                         style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
+                             style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }} >
+
                         <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
                         <ul id='v_ruler'></ul>
+
                     </div>
                 </div>
             </div>
