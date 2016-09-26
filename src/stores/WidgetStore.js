@@ -329,6 +329,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
         this.listenTo(WidgetActions['removeVariable'], this.removeVariable);
 
+        this.listenTo(WidgetActions['changeName'], this.changeName);
+
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
     selectWidget: function(widget) {
@@ -669,13 +671,23 @@ export default Reflux.createStore({
     addVariable: function (className, param) {
         if(this.currentWidget) {
             let vars = {};
-            vars['value'] = param.value||'';
+            vars['value'] = param.value||null;
             vars['name'] = param.name||'';
             vars['className']  = className;
             vars['props'] = {};
-            vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
-            vars['key'] = _keyCount++;
             vars['type'] = param.type;
+            switch (vars['type']) {
+                case 'number':
+                    vars['props']['name'] = 'intVar' + (this.currentWidget['varList'].length + 1);
+                    break;
+                case 'string':
+                    vars['props']['name'] = 'strVar' + (this.currentWidget['varList'].length + 1);
+                    break;
+                default:
+                    vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
+                    break;
+            }
+            vars['key'] = _keyCount++;
             vars['widget'] = this.currentWidget;
             this.currentWidget['varList'].unshift(vars);
         }
@@ -687,8 +699,6 @@ export default Reflux.createStore({
                 this.currentVariable['name'] = props['name'];
             } else if(props['value']) {
                 this.currentVariable['value'] = props['value'];
-            } else if (props['type']) {
-                this.currentVariable['type'] = props['type'];
             }
         }
     },
@@ -704,6 +714,24 @@ export default Reflux.createStore({
                 this.currentWidget.varList.splice(index,1);
                 this.selectWidget(this.currentWidget);
             }
+        }
+    },
+    changeName: function (type) {
+        switch (type){
+            case 'func':
+                if(this.currentFunction&&!(this.currentFunction.name.replace(/(^s*)|(s*$)/g, "").length === 0)){
+                    this.currentFunction.props.name = this.currentFunction.name;
+                    this.trigger({redrawTree: true});
+                }
+                break;
+            case 'var':
+                if(this.currentVariable&&!(this.currentVariable.name.replace(/(^s*)|(s*$)/g, "").length === 0)) {
+                    this.currentVariable.props.name = this.currentVariable.name;
+                    this.trigger({redrawTree: true});
+                }
+                break;
+            default:
+                break;
         }
     },
     resetTrack: function() {

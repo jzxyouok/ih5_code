@@ -1,8 +1,8 @@
 #VariableView {
   position: fixed;
-  left: 37px;
-  top: 37px;
-  width: 400px;
+  left: 36px;
+  top: 36px;
+  width: 260px;
   //bottom: 1px;
   //height: 600px;
   background: #232323;
@@ -36,46 +36,11 @@
     }
   }
   #VariableViewBody {
-    position: relative;
-    height: 100%;
-    //.function-body-layer {
-    //  position: absolute;
-    //  left: 0;
-    //  right: -20px;
-    //  top: 0;
-    //  bottom: 0;
-    //  overflow: scroll;
-    //}
+    flex: 1;
+    overflow-y: auto;
 
-    .ant-form {
-      padding: 20px;
-
-      .ant-form-item {
-        margin-bottom: 15px;
-      }
-
-      .ant-form-item-label {
-        width: 100%;
-        text-align: left;
-        padding-bottom: 5px;
-        color: #b5b5b5;
-      }
-
-      .ant-input {
-        background-color: #353535;
-        border-color: #444;
-        border-radius: 2px;
-        color: #858585;
-        width: 340px;
-        &:hover {
-          border-color: #1a1a1a;
-        }
-        &:focus {
-          border-color: #444;
-          outline: 0;
-          box-shadow: 0 0 0 2px rgba(255, 168, 0, 0.4);
-        }
-      }
+    textarea {
+      resize: vertical;
     }
   }
 }
