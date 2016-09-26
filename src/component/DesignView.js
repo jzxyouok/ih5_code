@@ -23,6 +23,7 @@ class DesignView extends React.Component {
 
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
+        this.onresize=this.onresize.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
 
@@ -45,23 +46,25 @@ class DesignView extends React.Component {
 
 
     onStatusChange(widget) {
+
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
-
             if(widget.selectWidget.className == "root"){
                 document.body.addEventListener('keyup', this.onKeyScroll);
                 document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown_top);
                 document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);
                 document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
                 document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
+                window.onresize=this.onresize;
                 this.setRuler(6,10);
+
             }  else {
                 document.body.removeEventListener('keyup', this.onKeyScroll);
             }
-            if(widget.selectWidget.props.rulerArr && this.selectNode.props.isShow){
+
+            if(widget.selectWidget.props.rulerArr &&( this.selectNode.props.isShow ||  this.selectNode.props.isShow===undefined)){  //isShow没有定义时和确定显示的时候才执行
                 this.drawLine(widget.selectWidget.props.rulerArr);
             }
-
         }
 
         if(widget.setRulerLine){
@@ -69,7 +72,6 @@ class DesignView extends React.Component {
         }
 
         if(widget.updateProperties && (widget.updateProperties .width || widget.updateProperties .height)){
-
             let iWidthSum =Math.floor(widget.updateProperties .width/100);
             let iHeightSum=Math.floor(widget.updateProperties .height/100);
             this.setRuler(iWidthSum,iHeightSum);
@@ -126,7 +128,7 @@ class DesignView extends React.Component {
         t -= y/4;
 
         this.refs.view.style.top = t+'px';
-        this.refs.line_top.style.top= t+this.stageZoomTop+'px';
+        this.refs.line_top.style.top= (t+this.stageZoomTop)+'px';
 
         this.aODiv.map(item =>{
             if(item.oDiv.whichDrag =='top'){
@@ -177,6 +179,11 @@ class DesignView extends React.Component {
         }
     }
 
+    onresize(){
+        let aODiv =this.aODiv;
+        this.drawLine(aODiv);
+    }
+
     isShowRulerLine(bIsShow){
         this.selectNode.props.isShow =bIsShow;
         let oContainer =document.getElementById('DesignView-Container');
@@ -200,7 +207,7 @@ class DesignView extends React.Component {
         let offsetLeft =this.refs.canvas_wraper.offsetLeft + this.stageZoomLeft;
 
         //设置主对齐线
-        this.refs.line_top.style.top=offsetTop+'px';
+        this.refs.line_top.style.top=(offsetTop)+'px';
         this.refs.line_left.style.left=this.stageZoomLeft+'px';
 
 
@@ -279,13 +286,13 @@ class DesignView extends React.Component {
     mouseMove(event){
         if(this.curODiv &&  this.isDraging){
             if(this.whichDrag=='top'){
-                this.curODiv.style.top = (event.pageY)+'px';
+               this.curODiv.style.top = (event.pageY-17)+'px';
                 document.body.style.cursor=' n-resize';
             }else{
                 this.curODiv.style.left = (event.pageX)+'px';
                 document.body.style.cursor='e-resize';
             }
-            if((event.pageY<=this.refs.view.offsetTop && this.refs.view.offsetTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft && this.refs.canvas_wraper.offsetLeft-13 <=event.pageX)){
+            if((event.pageY<=this.refs.view.offsetTop +this.stageZoomTop && this.refs.view.offsetTop +this.stageZoomTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft+this.stageZoomLeft && this.refs.canvas_wraper.offsetLeft+this.stageZoomLeft-13 <=event.pageX)){
                 this.curODiv.style.display='none';
             }else{
                 this.curODiv.style.display='block';
@@ -298,11 +305,9 @@ class DesignView extends React.Component {
         let $this =this;
         if(this.curODiv) {
             //在x_ruler ,则消失,否则存储
-            if((event.pageY<=this.refs.view.offsetTop && this.refs.view.offsetTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft && this.refs.canvas_wraper.offsetLeft-13 <=event.pageX) ){
+            if((event.pageY<=this.refs.view.offsetTop+this.stageZoomTop && this.refs.view.offsetTop+this.stageZoomTop-14 <=event.pageY)||(event.pageX<=this.refs.canvas_wraper.offsetLeft +this.stageZoomLeft && this.refs.canvas_wraper.offsetLeft +this.stageZoomLeft-13 <=event.pageX) ){
                 this.refs.container.removeChild(this.curODiv);
             }else{
-
-
                 //存在,则修改;不存在,则添加
                 this.curODiv.onmousedown= function(){
                     $this.isDraging=true;
@@ -322,12 +327,10 @@ class DesignView extends React.Component {
                 this.curODiv.whichDrag=this.whichDrag;
                 this.aODiv.push({
                     oDiv:this.curODiv,
-                    offsetLeft:event.pageX-this.refs.canvas_wraper.offsetLeft,
-                    offsetTop:this.refs.view.offsetTop -event.pageY
+                    offsetLeft:(event.pageX-this.refs.canvas_wraper.offsetLeft)/this.stageZoomRate,
+                    offsetTop:(this.refs.view.offsetTop+this.stageZoomTop -event.pageY)/this.stageZoomRate
                 });
-
                 WidgetStore.currentWidget.props.rulerArr =this.aODiv;
-
             }
         }
         document.body.style.cursor='auto';
