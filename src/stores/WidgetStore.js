@@ -650,11 +650,11 @@ export default Reflux.createStore({
             }
         }
     },
-    removeFunction: function (data) {
+    removeFunction: function (key) {
         if(this.currentFunction) {
             let index = -1;
             for(let i=0; i<this.currentWidget.funcList.length; i++) {
-                if(this.currentFunction.widget.funcList[i].key == data.key) {
+                if(this.currentFunction.widget.funcList[i].key == key) {
                     index = i;
                 }
             }
@@ -709,11 +709,11 @@ export default Reflux.createStore({
             }
         }
     },
-    removeVariable: function (data) {
+    removeVariable: function (key) {
         if(this.currentVariable) {
             let index = -1;
             for(let i=0; i<this.currentWidget.varList.length; i++) {
-                if(this.currentVariable.widget.varList[i].key == data.key) {
+                if(this.currentVariable.widget.varList[i].key == key) {
                     index = i;
                 }
             }
