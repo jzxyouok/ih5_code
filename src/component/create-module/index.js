@@ -28,8 +28,12 @@ class CreateModule extends React.Component {
 
     onStatusChange(widget) {
         if (widget.classList !== undefined) {
+            //console.log(widget.classList);
             this.props.closeClassBtn();
-            this.refs.name.value = ""
+            this.refs.name.value = "";
+            this.setState({
+                isTop : false
+            })
         }
     }
 
@@ -50,6 +54,10 @@ class CreateModule extends React.Component {
         else {
             //console.log(name, this.state.isTop);
             WidgetActions['addClass'](name, this.state.isTop);
+            this.setState({
+                error : "组件名称未能为空"
+                , isError : false
+            })
         }
     }
 

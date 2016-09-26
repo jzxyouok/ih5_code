@@ -113,7 +113,6 @@ function loadTree(parent, node) {
       loadTree(current, children[i]);
     }
   }
-
   return current;
 }
 
@@ -751,6 +750,7 @@ export default Reflux.createStore({
       this.trigger({deletePoint: true});
     },
     initTree: function(data) {
+        console.log(data);
         classList = [];
         bridge.resetClass();
         stageTree = [];
@@ -778,22 +778,30 @@ export default Reflux.createStore({
         this.selectWidget(stageTree[0].tree);
     },
     addClass: function(name, bool) {
-        stageTree.push(
-            { name: name,
-              tree: loadTree(null, { 'cls': 'root',
-                                    'type': bridge.getRendererType(this.currentWidget.node),
-                                    'props': {'width': 640, 'height': 1040}})
-            }
-        );
-
         if(bool){
             classList.unshift(name);
+            stageTree.splice(
+                1,
+                0,
+                { name: name,
+                    tree: loadTree(null, { 'cls': 'root',
+                        'type': bridge.getRendererType(this.currentWidget.node),
+                        'props': {'width': 640, 'height': 1040}})
+                }
+            );
         }
         else {
             classList.push(name);
+            stageTree.push(
+                { name: name,
+                    tree: loadTree(null, { 'cls': 'root',
+                        'type': bridge.getRendererType(this.currentWidget.node),
+                        'props': {'width': 640, 'height': 1040}})
+                }
+            );
         }
 
-        bridge.addClass(name);
+        bridge.addClass(name,bool);
         this.trigger({initTree: stageTree, classList: classList});
     },
     render: function() {
