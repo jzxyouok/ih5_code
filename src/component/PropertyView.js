@@ -203,14 +203,27 @@ class PropertyView extends React.Component {
                               //回调完成
                               oProgress.style.display='none';
                               //设置默认值
-                             // this.selectNode.props.fontKey=arguments[1].name;
-                              this.selectNode.props.fontKey='哈哈';
+
+                              console.log(arguments[1],arguments[1].name,escape(arguments[1].name));
+
+                              this.selectNode.props.fontKey=escape(arguments[1].name);
+
+
                               console.log(this.selectNode.props);
                               //更新属性面板
                               WidgetActions['render']();
                               this.setState({fields: this.getFields()});
 
-                          }.bind(this));
+                          }.bind(this),function(evt){
+                              oProgress.style.display='block';
+                              if (evt.lengthComputable) {
+                                  var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                  oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
+                                  oProgress.childNodes[0].style.width=percentComplete+'%';
+                              }else {
+                                  console.log('failed');
+                              }
+                          });
                           bTag=false;
                       }else{
                           this.selectNode.props.fontKey=this.getFontDefault(value);
