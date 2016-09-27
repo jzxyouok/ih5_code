@@ -35,10 +35,9 @@ var chooseFileCallback = (w)=> {  //tag
                 xhr.send(form);
 
                 if(w.showProgress){
+                    console.log(w.showProgress);
                     xhr.upload.addEventListener("progress", w.showProgress);
                 }
-
-
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
                         w.userCallback(w, xhr.responseText);
