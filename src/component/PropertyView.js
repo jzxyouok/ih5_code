@@ -204,10 +204,10 @@ class PropertyView extends React.Component {
                               oProgress.style.display='none';
                               //设置默认值
 
-                              console.log(arguments[1],arguments[1].name,escape(arguments[1].name));
+                            //  console.log(arguments[1],arguments[1].name,escape(arguments[1].name));
 
-                              this.selectNode.props.fontKey=escape(arguments[1].name);
-
+                           //   this.selectNode.props.fontKey=escape(arguments[1].name);
+                              this.selectNode.props.fontKey=arguments[1].name;
 
                               console.log(this.selectNode.props);
                               //更新属性面板

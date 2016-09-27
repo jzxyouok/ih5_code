@@ -52,8 +52,6 @@ var chooseFileCallback = (w)=> {  //tag
 };
 
 
-
-
 var chooseFile = (type, upload, callback,showProgress) => {
     var w = document.getElementById('upload-box');
     w.value = '';
