@@ -44,7 +44,7 @@ var chooseFileCallback = (w)=> {  //tag
                 var form = new FormData();
                 form.append('type', w.userType);
                 form.append('file', w.files[0]);
-                xhr.send(form);
+
 
                 console.log('tag1')
                 xhr.upload.onprogress=progressFn;
@@ -55,7 +55,7 @@ var chooseFileCallback = (w)=> {  //tag
                 }else{
                     console.log('tag3');
                 }
-
+                xhr.send(form);
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
                         w.userCallback(w, xhr.responseText);
