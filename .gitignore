@@ -5,3 +5,6 @@ npm-debug.*
 *.swp
 .DS_Store
 dist
+
+#自动上传测试服的脚本
+ih5Text.sh
