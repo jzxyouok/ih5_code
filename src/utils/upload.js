@@ -33,7 +33,9 @@ var chooseFileCallback = (w)=> {  //tag
                 form.append('type', w.userType);
                 form.append('file', w.files[0]);
 
-                xhr.upload.onprogress= w.showProgress;
+                    xhr.upload.onprogress= w.showProgress;
+
+
 
                 xhr.send(form);
 

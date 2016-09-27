@@ -203,6 +203,9 @@ class PropertyView extends React.Component {
                   }else if(prop.name == 'font'){
                       if(value == 0){
                           chooseFile('font', true, function(){
+
+                              console.log(this);
+
                               let  fontObj =eval("("+arguments[1]+")");
                               let oProgress=document.getElementById('ant-progress');
                               //回调完成
