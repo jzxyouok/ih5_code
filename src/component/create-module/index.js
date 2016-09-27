@@ -10,12 +10,13 @@ class CreateModule extends React.Component {
         super(props);
         this.state = {
             isTop : false,
-            error : "组件名称未能为空",
+            error : "组件名称不能为空",
             isError : false
         };
 
         this.isTopSet = this.isTopSet.bind(this);
         this.addClass = this.addClass.bind(this);
+        this.closeClassBtn = this.closeClassBtn.bind(this);
     }
 
     componentDidMount() {
@@ -28,13 +29,18 @@ class CreateModule extends React.Component {
 
     onStatusChange(widget) {
         if (widget.classList !== undefined) {
-            //console.log(widget.classList);
-            this.props.closeClassBtn();
-            this.refs.name.value = "";
-            this.setState({
-                isTop : false
-            })
+            this.closeClassBtn();
         }
+    }
+
+    closeClassBtn(){
+        this.state = {
+            isTop : false,
+            error : "组件名称不能为空",
+            isError : false
+        };
+        this.refs.name.value = "";
+        this.props.closeClassBtn();
     }
 
     isTopSet(){
@@ -45,19 +51,22 @@ class CreateModule extends React.Component {
 
     addClass(){
         let name = this.refs.name.value;
+        let index = this.props.classList.indexOf(name);
         if(name.length == 0 ){
             this.setState({
-                error : "组件名称未能为空"
+                error : "组件名称不能为空"
+                , isError : true
+            })
+        }
+        else if(index >= 0){
+            this.setState({
+                error : "该组件已存在"
                 , isError : true
             })
         }
         else {
             //console.log(name, this.state.isTop);
             WidgetActions['addClass'](name, this.state.isTop);
-            this.setState({
-                error : "组件名称未能为空"
-                , isError : false
-            })
         }
     }
 
@@ -81,7 +90,7 @@ class CreateModule extends React.Component {
                         </div>
 
                         <div className="btn-group f--hcc">
-                            <button className="btn btn-clear cancel-btn" onClick={ this.props.closeClassBtn }>取消</button>
+                            <button className="btn btn-clear cancel-btn" onClick={ this.closeClassBtn }>取消</button>
                             <button className="btn btn-clear sure-btn" onClick={ this.addClass }>确定</button>
                         </div>
                     </div>

@@ -93,7 +93,7 @@ class PropertyView extends React.Component {
                     <Select   {...defaultProp} >
                         {defaultProp.options}
                     </Select>
-                    <div id={cls({'ant-progress':defaultProp.name=='font'})}><div></div></div>
+                    <div id={cls({'ant-progress':defaultProp.name=='font'})}><div className='ant-progress-bar'></div><div className='ant-progress-txt'>上传 10%</div></div>
                 </div>;
 
             default:
@@ -200,19 +200,27 @@ class PropertyView extends React.Component {
                       if(value == 0){
                           let oProgress=document.getElementById('ant-progress');
                           chooseFile('font', true, function(){
+                              let  fontObj =eval("("+arguments[1]+")");
                               //回调完成
                               oProgress.style.display='none';
                               //设置默认值
-
-                            //  console.log(arguments[1],arguments[1].name,escape(arguments[1].name));
-
-                           //   this.selectNode.props.fontKey=escape(arguments[1].name);
-                              this.selectNode.props.fontKey=arguments[1].name;
-
-                              console.log(this.selectNode.props);
+                              this.selectNode.props.fontKey=fontObj.name;
                               //更新属性面板
-                              WidgetActions['render']();
-                              this.setState({fields: this.getFields()});
+
+                              const obj = {};
+                              obj[prop.name] = fontObj.file;
+                              this.onStatusChange({updateProperties: obj});
+                              WidgetActions['updateProperties'](obj, false,  function(evt){
+                                  let oProgress=document.getElementById('ant-progress');
+                                  if(evt.lengthComputable && oProgress) {
+                                      oProgress.style.display='block';
+                                      var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                      oProgress.childNodes[1].innerHTML='上传 '+percentComplete+'%';
+                                      oProgress.childNodes[0].style.width=percentComplete+'%';
+                                  }else {
+                                      console.log('failed');
+                                  }
+                              });
 
                           }.bind(this),true);
                           bTag=false;
