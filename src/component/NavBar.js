@@ -10,6 +10,7 @@ import $ from 'jquery'
 import $class from 'classnames'
 
 import CreateModule from './create-module/index'
+import ArrangeModule from './arrange-module/index'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -29,7 +30,8 @@ class NavBar extends React.Component {
             classList:[],
             fontList:[],
             dropDownState : 0,
-            createClass : false
+            createClass : false,
+            arrangeModule : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -45,6 +47,8 @@ class NavBar extends React.Component {
         this.createClassBtn = this.createClassBtn.bind(this);
         this.closeClassBtn = this.closeClassBtn.bind(this);
         this.addClass = this.addClass.bind(this);
+        this.arrangeModuleBtn = this.arrangeModuleBtn.bind(this);
+        this.closeArrangeModuleBtn = this.closeArrangeModuleBtn.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -274,6 +278,18 @@ class NavBar extends React.Component {
         WidgetActions['addWidget'](name);
     }
 
+    arrangeModuleBtn(){
+        this.setState({
+            arrangeModule : true
+        })
+    }
+
+    closeArrangeModuleBtn(){
+        this.setState({
+            arrangeModule : false
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num)=>{
@@ -330,7 +346,7 @@ class NavBar extends React.Component {
                                 <div className="dropDownToggle-main">
                                     <div className="dropDown-title f--hlc">
                                         <span className="flex-1">全部组件：</span>
-                                        <span className="set-btn" />
+                                        <span className="set-btn" onClick={ this.arrangeModuleBtn } />
                                     </div>
 
                                     <div className="dropDown-main">
@@ -488,6 +504,10 @@ class NavBar extends React.Component {
 
                 <div className={$class({"hidden": !this.state.createClass}) }>
                     <CreateModule closeClassBtn={ this.closeClassBtn }  />
+                </div>
+
+                <div className={$class({"hidden": !this.state.arrangeModule }) }>
+                    <ArrangeModule closeArrangeModuleBtn={ this.closeArrangeModuleBtn } />
                 </div>
 
             </div>
