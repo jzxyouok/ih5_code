@@ -249,8 +249,8 @@ class ObjectView extends React.Component {
                             onClick={ this.initEvent.bind(this, 'event', null)}/>
                     {/*<button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />*/}
                     <button className={$class('btn btn-clear delete-btn',
-                                {'not-allowed': !this.state.canDelete})}
-                            disabled={!this.state.canDelete}
+                                {'not-allowed': !this.state.canDelete&&this.state.activeEventTreeKey== null})}
+                            disabled={!this.state.canDelete&&this.state.activeEventTreeKey== null}
                             title='删除' onClick={ this.delete } />
                 </div>
 
