@@ -140,7 +140,6 @@ class Event extends React.Component {
                 </div>
             </div>
         });
-
         return (
             <div className={$class('Event',{'active' :this.props.activeKey === this.props.wKey })}
                  onClick={this.chooseEventBtn.bind(this, this.props.wKey)}
@@ -166,9 +165,9 @@ class Event extends React.Component {
                 </div>
 
                 <div className={$class('E--content',{'hidden': !this.state.expanded})}>
-                    {
-                        this.props.event.map(content)
-                    }
+                    {/*{*/}
+                        {/*this.props.event.map(content)*/}
+                    {/*}*/}
                 </div>
             </div>
         );

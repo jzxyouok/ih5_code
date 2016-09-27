@@ -645,6 +645,28 @@ export default Reflux.createStore({
         }
         this.trigger(p);
     },
+    reorderEventTreeList: function () {
+        if(this.currentWidget&&this.currentWidget.rootWidget) {
+            this.eventTreeList = [];
+            //母节点
+            if(this.currentWidget.rootWidget.props.eventTree){
+                this.eventTreeList.push(this.currentWidget.rootWidget);
+            }
+            //递归遍历添加有事件widget到eventTreeList
+            let loopEventTree = (children) => {
+                for(let i=0; i<children.length; i++) {
+                    if (children[i].props.eventTree) {
+                        this.eventTreeList.push(children[i]);
+                    }
+                    if (children[i].children && children[i].children.length > 0) {
+                        loopEventTree(children[i].children);
+                    }
+                }
+            };
+            loopEventTree(this.currentWidget.rootWidget.children);
+            this.trigger({eventTreeList: this.eventTreeList});
+        }
+    },
     initEventTree: function(className, props) {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
@@ -672,6 +694,8 @@ export default Reflux.createStore({
         //激活事件树，无则为
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
+            //重新排序eventTreeList
+            this.reorderEventTreeList();
         } else {
             this.currentActiveEventTreeKey = null;
         }
