@@ -7,4 +7,4 @@ npm-debug.*
 dist
 
 #自动上传测试服的脚本
-ih5Text.sh
+ih5Test.sh
