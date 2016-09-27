@@ -45,7 +45,9 @@ function loadTree(parent, node) {
   current.props = node['props'] || {};
   current.events = node['events'] || {};
 
-  current.varList = [];
+  // current.varList = [];
+  current.strVarList = [];
+  current.intVarList = [];
   if (node['vars']) {
     for (let i = 0; i<node['vars'].length; i++) {
         let temp = {};
@@ -56,7 +58,16 @@ function loadTree(parent, node) {
         temp['type'] = node['vars'][i].__type;
         temp['key'] = _keyCount++;
         temp['widget'] = current;
-        current.varList.unshift(temp);
+        switch (temp['type']){
+            case 'number':
+                current.intVarList.unshift(temp);
+                break;
+            case 'string':
+                current.strVarList.unshift(temp);
+                break;
+            default:
+                break;
+        }
       // if (n.length >= 3 && n.substr(0, 2) == '__') {
       //     current.varList.unshift({n.substr(2) : node['vars'][n]});
       // }
@@ -146,15 +157,37 @@ function saveTree(data, node) {
     data['props'] = props;
   if (node.events)
     data['events'] = node.events;
-  if (node.varList.length > 0) {
-    data['vars'] = [];
-    for (let i = node.varList.length-1; i >=0 ; i--) {
+  if (node.intVarList.length > 0) {
+      data['vars'] = [];
+      // for (let i = node.varList.length-1; i >=0 ; i--) {
+      //     let o = {};
+      //     o['__name'] = node.varList[i].name;
+      //     o['__value'] = node.varList[i].value;
+      //     o['__className'] = node.varList[i].className;
+      //     o['__props'] = node.varList[i].props;
+      //     o['__type'] = node.varList[i].type;
+      //     data['vars'].push(o);
+      // }
+      //int vars list
+      for (let i = node.intVarList.length - 1; i >= 0; i--) {
+          let o = {};
+          o['__name'] = node.intVarList[i].name;
+          o['__value'] = node.intVarList[i].value;
+          o['__className'] = node.intVarList[i].className;
+          o['__props'] = node.intVarList[i].props;
+          o['__type'] = node.intVarList[i].type;
+          data['vars'].push(o);
+      }
+  }
+  if(node.strVarList.length > 0){
+    //str vars list
+    for (let i = node.strVarList.length-1; i >=0 ; i--) {
         let o = {};
-        o['__name'] = node.varList[i].name;
-        o['__value'] = node.varList[i].value;
-        o['__className'] = node.varList[i].className;
-        o['__props'] = node.varList[i].props;
-        o['__type'] = node.varList[i].type;
+        o['__name'] = node.strVarList[i].name;
+        o['__value'] = node.strVarList[i].value;
+        o['__className'] = node.strVarList[i].className;
+        o['__props'] = node.strVarList[i].props;
+        o['__type'] = node.strVarList[i].type;
         data['vars'].push(o);
     }
     // data['vars'] = o;
@@ -368,8 +401,8 @@ export default Reflux.createStore({
           }
         }
         this.currentWidget = widget;
-        //是否触发（为定义或者是true就触发）
-        if(shouldTrigger===true||shouldTrigger===undefined) {
+        //是否触发（不为false就触发）
+        if(shouldTrigger!=false) {
             this.trigger({selectWidget: widget});
             //判断是否是可选择的，是否加锁
             if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
@@ -377,10 +410,9 @@ export default Reflux.createStore({
             } else {
                 bridge.selectWidget(widget.node);
             }
+            if (render)
+                this.render();
         }
-
-        if (render)
-          this.render();
     },
     addWidget: function(className, props, link) {
 
@@ -652,11 +684,11 @@ export default Reflux.createStore({
             }
         }
     },
-    removeFunction: function (key) {
+    removeFunction: function () {
         if(this.currentFunction) {
             let index = -1;
             for(let i=0; i<this.currentWidget.funcList.length; i++) {
-                if(this.currentFunction.widget.funcList[i].key == key) {
+                if(this.currentWidget.funcList[i].key == this.currentFunction.key) {
                     index = i;
                 }
             }
@@ -685,20 +717,20 @@ export default Reflux.createStore({
             vars['className']  = className;
             vars['props'] = {};
             vars['type'] = param.type;
-            switch (vars['type']) {
-                case 'number':
-                    vars['props']['name'] = 'intVar' + (this.currentWidget['varList'].length + 1);
-                    break;
-                case 'string':
-                    vars['props']['name'] = 'strVar' + (this.currentWidget['varList'].length + 1);
-                    break;
-                default:
-                    vars['props']['name'] = 'var' + (this.currentWidget['varList'].length + 1);
-                    break;
-            }
             vars['key'] = _keyCount++;
             vars['widget'] = this.currentWidget;
-            this.currentWidget['varList'].unshift(vars);
+            switch (vars['type']) {
+                case 'number':
+                    vars['props']['name'] = 'intVar' + (this.currentWidget['intVarList'].length + 1);
+                    this.currentWidget['intVarList'].unshift(vars);
+                    break;
+                case 'string':
+                    vars['props']['name'] = 'strVar' + (this.currentWidget['strVarList'].length + 1);
+                    this.currentWidget['strVarList'].unshift(vars);
+                    break;
+                default:
+                    break;
+            }
         }
         this.trigger({redrawTree: true});
     },
@@ -711,17 +743,30 @@ export default Reflux.createStore({
             }
         }
     },
-    removeVariable: function (key) {
+    removeVariable: function () {
         if(this.currentVariable) {
-            let index = -1;
-            for(let i=0; i<this.currentWidget.varList.length; i++) {
-                if(this.currentVariable.widget.varList[i].key == key) {
-                    index = i;
+            let removeV = (list, key) => {
+                let index = -1;
+                for(let i=0; i<list.length; i++) {
+                    if(list[i].key == key) {
+                        index = i;
+                    }
                 }
-            }
-            if(index>-1){
-                this.currentWidget.varList.splice(index,1);
-                this.selectWidget(this.currentWidget);
+                if(index>-1){
+                    list.splice(index,1);
+                    this.selectWidget(this.currentWidget);
+                }
+            };
+
+            switch (this.currentVariable.type){
+                case 'number':
+                    removeV(this.currentWidget.intVarList, this.currentVariable.key);
+                    break;
+                case 'string':
+                    removeV(this.currentWidget.strVarList, this.currentVariable.key);
+                    break;
+                default:
+                    break;
             }
         }
     },
