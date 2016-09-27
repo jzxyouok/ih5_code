@@ -4,6 +4,8 @@ export default Reflux.createActions([
   'selectWidget',                 //选中舞台组件、对象树图层
   'addWidget',                    //添加组件
   'addClass',                     //自定义组件
+  'sortClass',                    //排序组件
+  'deleteClass',                  //删除组件
   'removeWidget',                 //删除组件
   'copyWidget',                   //复制组件
   'pasteWidget',                  //粘贴组件

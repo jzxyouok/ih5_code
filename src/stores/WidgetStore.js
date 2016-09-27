@@ -37,6 +37,13 @@ function isEmptyString( str ){
     return re.test(str);
 }
 
+function isCustomizeWidget(className) {
+    if (className&&className.length>0){
+        return className.substr(0,1)==='_';
+    }
+    return false;
+}
+
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
 
@@ -335,6 +342,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addWidget'], this.addWidget);
         this.listenTo(WidgetActions['reorderWidget'], this.reorderWidget);
         this.listenTo(WidgetActions['addClass'], this.addClass);
+        this.listenTo(WidgetActions['sortClass'], this.sortClass);
+        this.listenTo(WidgetActions['deleteClass'], this.deleteClass);
         this.listenTo(WidgetActions['removeWidget'], this.removeWidget);
         this.listenTo(WidgetActions['copyWidget'], this.copyWidget);
         this.listenTo(WidgetActions['pasteWidget'], this.pasteWidget);
@@ -556,9 +565,6 @@ export default Reflux.createStore({
       }
     },
     addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties) {
-        if (!this.currentWidget)
-            return;
-
         if(properties === undefined || properties === null) {
             properties = {};
         }
@@ -568,17 +574,22 @@ export default Reflux.createStore({
             props = cpJson(properties);
         }
 
-        if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
-            props['name'] = props.value;
+        //自定义组件就不重命名
+        if(isCustomizeWidget(className)){
+            props['name'] = className;
         } else {
-            let cOrder = 1;
-            //查找当前widget有多少个相同className的，然后＋1处理名字
-            for(let i = 0; i<this.currentWidget.children.length; i++){
-                if(this.currentWidget.children[i].className === className){
-                    cOrder+=1;
+            if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
+                props['name'] = props.value;
+            } else {
+                let cOrder = 1;
+                //查找当前widget有多少个相同className的，然后＋1处理名字
+                for(let i = 0; i<this.currentWidget.children.length; i++){
+                    if(this.currentWidget.children[i].className === className){
+                        cOrder+=1;
+                    }
                 }
+                props['name'] = className + cOrder;
             }
-            props['name'] = className + cOrder;
         }
         return props;
     },
@@ -979,6 +990,59 @@ export default Reflux.createStore({
         bridge.addClass(name,bool);
         this.trigger({initTree: stageTree, classList: classList});
     },
+
+    sortClass: function(data) {
+        //console.log(data,classList);
+        let fuc = ((v,i)=>{
+            data.forEach((v1,i1)=>{
+               if(v1 == v){
+                   data.splice(i1, 1);
+                   classList.splice(i, 1);
+                   classList.unshift(v1);
+                   stageTree.splice(i+1, 1);
+                   stageTree.splice(
+                       1,
+                       0,
+                       { name: v1,
+                           tree: loadTree(null, { 'cls': 'root',
+                               'type': bridge.getRendererType(this.currentWidget.node),
+                               'props': {'width': 640, 'height': 1040}})
+                       }
+                   );
+                   return classList.map(fuc);
+               }
+            });
+            return {
+                classList,
+                stageTree
+            }
+        });
+
+        classList.map(fuc);
+        //console.log(classList,stageTree);
+        this.trigger({initTree: stageTree, classList: classList});
+    },
+
+    deleteClass: function(data){
+        //console.log(data,classList);
+        let fuc = ((v,i)=>{
+            data.forEach((v1,i1)=>{
+                if(v == v1){
+                    data.splice(i1, 1);
+                    classList.splice(i, 1);
+                    stageTree.splice(i+1, 1);
+                    return classList.map(fuc);
+                }
+            });
+            return {
+                classList,
+                stageTree
+            }
+        });
+        classList.map(fuc);
+        //console.log(classList,stageTree);
+        this.trigger({initTree: stageTree, classList: classList});
+    },
     render: function() {
       if (this.currentWidget) {
         process.nextTick(() => bridge.render(this.currentWidget.rootWidget.node));
@@ -1133,4 +1197,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType}
+export {globalToken, nodeType, varType, isCustomizeWidget}

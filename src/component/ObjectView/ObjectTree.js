@@ -4,7 +4,7 @@ import $class from 'classnames';
 
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore, {nodeType} from '../../stores/WidgetStore';
+import WidgetStore, {nodeType, isCustomizeWidget} from '../../stores/WidgetStore';
 
 class ObjectTree extends React.Component {
     constructor (props) {
@@ -536,7 +536,7 @@ class ObjectTree extends React.Component {
                          {'active': item.key === this.state.nid})}
                          onClick={this.funcBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
-                        <span className='func-icon' />
+                        <span className='item-icon func-var-icon func-icon' />
                         <div className='func-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
                             <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
                             <input id={'item-name-input-'+item.key} type="text"
@@ -565,7 +565,7 @@ class ObjectTree extends React.Component {
                         {'active': item.key === this.state.nid})}
                          onClick={this.varBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
-                        <span className={$class({'var-num-icon': item.type==='number'},
+                        <span className={$class('item-icon func-var-icon', {'var-num-icon': item.type==='number'},
                             {'var-str-icon': item.type==='string'})} />
                         <div className='var-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
                             <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
@@ -607,10 +607,13 @@ class ObjectTree extends React.Component {
         };
 
         let fuc = (v,i)=>{
-            //console.log(v.props.visible);
             let pic = null;
+            let picIsImage = true;
             this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
-                if (v1.className === v.className){
+                if(isCustomizeWidget(v.className)) {
+                    pic = 'component-icon';
+                    picIsImage = false;
+                } else if (v1.className === v.className){
                     if(v.className === 'image' || v.className === 'imagelist') {
                         if(v.props.link !== undefined &&v.rootWidget.imageList&&v.rootWidget.imageList.length>v.props.link){
                             pic = v.rootWidget.imageList[v.props.link];
@@ -655,16 +658,23 @@ class ObjectTree extends React.Component {
                                 ? icon( 1 , v.key)
                                 : icon( 0 , v.key)
                         }
-
-                        <img className="item-img" src={ pic } />
-
-                        <div className='item-name-wrap' onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>
-                            <p className={$class({'hidden':((v.key === this.state.nid)&&this.state.editMode)})} >{v.props.name}</p>
-                            <input id={'item-name-input-'+v.key} type="text"
-                                   onBlur={this.endEditObjName}
-                                   onClick={this.editStopPropagation}
-                                   className={$class('item-name-input',{'hidden':!((v.key === this.state.nid)&&this.state.editMode)})}/>
-                        </div>
+                        {
+                            picIsImage?<span className="item-icon"><img className="item-img" src={ pic } /></span>
+                                : <span className={$class('item-icon', pic)} />
+                        }
+                        {
+                            isCustomizeWidget(v.className)
+                                ? <div className='item-name-wrap'>
+                                    <p>{v.props.name}</p>
+                                  </div>
+                                : <div className='item-name-wrap' onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>
+                                    <p className={$class({'hidden':((v.key === this.state.nid)&&this.state.editMode)})} >{v.props.name}</p>
+                                    <input id={'item-name-input-'+v.key} type="text"
+                                           onBlur={this.endEditObjName}
+                                           onClick={this.editStopPropagation}
+                                           className={$class('item-name-input',{'hidden':!((v.key === this.state.nid)&&this.state.editMode)})}/>
+                                  </div>
+                        }
                         {
                             v.props.locked!==undefined && v.props.locked
                                 ? <span className='lock-icon' onClick={ this.lockBtn.bind(this, v.key, v) }/>

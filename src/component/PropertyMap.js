@@ -1,4 +1,5 @@
 import bridge from 'bridge';
+import {isCustomizeWidget} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
@@ -348,8 +349,8 @@ for (var n in propertyMap) {
 }
 
 function checkChildClass(selected, className) {
-    // 对函数和变量的处理
-    if (selected.className === 'func' || selected.className === 'var') {
+    // 对函数,变量,自定义的处理
+    if (selected.className === 'func' || selected.className === 'var' || isCustomizeWidget(selected.className)) {
         return false;
     }
     var provides = propertyFlags[selected.className].provides;
