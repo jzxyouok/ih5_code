@@ -9,6 +9,7 @@ import { Form, Input, InputNumber, Slider, Switch, Collapse,Select} from 'antd';
 const Option = Select.Option;
 const Panel = Collapse.Panel;
 import cls from 'classnames';
+import {SwitchMore} from  '../PropertyView/PropertyViewComponet';
 
 import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -87,6 +88,9 @@ class PropertyView extends React.Component {
             case propertyType.Boolean:
 
                 return <Switch   {...defaultProp} />;
+            case propertyType.Boolean2:
+                console.log(11);
+                return <S23witchMore   {...defaultProp} />;
 
             case propertyType.Select:
                 return <div>
@@ -198,15 +202,14 @@ class PropertyView extends React.Component {
 
                   }else if(prop.name == 'font'){
                       if(value == 0){
-                          let oProgress=document.getElementById('ant-progress');
                           chooseFile('font', true, function(){
                               let  fontObj =eval("("+arguments[1]+")");
+                              let oProgress=document.getElementById('ant-progress');
                               //回调完成
                               oProgress.style.display='none';
                               //设置默认值
                               this.selectNode.props.fontKey=fontObj.name;
                               //更新属性面板
-
                               const obj = {};
                               obj[prop.name] = fontObj.file;
                               this.onStatusChange({updateProperties: obj});
@@ -233,6 +236,9 @@ class PropertyView extends React.Component {
                   }
                     break;
                 case propertyType.Boolean:
+                    v =value;
+                    break;
+                case propertyType.Boolean2:
                     v =value;
                     break;
                 default:
@@ -368,7 +374,7 @@ class PropertyView extends React.Component {
                     defaultValue = node.props.fontFamily;
                 }
             } else  if (node.props[item.name] === undefined){
-                if(item.type === propertyType.Boolean ){
+                if(item.type === propertyType.Boolean ||item.type === propertyType.Boolean2 ){
                     defaultValue = item.default
                 }else if(item.type === propertyType.Percentage && item.name=='alpha'){
                     defaultValue = item.default*100;
@@ -391,9 +397,8 @@ class PropertyView extends React.Component {
             };
 
             //单独设置默认参数
-            if (item.type === propertyType.Boolean) {
+            if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
                 defaultProp.checked = defaultValue;
-
             }else if(item.type ==propertyType.Select ){
               let selectClassName='';
                 defaultProp.options=[];
