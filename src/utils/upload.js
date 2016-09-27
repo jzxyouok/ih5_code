@@ -1,17 +1,5 @@
 import {globalToken} from '../stores/WidgetStore'
-var progressFn=function(evt){
-    //let oProgress=document.getElementById('ant-progress');
-    //oProgress.style.display='block';
-    console.log('progress');
-    //if (evt.lengthComputable) {
-    //    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-    //    console.log(percentComplete);
-    //    oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
-    //    oProgress.childNodes[0].style.width=percentComplete+'%';
-    //}else {
-    //    console.log('failed');
-    //}
-}
+
 var chooseFileCallback = (w)=> {  //tag
     if (w.files.length > 0) {
         var allowExt = null;
@@ -46,15 +34,10 @@ var chooseFileCallback = (w)=> {  //tag
                 form.append('file', w.files[0]);
 
 
-                console.log('tag1')
-                xhr.upload.onprogress=progressFn;
-              //  xhr.upload.addEventListener("progress", progress);
 
-                if (typeof xhr.upload.onprogress !== 'function') {
-                   console.log('tag2');
-                }else{
-                    console.log('tag3');
-                }
+                xhr.upload.onprogress= w.showProgress;
+
+
                 xhr.send(form);
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
@@ -68,14 +51,24 @@ var chooseFileCallback = (w)=> {  //tag
     }
 };
 
-
-
-var chooseFile = (type, upload, callback) => {
+function showProgressFn(evt){
+    let oProgress=document.getElementById('ant-progress');
+    oProgress.style.display='block';
+    if (evt.lengthComputable) {
+        var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+        oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
+        oProgress.childNodes[0].style.width=percentComplete+'%';
+    }else {
+        console.log('failed');
+    }
+}
+var chooseFile = (type, upload, callback,showProgress) => {
     var w = document.getElementById('upload-box');
     w.value = '';
     w.userType = type;
     w.userUpload = upload;
     w.userCallback = callback;
+    w.showProgress=showProgress?showProgressFn:null;
     w.sysCallback = chooseFileCallback;
     w.click();
 };
