@@ -53,9 +53,9 @@ function loadTree(parent, node) {
         let temp = {};
         temp['name'] = node['vars'][i].__name;
         temp['value'] = node['vars'][i].__value;
-        temp['className'] = node['vars'][i].__className;
         temp['props'] = node['vars'][i].__props;
         temp['type'] = node['vars'][i].__type;
+        temp['className'] = 'var';
         temp['key'] = _keyCount++;
         temp['widget'] = current;
         switch (temp['type']){
@@ -79,8 +79,8 @@ function loadTree(parent, node) {
         let temp = {};
         temp['name'] = node['funcs'][i].__name;
         temp['value'] = node['funcs'][i].__value;
-        temp['className'] = node['funcs'][i].__className;
         temp['props'] = node['funcs'][i].__props;
+        temp['className'] = 'func';
         temp['key'] = _keyCount++;
         temp['widget'] = current;
         current.funcList.unshift(temp);
@@ -173,7 +173,6 @@ function saveTree(data, node) {
           let o = {};
           o['__name'] = node.intVarList[i].name;
           o['__value'] = node.intVarList[i].value;
-          o['__className'] = node.intVarList[i].className;
           o['__props'] = node.intVarList[i].props;
           o['__type'] = node.intVarList[i].type;
           data['vars'].push(o);
@@ -185,7 +184,6 @@ function saveTree(data, node) {
         let o = {};
         o['__name'] = node.strVarList[i].name;
         o['__value'] = node.strVarList[i].value;
-        o['__className'] = node.strVarList[i].className;
         o['__props'] = node.strVarList[i].props;
         o['__type'] = node.strVarList[i].type;
         data['vars'].push(o);
@@ -199,7 +197,6 @@ function saveTree(data, node) {
       // o['__' + node.funcList[i].key] = node.funcList[i].key;
         o['__name'] = node.funcList[i].name;
         o['__value'] = node.funcList[i].value;
-        o['__className'] = node.funcList[i].className;
         o['__props'] = node.funcList[i].props;
         data['funcs'].push(o);
     }
