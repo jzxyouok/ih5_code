@@ -35,7 +35,8 @@ var chooseFileCallback = (w)=> {  //tag
                 xhr.send(form);
 
 
-                    xhr.upload.addEventListener("progress", progress);
+                xhr.upload.onprogress=progress;
+              //  xhr.upload.addEventListener("progress", progress);
 
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
@@ -69,7 +70,6 @@ var chooseFile = (type, upload, callback) => {
     w.userType = type;
     w.userUpload = upload;
     w.userCallback = callback;
-
     w.sysCallback = chooseFileCallback;
     w.click();
 };
