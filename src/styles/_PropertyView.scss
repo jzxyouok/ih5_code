@@ -6,7 +6,6 @@
 	color: #b5b5b5;
 }
 $toBottom:14px;
-
 #PropertyView,
 .propretyView{
 	position: absolute;
@@ -486,6 +485,72 @@ $toBottom:14px;
 }
 
 form .ant-select, form .ant-cascader-picker{width:100%;}
+
+/*
+*自定义组件
+*/
+.switchMore{
+   background: #151515;
+   width: 93px;
+  border: 1px solid #151515;
+  height: 18px;
+   overflow: hidden;
+  border-radius: 20px;
+  transition: all 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: middle;
+  cursor: pointer;
+  .bg_gray{
+   background: #353535 !important;;
+  }
+  .switchMore-ul{
+	overflow: hidden;
+	width:90px;
+	height: 100%;
+	&.off:after{
+	  left: 63px;
+	}
+	&.mid:after{
+        left:31px;
+	}
+	&.on:after{
+	  left:0;
+	}
+	li{
+	   float: left;
+	   width: 33.33%;
+	   height: 100%;
+	  text-align: center;
+	  line-height: 1.5em;
+	 }
+	.switchMore-ul-on{color: #ffa800}
+	.switchMore-ul-mid{
+	   div{
+		 width: 12px;
+		 height: 12px;
+		 border-radius: 50%;
+		 background: #ffa800;
+		 margin-left: 8px;
+		 margin-top: 2px;
+	   }
+	}
+	.switchMore-ul-off{color: #ffa800}
+	&:after{
+		width: 26px;
+		height: 16px;
+		top: 0;
+		left: 0;
+		background-color: #858585;
+		position: absolute;
+		border-radius: 18px;
+		content: " ";
+		cursor: pointer;
+		transition: left 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86), width 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+	}
+  }
+}
 
 
 
