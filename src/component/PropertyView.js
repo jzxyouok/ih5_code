@@ -9,7 +9,8 @@ import { Form, Input, InputNumber, Slider, Switch, Collapse,Select} from 'antd';
 const Option = Select.Option;
 const Panel = Collapse.Panel;
 import cls from 'classnames';
-import {SwitchMore} from  '../PropertyView/PropertyViewComponet';
+
+import { SwitchMore } from  './PropertyView/PropertyViewComponet';
 
 import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -89,8 +90,7 @@ class PropertyView extends React.Component {
 
                 return <Switch   {...defaultProp} />;
             case propertyType.Boolean2:
-                console.log(11);
-                return <S23witchMore   {...defaultProp} />;
+                return <SwitchMore   {...defaultProp} />;
 
             case propertyType.Select:
                 return <div>
