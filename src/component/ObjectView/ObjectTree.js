@@ -610,8 +610,8 @@ class ObjectTree extends React.Component {
             let pic = null;
             let picIsImage = true;
             this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
-                if(isCustomizeWidget(v.className)&&v1.className==='component') {
-                    pic = 'componet-icon';
+                if(isCustomizeWidget(v.className)) {
+                    pic = 'component-icon';
                     picIsImage = false;
                 } else if (v1.className === v.className){
                     if(v.className === 'image' || v.className === 'imagelist') {
