@@ -536,7 +536,7 @@ class ObjectTree extends React.Component {
                          {'active': item.key === this.state.nid})}
                          onClick={this.funcBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
-                        <span className='func-icon' />
+                        <span className='item-icon func-var-icon func-icon' />
                         <div className='func-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
                             <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
                             <input id={'item-name-input-'+item.key} type="text"
@@ -565,7 +565,7 @@ class ObjectTree extends React.Component {
                         {'active': item.key === this.state.nid})}
                          onClick={this.varBtn.bind(this, item.key, item)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
-                        <span className={$class({'var-num-icon': item.type==='number'},
+                        <span className={$class('item-icon func-var-icon', {'var-num-icon': item.type==='number'},
                             {'var-str-icon': item.type==='string'})} />
                         <div className='var-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
                             <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
@@ -609,6 +609,7 @@ class ObjectTree extends React.Component {
         let fuc = (v,i)=>{
             //console.log(v.props.visible);
             let pic = null;
+            let picIsImage = true;
             this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
                 if(isCustomizeWidget(v.className)&&v1.className==='component') {
                     pic = v1.icon;
@@ -657,8 +658,10 @@ class ObjectTree extends React.Component {
                                 ? icon( 1 , v.key)
                                 : icon( 0 , v.key)
                         }
-
-                        <img className="item-img" src={ pic } />
+                        {
+                            picIsImage?<span className="item-icon"><img className="item-img" src={ pic } /></span>
+                                : <span className={$class('item-icon', pic)} />
+                        }
                         {
                             isCustomizeWidget(v.className)
                                 ? <div className='item-name-wrap'>

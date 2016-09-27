@@ -44,7 +44,7 @@ let twodvarIcon = require('../images/base/twoDvar.svg');
 let composingcontainerIcon = require('../images/base/composingContainer.svg');
 let cominterfaceIcon = require('../images/base/comInterface.svg');
 //自定义组件
-let componentIcon = require('../images/base/testicon.svg');
+let componentIcon = require('../images/testicon.svg');
 
 function callback() {
     //console.log(key);
