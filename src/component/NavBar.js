@@ -11,6 +11,7 @@ import $class from 'classnames'
 
 import CreateModule from './create-module/index'
 import ArrangeModule from './arrange-module/index'
+import CreateDb from './create-db/index'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -32,7 +33,8 @@ class NavBar extends React.Component {
             dropDownState : 0,
             createClass : false,
             arrangeModule : false,
-            dbList : []
+            dbList : [],
+            createDb : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -50,6 +52,9 @@ class NavBar extends React.Component {
         this.addClass = this.addClass.bind(this);
         this.arrangeModuleBtn = this.arrangeModuleBtn.bind(this);
         this.closeArrangeModuleBtn = this.closeArrangeModuleBtn.bind(this);
+        this.createDbShow = this.createDbShow.bind(this);
+        this.createDbHide = this.createDbHide.bind(this);
+        this.onUpdateDb = this.onUpdateDb.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -292,6 +297,22 @@ class NavBar extends React.Component {
         })
     }
 
+    createDbShow(){
+        this.setState({
+            createDb : true
+        })
+    }
+
+    createDbHide(){
+        this.setState({
+            createDb : false
+        })
+    }
+
+    onUpdateDb(list) {
+        this.setState({'dbList': list});
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -413,7 +434,7 @@ class NavBar extends React.Component {
                                                           })
                                                         : null
                                                 }
-                                                <li className="add-btn f--hcc">
+                                                <li className="add-btn f--hcc" onClick={ this.createDbShow }>
                                                     <div className="icon">
                                                         <span className="heng" />
                                                         <span className="shu" />
@@ -550,6 +571,12 @@ class NavBar extends React.Component {
                 <div className={$class({"hidden": !this.state.arrangeModule }) }>
                     <ArrangeModule closeArrangeModuleBtn={ this.closeArrangeModuleBtn }
                                    createClassBtn={ this.createClassBtn }/>
+                </div>
+
+                <div className={$class({"hidden": !this.state.createDb }) }>
+                    <CreateDb createDbHide={ this.createDbHide }
+                              onUpdateDb={this.onUpdateDb.bind(this)}
+                              dbList = { this.state.dbList }/>
                 </div>
 
             </div>
