@@ -102,8 +102,8 @@ class NavBar extends React.Component {
                     loginVisible: false,
                     username: result['name'],
                     workList: result['list'].reverse(),
-                    fontList: result['font'],
-                    dbList: result['db']
+                    fontList: result['font']
+                    // dbList: result['db']
                 });
                 WidgetActions['saveFontList'](result['font']);
             } else {
