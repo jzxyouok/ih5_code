@@ -347,6 +347,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
         this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
+        //事件
         this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
         this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
         this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
@@ -354,17 +355,23 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
-
+        //函数
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
         this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
         this.listenTo(WidgetActions['removeFunction'], this.removeFunction);
-
+        this.listenTo(WidgetActions['copyFunction'], this.copyFunction);
+        this.listenTo(WidgetActions['pasteFunction'], this.pasteFunction);
+        this.listenTo(WidgetActions['cutFunction'], this.cutFunction);
+        //变量
         this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
         this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
         this.listenTo(WidgetActions['removeVariable'], this.removeVariable);
-
+        this.listenTo(WidgetActions['copyVariable'], this.copyVariable);
+        this.listenTo(WidgetActions['pasteVariable'], this.pasteVariable);
+        this.listenTo(WidgetActions['cutVariable'], this.cutVariable);
+        //函数或变量的重命名
         this.listenTo(WidgetActions['changeName'], this.changeName);
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
@@ -416,7 +423,7 @@ export default Reflux.createStore({
       if (!this.currentWidget)
           return;
 
-      props = this.addWidgetDefaultName(className, props, true);
+      props = this.addWidgetDefaultName(className, props, true, false);
 
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
@@ -484,9 +491,8 @@ export default Reflux.createStore({
     pasteWidget: function() {
       if (this.currentWidget) {
         // 重命名要黏贴的widget
-        let temp = cpJson(copyObj);
-        temp.props = this.addWidgetDefaultName(temp.cls, temp.props, false);
-        loadTree(this.currentWidget, temp);
+        copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
+        loadTree(this.currentWidget, copyObj);
         this.trigger({selectWidget: null, redrawTree: true});
         this.render();
       }
@@ -532,14 +538,19 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, properties, valueAsTextName) {
+    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties) {
         if (!this.currentWidget)
             return;
 
         if(properties === undefined || properties === null) {
             properties = {};
         }
-        let props = cpJson(properties);
+        let props = properties;
+
+        if(copyProperties) {
+            props = cpJson(properties);
+        }
+
         if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
             props['name'] = props.value;
         } else {
@@ -695,6 +706,15 @@ export default Reflux.createStore({
             }
         }
     },
+    copyFunction: function () {
+
+    },
+    pasteFunction: function () {
+
+    },
+    cutFunction: function () {
+
+    },
     selectVariable: function (data) {
         if (data!=null) {
             //取消在canvas上的widget选择
@@ -766,6 +786,15 @@ export default Reflux.createStore({
                     break;
             }
         }
+    },
+    copyVariable: function () {
+
+    },
+    pasteVariable: function () {
+
+    },
+    cutVariable: function () {
+
     },
     changeName: function (type, name) {
         switch (type){

@@ -419,7 +419,10 @@ class ObjectTree extends React.Component {
         if (didPressCtrl && event.keyCode == 67) {
             switch(this.state.nodeType){
                 case nodeType.func:
+                    WidgetActions['copyFunction']();
+                    break;
                 case nodeType.var:
+                    WidgetActions['copyVariable']();
                     break;
                 default:
                     WidgetActions['copyWidget']();
@@ -429,9 +432,17 @@ class ObjectTree extends React.Component {
         }
         //黏贴 86
         if (didPressCtrl && event.keyCode == 86) {
+            //当前选中func or var就不理会
+            if(this.state.nodeType === nodeType.func || this.state.nodeType==nodeType.var) {
+                window.macKeys.reset();
+                return;
+            }
             switch(this.state.nodeType){
                 case nodeType.func:
+                    WidgetActions['pasteFunction']();
+                    break;
                 case nodeType.var:
+                    WidgetActions['pasteVariable']();
                     break;
                 default:
                     WidgetActions['pasteWidget']();
@@ -443,7 +454,10 @@ class ObjectTree extends React.Component {
         if (didPressCtrl && event.keyCode == 88) {
             switch(this.state.nodeType){
                 case nodeType.func:
+                    WidgetActions['cutFunction']();
+                    break;
                 case nodeType.var:
+                    WidgetActions['cutVariable']();
                     break;
                 default:
                     WidgetActions['cutWidget']();
