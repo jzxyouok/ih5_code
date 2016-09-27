@@ -75,20 +75,20 @@ class CreateDb extends React.Component {
         }
         else {
             let data = "name=" + encodeURIComponent(name);
-            WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
-                var result = JSON.parse(text);
-                if (result['id']) {
-                    let list = this.state.dbParm;
-                    if(this.state.isTop){
-                        list.unshift({'id': result['id'], 'key': result['id'], 'name': name });
-                    }
-                    else {
-                        list.push({'id': result['id'], 'key': result['id'], 'name': name });
-                    }
-                    this.setState({'dbParm': list});
-                    this.props.onUpdateDb(list);
-                }
-            }.bind(this));
+            //WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
+            //    //var result = JSON.parse(text);
+            //    //if (result['id']) {
+            //    //    let list = this.state.dbParm;
+            //    //    if(this.state.isTop){
+            //    //        list.unshift({'id': result['id'], 'key': result['id'], 'name': name });
+            //    //    }
+            //    //    else {
+            //    //        list.push({'id': result['id'], 'key': result['id'], 'name': name });
+            //    //    }
+            //    //    this.setState({'dbParm': list});
+            //    //    this.props.onUpdateDb(list);
+            //    //}
+            //}.bind(this));
         }
     }
 
