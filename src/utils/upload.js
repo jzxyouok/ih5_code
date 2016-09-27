@@ -51,14 +51,24 @@ var chooseFileCallback = (w)=> {  //tag
     }
 };
 
-
+function showProgressFn(evt){
+    let oProgress=document.getElementById('ant-progress');
+    oProgress.style.display='block';
+    if (evt.lengthComputable) {
+        var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+        oProgress.childNodes[0].innerHTML= 'ÉÏ´«ÖÐ '+percentComplete+'%';
+        oProgress.childNodes[0].style.width=percentComplete+'%';
+    }else {
+        console.log('failed');
+    }
+}
 var chooseFile = (type, upload, callback,showProgress) => {
     var w = document.getElementById('upload-box');
     w.value = '';
     w.userType = type;
     w.userUpload = upload;
     w.userCallback = callback;
-    w.showProgress=showProgress;
+    w.showProgress=showProgress?showProgressFn:null;
     w.sysCallback = chooseFileCallback;
     w.click();
 };
