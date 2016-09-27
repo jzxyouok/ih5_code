@@ -200,17 +200,17 @@ class PropertyView extends React.Component {
                       if(value == 0){
                           let oProgress=document.getElementById('ant-progress');
                           chooseFile('font', true, function(){
+                              let  fontObj =eval("("+arguments[1]+")");
                               //回调完成
                               oProgress.style.display='none';
                               //设置默认值
-
-                             console.log(arguments,arguments[1],arguments[1].name);
-
-                             this.selectNode.props.fontKey=arguments[1].name;
-                              console.log(this.selectNode.props);
+                              this.selectNode.props.fontKey=fontObj.name;
                               //更新属性面板
-                              WidgetActions['render']();
-                              this.setState({fields: this.getFields()});
+
+                              const obj = {};
+                              obj[prop.name] = fontObj.file;
+                              this.onStatusChange({updateProperties: obj});
+                              WidgetActions['updateProperties'](obj, false, true);
 
                           }.bind(this),true);
                           bTag=false;
