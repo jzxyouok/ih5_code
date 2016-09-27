@@ -43,6 +43,8 @@ let pcdeviceIcon = require('../images/base/pcDevice.svg');
 let twodvarIcon = require('../images/base/twoDvar.svg');
 let composingcontainerIcon = require('../images/base/composingContainer.svg');
 let cominterfaceIcon = require('../images/base/comInterface.svg');
+//自定义组件
+let componentIcon = require('../images/base/testicon.svg');
 
 function callback() {
     //console.log(key);
@@ -87,7 +89,9 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:pcdeviceIcon, className:'pcdevice'},
                 {cid:this.cid++,icon:twodvarIcon, className:'twodvar'},
                 {cid:this.cid++,icon:composingcontainerIcon, className:'composingcontainer'},
-                {cid:this.cid++,icon:cominterfaceIcon, className:'cominterface'}]
+                {cid:this.cid++,icon:cominterfaceIcon, className:'cominterface'},
+                //自定义组件统一图标
+                {cid:this.cid++,icon:componentIcon, className:'component'}]
             }
         ];
     }
