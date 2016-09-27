@@ -1,5 +1,17 @@
 import {globalToken} from '../stores/WidgetStore'
-
+var progressFn=function(evt){
+    //let oProgress=document.getElementById('ant-progress');
+    //oProgress.style.display='block';
+    console.log('progress');
+    //if (evt.lengthComputable) {
+    //    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+    //    console.log(percentComplete);
+    //    oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
+    //    oProgress.childNodes[0].style.width=percentComplete+'%';
+    //}else {
+    //    console.log('failed');
+    //}
+}
 var chooseFileCallback = (w)=> {  //tag
     if (w.files.length > 0) {
         var allowExt = null;
@@ -34,9 +46,15 @@ var chooseFileCallback = (w)=> {  //tag
                 form.append('file', w.files[0]);
                 xhr.send(form);
 
-
-                xhr.upload.onprogress=progress;
+                console.log('tag1')
+                xhr.upload.onprogress=progressFn;
               //  xhr.upload.addEventListener("progress", progress);
+
+                if (typeof xhr.upload.onprogress !== 'function') {
+                   console.log('tag2');
+                }else{
+                    console.log('tag3');
+                }
 
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
@@ -50,19 +68,7 @@ var chooseFileCallback = (w)=> {  //tag
     }
 };
 
-function progress(evt){
-    let oProgress=document.getElementById('ant-progress');
-    oProgress.style.display='block';
-    console.log('progress');
-    if (evt.lengthComputable) {
-        var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-        console.log(percentComplete);
-        oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
-        oProgress.childNodes[0].style.width=percentComplete+'%';
-    }else {
-        console.log('failed');
-    }
-}
+
 
 var chooseFile = (type, upload, callback) => {
     var w = document.getElementById('upload-box');
