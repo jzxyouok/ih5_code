@@ -342,6 +342,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addWidget'], this.addWidget);
         this.listenTo(WidgetActions['reorderWidget'], this.reorderWidget);
         this.listenTo(WidgetActions['addClass'], this.addClass);
+        this.listenTo(WidgetActions['sortClass'], this.sortClass);
+        this.listenTo(WidgetActions['deleteClass'], this.deleteClass);
         this.listenTo(WidgetActions['removeWidget'], this.removeWidget);
         this.listenTo(WidgetActions['copyWidget'], this.copyWidget);
         this.listenTo(WidgetActions['pasteWidget'], this.pasteWidget);
@@ -986,6 +988,59 @@ export default Reflux.createStore({
         }
 
         bridge.addClass(name,bool);
+        this.trigger({initTree: stageTree, classList: classList});
+    },
+
+    sortClass: function(data) {
+        //console.log(data,classList);
+        let fuc = ((v,i)=>{
+            data.forEach((v1,i1)=>{
+               if(v1 == v){
+                   data.splice(i1, 1);
+                   classList.splice(i, 1);
+                   classList.unshift(v1);
+                   stageTree.splice(i+1, 1);
+                   stageTree.splice(
+                       1,
+                       0,
+                       { name: v1,
+                           tree: loadTree(null, { 'cls': 'root',
+                               'type': bridge.getRendererType(this.currentWidget.node),
+                               'props': {'width': 640, 'height': 1040}})
+                       }
+                   );
+                   return classList.map(fuc);
+               }
+            });
+            return {
+                classList,
+                stageTree
+            }
+        });
+
+        classList.map(fuc);
+        //console.log(classList,stageTree);
+        this.trigger({initTree: stageTree, classList: classList});
+    },
+
+    deleteClass: function(data){
+        console.log(data,classList);
+        let fuc = ((v,i)=>{
+            data.forEach((v1,i1)=>{
+                if(v == v1){
+                    data.splice(i1, 1);
+                    classList.splice(i, 1);
+                    stageTree.splice(i+1, 1);
+                    return classList.map(fuc);
+                }
+            });
+            return {
+                classList,
+                stageTree
+            }
+        });
+        classList.map(fuc);
+        console.log(classList,stageTree);
         this.trigger({initTree: stageTree, classList: classList});
     },
     render: function() {

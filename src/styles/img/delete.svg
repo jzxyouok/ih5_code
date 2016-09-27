@@ -1,0 +1,26 @@
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="60" height="78.79" viewBox="0 0 60 78.79">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #7b7b7b;
+      }
+
+      .cls-2 {
+        fill: #b5b5b5;
+      }
+    </style>
+  </defs>
+  <title>delete</title>
+  <g>
+    <g>
+      <circle class="cls-1" cx="44.07" cy="7.45" r="7.45"/>
+      <path class="cls-1" d="M57.21,18H54.41L35.35,18a2.7,2.7,0,0,0-1.74,1.14l-6.52,9.61H15a2.79,2.79,0,1,0,0,5.58H28.44a2.73,2.73,0,0,0,2.41-1.18l4.5-6.63V75.12a3.66,3.66,0,1,0,7.32,0V48.6h2.71V75.12a3.66,3.66,0,0,0,7.32,0V27h1.71V47A2.79,2.79,0,0,0,60,47V20.76A2.79,2.79,0,0,0,57.21,18Z"/>
+    </g>
+    <polygon class="cls-1" points="21.77 43.72 18.3 74.2 8.03 74.2 4.56 43.72 0 43.72 3.91 78.79 22.42 78.79 26.33 43.72 21.77 43.72"/>
+  </g>
+  <g>
+    <rect class="cls-2" x="7.46" y="37.09" width="6.28" height="6.28" transform="translate(-30.1 31.61) rotate(-63.29)"/>
+    <rect class="cls-2" x="11.06" y="53.13" width="5.37" height="5.37" transform="translate(-43.63 59.41) rotate(-79.75)"/>
+    <rect class="cls-2" x="12.13" y="44.88" width="5.36" height="5.36" transform="translate(-21.7 13.68) rotate(-29.84)"/>
+  </g>
+</svg>
