@@ -2,7 +2,7 @@ import React from 'react';
 import $class from 'classnames';
 import {Form, Input, InputNumber} from 'antd';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore from '../../stores/WidgetStore';
+import WidgetStore, {nodeType, varType} from '../../stores/WidgetStore';
 
 const FormItem = Form.Item;
 
@@ -58,10 +58,10 @@ class VariableView extends React.Component {
         } else if(type === 'value') {
             let value = null;
             switch(this.state.type){
-                case 'number':
+                case varType.number:
                     value = v;
                     break;
-                case 'string':
+                case varType.string:
                     value = v.target.value;
                     break;
                 default:
@@ -76,7 +76,7 @@ class VariableView extends React.Component {
     endEdit(type, event) {
         if(type === 'name') {
             WidgetActions['changeVariable']({'name': event.target.value});
-            WidgetActions['changeName']('var', event.target.value);
+            WidgetActions['renameTreeNode'](nodeType.var, event.target.value);
         } else if(type === 'value') {
             WidgetActions['changeVariable']({'value': event.target.value});
         }
@@ -86,14 +86,14 @@ class VariableView extends React.Component {
         let valueInput = ()=>{
             let temp = null;
             switch(this.state.type){
-                case 'number':
+                case varType.number:
                     temp = <div className= {$class('ant-form-item-control')}>
                         <InputNumber step={0.1} size="small" placeholder="请输入值"
                                onChange={this.onEditChange.bind(this, 'value')}
                                onBlur={this.endEdit.bind(this, 'value')}
                                value={this.state.value}/></div>;
                     break;
-                case 'string':
+                case varType.string:
                     temp = <div className= {$class('ant-form-item-control')}>
                         <Input type="textarea" size="small" placeholder="请输入值"
                                onChange={this.onEditChange.bind(this, 'value')}
@@ -109,10 +109,10 @@ class VariableView extends React.Component {
         let title = ()=>{
             let temp = null;
             switch(this.state.type){
-                case 'number':
+                case varType.number:
                     temp = '数字';
                     break;
-                case 'string':
+                case varType.string:
                     temp = '文本';
                     break;
                 default:

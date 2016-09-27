@@ -315,6 +315,7 @@ $toBottom:14px;
 
 
    //select
+  .ant-progress-bar,.ant-progress-txt{display:none;}
      #ant-progress{
 	   width: 100%;
 	   height: 22px;
@@ -324,7 +325,7 @@ $toBottom:14px;
 	   background: #282828;
 	   border: 1px solid #434343;
 	   display: none;
-	   div{
+	   .ant-progress-bar{
 		 height: 100%;
 		 width: 50%;
 		 color: white;
@@ -332,6 +333,16 @@ $toBottom:14px;
 		 text-align: right;
 		 line-height: 2em;
 		 font-size: 12px;
+		 display: block;
+	   }
+	   .ant-progress-txt{
+		 position: absolute;
+		 left: 40%;
+		 top: 4px;
+		 color: white;
+		 display: block;
+		 font-size: 12px;
+		 display: block;
 	   }
 	 }
 	  .ant-select-selection--single {
@@ -340,6 +351,12 @@ $toBottom:14px;
 		color: #858585;
 		border: 1px solid #444;
 		background-color:#353535;
+		.ant-select-selection-selected-value{
+		  white-space: nowrap;
+		  text-overflow: ellipsis;
+		  overflow: hidden;
+		  max-width: 149px;
+		}
 	  }
 
 

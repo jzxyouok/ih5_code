@@ -93,7 +93,7 @@ class PropertyView extends React.Component {
                     <Select   {...defaultProp} >
                         {defaultProp.options}
                     </Select>
-                    <div id={cls({'ant-progress':defaultProp.name=='font'})}><div></div></div>
+                    <div id={cls({'ant-progress':defaultProp.name=='font'})}><div className='ant-progress-bar'></div><div className='ant-progress-txt'>上传 10%</div></div>
                 </div>;
 
             default:
@@ -212,7 +212,17 @@ class PropertyView extends React.Component {
                               this.onStatusChange({updateProperties: obj});
                               WidgetActions['updateProperties'](obj, false, true);
 
-                          }.bind(this),true);
+                          }.bind(this), function(evt){
+                              let oProgress=document.getElementById('ant-progress');
+                              if(evt.lengthComputable && oProgress) {
+                                  oProgress.style.display='block';
+                                  var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                  oProgress.childNodes[1].innerHTML='上传 '+percentComplete+'%';
+                                  oProgress.childNodes[0].style.width=percentComplete+'%';
+                              }else {
+                                  console.log('failed');
+                              }
+                          });
                           bTag=false;
                       }else{
                           this.selectNode.props.fontKey=this.getFontDefault(value);

@@ -2,7 +2,7 @@ import React from 'react';
 import $class from 'classnames';
 import {Form, Input} from 'antd';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore from '../../stores/WidgetStore';
+import WidgetStore, {nodeType} from '../../stores/WidgetStore';
 
 var CodeMirror = require('codemirror/CodeMirror');
 
@@ -65,7 +65,7 @@ class FunctionView extends React.Component {
     endEdit(type, v) {
         if(type === 'name') {
             WidgetActions['changeFunction']({'name': this.state.name});
-            WidgetActions['changeName']('func', this.state.name);
+            WidgetActions['renameTreeNode'](nodeType.func, this.state.name);
         } else if(type === 'value') {
             if(v === false){
                 WidgetActions['changeFunction']({'value': this.state.value});

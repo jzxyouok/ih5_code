@@ -27,6 +27,7 @@ class ObjectView extends React.Component {
             currentNode : null, //当前的节点，可以为function，widget或variable
             canLock: false, //是否可有锁
             locked: false,  //是否已锁
+            canDelete: false,   //是否可删除
             canHaveEventTree: false,    //是否可有事件树
             hasEventTree: false, //是否有事件树
             activeEventTreeKey: null, //激活事件的key
@@ -41,6 +42,8 @@ class ObjectView extends React.Component {
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onInitLock = this.onInitLock.bind(this);
         this.onInitHasEventTree = this.onInitHasEventTree.bind(this);
+        this.onInitDelete = this.onInitDelete.bind(this);
+        this.onInitButtons = this.onInitButtons.bind(this);
     }
 
     componentDidMount() {
@@ -66,28 +69,30 @@ class ObjectView extends React.Component {
                     parentData : widget.selectWidget.parent,
                 });
             }
-            this.onInitLock(widget.selectWidget);
-            this.onInitHasEventTree(widget.selectWidget);
-
+            this.onInitButtons(widget.selectWidget);
         } else if (widget.selectFunction) {
             this.setState({
                 currentNode : widget.selectFunction,
                 enableContainer: checkChildClass(widget.selectFunction, 'container')
             });
-            this.onInitLock(widget.selectFunction);
-            this.onInitHasEventTree(widget.selectFunction);
+            this.onInitButtons(widget.selectFunction);
         } else if (widget.selectVariable) {
             this.setState({
                 currentNode : widget.selectVariable,
                 enableContainer: checkChildClass(widget.selectVariable, 'container')
             });
-            this.onInitLock(widget.selectVariable);
-            this.onInitHasEventTree(widget.selectVariable);
+            this.onInitButtons(widget.selectVariable);
         } else if(widget.activeEventTreeKey) {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
         }
+    }
+
+    onInitButtons(selectWidget){
+        this.onInitLock(selectWidget);
+        this.onInitHasEventTree(selectWidget);
+        this.onInitDelete(selectWidget);
     }
 
     onInitHasEventTree(selectWidget){
@@ -119,6 +124,18 @@ class ObjectView extends React.Component {
         });
     }
 
+    onInitDelete(selectWidget) {
+        let canDelete = false;
+        if(selectWidget.className === 'root') {
+            canDelete = false;
+        } else {
+            canDelete = true;
+        }
+        this.setState({
+            canDelete: canDelete
+        });
+    }
+
     toggleBtn(i){
         this.setState({
             whichContent : i
@@ -147,13 +164,8 @@ class ObjectView extends React.Component {
         if(this.state.activeEventTreeKey != null) {
             WidgetActions['removeEventTree']();
             WidgetActions['selectWidget'](this.state.currentNode);
-        } else if(this.state.currentNode.className == 'func'){
-            WidgetActions['removeFunction']();
-        } else if(this.state.currentNode.className == 'var') {
-            WidgetActions['removeVariable']();
         } else {
-            WidgetActions['removeWidget']();
-            this.refs.ObjectTree.chooseBtn(this.state.parentID, this.state.parentData);
+            WidgetActions['deleteTreeNode'](this.state.currentNode.className);
         }
     }
 
@@ -236,7 +248,10 @@ class ObjectView extends React.Component {
                             disabled={!this.state.canHaveEventTree||this.state.hasEventTree}
                             onClick={ this.initEvent.bind(this, 'event', null)}/>
                     {/*<button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />*/}
-                    <button className='btn btn-clear delete-btn' title='删除' onClick={ this.delete } />
+                    <button className={$class('btn btn-clear delete-btn',
+                                {'not-allowed': !this.state.canDelete})}
+                            disabled={!this.state.canDelete}
+                            title='删除' onClick={ this.delete } />
                 </div>
 
                 {

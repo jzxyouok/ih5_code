@@ -22,22 +22,21 @@ export default Reflux.createActions([
   'addEvent',                     //添加事件
   'removeEvent',                  //删除事件
   'enableEvent',                  //单个事件的可执行与否
-  'renameWidget',                 //重命名组件
+
   'selectFunction',               //选择函数
   'addFunction',                  //添加函数
   'changeFunction',               //修改函数
-  'removeFunction',               //删除函数
-  'copyFunction',                 //复制函数
-  'pasteFunction',                //黏贴函数
-  'cutFunction',                  //剪切函数
+
   'selectVariable',               //选择变量
   'addVariable',                  //添加变量
   'changeVariable',               //添加变量
-  'removeVariable',               //添加变量
-  'copyVariable',                 //复制变量
-  'pasteVariable',                //黏贴变量
-  'cutVariable',                  //剪切变量
-  'changeName',                   //修改名字(暂时可以用作函数和变量的名字修改)
+
+  'pasteTreeNode',                  //黏贴功能入口
+  'cutTreeNode',                    //剪切功能入口
+  'copyTreeNode',                   //复制功能入口
+  'deleteTreeNode',                 //删除功能入口
+  'renameTreeNode',                 //重命名功能入口
+
   'resetTrack',
   'syncTrack',
   'deletePoint',

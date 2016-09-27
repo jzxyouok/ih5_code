@@ -17,6 +17,16 @@ var prevObj;
 var prevNewObj;
 var dragTag;
 
+var nodeType = {
+    widget: 'widget',  //树对象
+    func: 'func',    //函数
+    var: 'var'      //属性
+};
+
+var varType = {
+    number: 'number',   //数字
+    string: 'string'    //字串
+};
 
 var copyObj = {};
 
@@ -59,10 +69,10 @@ function loadTree(parent, node) {
         temp['key'] = _keyCount++;
         temp['widget'] = current;
         switch (temp['type']){
-            case 'number':
+            case varType.number:
                 current.intVarList.unshift(temp);
                 break;
-            case 'string':
+            case varType.string:
                 current.strVarList.unshift(temp);
                 break;
             default:
@@ -347,7 +357,13 @@ export default Reflux.createStore({
 
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
-        this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
+
+        //widget, 变量，函数的统一入口
+        this.listenTo(WidgetActions['pasteTreeNode'], this.pasteTreeNode);
+        this.listenTo(WidgetActions['cutTreeNode'], this.cutTreeNode);
+        this.listenTo(WidgetActions['copyTreeNode'], this.copyTreeNode);
+        this.listenTo(WidgetActions['deleteTreeNode'], this.deleteTreeNode);
+        this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
 
         //事件
         this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
@@ -361,20 +377,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
         this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
-        this.listenTo(WidgetActions['removeFunction'], this.removeFunction);
-        this.listenTo(WidgetActions['copyFunction'], this.copyFunction);
-        this.listenTo(WidgetActions['pasteFunction'], this.pasteFunction);
-        this.listenTo(WidgetActions['cutFunction'], this.cutFunction);
+
         //变量
         this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
         this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
-        this.listenTo(WidgetActions['removeVariable'], this.removeVariable);
-        this.listenTo(WidgetActions['copyVariable'], this.copyVariable);
-        this.listenTo(WidgetActions['pasteVariable'], this.pasteVariable);
-        this.listenTo(WidgetActions['cutVariable'], this.cutVariable);
-        //函数或变量的重命名
-        this.listenTo(WidgetActions['changeName'], this.changeName);
 
         this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
     },
@@ -472,7 +479,11 @@ export default Reflux.createStore({
       }
     },
 
-    removeWidget: function() {
+    removeWidget: function(shouldChooseParent) {
+        let parentWidget;
+        if (this.currentWidget&&shouldChooseParent) {
+            parentWidget = this.currentWidget.parent ? this.currentWidget.parent : this.currentWidget.rootWidget;
+        }
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;
             bridge.removeWidget(this.currentWidget.node);
@@ -480,8 +491,14 @@ export default Reflux.createStore({
             var rootNode = this.currentWidget.rootWidget.node;
             this.currentWidget.parent.children.splice(index, 1);
             this.currentWidget = null;
-            this.trigger({selectWidget: null, redrawTree: true});
-            process.nextTick(() => bridge.render(rootNode));
+            if(shouldChooseParent) {
+                this.selectWidget(parentWidget);
+            } else {
+                this.trigger({selectWidget: null, redrawTree: true});
+            }
+            process.nextTick(() =>bridge.render(rootNode));
+
+
         }
     },
     copyWidget: function() {
@@ -670,16 +687,16 @@ export default Reflux.createStore({
         this.trigger({selectFunction: this.currentFunction});
         // this.render();
     },
-    addFunction: function (className, param) {
+    addFunction: function (param) {
         if(this.currentWidget) {
             let func = {};
+            func['name'] = param.name||'';
             func['value'] = param.value||'';
-            func['name'] = param.key||'';
-            func['className']  = className;
-            func['props'] = {};
-            func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
+            func['className']  = 'func';
             func['key'] = _keyCount++;
             func['widget'] = this.currentWidget;
+            func['props'] = {};
+            func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
@@ -709,13 +726,23 @@ export default Reflux.createStore({
         }
     },
     copyFunction: function () {
-
+        if(this.currentFunction) {
+            copyObj = {
+                'name': this.currentFunction.name,
+                'value': this.currentFunction.value,
+                'className': this.currentFunction.className,
+                'props': {}
+            }
+        }
     },
     pasteFunction: function () {
-
+        if (this.currentWidget) {
+            this.addFunction(copyObj);
+        }
     },
     cutFunction: function () {
-
+        this.copyFunction();
+        this.removeFunction();
     },
     selectVariable: function (data) {
         if (data!=null) {
@@ -728,22 +755,22 @@ export default Reflux.createStore({
         this.trigger({selectVariable: this.currentVariable});
         // this.render();
     },
-    addVariable: function (className, param) {
+    addVariable: function (param) {
         if(this.currentWidget) {
             let vars = {};
             vars['value'] = param.value||null;
             vars['name'] = param.name||'';
-            vars['className']  = className;
-            vars['props'] = {};
             vars['type'] = param.type;
+            vars['className']  = 'var';
             vars['key'] = _keyCount++;
             vars['widget'] = this.currentWidget;
+            vars['props'] = {};
             switch (vars['type']) {
-                case 'number':
+                case varType.number:
                     vars['props']['name'] = 'intVar' + (this.currentWidget['intVarList'].length + 1);
                     this.currentWidget['intVarList'].unshift(vars);
                     break;
-                case 'string':
+                case varType.string:
                     vars['props']['name'] = 'strVar' + (this.currentWidget['strVarList'].length + 1);
                     this.currentWidget['strVarList'].unshift(vars);
                     break;
@@ -778,10 +805,10 @@ export default Reflux.createStore({
             };
 
             switch (this.currentVariable.type){
-                case 'number':
+                case varType.number:
                     removeV(this.currentWidget.intVarList, this.currentVariable.key);
                     break;
-                case 'string':
+                case varType.string:
                     removeV(this.currentWidget.strVarList, this.currentVariable.key);
                     break;
                 default:
@@ -790,29 +817,103 @@ export default Reflux.createStore({
         }
     },
     copyVariable: function () {
-
+        if(this.currentVariable) {
+            copyObj = {
+                'name': this.currentVariable.name,
+                'value': this.currentVariable.value,
+                'className': this.currentVariable.className,
+                'type': this.currentVariable.type,
+                'props': {}
+            }
+        }
     },
     pasteVariable: function () {
-
+        if (this.currentWidget) {
+            this.addVariable(copyObj);
+        }
     },
     cutVariable: function () {
-
+        this.copyVariable();
+        this.removeVariable();
     },
-    changeName: function (type, name) {
+    renameFuncOrVar: function (type, name) {
         switch (type){
-            case 'func':
+            case nodeType.func:
                 if(this.currentFunction&&!isEmptyString(name)){
                     this.currentFunction.props.name = name;
                     this.trigger({redrawTree: true});
                 }
                 break;
-            case 'var':
+            case nodeType.var:
                 if(this.currentVariable&&!isEmptyString(name)) {
                     this.currentVariable.props.name = name;
                     this.trigger({redrawTree: true});
                 }
                 break;
             default:
+                break;
+        }
+    },
+    pasteTreeNode: function () {
+       switch (copyObj.className) {
+           case nodeType.func:
+               this.pasteFunction();
+               break;
+           case nodeType.var:
+               this.pasteVariable();
+               break;
+           default:
+               this.pasteWidget();
+               break;
+       }
+    },
+    cutTreeNode: function (type) {
+        switch(type){
+            case nodeType.func:
+                this.cutFunction();
+                break;
+            case nodeType.var:
+                this.cutVariable();
+                break;
+            default:
+                this.cutWidget();
+                break;
+        }
+    },
+    renameTreeNode: function (type, value) {
+        switch(type){
+            case nodeType.func:
+            case nodeType.var:
+                this.renameFuncOrVar(type, value);
+                break;
+            default:
+                this.renameWidget(value);
+                break;
+        }
+    },
+    copyTreeNode: function (type) {
+        switch(type){
+            case nodeType.func:
+                this.copyFunction();
+                break;
+            case nodeType.var:
+                this.copyVariable();
+                break;
+            default:
+                this.copyWidget();
+                break;
+        }
+    },
+    deleteTreeNode: function (type) {
+        switch(type){
+            case nodeType.func:
+                this.removeFunction();
+                break;
+            case nodeType.var:
+                this.removeVariable();
+                break;
+            default:
+                this.removeWidget(true);
                 break;
         }
     },
@@ -1087,4 +1188,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken}
+export {globalToken, nodeType, varType}
