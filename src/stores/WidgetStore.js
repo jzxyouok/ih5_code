@@ -365,7 +365,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
 
-        //widget, 变量，函数的统一入口
+        //widget，变量，函数的统一复制，黏贴，删除，重命名，剪切入口
         this.listenTo(WidgetActions['pasteTreeNode'], this.pasteTreeNode);
         this.listenTo(WidgetActions['cutTreeNode'], this.cutTreeNode);
         this.listenTo(WidgetActions['copyTreeNode'], this.copyTreeNode);
@@ -390,7 +390,9 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
 
-        this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
+        //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
+
+        this.eventTreeList = [];
     },
     selectWidget: function(widget, shouldTrigger) {
         var render = false;
