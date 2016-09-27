@@ -110,7 +110,6 @@ propertyMap['textBox']=[
 ]
 
 
-
 propertyMap['text'] = [
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,

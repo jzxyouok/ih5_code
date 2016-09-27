@@ -203,7 +203,8 @@ class PropertyView extends React.Component {
                               //回调完成
                               oProgress.style.display='none';
                               //设置默认值
-                              this.selectNode.props.fontKey=arguments[1].name;
+                             // this.selectNode.props.fontKey=arguments[1].name;
+                              this.selectNode.props.fontKey='哈哈';
                               console.log(this.selectNode.props);
                               //更新属性面板
                               WidgetActions['render']();
