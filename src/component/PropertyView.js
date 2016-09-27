@@ -210,7 +210,17 @@ class PropertyView extends React.Component {
                               const obj = {};
                               obj[prop.name] = fontObj.file;
                               this.onStatusChange({updateProperties: obj});
-                              WidgetActions['updateProperties'](obj, false, true);
+                              WidgetActions['updateProperties'](obj, false,  function(evt){
+                                  let oProgress=document.getElementById('ant-progress');
+                                  if(evt.lengthComputable && oProgress) {
+                                      oProgress.style.display='block';
+                                      var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                      oProgress.childNodes[1].innerHTML='上传 '+percentComplete+'%';
+                                      oProgress.childNodes[0].style.width=percentComplete+'%';
+                                  }else {
+                                      console.log('failed');
+                                  }
+                              });
 
                           }.bind(this),true);
                           bTag=false;

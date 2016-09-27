@@ -49,24 +49,14 @@ var chooseFileCallback = (w)=> {  //tag
     }
 };
 
-function showProgressFn(evt){
-    let oProgress=document.getElementById('ant-progress');
-    oProgress.style.display='block';
-    if (evt.lengthComputable) {
-        var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-        oProgress.childNodes[1].innerHTML='上传 '+percentComplete+'%';
-        oProgress.childNodes[0].style.width=percentComplete+'%';
-    }else {
-        console.log('failed');
-    }
-}
+
 var chooseFile = (type, upload, callback,showProgress) => {
     var w = document.getElementById('upload-box');
     w.value = '';
     w.userType = type;
     w.userUpload = upload;
     w.userCallback = callback;
-    w.showProgress=showProgress?showProgressFn:null;
+    w.showProgress=showProgress?showProgress:null;
     w.sysCallback = chooseFileCallback;
     w.click();
 };
