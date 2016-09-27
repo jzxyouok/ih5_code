@@ -4,13 +4,7 @@ import $class from 'classnames';
 
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore from '../../stores/WidgetStore';
-
-var nodeType = {
-    widget: 0,  //树对象
-    func: 1,    //函数
-    var: 2      //属性
-};
+import WidgetStore, {nodeType} from '../../stores/WidgetStore';
 
 class ObjectTree extends React.Component {
     constructor (props) {
@@ -29,7 +23,7 @@ class ObjectTree extends React.Component {
             editMode:false   //处于更改名字状态
             //widgetTreeChildren :null
             , allTreeData : [],
-            nodeType: nodeType[0]
+            nodeType: nodeType.widget
         };
         this.chooseBtn = this.chooseBtn.bind(this);
         this.openBtn = this.openBtn.bind(this);
@@ -349,17 +343,7 @@ class ObjectTree extends React.Component {
             editMode: false
         });
         if(event.target.value) {
-            switch(this.state.nodeType){
-                case nodeType.func:
-                    WidgetActions['changeName']('func', event.target.value);
-                    break;
-                case nodeType.var:
-                    WidgetActions['changeName']('var', event.target.value);
-                    break;
-                default:
-                    WidgetActions['renameWidget'](event.target.value);
-                    break;
-            }
+            WidgetActions['renameTreeNode'](this.state.nodeType, event.target.value);
         }
     }
 
@@ -391,14 +375,7 @@ class ObjectTree extends React.Component {
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
         //黏贴
         if (didPressCtrl && event.keyCode == 86) {
-            switch(this.state.nodeType){
-                case nodeType.func:
-                case nodeType.var:
-                    break;
-                default:
-                    WidgetActions['pasteWidget']();
-                    break;
-            }
+            WidgetActions['pasteTreeNode']();
         }
     }
 
@@ -417,17 +394,7 @@ class ObjectTree extends React.Component {
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
         //复制 67
         if (didPressCtrl && event.keyCode == 67) {
-            switch(this.state.nodeType){
-                case nodeType.func:
-                    WidgetActions['copyFunction']();
-                    break;
-                case nodeType.var:
-                    WidgetActions['copyVariable']();
-                    break;
-                default:
-                    WidgetActions['copyWidget']();
-                    break;
-            }
+            WidgetActions['copyTreeNode'](this.state.nodeType);
             window.macKeys.reset();
         }
         //黏贴 86
@@ -437,49 +404,17 @@ class ObjectTree extends React.Component {
                 window.macKeys.reset();
                 return;
             }
-            switch(this.state.nodeType){
-                case nodeType.func:
-                    WidgetActions['pasteFunction']();
-                    break;
-                case nodeType.var:
-                    WidgetActions['pasteVariable']();
-                    break;
-                default:
-                    WidgetActions['pasteWidget']();
-                    break;
-            }
+            WidgetActions['pasteTreeNode']();
             window.macKeys.reset();
         }
         //剪切 88
         if (didPressCtrl && event.keyCode == 88) {
-            switch(this.state.nodeType){
-                case nodeType.func:
-                    WidgetActions['cutFunction']();
-                    break;
-                case nodeType.var:
-                    WidgetActions['cutVariable']();
-                    break;
-                default:
-                    WidgetActions['cutWidget']();
-                    break;
-            }
+            WidgetActions['cutTreeNode'](this.state.nodeType);
             window.macKeys.reset();
         }
         //删除 delete
         if (!didPressCtrl && event.keyCode == 8) {
-            switch(this.state.nodeType){
-                case nodeType.func:
-                    WidgetActions['removeFunction']();
-                    break;
-                case nodeType.var:
-                    WidgetActions['removeVariable']();
-                    break;
-                default:
-                    WidgetActions['removeWidget']();
-                    let parentWidget = this.state.selectWidget.parent ? this.state.selectWidget.parent: this.state.selectWidget.rootWidget;
-                    this.chooseBtn(parentWidget.key, parentWidget);
-                    break;
-            }
+            WidgetActions['deleteTreeNode'](this.state.nodeType);
             window.macKeys.reset();
         }
     }
