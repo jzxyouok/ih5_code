@@ -35,11 +35,11 @@ var chooseFileCallback = (w)=> {  //tag
                 xhr.send(form);
 
                 if(w.showProgress){
-                    xhr.upload.addEventListener("progress", w.showProgress, false);
+                    xhr.upload.addEventListener("progress", w.showProgress);
                 }
 
+
                 xhr.onreadystatechange = function() {
-                    console.log(xhr.readyState);
                     if (xhr.readyState == 4) {
                         w.userCallback(w, xhr.responseText);
                     }
@@ -50,6 +50,8 @@ var chooseFileCallback = (w)=> {  //tag
         }
     }
 };
+
+
 
 var chooseFile = (type, upload, callback,showProgress) => {
     var w = document.getElementById('upload-box');

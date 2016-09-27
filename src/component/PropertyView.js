@@ -198,12 +198,10 @@ class PropertyView extends React.Component {
 
                   }else if(prop.name == 'font'){
                       if(value == 0){
-
                           let oProgress=document.getElementById('ant-progress');
                           chooseFile('font', true, function(){
                               //回调完成
                               oProgress.style.display='none';
-
                               //设置默认值
                               this.selectNode.props.fontKey=arguments[1].name;
                               console.log(this.selectNode.props);
@@ -213,17 +211,13 @@ class PropertyView extends React.Component {
 
                           }.bind(this),function(evt){
                               oProgress.style.display='block';
+                              console.log('progress');
                               //显示进度条
                               if (evt.lengthComputable) {
-
                                   var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-
                                   console.log(percentComplete);
-
                                   oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
-
                                   oProgress.childNodes[0].style.width=percentComplete+'%';
-
                               }else {
                                   console.log('failed');
                               }
