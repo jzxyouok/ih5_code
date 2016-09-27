@@ -12,13 +12,16 @@ class CreateModule extends React.Component {
             classList : [],
             error : "组件名称未能为空",
             isError : false,
-            chooseId : []
+            chooseId : [],
+            isDelete : false
         };
         this.createClassBtn = this.createClassBtn.bind(this);
         this.chooseBtn = this.chooseBtn.bind(this);
         this.topBtn = this.topBtn.bind(this);
         this.closeArrangeModuleBtn = this.closeArrangeModuleBtn.bind(this);
         this.deleteBtn = this.deleteBtn.bind(this);
+        this.deleteLayerShow = this.deleteLayerShow.bind(this);
+        this.deleteLayerHide = this.deleteLayerHide.bind(this);
     }
 
     componentDidMount() {
@@ -42,7 +45,8 @@ class CreateModule extends React.Component {
         this.setState({
             error : "组件名称未能为空",
             isError : false,
-            chooseId : []
+            chooseId : [],
+            isDelete : false
         });
         this.props.closeArrangeModuleBtn();
     }
@@ -94,12 +98,25 @@ class CreateModule extends React.Component {
         }
         else {
             WidgetActions['deleteClass'](this.state.chooseId);
+            this.deleteLayerHide();
             this.setState({
                 error : "组件名称未能为空",
                 isError : false,
                 chooseId : []
             });
         }
+    }
+
+    deleteLayerShow(){
+        this.setState({
+            isDelete : true
+        })
+    }
+
+    deleteLayerHide(){
+        this.setState({
+            isDelete : false
+        })
     }
 
     render() {
@@ -174,12 +191,34 @@ class CreateModule extends React.Component {
                         </div>
 
                         <div className="btn-group f--hcc">
-                            <button className="btn btn-clear delete-btn" onClick={ this.deleteBtn } >删除</button>
+                            <button className="btn btn-clear delete-btn" onClick={ this.deleteLayerShow }>删除</button>
                             <button className="btn btn-clear top-btn" onClick={ this.topBtn } >置顶</button>
                         </div>
                     </div>
 
                     <div className={$class("error",{"hidden": !this.state.isError})}>{ this.state.error }</div>
+
+                    <div className={$class("delete-layer f--hcc",{"hidden" : !this.state.isDelete })}>
+                        <div className="delete-mark"></div>
+
+                        <div className="delete-main">
+                            <div className="delete-header f--hlc">
+                                <span className="icon" />
+                                删除
+                            </div>
+
+                            <div className="delete-content">
+                                <span />
+
+                                <p>确定删除选中的组件？</p>
+
+                                <div className="btn-group f--hcc">
+                                    <button className="btn btn-clear delete-btn" onClick={ this.deleteBtn }>删除</button>
+                                    <button className="btn btn-clear cancel-btn" onClick={ this.deleteLayerHide }>取消</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
