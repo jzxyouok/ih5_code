@@ -32,14 +32,14 @@ var chooseFileCallback = (w)=> {  //tag
                 var form = new FormData();
                 form.append('type', w.userType);
                 form.append('file', w.files[0]);
+
+
+
+                xhr.upload.onprogress= w.showProgress;
+
+
                 xhr.send(form);
-
-                if(w.showProgress){
-                    xhr.upload.addEventListener("progress", w.showProgress, false);
-                }
-
                 xhr.onreadystatechange = function() {
-                    console.log(xhr.readyState);
                     if (xhr.readyState == 4) {
                         w.userCallback(w, xhr.responseText);
                     }
@@ -51,13 +51,16 @@ var chooseFileCallback = (w)=> {  //tag
     }
 };
 
+
+
+
 var chooseFile = (type, upload, callback,showProgress) => {
     var w = document.getElementById('upload-box');
     w.value = '';
     w.userType = type;
     w.userUpload = upload;
     w.userCallback = callback;
-    w.showProgress=showProgress; //显示进度条
+    w.showProgress=showProgress;
     w.sysCallback = chooseFileCallback;
     w.click();
 };

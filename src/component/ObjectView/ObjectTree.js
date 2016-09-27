@@ -455,10 +455,10 @@ class ObjectTree extends React.Component {
         if (!didPressCtrl && event.keyCode == 8) {
             switch(this.state.nodeType){
                 case nodeType.func:
-                    WidgetActions['removeFunction'](this.state.nid);
+                    WidgetActions['removeFunction']();
                     break;
                 case nodeType.var:
-                    WidgetActions['removeVariable'](this.state.nid);
+                    WidgetActions['removeVariable']();
                     break;
                 default:
                     WidgetActions['removeWidget']();
@@ -701,7 +701,8 @@ class ObjectTree extends React.Component {
                         {
                             v.children.length > 0
                             ||v.funcList.length > 0
-                            ||v.varList.length > 0
+                            ||v.intVarList.length > 0
+                            ||v.strVarList.length > 0
                                 ? icon( 1 , v.key)
                                 : icon( 0 , v.key)
                         }
@@ -731,9 +732,15 @@ class ObjectTree extends React.Component {
                     </div>
                 </div>
                 <div className={$class('item-var-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
-                    {v.varList.length === 0
+                    {v.intVarList.length === 0
                         ? null
-                        : varList(v.varList, num+1)
+                        : varList(v.intVarList, num+1)
+                    }
+                </div>
+                <div className={$class('item-var-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                    {v.strVarList.length === 0
+                        ? null
+                        : varList(v.strVarList, num+1)
                     }
                 </div>
                 <div className={$class('item-function-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
@@ -772,7 +779,8 @@ class ObjectTree extends React.Component {
                                          {
                                              v.tree.children.length > 0
                                              ||v.tree.funcList.length > 0
-                                             ||v.tree.varList.length > 0
+                                             ||v.tree.intVarList.length > 0
+                                             ||v.tree.strVarList.length > 0
                                                  ? icon( 1 , v.tree.key)
                                                  : icon( 0 , v.tree.key)
                                          }
@@ -791,9 +799,15 @@ class ObjectTree extends React.Component {
                                      </div>
                                  </div>
                                  <div className={$class('stage-var-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
-                                     {v.tree.varList.length === 0
+                                     {v.tree.intVarList.length === 0
                                          ? null
-                                         : varList(v.tree.varList, 1)
+                                         : varList(v.tree.intVarList, 1)
+                                     }
+                                 </div>
+                                 <div className={$class('stage-var-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
+                                     {v.tree.strVarList.length === 0
+                                         ? null
+                                         : varList(v.tree.strVarList, 1)
                                      }
                                  </div>
                                  <div className={$class('stage-function-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
