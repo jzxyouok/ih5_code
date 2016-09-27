@@ -242,7 +242,7 @@ class PropertyView extends React.Component {
                 case propertyType.Boolean2:
                     v =value;
                     if(v===null){
-                       //  delete  this.selectNode.props.visible;
+                        delete  this.selectNode.props.visible;
                     }else{
                         this.selectNode.props.visible = v;
                     }
