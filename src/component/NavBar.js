@@ -503,11 +503,13 @@ class NavBar extends React.Component {
                      onEditDone={this.onLoginDone.bind(this)} />
 
                 <div className={$class({"hidden": !this.state.createClass}) }>
-                    <CreateModule closeClassBtn={ this.closeClassBtn }  />
+                    <CreateModule closeClassBtn={ this.closeClassBtn }
+                                  classList = { this.state.classList }  />
                 </div>
 
                 <div className={$class({"hidden": !this.state.arrangeModule }) }>
-                    <ArrangeModule closeArrangeModuleBtn={ this.closeArrangeModuleBtn } />
+                    <ArrangeModule closeArrangeModuleBtn={ this.closeArrangeModuleBtn }
+                                   createClassBtn={ this.createClassBtn }/>
                 </div>
 
             </div>

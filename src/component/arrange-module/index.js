@@ -11,9 +11,12 @@ class CreateModule extends React.Component {
         this.state = {
             classList : [],
             error : "组件名称未能为空",
-            isError : false
+            isError : false,
+            chooseId : []
         };
         this.createClassBtn = this.createClassBtn.bind(this);
+        this.chooseBtn = this.chooseBtn.bind(this);
+        this.topBtn = this.topBtn.bind(this);
     }
 
     componentDidMount() {
@@ -26,11 +29,35 @@ class CreateModule extends React.Component {
 
     onStatusChange(widget) {
         if (widget.classList !== undefined) {
-
+            //console.log(1,widget.classList);
+            this.setState({
+                classList: widget.classList
+            });
         }
     }
 
     createClassBtn(){
+        this.props.createClassBtn();
+        this.props.closeArrangeModuleBtn();
+    }
+
+    chooseBtn(id){
+        let array = this.state.chooseId;
+        let index = array.indexOf(id);
+        //console.log(index);
+        if( index >= 0){
+            array.splice(index, 1);
+        }
+        else {
+            array.push(id);
+        }
+        //console.log(array);
+        this.setState({
+            chooseId : array
+        })
+    }
+
+    topBtn(name){
 
     }
 
@@ -79,7 +106,10 @@ class CreateModule extends React.Component {
                                     {
                                         this.state.classList.length > 0
                                         ?   this.state.classList.map((v,i)=>{
-                                                return  <li className="f--hlc" key={i}>
+                                                return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v) >= 0})}
+                                                            key={i}
+                                                            onClick={ this.chooseBtn.bind(this, v)}>
+
                                                             <div className="flex-1 f--hlc title">
                                                                 <span className="li-icon" />
                                                                 <div className="TitleName">{v}</div>

@@ -105,6 +105,12 @@
                             .li-icon{ background-position: -400px -200px; }
                         }
 
+                        &.active {
+                            color: #fff;
+                            .li-icon{ background-position: -400px -240px; }
+                            .choose-btn{ background: #ffa800;}
+                        }
+
                         &:nth-child(4n){
                             width: 118px;
                             border-right: none;
@@ -169,10 +175,6 @@
                             height: 10px;
                             margin-right: 4px;
                             background: #151515;
-                        }
-
-                        &.active .choose-btn{
-                            background: #ffa800;
                         }
                     }
                 }
