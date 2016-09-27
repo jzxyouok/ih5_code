@@ -607,12 +607,12 @@ class ObjectTree extends React.Component {
         };
 
         let fuc = (v,i)=>{
-            //console.log(v.props.visible);
             let pic = null;
             let picIsImage = true;
             this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
                 if(isCustomizeWidget(v.className)&&v1.className==='component') {
-                    pic = v1.icon;
+                    pic = 'componet-icon';
+                    picIsImage = false;
                 } else if (v1.className === v.className){
                     if(v.className === 'image' || v.className === 'imagelist') {
                         if(v.props.link !== undefined &&v.rootWidget.imageList&&v.rootWidget.imageList.length>v.props.link){

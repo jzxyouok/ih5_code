@@ -231,14 +231,16 @@
         filter: Gray;
         -webkit-filter: grayscale(100%);
     }
-
+    .func-var-icon {
+        margin-left: 11px;
+    }
     .item-icon {
         width: 16px;
         min-width: 16px;
         height: 16px;
     }
-    .func-var-icon {
-        margin-left: 11px;
+    .componet-icon {
+        background: url("img/button-icon.svg") no-repeat -280px -200px;
     }
 }
 
