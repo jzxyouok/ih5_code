@@ -2,12 +2,12 @@
 import React from 'react';
 
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore from '../../stores/WidgetStore';
+import WidgetStore, {varType} from '../../stores/WidgetStore';
 import {checkChildClass} from '../PropertyMap';
 
 const animationData = [
-    {name:'数字变量', class:'var-num-btn', className:'var', disabled:false, param:{name:'', value:null, type:'number'}},
-    {name:'文本变量', class:'var-str-btn', className:'var', disabled:false, param:{name:'', value:null, type:'string'}},
+    {name:'数字变量', class:'var-num-btn', className:'var', disabled:false, param:{name:'', value:null, type:varType.number}},
+    {name:'文本变量', class:'var-str-btn', className:'var', disabled:false, param:{name:'', value:null, type:varType.string}},
     {name:'函数', class:'func-btn', className:'func', disabled:false, param:{key:'',value:''}},
     {name:'轨迹', class:'locus-btn', className:'track', disabled:false},
     {name:'缓动', class:'easing-btn', className:'easing', disabled:false},
@@ -74,9 +74,9 @@ class Animation extends React.Component {
 
     addWidgetBtn(className, param){
         if(className === 'func') {
-            WidgetActions['addFunction'](className, param);
+            WidgetActions['addFunction'](param);
         } else if(className === 'var') {
-            WidgetActions['addVariable'](className, param);
+            WidgetActions['addVariable'](param);
         } else {
             WidgetActions['addWidget'](className, param);
         }
