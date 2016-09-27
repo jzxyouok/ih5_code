@@ -11,6 +11,7 @@ import $class from 'classnames'
 
 import CreateModule from './create-module/index'
 import ArrangeModule from './arrange-module/index'
+import CreateDb from './create-db/index'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -31,7 +32,9 @@ class NavBar extends React.Component {
             fontList:[],
             dropDownState : 0,
             createClass : false,
-            arrangeModule : false
+            arrangeModule : false,
+            dbList : [],
+            createDb : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -49,6 +52,9 @@ class NavBar extends React.Component {
         this.addClass = this.addClass.bind(this);
         this.arrangeModuleBtn = this.arrangeModuleBtn.bind(this);
         this.closeArrangeModuleBtn = this.closeArrangeModuleBtn.bind(this);
+        this.createDbShow = this.createDbShow.bind(this);
+        this.createDbHide = this.createDbHide.bind(this);
+        this.onUpdateDb = this.onUpdateDb.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -96,7 +102,8 @@ class NavBar extends React.Component {
                     loginVisible: false,
                     username: result['name'],
                     workList: result['list'].reverse(),
-                    fontList: result['font']
+                    fontList: result['font'],
+                    dbList: result['db']
                 });
                 WidgetActions['saveFontList'](result['font']);
             } else {
@@ -290,10 +297,26 @@ class NavBar extends React.Component {
         })
     }
 
+    createDbShow(){
+        this.setState({
+            createDb : true
+        })
+    }
+
+    createDbHide(){
+        this.setState({
+            createDb : false
+        })
+    }
+
+    onUpdateDb(list) {
+        this.setState({'dbList': list});
+    }
+
     render() {
         //console.log(this.state.workList);
-        let moduleFuc = (num)=>{
-            let a = 14 - num;
+        let moduleFuc = (num, min)=>{
+            let a = min - num;
             let fuc = [];
             if(a >= 0){
                 for(let index = 0; index < a; index++){
@@ -373,7 +396,7 @@ class NavBar extends React.Component {
                                                     </div>
                                                 </li>
                                                 {
-                                                    moduleFuc(this.state.classList.length)
+                                                    moduleFuc(this.state.classList.length, 14)
                                                 }
                                             </ul>
                                         </div>
@@ -382,11 +405,49 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <div className='dropDown-btn f--hlc'>
+                        <div className='dropDown-btn db-dropDown f--hlc'>
                             <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }}>
                                 <span className="icon" />
                                 <span className="title">数据库</span>
                             </button>
+
+                            <div className='dropDownToggle'>
+                                <div className="dropDownToggle-main">
+                                    <div className="dropDown-title f--hlc">
+                                        <span className="flex-1">全部数据库：</span>
+                                        <span className="set-btn" />
+                                    </div>
+
+                                    <div className="dropDown-main">
+                                        <div className="dropDown-scroll">
+                                            <ul className="dropDown-content">
+                                                {
+                                                    this.state.dbList.length > 0
+                                                        ? this.state.dbList.map((v,i)=>{
+                                                            return  <li className="" key={i}>
+                                                                        <div className="title">
+                                                                            <span className="li-icon" />
+                                                                            <div className="TitleName">{v}</div>
+                                                                        </div>
+                                                                        <span className="edit-btn" />
+                                                                    </li>
+                                                          })
+                                                        : null
+                                                }
+                                                <li className="add-btn f--hcc" onClick={ this.createDbShow }>
+                                                    <div className="icon">
+                                                        <span className="heng" />
+                                                        <span className="shu" />
+                                                    </div>
+                                                </li>
+                                                {
+                                                    moduleFuc(this.state.dbList.length, 11)
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className='dropDown-btn f--hlc'>
@@ -510,6 +571,12 @@ class NavBar extends React.Component {
                 <div className={$class({"hidden": !this.state.arrangeModule }) }>
                     <ArrangeModule closeArrangeModuleBtn={ this.closeArrangeModuleBtn }
                                    createClassBtn={ this.createClassBtn }/>
+                </div>
+
+                <div className={$class({"hidden": !this.state.createDb }) }>
+                    <CreateDb createDbHide={ this.createDbHide }
+                              onUpdateDb={this.onUpdateDb.bind(this)}
+                              dbList = { this.state.dbList }/>
                 </div>
 
             </div>

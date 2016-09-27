@@ -1,5 +1,5 @@
 /**
- * 属性面板 zAl968uo
+ * 属性面板
  */
 
 import React from 'react';
@@ -204,8 +204,6 @@ class PropertyView extends React.Component {
                       if(value == 0){
                           chooseFile('font', true, function(){
 
-                              console.log('progress',this);
-
                               let  fontObj =eval("("+arguments[1]+")");
                               let oProgress=document.getElementById('ant-progress');
                               //回调完成
@@ -243,6 +241,12 @@ class PropertyView extends React.Component {
                     break;
                 case propertyType.Boolean2:
                     v =value;
+                    if(v===null){
+                        delete  this.selectNode.props.visible;
+                    }else{
+                        this.selectNode.props.visible = v;
+                    }
+                    bTag=false;
                     break;
                 default:
                     v = value;
@@ -332,7 +336,6 @@ class PropertyView extends React.Component {
         if( node.props.isLock ===undefined){
             node.props.isLock =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
         }
-
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
         if (!propertyMap[className])    return null;

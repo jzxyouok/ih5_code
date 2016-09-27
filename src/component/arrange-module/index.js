@@ -5,7 +5,7 @@ import $class from 'classnames';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
-class CreateModule extends React.Component {
+class ArrangeModule extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
@@ -225,5 +225,5 @@ class CreateModule extends React.Component {
     }
 }
 
-module.exports = CreateModule;
+module.exports = ArrangeModule;
 
