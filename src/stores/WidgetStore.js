@@ -1024,7 +1024,7 @@ export default Reflux.createStore({
     },
 
     deleteClass: function(data){
-        console.log(data,classList);
+        //console.log(data,classList);
         let fuc = ((v,i)=>{
             data.forEach((v1,i1)=>{
                 if(v == v1){
@@ -1040,7 +1040,7 @@ export default Reflux.createStore({
             }
         });
         classList.map(fuc);
-        console.log(classList,stageTree);
+        //console.log(classList,stageTree);
         this.trigger({initTree: stageTree, classList: classList});
     },
     render: function() {
