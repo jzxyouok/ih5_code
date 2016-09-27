@@ -1212,7 +1212,7 @@ export default Reflux.createStore({
         if (globalToken) {
             xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
         }
-        xhr.send(data);
+        //xhr.send(data);
     },
     getStore: function() {
       //this.selectWidget(stageTree[0].tree);

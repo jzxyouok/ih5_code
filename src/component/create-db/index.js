@@ -5,7 +5,7 @@ import $class from 'classnames';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
-var PREFIX = 'app/';
+//var PREFIX = 'app/';
 
 class CreateDb extends React.Component {
     constructor (props) {
@@ -22,11 +22,11 @@ class CreateDb extends React.Component {
         this.createDb = this.createDb.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.dbList) {
-            this.setState({dbParm: nextProps.dbList});
-        }
-    }
+    //componentWillReceiveProps(nextProps) {
+    //    if (nextProps.dbList) {
+    //        this.setState({dbParm: nextProps.dbList});
+    //    }
+    //}
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
@@ -74,7 +74,7 @@ class CreateDb extends React.Component {
             })
         }
         else {
-            let data = "name=" + encodeURIComponent(name);
+            //let data = "name=" + encodeURIComponent(name);
             //WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
             //    //var result = JSON.parse(text);
             //    //if (result['id']) {
