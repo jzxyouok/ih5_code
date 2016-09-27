@@ -79,7 +79,6 @@ class Property extends React.Component {
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
                                 <button className="p--icon"></button>
-
                                 <div className="p--dropDown short">
                                     <div className="title f--hlc">
                                         { this.props.object }

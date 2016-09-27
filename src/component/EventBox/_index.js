@@ -1,166 +1,60 @@
 //事件属性框
 import React from 'react';
-import $class from 'classnames'
-
-import Event from './Event'
+import $class from 'classnames';
+import Event from './Event';
+import {eventTempData} from './tempData';
+import WidgetStore from '../../stores/WidgetStore'
+import WidgetActions from '../../actions/WidgetActions'
 
 class EventBox extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
             keepIt : false,
-            activeWid: 1,
+            activeKey: 1,
+            selectWidget: null
         };
-        this.eventData = [
-            {
-                wid: 1,
-                name:'stage',
-                event:[
-                    {   eid:1 ,
-                        condition:'触发条件',
-                        children:[],
-                        specific:[
-                            {
-                                sid:1,
-                                object: '目标对象',
-                                children: [
-                                    {   action: '目标动作',
-                                        property: []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },{
-                wid: 2,
-                name:'rect',
-                event:[
-                    {
-                        eid:2 ,
-                        condition:'点击',
-                        children:[{bind:'or',object:'某某计数器',action:'计算',judgment:'=',value:'true',calculator:'true'}],
-                        specific:[
-                            {
-                                sid:2,
-                                object:'某某图片',
-                                children: [
-                                    {   action:'设置属性',
-                                        property:[
-                                            {name:'x坐标',types:'0',value:'1920'},
-                                            {name:'y坐标',types:'0',value:'1366'},
-                                            {name:'剪切',types:'1',value:'-1'},
-                                            {name:'复制',types:'1',value:'0'},
-                                            {name:'粘贴',types:'1',value:'1'},
-                                            {name:'属性名字',types:'2',value:'20'}
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },{
-                        eid:3,
-                        condition:'触发条件',
-                        children:[],
-                        specific:[
-                            {
-                                sid:3,
-                                object:'某某图片',
-                                children: [
-                                    {   action:'设置属性',
-                                        property:[
-                                            {name:'x坐标',types:0,value:'1920'},
-                                            {name:'y坐标',types:0,value:'1366'},
-                                            {name:'剪切',types:1,value:-1},
-                                            {name:'复制',types:1,value:0},
-                                            {name:'粘贴',types:1,value:1},
-                                            {name:'属性名字',types:2,value:'20'}
-                                        ]
-                                    }
-                                ]
-                            },{
-                                sid:4,
-                                object:'某某计数器',
-                                children: [
-                                    {   action:'赋值',
-                                        property:[
-                                            {name:'值',types:'0',value:'100'}
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },{
-                        eid:4,
-                        condition:'触发条件',
-                        children:[
-                            {bind:'or',object:'图片',action:'隐藏',judgment:'=',value:'true'},
-                            {bind:'or',object:'图片',action:'隐藏',judgment:'=',value:'true'}
-                        ],
-                        specific:[
-                            {
-                                sid:5,
-                                object:'目标对象',
-                                children: [
-                                    {   action:'目标动作',
-                                        property:[]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },{
-                wid: 3,
-                name:'cccc',
-                event:[
-                    {   eid:5 ,
-                        condition:'触发条件',
-                        children:[],
-                        specific:[
-                            {
-                                sid:6,
-                                object: '目标对象',
-                                children: [
-                                    {   action: '目标动作',
-                                        property: []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },{
-                wid: 4,
-                name:'dddd',
-                event:[
-                    {   eid:6 ,
-                        condition:'触发条件',
-                        children:[],
-                        specific:[
-                            {
-                                sid:7,
-                                object: '目标对象',
-                                children: [
-                                    {   action: '目标动作',
-                                        property: []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ];
+        this.eventData = eventTempData;
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.keepBtn = this.keepBtn.bind(this);
+        this.onStatusChange = this.onStatusChange.bind(this);
     }
 
-    chooseEventBtn(nid){
+    componentDidMount() {
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onStatusChange(widget) {
+        if(widget.selectWidget){
+            this.setState({
+                selectWidget: widget.selectWidget
+            });
+        }
+        //TODO: uncomment
+        // if(widget.activeEventTreeKey) {
+        //     this.setState({
+        //         activeKey: widget.activeEventTreeKey.key
+        //     });
+        // }
+    }
+
+    chooseEventBtn(nid, data){
         this.setState({
-            activeWid: nid
+            activeKey: nid
         });
+
+        //TODO: uncomment
+        // if(this.state.activeKey !== nid) {
+        //     //触发选择widget并选择当前event
+        //     WidgetActions['selectWidget'](data.widget);
+        //     WidgetActions['activeEventTree'](nid);
+        // }
     }
 
     keepBtn(){
@@ -182,7 +76,7 @@ class EventBox extends React.Component {
                     <div className='EB--content'>
                         {
                             this.eventData.map((v,i)=>{
-                                return <Event key={i} {...v} activeWid={this.state.activeWid} chooseEventBtn={this.chooseEventBtn} />
+                                return <Event key={i} {...v} wKey={v.key} activeKey={this.state.activeKey} chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
                             })
                         }
                     </div>

@@ -142,9 +142,9 @@ class Event extends React.Component {
         });
 
         return (
-            <div className={$class('Event',{'active' :this.props.activeWid === this.props.wid })}
-                 onClick={this.chooseEventBtn.bind(this, this.props.wid)}
-                 id={'event-tree-'+this.props.wid}>
+            <div className={$class('Event',{'active' :this.props.activeKey === this.props.wKey })}
+                 onClick={this.chooseEventBtn.bind(this, this.props.wKey)}
+                 id={'event-tree-'+this.props.wKey}>
                 <div className='E--title f--h'>
                     <div className='title-content f--hlc flex-1'>
                         <div className={$class('close-btn', {'expanded-btn': this.state.expanded})}
@@ -159,7 +159,7 @@ class Event extends React.Component {
                         <div className='name flex-1'>{ this.props.name }</div>
                     </div>
 
-                    <div className={$class('btn f--hlc',{'hidden' :this.props.activeWid !== this.props.wid })}>
+                    <div className={$class('btn f--hlc',{'hidden' :this.props.activeKey !== this.props.wKey })}>
                         <div className='btn-name'>添加事件</div>
                         <div className='btn-icon'><span className='heng'/><span  className='shu'/></div>
                     </div>
