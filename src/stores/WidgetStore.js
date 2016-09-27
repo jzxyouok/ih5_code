@@ -189,7 +189,7 @@ function saveTree(data, node) {
       for (let i = node.intVarList.length - 1; i >= 0; i--) {
           let o = {};
           o['__name'] = node.intVarList[i].name;
-          o['__value'] = node.intVarList[i].value;
+          o['__value'] = node.intVarList[i].value==null?node.intVarList[i].value:parseInt(node.intVarList[i].value);
           o['__props'] = node.intVarList[i].props;
           o['__type'] = node.intVarList[i].type;
           data['vars'].push(o);
