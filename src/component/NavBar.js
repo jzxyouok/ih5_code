@@ -31,7 +31,8 @@ class NavBar extends React.Component {
             fontList:[],
             dropDownState : 0,
             createClass : false,
-            arrangeModule : false
+            arrangeModule : false,
+            dbList : []
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -96,7 +97,8 @@ class NavBar extends React.Component {
                     loginVisible: false,
                     username: result['name'],
                     workList: result['list'].reverse(),
-                    fontList: result['font']
+                    fontList: result['font'],
+                    dbList: result['db']
                 });
                 WidgetActions['saveFontList'](result['font']);
             } else {
@@ -292,8 +294,8 @@ class NavBar extends React.Component {
 
     render() {
         //console.log(this.state.workList);
-        let moduleFuc = (num)=>{
-            let a = 14 - num;
+        let moduleFuc = (num, min)=>{
+            let a = min - num;
             let fuc = [];
             if(a >= 0){
                 for(let index = 0; index < a; index++){
@@ -373,7 +375,7 @@ class NavBar extends React.Component {
                                                     </div>
                                                 </li>
                                                 {
-                                                    moduleFuc(this.state.classList.length)
+                                                    moduleFuc(this.state.classList.length, 14)
                                                 }
                                             </ul>
                                         </div>
@@ -382,11 +384,49 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <div className='dropDown-btn f--hlc'>
+                        <div className='dropDown-btn db-dropDown f--hlc'>
                             <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }}>
                                 <span className="icon" />
                                 <span className="title">数据库</span>
                             </button>
+
+                            <div className='dropDownToggle'>
+                                <div className="dropDownToggle-main">
+                                    <div className="dropDown-title f--hlc">
+                                        <span className="flex-1">全部数据库：</span>
+                                        <span className="set-btn" />
+                                    </div>
+
+                                    <div className="dropDown-main">
+                                        <div className="dropDown-scroll">
+                                            <ul className="dropDown-content">
+                                                {
+                                                    this.state.dbList.length > 0
+                                                        ? this.state.dbList.map((v,i)=>{
+                                                            return  <li className="" key={i}>
+                                                                        <div className="title">
+                                                                            <span className="li-icon" />
+                                                                            <div className="TitleName">{v}</div>
+                                                                        </div>
+                                                                        <span className="edit-btn" />
+                                                                    </li>
+                                                          })
+                                                        : null
+                                                }
+                                                <li className="add-btn f--hcc">
+                                                    <div className="icon">
+                                                        <span className="heng" />
+                                                        <span className="shu" />
+                                                    </div>
+                                                </li>
+                                                {
+                                                    moduleFuc(this.state.dbList.length, 11)
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className='dropDown-btn f--hlc'>
