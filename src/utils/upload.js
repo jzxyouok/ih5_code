@@ -34,10 +34,10 @@ var chooseFileCallback = (w)=> {  //tag
                 form.append('file', w.files[0]);
                 xhr.send(form);
 
-                if(w.showProgress){
-                    console.log(w.showProgress);
-                    xhr.upload.addEventListener("progress", w.showProgress);
-                }
+
+                xhr.upload.onprogress=progress;
+              //  xhr.upload.addEventListener("progress", progress);
+
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
                         w.userCallback(w, xhr.responseText);
@@ -50,15 +50,26 @@ var chooseFileCallback = (w)=> {  //tag
     }
 };
 
+function progress(evt){
+    let oProgress=document.getElementById('ant-progress');
+    oProgress.style.display='block';
+    console.log('progress');
+    if (evt.lengthComputable) {
+        var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+        console.log(percentComplete);
+        oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
+        oProgress.childNodes[0].style.width=percentComplete+'%';
+    }else {
+        console.log('failed');
+    }
+}
 
-
-var chooseFile = (type, upload, callback,showProgress) => {
+var chooseFile = (type, upload, callback) => {
     var w = document.getElementById('upload-box');
     w.value = '';
     w.userType = type;
     w.userUpload = upload;
     w.userCallback = callback;
-    w.showProgress=showProgress; //显示进度条
     w.sysCallback = chooseFileCallback;
     w.click();
 };
