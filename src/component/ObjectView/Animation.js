@@ -2,7 +2,7 @@
 import React from 'react';
 
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore, {varType} from '../../stores/WidgetStore';
+import WidgetStore, {varType, isCustomizeWidget} from '../../stores/WidgetStore';
 import {checkChildClass} from '../PropertyMap';
 
 const animationData = [
@@ -49,7 +49,9 @@ class Animation extends React.Component {
         //过滤可选的功能组件
         let data = animationData;
         for(let i = 0; i<data.length; i++) {
-            if(data[i].className === 'func'&&
+            if(isCustomizeWidget(widget.className)){
+                data[i].disabled = true;
+            } else if(data[i].className === 'func'&&
                 (widget.className !== 'func'&&
                 widget.className !== 'var')) {
                 data[i].disabled = false;

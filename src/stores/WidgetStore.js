@@ -37,6 +37,13 @@ function isEmptyString( str ){
     return re.test(str);
 }
 
+function isCustomizeWidget(className) {
+    if (className&&className.length>0){
+        return className.substr(0,1)==='_';
+    }
+    return false;
+}
+
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
 
@@ -556,9 +563,6 @@ export default Reflux.createStore({
       }
     },
     addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties) {
-        if (!this.currentWidget)
-            return;
-
         if(properties === undefined || properties === null) {
             properties = {};
         }
@@ -568,17 +572,22 @@ export default Reflux.createStore({
             props = cpJson(properties);
         }
 
-        if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
-            props['name'] = props.value;
+        //自定义组件就不重命名
+        if(isCustomizeWidget(className)){
+            props['name'] = className;
         } else {
-            let cOrder = 1;
-            //查找当前widget有多少个相同className的，然后＋1处理名字
-            for(let i = 0; i<this.currentWidget.children.length; i++){
-                if(this.currentWidget.children[i].className === className){
-                    cOrder+=1;
+            if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
+                props['name'] = props.value;
+            } else {
+                let cOrder = 1;
+                //查找当前widget有多少个相同className的，然后＋1处理名字
+                for(let i = 0; i<this.currentWidget.children.length; i++){
+                    if(this.currentWidget.children[i].className === className){
+                        cOrder+=1;
+                    }
                 }
+                props['name'] = className + cOrder;
             }
-            props['name'] = className + cOrder;
         }
         return props;
     },
@@ -1133,4 +1142,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType}
+export {globalToken, nodeType, varType, isCustomizeWidget}
