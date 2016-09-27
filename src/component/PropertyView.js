@@ -93,7 +93,7 @@ class PropertyView extends React.Component {
                     <Select   {...defaultProp} >
                         {defaultProp.options}
                     </Select>
-                    <div id={cls({'ant-progress':defaultProp.name=='font'})}><div></div></div>
+                    <div id={cls({'ant-progress':defaultProp.name=='font'})}><div className='ant-progress-bar'></div><div className='ant-progress-txt'>上传 10%</div></div>
                 </div>;
 
             default:

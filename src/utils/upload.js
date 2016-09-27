@@ -54,7 +54,7 @@ function showProgressFn(evt){
     oProgress.style.display='block';
     if (evt.lengthComputable) {
         var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-        oProgress.childNodes[0].innerHTML=percentComplete+'%';
+        oProgress.childNodes[1].innerHTML='上传 '+percentComplete+'%';
         oProgress.childNodes[0].style.width=percentComplete+'%';
     }else {
         console.log('failed');
