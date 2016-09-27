@@ -1,5 +1,5 @@
 /**
- * 属性面板 zAl968uo
+ * 属性面板
  */
 
 import React from 'react';
@@ -39,28 +39,7 @@ class PropertyView extends React.Component {
             y:null
         };
     }
-    //获取下拉框默认值
-    getSelectDefault(originPos,options){
-        for(let i in options){
-            if(options[i][0]==originPos.x && options[i][1]==originPos.y  ){
-                return i;
-            }
-        }
-    }
-    //锁定
-    antLock(){
-        this.selectNode.props.isLock=!this.selectNode.props.isLock;
-        let  oLock=  document.getElementsByClassName('ant-lock')[0];
-        if(this.selectNode.props.isLock){
-            oLock.classList.add('ant-lock-checked');
-            let k =this.selectNode.props.scaleX;
-            //设定原始宽高比
-            // WidgetActions['updateProperties']({scaleX:1,scaleY:1}, false, false);
-            WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
-        }else{
-            oLock.classList.remove('ant-lock-checked');
-        }
-    }
+
      //获取封装的form组件
      getInputBox(type, defaultProp) {
         switch (type) {
@@ -162,6 +141,8 @@ class PropertyView extends React.Component {
                         obj.scaleY = obj.scaleX=1;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
+
+
                         bTag=false;
                     }else{
                         v = parseInt(value);
@@ -169,24 +150,20 @@ class PropertyView extends React.Component {
                     break;
                 case propertyType.Float:
                     if(this.selectNode.props.isLock){
-
-                        const obj = {};
-                        let w;
                         let h;
+                        let w;
+                        const obj = {};
                         if('scaleX'== prop.name) {
-                            //获取scaleY的值
                               h  =parseFloat(value)*(this.selectNode.node.height/this.selectNode.node.width)/this.selectNode.node.defaultData.height;
-                           //获取scaleX的值
-                              w =parseFloat(value) /this.selectNode.node.defaultData.width;
-                        }else if('scaleY'== prop.name){
-                            //获取scaleX的值
-                               w  =parseFloat(value)*(this.selectNode.node.width/this.selectNode.node.height)/this.selectNode.node.defaultData.width;
-                            //获取scaleY的值
-                              h =parseFloat(value) /this.selectNode.node.defaultData.height;
-                        }
-                        obj['scaleX'] =w;
-                        obj['scaleY']=h;
 
+                              w =parseFloat(value) /this.selectNode.node.defaultData.width;
+                        }else if('scaleY'== prop.name) {
+                            w = parseFloat(value) * (this.selectNode.node.width / this.selectNode.node.height) / this.selectNode.node.defaultData.width;
+
+                            h = parseFloat(value) / this.selectNode.node.defaultData.height;
+                        }
+                        obj['scaleY'] =h;
+                        obj['scaleX']=w;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag=false;
@@ -200,29 +177,62 @@ class PropertyView extends React.Component {
                     break;
                 case propertyType.Select:
                   if(prop.name == 'originPos'){
-                      const obj = {};
+                      //数组
                       let arr=value.split(',');
                       let x = parseFloat(arr[0]);
                       let y = parseFloat(arr[1]);
-
-
+                      this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
+                      const obj = {};
                        prop.name='originX';
                        obj[prop.name] =x;
                       this.onStatusChange({updateProperties: obj});
 
-
                       prop.name='originY';
-                      obj[prop.name] = parseFloat(y);
+                      obj[prop.name] = y;
                       this.onStatusChange({updateProperties: obj});
-
-                      WidgetActions['updateProperties']({
-                          originX:x,
-                          originY:y
-                      }, false, true);
+                      WidgetActions['updateProperties']({originX:x,originY:y}, false, true);
                       prop.name='originPos';
                        bTag=false;
-                  }else{
+                  }else if(prop.name == 'scaleType'){
+                      this.selectNode.props.scaleTypeKey=this.getScaleTypeDefault(value,prop.options);
+                      v = parseInt(value);
+                  }else if(prop.name == 'fontFamily'){
+                      this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
+                      v = value;
 
+                  }else if(prop.name == 'font'){
+                      if(value == 0){
+                          chooseFile('font', true, function(){
+
+                              let  fontObj =eval("("+arguments[1]+")");
+                              let oProgress=document.getElementById('ant-progress');
+                              //回调完成
+                              oProgress.style.display='none';
+                              //设置默认值
+                              this.selectNode.props.fontKey=fontObj.name;
+                              //更新属性面板
+                              const obj = {};
+                              obj[prop.name] = fontObj.file;
+                              this.onStatusChange({updateProperties: obj});
+                              WidgetActions['updateProperties'](obj, false, true);
+
+                          }.bind(this), function(evt){
+                              let oProgress=document.getElementById('ant-progress');
+                              if(evt.lengthComputable && oProgress) {
+                                  oProgress.style.display='block';
+                                  var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                  oProgress.childNodes[1].innerHTML='上传 '+percentComplete+'%';
+                                  oProgress.childNodes[0].style.width=percentComplete+'%';
+                              }else {
+                                  console.log('failed');
+                              }
+                          });
+                          bTag=false;
+                      }else{
+                          this.selectNode.props.fontKey=this.getFontDefault(value);
+                          v = value;
+                      }
+                  } else{
                       v = parseInt(value);
                   }
                     break;
@@ -233,7 +243,7 @@ class PropertyView extends React.Component {
                     v =value;
                     if(v===null){
                         delete  this.selectNode.props.visible;
-                    }else {
+                    }else{
                         this.selectNode.props.visible = v;
                     }
                     bTag=false;
@@ -248,10 +258,6 @@ class PropertyView extends React.Component {
            obj[prop.name] = v;
            this.onStatusChange({updateProperties: obj});
            WidgetActions['updateProperties'](obj, false, true);
-
-       //    onStatusChange 用于回填数据(靠react的state同步) 和 设定舞台(靠WidgetActions.render)
-           // WidgetActions.updateProperties(obj, false, true) 用于暴露出舞台参数的修改
-
        }
     }
 
@@ -259,7 +265,7 @@ class PropertyView extends React.Component {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
             this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
         }else if(item.type === propertyType.Color){
-            if(typeof value == 'boolean'){ //设置隐藏开关
+            if(typeof value == 'boolean'){
                 let colorStr;
                 if(value){
                     colorStr =this.selectNode.props[item.name+'_originColor'];
@@ -270,7 +276,7 @@ class PropertyView extends React.Component {
                 }
 
                 this.onChangeProp(item,colorStr);
-            }else{  //设置颜色
+            }else{
 
                 if(this.selectNode.props[item.name+'_originColor']){
                     this.selectNode.props[item.name+'_originColor']=value.target.value
@@ -321,7 +327,6 @@ class PropertyView extends React.Component {
             }
         }
     }
-
 
     getFields() {
         let node = this.selectNode;
@@ -503,9 +508,12 @@ class PropertyView extends React.Component {
         }
 
         if (widget.selectWidget !== undefined){
+
             this.selectNode = widget.selectWidget;
+
             this.setState({fields: this.getFields()});
             let node = this.selectNode;
+
             while (node != null) {
                 if (node.className == 'page') {
                     if (node != this.currentPage) {
@@ -522,27 +530,29 @@ class PropertyView extends React.Component {
 
             let selectNode = this.selectNode;
             let obj = widget.updateProperties;
-
-            //let className = selectNode.className;
-            //if (className.charAt(0) == '_')  className = 'class';
-
-            let className  =  selectNode.className.charAt(0) == '_'?'class':selectNode.className;
+            let className = selectNode.className;
+            if (className.charAt(0) == '_')  className = 'class';
 
             propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
                     if (obj[item.name] === null) {
                         delete(selectNode.props[item.name]);
-                        if (needRender)  selectNode.node[item.name] = undefined;
+                        if (needRender)
+                            selectNode.node[item.name] = undefined;
                     } else {
+                        //用于回填
                         selectNode.props[item.name] = obj[item.name];
-                        if (needRender)  selectNode.node[item.name] = obj[item.name];
+                        //用于更新
+                        if (needRender){
+                            selectNode.node[item.name] = obj[item.name];
+                        }
                     }
                 }
             });
-            if (needRender){
+
+            if (needRender)
                 WidgetActions['render']();
                 this.setState({fields: this.getFields()});
-            }
         }
     }
 
