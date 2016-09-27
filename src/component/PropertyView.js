@@ -200,30 +200,19 @@ class PropertyView extends React.Component {
                       if(value == 0){
                           let oProgress=document.getElementById('ant-progress');
                           chooseFile('font', true, function(){
+                              let  fontObj =eval("("+arguments[1]+")");
                               //回调完成
                               oProgress.style.display='none';
                               //设置默认值
-
-                              console.log(arguments[1],arguments[1].name,escape(arguments[1].name));
-
-                              this.selectNode.props.fontKey=escape(arguments[1].name);
-
-
-                              console.log(this.selectNode.props);
+                              this.selectNode.props.fontKey=fontObj.name;
                               //更新属性面板
-                              WidgetActions['render']();
-                              this.setState({fields: this.getFields()});
 
-                          }.bind(this),function(evt){
-                              oProgress.style.display='block';
-                              if (evt.lengthComputable) {
-                                  var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                                  oProgress.childNodes[0].innerHTML= '上传中 '+percentComplete+'%';
-                                  oProgress.childNodes[0].style.width=percentComplete+'%';
-                              }else {
-                                  console.log('failed');
-                              }
-                          });
+                              const obj = {};
+                              obj[prop.name] = fontObj.file;
+                              this.onStatusChange({updateProperties: obj});
+                              WidgetActions['updateProperties'](obj, false, true);
+
+                          }.bind(this),true);
                           bTag=false;
                       }else{
                           this.selectNode.props.fontKey=this.getFontDefault(value);
