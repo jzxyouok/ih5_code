@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "copy": "copyfiles -fr ./src/index.html ./src/favicon.ico ./ih5bridge.js ./lib/codemirrorLib ./dist",
+    "copy": "copyfiles -fr ./src/index.html ./src/favicon.ico ./ih5bridge.js ./dist",
     "start": "node server.js --env=dev",
     "dev": "node server-dev.js --display-error-details",
     "dist": "npm run copy & webpack --env=dist"
