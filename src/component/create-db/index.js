@@ -5,7 +5,7 @@ import $class from 'classnames';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
-//var PREFIX = 'app/';
+var PREFIX = 'app/';
 
 class CreateDb extends React.Component {
     constructor (props) {
@@ -22,11 +22,11 @@ class CreateDb extends React.Component {
         this.createDb = this.createDb.bind(this);
     }
 
-    //componentWillReceiveProps(nextProps) {
-    //    if (nextProps.dbList) {
-    //        this.setState({dbParm: nextProps.dbList});
-    //    }
-    //}
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.dbList) {
+            this.setState({dbParm: nextProps.dbList});
+        }
+    }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
@@ -60,35 +60,50 @@ class CreateDb extends React.Component {
 
     createDb(){
         let name = this.refs.name.value;
-        let index = this.props.dbList.indexOf(name);
+        let bool = false;
+        this.props.dbList.map((v,i)=>{
+            if(v.name == name){
+                bool  = true
+            }
+            else {
+                bool = false
+            }
+            return bool;
+        });
         if(name.length == 0 ){
             this.setState({
                 error : "数据库名称不能为空"
                 , isError : true
             })
         }
-        else if(index >= 0){
+        else if(bool){
             this.setState({
                 error : "该数据库已存在"
                 , isError : true
             })
         }
         else {
-            //let data = "name=" + encodeURIComponent(name);
-            //WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
-            //    //var result = JSON.parse(text);
-            //    //if (result['id']) {
-            //    //    let list = this.state.dbParm;
-            //    //    if(this.state.isTop){
-            //    //        list.unshift({'id': result['id'], 'key': result['id'], 'name': name });
-            //    //    }
-            //    //    else {
-            //    //        list.push({'id': result['id'], 'key': result['id'], 'name': name });
-            //    //    }
-            //    //    this.setState({'dbParm': list});
-            //    //    this.props.onUpdateDb(list);
-            //    //}
-            //}.bind(this));
+            let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
+            //console.log(data);
+            WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
+                var result = JSON.parse(text);
+                //console.log(result);
+                if (result['id']) {
+                    var list = this.state.dbParm;
+                    //console.log(list);
+                    if(this.state.isTop){
+                        list.unshift({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
+                    }
+                    else {
+                        list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
+                    }
+                    this.props.onUpdateDb(list);
+                    this.setState({'dbParm': list
+                    },()=>{
+                        this.createDbHide();
+                    });
+                }
+            }.bind(this));
         }
     }
 

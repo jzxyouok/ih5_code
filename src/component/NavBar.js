@@ -102,8 +102,8 @@ class NavBar extends React.Component {
                     loginVisible: false,
                     username: result['name'],
                     workList: result['list'].reverse(),
-                    fontList: result['font']
-                    // dbList: result['db']
+                    fontList: result['font'],
+                    dbList: result['db']
                 });
                 WidgetActions['saveFontList'](result['font']);
             } else {
@@ -424,10 +424,10 @@ class NavBar extends React.Component {
                                                 {
                                                     this.state.dbList.length > 0
                                                         ? this.state.dbList.map((v,i)=>{
-                                                            return  <li className="" key={i}>
+                                                            return  <li className="" key={i} >
                                                                         <div className="title">
                                                                             <span className="li-icon" />
-                                                                            <div className="TitleName">{v}</div>
+                                                                            <div className="TitleName">{ v.name }</div>
                                                                         </div>
                                                                         <span className="edit-btn" />
                                                                     </li>
