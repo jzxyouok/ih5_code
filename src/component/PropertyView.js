@@ -242,7 +242,7 @@ class PropertyView extends React.Component {
                 case propertyType.Boolean2:
                     v =value;
                     if(v===null){
-                        delete  this.selectNode.props.visible;
+                       delete  this.selectNode.props.visible;
                     }else{
                         this.selectNode.props.visible = v;
                     }
@@ -342,6 +342,8 @@ class PropertyView extends React.Component {
 
         const groups = {};
 
+        console.log(node);
+
         const getInput = (item, index) => {
 
             //设置默认值,用于展示
@@ -379,8 +381,24 @@ class PropertyView extends React.Component {
                 }else if( item.name=='fontFamily'  && node.props.fontFamilyKey){
                     defaultValue = node.props.fontFamily;
                 }
-            } else  if (node.props[item.name] === undefined){
-                if(item.type === propertyType.Boolean ||item.type === propertyType.Boolean2 ){
+            } else if(item.type === propertyType.Boolean2 ){
+
+                if(node.props[item.name]===undefined){
+                    defaultValue =item.default
+                }else{
+                     if(node.props[item.name]==false){
+                         defaultValue=2;
+                     }else if(node.props[item.name]==true){
+                         defaultValue=0;
+                     }else{
+                         defaultValue=1;
+                     }
+
+                }
+
+
+            }else  if (node.props[item.name] === undefined){
+                if(item.type === propertyType.Boolean ){
                     defaultValue = item.default
                 }else if(item.type === propertyType.Percentage && item.name=='alpha'){
                     defaultValue = item.default*100;
