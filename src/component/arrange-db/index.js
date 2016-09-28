@@ -139,6 +139,7 @@ class ArrangeDb extends React.Component {
                             if(v2.className == "db"){
                                 if(v2.node){
                                     if(v2.node.dbid == v1.id){
+                                        WidgetActions['selectWidget'](v2);
                                         WidgetActions['deleteTreeNode'](v2.className);
                                     }
                                 }
