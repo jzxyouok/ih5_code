@@ -17,6 +17,7 @@ class Event extends React.Component {
             eventList: props.eventList,
         };
 
+
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.addEventBtn = this.addEventBtn.bind(this);
@@ -39,6 +40,8 @@ class Event extends React.Component {
             });
         }
     }
+
+
 
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);

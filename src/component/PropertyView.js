@@ -121,7 +121,8 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Number:
-                    if(prop.name='fontSize'){
+
+                    if(prop.name=='fontSize'){
                         const obj = {};
                         obj[prop.name] = parseInt(value);
                         obj.scaleY = obj.scaleX=1;
@@ -342,7 +343,7 @@ class PropertyView extends React.Component {
 
         const groups = {};
 
-        //console.log(node);
+        console.log(node);
 
         const getInput = (item, index) => {
 
