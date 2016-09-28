@@ -613,7 +613,12 @@ class ObjectTree extends React.Component {
                 if(isCustomizeWidget(v.className)) {
                     pic = 'component-icon';
                     picIsImage = false;
-                } else if (v1.className === v.className){
+                }
+                else if(v.className == 'db'){
+                    pic = 'db-icon';
+                    picIsImage = false;
+                }
+                else if (v1.className === v.className){
                     if(v.className === 'image' || v.className === 'imagelist') {
                         if(v.props.link !== undefined &&v.rootWidget.imageList&&v.rootWidget.imageList.length>v.props.link){
                             pic = v.rootWidget.imageList[v.props.link];
