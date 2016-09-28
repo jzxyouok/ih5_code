@@ -19,6 +19,7 @@ class Event extends React.Component {
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
+        this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
     }
 
@@ -43,6 +44,12 @@ class Event extends React.Component {
         this.props.chooseEventBtn(nid);
     }
 
+    addEventBtn(e) {
+        e.stopPropagation();
+        WidgetActions['addEvent']();
+        // this.forceUpdate();
+    }
+
     expandedBtn(expanded, event){
         event.stopPropagation();
         this.setState({
@@ -63,7 +70,11 @@ class Event extends React.Component {
                                     <span className='title-icon' />
                                     <div className='dropDown-layer long'>
                                         <div className='title f--hlc'>
-                                            { v.condition }
+                                            {
+                                                v.condition==null
+                                                    ? '触发条件'
+                                                    : 'TODO: 这里要修改'
+                                            }
                                             <span className='icon' />
                                         </div>
                                         <div className='dropDown'></div>
@@ -177,7 +188,8 @@ class Event extends React.Component {
                         <div className='name flex-1'>{ this.props.name }</div>
                     </div>
 
-                    <div className={$class('btn f--hlc',{'hidden' :this.props.activeKey !== this.props.wKey })}>
+                    <div className={$class('btn f--hlc',{'hidden' :this.props.activeKey !== this.props.wKey })}
+                         onClick={this.addEventBtn}>
                         <div className='btn-name'>添加事件</div>
                         <div className='btn-icon'><span className='heng'/><span  className='shu'/></div>
                     </div>
