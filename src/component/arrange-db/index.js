@@ -9,7 +9,6 @@ class ArrangeDb extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            dbList : this.props.dbList,
             error : "数据库名称未能为空",
             isError : false,
             chooseId : [],
@@ -159,13 +158,13 @@ class ArrangeDb extends React.Component {
                             <div className="AM-scroll">
                                 <ul className="AM-table">
                                     {
-                                        this.state.dbList.length > 0
-                                            ?   this.state.dbList.map((v,i)=>{
-                                                    return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v) >= 0})}
+                                        this.props.dbList.length > 0
+                                            ?   this.props.dbList.map((v,i)=>{
+                                                    return  <li className={ $class({"active": this.state.chooseId.indexOf(v) >= 0})}
                                                                 key={i}
-                                                                onClick={ this.chooseBtn.bind(this, v.key)}>
+                                                                onClick={ this.chooseBtn.bind(this, v.id)}>
 
-                                                                <div className="flex-1 f--hlc title">
+                                                                <div className="title">
                                                                     <span className="li-icon" />
                                                                     <div className="TitleName">{v.name}</div>
                                                                 </div>
@@ -181,7 +180,7 @@ class ArrangeDb extends React.Component {
                                         </div>
                                     </li>
                                     {
-                                        moduleFuc(this.state.dbList.length)
+                                        moduleFuc(this.props.dbList.length)
                                     }
                                 </ul>
                             </div>
