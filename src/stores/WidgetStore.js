@@ -722,7 +722,7 @@ export default Reflux.createStore({
         this.trigger({selectFunction: this.currentFunction});
         // this.render();
     },
-    addFunction: function (param) {
+    addFunction: function (param, defaultName) {
         if(this.currentWidget) {
             let func = {};
             func['name'] = param.name||'';
@@ -731,7 +731,12 @@ export default Reflux.createStore({
             func['key'] = _keyCount++;
             func['widget'] = this.currentWidget;
             func['props'] = {};
-            func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
+            func['props']['unlockPropsName'] = true;
+            if(defaultName!=undefined) {
+                func['props']['name'] = defaultName;
+            } else {
+                func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
+            }
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({redrawTree: true});
@@ -766,13 +771,20 @@ export default Reflux.createStore({
                 'name': this.currentFunction.name,
                 'value': this.currentFunction.value,
                 'className': this.currentFunction.className,
-                'props': {}
+                'props': {
+                    'name': this.currentFunction.props.name,
+                    'unlockPropsName': this.currentFunction.props.unlockPropsName
+                }
             }
         }
     },
     pasteFunction: function () {
         if (this.currentWidget) {
-            this.addFunction(copyObj);
+            if(isEmptyString(copyObj.name)&&copyObj.props.unlockPropsName){
+                this.addFunction(copyObj);
+            } else {
+                this.addFunction(copyObj, copyObj.props.name);
+            }
         }
     },
     cutFunction: function () {
@@ -790,7 +802,7 @@ export default Reflux.createStore({
         this.trigger({selectVariable: this.currentVariable});
         // this.render();
     },
-    addVariable: function (param) {
+    addVariable: function (param, defaultName) {
         if(this.currentWidget) {
             let vars = {};
             vars['value'] = param.value||null;
@@ -800,13 +812,22 @@ export default Reflux.createStore({
             vars['key'] = _keyCount++;
             vars['widget'] = this.currentWidget;
             vars['props'] = {};
+            vars['props']['unlockPropsName'] = true;
             switch (vars['type']) {
                 case varType.number:
-                    vars['props']['name'] = 'intVar' + (this.currentWidget['intVarList'].length + 1);
+                    if(defaultName!=undefined) {
+                        vars['props']['name'] = defaultName;
+                    } else {
+                        vars['props']['name'] = 'intVar' + (this.currentWidget['intVarList'].length + 1);
+                    }
                     this.currentWidget['intVarList'].unshift(vars);
                     break;
                 case varType.string:
-                    vars['props']['name'] = 'strVar' + (this.currentWidget['strVarList'].length + 1);
+                    if(defaultName!=undefined) {
+                        vars['props']['name'] = defaultName;
+                    } else {
+                        vars['props']['name'] = 'strVar' + (this.currentWidget['strVarList'].length + 1);
+                    }
                     this.currentWidget['strVarList'].unshift(vars);
                     break;
                 default:
@@ -858,30 +879,55 @@ export default Reflux.createStore({
                 'value': this.currentVariable.value,
                 'className': this.currentVariable.className,
                 'type': this.currentVariable.type,
-                'props': {}
+                'props': {
+                    'name': this.currentVariable.props.name,
+                    'unlockPropsName': this.currentVariable.props.unlockPropsName
+                }
             }
         }
     },
     pasteVariable: function () {
         if (this.currentWidget) {
-            this.addVariable(copyObj);
+            if(isEmptyString(copyObj.name)&&copyObj.props.unlockPropsName){
+                this.addVariable(copyObj);
+            } else {
+                this.addVariable(copyObj, copyObj.props.name);
+            }
         }
     },
     cutVariable: function () {
         this.copyVariable();
         this.removeVariable();
     },
-    renameFuncOrVar: function (type, name) {
+    renameFuncOrVar: function (type, name, fromTree) {
         switch (type){
             case nodeType.func:
                 if(this.currentFunction&&!isEmptyString(name)){
-                    this.currentFunction.props.name = name;
+                    if(fromTree){
+                        if(this.currentFunction.props.unlockPropsName) {
+                            this.currentFunction.props.unlockPropsName = !this.currentFunction.props.unlockPropsName;
+                        }
+                        this.currentFunction.props.name = name;
+                    } else {
+                        if(this.currentFunction.props.unlockPropsName) {
+                            this.currentFunction.props.name = name;
+                        }
+                    }
                     this.trigger({redrawTree: true});
                 }
                 break;
             case nodeType.var:
                 if(this.currentVariable&&!isEmptyString(name)) {
-                    this.currentVariable.props.name = name;
+                    if(fromTree){
+                        if(this.currentVariable.props.unlockPropsName) {
+                            this.currentVariable.props.unlockPropsName = !this.currentVariable.props.unlockPropsName;
+                        }
+                        this.currentVariable.props.name = name;
+                    } else {
+                        if(this.currentVariable.props.unlockPropsName) {
+                            this.currentVariable.props.name = name;
+                        }
+                    }
                     this.trigger({redrawTree: true});
                 }
                 break;
@@ -915,11 +961,11 @@ export default Reflux.createStore({
                 break;
         }
     },
-    renameTreeNode: function (type, value) {
+    renameTreeNode: function (type, value, fromTree) {
         switch(type){
             case nodeType.func:
             case nodeType.var:
-                this.renameFuncOrVar(type, value);
+                this.renameFuncOrVar(type, value, fromTree);
                 break;
             default:
                 this.renameWidget(value);
