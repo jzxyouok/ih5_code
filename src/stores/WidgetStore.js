@@ -667,7 +667,8 @@ export default Reflux.createStore({
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
-    emptyEventTree: function () {
+    emptyEventTree: function (className) {
+        //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eventTree = {
             eid: _eventCount++,
             condition: null,
@@ -689,7 +690,7 @@ export default Reflux.createStore({
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
-            this.currentWidget.props['eventTree'].push(this.emptyEventTree());
+            this.currentWidget.props['eventTree'].push(this.emptyEventTree(className));
         }
         this.trigger({redrawTree: true});
         // this.render();
