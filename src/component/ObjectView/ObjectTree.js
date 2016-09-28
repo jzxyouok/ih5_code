@@ -283,7 +283,7 @@ class ObjectTree extends React.Component {
                 nid : nid,
                 editMode: false
             },()=>{
-                WidgetActions['selectWidget'](data, true, true);
+                WidgetActions['selectWidget'](data, true, 'event');
                 WidgetActions['activeEventTree'](nid);
             });
         } else  {
@@ -300,7 +300,7 @@ class ObjectTree extends React.Component {
             nid : nid,
             editMode: false
         },()=>{
-            WidgetActions['selectWidget'](data.widget, false);
+            WidgetActions['selectWidget'](data.widget, false, 'func');
             WidgetActions['selectFunction'](data);
         });
     }
@@ -310,7 +310,7 @@ class ObjectTree extends React.Component {
             nid : nid,
             editMode: false
         },()=>{
-            WidgetActions['selectWidget'](data.widget, false);
+            WidgetActions['selectWidget'](data.widget, false, 'var');
             WidgetActions['selectVariable'](data);
         });
     }

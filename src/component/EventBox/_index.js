@@ -54,7 +54,7 @@ class EventBox extends React.Component {
                 activeKey: nid
             });
             //触发选择widget并选择当前event
-            WidgetActions['selectWidget'](data, true, true);
+            WidgetActions['selectWidget'](data, true, 'event');
             WidgetActions['activeEventTree'](nid);
         }
     }

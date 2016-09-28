@@ -401,7 +401,7 @@ export default Reflux.createStore({
 
         this.eventTreeList = [];
     },
-    selectWidget: function(widget, shouldTrigger, keepActiveEventTreeKey) {
+    selectWidget: function(widget, shouldTrigger, keepType) {
         var render = false;
         if (widget) {
           if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -418,15 +418,16 @@ export default Reflux.createStore({
             widget.props['locked'] = false;
           }
           //取选激活的树
-          if(!keepActiveEventTreeKey&&this.currentActiveEventTreeKey!==null&&this.currentActiveEventTreeKey!==undefined){
+          if(!(keepType&&keepType=='event')&&this.currentActiveEventTreeKey) {
             this.activeEventTree(null);
           }
           //取选func状态
-          if(this.currentFunction!==null&&this.currentFunction!==undefined) {
+          if(!(keepType&&keepType=='func')&&this.currentFunction) {
             this.selectFunction(null);
           }
-          if(this.currentVariable!==null&&this.currentVariable!==undefined) {
-              this.selectVariable(null);
+          //取选var状态
+          if(!(keepType&&keepType=='var')&&this.currentVariable) {
+            this.selectVariable(null);
           }
         }
         this.currentWidget = widget;
