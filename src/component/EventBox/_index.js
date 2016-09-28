@@ -41,10 +41,14 @@ class EventBox extends React.Component {
                 eventTreeList: widget.eventTreeList
             });
         }
+        if(widget.selectWidget) {
+            this.setState({
+                selectWidget: widget.widget
+            });
+        }
         if(widget.activeEventTreeKey) {
             this.setState({
-                activeKey: widget.activeEventTreeKey.key,
-                selectWidget: widget.widget
+                activeKey: widget.activeEventTreeKey.key
             });
         }
     }

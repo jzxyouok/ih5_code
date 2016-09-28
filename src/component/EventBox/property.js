@@ -14,6 +14,7 @@ class Property extends React.Component {
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onDeleteSpecific = this.onDeleteSpecific.bind(this);
         this.onAddSpecific = this.onAddSpecific.bind(this);
+        this.onChangeSpecific = this.onChangeSpecific.bind(this);
     }
 
     componentDidMount() {
@@ -35,10 +36,14 @@ class Property extends React.Component {
         }
     }
 
-    onDeleteSpecific(){
+    onDeleteSpecific() {
         if(this.props.activeKey == this.props.wid) {
             WidgetActions['deleteSpecific'](this.props.specific.sid ,this.props.event);
         }
+    }
+
+    onChangeSpecific() {
+
     }
 
     expandBtn(expanded, event) {
@@ -124,9 +129,9 @@ class Property extends React.Component {
 
                         <div className="p--right flex-1">
                             {
-                                !this.props.specific.children || this.props.specific.children.length === 0
+                                !this.props.specific.params || this.props.specific.params.length === 0
                                 ? null
-                                : this.props.specific.children.map((v,i)=>{
+                                : this.props.specific.params.map((v,i)=>{
                                     return  <div className="p--property" key={i}>
                                         <div className="p--dropDown long">
                                             <div className="title f--hlc">
