@@ -149,7 +149,7 @@ class Event extends React.Component {
                             !v.specificList || v.specificList.length === 0
                                 ? null
                                 : v.specificList.map((v2,i2)=>{
-                                return <Property key={i2} specific={v2} />
+                                return <Property key={i2} specific={v2} eid={v.eid} />
                             })
                         }
                     </div>
