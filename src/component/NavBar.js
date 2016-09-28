@@ -55,6 +55,7 @@ class NavBar extends React.Component {
         this.createDbShow = this.createDbShow.bind(this);
         this.createDbHide = this.createDbHide.bind(this);
         this.onUpdateDb = this.onUpdateDb.bind(this);
+        this.addDb = this.addDb.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -158,7 +159,7 @@ class NavBar extends React.Component {
             value.target.title='显示参考线';
             WidgetActions['setRulerLine'](false) ;
         }else{
-            value.target.title='隐藏参考线'
+            value.target.title='隐藏参考线';
             WidgetActions['setRulerLine'](true) ;
         }
     }
@@ -313,6 +314,10 @@ class NavBar extends React.Component {
         this.setState({'dbList': list});
     }
 
+    addDb(id){
+        WidgetActions['addWidget']('db', {'dbid': id });
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -425,7 +430,7 @@ class NavBar extends React.Component {
                                                     this.state.dbList.length > 0
                                                         ? this.state.dbList.map((v,i)=>{
                                                             return  <li className="" key={i} >
-                                                                        <div className="title">
+                                                                        <div className="title" onClick={this.addDb.bind(v.id)}>
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{ v.name }</div>
                                                                         </div>
