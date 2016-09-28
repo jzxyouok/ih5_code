@@ -76,7 +76,7 @@ class VariableView extends React.Component {
     endEdit(type, event) {
         if(type === 'name') {
             WidgetActions['changeVariable']({'name': event.target.value});
-            WidgetActions['renameTreeNode'](nodeType.var, event.target.value);
+            WidgetActions['renameTreeNode'](nodeType.var, event.target.value, false);
         } else if(type === 'value') {
             WidgetActions['changeVariable']({'value': event.target.value});
         }

@@ -343,7 +343,7 @@ class ObjectTree extends React.Component {
             editMode: false
         });
         if(event.target.value) {
-            WidgetActions['renameTreeNode'](this.state.nodeType, event.target.value);
+            WidgetActions['renameTreeNode'](this.state.nodeType, event.target.value, true);
         }
     }
 
