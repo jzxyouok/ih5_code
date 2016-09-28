@@ -31,6 +31,11 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
+        if(widget.redrawEventTree){
+            if(widget.selectWidget.key === this.props.activeKey) {
+                this.forceUpdate();
+            }
+        }
     }
 
     chooseEventBtn(nid){
@@ -156,7 +161,11 @@ class Event extends React.Component {
                             !v.specificList || v.specificList.length === 0
                                 ? null
                                 : v.specificList.map((v2,i2)=>{
-                                return <Property key={i2} specific={v2} eid={v.eid} />
+                                return <Property key={i2}
+                                                 specific={v2}
+                                                 eid={v.eid}
+                                                 wid={this.props.wKey}
+                                                 activeKey={this.props.activeKey}/>
                             })
                         }
                     </div>

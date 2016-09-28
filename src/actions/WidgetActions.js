@@ -26,6 +26,10 @@ export default Reflux.createActions([
   'getAllWidgets',                //获取所有的对象
   'reorderEventTreeList',         //重排事件列表
 
+  'addSpecific',                  //添加事件目标
+  'deleteSpecific',               //删除事件目标
+  'changeSpecific',               //修改事件目标
+
   'selectFunction',               //选择函数
   'addFunction',                  //添加函数
   'changeFunction',               //修改函数
