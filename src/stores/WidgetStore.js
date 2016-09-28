@@ -418,14 +418,14 @@ export default Reflux.createStore({
             widget.props['locked'] = false;
           }
           //取选激活的树
-          if(!keepActiveEventTreeKey&&this.currentActiveEventTreeKey!==null && this.currentActiveEventTreeKey!==undefined){
+          if(!keepActiveEventTreeKey&&this.currentActiveEventTreeKey!==null&&this.currentActiveEventTreeKey!==undefined){
             this.activeEventTree(null);
           }
           //取选func状态
-          if(this.currentFunction!==null && this.currentFunction!==undefined) {
+          if(this.currentFunction!==null&&this.currentFunction!==undefined) {
             this.selectFunction(null);
           }
-          if(this.currentVariable!==null && this.currentVariable!==undefined) {
+          if(this.currentVariable!==null&&this.currentVariable!==undefined) {
               this.selectVariable(null);
           }
         }
