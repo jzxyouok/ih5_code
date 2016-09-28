@@ -15,6 +15,8 @@ class Event extends React.Component {
             expanded: true,
         };
 
+        this.curSelectNode =null;
+
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.addEventBtn = this.addEventBtn.bind(this);
@@ -31,7 +33,10 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
-        console.log(widget);
+       // console.log(widget);
+        if(widget.activeEventTreeKey){
+           this.curSelectNode =  widget.activeEventTreeKey.widget;
+        }
     }
 
     chooseEventBtn(nid){
