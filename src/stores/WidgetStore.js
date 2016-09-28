@@ -438,12 +438,17 @@ export default Reflux.createStore({
                 this.render();
         }
     },
-    addWidget: function(className, props, link) {
+    addWidget: function(className, props, link, name) {
 
       if (!this.currentWidget)
           return;
 
-      props = this.addWidgetDefaultName(className, props, true, false);
+      if(className == "db"){
+          props = this.addWidgetDefaultName(className, props, true, false, name);
+      }
+      else{
+          props = this.addWidgetDefaultName(className, props, true, false);
+      }
 
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
@@ -566,7 +571,7 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties) {
+    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties ,name) {
         if(properties === undefined || properties === null) {
             properties = {};
         }
@@ -579,7 +584,11 @@ export default Reflux.createStore({
         //自定义组件就不重命名
         if(isCustomizeWidget(className)){
             props['name'] = className;
-        } else {
+        }
+        else if( className == "db"){
+            props['name'] = name;
+        }
+        else {
             if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
                 props['name'] = props.value;
             } else {
@@ -667,7 +676,8 @@ export default Reflux.createStore({
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
-    emptyEventTree: function () {
+    emptyEventTree: function (className) {
+        //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eventTree = {
             eid: _eventCount++,
             condition: null,
@@ -689,7 +699,7 @@ export default Reflux.createStore({
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
-            this.currentWidget.props['eventTree'].push(this.emptyEventTree());
+            this.currentWidget.props['eventTree'].push(this.emptyEventTree(className));
         }
         this.trigger({redrawTree: true});
         // this.render();
