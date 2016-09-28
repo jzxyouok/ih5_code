@@ -15,6 +15,8 @@ class Event extends React.Component {
             expanded: true,
         };
 
+        this.curSelectNode =null;
+
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.addEventBtn = this.addEventBtn.bind(this);
@@ -31,10 +33,15 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
+        //触发更新目标对象列表
         if(widget.redrawEventTree){
             if(widget.selectWidget.key === this.props.activeKey) {
                 this.forceUpdate();
             }
+        }
+       // console.log(widget);
+        if(widget.activeEventTreeKey){
+           this.curSelectNode =  widget.activeEventTreeKey.widget;
         }
     }
 
@@ -196,7 +203,6 @@ class Event extends React.Component {
                         <div className='btn-icon'><span className='heng'/><span  className='shu'/></div>
                     </div>
                 </div>
-
                 <div className={$class('E--content',{'hidden': !this.state.expanded})}>
                     {
                         !this.props.eventList || this.props.eventList.length===0

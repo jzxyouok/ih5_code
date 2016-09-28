@@ -43,6 +43,9 @@ class PropertyView extends React.Component {
      //获取封装的form组件
      getInputBox(type, defaultProp) {
         switch (type) {
+            case propertyType.Btn:
+                return <div className={defaultProp.className}></div>;
+
             case propertyType.Integer:
                 return <InputNumber {...defaultProp} />;
 
@@ -342,9 +345,7 @@ class PropertyView extends React.Component {
         if (!propertyMap[className])    return null;
 
         const groups = {};
-
-        // console.log(node);
-
+ 
         const getInput = (item, index) => {
 
             //设置默认值,用于展示
@@ -395,6 +396,8 @@ class PropertyView extends React.Component {
                          defaultValue=1;
                      }
                 }
+            }else if(item.type === propertyType.Btn){
+                defaultValue =item.default;
             }else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default
@@ -447,7 +450,9 @@ class PropertyView extends React.Component {
             }else if(item.type ==propertyType.Color){
                     defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
                     defaultProp.value = defaultValue;
-            } else {
+            } else if(item.type ==propertyType.Btn){
+                defaultProp.className = defaultValue;
+            }else {
                 defaultProp.value = defaultValue;
             }
 
@@ -457,7 +462,7 @@ class PropertyView extends React.Component {
             if (groups[groupName] === undefined)   groups[groupName] = [];
 
             //设置布局结构和图标
-            let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY'].indexOf(item.showName) >= 0;//左右结构显示
+            let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY','btnLeft','btnRight'].indexOf(item.showName) >= 0;//左右结构显示
             let hasPx=['x','y','w','h'].indexOf(item.showName)>=0; //判断input中是否添加px单位
             let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
             let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
