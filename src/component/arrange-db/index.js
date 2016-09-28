@@ -134,12 +134,11 @@ class ArrangeDb extends React.Component {
             let fuc = ((v,i)=>{
                 list.forEach((v1,i1)=>{
                     if(v == v1.id){
-                        console.log(tree);
+                        //console.log(tree);
                         tree.map((v2,i2)=>{
                             if(v2.className == "db"){
                                 if(v2.node){
                                     if(v2.node.dbid == v1.id){
-                                        WidgetActions['selectWidget'](v2);
                                         WidgetActions['deleteTreeNode'](v2.className);
                                     }
                                 }
