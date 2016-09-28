@@ -730,7 +730,6 @@ export default Reflux.createStore({
         }
 
     },
-    // getEventTreeFunc: function(cl)
     initEventTree: function(className, props) {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
@@ -779,7 +778,6 @@ export default Reflux.createStore({
     },
     addSpecific: function(eid){
         if(this.currentWidget&&this.currentWidget.props.eventTree){
-            this
             for(let i=0; i<this.currentWidget.props.eventTree.length; i++){
                 let event = this.currentWidget.props.eventTree[i];
                 if(event.eid == eid){
