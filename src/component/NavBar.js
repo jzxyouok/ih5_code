@@ -12,6 +12,7 @@ import $class from 'classnames'
 import CreateModule from './create-module/index'
 import ArrangeModule from './arrange-module/index'
 import CreateDb from './create-db/index'
+import ArrangeDb from './arrange-db/index'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -34,7 +35,9 @@ class NavBar extends React.Component {
             createClass : false,
             arrangeModule : false,
             dbList : [],
-            createDb : false
+            createDb : false,
+            selectWidget : null,
+            arrangeDb : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -55,6 +58,9 @@ class NavBar extends React.Component {
         this.createDbShow = this.createDbShow.bind(this);
         this.createDbHide = this.createDbHide.bind(this);
         this.onUpdateDb = this.onUpdateDb.bind(this);
+        this.addDb = this.addDb.bind(this);
+        this.arrangeDbShow = this.arrangeDbShow.bind(this);
+        this.arrangeDbHide = this.arrangeDbHide.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -85,6 +91,11 @@ class NavBar extends React.Component {
             this.setState({
                 classList: widget.classList
             });
+        }
+        if(widget.selectWidget){
+            this.setState({
+                selectWidget : widget.selectWidget
+            })
         }
     }
 
@@ -158,7 +169,7 @@ class NavBar extends React.Component {
             value.target.title='显示参考线';
             WidgetActions['setRulerLine'](false) ;
         }else{
-            value.target.title='隐藏参考线'
+            value.target.title='隐藏参考线';
             WidgetActions['setRulerLine'](true) ;
         }
     }
@@ -313,6 +324,24 @@ class NavBar extends React.Component {
         this.setState({'dbList': list});
     }
 
+    addDb(id){
+        if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
+            WidgetActions['addWidget']('db', {'dbid': id });
+        }
+    }
+
+    arrangeDbShow(){
+        this.setState({
+            arrangeDb : true
+        })
+    }
+
+    arrangeDbHide(){
+        this.setState({
+            arrangeDb : false
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -415,7 +444,7 @@ class NavBar extends React.Component {
                                 <div className="dropDownToggle-main">
                                     <div className="dropDown-title f--hlc">
                                         <span className="flex-1">全部数据库：</span>
-                                        <span className="set-btn" />
+                                        <span className="set-btn" onClick={ this.arrangeDbShow } />
                                     </div>
 
                                     <div className="dropDown-main">
@@ -425,7 +454,7 @@ class NavBar extends React.Component {
                                                     this.state.dbList.length > 0
                                                         ? this.state.dbList.map((v,i)=>{
                                                             return  <li className="" key={i} >
-                                                                        <div className="title">
+                                                                        <div className="title" onClick={this.addDb.bind(v.id)}>
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{ v.name }</div>
                                                                         </div>
@@ -570,13 +599,20 @@ class NavBar extends React.Component {
 
                 <div className={$class({"hidden": !this.state.arrangeModule }) }>
                     <ArrangeModule closeArrangeModuleBtn={ this.closeArrangeModuleBtn }
-                                   createClassBtn={ this.createClassBtn }/>
+                                   createClassBtn={ this.createClassBtn } />
                 </div>
 
                 <div className={$class({"hidden": !this.state.createDb }) }>
                     <CreateDb createDbHide={ this.createDbHide }
                               onUpdateDb={this.onUpdateDb.bind(this)}
-                              dbList = { this.state.dbList }/>
+                              dbList = { this.state.dbList } />
+                </div>
+
+                <div className={$class({"hidden": !this.state.arrangeDb})}>
+                    <ArrangeDb  arrangeDbHide={ this.arrangeDbHide }
+                                createDbShow={ this.createDbShow }
+                                onUpdateDb={this.onUpdateDb.bind(this)}
+                                dbList = { this.state.dbList } />
                 </div>
 
             </div>

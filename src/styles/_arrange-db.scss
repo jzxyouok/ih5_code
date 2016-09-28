@@ -1,0 +1,107 @@
+.ArrangeDb {
+    .AM-main {
+        width: 512px;
+
+        .AM-header {
+            .icon {
+                width: 30px;
+                height: 40px;
+                background: url("img/button-icon.svg") no-repeat -680px -240px;
+                display: block;
+                //margin: 0 5px;
+            }
+        }
+
+        .AM-content {
+            .AM-module {
+                width: 496px;
+                height: 224px;
+
+                .AM-scroll {
+                    height: 224px;
+                }
+
+                .AM-table {
+                    width: 496px;
+
+                    li {
+                        position: relative;
+                        width: 99px;
+                        height: 59px;
+                        color: #b5b5b5;
+
+                        &:hover {
+                            color: #fff;
+                            .li-icon {
+                                background-position: -760px -240px;
+                            }
+                        }
+
+                        &:active {
+                            background: #232323;
+                            color: #454545;
+                            .li-icon {
+                                background-position: -760px -280px;
+                            }
+                        }
+
+                        &.active {
+                            color: #b5b5b5;
+                            .li-icon {
+                                background-position: -760px -200px;
+                            }
+                            .choose-btn {
+                                background: #ffa800;
+                            }
+                        }
+
+                        &:nth-child(4n) {
+                            width: 99px;
+                            border-right: 1px solid #292929;
+                        }
+
+                        &:nth-child(5n) {
+                            width: 98px;
+                            border-right: none;
+                        }
+
+                        .li-icon {
+                            width: 20px;
+                            height: 23px;
+                            background: url("img/button-icon.svg") no-repeat -760px -200px;
+                            display: block;
+                            margin: 0 auto;
+                        }
+
+                        .title {
+                            width: 100%;
+                            height: 100%;
+                            padding-top: 9px;
+                        }
+
+                        .TitleName {
+                            max-width: 80px;
+                            height: 26px;
+                            line-height: 26px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            margin: 0 auto;
+                            text-align: center;
+                        }
+
+                        .choose-btn {
+                            @include border-radius(5px);
+                            position: absolute;
+                            right: 2px;
+                            top: 2px;
+                            width: 10px;
+                            height: 10px;
+                            background: #151515;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
