@@ -98,7 +98,8 @@ class CreateDb extends React.Component {
                         list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
                     }
                     this.props.onUpdateDb(list);
-                    this.setState({'dbParm': list
+                    this.setState({
+                        'dbParm': list
                     },()=>{
                         this.createDbHide();
                     });

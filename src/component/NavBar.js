@@ -611,6 +611,7 @@ class NavBar extends React.Component {
                 <div className={$class({"hidden": !this.state.arrangeDb})}>
                     <ArrangeDb  arrangeDbHide={ this.arrangeDbHide }
                                 createDbShow={ this.createDbShow }
+                                onUpdateDb={this.onUpdateDb.bind(this)}
                                 dbList = { this.state.dbList } />
                 </div>
 

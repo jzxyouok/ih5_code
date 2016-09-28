@@ -5,6 +5,8 @@ import $class from 'classnames';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
+const PREFIX = 'app/';
+
 class ArrangeDb extends React.Component {
     constructor (props) {
         super(props);
@@ -12,7 +14,8 @@ class ArrangeDb extends React.Component {
             error : "数据库名称未能为空",
             isError : false,
             chooseId : [],
-            isDelete : false
+            isDelete : false,
+            dbParm: null
         };
         this.createDbShow = this.createDbShow.bind(this);
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -21,6 +24,12 @@ class ArrangeDb extends React.Component {
         this.deleteBtn = this.deleteBtn.bind(this);
         this.deleteLayerShow = this.deleteLayerShow.bind(this);
         this.deleteLayerHide = this.deleteLayerHide.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.dbList) {
+            this.setState({dbParm: nextProps.dbList});
+        }
     }
 
     componentDidMount() {
@@ -62,7 +71,7 @@ class ArrangeDb extends React.Component {
         else {
             array.push(id);
         }
-        //console.log(array);
+        console.log(array);
         this.setState({
             chooseId : array
         })
@@ -76,12 +85,37 @@ class ArrangeDb extends React.Component {
             })
         }
         else {
+            let array = this.state.chooseId;
+            let fuc = ((v,i)=>{
+                this.props.dbList.forEach((v1,i1)=>{
+                   if(v == v1.id){
+                       let data = "id=" + v + "&name=" + encodeURIComponent(v1.name) + "&header=" + encodeURIComponent(v1.header);
+                       array.splice(i,1);
+                       WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
+                           var result = JSON.parse(text);
+                           if (result['id']) {
+                               let list = this.state.dbParm;
+                               let data = list[i1];
 
-            this.setState({
-                error : "数据库名称未能为空",
-                isError : false,
-                chooseId : []
+                               list.splice(i1 , 1);
+                               list.unshift(data);
+
+                               this.setState({
+                                   dbParm: list
+                               });
+                               this.props.onUpdateDb(list);
+                           }
+                       }.bind(this));
+                       return array.map(fuc);
+                   }
+                });
+                return  this.setState({
+                            error : "数据库名称未能为空",
+                            isError : false,
+                            chooseId : []
+                        });
             });
+            array.map(fuc);
         }
     }
 
@@ -160,7 +194,7 @@ class ArrangeDb extends React.Component {
                                     {
                                         this.props.dbList.length > 0
                                             ?   this.props.dbList.map((v,i)=>{
-                                                    return  <li className={ $class({"active": this.state.chooseId.indexOf(v) >= 0})}
+                                                    return  <li className={ $class({"active": this.state.chooseId.indexOf(v.id) >= 0})}
                                                                 key={i}
                                                                 onClick={ this.chooseBtn.bind(this, v.id)}>
 
