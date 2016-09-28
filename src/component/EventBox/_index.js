@@ -37,6 +37,9 @@ class EventBox extends React.Component {
     }
 
     onStatusChange(widget) {
+        if(widget.initTree !== undefined || widget.redrawTree){
+            WidgetActions['reorderEventTreeList']();
+        }
         if(widget.eventTreeList){
             this.setState({
                 eventTreeList: widget.eventTreeList

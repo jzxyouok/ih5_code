@@ -24,6 +24,7 @@ export default Reflux.createActions([
   'removeEvent',                  //删除事件
   'enableEvent',                  //单个事件的可执行与否
   'getAllWidgets',                //获取所有的对象
+  'reorderEventTreeList',         //重排事件列表
 
   'selectFunction',               //选择函数
   'addFunction',                  //添加函数
