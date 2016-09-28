@@ -12,7 +12,7 @@ class Property extends React.Component {
             activeKey: this.props.activeKey,//当前激活的widgetkey
             event: this.props.event,        //对应的事件
             wid: this.props.activeKey,      //specfic所在的widgetkey
-            specific: this.props.specific,  //specfic所在的widgetkey
+            specific: this.props.specific,  //specfic
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
