@@ -34,7 +34,8 @@ class NavBar extends React.Component {
             createClass : false,
             arrangeModule : false,
             dbList : [],
-            createDb : false
+            createDb : false,
+            selectWidget : null
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -86,6 +87,11 @@ class NavBar extends React.Component {
             this.setState({
                 classList: widget.classList
             });
+        }
+        if(widget.selectWidget){
+            this.setState({
+                selectWidget : widget.selectWidget
+            })
         }
     }
 
@@ -315,7 +321,9 @@ class NavBar extends React.Component {
     }
 
     addDb(id){
-        WidgetActions['addWidget']('db', {'dbid': id });
+        if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
+            WidgetActions['addWidget']('db', {'dbid': id });
+        }
     }
 
     render() {
