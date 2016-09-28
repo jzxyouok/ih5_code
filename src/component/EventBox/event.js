@@ -192,7 +192,6 @@ class Event extends React.Component {
                                 : v.specificList.map((v2,i2)=>{
                                 return <Property key={i2}
                                                  specific={v2}
-                                                 eid={v.eid}
                                                  event={v}
                                                  wid={this.props.wKey}
                                                  activeKey={this.props.activeKey}/>
