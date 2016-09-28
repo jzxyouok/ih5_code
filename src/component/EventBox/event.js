@@ -16,11 +16,13 @@ class Event extends React.Component {
         };
 
         this.curSelectNode =null;
+        this.conditionList=[];
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
+        this.setCondition = this.setCondition.bind(this);
     }
 
     componentDidMount() {
@@ -39,10 +41,29 @@ class Event extends React.Component {
                 this.forceUpdate();
             }
         }
-       // console.log(widget);
+        console.log(widget);
         if(widget.activeEventTreeKey){
            this.curSelectNode =  widget.activeEventTreeKey.widget;
+            if(this.curSelectNode){
+                this.setCondition(this.curSelectNode.className);
+            }
         }
+    }
+
+    setCondition(className){
+        propertyMap[className].map((item,index)=>{
+            if(item.isEvent ===true){
+                this.conditionList.push(item);
+            }
+        });
+
+        console.log(this.state.eventList);
+
+        this.state.eventList.map((item,index)=>{
+            item.condition='哈哈';
+        });
+        console.log(1);
+
     }
 
     chooseEventBtn(nid){
@@ -64,6 +85,7 @@ class Event extends React.Component {
 
     render() {
         let content = ((v,i)=>{
+            console.log(2);
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
                 <div className='item-main flex-1'>
@@ -78,7 +100,7 @@ class Event extends React.Component {
                                             {
                                                 v.condition==null
                                                     ? '触发条件'
-                                                    : 'TODO: 这里要修改'
+                                                    :v.condition
                                             }
                                             <span className='icon' />
                                         </div>

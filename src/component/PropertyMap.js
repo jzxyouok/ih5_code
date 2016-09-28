@@ -12,8 +12,7 @@ const propertyType = {
     Select:7,
     Float:8,
     Color2:9,
-    Boolean2:10,
-    Btn:11
+    Boolean2:10
 };
 
 var level;
@@ -327,8 +326,6 @@ propertyMap['track'] = [
 propertyMap['db'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'btnLeft',showName:'btnLeft', type: propertyType.Btn, default: 'btn1', isProperty: true },
-    { name: 'btnRight',showName:'btnRight', type: propertyType.Btn, default: 'btn2', isProperty: true },
     { name: 'find', isFunc: true, info:'(option, callback(err, result))' },
     { name: 'insert', isFunc: true, info:'(data, callback(err, result))' },
     { name: 'update', isFunc: true, info:'(data, callback(err, result))' }
