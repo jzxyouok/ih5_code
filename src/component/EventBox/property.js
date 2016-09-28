@@ -97,7 +97,10 @@ class Property extends React.Component {
                                 <button className="p--icon"></button>
                                 <div className="p--dropDown short">
                                     <div className="title f--hlc">
-                                        { this.state.specific.object }
+                                        { this.state.specific.object===null
+                                            ?'目标对象'
+                                            :'TODO:这里需要修改'
+                                        }
                                         <span className="icon" />
                                     </div>
                                     <div className="dropDown"></div>
@@ -121,7 +124,10 @@ class Property extends React.Component {
                                         <div className="p--dropDown long">
                                             <div className="title f--hlc">
                                                 <span className="pp--icon" />
-                                                { v.action }
+                                                { v.action===null
+                                                    ? '目标动作'
+                                                    : 'TODO:这里需要修改'
+                                                }
                                                 <span className="icon" />
                                             </div>
                                             <div className="dropDown"></div>
