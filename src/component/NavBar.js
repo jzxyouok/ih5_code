@@ -12,6 +12,7 @@ import $class from 'classnames'
 import CreateModule from './create-module/index'
 import ArrangeModule from './arrange-module/index'
 import CreateDb from './create-db/index'
+import ArrangeDb from './arrange-db/index'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -35,7 +36,8 @@ class NavBar extends React.Component {
             arrangeModule : false,
             dbList : [],
             createDb : false,
-            selectWidget : null
+            selectWidget : null,
+            arrangeDb : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -57,6 +59,8 @@ class NavBar extends React.Component {
         this.createDbHide = this.createDbHide.bind(this);
         this.onUpdateDb = this.onUpdateDb.bind(this);
         this.addDb = this.addDb.bind(this);
+        this.arrangeDbShow = this.arrangeDbShow.bind(this);
+        this.arrangeDbHide = this.arrangeDbHide.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -326,6 +330,18 @@ class NavBar extends React.Component {
         }
     }
 
+    arrangeDbShow(){
+        this.setState({
+            arrangeDb : true
+        })
+    }
+
+    arrangeDbHide(){
+        this.setState({
+            arrangeDb : false
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -428,7 +444,7 @@ class NavBar extends React.Component {
                                 <div className="dropDownToggle-main">
                                     <div className="dropDown-title f--hlc">
                                         <span className="flex-1">全部数据库：</span>
-                                        <span className="set-btn" />
+                                        <span className="set-btn" onClick={ this.arrangeDbShow } />
                                     </div>
 
                                     <div className="dropDown-main">
@@ -583,13 +599,19 @@ class NavBar extends React.Component {
 
                 <div className={$class({"hidden": !this.state.arrangeModule }) }>
                     <ArrangeModule closeArrangeModuleBtn={ this.closeArrangeModuleBtn }
-                                   createClassBtn={ this.createClassBtn }/>
+                                   createClassBtn={ this.createClassBtn } />
                 </div>
 
                 <div className={$class({"hidden": !this.state.createDb }) }>
                     <CreateDb createDbHide={ this.createDbHide }
                               onUpdateDb={this.onUpdateDb.bind(this)}
-                              dbList = { this.state.dbList }/>
+                              dbList = { this.state.dbList } />
+                </div>
+
+                <div className={$class({"hidden": !this.state.arrangeDb})}>
+                    <ArrangeDb  arrangeDbHide={ this.arrangeDbHide }
+                                createDbShow={ this.createDbShow }
+                                dbList = { this.state.dbList } />
                 </div>
 
             </div>
