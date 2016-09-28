@@ -324,9 +324,9 @@ class NavBar extends React.Component {
         this.setState({'dbList': list});
     }
 
-    addDb(id){
+    addDb(id,name){
         if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
-            WidgetActions['addWidget']('db', {'dbid': id });
+            WidgetActions['addWidget']('db', {'dbid': id }, null, name);
         }
     }
 
@@ -454,7 +454,7 @@ class NavBar extends React.Component {
                                                     this.state.dbList.length > 0
                                                         ? this.state.dbList.map((v,i)=>{
                                                             return  <li className="" key={i} >
-                                                                        <div className="title" onClick={this.addDb.bind(v.id)}>
+                                                                        <div className="title" onClick={this.addDb.bind(this,v.id,v.name)}>
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{ v.name }</div>
                                                                         </div>

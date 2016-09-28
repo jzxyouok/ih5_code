@@ -436,12 +436,17 @@ export default Reflux.createStore({
                 this.render();
         }
     },
-    addWidget: function(className, props, link) {
+    addWidget: function(className, props, link, name) {
 
       if (!this.currentWidget)
           return;
 
-      props = this.addWidgetDefaultName(className, props, true, false);
+      if(className == "db"){
+          props = this.addWidgetDefaultName(name, props, true, false);
+      }
+      else{
+          props = this.addWidgetDefaultName(className, props, true, false);
+      }
 
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
