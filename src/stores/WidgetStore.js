@@ -444,7 +444,7 @@ export default Reflux.createStore({
           return;
 
       if(className == "db"){
-          props = this.addWidgetDefaultName(name, props, true, false);
+          props = this.addWidgetDefaultName(name+"-", props, true, false);
       }
       else{
           props = this.addWidgetDefaultName(className, props, true, false);
