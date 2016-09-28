@@ -10,11 +10,13 @@ class Property extends React.Component {
         this.state = {
             expanded: true,
             selectWidget: null,
+            activeKey: null,
             widgetList: []
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onGetAllWidgets = this.onGetAllWidgets.bind(this);
+        this.onDeleteSpecific = this.onDeleteSpecific.bind(this);
     }
 
     componentDidMount() {
@@ -33,15 +35,20 @@ class Property extends React.Component {
             this.setState({
                 widgetList: widget.allWidgets
             });
-        } else if(widget.selectWidget){
+        } else if(widget.activeEventTreeKey) {
             this.setState({
-                selectWidget: widget.selectWidget
+                activeKey: widget.activeEventTreeKey.key,
+                selectWidget: widget.widget
             });
         }
     }
 
     onGetAllWidgets() {
         WidgetActions['getAllWidgets']();
+    }
+
+    onDeleteSpecific(sid){
+        WidgetActions['deleteSpecific'](this.props.eid,sid);
     }
 
     expandBtn(expanded, event) {
@@ -100,7 +107,7 @@ class Property extends React.Component {
             <div className="Property f--h" id={'spec-item-'+ this.props.specific.sid}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
-                    <span className="p--close-line" />
+                    <span className="p--close-line" onClick={this.onDeleteSpecific.bind(this, this.props.specific.sid)}/>
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">

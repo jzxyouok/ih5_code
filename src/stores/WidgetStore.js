@@ -753,7 +753,7 @@ export default Reflux.createStore({
         } else {
             this.currentActiveEventTreeKey = null;
         }
-        this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey}});
+        this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey, widget:this.currentWidget}});
         // this.render();
     },
     addEvent: function () {
