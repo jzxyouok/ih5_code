@@ -12,9 +12,10 @@ class EditDb extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-
+            isBig : true
         };
-
+        this.smallBtn = this.smallBtn.bind(this);
+        this.bigBtn = this.bigBtn.bind(this);
     }
 
     componentDidMount() {
@@ -25,15 +26,29 @@ class EditDb extends React.Component {
 
     }
 
+    smallBtn(){
+        this.setState({
+            isBig : false
+        })
+    }
+
+    bigBtn(){
+        this.setState({
+            isBig : true
+        })
+    }
+
     render() {
         return (
             <div className='EditDb f--h'>
-                <div className="ED-left">
-                    <Condition />
+                <div className={$class("ED-left",{"active": !this.state.isBig})}>
+                    <Condition smallBtn={ this.smallBtn }
+                               isBig={ this.state.isBig }
+                               bigBtn={ this.bigBtn } />
                 </div>
 
                 <div className="ED-right flex-1">
-                    <DbTable />
+                    <DbTable editDbHide={this.props.editDbHide} />
                 </div>
             </div>
         );

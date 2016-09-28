@@ -25,7 +25,7 @@ class DbTable extends React.Component {
     render() {
         return (
             <div className='DbTable'>
-
+                <button onClick={ this.props.editDbHide }>关闭</button>
             </div>
         );
     }
