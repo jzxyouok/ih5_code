@@ -141,6 +141,7 @@ class ArrangeDb extends React.Component {
                 error : "数据库名称未能为空",
                 isError : false
             });
+            this.deleteLayerHide();
         }
     }
 
