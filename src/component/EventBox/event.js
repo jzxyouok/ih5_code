@@ -12,7 +12,7 @@ class Event extends React.Component {
         this.state = {
             expanded: true,
             selectWidget: null,
-            eventList: [],
+            eventList: props.eventList,
         };
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
@@ -146,10 +146,10 @@ class Event extends React.Component {
                     </div>
                     <div className='item-content'>
                         {
-                            v.specific.length === 0
+                            !v.specificList || v.specificList.length === 0
                                 ? null
-                                : v.specific.map((v2,i2)=>{
-                                return <Property key={i2} {...v2} />
+                                : v.specificList.map((v2,i2)=>{
+                                return <Property key={i2} specific={v2} />
                             })
                         }
                     </div>
@@ -182,10 +182,9 @@ class Event extends React.Component {
 
                 <div className={$class('E--content',{'hidden': !this.state.expanded})}>
                     {
-                        this.state.eventList.length===0
+                        !this.state.eventList || this.state.eventList.length===0
                             ? null
-                            : this.state.map(content)
-
+                            : this.state.eventList.map(content)
                     }
                 </div>
             </div>
