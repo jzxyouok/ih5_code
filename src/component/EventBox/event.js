@@ -6,6 +6,8 @@ import Property from './Property'
 import WidgetStore from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 
+import  {propertyMap} from '../PropertyMap'
+
 class Event extends React.Component {
     constructor (props) {
         super(props);
@@ -14,6 +16,7 @@ class Event extends React.Component {
             selectWidget: null,
             eventList: props.eventList,
         };
+
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);

@@ -342,7 +342,7 @@ class PropertyView extends React.Component {
 
         const groups = {};
 
-        console.log(node);
+        //console.log(node);
 
         const getInput = (item, index) => {
 
