@@ -18,10 +18,6 @@ class EventBox extends React.Component {
         };
         this.eventData = eventTempData;
 
-
-
-
-
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.keepBtn = this.keepBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -54,6 +50,7 @@ class EventBox extends React.Component {
             this.setState({
                 activeKey: widget.activeEventTreeKey.key
             });
+            this.forceUpdate();
         }
         if(widget.redrawEventTreeList) {
             this.forceUpdate();
