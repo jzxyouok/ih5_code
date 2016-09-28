@@ -37,7 +37,7 @@ class Event extends React.Component {
     onStatusChange(widget) {
         //触发更新目标对象列表
         if(widget.redrawEventTree){
-            if(widget.selectWidget.key === this.props.activeKey) {
+            if(this.props.wKey === this.props.activeKey) {
                 this.forceUpdate();
             }
         }
@@ -192,7 +192,7 @@ class Event extends React.Component {
                                 : v.specificList.map((v2,i2)=>{
                                 return <Property key={i2}
                                                  specific={v2}
-                                                 eid={v.eid}
+                                                 event={v}
                                                  wid={this.props.wKey}
                                                  activeKey={this.props.activeKey}/>
                             })

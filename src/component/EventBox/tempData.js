@@ -11,7 +11,7 @@ let eventTempData = [
                         {
                             sid:1,
                             object: '目标对象',
-                            children: [
+                            params: [
                                 {   action: '目标动作',
                                     property: []
                                 }
@@ -41,7 +41,7 @@ let eventTempData = [
                         {
                             sid: 2,
                             object: '某某图片',
-                            children: [
+                            params: [
                                 {
                                     action: '设置属性',
                                     property: [
@@ -64,7 +64,7 @@ let eventTempData = [
                         {
                             sid: 3,
                             object: '某某图片',
-                            children: [
+                            params: [
                                 {
                                     action: '设置属性',
                                     property: [
@@ -80,7 +80,7 @@ let eventTempData = [
                         }, {
                             sid: 4,
                             object: '某某计数器',
-                            children: [
+                            params: [
                                 {
                                     action: '赋值',
                                     property: [
@@ -101,7 +101,7 @@ let eventTempData = [
                         {
                             sid: 5,
                             object: '目标对象',
-                            children: [
+                            params: [
                                 {
                                     action: '目标动作',
                                     property: []
@@ -125,7 +125,7 @@ let eventTempData = [
                         {
                             sid: 6,
                             object: '目标对象',
-                            children: [
+                            params: [
                                 {
                                     action: '目标动作',
                                     property: []
@@ -149,7 +149,7 @@ let eventTempData = [
                         {
                             sid: 7,
                             object: '目标对象',
-                            children: [
+                            params: [
                                 {
                                     action: '目标动作',
                                     property: []

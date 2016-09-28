@@ -683,9 +683,10 @@ export default Reflux.createStore({
     },
     emptyEventTree: function (className) {
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
+        let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
         let eventTree = {
-            'eid': _eventCount++,
+            'eid': eid,
             'condition': null,
             'children': null,
             'specificList': [eventSpec]
@@ -696,7 +697,7 @@ export default Reflux.createStore({
         let eventSpecific = {
             'sid': _specificCount++,
             'object': null,
-            'children': [
+            'params': [
                 {
                     'action': null,
                     'property': []
@@ -728,7 +729,6 @@ export default Reflux.createStore({
         }
 
     },
-    // getEventTreeFunc: function(cl)
     initEventTree: function(className, props) {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
@@ -767,7 +767,7 @@ export default Reflux.createStore({
         if (this.currentWidget) {
             this.currentWidget.props['eventTree'].push(this.emptyEventTree());
         }
-        this.trigger({redrawEventTreeList: true});
+        this.trigger({eventTreeList: this.eventTreeList});
     },
     removeEvent: function () {
         //TODO: 单个事件的删除
@@ -775,30 +775,33 @@ export default Reflux.createStore({
     enableEvent: function () {
         //TODO: 单个事件的可执行开关
     },
-    addSpecific: function(eid){
-        if(this.currentWidget&&this.currentWidget.props['eventTree']){
-            for(let i=0; i<this.currentWidget.props['eventTree'].length; i++){
-                let event = this.currentWidget.props['eventTree'][i];
-                if(event.eid == eid){
-                    event['specificList'].push(this.emptyEventSpecific());
-                }
-            }
-            this.trigger({redrawEventTree: true, selectWidget:this.currentWidget});
+    addSpecific: function(event){
+        if(event&&event['specificList']){
+            event['specificList'].push(this.emptyEventSpecific());
+            this.trigger({redrawEventTree: true});
         }
     },
-    deleteSpecific: function(eid, sid){
-        if(this.currentWidget&&this.currentWidget.props['eventTree']){
-            for(let i=0; i<this.currentWidget.props['eventTree'].length; i++){
-                let event = this.currentWidget.props['eventTree'][i];
-                if(event.eid == eid){
-                    event['specificList'].push(this.emptyEventSpecific());
+    deleteSpecific: function(sid, event){
+        if(event&&event['specificList']) {
+            if(event.specificList.length==1) {
+                event.specificList = [this.emptyEventSpecific()];
+            } else {
+                let index = -1;
+                for(let j=0; j<event.specificList.length; j++){
+                    let specific = event.specificList[j];
+                    if(sid == specific.sid){
+                        index = j;
+                    }
+                }
+                if(index>-1){
+                    event.specificList.splice(index, 1);
                 }
             }
-            this.trigger({redrawEventTree: true, selectWidget:this.currentWidget});
+            this.trigger({redrawEventTree: true});
         }
     },
-    changeSpecific: function(eid, sid){
-
+    changeSpecific: function(sid, event, params){
+        //修改对应事件的specific
     },
     selectFunction: function (data) {
         if (data!=null) {
