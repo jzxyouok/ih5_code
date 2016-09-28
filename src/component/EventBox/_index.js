@@ -47,9 +47,6 @@ class EventBox extends React.Component {
                 selectWidget: widget.widget
             });
         }
-        if(widget.redrawEventTreeList) {
-            this.forceUpdate();
-        }
     }
 
     chooseEventBtn(nid, data){

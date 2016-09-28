@@ -28,27 +28,16 @@ class Property extends React.Component {
     onStatusChange(widget) {
 
     }
-        // if(widget.initTree !== undefined || widget.redrawTree){
-        //     this.onGetAllWidgets();
-        // } else if (widget.allWidgets){
-        //     this.setState({
-        //         widgetList: widget.allWidgets
-        //     });
-        // }
-
-    // onGetAllWidgets() {
-    //     WidgetActions['getAllWidgets']();
-    // }
 
     onAddSpecific() {
         if(this.props.activeKey == this.props.wid) {
-            WidgetActions['addSpecific'](this.props.eid);
+            WidgetActions['addSpecific'](this.props.event);
         }
     }
 
     onDeleteSpecific(){
         if(this.props.activeKey == this.props.wid) {
-            WidgetActions['deleteSpecific'](this.props.eid, this.props.specific.sid);
+            WidgetActions['deleteSpecific'](this.props.specific.sid ,this.props.event);
         }
     }
 
