@@ -382,11 +382,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
+        this.listenTo(WidgetActions['getAllWidgets'], this.getAllWidgets);
         //函数
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
         this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
-
         //变量
         this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
         this.listenTo(WidgetActions['addVariable'], this.addVariable);
@@ -695,6 +695,30 @@ export default Reflux.createStore({
         };
         return eventTree;
     },
+    //获取所有的widget：
+    getAllWidgets: function(){
+        if(this.currentWidget&&this.currentWidget.rootWidget){
+            let root = this.currentWidget.rootWidget;
+            let widgetList = [];
+            //母节点
+            if(this.currentWidget.rootWidget){
+                widgetList.push(root);
+            }
+            //递归遍历添加有事件widget到eventTreeList
+            let loopWidgetTree = (children) => {
+                for(let i=0; i<children.length; i++) {
+                    widgetList.push(children[i]);
+                    if (children[i].children && children[i].children.length > 0) {
+                        loopWidgetTree(children[i].children);
+                    }
+                }
+            };
+            loopWidgetTree(this.currentWidget.rootWidget.children);
+            this.trigger({allWidgets: widgetList});
+        }
+
+    },
+    // getEventTreeFunc: function(cl)
     initEventTree: function(className, props) {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
