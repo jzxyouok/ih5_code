@@ -1117,7 +1117,7 @@ export default Reflux.createStore({
             data['stage']['props']['name'] = 'stage';
         }
         stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
-        bridge.createSelector(null);
+        // bridge.createSelector(null);
 
         if (!rootDiv) {
             rootDiv = document.getElementById('canvas-dom');
