@@ -71,7 +71,7 @@ class ArrangeDb extends React.Component {
         else {
             array.push(id);
         }
-        console.log(array);
+        //console.log(array);
         this.setState({
             chooseId : array
         })
@@ -86,36 +86,28 @@ class ArrangeDb extends React.Component {
         }
         else {
             let array = this.state.chooseId;
+            let list = this.props.dbList;
             let fuc = ((v,i)=>{
-                this.props.dbList.forEach((v1,i1)=>{
-                   if(v == v1.id){
-                       let data = "id=" + v + "&name=" + encodeURIComponent(v1.name) + "&header=" + encodeURIComponent(v1.header);
-                       array.splice(i,1);
-                       WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
-                           var result = JSON.parse(text);
-                           if (result['id']) {
-                               let list = this.state.dbParm;
-                               let data = list[i1];
-
-                               list.splice(i1 , 1);
-                               list.unshift(data);
-
-                               this.setState({
-                                   dbParm: list
-                               });
-                               this.props.onUpdateDb(list);
-                           }
-                       }.bind(this));
-                       return array.map(fuc);
-                   }
+                list.forEach((v1,i1)=>{
+                    if(v == v1.id){
+                        array.splice(i,1);
+                        list.unshift(v1);
+                        list.splice(i1 + 1 , 1);
+                        return array.map(fuc);
+                    }
                 });
                 return  this.setState({
-                            error : "数据库名称未能为空",
-                            isError : false,
-                            chooseId : []
+                            dbParm: list
+                        },()=>{
+                            this.props.onUpdateDb(list);
                         });
             });
+
             array.map(fuc);
+            this.setState({
+                error : "数据库名称未能为空",
+                isError : false
+            });
         }
     }
 
@@ -127,12 +119,27 @@ class ArrangeDb extends React.Component {
             })
         }
         else {
+            let array = this.state.chooseId;
+            let list = this.props.dbList;
+            let fuc = ((v,i)=>{
+                list.forEach((v1,i1)=>{
+                    if(v == v1.id){
+                        array.splice(i,1);
+                        list.splice(i1, 1);
+                        return array.map(fuc);
+                    }
+                });
+                return  this.setState({
+                    dbParm: list
+                },()=>{
+                    this.props.onUpdateDb(list);
+                });
+            });
 
-            this.deleteLayerHide();
+            array.map(fuc);
             this.setState({
                 error : "数据库名称未能为空",
-                isError : false,
-                chooseId : []
+                isError : false
             });
         }
     }
