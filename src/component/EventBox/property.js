@@ -9,14 +9,11 @@ class Property extends React.Component {
         super(props);
         this.state = {
             expanded: true,
-            selectWidget: null,
-            activeKey: null,
-            widgetList: []
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        this.onGetAllWidgets = this.onGetAllWidgets.bind(this);
         this.onDeleteSpecific = this.onDeleteSpecific.bind(this);
+        this.onAddSpecific = this.onAddSpecific.bind(this);
     }
 
     componentDidMount() {
@@ -29,26 +26,30 @@ class Property extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.initTree !== undefined || widget.redrawTree){
-            this.onGetAllWidgets();
-        } else if (widget.allWidgets){
-            this.setState({
-                widgetList: widget.allWidgets
-            });
-        } else if(widget.activeEventTreeKey) {
-            this.setState({
-                activeKey: widget.activeEventTreeKey.key,
-                selectWidget: widget.widget
-            });
+
+    }
+        // if(widget.initTree !== undefined || widget.redrawTree){
+        //     this.onGetAllWidgets();
+        // } else if (widget.allWidgets){
+        //     this.setState({
+        //         widgetList: widget.allWidgets
+        //     });
+        // }
+
+    // onGetAllWidgets() {
+    //     WidgetActions['getAllWidgets']();
+    // }
+
+    onAddSpecific() {
+        if(this.props.activeKey == this.props.wid) {
+            WidgetActions['addSpecific'](this.props.eid);
         }
     }
 
-    onGetAllWidgets() {
-        WidgetActions['getAllWidgets']();
-    }
-
-    onDeleteSpecific(sid){
-        WidgetActions['deleteSpecific'](this.props.eid,sid);
+    onDeleteSpecific(){
+        if(this.props.activeKey == this.props.wid) {
+            WidgetActions['deleteSpecific'](this.props.eid, this.props.specific.sid);
+        }
     }
 
     expandBtn(expanded, event) {
@@ -107,7 +108,7 @@ class Property extends React.Component {
             <div className="Property f--h" id={'spec-item-'+ this.props.specific.sid}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
-                    <span className="p--close-line" onClick={this.onDeleteSpecific.bind(this, this.props.specific.sid)}/>
+                    <span className="p--close-line" onClick={this.onDeleteSpecific}/>
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
@@ -124,7 +125,7 @@ class Property extends React.Component {
                                 </div>
                             </div>
 
-                            <div className="add-btn">
+                            <div className="add-btn" onClick={this.onAddSpecific}>
                                 <div className="btn-layer">
                                     <span className="heng"/>
                                     <span className="shu"/>

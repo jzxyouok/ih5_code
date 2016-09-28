@@ -383,6 +383,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['getAllWidgets'], this.getAllWidgets);
+        this.listenTo(WidgetActions['reorderEventTreeList'], this.reorderEventTreeList);
+        //事件属性
+        this.listenTo(WidgetActions['addSpecific'], this.addSpecific);
+        this.listenTo(WidgetActions['deleteSpecific'], this.deleteSpecific);
+        this.listenTo(WidgetActions['changeSpecific'], this.changeSpecific);
         //函数
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
@@ -673,30 +678,34 @@ export default Reflux.createStore({
                 }
             };
             loopEventTree(this.currentWidget.rootWidget.children);
-
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
     emptyEventTree: function (className) {
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
+        let eventSpec = this.emptyEventSpecific();
         let eventTree = {
-            eid: _eventCount++,
-            condition: null,
-            children: null,
-            specificList: [{
-                sid: _specificCount++,
-                object: null,
-                children: [
-                    {
-                        action: null,
-                        property: []
-                    }
-                ]
-            }]
+            'eid': _eventCount++,
+            'condition': null,
+            'children': null,
+            'specificList': [eventSpec]
         };
         return eventTree;
     },
-    //获取所有的widget：
+    emptyEventSpecific: function() {
+        let eventSpecific = {
+            'sid': _specificCount++,
+            'object': null,
+            'children': [
+                {
+                    'action': null,
+                    'property': []
+                }
+            ]
+        };
+        return eventSpecific;
+    },
+    //获取所有的widget
     getAllWidgets: function(){
         if(this.currentWidget&&this.currentWidget.rootWidget){
             let root = this.currentWidget.rootWidget;
@@ -748,12 +757,10 @@ export default Reflux.createStore({
         //激活事件树，无则为
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
-            //重新排序eventTreeList
-            this.reorderEventTreeList();
         } else {
             this.currentActiveEventTreeKey = null;
         }
-        this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey, widget:this.currentWidget}});
+        this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey}});
         // this.render();
     },
     addEvent: function () {
@@ -767,6 +774,31 @@ export default Reflux.createStore({
     },
     enableEvent: function () {
         //TODO: 单个事件的可执行开关
+    },
+    addSpecific: function(eid){
+        if(this.currentWidget&&this.currentWidget.props['eventTree']){
+            for(let i=0; i<this.currentWidget.props['eventTree'].length; i++){
+                let event = this.currentWidget.props['eventTree'][i];
+                if(event.eid == eid){
+                    event['specificList'].push(this.emptyEventSpecific());
+                }
+            }
+            this.trigger({redrawEventTree: true, selectWidget:this.currentWidget});
+        }
+    },
+    deleteSpecific: function(eid, sid){
+        if(this.currentWidget&&this.currentWidget.props['eventTree']){
+            for(let i=0; i<this.currentWidget.props['eventTree'].length; i++){
+                let event = this.currentWidget.props['eventTree'][i];
+                if(event.eid == eid){
+                    event['specificList'].push(this.emptyEventSpecific());
+                }
+            }
+            this.trigger({redrawEventTree: true, selectWidget:this.currentWidget});
+        }
+    },
+    changeSpecific: function(eid, sid){
+
     },
     selectFunction: function (data) {
         if (data!=null) {

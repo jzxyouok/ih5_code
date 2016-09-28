@@ -13,7 +13,6 @@ class Event extends React.Component {
         super(props);
         this.state = {
             expanded: true,
-            eventList:this.props.eventList
         };
 
         this.curSelectNode =null;
@@ -36,10 +35,18 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
+        //触发更新目标对象列表
+        if(widget.redrawEventTree){
+            if(widget.selectWidget.key === this.props.activeKey) {
+                this.forceUpdate();
+            }
+        }
         console.log(widget);
         if(widget.activeEventTreeKey){
            this.curSelectNode =  widget.activeEventTreeKey.widget;
-           this.setCondition(this.curSelectNode.className);
+            if(this.curSelectNode){
+                this.setCondition(this.curSelectNode.className);
+            }
         }
     }
 
@@ -183,7 +190,11 @@ class Event extends React.Component {
                             !v.specificList || v.specificList.length === 0
                                 ? null
                                 : v.specificList.map((v2,i2)=>{
-                                return <Property key={i2} specific={v2} eid={v.eid} />
+                                return <Property key={i2}
+                                                 specific={v2}
+                                                 eid={v.eid}
+                                                 wid={this.props.wKey}
+                                                 activeKey={this.props.activeKey}/>
                             })
                         }
                     </div>
@@ -216,9 +227,9 @@ class Event extends React.Component {
                 </div>
                 <div className={$class('E--content',{'hidden': !this.state.expanded})}>
                     {
-                        !this.state.eventList || this.state.eventList.length===0
+                        !this.props.eventList || this.props.eventList.length===0
                             ? null
-                            : this.state.eventList.map(content)
+                            : this.props.eventList.map(content)
                     }
                 </div>
             </div>
