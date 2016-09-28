@@ -35,6 +35,7 @@ class Event extends React.Component {
 
     onStatusChange(widget) {
         if(widget.selectWidget){
+            console.log(widget.selectWidget.className);
             this.setState({
                 selectWidget: widget.selectWidget
             });
