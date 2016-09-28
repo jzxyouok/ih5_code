@@ -129,7 +129,7 @@ function loadTree(parent, node) {
     current.imageList = node['links'] || [];
     current.rendererList = [renderer];
     bridge.setLinks(current.node, current.imageList);
-    bridge.createSelector(current.node);
+    // bridge.createSelector(current.node);
   }
 
   if (selectableClass.indexOf(current.className) >= 0) {
