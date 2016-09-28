@@ -673,6 +673,9 @@ export default Reflux.createStore({
                 }
             };
             loopEventTree(this.currentWidget.rootWidget.children);
+
+            WidgetActions['getEventTreeList'](this.eventTreeList);
+
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },

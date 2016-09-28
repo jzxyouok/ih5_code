@@ -35,7 +35,6 @@ class Event extends React.Component {
 
     onStatusChange(widget) {
         if(widget.selectWidget){
-            console.log(widget.selectWidget.className);
             this.setState({
                 selectWidget: widget.selectWidget
             });
@@ -63,6 +62,7 @@ class Event extends React.Component {
 
     render() {
         let content = ((v,i)=>{
+            console.log(v);
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
                 <div className='item-main flex-1'>
@@ -198,7 +198,6 @@ class Event extends React.Component {
                         <div className='btn-icon'><span className='heng'/><span  className='shu'/></div>
                     </div>
                 </div>
-
                 <div className={$class('E--content',{'hidden': !this.state.expanded})}>
                     {
                         !this.state.eventList || this.state.eventList.length===0
