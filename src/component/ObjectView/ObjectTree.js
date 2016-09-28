@@ -283,7 +283,7 @@ class ObjectTree extends React.Component {
                 nid : nid,
                 editMode: false
             },()=>{
-                WidgetActions['selectWidget'](data, true);
+                WidgetActions['selectWidget'](data, true, true);
                 WidgetActions['activeEventTree'](nid);
             });
         } else  {

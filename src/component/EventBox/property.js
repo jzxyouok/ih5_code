@@ -11,7 +11,7 @@ class Property extends React.Component {
             expanded: true,
             activeKey: this.props.activeKey,//当前激活的widgetkey
             event: this.props.event,        //对应的事件
-            wid: this.props.activeKey,      //specfic所在的widgetkey
+            wid: this.props.wid,      //specfic所在的widgetkey
             specific: this.props.specific,  //specfic
             objectList: null    //目标对象的列表
         };
@@ -23,12 +23,14 @@ class Property extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            activeKey: nextProps.activeKey,
-            event: nextProps.event,
-            wid: nextProps.activeKey,
-            specific: nextProps.specific
-        });
+        if(nextProps.activeKey){
+            this.setState({
+                activeKey: nextProps.activeKey,
+                event: nextProps.event,
+                wid: nextProps.wid,
+                specific: nextProps.specific
+            });
+        }
     }
 
     componentDidMount() {
