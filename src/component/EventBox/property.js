@@ -13,6 +13,7 @@ class Property extends React.Component {
             event: this.props.event,        //对应的事件
             wid: this.props.activeKey,      //specfic所在的widgetkey
             specific: this.props.specific,  //specfic
+            objectList: null    //目标对象的列表
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
