@@ -245,9 +245,9 @@ class PropertyView extends React.Component {
                 case propertyType.Boolean2:
                     v =value;
                     if(v===null){
-                       delete  this.selectNode.props.visible;
+                       delete  this.selectNode.props.initVisible;
                     }else{
-                        this.selectNode.props.visible = v;
+                        this.selectNode.props.initVisible = v;
                     }
                     bTag=false;
                     break;
