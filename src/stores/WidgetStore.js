@@ -12,6 +12,8 @@ var stageTree;
 var classList;
 let _keyCount = 1;
 
+let _eventCount = 0;    //事件id
+let _specificCount = 0; //事件内目标对象id
 
 var prevObj;
 var prevNewObj;
@@ -670,10 +672,30 @@ export default Reflux.createStore({
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
+    emptyEventTree: function (className) {
+        //需根据不同的className添加不同的触发条件和目标对象，动作之类的
+        let eventTree = {
+            eid: _eventCount++,
+            condition: null,
+            children: null,
+            specificList: [{
+                sid: _specificCount++,
+                object: null,
+                children: [
+                    {
+                        action: null,
+                        property: []
+                    }
+                ]
+            }]
+        };
+        return eventTree;
+    },
     initEventTree: function(className, props) {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
+            this.currentWidget.props['eventTree'].push(this.emptyEventTree(className));
         }
         this.trigger({redrawTree: true});
         // this.render();
@@ -706,7 +728,10 @@ export default Reflux.createStore({
         // this.render();
     },
     addEvent: function () {
-        //TODO: 添加事件
+        if (this.currentWidget) {
+            this.currentWidget.props['eventTree'].push(this.emptyEventTree());
+        }
+        this.trigger({redrawEventTreeList: true});
     },
     removeEvent: function () {
         //TODO: 单个事件的删除
