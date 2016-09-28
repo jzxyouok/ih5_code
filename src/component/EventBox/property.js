@@ -9,12 +9,25 @@ class Property extends React.Component {
         super(props);
         this.state = {
             expanded: true,
+            activeKey: this.props.activeKey,//当前激活的widgetkey
+            event: this.props.event,        //对应的事件
+            wid: this.props.activeKey,      //specfic所在的widgetkey
+            specific: this.props.specific,  //specfic所在的widgetkey
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onDeleteSpecific = this.onDeleteSpecific.bind(this);
         this.onAddSpecific = this.onAddSpecific.bind(this);
         this.onChangeSpecific = this.onChangeSpecific.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            activeKey: nextProps.activeKey,
+            event: nextProps.event,
+            wid: nextProps.activeKey,
+            specific: nextProps.specific
+        });
     }
 
     componentDidMount() {
@@ -31,14 +44,14 @@ class Property extends React.Component {
     }
 
     onAddSpecific() {
-        if(this.props.activeKey == this.props.wid) {
-            WidgetActions['addSpecific'](this.props.event);
+        if(this.state.activeKey == this.state.wid) {
+            WidgetActions['addSpecific'](this.state.event);
         }
     }
 
     onDeleteSpecific() {
-        if(this.props.activeKey == this.props.wid) {
-            WidgetActions['deleteSpecific'](this.props.specific.sid ,this.props.event);
+        if(this.state.activeKey == this.state.wid) {
+            WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
         }
     }
 
@@ -99,7 +112,7 @@ class Property extends React.Component {
         };
 
         return (
-            <div className="Property f--h" id={'spec-item-'+ this.props.specific.sid}>
+            <div className="Property f--h" id={'spec-item-'+ this.state.specific.sid}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
                     <span className="p--close-line" onClick={this.onDeleteSpecific}/>
@@ -109,7 +122,7 @@ class Property extends React.Component {
                                 <button className="p--icon"></button>
                                 <div className="p--dropDown short">
                                     <div className="title f--hlc">
-                                        { this.props.specific.object===null
+                                        { this.state.specific.object===null
                                             ?'目标对象'
                                             :'TODO:这里需要修改'
                                         }
@@ -129,9 +142,9 @@ class Property extends React.Component {
 
                         <div className="p--right flex-1">
                             {
-                                !this.props.specific.params || this.props.specific.params.length === 0
+                                !this.state.specific.params || this.state.specific.params.length === 0
                                 ? null
-                                : this.props.specific.params.map((v,i)=>{
+                                : this.state.specific.params.map((v,i)=>{
                                     return  <div className="p--property" key={i}>
                                         <div className="p--dropDown long">
                                             <div className="title f--hlc">
