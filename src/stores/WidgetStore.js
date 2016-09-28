@@ -383,7 +383,6 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['getAllWidgets'], this.getAllWidgets);
-        this.listenTo(WidgetActions['reorderEventTreeList'], this.reorderEventTreeList);
         //函数
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
@@ -675,8 +674,6 @@ export default Reflux.createStore({
             };
             loopEventTree(this.currentWidget.rootWidget.children);
 
-            WidgetActions['getEventTreeList'](this.eventTreeList);
-
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
@@ -751,6 +748,8 @@ export default Reflux.createStore({
         //激活事件树，无则为
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
+            //重新排序eventTreeList
+            this.reorderEventTreeList();
         } else {
             this.currentActiveEventTreeKey = null;
         }

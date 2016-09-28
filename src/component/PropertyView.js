@@ -342,13 +342,7 @@ class PropertyView extends React.Component {
         if (!propertyMap[className])    return null;
 
         const groups = {};
-
-<<<<<<< HEAD
-        //console.log(node);
-=======
-        // console.log(node);
->>>>>>> ba0be8c1084df4d3297a116ee7bed69ecfe5f81c
-
+ 
         const getInput = (item, index) => {
 
             //设置默认值,用于展示

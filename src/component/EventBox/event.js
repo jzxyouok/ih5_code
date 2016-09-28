@@ -31,6 +31,7 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
+        console.log(widget);
     }
 
     chooseEventBtn(nid){
@@ -52,7 +53,6 @@ class Event extends React.Component {
 
     render() {
         let content = ((v,i)=>{
-            console.log(v);
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
                 <div className='item-main flex-1'>
