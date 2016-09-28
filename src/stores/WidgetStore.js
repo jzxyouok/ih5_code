@@ -537,7 +537,7 @@ export default Reflux.createStore({
         if(copyObj.props.eventTree){
           this.reorderEventTreeList();
         }
-        this.trigger({selectWidget: null, redrawTree: true});
+        this.trigger({selectWidget: this.currentWidget});
         // this.render();
       }
     },
