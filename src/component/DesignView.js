@@ -49,7 +49,7 @@ class DesignView extends React.Component {
 
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
-            if(widget.selectWidget.className == "root"){
+            if(widget.selectWidget.className == "root" && widget.selectWidget.key == 1){
                 document.body.addEventListener('keyup', this.onKeyScroll);
                 document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown_top);
                 document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);

@@ -393,10 +393,7 @@ class PropertyView extends React.Component {
                      }else{
                          defaultValue=1;
                      }
-
                 }
-
-
             }else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default
@@ -473,7 +470,6 @@ class PropertyView extends React.Component {
             }else{
                 htmlStr= hasLock ?<label><div className={cls('ant-lock',{'ant-lock-checked':node.props.isLock})} onClick={this.antLock.bind(this)}></div>{item.showName}</label>:<label>{item.showName}</label>
             }
-
             groups[groupName].push(
                 <div key={item.name}
                     className={cls('f--hlc','ant-row','ant-form-item',{'ant-form-half': hasTwin}, {'ant-form-full': !hasTwin})}>
