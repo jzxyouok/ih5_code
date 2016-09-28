@@ -1,21 +1,37 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
+import WidgetStore from '../../stores/WidgetStore'
+import WidgetActions from '../../actions/WidgetActions'
 
 class Property extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
             expanded: true,
+            selectWidget: null,
+            eid: props.eid,
             specific: props.specific
         };
         this.expandBtn = this.expandBtn.bind(this);
+        this.onStatusChange = this.onStatusChange.bind(this);
     }
 
     componentDidMount() {
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onStatusChange(widget) {
+        if(widget.selectWidget){
+            this.setState({
+                selectWidget: widget.selectWidget
+            });
+        }
     }
 
     expandBtn(expanded, event) {
