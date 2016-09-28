@@ -13,10 +13,7 @@ class Event extends React.Component {
         super(props);
         this.state = {
             expanded: true,
-            selectWidget: null,
-            eventList: props.eventList,
         };
-
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
@@ -34,14 +31,7 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.selectWidget){
-            this.setState({
-                selectWidget: widget.selectWidget
-            });
-        }
     }
-
-
 
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);
@@ -200,9 +190,9 @@ class Event extends React.Component {
                 </div>
                 <div className={$class('E--content',{'hidden': !this.state.expanded})}>
                     {
-                        !this.state.eventList || this.state.eventList.length===0
+                        !this.props.eventList || this.props.eventList.length===0
                             ? null
-                            : this.state.eventList.map(content)
+                            : this.props.eventList.map(content)
                     }
                 </div>
             </div>

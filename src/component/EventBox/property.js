@@ -10,8 +10,6 @@ class Property extends React.Component {
         this.state = {
             expanded: true,
             selectWidget: null,
-            eid: props.eid,
-            specific: props.specific,
             widgetList: []
         };
         this.expandBtn = this.expandBtn.bind(this);
@@ -99,7 +97,7 @@ class Property extends React.Component {
         };
 
         return (
-            <div className="Property f--h" id={'spec-item-'+ this.state.specific.sid}>
+            <div className="Property f--h" id={'spec-item-'+ this.props.specific.sid}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
                     <span className="p--close-line" />
@@ -109,7 +107,7 @@ class Property extends React.Component {
                                 <button className="p--icon"></button>
                                 <div className="p--dropDown short">
                                     <div className="title f--hlc">
-                                        { this.state.specific.object===null
+                                        { this.props.specific.object===null
                                             ?'目标对象'
                                             :'TODO:这里需要修改'
                                         }
@@ -129,9 +127,9 @@ class Property extends React.Component {
 
                         <div className="p--right flex-1">
                             {
-                                !this.state.specific.children || this.state.specific.children.length === 0
+                                !this.props.specific.children || this.props.specific.children.length === 0
                                 ? null
-                                : this.state.specific.children.map((v,i)=>{
+                                : this.props.specific.children.map((v,i)=>{
                                     return  <div className="p--property" key={i}>
                                         <div className="p--dropDown long">
                                             <div className="title f--hlc">

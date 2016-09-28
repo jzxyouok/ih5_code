@@ -15,7 +15,8 @@ class ArrangeDb extends React.Component {
             isError : false,
             chooseId : [],
             isDelete : false,
-            dbParm: null
+            dbParm: null,
+            widgetTree : null
         };
         this.createDbShow = this.createDbShow.bind(this);
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -34,6 +35,7 @@ class ArrangeDb extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
@@ -41,8 +43,15 @@ class ArrangeDb extends React.Component {
     }
 
     onStatusChange(widget) {
-        if (widget.classList !== undefined) {
+        if (widget.initTree !== undefined){
+            this.setState({
+                widgetTree: widget.initTree[0]
+            });
+        }
 
+        //redrawTree : 重新加载对象树
+        else if (widget.redrawTree !== undefined){
+            this.forceUpdate();
         }
     }
 
@@ -121,9 +130,21 @@ class ArrangeDb extends React.Component {
         else {
             let array = this.state.chooseId;
             let list = this.props.dbList;
+            let tree = this.state.widgetTree.tree.children;
             let fuc = ((v,i)=>{
                 list.forEach((v1,i1)=>{
                     if(v == v1.id){
+                        //console.log(tree);
+                        tree.map((v2,i2)=>{
+                            if(v2.className == "db"){
+                                if(v2.node){
+                                    if(v2.node.dbid == v1.id){
+                                        WidgetActions['selectWidget'](v2);
+                                        WidgetActions['deleteTreeNode'](v2.className);
+                                    }
+                                }
+                            }
+                        });
                         array.splice(i,1);
                         list.splice(i1, 1);
                         return array.map(fuc);
@@ -132,6 +153,7 @@ class ArrangeDb extends React.Component {
                 return  this.setState({
                     dbParm: list
                 },()=>{
+                    WidgetActions['selectWidget'](this.state.widgetTree);
                     this.props.onUpdateDb(list);
                 });
             });
