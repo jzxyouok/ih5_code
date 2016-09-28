@@ -6,6 +6,7 @@ import {eventTempData} from './tempData';
 import WidgetStore from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 
+
 class EventBox extends React.Component {
     constructor (props) {
         super(props);
@@ -16,6 +17,10 @@ class EventBox extends React.Component {
             eventTreeList: []
         };
         this.eventData = eventTempData;
+
+
+
+
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.keepBtn = this.keepBtn.bind(this);

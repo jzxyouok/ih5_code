@@ -438,12 +438,17 @@ export default Reflux.createStore({
                 this.render();
         }
     },
-    addWidget: function(className, props, link) {
+    addWidget: function(className, props, link, name) {
 
       if (!this.currentWidget)
           return;
 
-      props = this.addWidgetDefaultName(className, props, true, false);
+      if(className == "db"){
+          props = this.addWidgetDefaultName(className, props, true, false, name);
+      }
+      else{
+          props = this.addWidgetDefaultName(className, props, true, false);
+      }
 
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
@@ -566,7 +571,7 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties) {
+    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties ,name) {
         if(properties === undefined || properties === null) {
             properties = {};
         }
@@ -579,7 +584,11 @@ export default Reflux.createStore({
         //自定义组件就不重命名
         if(isCustomizeWidget(className)){
             props['name'] = className;
-        } else {
+        }
+        else if( className == "db"){
+            props['name'] = name;
+        }
+        else {
             if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
                 props['name'] = props.value;
             } else {
