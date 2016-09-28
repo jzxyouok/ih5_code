@@ -123,7 +123,7 @@ class VariableView extends React.Component {
 
         return <div id="VariableView"
                     className={$class('propretyView', {'keep':this.state.minSize}, {'hidden':this.props.isHidden})}
-                    style={{ left : this.props.expanded? '64px':'36px'}}>
+                    style={{ left : this.props.expanded? '64px':'37px'}}>
             <div id='VariableViewHeader' className="f--hlc">
                 <span className="flex-1">{title()}变量</span>
                 <button className='btn btn-clear' title='收起' onClick={this.toggle}/>
