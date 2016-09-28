@@ -506,8 +506,6 @@ export default Reflux.createStore({
                 this.trigger({selectWidget: null, redrawTree: true});
             }
             process.nextTick(() =>bridge.render(rootNode));
-
-
         }
     },
     copyWidget: function() {
@@ -1008,7 +1006,6 @@ export default Reflux.createStore({
       this.trigger({deletePoint: true});
     },
     initTree: function(data) {
-        //console.log(data);
         classList = [];
         bridge.resetClass();
         stageTree = [];
@@ -1021,6 +1018,10 @@ export default Reflux.createStore({
             }
         }
 
+        //起个名字给舞台
+        if (data['stage']){
+            data['stage']['props']['name'] = 'stage';
+        }
         stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
         bridge.createSelector(null);
 

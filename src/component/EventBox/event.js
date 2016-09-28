@@ -3,21 +3,37 @@ import React from 'react';
 import $class from 'classnames'
 
 import Property from './Property'
+import WidgetStore from '../../stores/WidgetStore'
+import WidgetActions from '../../actions/WidgetActions'
 
 class Event extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            expanded: true
+            expanded: true,
+            selectWidget: null,
+            eventList: props.eventList,
         };
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
+        this.onStatusChange = this.onStatusChange.bind(this);
     }
 
     componentDidMount() {
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onStatusChange(widget) {
+        if(widget.selectWidget){
+            this.setState({
+                selectWidget: widget.selectWidget
+            });
+        }
     }
 
     chooseEventBtn(nid){
@@ -130,10 +146,10 @@ class Event extends React.Component {
                     </div>
                     <div className='item-content'>
                         {
-                            v.specific.length === 0
+                            !v.specificList || v.specificList.length === 0
                                 ? null
-                                : v.specific.map((v2,i2)=>{
-                                return <Property key={i2} {...v2} />
+                                : v.specificList.map((v2,i2)=>{
+                                return <Property key={i2} specific={v2} eid={v.eid} />
                             })
                         }
                     </div>
@@ -165,9 +181,11 @@ class Event extends React.Component {
                 </div>
 
                 <div className={$class('E--content',{'hidden': !this.state.expanded})}>
-                    {/*{*/}
-                        {/*this.props.event.map(content)*/}
-                    {/*}*/}
+                    {
+                        !this.state.eventList || this.state.eventList.length===0
+                            ? null
+                            : this.state.eventList.map(content)
+                    }
                 </div>
             </div>
         );

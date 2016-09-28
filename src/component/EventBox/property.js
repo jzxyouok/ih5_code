@@ -1,21 +1,37 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
+import WidgetStore from '../../stores/WidgetStore'
+import WidgetActions from '../../actions/WidgetActions'
 
 class Property extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            expanded: true
+            expanded: true,
+            selectWidget: null,
+            eid: props.eid,
+            specific: props.specific
         };
-
         this.expandBtn = this.expandBtn.bind(this);
+        this.onStatusChange = this.onStatusChange.bind(this);
     }
 
     componentDidMount() {
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onStatusChange(widget) {
+        if(widget.selectWidget){
+            this.setState({
+                selectWidget: widget.selectWidget
+            });
+        }
     }
 
     expandBtn(expanded, event) {
@@ -71,7 +87,7 @@ class Property extends React.Component {
         };
 
         return (
-            <div className="Property f--h" id={'spec-item-'+ this.props.sid}>
+            <div className="Property f--h" id={'spec-item-'+ this.state.specific.sid}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
                     <span className="p--close-line" />
@@ -81,7 +97,7 @@ class Property extends React.Component {
                                 <button className="p--icon"></button>
                                 <div className="p--dropDown short">
                                     <div className="title f--hlc">
-                                        { this.props.object }
+                                        { this.state.specific.object }
                                         <span className="icon" />
                                     </div>
                                     <div className="dropDown"></div>
@@ -98,9 +114,9 @@ class Property extends React.Component {
 
                         <div className="p--right flex-1">
                             {
-                                this.props.children.length === 0
+                                !this.state.specific.children || this.state.specific.children.length === 0
                                 ? null
-                                : this.props.children.map((v,i)=>{
+                                : this.state.specific.children.map((v,i)=>{
                                     return  <div className="p--property" key={i}>
                                         <div className="p--dropDown long">
                                             <div className="title f--hlc">
@@ -113,7 +129,7 @@ class Property extends React.Component {
                                         {/*是否展开属性内容*/}
                                         <div className={$class("pp-content f--h", {'hidden': !this.state.expanded} )}>
                                             {
-                                                v.property.length === 0
+                                                !v.property || v.property.length === 0
                                                     ? null
                                                     : <div className="pp--list-layer flex-1">
                                                     {

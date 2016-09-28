@@ -744,9 +744,19 @@ class ObjectTree extends React.Component {
                                                  : icon( 0 , v.tree.key)
                                          }
                                          <span className={$class('stage-icon',{"module-icon": i !== 0})} />
-                                         <div className='stage-name-wrap'>
-                                             <p>{ v.name }</p>
-                                         </div>
+                                         {
+                                             v.name == 'stage'
+                                                 ?<div className='stage-name-wrap' onDoubleClick={this.startEditObjName.bind(this, v.tree.key, v.tree)}>
+                                                    <p className={$class({'hidden':((v.tree.key === this.state.nid)&&this.state.editMode)})} >
+                                                     {v.tree.props.name}
+                                                    </p>
+                                                    <input id={'item-name-input-'+v.tree.key} type="text"
+                                                        onBlur={this.endEditObjName}
+                                                        onClick={this.editStopPropagation}
+                                                        className={$class('item-name-input',{'hidden':!((v.tree.key === this.state.nid)&&this.state.editMode)})}/>
+                                                   </div>
+                                                 : <div className='stage-name-wrap'><p>{ v.name }</p></div>
+                                         }
                                      </div>
                                      <div className={$class('item-event')}>
                                          {
