@@ -11,10 +11,12 @@ class Property extends React.Component {
             expanded: true,
             selectWidget: null,
             eid: props.eid,
-            specific: props.specific
+            specific: props.specific,
+            widgetList: []
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
+        this.onGetAllWidgets = this.onGetAllWidgets.bind(this);
     }
 
     componentDidMount() {
@@ -27,11 +29,21 @@ class Property extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.selectWidget){
+        if(widget.initTree !== undefined || widget.redrawTree){
+            this.onGetAllWidgets();
+        } else if (widget.allWidgets){
+            this.setState({
+                widgetList: widget.allWidgets
+            });
+        } else if(widget.selectWidget){
             this.setState({
                 selectWidget: widget.selectWidget
             });
         }
+    }
+
+    onGetAllWidgets() {
+        WidgetActions['getAllWidgets']();
     }
 
     expandBtn(expanded, event) {
