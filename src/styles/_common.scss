@@ -157,3 +157,41 @@
     -ms-box-shadow: $size $size1 $size3 0 rgba(0, 0, 0, $alpha);
     -o-box-shadow: $size $size1 $size3 0 rgba(0, 0, 0, $alpha);
 }
+
+/******************* 动画 **************************/
+@mixin keyframes($name) {
+    @keyframes #{$name}{
+        @content
+    }
+    @-webkit-keyframes #{$name}{
+        @content
+    }
+    @-moz-keyframes #{$name}{
+        @content
+    }
+    @-ms-keyframes #{$name}{
+        @content
+    }
+    @-o-keyframes #{$name}{
+        @content
+    }
+}
+
+// 360旋转
+@include keyframes(editDb-big){
+    0% {
+        left: -194px;
+    }
+    100% {
+        left: 0;
+    }
+}
+
+@include keyframes(editDb-small){
+    0% {
+        right: -38px;
+    }
+    100% {
+        right: 0;
+    }
+}
