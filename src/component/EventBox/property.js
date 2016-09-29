@@ -4,6 +4,8 @@ import $class from 'classnames'
 import WidgetStore, {varType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
+import { Input, InputNumber, Select} from 'antd';
+// import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
 import { propertyMap, propertyType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
@@ -21,6 +23,7 @@ class Property extends React.Component {
 
             objectList: null,    //目标对象的列表
             actionList: null,    //对象动作列表
+            funcList: null,
             objectDropdownVisible: false, //是否显示对象的下拉框
             actionDropdownVisible: false, //是否显示动作的下拉框
 
@@ -37,6 +40,7 @@ class Property extends React.Component {
         this.onActionVisibleChange = this.onActionVisibleChange.bind(this);
         this.onSelectAction = this.onSelectAction.bind(this);
         this.onGetActionList = this.onGetActionList.bind(this);
+        this.onChangePropDom = this.onChangePropDom.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -75,6 +79,11 @@ class Property extends React.Component {
         if(widget.allWidgets){
             this.setState({
                 objectList: widget.allWidgets
+            });
+        }
+        if(widget.funcList) {
+            this.setState({
+                funcList: widget.funcList
             });
         }
     }
@@ -175,28 +184,69 @@ class Property extends React.Component {
         }
     }
 
+    onChangePropDom(prop, index, e){
+        let value = null;
+        switch (prop) {
+            case prop.String:
+                value = e.target.value;
+                break;
+            case prop.Integer:
+            case prop.Float:
+                value = e;
+                break;
+            case prop:Function:
+                break;
+            default:
+                break;
+        };
+        prop.value = value;
+        let property = this.state.currentAction.property;
+        property[index] = prop;
+        this.setState({
+            currentAction: {
+                'name': this.state.currentAction.name,
+                'property': property,
+            },
+        });
+        WidgetActions['changeSpecific'](this.state.specific, {'property':this.state.currentAction.property});
+    }
+
     render() {
         let content = (v1,i1)=>{
+            //设置通用默认参数和事件
+            let defaultProp = {
+                size: 'small',
+                onChange:  this.onChangePropDom.bind(this, v1, i1)
+            };
             return  <div className="pp--list f--hlc" key={i1}>
                         <div className="pp--name">{ v1.name }</div>
-                        { type(v1.type, v1.value, i1) }
+                        { type(v1.type, v1.value, defaultProp) }
                     </div>
         };
 
-        let type = (type, value, i1)=>{
+        let func = (v1, i2)=>{
+            return <Option value={v1}>{v1.props.name}</Option>;
+        };
+
+        let type = (type, value, defaultProp)=>{
             switch (type) {
                 case propertyType.String:
-                    return <input className="flex-1" type="text" placeholder={value}/>;
-                    break;
+                    return <Input {...defaultProp}/>;
+                    {/*return <input {...defaultProp} className="flex-1" type="text" placeholder={value}/>;*/}
                 case propertyType.Integer:
-                    return <input className="flex-1" type="text" placeholder={value}/>;
-                    break;
+                    return <InputNumber {...defaultProp} />;
+                    // return <input className="flex-1" type="text" placeholder={value}/>;
                 case propertyType.Float:
-                    return <input className="flex-1" type="text" placeholder={value}/>;
-                    break;
+                    return <InputNumber step={0.1} {...defaultProp} />;
+                    {/*return <input className="flex-1" type="text" placeholder={value}/>;*/}
                 case propertyType.Function:
-                    return <div>目标对象的函数列表</div>;
-                    break;
+                    return <Select defaultValue="目标函数"  {...defaultProp}>
+                        {
+                            !this.state.funcList||this.state.funcList.length==0
+                                ? null
+                                : this.state.funcList.map(func)
+                        }
+                    </Select>;
                 default:
                     return <div>未定义类型</div>;
             }

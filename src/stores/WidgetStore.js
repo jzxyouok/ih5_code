@@ -423,7 +423,7 @@ export default Reflux.createStore({
           if(widget.props['locked'] === undefined) {
             widget.props['locked'] = false;
           }
-          //取选激活的树
+          //取选激活的事件树
           if(!(keepValueType&&keepValueType==keepType.event)&&this.currentActiveEventTreeKey) {
             this.activeEventTree(null);
           }
@@ -437,6 +437,7 @@ export default Reflux.createStore({
           }
         }
         this.currentWidget = widget;
+        this.trigger({funcList: this.currentWidget['funcList']});
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
             this.trigger({selectWidget: widget});
@@ -851,6 +852,8 @@ export default Reflux.createStore({
                 specific.action.property = [];
             } else if(params.action){
                 specific.action = params.action;
+            } else if(params.property){
+                specific.action.property = params.property;
             }
             this.trigger({redrawEventTree: true});
         }

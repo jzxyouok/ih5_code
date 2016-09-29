@@ -665,6 +665,16 @@
                             }
                         }
 
+                        .ant-input-number-sm {
+                            width: 142px;
+                            border-radius: 2px;
+                            background-color: transparent;
+                            border: none;
+                            input {
+                                margin-top: 0;
+                            }
+                        }
+
                         .on-off-btn {
                             @include border-radius(11px);
                             position: relative;
