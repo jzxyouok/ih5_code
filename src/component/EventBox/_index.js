@@ -3,9 +3,8 @@ import React from 'react';
 import $class from 'classnames';
 import Event from './Event';
 import {eventTempData} from './tempData';
-import WidgetStore from '../../stores/WidgetStore'
+import WidgetStore, {keepType}  from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-
 
 class EventBox extends React.Component {
     constructor (props) {
@@ -33,20 +32,15 @@ class EventBox extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.initTree !== undefined || widget.redrawTree){
-            WidgetActions['reorderEventTreeList']();
-        }
         if(widget.eventTreeList){
             this.setState({
                 eventTreeList: widget.eventTreeList
             });
-        }
-        if(widget.selectWidget) {
+        } else if(widget.selectWidget) {
             this.setState({
                 selectWidget: widget.widget
             });
-        }
-        if(widget.activeEventTreeKey) {
+        } else if(widget.activeEventTreeKey) {
             this.setState({
                 activeKey: widget.activeEventTreeKey.key
             });
@@ -59,7 +53,7 @@ class EventBox extends React.Component {
                 activeKey: nid
             });
             //触发选择widget并选择当前event
-            WidgetActions['selectWidget'](data);
+            WidgetActions['selectWidget'](data, true, keepType.event);
             WidgetActions['activeEventTree'](nid);
         }
     }

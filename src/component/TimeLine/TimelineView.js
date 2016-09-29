@@ -172,12 +172,14 @@ class TimelineView extends React.Component {
 			this.setState(changed);
             this.changeAllWidth(true, changed);
 
-            let nowID = widget.selectWidget.key;
-            if(this.state.nowLayerId !== nowID){
-                this.setState({
-                    isChangeKey : false,
-                    nowLayerId : nowID
-                })
+            if(widget.selectWidget){
+                let nowID = widget.selectWidget.key;
+                if(this.state.nowLayerId !== nowID){
+                    this.setState({
+                        isChangeKey : false,
+                        nowLayerId : nowID
+                    })
+                }
             }
 		}
         if(widget.skipProperty){

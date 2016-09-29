@@ -25,6 +25,12 @@ var nodeType = {
     var: 'var'      //属性
 };
 
+var keepType = {
+    event: 'event',
+    func: 'func',
+    var: 'var'
+};
+
 var varType = {
     number: 'number',   //数字
     string: 'string'    //字串
@@ -401,7 +407,7 @@ export default Reflux.createStore({
 
         this.eventTreeList = [];
     },
-    selectWidget: function(widget, shouldTrigger) {
+    selectWidget: function(widget, shouldTrigger, keepValueType) {
         var render = false;
         if (widget) {
           if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -418,15 +424,16 @@ export default Reflux.createStore({
             widget.props['locked'] = false;
           }
           //取选激活的树
-          if(this.currentActiveEventTreeKey!==null || this.currentActiveEventTreeKey!==undefined){
+          if(!(keepValueType&&keepValueType==keepType.event)&&this.currentActiveEventTreeKey) {
             this.activeEventTree(null);
           }
           //取选func状态
-          if(this.currentFunction!==null || this.currentFunction!==undefined) {
+          if(!(keepValueType&&keepValueType==keepType.func)&&this.currentFunction) {
             this.selectFunction(null);
           }
-          if(this.currentVariable!==null || this.currentVariable!==undefined) {
-              this.selectVariable(null);
+          //取选var状态
+          if(!(keepValueType&&keepValueType==keepType.var)&&this.currentVariable) {
+            this.selectVariable(null);
           }
         }
         this.currentWidget = widget;
@@ -511,6 +518,9 @@ export default Reflux.createStore({
             let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
             var rootNode = this.currentWidget.rootWidget.node;
             this.currentWidget.parent.children.splice(index, 1);
+            if(this.currentWidget.props.eventTree){
+                this.reorderEventTreeList();
+            }
             this.currentWidget = null;
             if(shouldChooseParent) {
                 this.selectWidget(parentWidget);
@@ -531,8 +541,11 @@ export default Reflux.createStore({
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
         loadTree(this.currentWidget, copyObj);
-        this.trigger({selectWidget: null, redrawTree: true});
-        this.render();
+        if(copyObj.props.eventTree){
+          this.reorderEventTreeList();
+        }
+        this.trigger({selectWidget: this.currentWidget});
+        // this.render();
       }
     },
     cutWidget: function() {
@@ -561,7 +574,7 @@ export default Reflux.createStore({
             loopLock(this.currentWidget.children);
 
             this.trigger({redrawTree: true});
-            this.render();
+            // this.render();
         }
     },
     reorderWidget: function(delta) {
@@ -571,8 +584,9 @@ export default Reflux.createStore({
             this.currentWidget.parent.children.splice(index, 1);
             this.currentWidget.parent.children.splice(index + delta, 0, this.currentWidget);
             bridge.reorderWidget(this.currentWidget.node, delta);
-            this.render();
             this.trigger({redrawTree: true});
+            this.reorderEventTreeList();
+            // this.render();
           }
       }
     },
@@ -612,7 +626,7 @@ export default Reflux.createStore({
     renameWidget: function (newname) {
         this.currentWidget.props['name'] = newname;
         this.updateProperties({'name':this.currentWidget.props['name']});
-        this.render();
+        // this.render();
         this.trigger({redrawTree: true});
     },
     updateProperties: function(obj, skipRender, skipProperty) {
@@ -736,6 +750,7 @@ export default Reflux.createStore({
             this.currentWidget.props['eventTree'].push(this.emptyEventTree(className));
         }
         this.trigger({redrawTree: true});
+        this.reorderEventTreeList();
         // this.render();
     },
     removeEventTree: function() {
@@ -744,6 +759,7 @@ export default Reflux.createStore({
             this.currentWidget.props['enableEventTree'] = undefined;
         }
         this.trigger({redrawTree: true});
+        this.reorderEventTreeList();
         // this.render();
     },
     enableEventTree: function () {
@@ -1127,8 +1143,8 @@ export default Reflux.createStore({
         }
 
         this.trigger({initTree: stageTree, classList: classList});
-
         this.selectWidget(stageTree[0].tree);
+        this.reorderEventTreeList();
     },
     addClass: function(name, bool) {
         if(bool){
@@ -1364,4 +1380,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType, isCustomizeWidget}
+export {globalToken, nodeType, varType, keepType, isCustomizeWidget}
