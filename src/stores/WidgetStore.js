@@ -711,12 +711,11 @@ export default Reflux.createStore({
         let eventSpecific = {
             'sid': _specificCount++,
             'object': null,
-            'params': [
-                {
-                    'action': null,
-                    'property': []
-                }
-            ]
+            'action': {
+                'name': null,
+                'property': []
+            }
+
         };
         return eventSpecific;
     },
@@ -798,7 +797,7 @@ export default Reflux.createStore({
         }
     },
     deleteSpecific: function(sid, event){
-        if(event&&event['specificList']) {
+        if(event&&event.specificList) {
             if(event.specificList.length==1) {
                 event.specificList = [this.emptyEventSpecific()];
             } else {
@@ -816,8 +815,17 @@ export default Reflux.createStore({
             this.trigger({redrawEventTree: true});
         }
     },
-    changeSpecific: function(sid, event, params){
-        //修改对应事件的specific
+    changeSpecific: function(specific, params){
+        if(params){
+            if(params.object){
+                specific.object = params.object;
+            } else if(params.action){
+                specific.action.name = params.action;
+            } else if (params.property){
+                specific.action.property = params;
+            }
+            this.trigger({redrawEventTree: true});
+        }
     },
     selectFunction: function (data) {
         if (data!=null) {

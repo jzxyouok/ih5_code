@@ -431,6 +431,11 @@
                     position: relative;
                     height: 22px;
 
+                    &.active {
+                        border: 1px solid #7b5815;
+                        @include border-radius(2px);
+                    }
+
                     .title {
                         @include border-radius(2px);
                         position: relative;
@@ -590,6 +595,7 @@
                     }
 
                     .p--icon {
+                        cursor: pointer;
                         width: 26px;
                         height: 100%;
                         border: none;
@@ -692,6 +698,27 @@
                         }
                     }
                 }
+            }
+
+            .ant-dropdown-menu    {
+                background: #315654;
+                border: none;
+                box-shadow: none;
+                margin-top: -4px;
+                border-radius: 0 0 2px 2px;
+            }
+            .ant-dropdown-menu-item {
+                color: white;
+                padding: 5px 14px;
+            }
+            .ant-dropdown-menu-item-active {
+                background: #162322;
+            }
+            .ant-dropdown-menu-item:first-child {
+                border-radius: 0;
+            }
+            .ant-dropdown-menu-item:last-child {
+                border-radius: 0 0 2px 2px;
             }
         }
     }
