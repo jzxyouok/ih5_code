@@ -1,10 +1,10 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
-import WidgetStore from '../../stores/WidgetStore'
+import WidgetStore, {varType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
-import { propertyMap } from '../PropertyMap'
+import { propertyMap, propertyType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
 
@@ -53,7 +53,7 @@ class Property extends React.Component {
             }, ()=>{
                 //获取动作
                 if(this.state.currentObject.className){
-                    this.onGetActionList(this.state.currentObject.className);
+                    this.onGetActionList(this.state.currentObject.className, this.state.currentObject.type);
                 }
             });
         }
@@ -79,11 +79,24 @@ class Property extends React.Component {
         }
     }
 
-    onGetActionList(className){
+    onGetActionList(classname, type){
         let actionList = [];
+        let className = classname;
+        if(className === 'var'){
+            switch (type) {
+                case varType.number:
+                    className = 'intVar';
+                    break;
+                case varType.string:
+                    className = 'strVar';
+                    break;
+                default:
+                    break;
+            }
+        }
         propertyMap[className].map((item, index) => { 
             if (item.isFunc)
-                actionList.push({'name': item.name, 'info': item.info});
+                actionList.push({'name': item.name, 'property': item.property});
          });
         this.setState({
             actionList: actionList
@@ -111,16 +124,20 @@ class Property extends React.Component {
 
     onSelectObject(e){
         e.domEvent.stopPropagation();
+        let object = e.item.props.object;
+        let currentObj =  {
+            name:object.props.name,
+            id:object.props.id,
+            className: object.className
+        };
+        if(object.className === 'var'){
+            currentObj.type = object.type;
+        }
         this.setState({
-            currentObject: {
-                name:e.item.props.object.props.name,
-                id:e.item.props.object.props.id,
-                className: e.item.props.object.className
-            },
+            currentObject: currentObj,
             objectDropdownVisible: false
         }, ()=> {
             WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
-            //获取动作
         });
     }
 
@@ -134,11 +151,19 @@ class Property extends React.Component {
 
     onSelectAction(e){
         e.domEvent.stopPropagation();
+        let action = e.item.props.action;
+        let property =[];
+        if(action.property){
+            property = action.property;
+        }
         this.setState({
-            currentAction: e.item.props.action,
+            currentAction: {
+                'name': action.name,
+                'property': property,
+            },
             actionDropdownVisible: false
         }, ()=> {
-            WidgetActions['changeSpecific'](this.state.specific, {'actionName':this.state.currentAction.name});
+            WidgetActions['changeSpecific'](this.state.specific, {'action':this.state.currentAction});
         });
     }
 
@@ -154,45 +179,62 @@ class Property extends React.Component {
         let content = (v1,i1)=>{
             return  <div className="pp--list f--hlc" key={i1}>
                         <div className="pp--name">{ v1.name }</div>
-                        { type(v1.types, v1.value) }
+                        { type(v1.type, v1.value, i1) }
                     </div>
         };
 
-        let type = (num, data)=>{
-            if(num == 0){
-                return  <input className="flex-1" type="text" placeholder={data}/>
+        let type = (type, value, i1)=>{
+            switch (type) {
+                case propertyType.String:
+                    return <input className="flex-1" type="text" placeholder={value}/>;
+                    break;
+                case propertyType.Integer:
+                    return <input className="flex-1" type="text" placeholder={value}/>;
+                    break;
+                case propertyType.Float:
+                    return <input className="flex-1" type="text" placeholder={value}/>;
+                    break;
+                case propertyType.Function:
+                    return <div>目标对象的函数列表</div>;
+                    break;
+                default:
+                    return <div>未定义类型</div>;
             }
-            else if(num == 1){
-                let btnp = null;
-                let bg =  "none";
-                if(data == -1){
-                    btnp = 2;
-                    bg = "#152322"
-                }
-                else if (data ==  0){
-                    btnp = 33;
-                    bg =  "none";
-                }
-                else {
-                    btnp = 67;
-                    bg = "#396764";
-                }
-                return  <div className="on-off-btn f--h">
-                            <span className="btn-name left flex-1">ON</span>
-                            <div className="btn-icon flex-1"><span style={{ background: bg}} /></div>
-                            <span className="btn-name right flex-1">OFF</span>
-                            <span className="btn" style={{ marginLeft : btnp + "px" }}/>
-                        </div>
-            }
-            else {
-                return  <div className="p--dropDown middle flex-1">
-                            <div className="title f--hlc">
-                                { data }
-                                <span className="icon" />
-                            </div>
-                            <div className="dropDown"></div>
-                        </div>
-            }
+
+            // if(type == propertyType.String){
+            //     return  <input className="flex-1" type="text" placeholder={data}/>
+            // }
+            // else if(type == 1){
+            //     let btnp = null;
+            //     let bg =  "none";
+            //     if(data == -1){
+            //         btnp = 2;
+            //         bg = "#152322"
+            //     }
+            //     else if (data ==  0){
+            //         btnp = 33;
+            //         bg =  "none";
+            //     }
+            //     else {
+            //         btnp = 67;
+            //         bg = "#396764";
+            //     }
+            //     return  <div className="on-off-btn f--h">
+            //                 <span className="btn-name left flex-1">ON</span>
+            //                 <div className="btn-icon flex-1"><span style={{ background: bg}} /></div>
+            //                 <span className="btn-name right flex-1">OFF</span>
+            //                 <span className="btn" style={{ marginLeft : btnp + "px" }}/>
+            //             </div>
+            // }
+            // else {
+            //     return  <div className="p--dropDown middle flex-1">
+            //                 <div className="title f--hlc">
+            //                     { data }
+            //                     <span className="icon" />
+            //                 </div>
+            //                 <div className="dropDown"></div>
+            //             </div>
+            // }
         };
 
 

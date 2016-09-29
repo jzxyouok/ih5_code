@@ -732,11 +732,31 @@ export default Reflux.createStore({
             //母节点
             if(this.currentWidget.rootWidget){
                 widgetList.push(root);
+                if(root.intVarList.length>0){
+                    for(let j=0; j<root.intVarList.length; j++){
+                        widgetList.push(root.intVarList[j]);
+                    }
+                }
+                if(root.strVarList.length>0){
+                    for(let k=0; k<root.strVarList.length; k++){
+                        widgetList.push(root.strVarList[k]);
+                    }
+                }
             }
             //递归遍历添加有事件widget到eventTreeList
             let loopWidgetTree = (children) => {
                 for(let i=0; i<children.length; i++) {
                     widgetList.push(children[i]);
+                    if(children[i].intVarList.length>0){
+                        for(let j=0; j<children[i].intVarList.length; j++){
+                            widgetList.push(children[i].intVarList[j]);
+                        }
+                    }
+                    if(children[i].strVarList.length>0){
+                        for(let k=0; k<children[i].strVarList.length; k++){
+                            widgetList.push(children[i].strVarList[k]);
+                        }
+                    }
                     if (children[i].children && children[i].children.length > 0) {
                         loopWidgetTree(children[i].children);
                     }
@@ -826,13 +846,11 @@ export default Reflux.createStore({
     changeSpecific: function(specific, params){
         if(params){
             if(params.object){
-                specific.object.name = params.object.name;
-                specific.object.id = params.object.id;
-                specific.object.className = params.object.className;
-            } else if(params.actionName){
-                specific.action.name = params.actionName;
-            } else if (params.property){
-                specific.action.property = params;
+                specific.object = params.object;
+                specific.action.name = null;
+                specific.action.property = [];
+            } else if(params.action){
+                specific.action = params.action;
             }
             this.trigger({redrawEventTree: true});
         }

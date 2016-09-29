@@ -1,5 +1,5 @@
 import bridge from 'bridge';
-import {isCustomizeWidget} from '../stores/WidgetStore';
+import {isCustomizeWidget, varType} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
@@ -12,7 +12,8 @@ const propertyType = {
     Select:7,
     Float:8,
     Color2:9,
-    Boolean2:10
+    Boolean2:10,
+    Function:11
 };
 
 var level;
@@ -61,9 +62,21 @@ propertyMap['root'] = [
     { name: 'swipeRight', isEvent: true },
     { name: 'swipeUp', isEvent: true },
     { name: 'swipeDown', isEvent: true },
-    { name: 'create', info:'(class,id,props,bottom)', isFunc: true },
-    { name: 'gotoPage', info:'(page)', isFunc: true },
-    { name: 'gotoPageNum', info:'(num)', isFunc: true },
+    { name: 'create', info:'(class,id,props,bottom)',
+        property:[
+            {'name':'class', 'value':null, 'type':propertyType.String},
+            {'name':'id', 'value':null, 'type':propertyType.Integer},
+            {'name':'props', 'value':null, 'type':propertyType.String},
+            {'name':'bottom', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'gotoPage', info:'(page)',
+        property:[
+            {'name':'page', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'gotoPageNum', info:'(num)',
+        property:[
+            {'name':'num', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
     { name: 'nextPage', isFunc: true },
     { name: 'prevPage', isFunc: true },
     { name: 'getTouchX', isFunc: true },
@@ -113,14 +126,20 @@ propertyMap['textBox']=[
 
 
 propertyMap['text'] = [
-    { name: 'changeValue', isFunc: true },
+    { name: 'changeValue', info:'(value)',
+        property:[
+            {'name':'value', 'value':null, 'type':propertyType.String},
+        ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
 ];
 
 propertyMap['counter'] = [
-    { name: 'changeValue', isFunc: true },
+    { name: 'changeValue', info:'(value)',
+        property:[
+            {'name':'value', 'value':null, 'type':propertyType.String},
+        ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
@@ -221,7 +240,13 @@ propertyMap['path'] = [
 propertyMap['container'] = [
     ...propertyMap['box'],
     { addProvides: widgetFlags.Container},
-    { name: 'create', info:'(class,id,props,bottom)', isFunc: true }
+    { name: 'create', info:'(class,id,props,bottom)',
+        property:[
+            {'name':'class', 'value':null, 'type':propertyType.String},
+            {'name':'id', 'value':null, 'type':propertyType.Integer},
+            {'name':'props', 'value':null, 'type':propertyType.String},
+            {'name':'bottom', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true }
 ];
 
 propertyMap['canvas'] = [
@@ -252,7 +277,10 @@ propertyMap['timer'] = [
     { name: 'loop',showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
     { name: 'play', isFunc: true },
     { name: 'pause', isFunc: true },
-    { name: 'seek', info: '(time)', isFunc: true },
+    { name: 'seek', info: '(time)',
+        property:[
+            {'name':'time', 'value':null, 'type':propertyType.Float},
+        ], isFunc: true },
     { name: 'loop', isEvent: true },
     { name: 'stop', isEvent: true }
 ];
@@ -328,9 +356,21 @@ propertyMap['track'] = [
 propertyMap['db'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'find', isFunc: true, info:'(option, callback(err, result))' },
-    { name: 'insert', isFunc: true, info:'(data, callback(err, result))' },
-    { name: 'update', isFunc: true, info:'(data, callback(err, result))' }
+    { name: 'find', isFunc: true, info:'(option, callback(err, result))',
+        property:[
+            {'name':'option', 'value':null, 'type':propertyType.String},
+            {'name':'callback(err, result)', 'value':null, 'type':propertyType.Function},
+        ]},
+    { name: 'insert', isFunc: true, info:'(data, callback(err, result))',
+        property:[
+            {'name':'data', 'value':null, 'type':propertyType.String},
+            {'name':'callback(err, result)', 'value':null, 'type':propertyType.Function},
+        ]},
+    { name: 'update', isFunc: true, info:'(data, callback(err, result))',
+        property:[
+            {'name':'data', 'value':null, 'type':propertyType.String},
+            {'name':'callback(err, result)', 'value':null, 'type':propertyType.Function},
+        ]}
 ];
 
 propertyMap['sock'] = [
@@ -338,6 +378,20 @@ propertyMap['sock'] = [
     { addRequires: widgetFlags.Root},
     { name: 'listened', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'message', isEvent: true, info:'data'},
+];
+
+propertyMap['strVar'] = [
+    { name: 'changeValue', info:'(value)',
+        property:[
+            {'name':'value', 'value':null, 'type':propertyType.String},
+        ], isFunc: true },
+];
+
+propertyMap['intVar'] = [
+    { name: 'changeValue', info:'(value)',
+        property:[
+            {'name':'value', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
 ];
 
 for (var n in propertyMap) {
