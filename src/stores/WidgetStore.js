@@ -25,6 +25,12 @@ var nodeType = {
     var: 'var'      //属性
 };
 
+var keepType = {
+    event: 'event',
+    func: 'func',
+    var: 'var'
+};
+
 var varType = {
     number: 'number',   //数字
     string: 'string'    //字串
@@ -401,7 +407,7 @@ export default Reflux.createStore({
 
         this.eventTreeList = [];
     },
-    selectWidget: function(widget, shouldTrigger, keepType) {
+    selectWidget: function(widget, shouldTrigger, keepValueType) {
         var render = false;
         if (widget) {
           if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -418,15 +424,15 @@ export default Reflux.createStore({
             widget.props['locked'] = false;
           }
           //取选激活的树
-          if(!(keepType&&keepType=='event')&&this.currentActiveEventTreeKey) {
+          if(!(keepValueType&&keepValueType==keepType.event)&&this.currentActiveEventTreeKey) {
             this.activeEventTree(null);
           }
           //取选func状态
-          if(!(keepType&&keepType=='func')&&this.currentFunction) {
+          if(!(keepValueType&&keepValueType==keepType.func)&&this.currentFunction) {
             this.selectFunction(null);
           }
           //取选var状态
-          if(!(keepType&&keepType=='var')&&this.currentVariable) {
+          if(!(keepValueType&&keepValueType==keepType.var)&&this.currentVariable) {
             this.selectVariable(null);
           }
         }
@@ -1374,4 +1380,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType, isCustomizeWidget}
+export {globalToken, nodeType, varType, keepType, isCustomizeWidget}

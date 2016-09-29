@@ -3,9 +3,8 @@ import React from 'react';
 import $class from 'classnames';
 import Event from './Event';
 import {eventTempData} from './tempData';
-import WidgetStore from '../../stores/WidgetStore'
+import WidgetStore, {keepType}  from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-
 
 class EventBox extends React.Component {
     constructor (props) {
@@ -54,7 +53,7 @@ class EventBox extends React.Component {
                 activeKey: nid
             });
             //触发选择widget并选择当前event
-            WidgetActions['selectWidget'](data, true, 'event');
+            WidgetActions['selectWidget'](data, true, keepType.event);
             WidgetActions['activeEventTree'](nid);
         }
     }

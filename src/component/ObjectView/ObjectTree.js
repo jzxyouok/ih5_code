@@ -4,7 +4,7 @@ import $class from 'classnames';
 
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore, {nodeType, isCustomizeWidget} from '../../stores/WidgetStore';
+import WidgetStore, {nodeType, keepType, isCustomizeWidget} from '../../stores/WidgetStore';
 
 class ObjectTree extends React.Component {
     constructor (props) {
@@ -283,7 +283,7 @@ class ObjectTree extends React.Component {
                 nid : nid,
                 editMode: false
             },()=>{
-                WidgetActions['selectWidget'](data, true, 'event');
+                WidgetActions['selectWidget'](data, true, keepType.event);
                 WidgetActions['activeEventTree'](nid);
             });
         } else  {
@@ -300,7 +300,7 @@ class ObjectTree extends React.Component {
             nid : nid,
             editMode: false
         },()=>{
-            WidgetActions['selectWidget'](data.widget, false, 'func');
+            WidgetActions['selectWidget'](data.widget, false, keepType.func);
             WidgetActions['selectFunction'](data);
         });
     }
@@ -310,7 +310,7 @@ class ObjectTree extends React.Component {
             nid : nid,
             editMode: false
         },()=>{
-            WidgetActions['selectWidget'](data.widget, false, 'var');
+            WidgetActions['selectWidget'](data.widget, false, keepType.var);
             WidgetActions['selectVariable'](data);
         });
     }
