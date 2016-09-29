@@ -712,12 +712,15 @@ export default Reflux.createStore({
     emptyEventSpecific: function() {
         let eventSpecific = {
             'sid': _specificCount++,
-            'object': null,
+            'object': {
+                'name': null,
+                'id': null,
+                'className':null
+            },
             'action': {
                 'name': null,
                 'property': []
             }
-
         };
         return eventSpecific;
     },
@@ -770,6 +773,10 @@ export default Reflux.createStore({
         // this.render();
     },
     activeEventTree: function (nid) {
+        if(!this.currentActiveEventTreeKey&&(nid!=null||nid!=undefined)){
+            this.reorderEventTreeList();
+            this.getAllWidgets();
+        }
         //激活事件树，无则为
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
@@ -819,9 +826,11 @@ export default Reflux.createStore({
     changeSpecific: function(specific, params){
         if(params){
             if(params.object){
-                specific.object = params.object;
-            } else if(params.action){
-                specific.action.name = params.action;
+                specific.object.name = params.object.name;
+                specific.object.id = params.object.id;
+                specific.object.className = params.object.className;
+            } else if(params.actionName){
+                specific.action.name = params.actionName;
             } else if (params.property){
                 specific.action.property = params;
             }

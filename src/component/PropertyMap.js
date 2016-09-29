@@ -109,16 +109,18 @@ propertyMap['textBox']=[
     { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true },
     { name: 'fontSize',showName:'字体大小', type: propertyType.Number,group:'tools', default: 26, isProperty: true },
     { name: 'fontFill',showName:'字体颜色', type: propertyType.Color,group:'tools', default: '#000000', isProperty: true },
-]
+];
 
 
 propertyMap['text'] = [
+    { name: 'changeValue', isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
 ];
 
 propertyMap['counter'] = [
+    { name: 'changeValue', isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
