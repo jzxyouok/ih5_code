@@ -28,7 +28,8 @@ class App extends React.Component {
             activeEventTreeKey: null,
             activeFunc: null,
             activeVar: null,
-            editDb : false
+            editDb : false,
+            dbNode : null
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -65,7 +66,13 @@ class App extends React.Component {
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
         }
-
+        else if(widget.selectWidget){
+            if(widget.selectWidget.className == "db"){
+                this.setState({
+                    dbNode : widget.selectWidget.node
+                });
+            }
+        }
     }
 
     onToolBoxStatusChange(toolbox) {
@@ -119,7 +126,11 @@ class App extends React.Component {
     editDbShow(){
         this.setState({
             editDb : true
-        })
+        });
+        //console.log(this.state.dbNode);
+        //this.state.dbNode.find({},function(err,data){
+        //    console.log(data);
+        //});
     }
 
     editDbHide(){
@@ -160,12 +171,9 @@ class App extends React.Component {
                 <TimelineView isHidden={this.state.activeFunc != null
                               || this.state.activeVar != null}/>
 
-                {
-                    this.state.editDb
-                        ? <EditDb editDbHide={ this.editDbHide }  />
-                        : null
-                }
-
+                <div className={$class({"hidden":!this.state.editDb})}>
+                    <EditDb editDbHide={ this.editDbHide }  />
+                </div>
                 {
                     //<Row gutter={5}>
                     //    <Col span={3}><ComponentPanel /></Col>
