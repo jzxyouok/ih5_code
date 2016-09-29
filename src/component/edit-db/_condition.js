@@ -27,7 +27,7 @@ class Condition extends React.Component {
             <div className='Condition'>
                 {
                     this.props.isBig
-                    ? <div className='Condition-layer'>
+                    ? <div className={$class('Condition-layer',{"action": this.props.isBig })}>
                         <div className="Condition-header f--hlc">限制条件</div>
 
                         <ul>
@@ -132,7 +132,7 @@ class Condition extends React.Component {
                             收起页面
                         </div>
                     </div>
-                    :   <div className="expand-layer" onClick={ this.props.bigBtn }>
+                    :   <div className={$class("expand-layer",{"action": !this.props.isBig })} onClick={ this.props.bigBtn }>
                             <div className="expand-btn">
                                 <span className="icon" />
                                 展开

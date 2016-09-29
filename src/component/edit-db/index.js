@@ -41,14 +41,15 @@ class EditDb extends React.Component {
     render() {
         return (
             <div className='EditDb f--h'>
-                <div className={$class("ED-left",{"active": !this.state.isBig})}>
+                <div className={$class("ED-left",{"action": !this.state.isBig})}>
                     <Condition smallBtn={ this.smallBtn }
                                isBig={ this.state.isBig }
                                bigBtn={ this.bigBtn } />
                 </div>
 
                 <div className="ED-right flex-1">
-                    <DbTable editDbHide={this.props.editDbHide} />
+                    <DbTable editDbHide={this.props.editDbHide}
+                             isBig={ this.state.isBig } />
                 </div>
             </div>
         );
