@@ -437,7 +437,6 @@ export default Reflux.createStore({
           }
         }
         this.currentWidget = widget;
-        this.trigger({funcList: this.currentWidget['funcList']});
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
             this.trigger({selectWidget: widget});
