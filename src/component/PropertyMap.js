@@ -126,9 +126,9 @@ propertyMap['textBox']=[
 
 
 propertyMap['text'] = [
-    { name: 'changeValue', info:'(value)',
+    { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'赋值', 'value':null, 'type':propertyType.String},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
         ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
@@ -136,9 +136,9 @@ propertyMap['text'] = [
 ];
 
 propertyMap['counter'] = [
-    { name: 'changeValue', info:'(value)',
+    { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'赋值', 'value':null, 'type':propertyType.String},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
         ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
@@ -381,16 +381,16 @@ propertyMap['sock'] = [
 ];
 
 propertyMap['strVar'] = [
-    { name: 'changeValue', info:'(value)',
+    { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'赋值', 'value':null, 'type':propertyType.String},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
         ], isFunc: true },
 ];
 
 propertyMap['intVar'] = [
-    { name: 'changeValue', info:'(value)',
+    { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'赋值', 'value':null, 'type':propertyType.Integer},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.Integer},
         ], isFunc: true },
 ];
 
