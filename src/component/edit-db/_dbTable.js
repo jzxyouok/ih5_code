@@ -15,7 +15,10 @@ class DbTable extends React.Component {
     }
 
     componentDidMount() {
-
+        WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ea32507f8472077f7384f1", null, null, function(text) {
+            let result = JSON.parse(text);
+            console.log(result);
+        }.bind(this));
     }
 
     componentWillUnmount() {
@@ -39,13 +42,15 @@ class DbTable extends React.Component {
                         <div className="DT-content" style={{ width : width }}>
                             <table>
                                 <thead>
-                                    <td></td>
-                                    <td>用户ID</td>
-                                    <td>昵称</td>
-                                    <td>手机</td>
-                                    <td>金额</td>
-                                    <td>时间</td>
-                                    <td>asdasd</td>
+                                    <tr>
+                                        <td></td>
+                                        <td>用户ID</td>
+                                        <td>昵称</td>
+                                        <td>手机</td>
+                                        <td>金额</td>
+                                        <td>时间</td>
+                                        <td>asdasd</td>
+                                    </tr>
                                 </thead>
 
                                 <tbody>

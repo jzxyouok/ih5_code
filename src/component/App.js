@@ -160,9 +160,11 @@ class App extends React.Component {
                 <TimelineView isHidden={this.state.activeFunc != null
                               || this.state.activeVar != null}/>
 
-                <div className={ $class({ "hidden" : !this.state.editDb })}>
-                    <EditDb editDbHide={ this.editDbHide }  />
-                </div>
+                {
+                    !this.state.editDb
+                        ? <EditDb editDbHide={ this.editDbHide }  />
+                        : null
+                }
 
                 {
                     //<Row gutter={5}>
