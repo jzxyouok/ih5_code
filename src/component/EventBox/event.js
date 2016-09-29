@@ -5,16 +5,24 @@ import $class from 'classnames'
 import Property from './Property'
 import WidgetStore from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-
 import  {propertyMap} from '../PropertyMap'
+
+import { Menu, Dropdown, Icon } from 'antd';
+const MenuItem = Menu.Item;
+
 
 class Event extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
             expanded: true,
-            activeEventTreeKey:null
+            selectWidget:this.props.widget,
+            selectOption:[],
+            activeKey:this.props.activeKey,  //当前激活事件的key
+            currentConditionObject:null
         };
+
+
 
         this.eventTreeList=[];
         this.curClassName =null
@@ -24,9 +32,8 @@ class Event extends React.Component {
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
-
-        this.showDropDown = this.showDropDown.bind(this);
-        this.showDropDownContent =this.showDropDownContent.bind(this);
+        this.getSelectOption = this.getSelectOption.bind(this);
+        this.onConditionSelectObject=this.onConditionSelectObject.bind(this);
 
 
         this.getSelectFull =this.getSelectFull.bind(this);
@@ -37,12 +44,16 @@ class Event extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
+        this.setState({
+            activeKey:this.props.activeKey
+        })
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+        //获取当前事件对象的触发条件
+        this.getSelectOption();
     }
 
     componentWillUnmount() {
@@ -51,6 +62,8 @@ class Event extends React.Component {
 
     onStatusChange(widget) {
 
+        console.log(widget);
+
         //触发更新目标对象列表
         if(widget.redrawEventTree){
             if(this.props.wKey === this.props.activeKey) {
@@ -58,23 +71,22 @@ class Event extends React.Component {
             }
         }
 
-        //获取最新的eventTreeList
-        if(widget.eventTreeList){
-            //this.setState({eventTreeList:widget.eventTreeList});
-            this.eventTreeList =widget.eventTreeList;
-        }
-
-        if(widget.activeEventTreeKey){
-           this.setState({activeEventTreeKey:widget.activeEventTreeKey});
-            this.eventTreeList.map((v,i)=>{
-                if(v.key == widget.activeEventTreeKey.key){
-                    this.curClassName =v.className;
-                }
+        if(widget.selectWidget){
+            this.setState({
+                selectWidget:widget.selectWidget
             });
+
+            this.getSelectOption();
         }
 
     }
 
+    onConditionSelectObject(e){
+        e.domEvent.stopPropagation();
+        this.setState({
+            currentConditionObject: e.item.props.object
+        });
+    }
 
 
     chooseEventBtn(nid){
@@ -93,28 +105,6 @@ class Event extends React.Component {
             expanded: expanded
         });
     }
-
-    showDropDown(e){
-        let oDropDown =e.target.nextSibling;
-        oDropDown.style.display='block';
-    }
-
-
-    showDropDownContent(){
-         switch (this.curClassName){
-             case 'rect':
-                 let aOption=[];
-                 propertyMap['rect'].map((item,index)=>{
-                     if(item.isEvent ===true){
-                         aOption.push(<li>item.name</li>);
-                     }
-                 });
-             //  return   <div className='dropDonw-select-option'><ul>aOption</ul></div>;
-             break;
-             default :;
-         }
-    }
-
 
     getSelectFull(){
       return   <div className='dropDown-input dropDown-input-select dropDown-input-full'>
@@ -143,8 +133,27 @@ class Event extends React.Component {
         </div>
     }
 
+    getSelectOption(){
+        let aOption=[];
+        let className = this.state.selectWidget.className;
+        propertyMap[className].map((item,index)=>{
+            if(item.isEvent === true){
+                aOption.push(item);
+            }
+        });
+        this.setState({selectOption:aOption});
+    }
 
     render() {
+
+        let actionCondition = (
+            <Menu className='dropDownMenu' onClick={this.onConditionSelectObject}>
+                { this.state.selectOption.map((v,i)=>{
+                    return <MenuItem key={i} object={v} >{v.name}</MenuItem>;
+                })}
+            </Menu>
+        );
+
         let content = ((v,i)=>{
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
@@ -156,16 +165,14 @@ class Event extends React.Component {
                                 <div className='left-layer  f--h'>
                                     <span className='title-icon' />
                                     <div className='dropDown-layer long'>
-                                        <div className='title f--hlc' onClick={this.showDropDown}>触发条件<span className='icon' /></div>
-                                        <div className='dropDown'>
-                                            <div className='dropDonw-select-option'><ul>
-                                            <li>123</li>
-                                            <li>123</li>
-                                            <li>123</li>
-                                            <li>123</li>
-                                            <li>123</li>
-                                            </ul></div>
-                                        </div>
+                                        <Dropdown
+                                            overlay={actionCondition}
+                                            trigger={['click']}>
+                                            <div className='title f--hlc'>
+                                                { this.state.currentConditionObject==null? '触发条件': this.state.currentConditionObject.name}
+                                                <span className='icon' /></div>
+                                        </Dropdown>
+                                        <div className='dropDown'></div>
                                     </div>
                                 </div>
                             </div>

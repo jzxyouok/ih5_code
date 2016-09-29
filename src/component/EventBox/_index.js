@@ -83,7 +83,7 @@ class EventBox extends React.Component {
                             !this.state.eventTreeList || this.state.eventTreeList.length === 0
                                 ? null
                                 : this.state.eventTreeList.map((v,i)=>{
-                                    return <Event key={i} eventList={v.props.eventTree} name={v.props.name} wKey={v.key} activeKey={this.state.activeKey} chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
+                                    return <Event key={i}  widget={v} eventList={v.props.eventTree} name={v.props.name} wKey={v.key} activeKey={this.state.activeKey} chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
                                   })
                         }
                     </div>
