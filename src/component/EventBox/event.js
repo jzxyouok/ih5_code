@@ -89,6 +89,10 @@ class Event extends React.Component {
         oDropDown.style.display='block';
     }
 
+    changeValue(value){
+
+    }
+
     render() {
         let content = ((v,i)=>{
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
@@ -110,23 +114,36 @@ class Event extends React.Component {
                                             <span className='icon' />
                                         </div>
                                         <div className='dropDown'>
+                                             <div className='dropDonw-select-option'>
+                                                <ul>
+                                                  <li>点击</li>
+                                                  <li>点击</li>
+                                                  <li>点击</li>
+                                                  <li>点击</li>
+                                                  <li>点击</li>
+                                                  <li>点击</li>
+                                                  <li>点击</li>
+                                                  <li>点击</li>
+                                                   <li>点击</li>
+                                                </ul>
+                                             </div>
                                              <div className='dropDown-input dropDown-input-select dropDown-input-full'>
-                                                 <input value='碰撞对象'  className='dropDown-input-content' />
+                                                 <input defaultValue='碰撞对象'  className='dropDown-input-content' />
                                                  <div className='dropDown-icon-select dropDown-select-down'></div>
                                              </div>
                                             <div className='dropDown-input2 dropDown-input-full '>
                                                 <div className='dropDown-input-txt-half'>中心距离</div>
                                                 <div className='dropDown-input-half'>
-                                                    <input value='中心' className='dropDown-input-content' />
+                                                    <input defaultValue='中心'   className='dropDown-input-content' />
                                                 </div>
                                                 <div className='dropDown-icon-select dropDown-select-down'></div>
                                             </div>
                                             <div className='dropDown-input2 dropDown-input-full '>
                                                 <div className='dropDown-input-txt-half'>优化速度</div>
-                                                <div className='dropDown-input-half'>
-
+                                                <div className='dropDown-switch dropDown-switch-right '>
+                                                       <div className='on'>ON</div>
+                                                       <div className='off'>OFF</div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>

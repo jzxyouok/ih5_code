@@ -56,8 +56,6 @@
             width: 100%;
             padding-bottom: 1px;
             border: 1px solid #232323;
-            overflow: hidden;
-
             .E--title {
                 width: 100%;
                 height: 30px;
@@ -266,6 +264,30 @@
                                 margin-bottom: 2px;
                                 display: none;
                                 overflow: hidden;
+                                .dropDonw-select-option{
+                                    position: absolute;
+                                    width: 140px;
+                                    overflow: hidden;
+                                    background-color: #3c516f;
+                                    left: 0;
+                                    top: 23px;
+                                    z-index: 10;
+                                   ul{
+                                       width: 157px;
+                                       max-height: 215px;
+                                       color: white;
+                                       overflow-y: scroll;
+                                       li{
+                                           padding-left:10px ;
+                                           width: 100%;
+                                           float: left;
+                                           &:hover{
+                                               background: #19222e;
+                                               cursor: pointer;
+                                           }
+                                       }
+                                   }
+                                }
                                 .dropDown-icon-select{
                                     position: absolute;
                                     right: 8px;
@@ -282,6 +304,57 @@
                                     height: 18px;
                                     color:#b5b5b5;
                                     overflow: hidden;
+                                    .dropDown-switch{
+                                        border-radius: 18px;
+                                        width: 50px;
+                                        cursor: pointer;
+                                        background-color:#283549 ;
+                                        overflow: hidden;
+                                        position: relative;
+                                        &.dropDown-switch-left{
+                                            .on{
+                                                display: none;
+                                            }
+                                            .off{
+                                                display: block;
+                                            }
+                                        }
+                                        &.dropDown-switch-right{
+                                            .on{
+                                                display: block;
+                                            }
+                                            .off{
+                                                display: none;
+                                            }
+                                        }
+                                        .on{
+                                            float: left;
+                                            text-align: right;
+                                            width: 50%;
+                                        }
+                                        .off{
+                                            float: right;
+                                            text-align: left;
+                                            width: 50%;
+                                        }
+                                        &:after{
+                                            content: '';
+                                            width: 16px;
+                                            height: 16px;
+                                            border-radius: 50%;
+                                            background-color: #b5b5b5;
+                                            position: absolute;
+                                            transition: left 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86), width 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+                                        }
+                                        &.dropDown-switch-left:after{
+                                            left:2px;
+                                            top:1px;
+                                        }
+                                        &.dropDown-switch-right:after{
+                                            right:2px;
+                                            top:1px;
+                                        }
+                                    }
                                     .dropDown-input-txt-half{
                                         width: 50%;
                                         float: left;
