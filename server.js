@@ -29,9 +29,7 @@ app.get('/ih5core.js', function(req, res) {
   res.sendFile(path.join(__dirname, 'ih5core.js'));
 });
 
-app.get('/ih5core.js', function(req, res) {
-  res.sendFile(path.join(__dirname, 'ih5core.js'));
-});
+app.use(express.static(path.join(__dirname, 'lib', 'codeMirror')));
 
 route(app);
 
