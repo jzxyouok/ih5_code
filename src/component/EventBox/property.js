@@ -101,7 +101,7 @@ class Property extends React.Component {
         }
         propertyMap[className].map((item, index) => { 
             if (item.isFunc)
-                actionList.push({'name': item.name, 'property': item.property});
+                actionList.push({'name':item.name, 'showName':item.showName, 'property':item.property});
          });
         this.setState({
             actionList: actionList
@@ -170,6 +170,7 @@ class Property extends React.Component {
         this.setState({
             currentAction: {
                 'name': action.name,
+                'showName': action.showName,
                 'property': property,
             },
             actionDropdownVisible: false
@@ -221,7 +222,7 @@ class Property extends React.Component {
                 onChange:  this.onChangePropDom.bind(this, v1, i1)
             };
             return  <div className="pp--list f--hlc" key={i1}>
-                        <div className="pp--name">{ v1.name }</div>
+                        <div className="pp--name">{ v1.showName }</div>
                         { type(v1.type, v1.value, defaultProp) }
                     </div>
         };
@@ -270,7 +271,7 @@ class Property extends React.Component {
         );
 
         let actionMenuItem = (v2, i)=>{
-            return <MenuItem key={i} action={v2}>{v2.name}</MenuItem>
+            return <MenuItem key={i} action={v2}>{v2.showName}</MenuItem>
         };
 
         let actionMenu = (
@@ -327,9 +328,9 @@ class Property extends React.Component {
                                     <div className={$class("p--dropDown long", {'active':this.state.actionDropdownVisible})}>
                                         <div className="title f--hlc">
                                             <span className="pp--icon" />
-                                            { !this.state.currentAction.name
+                                            { !this.state.currentAction.showName
                                                 ? '目标动作'
-                                                : this.state.currentAction.name
+                                                : this.state.currentAction.showName
                                             }
                                             <span className="icon" />
                                         </div>

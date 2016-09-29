@@ -719,6 +719,7 @@ export default Reflux.createStore({
             },
             'action': {
                 'name': null,
+                'showName': null,
                 'property': []
             }
         };
@@ -848,6 +849,7 @@ export default Reflux.createStore({
             if(params.object){
                 specific.object = params.object;
                 specific.action.name = null;
+                specific.action.showName = null;
                 specific.action.property = [];
             } else if(params.action){
                 specific.action = params.action;
