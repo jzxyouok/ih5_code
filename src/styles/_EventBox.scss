@@ -205,7 +205,7 @@
                         }
 
                         .zhong {
-                            width: 482px;
+                            max-width: 482px;
                             border-right: 1px solid #232323;
 
                             .dropDown-layer {
@@ -498,6 +498,7 @@
                         .plus-btn {
                             cursor: pointer;
                             padding: 2px;
+                            width: 22px;
 
                             &:hover .btn span{ background: #b5b5b5;}
                             &:active .btn span{ background: #fff;}
