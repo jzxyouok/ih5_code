@@ -1,5 +1,6 @@
 import React from 'react';
 import { Row, Col } from 'antd';
+import $class from 'classnames';
 
 import NavBar from  './NavBar';
 import ComponentPanel from './ComponentPanel';
@@ -13,6 +14,7 @@ import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
 import FunctionView from './FunctionView/FunctionView';
 import VariableView from './VariableView/VariableView';
+import EditDb from './edit-db/index'
 
 import WidgetStore from '../stores/WidgetStore';
 import ToolBoxStore from '../stores/ToolBoxStore';
@@ -25,7 +27,8 @@ class App extends React.Component {
             expandedToolbox: false,
             activeEventTreeKey: null,
             activeFunc: null,
-            activeVar: null
+            activeVar: null,
+            editDb : false
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -33,6 +36,8 @@ class App extends React.Component {
         this.toolboxExpanded = this.toolboxExpanded.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onToolBoxStatusChange = this.onToolBoxStatusChange.bind(this);
+        this.editDbShow = this.editDbShow.bind(this);
+        this.editDbHide = this.editDbHide.bind(this);
     }
 
     componentDidMount() {
@@ -111,6 +116,18 @@ class App extends React.Component {
         })
     }
 
+    editDbShow(){
+        this.setState({
+            editDb : true
+        })
+    }
+
+    editDbHide(){
+        this.setState({
+            editDb : false
+        })
+    }
+
     render() {
         return (
             <div id="iH5-App">
@@ -126,7 +143,8 @@ class App extends React.Component {
                 <PropertyView expanded={this.state.expandedToolbox}
                               isHidden={this.state.activeEventTreeKey != null
                               || this.state.activeFunc != null
-                              || this.state.activeVar != null} />
+                              || this.state.activeVar != null}
+                              editDbShow={ this.editDbShow }  />
 
                 <EventBox expanded={this.state.expandedToolbox}
                           isHidden={!(this.state.activeEventTreeKey != null)} />
@@ -141,6 +159,10 @@ class App extends React.Component {
 
                 <TimelineView isHidden={this.state.activeFunc != null
                               || this.state.activeVar != null}/>
+
+                <div className={ $class({ "hidden" : !this.state.editDb })}>
+                    <EditDb editDbHide={ this.editDbHide }  />
+                </div>
 
                 {
                     //<Row gutter={5}>

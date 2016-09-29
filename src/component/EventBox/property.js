@@ -9,14 +9,26 @@ class Property extends React.Component {
         super(props);
         this.state = {
             expanded: true,
-            selectWidget: null,
-            activeKey: null,
-            widgetList: []
+            activeKey: this.props.activeKey,//当前激活的widgetkey
+            event: this.props.event,        //对应的事件
+            wid: this.props.activeKey,      //specfic所在的widgetkey
+            specific: this.props.specific,  //specfic
+            objectList: null    //目标对象的列表
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        this.onGetAllWidgets = this.onGetAllWidgets.bind(this);
         this.onDeleteSpecific = this.onDeleteSpecific.bind(this);
+        this.onAddSpecific = this.onAddSpecific.bind(this);
+        this.onChangeSpecific = this.onChangeSpecific.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            activeKey: nextProps.activeKey,
+            event: nextProps.event,
+            wid: nextProps.activeKey,
+            specific: nextProps.specific
+        });
     }
 
     componentDidMount() {
@@ -29,26 +41,23 @@ class Property extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.initTree !== undefined || widget.redrawTree){
-            this.onGetAllWidgets();
-        } else if (widget.allWidgets){
-            this.setState({
-                widgetList: widget.allWidgets
-            });
-        } else if(widget.activeEventTreeKey) {
-            this.setState({
-                activeKey: widget.activeEventTreeKey.key,
-                selectWidget: widget.widget
-            });
+
+    }
+
+    onAddSpecific() {
+        if(this.state.activeKey == this.state.wid) {
+            WidgetActions['addSpecific'](this.state.event);
         }
     }
 
-    onGetAllWidgets() {
-        WidgetActions['getAllWidgets']();
+    onDeleteSpecific() {
+        if(this.state.activeKey == this.state.wid) {
+            WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
+        }
     }
 
-    onDeleteSpecific(sid){
-        WidgetActions['deleteSpecific'](this.props.eid,sid);
+    onChangeSpecific() {
+
     }
 
     expandBtn(expanded, event) {
@@ -104,17 +113,17 @@ class Property extends React.Component {
         };
 
         return (
-            <div className="Property f--h" id={'spec-item-'+ this.props.specific.sid}>
+            <div className="Property f--h" id={'spec-item-'+ this.state.specific.sid}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
-                    <span className="p--close-line" onClick={this.onDeleteSpecific.bind(this, this.props.specific.sid)}/>
+                    <span className="p--close-line" onClick={this.onDeleteSpecific}/>
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
                                 <button className="p--icon"></button>
                                 <div className="p--dropDown short">
                                     <div className="title f--hlc">
-                                        { this.props.specific.object===null
+                                        { this.state.specific.object===null
                                             ?'目标对象'
                                             :'TODO:这里需要修改'
                                         }
@@ -124,7 +133,7 @@ class Property extends React.Component {
                                 </div>
                             </div>
 
-                            <div className="add-btn">
+                            <div className="add-btn" onClick={this.onAddSpecific}>
                                 <div className="btn-layer">
                                     <span className="heng"/>
                                     <span className="shu"/>
@@ -134,9 +143,9 @@ class Property extends React.Component {
 
                         <div className="p--right flex-1">
                             {
-                                !this.props.specific.children || this.props.specific.children.length === 0
+                                !this.state.specific.params || this.state.specific.params.length === 0
                                 ? null
-                                : this.props.specific.children.map((v,i)=>{
+                                : this.state.specific.params.map((v,i)=>{
                                     return  <div className="p--property" key={i}>
                                         <div className="p--dropDown long">
                                             <div className="title f--hlc">

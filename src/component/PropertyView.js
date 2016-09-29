@@ -243,9 +243,9 @@ class PropertyView extends React.Component {
                 case propertyType.Boolean2:
                     v =value;
                     if(v===null){
-                       delete  this.selectNode.props.visible;
+                       delete  this.selectNode.props.initVisible;
                     }else{
-                        this.selectNode.props.visible = v;
+                        this.selectNode.props.initVisible = v;
                     }
                     bTag=false;
                     break;
@@ -583,6 +583,17 @@ class PropertyView extends React.Component {
                 <h1 id='PropertyViewHeader'>属性</h1>
                 <div id='PropertyViewBody'>
                     {this.state.fields}
+
+                    {
+                        this.selectNode
+                        ? this.selectNode.className === "db"
+                            ? <div className="db-btn-group f--hcc">
+                                <button className="btn btn-clear">上传数据库</button>
+                                <button className="btn btn-clear" onClick={ this.props.editDbShow }>编辑数据库</button>
+                              </div>
+                            : null
+                        : null
+                    }
                 </div>
             </div>
         );

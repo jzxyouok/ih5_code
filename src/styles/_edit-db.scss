@@ -1,0 +1,188 @@
+.EditDb {
+    @include shadow(0,5px,20px,0.3);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 99;
+    width: 1000px;
+    height: 650px;
+    margin: -325px 0 0 -500px;
+
+    .ED-left {
+        width: 194px;
+        height: 100%;
+        overflow: hidden;
+        transition: 500ms;
+
+        &.active {
+            width: 38px;
+            transition: 500ms;
+        }
+    }
+}
+
+.Condition {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #232323;
+
+    .expand-layer {
+        width: 100%;
+        height: 100%;
+        .expand-btn {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            line-height: 32px;
+            font-size: 14px;
+            color: #858585;
+            cursor: pointer;
+            text-align: center;
+
+            &:hover {
+                color: #fff;
+                .icon {
+                    background-position: -840px -240px;
+                }
+            }
+
+            .icon {
+                width: 18px;
+                height: 18px;
+                margin: 7px auto 0 auto;
+                display: block;
+                background: url("img/button-icon.svg") no-repeat -840px -200px;
+            }
+        }
+    }
+
+    .Condition-layer {
+        width: 100%;
+        height: 100%;
+    }
+
+    .Condition-header {
+        width: 100%;
+        height: 41px;
+        font-size: 14px;
+        color: #858585;
+        border: 1px solid #353535;
+        padding-left: 12px;
+    }
+
+    ul {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+
+        li{
+            width: 100%;
+            height: 54px;
+            padding: 10px 12px 0 12px;
+
+            label {
+                width: 100%;
+                height: 23px;
+                line-height: 23px;
+                font-size: 12px;
+                color: #858585;
+            }
+
+            input {
+                @include border-radius(2px);
+                width: 100%;
+                height: 22px;
+                line-height: 22px;
+                background: #353535;
+                font-size: 12px;
+                color: #fff;
+                border: none;
+                outline: none;
+                shadow: none;
+                padding-left: 6px;
+            }
+            input::-webkit-input-placeholder{
+                color: #858585;
+            }
+
+            .input-layer {
+                position: relative;
+                width: 130px;
+
+                input{
+                    width: 119px;
+                }
+
+                .btn-group {
+                    width: 11px;
+                    height: 22px;
+                    background: #151515;
+                    padding: 1px;
+
+                    .btn {
+                        width: 100%;
+                        height: 10px;
+                        display: block;
+                        background: url("img/button-icon.svg") no-repeat ;
+                        cursor: pointer;
+
+                        &.top-btn {
+                            background-position: -880px -200px;
+                            &:hover { background-position: -880px -240px; }
+                            &:active { background-position: -880px -280px; }
+                        }
+
+                        &.bottom-btn {
+                            background-position: -920px -200px;
+                            &:hover { background-position: -920px -240px; }
+                            &:active { background-position: -920px -280px; }
+                        }
+                    }
+                }
+            }
+
+            .unit {
+                margin-left: 9px;
+                font-size: 12px;
+                color: #858585;
+                line-height: 22px;
+            }
+        }
+    }
+
+    .putAway-btn {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 40px;
+        font-size: 14px;
+        color: #858585;
+        padding-right: 11px;
+        cursor: pointer;
+
+        &:hover {
+            color: #fff;
+            .icon {
+                background-position: -840px -240px;
+            }
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            margin: 0 11px 0 0;
+            display: block;
+            background: url("img/button-icon.svg") no-repeat -840px -200px;
+        }
+    }
+}
+
+.DbTable {
+    width: 100%;
+    height: 100%;
+    background: #353535;
+}

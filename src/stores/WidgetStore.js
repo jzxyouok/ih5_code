@@ -129,7 +129,7 @@ function loadTree(parent, node) {
     current.imageList = node['links'] || [];
     current.rendererList = [renderer];
     bridge.setLinks(current.node, current.imageList);
-    bridge.createSelector(current.node);
+    // bridge.createSelector(current.node);
   }
 
   if (selectableClass.indexOf(current.className) >= 0) {
@@ -383,6 +383,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['getAllWidgets'], this.getAllWidgets);
+        this.listenTo(WidgetActions['reorderEventTreeList'], this.reorderEventTreeList);
+        //事件属性
+        this.listenTo(WidgetActions['addSpecific'], this.addSpecific);
+        this.listenTo(WidgetActions['deleteSpecific'], this.deleteSpecific);
+        this.listenTo(WidgetActions['changeSpecific'], this.changeSpecific);
         //函数
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
@@ -673,30 +678,35 @@ export default Reflux.createStore({
                 }
             };
             loopEventTree(this.currentWidget.rootWidget.children);
-
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
     emptyEventTree: function (className) {
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
+        let eid = _eventCount++;
+        let eventSpec = this.emptyEventSpecific();
         let eventTree = {
-            eid: _eventCount++,
-            condition: null,
-            children: null,
-            specificList: [{
-                sid: _specificCount++,
-                object: null,
-                children: [
-                    {
-                        action: null,
-                        property: []
-                    }
-                ]
-            }]
+            'eid': eid,
+            'condition': null,
+            'children': null,
+            'specificList': [eventSpec]
         };
         return eventTree;
     },
-    //获取所有的widget：
+    emptyEventSpecific: function() {
+        let eventSpecific = {
+            'sid': _specificCount++,
+            'object': null,
+            'params': [
+                {
+                    'action': null,
+                    'property': []
+                }
+            ]
+        };
+        return eventSpecific;
+    },
+    //获取所有的widget
     getAllWidgets: function(){
         if(this.currentWidget&&this.currentWidget.rootWidget){
             let root = this.currentWidget.rootWidget;
@@ -719,7 +729,6 @@ export default Reflux.createStore({
         }
 
     },
-    // getEventTreeFunc: function(cl)
     initEventTree: function(className, props) {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
@@ -748,25 +757,51 @@ export default Reflux.createStore({
         //激活事件树，无则为
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
-            //重新排序eventTreeList
-            this.reorderEventTreeList();
         } else {
             this.currentActiveEventTreeKey = null;
         }
-        this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey, widget:this.currentWidget}});
+        this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey}});
         // this.render();
     },
     addEvent: function () {
         if (this.currentWidget) {
             this.currentWidget.props['eventTree'].push(this.emptyEventTree());
         }
-        this.trigger({redrawEventTreeList: true});
+        this.trigger({eventTreeList: this.eventTreeList});
     },
     removeEvent: function () {
         //TODO: 单个事件的删除
     },
     enableEvent: function () {
         //TODO: 单个事件的可执行开关
+    },
+    addSpecific: function(event){
+        if(event&&event['specificList']){
+            event['specificList'].push(this.emptyEventSpecific());
+            this.trigger({redrawEventTree: true});
+        }
+    },
+    deleteSpecific: function(sid, event){
+        if(event&&event['specificList']) {
+            if(event.specificList.length==1) {
+                event.specificList = [this.emptyEventSpecific()];
+            } else {
+                let index = -1;
+                for(let j=0; j<event.specificList.length; j++){
+                    let specific = event.specificList[j];
+                    if(sid == specific.sid){
+                        index = j;
+                    }
+                }
+                if(index>-1){
+                    event.specificList.splice(index, 1);
+                }
+            }
+            this.trigger({redrawEventTree: true});
+        }
+    },
+    changeSpecific: function(sid, event, params){
+        //修改对应事件的specific
     },
     selectFunction: function (data) {
         if (data!=null) {
@@ -1082,7 +1117,7 @@ export default Reflux.createStore({
             data['stage']['props']['name'] = 'stage';
         }
         stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
-        bridge.createSelector(null);
+        // bridge.createSelector(null);
 
         if (!rootDiv) {
             rootDiv = document.getElementById('canvas-dom');
