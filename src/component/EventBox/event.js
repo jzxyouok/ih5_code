@@ -112,13 +112,14 @@ class Event extends React.Component {
                                         <div className='dropDown'>
                                              <div className='dropDown-input dropDown-input-select dropDown-input-full'>
                                                  <input value='碰撞对象'  className='dropDown-input-content' />
+                                                 <div className='dropDown-icon-select dropDown-select-down'></div>
                                              </div>
                                             <div className='dropDown-input2 dropDown-input-full '>
-                                                <div className='dropDown-icon-select dropDown-select-down'></div>
                                                 <div className='dropDown-input-txt-half'>中心距离</div>
                                                 <div className='dropDown-input-half'>
                                                     <input value='中心' className='dropDown-input-content' />
                                                 </div>
+                                                <div className='dropDown-icon-select dropDown-select-down'></div>
                                             </div>
                                             <div className='dropDown-input2 dropDown-input-full '>
                                                 <div className='dropDown-input-txt-half'>优化速度</div>

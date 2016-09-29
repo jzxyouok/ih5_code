@@ -266,7 +266,18 @@
                                 margin-bottom: 2px;
                                 display: none;
                                 overflow: hidden;
-
+                                .dropDown-icon-select{
+                                    position: absolute;
+                                    right: 8px;
+                                    top: 0;
+                                    width: 10px;
+                                    height: 22px;
+                                    background: url("img/button-icon.svg") no-repeat;
+                                    display: block;
+                                }
+                                .dropDown-select-down{
+                                    background-position: -1680px 0 ;
+                                }
                                 .dropDown-input2{
                                     height: 18px;
                                     color:#b5b5b5;
@@ -307,6 +318,7 @@
                                 .dropDown-input-full{
                                     width: 136px;
                                     margin: 2px auto;
+                                    position: relative;
                                 }
 
 
