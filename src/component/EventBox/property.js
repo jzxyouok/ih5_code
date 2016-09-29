@@ -57,7 +57,7 @@ class Property extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
-        this.onStatusChange(WidgetStore.getStore());
+        this.onStatusChange(WidgetStore.getAllWidgets());
     }
 
     componentWillUnmount() {
@@ -65,7 +65,14 @@ class Property extends React.Component {
     }
 
     onStatusChange(widget) {
-
+        if(!widget) {
+            return;
+        }
+        if(widget.allWidgets){
+            this.setState({
+                objectList: widget.allWidgets
+            });
+        }
     }
 
     onAddSpecific() {
@@ -168,11 +175,21 @@ class Property extends React.Component {
             }
         };
 
+
+        let objectMenuItem = (v1,i)=>{
+            return  <MenuItem key={i} object={v1}>{v1.props.name}</MenuItem>
+        };
+
         let objectMenu = (
             <Menu onClick={this.onSelectObject}>
-                <MenuItem key="1" object="11">第一个菜单项</MenuItem>
-                <MenuItem key="2" object="12">第二个菜单项</MenuItem>
-                <MenuItem key="3" object="13">第三个菜单项</MenuItem>
+                {
+                    !this.state.objectList||this.state.objectList.length==0
+                        ? null
+                        : this.state.objectList.map(objectMenuItem)
+                }
+                {/*<MenuItem key="1" object="11">第一个菜单项</MenuItem>*/}
+                {/*<MenuItem key="2" object="12">第二个菜单项</MenuItem>*/}
+                {/*<MenuItem key="3" object="13">第三个菜单项</MenuItem>*/}
             </Menu>
         );
 
@@ -203,7 +220,7 @@ class Property extends React.Component {
                                         <div className="title f--hlc">
                                             { this.state.currentObject===null
                                                 ?'目标对象'
-                                                :this.state.currentObject
+                                                :this.state.currentObject.props.name
                                             }
                                             <span className="icon" />
                                         </div>

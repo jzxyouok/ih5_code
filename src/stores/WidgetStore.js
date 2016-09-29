@@ -503,6 +503,7 @@ export default Reflux.createStore({
         if (className == 'body')
           cmd.updateProperties = {'originX':0.5, 'originY':0.5};
         this.trigger(cmd);
+        this.getAllWidgets();
         this.render();
       }
     },
@@ -521,6 +522,7 @@ export default Reflux.createStore({
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
+            this.getAllWidgets();
             this.currentWidget = null;
             if(shouldChooseParent) {
                 this.selectWidget(parentWidget);
@@ -740,7 +742,6 @@ export default Reflux.createStore({
             loopWidgetTree(this.currentWidget.rootWidget.children);
             this.trigger({allWidgets: widgetList});
         }
-
     },
     initEventTree: function(className, props) {
         if (this.currentWidget) {
@@ -1152,7 +1153,6 @@ export default Reflux.createStore({
 
         this.trigger({initTree: stageTree, classList: classList});
         this.selectWidget(stageTree[0].tree);
-        this.reorderEventTreeList();
     },
     addClass: function(name, bool) {
         if(bool){
