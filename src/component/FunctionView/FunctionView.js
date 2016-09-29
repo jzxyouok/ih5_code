@@ -75,7 +75,7 @@ class FunctionView extends React.Component {
 
     render() {
         return <div id="FuncView"
-                    className={$class('FuncView',{'keep':this.state.minSize}, {'hidden':this.props.isHidden})}
+                    className={$class({'keep':this.state.minSize}, {'hidden':this.props.isHidden})}
                     style={{ left : this.props.expanded? '65px':'37px'}}>
             <div id='FunctionViewHeader' className="f--hlc">
                 <span className="flex-1">函数</span>
