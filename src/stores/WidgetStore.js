@@ -715,12 +715,12 @@ export default Reflux.createStore({
             'object': {
                 'name': null,
                 'id': null,
+                'className':null
             },
             'action': {
                 'name': null,
                 'property': []
             }
-
         };
         return eventSpecific;
     },
@@ -828,8 +828,9 @@ export default Reflux.createStore({
             if(params.object){
                 specific.object.name = params.object.name;
                 specific.object.id = params.object.id;
-            } else if(params.action){
-                specific.action.name = params.action;
+                specific.object.className = params.object.className;
+            } else if(params.actionName){
+                specific.action.name = params.actionName;
             } else if (params.property){
                 specific.action.property = params;
             }
