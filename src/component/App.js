@@ -161,7 +161,7 @@ class App extends React.Component {
                               || this.state.activeVar != null}/>
 
                 {
-                    !this.state.editDb
+                    this.state.editDb
                         ? <EditDb editDbHide={ this.editDbHide }  />
                         : null
                 }
