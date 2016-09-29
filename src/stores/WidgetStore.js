@@ -503,6 +503,7 @@ export default Reflux.createStore({
         if (className == 'body')
           cmd.updateProperties = {'originX':0.5, 'originY':0.5};
         this.trigger(cmd);
+        this.getAllWidgets();
         this.render();
       }
     },
@@ -521,6 +522,7 @@ export default Reflux.createStore({
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
+            this.getAllWidgets();
             this.currentWidget = null;
             if(shouldChooseParent) {
                 this.selectWidget(parentWidget);
@@ -711,12 +713,11 @@ export default Reflux.createStore({
         let eventSpecific = {
             'sid': _specificCount++,
             'object': null,
-            'params': [
-                {
-                    'action': null,
-                    'property': []
-                }
-            ]
+            'action': {
+                'name': null,
+                'property': []
+            }
+
         };
         return eventSpecific;
     },
@@ -741,7 +742,6 @@ export default Reflux.createStore({
             loopWidgetTree(this.currentWidget.rootWidget.children);
             this.trigger({allWidgets: widgetList});
         }
-
     },
     initEventTree: function(className, props) {
         if (this.currentWidget) {
@@ -798,7 +798,7 @@ export default Reflux.createStore({
         }
     },
     deleteSpecific: function(sid, event){
-        if(event&&event['specificList']) {
+        if(event&&event.specificList) {
             if(event.specificList.length==1) {
                 event.specificList = [this.emptyEventSpecific()];
             } else {
@@ -816,8 +816,17 @@ export default Reflux.createStore({
             this.trigger({redrawEventTree: true});
         }
     },
-    changeSpecific: function(sid, event, params){
-        //修改对应事件的specific
+    changeSpecific: function(specific, params){
+        if(params){
+            if(params.object){
+                specific.object = params.object;
+            } else if(params.action){
+                specific.action.name = params.action;
+            } else if (params.property){
+                specific.action.property = params;
+            }
+            this.trigger({redrawEventTree: true});
+        }
     },
     selectFunction: function (data) {
         if (data!=null) {
@@ -1144,7 +1153,6 @@ export default Reflux.createStore({
 
         this.trigger({initTree: stageTree, classList: classList});
         this.selectWidget(stageTree[0].tree);
-        this.reorderEventTreeList();
     },
     addClass: function(name, bool) {
         if(bool){

@@ -3,23 +3,40 @@ import React from 'react';
 import $class from 'classnames'
 import WidgetStore from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
+import { Menu, Dropdown } from 'antd';
+
+const MenuItem = Menu.Item;
 
 class Property extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
             expanded: true,
+
             activeKey: this.props.activeKey,//当前激活的widgetkey
             event: this.props.event,        //对应的事件
             wid: this.props.wid,      //specfic所在的widgetkey
             specific: this.props.specific,  //specfic
-            objectList: null    //目标对象的列表
+            sid: this.props.specific.sid,
+
+            objectList: null,    //目标对象的列表
+            actionList: null,    //对象动作列表
+            objectDropdownVisible: false, //是否显示对象的下拉框
+            actionDropdownVisible: false, //是否显示动作的下拉框
+
+            currentObject: this.props.specific.object,
+            currentAction: this.props.specific.action.name,
+            currentProperty: this.props.specific.action.property,    //属性列表
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onDeleteSpecific = this.onDeleteSpecific.bind(this);
         this.onAddSpecific = this.onAddSpecific.bind(this);
-        this.onChangeSpecific = this.onChangeSpecific.bind(this);
+
+        this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
+        this.onSelectObject = this.onSelectObject.bind(this);
+        this.onActionVisibleChange = this.onActionVisibleChange.bind(this);
+        this.onSelectAction = this.onSelectAction.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -28,14 +45,19 @@ class Property extends React.Component {
                 activeKey: nextProps.activeKey,
                 event: nextProps.event,
                 wid: nextProps.wid,
-                specific: nextProps.specific
+                specific: nextProps.specific,
+                sid: nextProps.specific.sid,
+
+                currentObject: nextProps.specific.object,
+                currentAction: nextProps.specific.action.name,
+                currentProperty: nextProps.specific.action.property,
             });
         }
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
-        this.onStatusChange(WidgetStore.getStore());
+        this.onStatusChange(WidgetStore.getAllWidgets());
     }
 
     componentWillUnmount() {
@@ -43,7 +65,14 @@ class Property extends React.Component {
     }
 
     onStatusChange(widget) {
-
+        if(!widget) {
+            return;
+        }
+        if(widget.allWidgets){
+            this.setState({
+                objectList: widget.allWidgets
+            });
+        }
     }
 
     onAddSpecific() {
@@ -54,12 +83,8 @@ class Property extends React.Component {
 
     onDeleteSpecific() {
         if(this.state.activeKey == this.state.wid) {
-            WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
+            WidgetActions['deleteSpecific'](this.state.sid ,this.state.event);
         }
-    }
-
-    onChangeSpecific() {
-
     }
 
     expandBtn(expanded, event) {
@@ -67,6 +92,42 @@ class Property extends React.Component {
         this.setState({
             expanded: expanded
         });
+    }
+
+    onSelectObject(e){
+        e.domEvent.stopPropagation();
+        this.setState({
+            currentObject: e.item.props.object,
+            objectDropdownVisible: false
+        }, ()=> {
+            WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
+        });
+    }
+
+    onObjectVisibleChange(flag) {
+        if(this.state.activeKey == this.state.wid) {
+            this.setState({
+                objectDropdownVisible: flag
+            });
+        }
+    }
+
+    onSelectAction(e){
+        e.domEvent.stopPropagation();
+        this.setState({
+            currentAction: e.item.props.action,
+            actionDropdownVisible: false
+        }, ()=> {
+            WidgetActions['changeSpecific'](this.state.specific, {'action':this.state.currentAction});
+        });
+    }
+
+    onActionVisibleChange(flag) {
+        if(this.state.activeKey == this.state.wid) {
+            this.setState({
+                actionDropdownVisible: flag
+            });
+        }
     }
 
     render() {
@@ -114,8 +175,36 @@ class Property extends React.Component {
             }
         };
 
+
+        let objectMenuItem = (v1,i)=>{
+            return  <MenuItem key={i} object={v1}>{v1.props.name}</MenuItem>
+        };
+
+        let objectMenu = (
+            <Menu onClick={this.onSelectObject}>
+                {
+                    !this.state.objectList||this.state.objectList.length==0
+                        ? null
+                        : this.state.objectList.map(objectMenuItem)
+                }
+                {/*<MenuItem key="1" object="11">第一个菜单项</MenuItem>*/}
+                {/*<MenuItem key="2" object="12">第二个菜单项</MenuItem>*/}
+                {/*<MenuItem key="3" object="13">第三个菜单项</MenuItem>*/}
+            </Menu>
+        );
+
+        let actionMenu = (
+            <Menu onClick={this.onSelectAction}>
+                <MenuItem key="1" action="11">A第一个菜单项</MenuItem>
+                <MenuItem key="2" action="12">A第二个菜单项</MenuItem>
+                <MenuItem key="3" action="13">A第三个菜单项</MenuItem>
+            </Menu>
+        );
+
+        let propertyId = 'spec-item-'+ this.state.sid;
+
         return (
-            <div className="Property f--h" id={'spec-item-'+ this.state.specific.sid}>
+            <div className="Property f--h" id={propertyId}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
                     <span className="p--close-line" onClick={this.onDeleteSpecific}/>
@@ -123,16 +212,20 @@ class Property extends React.Component {
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
                                 <button className="p--icon"></button>
-                                <div className="p--dropDown short">
-                                    <div className="title f--hlc">
-                                        { this.state.specific.object===null
-                                            ?'目标对象'
-                                            :'TODO:这里需要修改'
-                                        }
-                                        <span className="icon" />
+                                <Dropdown overlay={objectMenu} trigger={['click']}
+                                          getPopupContainer={() => document.getElementById(propertyId)}
+                                          onVisibleChange={this.onObjectVisibleChange}
+                                          visible={this.state.objectDropdownVisible}>
+                                    <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
+                                        <div className="title f--hlc">
+                                            { this.state.currentObject===null
+                                                ?'目标对象'
+                                                :this.state.currentObject.props.name
+                                            }
+                                            <span className="icon" />
+                                        </div>
                                     </div>
-                                    <div className="dropDown"></div>
-                                </div>
+                                </Dropdown>
                             </div>
 
                             <div className="add-btn" onClick={this.onAddSpecific}>
@@ -144,50 +237,48 @@ class Property extends React.Component {
                         </div>
 
                         <div className="p--right flex-1">
-                            {
-                                !this.state.specific.params || this.state.specific.params.length === 0
-                                ? null
-                                : this.state.specific.params.map((v,i)=>{
-                                    return  <div className="p--property" key={i}>
-                                        <div className="p--dropDown long">
-                                            <div className="title f--hlc">
-                                                <span className="pp--icon" />
-                                                { v.action===null
-                                                    ? '目标动作'
-                                                    : 'TODO:这里需要修改'
-                                                }
-                                                <span className="icon" />
-                                            </div>
-                                            <div className="dropDown"></div>
+                            <div className="p--property">
+                                <Dropdown overlay={actionMenu} trigger={['click']}
+                                          getPopupContainer={() => document.getElementById(propertyId)}
+                                          onVisibleChange={this.onActionVisibleChange}
+                                          visible={this.state.actionDropdownVisible}>
+                                    <div className={$class("p--dropDown long", {'active':this.state.actionDropdownVisible})}>
+                                        <div className="title f--hlc">
+                                            <span className="pp--icon" />
+                                            { this.state.currentAction===null
+                                                ? '目标动作'
+                                                : this.state.currentAction
+                                            }
+                                            <span className="icon" />
                                         </div>
-                                        {/*是否展开属性内容*/}
-                                        <div className={$class("pp-content f--h", {'hidden': !this.state.expanded} )}>
+                                    </div>
+                                </Dropdown>
+                                {/*是否展开属性内容*/}
+                                <div className={$class("pp-content f--h", {'hidden': !this.state.expanded} )}>
+                                    {
+                                        !this.state.currentProperty || this.state.currentProperty.length === 0
+                                            ? null
+                                            : <div className="pp--list-layer flex-1">
                                             {
-                                                !v.property || v.property.length === 0
-                                                    ? null
-                                                    : <div className="pp--list-layer flex-1">
-                                                    {
-                                                        v.property.map(content)
-                                                    }
-                                                </div>
+                                                this.state.currentProperty.map(content)
                                             }
                                         </div>
+                                    }
+                                </div>
 
-                                        <button className={$class("up-btn", {'expanded-props': this.state.expanded})}
-                                                onClick={this.expandBtn.bind(this, false)}
-                                                disabled={v.property.length==0}>
-                                            <div className="btn-layer">
-                                            </div>
-                                        </button>
-                                        <button className={$class("down-btn", {'expanded-props': (this.state.expanded)})}
-                                                onClick={this.expandBtn.bind(this, true)}
-                                                disabled={v.property.length==0}>
-                                            <div className="btn-layer">
-                                            </div>
-                                        </button>
+                                <button className={$class("up-btn", {'expanded-props': this.state.expanded})}
+                                        onClick={this.expandBtn.bind(this, false)}
+                                        disabled={this.state.currentProperty.length==0}>
+                                    <div className="btn-layer">
                                     </div>
-                                })
-                            }
+                                </button>
+                                <button className={$class("down-btn", {'expanded-props': (this.state.expanded)})}
+                                        onClick={this.expandBtn.bind(this, true)}
+                                        disabled={this.state.currentProperty.length==0}>
+                                    <div className="btn-layer">
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

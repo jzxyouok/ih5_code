@@ -24,7 +24,7 @@ class EventBox extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
-        this.onStatusChange(WidgetStore.getStore());
+        this.onStatusChange(WidgetStore.reorderEventTreeList());
     }
 
     componentWillUnmount() {
@@ -32,6 +32,9 @@ class EventBox extends React.Component {
     }
 
     onStatusChange(widget) {
+        if(!widget) {
+            return;
+        }
         if(widget.eventTreeList){
             this.setState({
                 eventTreeList: widget.eventTreeList
