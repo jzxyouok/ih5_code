@@ -15,7 +15,7 @@ class Property extends React.Component {
 
             activeKey: this.props.activeKey,//当前激活的widgetkey
             event: this.props.event,        //对应的事件
-            wid: this.props.wid,      //specfic所在的widgetkey
+            wKey: this.props.wKey,      //specfic所在的widgetkey
             specific: this.props.specific,  //specfic
             sid: this.props.specific.sid,
 
@@ -44,7 +44,7 @@ class Property extends React.Component {
             this.setState({
                 activeKey: nextProps.activeKey,
                 event: nextProps.event,
-                wid: nextProps.wid,
+                wKey: nextProps.wKey,
                 specific: nextProps.specific,
                 sid: nextProps.specific.sid,
 
@@ -76,13 +76,13 @@ class Property extends React.Component {
     }
 
     onAddSpecific() {
-        if(this.state.activeKey == this.state.wid) {
+        if(this.state.activeKey == this.state.wKey) {
             WidgetActions['addSpecific'](this.state.event);
         }
     }
 
     onDeleteSpecific() {
-        if(this.state.activeKey == this.state.wid) {
+        if(this.state.activeKey == this.state.wKey) {
             WidgetActions['deleteSpecific'](this.state.sid ,this.state.event);
         }
     }
@@ -105,7 +105,7 @@ class Property extends React.Component {
     }
 
     onObjectVisibleChange(flag) {
-        if(this.state.activeKey == this.state.wid) {
+        if(this.state.activeKey == this.state.wKey) {
             this.setState({
                 objectDropdownVisible: flag
             });
@@ -123,7 +123,7 @@ class Property extends React.Component {
     }
 
     onActionVisibleChange(flag) {
-        if(this.state.activeKey == this.state.wid) {
+        if(this.state.activeKey == this.state.wKey) {
             this.setState({
                 actionDropdownVisible: flag
             });
