@@ -219,7 +219,7 @@
 
                         .left-layer ,
                         .right-layer {
-                            height: 26px;
+                            min-height: 26px;
                             background: #303f54;
                         }
 
@@ -256,6 +256,60 @@
                                     background: url("img/button-icon.svg") no-repeat -1680px 0;
                                     display: block;
                                 }
+                            }
+                            .dropDown{
+                                width: 140px;
+                                min-height: 40px;
+                                background: #1d2736;
+                                border-radius: 2px;
+                                margin-top: 1px;
+                                margin-bottom: 2px;
+                                display: none;
+                                overflow: hidden;
+
+                                .dropDown-input2{
+                                    height: 18px;
+                                    color:#b5b5b5;
+                                    overflow: hidden;
+                                    .dropDown-input-txt-half{
+                                        width: 50%;
+                                        float: left;
+                                        padding-left: 8px;
+                                    }
+                                    .dropDown-input-half{
+                                        width: 50%;
+                                        background: #283549;
+                                        height: 18px;
+                                        float: left;
+                                        .dropDown-input-content{
+                                            width: 80%;
+                                            border: 0;
+                                            background-color: #283549;
+                                            outline: none;
+                                            padding-left: 8px;
+                                        }
+                                    }
+                                }
+                                .dropDown-input{
+                                  background: #283549;
+                                    height: 18px;
+                                    color:#b5b5b5;
+                                    overflow: hidden;
+                                    .dropDown-input-content{
+                                        width: 100px;
+                                        margin-left: 8px;
+                                        border: 0;
+                                        background-color: #283549;
+                                        outline: none;
+                                    }
+                                }
+                                .dropDown-input-select{}
+                                .dropDown-input-full{
+                                    width: 136px;
+                                    margin: 2px auto;
+                                }
+
+
                             }
 
                             &.long {

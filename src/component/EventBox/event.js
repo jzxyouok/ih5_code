@@ -24,6 +24,10 @@ class Event extends React.Component {
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.setCondition = this.setCondition.bind(this);
+        this.showDropDown = this.showDropDown.bind(this);
+
+
+
     }
 
     componentDidMount() {
@@ -36,26 +40,23 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
-        console.log(widget);
+     //   console.log(widget);
         if(widget.activeEventTreeKey){
            this.curSelectNode =  widget.activeEventTreeKey.widget;
-           this.setCondition(this.curSelectNode.className);
+           this.setCondition(this.curSelectNode);
         }
     }
 
-    setCondition(className){
-        propertyMap[className].map((item,index)=>{
+     setCondition(curSelectNode){
+        propertyMap[curSelectNode.className].map((item,index)=>{
             if(item.isEvent ===true){
                 this.conditionList.push(item);
             }
         });
 
-        console.log(this.state.eventList);
 
-        this.state.eventList.map((item,index)=>{
-            item.condition='哈哈';
-        });
-        console.log(1);
+
+       // this.setState({eventList: this.conditionList});
 
     }
 
@@ -76,9 +77,13 @@ class Event extends React.Component {
         });
     }
 
+    showDropDown(e){
+      let oDropDown =e.target.nextSibling;
+        oDropDown.style.display='block';
+    }
+
     render() {
         let content = ((v,i)=>{
-            console.log(2);
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
                 <div className='item-main flex-1'>
@@ -89,7 +94,7 @@ class Event extends React.Component {
                                 <div className='left-layer  f--h'>
                                     <span className='title-icon' />
                                     <div className='dropDown-layer long'>
-                                        <div className='title f--hlc'>
+                                        <div className='title f--hlc' onClick={this.showDropDown}>
                                             {
                                                 v.condition==null
                                                     ? '触发条件'
@@ -97,7 +102,25 @@ class Event extends React.Component {
                                             }
                                             <span className='icon' />
                                         </div>
-                                        <div className='dropDown'></div>
+                                        <div className='dropDown'>
+                                             <div className='dropDown-input dropDown-input-select dropDown-input-full'>
+                                                 <input value='碰撞对象'  className='dropDown-input-content' />
+                                             </div>
+                                            <div className='dropDown-input2 dropDown-input-full '>
+                                                <div className='dropDown-icon-select dropDown-select-down'></div>
+                                                <div className='dropDown-input-txt-half'>中心距离</div>
+                                                <div className='dropDown-input-half'>
+                                                    <input value='中心' className='dropDown-input-content' />
+                                                </div>
+                                            </div>
+                                            <div className='dropDown-input2 dropDown-input-full '>
+                                                <div className='dropDown-input-txt-half'>优化速度</div>
+                                                <div className='dropDown-input-half'>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
