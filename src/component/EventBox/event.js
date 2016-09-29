@@ -13,19 +13,30 @@ class Event extends React.Component {
         super(props);
         this.state = {
             expanded: true,
+            activeEventTreeKey:null
         };
 
-        this.curSelectNode =null;
-        this.conditionList=[];
+        this.eventTreeList=[];
+        this.curClassName =null
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        this.setCondition = this.setCondition.bind(this);
+
+
         this.showDropDown = this.showDropDown.bind(this);
+        this.showDropDownContent =this.showDropDownContent.bind(this);
 
 
+        this.getSelectFull =this.getSelectFull.bind(this);
+        this.getSelectHalf =this.getSelectHalf.bind(this);
+        this.getSwitchHalf =this.getSwitchHalf.bind(this);
+
+
+    }
+
+    componentWillReceiveProps(nextProps) {
 
     }
 
@@ -46,26 +57,25 @@ class Event extends React.Component {
                 this.forceUpdate();
             }
         }
-        console.log(widget);
-        if(widget.activeEventTreeKey){
-           this.curSelectNode =  widget.activeEventTreeKey.widget;
-            if(this.curSelectNode){
-                this.setCondition(this.curSelectNode.className);
-            }
 
+        //获取最新的eventTreeList
+        if(widget.eventTreeList){
+            //this.setState({eventTreeList:widget.eventTreeList});
+            this.eventTreeList =widget.eventTreeList;
         }
+
+        if(widget.activeEventTreeKey){
+           this.setState({activeEventTreeKey:widget.activeEventTreeKey});
+            this.eventTreeList.map((v,i)=>{
+                if(v.key == widget.activeEventTreeKey.key){
+                    this.curClassName =v.className;
+                }
+            });
+        }
+
     }
 
-     setCondition(curSelectNode){
-        propertyMap[curSelectNode.className].map((item,index)=>{
-            if(item.isEvent ===true){
-                this.conditionList.push(item);
-            }
-        });
 
-       // this.setState({eventList: this.conditionList});
-
-    }
 
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);
@@ -74,7 +84,7 @@ class Event extends React.Component {
     addEventBtn(e) {
         e.stopPropagation();
         WidgetActions['addEvent']();
-        // this.forceUpdate();
+
     }
 
     expandedBtn(expanded, event){
@@ -85,13 +95,54 @@ class Event extends React.Component {
     }
 
     showDropDown(e){
-      let oDropDown =e.target.nextSibling;
+        let oDropDown =e.target.nextSibling;
         oDropDown.style.display='block';
     }
 
-    changeValue(value){
 
+    showDropDownContent(){
+         switch (this.curClassName){
+             case 'rect':
+                 let aOption=[];
+                 propertyMap['rect'].map((item,index)=>{
+                     if(item.isEvent ===true){
+                         aOption.push(<li>item.name</li>);
+                     }
+                 });
+             //  return   <div className='dropDonw-select-option'><ul>aOption</ul></div>;
+             break;
+             default :;
+         }
     }
+
+
+    getSelectFull(){
+      return   <div className='dropDown-input dropDown-input-select dropDown-input-full'>
+            <input defaultValue='碰撞对象'  className='dropDown-input-content' />
+            <div className='dropDown-icon-select dropDown-select-down'></div>
+        </div>
+    }
+
+    getSelectHalf(){
+      return    <div className='dropDown-input2 dropDown-input-full '>
+            <div className='dropDown-input-txt-half'>中心距离</div>
+            <div className='dropDown-input-half'>
+                <input defaultValue='中心'   className='dropDown-input-content' />
+            </div>
+            <div className='dropDown-icon-select dropDown-select-down'></div>
+        </div>
+    }
+
+    getSwitchHalf(){
+        return   <div className='dropDown-input2 dropDown-input-full '>
+            <div className='dropDown-input-txt-half'>优化速度</div>
+            <div className='dropDown-switch dropDown-switch-right '>
+                <div className='on'>ON</div>
+                <div className='off'>OFF</div>
+            </div>
+        </div>
+    }
+
 
     render() {
         let content = ((v,i)=>{
@@ -105,46 +156,15 @@ class Event extends React.Component {
                                 <div className='left-layer  f--h'>
                                     <span className='title-icon' />
                                     <div className='dropDown-layer long'>
-                                        <div className='title f--hlc' onClick={this.showDropDown}>
-                                            {
-                                                v.condition==null
-                                                    ? '触发条件'
-                                                    :v.condition
-                                            }
-                                            <span className='icon' />
-                                        </div>
+                                        <div className='title f--hlc' onClick={this.showDropDown}>触发条件<span className='icon' /></div>
                                         <div className='dropDown'>
-                                             <div className='dropDonw-select-option'>
-                                                <ul>
-                                                  <li>点击</li>
-                                                  <li>点击</li>
-                                                  <li>点击</li>
-                                                  <li>点击</li>
-                                                  <li>点击</li>
-                                                  <li>点击</li>
-                                                  <li>点击</li>
-                                                  <li>点击</li>
-                                                   <li>点击</li>
-                                                </ul>
-                                             </div>
-                                             <div className='dropDown-input dropDown-input-select dropDown-input-full'>
-                                                 <input defaultValue='碰撞对象'  className='dropDown-input-content' />
-                                                 <div className='dropDown-icon-select dropDown-select-down'></div>
-                                             </div>
-                                            <div className='dropDown-input2 dropDown-input-full '>
-                                                <div className='dropDown-input-txt-half'>中心距离</div>
-                                                <div className='dropDown-input-half'>
-                                                    <input defaultValue='中心'   className='dropDown-input-content' />
-                                                </div>
-                                                <div className='dropDown-icon-select dropDown-select-down'></div>
-                                            </div>
-                                            <div className='dropDown-input2 dropDown-input-full '>
-                                                <div className='dropDown-input-txt-half'>优化速度</div>
-                                                <div className='dropDown-switch dropDown-switch-right '>
-                                                       <div className='on'>ON</div>
-                                                       <div className='off'>OFF</div>
-                                                </div>
-                                            </div>
+                                            <div className='dropDonw-select-option'><ul>
+                                            <li>123</li>
+                                            <li>123</li>
+                                            <li>123</li>
+                                            <li>123</li>
+                                            <li>123</li>
+                                            </ul></div>
                                         </div>
                                     </div>
                                 </div>
