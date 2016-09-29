@@ -580,7 +580,7 @@ class PropertyView extends React.Component {
     }
 
     render() {
-        console.log(this.selectNode.node);
+        console.log(this.selectNode);
         return (
             <div id='PropertyView' style={{ left : this.props.expanded? '65px':'37px'}} className={cls({'hidden':this.props.isHidden})}>
                 <h1 id='PropertyViewHeader'>属性</h1>
@@ -592,7 +592,7 @@ class PropertyView extends React.Component {
                         ? this.selectNode.className === "db"
                             ? <div className="db-btn-group f--hcc">
                                 <button className="btn btn-clear">上传数据库</button>
-                                <button className="btn btn-clear" onClick={ this.props.editDbShow() }>编辑数据库</button>
+                                <button className="btn btn-clear" onClick={ this.props.editDbShow }>编辑数据库</button>
                               </div>
                             : null
                         : null
