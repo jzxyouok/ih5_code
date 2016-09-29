@@ -1,10 +1,12 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
-import WidgetStore from '../../stores/WidgetStore'
+import WidgetStore, {varType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
-import { propertyMap } from '../PropertyMap'
+import { Input, InputNumber, Select} from 'antd';
+// import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
+import { propertyMap, propertyType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
 
@@ -13,6 +15,7 @@ class Property extends React.Component {
         super(props);
         this.state = {
             expanded: true,
+
             activeKey: this.props.activeKey,//当前激活的widgetkey
             event: this.props.event,        //对应的事件
             wKey: this.props.wKey,      //specfic所在的widgetkey
@@ -21,6 +24,7 @@ class Property extends React.Component {
 
             objectList: null,    //目标对象的列表
             actionList: null,    //对象动作列表
+            funcList: null,      //当前目标对象的函数列表
             objectDropdownVisible: false, //是否显示对象的下拉框
             actionDropdownVisible: false, //是否显示动作的下拉框
 
@@ -29,14 +33,15 @@ class Property extends React.Component {
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        this.onDeleteSpecific = this.onDeleteSpecific.bind(this);
-        this.onAddSpecific = this.onAddSpecific.bind(this);
+        this.onSpecificDelete = this.onSpecificDelete.bind(this);
+        this.onSpecificAdd = this.onSpecificAdd.bind(this);
 
         this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
-        this.onSelectObject = this.onSelectObject.bind(this);
+        this.onObjectSelect = this.onObjectSelect.bind(this);
         this.onActionVisibleChange = this.onActionVisibleChange.bind(this);
-        this.onSelectAction = this.onSelectAction.bind(this);
+        this.onActionSelect = this.onActionSelect.bind(this);
         this.onGetActionList = this.onGetActionList.bind(this);
+        this.onChangePropDom = this.onChangePropDom.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -53,7 +58,7 @@ class Property extends React.Component {
             }, ()=>{
                 //获取动作
                 if(this.state.currentObject.className){
-                    this.onGetActionList(this.state.currentObject.className);
+                    this.onGetActionList(this.state.currentObject.className, this.state.currentObject.type);
                 }
             });
         }
@@ -79,48 +84,71 @@ class Property extends React.Component {
         }
     }
 
-    onGetActionList(className){
+    onGetActionList(classname, type){
         let actionList = [];
+        let className = classname;
+        if(className === 'var'){
+            switch (type) {
+                case varType.number:
+                    className = 'intVar';
+                    break;
+                case varType.string:
+                    className = 'strVar';
+                    break;
+                default:
+                    break;
+            }
+        }
         propertyMap[className].map((item, index) => { 
             if (item.isFunc)
-                actionList.push({'name': item.name, 'info': item.info});
+                actionList.push({'name':item.name, 'showName':item.showName, 'property':item.property});
          });
         this.setState({
             actionList: actionList
         })
     }
 
-    onAddSpecific() {
-        if(this.state.activeKey == this.state.wKey) {
-            WidgetActions['addSpecific'](this.state.event);
+    onSpecificAdd() {
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
         }
+        WidgetActions['addSpecific'](this.state.event);
     }
 
-    onDeleteSpecific() {
-        if(this.state.activeKey == this.state.wKey) {
-            WidgetActions['deleteSpecific'](this.state.sid ,this.state.event);
+    onSpecificDelete() {
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
         }
+        WidgetActions['deleteSpecific'](this.state.sid ,this.state.event);
+
     }
 
     expandBtn(expanded, event) {
-        event.stopPropagation();
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
         this.setState({
             expanded: expanded
         });
     }
 
-    onSelectObject(e){
+    onObjectSelect(e){
         e.domEvent.stopPropagation();
+        let object = e.item.props.object;
+        let currentObj =  {
+            name:object.props.name,
+            id:object.props.id,
+            className: object.className
+        };
+        if(object.className === 'var'){
+            currentObj.type = object.type;
+        }
         this.setState({
-            currentObject: {
-                name:e.item.props.object.props.name,
-                id:e.item.props.object.props.id,
-                className: e.item.props.object.className
-            },
+            currentObject: currentObj,
+            funcList: object.funcList,
             objectDropdownVisible: false
         }, ()=> {
             WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
-            //获取动作
         });
     }
 
@@ -132,13 +160,22 @@ class Property extends React.Component {
         }
     }
 
-    onSelectAction(e){
+    onActionSelect(e){
         e.domEvent.stopPropagation();
+        let action = e.item.props.action;
+        let property =[];
+        if(action.property){
+            property = action.property;
+        }
         this.setState({
-            currentAction: e.item.props.action,
+            currentAction: {
+                'name': action.name,
+                'showName': action.showName,
+                'property': property,
+            },
             actionDropdownVisible: false
         }, ()=> {
-            WidgetActions['changeSpecific'](this.state.specific, {'actionName':this.state.currentAction.name});
+            WidgetActions['changeSpecific'](this.state.specific, {'action':this.state.currentAction});
         });
     }
 
@@ -150,48 +187,71 @@ class Property extends React.Component {
         }
     }
 
+    onChangePropDom(prop, index, e){
+        let value = null;
+        switch (prop) {
+            case prop.String:
+                value = e.target.value;
+                break;
+            case prop.Integer:
+            case prop.Float:
+                value = e;
+                break;
+            case prop:Function:
+                break;
+            default:
+                break;
+        };
+        prop.value = value;
+        let property = this.state.currentAction.property;
+        property[index] = prop;
+        this.setState({
+            currentAction: {
+                'name': this.state.currentAction.name,
+                'property': property,
+            },
+        });
+        WidgetActions['changeSpecific'](this.state.specific, {'property':this.state.currentAction.property});
+    }
+
     render() {
         let content = (v1,i1)=>{
+            //设置通用默认参数和事件
+            let defaultProp = {
+                size: 'small',
+                onChange:  this.onChangePropDom.bind(this, v1, i1)
+            };
             return  <div className="pp--list f--hlc" key={i1}>
-                        <div className="pp--name">{ v1.name }</div>
-                        { type(v1.types, v1.value) }
+                        <div className="pp--name">{ v1.showName }</div>
+                        { type(v1.type, v1.value, defaultProp) }
                     </div>
         };
 
-        let type = (num, data)=>{
-            if(num == 0){
-                return  <input className="flex-1" type="text" placeholder={data}/>
-            }
-            else if(num == 1){
-                let btnp = null;
-                let bg =  "none";
-                if(data == -1){
-                    btnp = 2;
-                    bg = "#152322"
-                }
-                else if (data ==  0){
-                    btnp = 33;
-                    bg =  "none";
-                }
-                else {
-                    btnp = 67;
-                    bg = "#396764";
-                }
-                return  <div className="on-off-btn f--h">
-                            <span className="btn-name left flex-1">ON</span>
-                            <div className="btn-icon flex-1"><span style={{ background: bg}} /></div>
-                            <span className="btn-name right flex-1">OFF</span>
-                            <span className="btn" style={{ marginLeft : btnp + "px" }}/>
-                        </div>
-            }
-            else {
-                return  <div className="p--dropDown middle flex-1">
-                            <div className="title f--hlc">
-                                { data }
-                                <span className="icon" />
-                            </div>
-                            <div className="dropDown"></div>
-                        </div>
+        let func = (v1, i2)=>{
+            return <Option value={v1}>{v1.props.name}</Option>;
+        };
+
+        let type = (type, value, defaultProp)=>{
+            switch (type) {
+                case propertyType.String:
+                    return <Input {...defaultProp}/>;
+                    {/*return <input {...defaultProp} className="flex-1" type="text" placeholder={value}/>;*/}
+                case propertyType.Integer:
+                    return <InputNumber {...defaultProp} />;
+                    // return <input className="flex-1" type="text" placeholder={value}/>;
+                case propertyType.Float:
+                    return <InputNumber step={0.1} {...defaultProp} />;
+                    {/*return <input className="flex-1" type="text" placeholder={value}/>;*/}
+                case propertyType.Function:
+                    return <Select defaultValue="目标函数"  {...defaultProp}>
+                        {
+                            !this.state.funcList||this.state.funcList.length==0
+                                ? null
+                                : this.state.funcList.map(func)
+                        }
+                    </Select>;
+                default:
+                    return <div>未定义类型</div>;
             }
         };
 
@@ -201,7 +261,7 @@ class Property extends React.Component {
         };
 
         let objectMenu = (
-            <Menu onClick={this.onSelectObject}>
+            <Menu onClick={this.onObjectSelect}>
                 {
                     !this.state.objectList||this.state.objectList.length==0
                         ? null
@@ -211,11 +271,11 @@ class Property extends React.Component {
         );
 
         let actionMenuItem = (v2, i)=>{
-            return <MenuItem key={i} action={v2}>{v2.name}</MenuItem>
+            return <MenuItem key={i} action={v2}>{v2.showName}</MenuItem>
         };
 
         let actionMenu = (
-            <Menu onClick={this.onSelectAction}>
+            <Menu onClick={this.onActionSelect}>
                 {
                     !this.state.actionList||this.state.actionList.length==0
                         ? null
@@ -230,7 +290,7 @@ class Property extends React.Component {
             <div className="Property f--h" id={propertyId}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
-                    <span className="p--close-line" onClick={this.onDeleteSpecific}/>
+                    <span className="p--close-line" onClick={this.onSpecificDelete}/>
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
@@ -251,7 +311,7 @@ class Property extends React.Component {
                                 </Dropdown>
                             </div>
 
-                            <div className="add-btn" onClick={this.onAddSpecific}>
+                            <div className="add-btn" onClick={this.onSpecificAdd}>
                                 <div className="btn-layer">
                                     <span className="heng"/>
                                     <span className="shu"/>
@@ -268,9 +328,9 @@ class Property extends React.Component {
                                     <div className={$class("p--dropDown long", {'active':this.state.actionDropdownVisible})}>
                                         <div className="title f--hlc">
                                             <span className="pp--icon" />
-                                            { !this.state.currentAction.name
+                                            { !this.state.currentAction.showName
                                                 ? '目标动作'
-                                                : this.state.currentAction.name
+                                                : this.state.currentAction.showName
                                             }
                                             <span className="icon" />
                                         </div>

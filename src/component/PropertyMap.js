@@ -1,5 +1,5 @@
 import bridge from 'bridge';
-import {isCustomizeWidget} from '../stores/WidgetStore';
+import {isCustomizeWidget, varType} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
@@ -12,7 +12,8 @@ const propertyType = {
     Select:7,
     Float:8,
     Color2:9,
-    Boolean2:10
+    Boolean2:10,
+    Function:11
 };
 
 var level;
@@ -41,7 +42,7 @@ const propertyFlags = {};
 
 propertyMap['widget'] = [
     { name: 'id',showName:'ID', type: propertyType.String, default: '', isProperty: true },
-    { name: 'getRoot', isFunc: true },
+    { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 
 
@@ -53,21 +54,33 @@ propertyMap['root'] = [
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
     { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
     { name: 'color',showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools', isProperty: true },
-    { name: 'init', isEvent: true },
-    { name: 'click', isEvent: true, info:['globalX','globalY']},
-    { name: 'touchDown', isEvent: true, info:['globalX','globalY']},
-    { name: 'touchUp', isEvent: true, info:['globalX','globalY']},
-    { name: 'swipeLeft', isEvent: true },
-    { name: 'swipeRight', isEvent: true },
-    { name: 'swipeUp', isEvent: true },
-    { name: 'swipeDown', isEvent: true },
-    { name: 'create', info:'(class,id,props,bottom)', isFunc: true },
-    { name: 'gotoPage', info:'(page)', isFunc: true },
-    { name: 'gotoPageNum', info:'(num)', isFunc: true },
-    { name: 'nextPage', isFunc: true },
-    { name: 'prevPage', isFunc: true },
-    { name: 'getTouchX', isFunc: true },
-    { name: 'getTouchY', isFunc: true }
+    { name: 'init', showName:'初始化', isEvent: true },
+    { name: 'click', showName:'点击', isEvent: true, info:['globalX','globalY']},
+    { name: 'touchDown', showName:'手指按下', isEvent: true, info:['globalX','globalY']},
+    { name: 'touchUp', showName:'手指松开', isEvent: true, info:['globalX','globalY']},
+    { name: 'swipeLeft', showName:'向左滑动', isEvent: true },
+    { name: 'swipeRight', showName:'向右滑动', isEvent: true },
+    { name: 'swipeUp',  showName:'向上滑动', isEvent: true },
+    { name: 'swipeDown', showName:'向下滑动', isEvent: true },
+    { name: 'create', showName:'创建对象', info:'(class,id,props,bottom)',
+        property:[
+            {'name':'class', showName:'类别', 'value':null, 'type':propertyType.String},
+            {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
+            {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
+            {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'gotoPage', showName:'跳转到页面', info:'(page)',
+        property:[
+            {'name':'page', showName:'页面', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'gotoPageNum', showName:'跳转到页数', info:'(num)',
+        property:[
+            {'name':'num', showName:'页数', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'nextPage', showName:'下一页', isFunc: true },
+    { name: 'prevPage', showName:'上一页', isFunc: true },
+    { name: 'getTouchX', showName:'获取点击的X坐标', isFunc: true },
+    { name: 'getTouchY', showName:'获取点击的Y坐标', isFunc: true }
 ];
 
 
@@ -90,15 +103,15 @@ propertyMap['box'] = [
     { name: 'rotation',showName:'rotationImgTag', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
-    { name: 'click', isEvent: true, info:'{globalX, globalY}'},
-    { name: 'touchDown', isEvent: true, info:'{globalX, globalY}'},
-    { name: 'touchUp', isEvent: true, info:'{globalX, globalY}'},
-    { name: 'swipeLeft', isEvent: true },
-    { name: 'swipeRight', isEvent: true },
-    { name: 'swipeUp', isEvent: true },
-    { name: 'swipeDown', isEvent: true },
-    { name: 'show', isEvent: true },
-    { name: 'hide', isEvent: true },
+    { name: 'click', showName:'点击', isEvent: true, info:'{globalX, globalY}'},
+    { name: 'touchDown', showName:'手指按下', isEvent: true, info:['globalX','globalY']},
+    { name: 'touchUp', showName:'手指松开', isEvent: true, info:['globalX','globalY']},
+    { name: 'swipeLeft', showName:'向左滑动', isEvent: true },
+    { name: 'swipeRight', showName:'向右滑动', isEvent: true },
+    { name: 'swipeUp',  showName:'向上滑动', isEvent: true },
+    { name: 'swipeDown', showName:'向下滑动', isEvent: true },
+    { name: 'show', showName:'显示', isEvent: true },
+    { name: 'hide', showName:'隐藏', isEvent: true },
 ];
 
 propertyMap['sprite'] = [
@@ -113,14 +126,20 @@ propertyMap['textBox']=[
 
 
 propertyMap['text'] = [
-    { name: 'changeValue', isFunc: true },
+    { name: 'changeValue', showName:'赋值', info:'(value)',
+        property:[
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
+        ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
 ];
 
 propertyMap['counter'] = [
-    { name: 'changeValue', isFunc: true },
+    { name: 'changeValue', showName:'赋值', info:'(value)',
+        property:[
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
+        ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
@@ -136,8 +155,8 @@ propertyMap['audio'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
     { name: 'url',showName:'资源位置', type: propertyType.String, default: '', isProperty: true },
-    { name: 'play', isFunc: true },
-    { name: 'pause', isFunc: true }
+    { name: 'play', showName:'播放', isFunc: true },
+    { name: 'pause', showName:'暂停', isFunc: true }
 ];
 
 propertyMap['image'] = [
@@ -221,7 +240,13 @@ propertyMap['path'] = [
 propertyMap['container'] = [
     ...propertyMap['box'],
     { addProvides: widgetFlags.Container},
-    { name: 'create', info:'(class,id,props,bottom)', isFunc: true }
+    { name: 'create', info:'(class,id,props,bottom)',
+        property:[
+            {'name':'class', showName:'类别', 'value':null, 'type':propertyType.String},
+            {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
+            {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
+            {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true }
 ];
 
 propertyMap['canvas'] = [
@@ -242,7 +267,7 @@ propertyMap['class'] = [
     ...propertyMap['container'],
     { name: 'width', type: propertyType.Integer, default: 0, readOnly: true, group:'position',  isProperty: true },
     { name: 'height', type: propertyType.Integer, default: 0, readOnly: true, group:'position', isProperty: true },
-    { name: 'init', isEvent: true }
+    { name: 'init', showName:'初始化', isEvent: true }
 ];
 
 propertyMap['timer'] = [
@@ -250,11 +275,14 @@ propertyMap['timer'] = [
     { addProvides: widgetFlags.Timer},
     { name: 'totalTime',showName:'总时长', type: propertyType.Number,group:'tools', default: 10, isProperty: true},
     { name: 'loop',showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
-    { name: 'play', isFunc: true },
-    { name: 'pause', isFunc: true },
-    { name: 'seek', info: '(time)', isFunc: true },
-    { name: 'loop', isEvent: true },
-    { name: 'stop', isEvent: true }
+    { name: 'play', showName:'播放', isFunc: true },
+    { name: 'pause', showName:'暂停', isFunc: true },
+    { name: 'seek', showName:'跳至', info: '(time)',
+        property:[
+            {'name':'time', showName:'跳至', 'value':null, 'type':propertyType.Float},
+        ], isFunc: true },
+    { name: 'loop', showName:'重复播放', isEvent: true },
+    { name: 'stop', showName:'停止', isEvent: true }
 ];
 
 propertyMap['world'] = [
@@ -268,9 +296,9 @@ propertyMap['world'] = [
     { name: 'westWall', type: propertyType.Boolean, default: true, isProperty: true },
     { name: 'eastWall', type: propertyType.Boolean, default: true, isProperty: true },
     { name: 'border', type: propertyType.Integer, default: 100, isProperty: true },
-    { name: 'play', isFunc: true },
-    { name: 'pause', isFunc: true },
-    { name: 'tick', isEvent: true }
+    { name: 'play', showName:'播放', isFunc: true },
+    { name: 'pause', showName:'暂停', isFunc: true },
+    { name: 'tick',  showName:'每一帧', isEvent: true }
 ];
 
 propertyMap['body'] = [
@@ -291,8 +319,8 @@ propertyMap['body'] = [
     { name: 'collisionResponse', type: propertyType.Boolean, default: true, isProperty: true },
     { name: 'detectionDepth', type: propertyType.Integer, default: 2, isProperty: true },
     //{ name: 'impact', info:'{target}', isEvent: true },
-    { name: 'beginContact', info:'{target}', isEvent: true },
-    { name: 'endContact', info:'{target}', isEvent: true }
+    { name: 'beginContact', showName:'开始碰撞', info:'{target}', isEvent: true },
+    { name: 'endContact', showName:'结束碰撞', info:'{target}', isEvent: true }
 ];
 
 propertyMap['easing'] = [
@@ -302,9 +330,9 @@ propertyMap['easing'] = [
     { name: 'radius', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'angle', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'duration', type: propertyType.Number, default: 2, isProperty: true },
-    { name: 'complete', isEvent: true },
-    { name: 'play', isFunc: true },
-    { name: 'pause', isFunc: true }
+    { name: 'complete', showName:'播放完成', isEvent: true },
+    { name: 'play', showName:'播放', isFunc: true },
+    { name: 'pause', showName:'暂停', isFunc: true }
 ];
 
 propertyMap['effect'] = [
@@ -313,8 +341,8 @@ propertyMap['effect'] = [
     { name: 'type', type: propertyType.String, default: '', isProperty: true },
     { name: 'duration', type: propertyType.Number, default: 1, isProperty: true },
     { name: 'count', type: propertyType.Integer, default: 1, isProperty: true },
-    { name: 'play', isFunc: true },
-    { name: 'pause', isFunc: true }
+    { name: 'play', showName:'播放', isFunc: true },
+    { name: 'pause', showName:'暂停', isFunc: true }
 ];
 
 propertyMap['track'] = [
@@ -328,16 +356,42 @@ propertyMap['track'] = [
 propertyMap['db'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'find', isFunc: true, info:'(option, callback(err, result))' },
-    { name: 'insert', isFunc: true, info:'(data, callback(err, result))' },
-    { name: 'update', isFunc: true, info:'(data, callback(err, result))' }
+    { name: 'find', showName:'查找', isFunc: true, info:'(option, callback(err, result))',
+        property:[
+            {'name':'option', showName:'选项', 'value':null, 'type':propertyType.String},
+            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+        ]},
+    { name: 'insert', showName:'插入', isFunc: true, info:'(data, callback(err, result))',
+        property:[
+            {'name':'data', showName:'数据', 'value':null, 'type':propertyType.String},
+            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+        ]},
+    { name: 'update', showName:'更新', isFunc: true, info:'(data, callback(err, result))',
+        property:[
+            {'name':'data', showName:'数据', 'value':null, 'type':propertyType.String},
+            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+        ]}
 ];
 
 propertyMap['sock'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
     { name: 'listened', type: propertyType.Boolean, default: false, isProperty: true },
-    { name: 'message', isEvent: true, info:'data'},
+    { name: 'message', showName:'消息', isEvent: true, info:'data'},
+];
+
+propertyMap['strVar'] = [
+    { name: 'changeValue', showName:'赋值', info:'(value)',
+        property:[
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
+        ], isFunc: true },
+];
+
+propertyMap['intVar'] = [
+    { name: 'changeValue', showName:'赋值', info:'(value)',
+        property:[
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
 ];
 
 for (var n in propertyMap) {
