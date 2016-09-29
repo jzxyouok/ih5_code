@@ -580,6 +580,7 @@ class PropertyView extends React.Component {
     }
 
     render() {
+        console.log(this.selectNode);
         return (
             <div id='PropertyView' style={{ left : this.props.expanded? '65px':'37px'}} className={cls({'hidden':this.props.isHidden})}>
                 <h1 id='PropertyViewHeader'>属性</h1>

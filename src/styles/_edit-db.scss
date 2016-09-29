@@ -14,7 +14,7 @@
         overflow: hidden;
         transition: 500ms;
 
-        &.active {
+        &.action {
             width: 38px;
             transition: 500ms;
         }
@@ -28,8 +28,15 @@
     background: #232323;
 
     .expand-layer {
+        position: absolute;
+        top: 0;
         width: 100%;
         height: 100%;
+
+        &.action{
+            animation: editDb-small 800ms;
+        }
+
         .expand-btn {
             position: absolute;
             left: 0;
@@ -60,15 +67,21 @@
     }
 
     .Condition-layer {
+        position: absolute;
+        top: 0;
         width: 100%;
         height: 100%;
+
+        &.action{
+            animation: editDb-big 800ms;
+        }
     }
 
     .Condition-header {
         width: 100%;
         height: 41px;
         font-size: 14px;
-        color: #858585;
+        color: #fff;
         border: 1px solid #353535;
         padding-left: 12px;
     }
@@ -185,4 +198,247 @@
     width: 100%;
     height: 100%;
     background: #353535;
+    padding: 0 20px 0 17px;
+
+    .DT-header {
+        width: 100%;
+        height: 52px;
+        padding-left: 1px;
+
+        p {
+            padding-top: 10px;
+            margin: 0 auto;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .btn-group {
+            padding-top: 28px;
+            .btn {
+                @include border-radius(2px);
+                width: 40px;
+                height: 18px;
+                background: #545454;
+                color: #fff;
+                font-size: 12px;
+                cursor: pointer;
+                margin-left: 6px;
+
+                &:hover {
+                    color: #151515;
+                    background: #b5b5b5;
+                }
+
+                &:active {
+                    color: #353535;
+                    background: #292929;
+                }
+            }
+        }
+    }
+
+    .DT-main {
+        position: relative;
+        width: 100%;
+        height: 538px;
+        overflow: hidden;
+
+        .DT-scroll {
+            position: absolute;
+            left: 0;
+            right: -20px;
+            top: 0;
+            bottom: 14px;
+            overflow: auto;
+            overflow-x: hidden;
+        }
+
+        .DT-content {
+            width: 928px;
+            table{
+                margin: 0;
+                padding: 0;
+                border-collapse:collapse;
+
+                thead,tbody{
+                    td:nth-child(1){
+                        width: 17px;
+                        min-width: 17px;
+                        line-height: 14px;
+                        border-left: 1px solid #353535;
+                        border-bottom: 1px solid #353535;
+                        background: #4a4130;
+                        color: #ffa800;
+                        padding: 18px 0;
+                    }
+                    td{
+                        min-width: 98px;
+                        max-width: 278px;
+                        padding: 18px 20px;
+                        text-align: center;
+                        font-size: 12px;
+                        margin: 0;
+                        border-right: 1px solid #434343;
+                        border-bottom: 1px solid #434343;
+                        color: #b5b5b5;
+                        background: #222222;
+                    }
+                }
+
+                thead{
+                    td:nth-child(1){
+                        border-top: 1px solid #4a4130;
+                    }
+                    td {
+                        border-top: 1px solid #434343;
+                        background: #2b2721;
+                        color: #FFA800;
+                    }
+                }
+
+                tbody,tr{
+                    td{
+
+                    }
+                }
+            }
+        }
+
+        .add-btn{
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 14px;
+            width: 38px;
+            background: #292929;
+            border: 1px solid #5d513a;
+            border-bottom: 1px solid #292929;
+
+            .btn {
+                width: 100%;
+                height: 53px;
+                border-bottom: 1px solid #4a4740;
+                background: #2b2721;
+                font-size: 12px;
+                color: #FFA800;
+                cursor: pointer;
+
+                &:hover {
+                    color: #fff;
+                    .icon {background-position: -800px -240px;}
+                }
+
+                &:active {
+                    color: #fff;
+                    .icon {background-position: -800px -280px;}
+                }
+
+                .icon {
+                    width: 18px;
+                    height: 18px;
+                    display: block;
+                    margin: 9px auto 3px auto;
+                    background: url("img/button-icon.svg") no-repeat -800px -200px;
+                }
+            }
+        }
+
+        .scroll-div {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 14px;
+
+            .icon {
+                width: 18px;
+                height: 14px;
+                border-left: 1px solid #353535;
+                background: #4a4130;
+            }
+
+            .scroll {
+                height: 14px;
+                background: #545454;
+                padding: 2px;
+
+                span{
+                    width: 100%;
+                    height: 100%;
+                    background: #353535;
+                }
+            }
+        }
+    }
+
+    .DT-footer {
+        width: 100%;
+        height: 60px;
+        padding-left:1px;
+
+        .left {
+            font-size:14px;
+            color: #b5b5b5;
+            height: 32px;
+
+            .account ,
+            .page{
+                margin-right: 18px;
+            }
+
+            .now-page {
+                width: 90px;
+                text-align: center;
+            }
+
+            .btn {
+                @include border-radius(2px);
+                width: 52px;
+                height: 18px;
+                background: #545454;
+                color: #fff;
+                font-size: 12px;
+                cursor: pointer;
+                margin-left: 6px;
+
+                &:hover {
+                    color: #151515;
+                    background: #b5b5b5;
+                }
+
+                &:active {
+                    color: #353535;
+                    background: #292929;
+                }
+            }
+        }
+
+        .right {
+            height: 60px;
+
+            .btn {
+                @include border-radius(2px);
+                width: 98px;
+                height: 26px;
+                font-size: 14px;
+                color: #151515;
+                cursor: pointer;
+            }
+
+            .cancel-btn {
+                background: #7b7b7b;
+                margin-right: 40px;
+
+                &:hover { background: #b5b5b5; }
+                &:active { background: #545454; }
+            }
+
+            .save-btn {
+                background: #b5b5b5;
+
+                &:hover { background: #fff; }
+                &:active { background: #545454; }
+            }
+        }
+    }
 }
