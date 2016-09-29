@@ -9,24 +9,65 @@ class DbTable extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-
+            dbList : [],
+            dbHeader: []
         };
 
     }
 
     componentDidMount() {
-        WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ea32507f8472077f7384f1", null, null, function(text) {
-            let result = JSON.parse(text);
-            console.log(result);
-        }.bind(this));
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.onStatusChange(WidgetStore.getStore());
+        //ids.db.find({}, function(err, data) {
+        //    console.log(data);
+        //});
+        //WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ea32507f8472077f7384f1", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if(result.d.length > 0){
+        //        let dbHeader = [];
+        //        for(let i in result.d[0]){
+        //            if (i != "_id"){
+        //                dbHeader.push(i);
+        //            }
+        //        }
+        //        this.setState({
+        //            dbHeader : dbHeader,
+        //            dbList : result.d
+        //        })
+        //    }
+        //}.bind(this));
     }
 
     componentWillUnmount() {
+        this.unsubscribe();
+    }
 
+    onStatusChange(widget) {
+        if(widget.selectWidget){
+           if(widget.selectWidget.className == "db"){
+               let data = widget.selectWidget.node.dbid;
+               WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/"+ data , null, null, function(text) {
+                   let result = JSON.parse(text);
+                   if(result.d.length > 0){
+                       let dbHeader = [];
+                       for(let i in result.d[0]){
+                           if (i != "_id"){
+                               dbHeader.push(i);
+                           }
+                       }
+                       this.setState({
+                           dbHeader : dbHeader,
+                           dbList : result.d
+                       })
+                   }
+               }.bind(this));
+           }
+        }
     }
 
     render() {
         let width = this.props.isBig ? 769 : 928;
+
         return (
             <div className='DbTable'>
                 <div className="DT-header f--h">
@@ -44,300 +85,32 @@ class DbTable extends React.Component {
                                 <thead>
                                     <tr>
                                         <td></td>
-                                        <td>用户ID</td>
-                                        <td>昵称</td>
-                                        <td>手机</td>
-                                        <td>金额</td>
-                                        <td>时间</td>
-                                        <td>asdasd</td>
+
+                                        {
+                                            this.state.dbList.length > 0
+                                            ? this.state.dbHeader.map((v,i)=>{
+                                                return <td key={i}>{v}</td>
+                                              })
+                                            : null
+                                        }
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                    <tr>
-                                        <td>1<br />0</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>4356757675</td>
-                                        <td>复古的风格</td>
-                                        <td>4356757675</td>
-                                        <td>asda</td>
-                                        <td>2016/06/30 12:30:23</td>
-                                    </tr>
+                                    {
+                                        this.state.dbList.length > 0
+                                            ? this.state.dbList.map((v,i)=>{
+                                                    return  <tr key={i}>
+                                                                <td>{ i }</td>
+                                                                {
+                                                                    this.state.dbHeader.map((v2,i2)=>{
+                                                                        return <td key={ i2 }>{ v[v2] }</td>
+                                                                    })
+                                                                }
+                                                            </tr>
+                                                })
+                                            : null
+                                    }
                                 </tbody>
                             </table>
                         </div>
