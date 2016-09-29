@@ -97,7 +97,7 @@ class Property extends React.Component {
     onSelectObject(e){
         e.domEvent.stopPropagation();
         this.setState({
-            currentObject: e.item.props.object,
+            currentObject: {name:e.item.props.object.props.name, id:e.item.props.object.props.id},
             objectDropdownVisible: false
         }, ()=> {
             WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
@@ -218,9 +218,9 @@ class Property extends React.Component {
                                           visible={this.state.objectDropdownVisible}>
                                     <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
                                         <div className="title f--hlc">
-                                            { this.state.currentObject===null
+                                            { this.state.currentObject.name===null
                                                 ?'目标对象'
-                                                :this.state.currentObject.props.name
+                                                :this.state.currentObject.name
                                             }
                                             <span className="icon" />
                                         </div>

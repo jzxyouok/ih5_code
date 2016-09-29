@@ -19,8 +19,6 @@ var prevObj;
 var prevNewObj;
 var dragTag;
 
-var _loadedKeyCount = false;
-
 var nodeType = {
     widget: 'widget',  //树对象
     func: 'func',    //函数
@@ -65,12 +63,6 @@ const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse
 var currentLoading;
 
 function loadTree(parent, node) {
-  if(node['maxKey']&&!_loadedKeyCount){
-      _keyCount = node['maxKey'];
-      _loadedKeyCount = true;
-  } else {
-      _loadedKeyCount = true;
-  }
   let current = {};
   current.parent = parent;
   current.key = _keyCount++;
@@ -126,11 +118,8 @@ function loadTree(parent, node) {
     // }
   }
 
-  if (node['id']){
-      current.props['id'] = node['id'];
-  } else {
-      current.props['id'] = current.key;
-  }
+  if (node['id'])
+    current.props['id'] = node['id'];
 
   var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
   current.node = bridge.addWidget(renderer, (parent) ? parent.node : null, node['cls'], null, node['props'], (parent && parent.timerWidget) ? parent.timerWidget.node : null);
@@ -184,21 +173,11 @@ function saveTree(data, node) {
   data['cls'] = node.className;
   let props = {};
   for (let name in node.props) {
-    if (name === 'id') {
-        if (node.props['id']) {
-            data['id'] = node.props['id'];
-        } else {
-            data['id'] = node.key;
-        }
-    } else {
-        props[name] = node.props[name];
-    }
+    if (name === 'id')
+      data['id'] = node.props['id'];
+    else
+      props[name] = node.props[name];
   }
-
-  if(node.className == 'root'){
-      data['maxKey'] = _keyCount;
-  }
-
   if (props)
     data['props'] = props;
   if (node.events)
@@ -733,7 +712,10 @@ export default Reflux.createStore({
     emptyEventSpecific: function() {
         let eventSpecific = {
             'sid': _specificCount++,
-            'object': null,
+            'object': {
+                'name': null,
+                'id': null,
+            },
             'action': {
                 'name': null,
                 'property': []
@@ -791,6 +773,10 @@ export default Reflux.createStore({
         // this.render();
     },
     activeEventTree: function (nid) {
+        if(!this.currentActiveEventTreeKey&&(nid!=null||nid!=undefined)){
+            this.reorderEventTreeList();
+            this.getAllWidgets();
+        }
         //激活事件树，无则为
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
@@ -840,7 +826,8 @@ export default Reflux.createStore({
     changeSpecific: function(specific, params){
         if(params){
             if(params.object){
-                specific.object = params.object;
+                specific.object.name = params.object.name;
+                specific.object.id = params.object.id;
             } else if(params.action){
                 specific.action.name = params.action;
             } else if (params.property){
