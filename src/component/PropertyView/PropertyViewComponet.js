@@ -13,40 +13,46 @@ class SwitchMore extends React.Component {
     componentDidMount() {
         switch (this.status){
             case 0 :
-                this.on();
+                this.on('init');
                 break;
             case 1 :
-                this.mid();
+                this.mid('init');
                 break;
             case 2 :
-                this.off();
+                this.off('init');
                 break;
         }
     }
     componentWillUnmount() {
 
     }
-    on(){
+    on(flag){
         this.refs.switchMoreUl.classList.remove('off');
         this.refs.switchMoreUl.classList.remove('mid');
         this.refs.switchMoreUl.classList.add('on');
         this.refs.switchMoreMidCrl.classList.remove('bg_gray');
-        this.onChange(true);
+        if(flag !== 'init') {
+            this.onChange(true);
+        }
     }
 
-    mid(){
+    mid(flag){
         this.refs.switchMoreUl.classList.remove('off');
         this.refs.switchMoreUl.classList.add('mid');
         this.refs.switchMoreUl.classList.remove('on');
-        this.onChange(null);
+        if(flag !== 'init') {
+            this.onChange(null);
+        }
     }
 
-    off(){
+    off(flag){
         this.refs.switchMoreUl.classList.add('off');
         this.refs.switchMoreUl.classList.remove('mid');
         this.refs.switchMoreUl.classList.remove('on');
         this.refs.switchMoreMidCrl.classList.add('bg_gray');
-        this.onChange(false);
+        if(flag !== 'init') {
+            this.onChange(false);
+        }
     }
     render() {
         return (

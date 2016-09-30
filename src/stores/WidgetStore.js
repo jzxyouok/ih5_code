@@ -36,6 +36,11 @@ var varType = {
     string: 'string'    //字串
 };
 
+var funcType = {
+    customize: 'customize', //自定义
+    default: 'default'      //系统自带
+};
+
 var copyObj = {};
 
 function isEmptyString( str ){
