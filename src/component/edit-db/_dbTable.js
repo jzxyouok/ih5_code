@@ -14,7 +14,7 @@ class DbTable extends React.Component {
         this.state = {
             dbList : [],
             dbHeader: [],
-            columnNum : 5,
+            columnNum : 1,
             inputNow : null,
             inputText : null,
             inputStyle : null,
