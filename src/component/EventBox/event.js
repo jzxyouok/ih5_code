@@ -276,7 +276,7 @@ class Event extends React.Component {
         switch (flag){
             case 'judgeObjFlag':
                 let judgeValOption=[];
-                if(this.state.specialObject.indexOf(chooseEventClassName)>=0){
+                if(this.state.specialObject.indexOf(chooseEventClassName[0])>=0){
                     arrHidden=[false,false,true,false,false,true];
                 }else{
                     arrHidden=[false,false,false,true,true,true];
@@ -313,7 +313,7 @@ class Event extends React.Component {
                  arrHidden =this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
 
                 let compareValOption;
-                if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
+                if (this.state.specialObject.indexOf(chooseEventClassName[0]) >= 0) {
                     arrHidden[5]=true;
                 }else{
                     arrHidden[5]=false;
