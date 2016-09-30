@@ -403,7 +403,7 @@ class DbTable extends React.Component {
                         </div>
                     </div>
 
-                    <p className={$class("no-tips f--hcc",{"hidden":  this.state.dbHeader.length === 0})}>请点击右上角添加按钮创建字段</p>
+                    <p className={$class("no-tips f--hcc",{"hidden":  this.state.dbHeader.length > 0})}>请点击右上角添加按钮创建字段</p>
 
                     <div className="add-btn f--s" onClick={ this.popShow }>
                         <button className="btn btn-clear">
