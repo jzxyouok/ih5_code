@@ -44,8 +44,6 @@ propertyMap['widget'] = [
     { name: 'id',showName:'ID', type: propertyType.String, default: '', isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
-
-
 propertyMap['root'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Root | widgetFlags.Container},
@@ -82,8 +80,6 @@ propertyMap['root'] = [
     { name: 'getTouchX', showName:'获取点击的X坐标', isFunc: true },
     { name: 'getTouchY', showName:'获取点击的Y坐标', isFunc: true }
 ];
-
-
 propertyMap['wechat'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
@@ -91,7 +87,6 @@ propertyMap['wechat'] = [
     { name: 'desc', type: propertyType.String, default: '', isProperty: true },
     { name: 'imgUrl', type: propertyType.String, default: '', isProperty: true }
 ];
-
 propertyMap['box'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
@@ -115,18 +110,14 @@ propertyMap['box'] = [
     { name: 'show', showName:'显示', isFunc: true },
     { name: 'hide', showName:'隐藏', isFunc: true },
 ];
-
 propertyMap['sprite'] = [
     ...propertyMap['box'],
 ];
-
 propertyMap['textBox']=[
     { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true },
     { name: 'fontSize',showName:'字体大小', type: propertyType.Number,group:'tools', default: 26, isProperty: true },
     { name: 'fontFill',showName:'字体颜色', type: propertyType.Color,group:'tools', default: '#000000', isProperty: true },
 ];
-
-
 propertyMap['text'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
@@ -136,7 +127,6 @@ propertyMap['text'] = [
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
 ];
-
 propertyMap['counter'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
@@ -147,12 +137,10 @@ propertyMap['counter'] = [
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
     ...propertyMap['textBox'],
 ];
-
 propertyMap['video'] = [
     ...propertyMap['sprite'],
     { name: 'url',showName:'资源位置', type: propertyType.String, default: '', isProperty: true },
 ];
-
 propertyMap['audio'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
@@ -160,17 +148,14 @@ propertyMap['audio'] = [
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true }
 ];
-
 propertyMap['image'] = [
     ...propertyMap['sprite'],
     { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: false }
 ];
-
 propertyMap['imagelist'] = [
     ...propertyMap['sprite'],
     { name: 'delay', type: propertyType.Number, default: 0.2, isProperty: true },
 ];
-
 propertyMap['bitmaptext'] = [
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text, default:'', isProperty: true },
@@ -179,13 +164,11 @@ propertyMap['bitmaptext'] = [
     { name: 'color', showName:'文字颜色', type: propertyType.Color, default:'',group:'tools', isProperty: true },
     { name: 'lineHeight',showName:'行距', type: propertyType.Integer, default:10,group:'tools', isProperty: true },
 ];
-
 propertyMap['qrcode'] = [
     ...propertyMap['sprite'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
     { name: 'value',showName:'数据', type: propertyType.String, default:'', isProperty: true },
 ];
-
 propertyMap['graphics'] = [
     ...propertyMap['box'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
@@ -198,18 +181,15 @@ propertyMap['rect'] = [
     ...propertyMap['graphics'],
     { name: 'radius', type: propertyType.Integer, default: 0,  group:'tools', isProperty: true },
 ];
-
 propertyMap['taparea'] = [
     ...propertyMap['box'],
     { name: 'fillColor',showName:'填充颜色', type: propertyType.Color, default: '', group:'display', isProperty: true },
 ];
-
 propertyMap['button'] = [
     ...propertyMap['rect'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
 ];
-
 propertyMap['slidetimer'] = [
     ...propertyMap['box'],
     { addProvidesRecursive: widgetFlags.Timer},
@@ -219,7 +199,6 @@ propertyMap['slidetimer'] = [
     { name: 'sliderScale', type: propertyType.Number,group:'tools', default: 1, isProperty: true},
     { name: 'totalTime',showName:'总时长', type: propertyType.Number, group:'tools',default: 10, isProperty: true}
 ];
-
 propertyMap['html'] = [
     ...propertyMap['box'],
     { addRequires: widgetFlags.DomOnly},
@@ -229,16 +208,13 @@ propertyMap['html'] = [
     { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
-
 propertyMap['ellipse'] = [
     ...propertyMap['graphics']
 ];
-
 propertyMap['path'] = [
     ...propertyMap['graphics'],
     { name: 'path',showName:'路径', type: propertyType.String, default: '', isProperty: true }
 ];
-
 propertyMap['container'] = [
     ...propertyMap['box'],
     { addProvides: widgetFlags.Container},
@@ -250,14 +226,12 @@ propertyMap['container'] = [
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true }
 ];
-
 propertyMap['canvas'] = [
     ...propertyMap['container'],
     { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
     { name: 'width', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'height', type: propertyType.Integer, default: 0, group:'position', isProperty: true}
 ];
-
 propertyMap['page'] = [
     ...propertyMap['container'],
     { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
@@ -265,14 +239,12 @@ propertyMap['page'] = [
     { name: 'backwardTransition', type: propertyType.Integer, default: -1, isProperty: true },
     { name: 'bgColor', type: propertyType.Color, default: '', isProperty: true }
 ];
-
 propertyMap['class'] = [
     ...propertyMap['container'],
     { name: 'width', type: propertyType.Integer, default: 0, readOnly: true, group:'position',  isProperty: true },
     { name: 'height', type: propertyType.Integer, default: 0, readOnly: true, group:'position', isProperty: true },
     { name: 'init', showName:'初始化', isEvent: true }
 ];
-
 propertyMap['timer'] = [
     ...propertyMap['container'],
     { addProvides: widgetFlags.Timer},
@@ -287,7 +259,6 @@ propertyMap['timer'] = [
     { name: 'loop', showName:'重复播放', isEvent: true },
     { name: 'stop', showName:'停止', isEvent: true }
 ];
-
 propertyMap['world'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root | widgetFlags.CanvasOnly},
@@ -303,7 +274,6 @@ propertyMap['world'] = [
     { name: 'pause', showName:'暂停', isFunc: true },
     { name: 'tick',  showName:'每一帧', isEvent: true }
 ];
-
 propertyMap['body'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box | widgetFlags.CanvasOnly},
@@ -325,7 +295,6 @@ propertyMap['body'] = [
     { name: 'beginContact', showName:'开始碰撞', info:'{target}', isEvent: true },
     { name: 'endContact', showName:'结束碰撞', info:'{target}', isEvent: true }
 ];
-
 propertyMap['easing'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box, addProvides:widgetFlags.Leaf},
@@ -337,7 +306,6 @@ propertyMap['easing'] = [
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true }
 ];
-
 propertyMap['effect'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box | widgetFlags.DomOnly, addProvides:widgetFlags.Leaf},
@@ -347,7 +315,6 @@ propertyMap['effect'] = [
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true }
 ];
-
 propertyMap['track'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Timer | widgetFlags.Unique, addProvides:widgetFlags.Leaf},
@@ -355,7 +322,6 @@ propertyMap['track'] = [
     { name: 'startTime', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'endTime', type: propertyType.Number, default: 0, isProperty: true }
 ];
-
 propertyMap['db'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
@@ -375,21 +341,18 @@ propertyMap['db'] = [
             {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]}
 ];
-
 propertyMap['sock'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
     { name: 'listened', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'message', showName:'消息', isEvent: true, info:'data'},
 ];
-
 propertyMap['strVar'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
         ], isFunc: true },
 ];
-
 propertyMap['intVar'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
