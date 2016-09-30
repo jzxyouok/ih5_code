@@ -1,5 +1,5 @@
 import bridge from 'bridge';
-import {isCustomizeWidget, varType} from '../stores/WidgetStore';
+import {isCustomizeWidget} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
@@ -112,6 +112,8 @@ propertyMap['box'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'show', showName:'显示', isEvent: true },
     { name: 'hide', showName:'隐藏', isEvent: true },
+    { name: 'show', showName:'显示', isFunc: true },
+    { name: 'hide', showName:'隐藏', isFunc: true },
 ];
 
 propertyMap['sprite'] = [
