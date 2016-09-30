@@ -668,7 +668,7 @@ class ObjectTree extends React.Component {
                                 : <span className={$class('item-icon', pic)} />
                         }
                         {
-                            isCustomizeWidget(v.className)
+                            isCustomizeWidget(v.className)||v.className == 'db'
                                 ? <div className='item-name-wrap'>
                                     <p>{v.props.name}</p>
                                   </div>

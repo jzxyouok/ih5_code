@@ -57,7 +57,7 @@ class Animation extends React.Component {
                 data[i].disabled = true;
             } else if(data[i].className ==='dbItem'&&widget.className !== 'db'){
                 //dbItem的disable
-                data[i].disabled = false;
+                data[i].disabled = true;
             } else if(data[i].className === 'func'&&
                 (widget.className !== 'func'&&
                 widget.className !== 'var')) {
