@@ -62,7 +62,11 @@ class ToolBoxButton extends Component {
             if(this.props.drawRect || this.props.drawRectText){
                 //点击时才清除原来有的，再创建drawRect对象
                 this.onDrawRect();
-            } else {
+            }
+            else if(this.props.className === "db"){
+                
+            }
+            else {
                 WidgetActions['addWidget'](this.props.className, this.props.param);
                 ToolBoxAction['deselect']();
             }
