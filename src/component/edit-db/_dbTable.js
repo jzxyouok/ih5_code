@@ -97,7 +97,8 @@ class DbTable extends React.Component {
             if(allDbHeader[i].id === this.state.node.dbid){
                 let headerData = allDbHeader[i].header.split(",");
                 //console.log(454,headerData,headerData.length);
-                if(headerData.length !== 0){
+                let index = headerData.indexOf("null");
+                if(headerData.length !== 0 && index < 0){
                     let dbHeader = headerData;
                     this.state.node.find({}, function (err, data) {
                         //console.log(2,data);
