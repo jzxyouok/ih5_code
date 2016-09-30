@@ -278,15 +278,11 @@ function saveTree(data, node) {
       data['id'] = node.props['id'];
     else if (name == 'eventTree') {
       var etree = [];
-        if(!node.props['eventTree']){
-            return;
-        }
       node.props['eventTree'].forEach(item => {
         var cmds = [];
         item.specificList.forEach(cmd => {
             var c = {};
-          if (!cmd.action) {
-          } else {
+          if (cmd.action) {
               c = {name:cmd.action.name,
                   showName:cmd.action.showName,
                   type:cmd.action.type};
@@ -915,8 +911,8 @@ export default Reflux.createStore({
     },
     removeEventTree: function() {
         if (this.currentWidget) {
-            this.currentWidget.props['eventTree'] = undefined;
-            this.currentWidget.props['enableEventTree'] = undefined;
+            delete this.currentWidget.props['eventTree'];
+            delete this.currentWidget.props['enableEventTree'];
         }
         this.trigger({redrawTree: true});
         this.reorderEventTreeList();
