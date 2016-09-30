@@ -31,6 +31,7 @@ let twodvarIcon = img('twoDvar.svg');
 let composingcontainerIcon = img('composingContainer.svg');
 let cominterfaceIcon = img('comInterface.svg');
 let htmlIcon = img('html.svg');
+let inputIcon = img('input.svg');
 
 // let trackIcon = img('track.svg');
 // let worldIcon = img('world.svg');
@@ -77,6 +78,9 @@ var TOOL_ID = {
     TWODVAR: 29,
     COMPOSINGCONTAINER:30,
     COMINTERFACE:31,
+
+    HTML:32,
+    INPUT:33,
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -97,6 +101,14 @@ var DEFAULT_TOOLBOX = {
         secondary: [
             {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', drawRectText:true, param: {'value': 'Text'}},
             {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+    },{
+        name:'输入框',
+        key:3,
+        gid:3,
+        primary: 0,
+        mode: modeType.dom,
+        secondary: [
+            {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50}}]
     },{
         name:'几何图形',
         key:4,
@@ -139,7 +151,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         mode: modeType.dom,
         secondary: [
-            {cid:TOOL_ID.VIDEO,name:'网页',icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+            {cid:TOOL_ID.HTML,name:'网页',icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
     },{
         name:'文件',
         key:9,
@@ -154,7 +166,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         mode: modeType.dom,
         secondary: [
-            {cid:TOOL_ID.FILE,name:'页面',icon:pageIcon, className:'page'}]
+            {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'}]
     },{
         name:'容器',
         key:11,
@@ -178,7 +190,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         mode: modeType.dom,
         secondary: [
-            {cid:TOOL_ID.COMPOSINGCONTAINER,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}
+            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'shapeWidth': 300, 'shapeHeight': 300}}
         ]
     },{
         name:'时间轴',

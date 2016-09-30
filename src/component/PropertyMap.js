@@ -208,6 +208,19 @@ propertyMap['html'] = [
     { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
+propertyMap['input'] = [
+    ...propertyMap['box'],
+    { addRequires: widgetFlags.DomOnly},
+    { name: 'value', type: propertyType.String, default: '', isProperty: true },
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'color', type: propertyType.Color, default:'#FFFFFF', isProperty: true },
+    { name: 'fontSize', type: propertyType.Number, default: 26, isProperty: true },
+    { name: 'fontFamily', type: propertyType.String, default: '', isProperty: true },
+    { name: 'fontFill', type: propertyType.Color, default: '#000000', isProperty: true },
+];
 propertyMap['ellipse'] = [
     ...propertyMap['graphics']
 ];

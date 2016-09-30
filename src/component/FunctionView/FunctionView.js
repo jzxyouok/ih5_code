@@ -82,7 +82,7 @@ class FunctionView extends React.Component {
                 <button className='btn btn-clear' title='收起' onClick={this.toggle}/>
             </div>
             <div id='FunctionViewBody' className="clearfix">
-                <div className="function-body-layer">
+                <div className={$class("function-body-layer",{'hidden':this.state.minSize})}>
                     <Form>
                         <FormItem label="名称">
                             <Input type="text" size="large" placeholder="请输入名称"
