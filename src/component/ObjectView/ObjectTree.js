@@ -460,7 +460,7 @@ class ObjectTree extends React.Component {
         }
 
         this.destroyDragTip();
-        this.dragged.style.display = 'block';
+        // this.dragged.style.display = 'block';
         this.dragged.parentNode.removeChild(this.placeholder);
         // update state
         let from = Number(this.dragged.dataset.keyid);
@@ -478,7 +478,7 @@ class ObjectTree extends React.Component {
         }
 
         this.dragWithTip(e.clientX, e.clientY, true);
-        this.dragged.style.display = 'none';
+        // this.dragged.style.display = 'none';
         if(e.target.className === 'placeholder') return;
         //递归找到并获取名字叫item的div
         let findItemDiv = (target,cName) => {
