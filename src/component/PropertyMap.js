@@ -343,14 +343,14 @@ propertyMap['db'] = [
             {'name':'option', showName:'选项', 'value':null, 'type':propertyType.String},
             {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
-    { name: 'insert', showName:'插入', isFunc: true, info:'(data, callback(err, result))',
+    { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',
         property:[
             {'name':'data', showName:'数据', 'value':null, 'type':propertyType.String},
             {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'update', showName:'更新', isFunc: true, info:'(data, callback(err, result))',
         property:[
-            {'name':'data', showName:'数据', 'value':null, 'type':propertyType.String},
+            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.String},
             {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]}
 ];
