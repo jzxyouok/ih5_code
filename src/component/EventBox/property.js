@@ -87,11 +87,21 @@ class Property extends React.Component {
         }
     }
 
-    onGetActionList(obj, type){
+    onGetActionList(obj){
         let actionList = [];
         let className = obj.className;
+
+        //添加自定义func
+        if(className !== 'var') {
+            for(let i=0; i<obj.funcList.length; i++){
+                let func = obj.funcList[i];
+                let act = { name: func.name, showName:func.props.name, type: funcType.customize, widget:obj};
+                actionList.push(act);
+            }
+        }
+
         if(className === 'var'){
-            switch (type) {
+            switch (obj.type) {
                 case varType.number:
                     className = 'intVar';
                     break;
@@ -102,14 +112,6 @@ class Property extends React.Component {
                     break;
             }
         }
-
-        //添加自定义func
-        for(let i=0; i<obj.funcList.length; i++){
-            let func = obj.funcList[i];
-            let act = { name: func.name, showName:func.props.name, type: funcType.customize, widget:obj};
-            actionList.push(act);
-        }
-
         propertyMap[className].map((item, index) => { 
             if (item.isFunc) {
                 let temp = JSON.parse(JSON.stringify(item));
