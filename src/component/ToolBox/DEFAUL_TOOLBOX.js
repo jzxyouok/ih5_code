@@ -12,19 +12,13 @@ let videoIcon = img('video.svg');
 let audioIcon = img('audio.svg');
 let containerIcon = img('container.svg');
 let timerIcon = img('timer.svg');
-let trackIcon = img('track.svg');
-let worldIcon = img('world.svg');
-let bodyIcon = img('body.svg');
-let easingIcon = img('easing.svg');
 let pageIcon = img('page.svg');
-let effectIcon = img('effect.svg');
 let canvasIcon = img('canvas.svg');
 let wechatIcon = img('wechat.svg');
 let slidetimerIcon = img('slidetimer.svg');
 let bitmaptextIcon = img('bitmapText.svg');
 let imageIcon = img('image.svg');
 let igroupIcon = img('imageGroup.svg');
-
 let buttonIcon = img('button.svg');
 let tapAreaIcon = img('tapArea.svg');
 let qrcodeIcon = img('qrCode.svg');
@@ -36,6 +30,19 @@ let pcdeviceIcon = img('pcDevice.svg');
 let twodvarIcon = img('twoDvar.svg');
 let composingcontainerIcon = img('composingContainer.svg');
 let cominterfaceIcon = img('comInterface.svg');
+let htmlIcon = img('html.svg');
+let inputIcon = img('input.svg');
+
+// let trackIcon = img('track.svg');
+// let worldIcon = img('world.svg');
+// let bodyIcon = img('body.svg');
+// let easingIcon = img('easing.svg');
+// let effectIcon = img('effect.svg');
+
+let modeType = {
+    canvas: 2,  //canvas模式
+    dom: 1      //dom模式
+};
 
 var cid = 1;
 var TOOL_ID = {
@@ -71,6 +78,9 @@ var TOOL_ID = {
     TWODVAR: 29,
     COMPOSINGCONTAINER:30,
     COMINTERFACE:31,
+
+    HTML:32,
+    INPUT:33,
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -91,6 +101,14 @@ var DEFAULT_TOOLBOX = {
         secondary: [
             {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', drawRectText:true, param: {'value': 'Text'}},
             {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+    },{
+        name:'输入框',
+        key:3,
+        gid:3,
+        primary: 0,
+        mode: modeType.dom,
+        secondary: [
+            {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50}}]
     },{
         name:'几何图形',
         key:4,
@@ -127,12 +145,28 @@ var DEFAULT_TOOLBOX = {
                 param: {'shapeWidth': 100, 'shapeHeight': 100}},
             {cid:TOOL_ID.AUDIO,name:'音频',icon:audioIcon, className:'audio'}]
     },{
+        name:'网页',
+        key:8,
+        gid:8,
+        primary: 0,
+        mode: modeType.dom,
+        secondary: [
+            {cid:TOOL_ID.HTML,name:'网页',icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
+    },{
         name:'文件',
         key:9,
         gid:9,
         primary: 0,
         secondary: [
             {cid:TOOL_ID.FILE,name:'文件',icon:fileIcon, className:'file'}]
+    },{
+        name:'页面',
+        key:10,
+        gid:10,
+        primary: 0,
+        mode: modeType.dom,
+        secondary: [
+            {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'}]
     },{
         name:'容器',
         key:11,
@@ -148,6 +182,15 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.COMPOSINGCONTAINER,name:'排版容器',icon:composingcontainerIcon, className:'composingcontainer'}
+        ]
+    },{
+        name:'画布',
+        key:13,
+        gid:13,
+        primary: 0,
+        mode: modeType.dom,
+        secondary: [
+            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'shapeWidth': 300, 'shapeHeight': 300}}
         ]
     },{
         name:'时间轴',
@@ -226,4 +269,5 @@ var DEFAULT_TOOLBOX = {
     // }
 };
 
+export {modeType};
 export default DEFAULT_TOOLBOX;

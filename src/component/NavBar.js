@@ -18,6 +18,7 @@ import bridge from 'bridge';
 const PREFIX = 'app/';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
+import DbHeaderAction from '../actions/DbHeader'
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -101,7 +102,7 @@ class NavBar extends React.Component {
 
     newWork() {
         this.workid = null;
-        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040}, links:[]}});
+        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040, 'color':'#FFFFFF'}, links:[]}});
     }
 
     getWorks(token) {
@@ -117,6 +118,7 @@ class NavBar extends React.Component {
                     dbList: result['db']
                 });
                 WidgetActions['saveFontList'](result['font']);
+                DbHeaderAction['DbHeaderData'](result['db']);
             } else {
                 this.setState({loginVisible: true});
             }
@@ -479,14 +481,24 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <div className='dropDown-btn f--hlc'>
+                        <div className='dropDown-btn f--hlc hidden'>
                             <button className='btn btn-clear link-btn' title='连接'>
                                 <span className="icon" />
                                 <span className="title">连接</span>
                             </button>
                         </div>
 
-                        <div className='dropDown-btn f--hlc'>
+                        <button className='btn btn-clear link-btn' title='连接'>
+                            <span className="icon" />
+                            <span className="title">连接</span>
+                        </button>
+
+                        <button className='btn btn-clear shape-btn' title='形状'>
+                            <span className="icon" />
+                            <span className="title">形状</span>
+                        </button>
+
+                        <div className='dropDown-btn f--hlc hidden'>
                             <button className='btn btn-clear shape-btn' title='形状'>
                                 <span className="icon" />
                                 <span className="title">形状</span>

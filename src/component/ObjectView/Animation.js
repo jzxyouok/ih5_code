@@ -4,14 +4,17 @@ import React from 'react';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {varType, isCustomizeWidget} from '../../stores/WidgetStore';
 import {checkChildClass} from '../PropertyMap';
+import {modeType} from '../ToolBox/DEFAUL_TOOLBOX'
 
 const animationData = [
     {name:'数字变量', class:'var-num-btn', className:'var', disabled:false, param:{name:'', value:null, type:varType.number}},
     {name:'文本变量', class:'var-str-btn', className:'var', disabled:false, param:{name:'', value:null, type:varType.string}},
     {name:'函数', class:'func-btn', className:'func', disabled:false, param:{key:'',value:''}},
     {name:'轨迹', class:'locus-btn', className:'track', disabled:false},
+    {name:'动效', class:'rotation-btn', className:'effect', disabled:false, mode:modeType.dom},
+    {name:'3D旋转', class:'dx-btn', className:'3dRotate', disabled:false, mode:modeType.dom},
     {name:'缓动', class:'easing-btn', className:'easing', disabled:false},
-    {name:'物体', class:'object-btn', className:'body', disabled:false}
+    {name:'物体', class:'object-btn', className:'body', disabled:false, mode:modeType.canvas},
 ];
 
 class Animation extends React.Component {

@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 import $class from 'classnames';
 
 import NavBar from  './NavBar';
-import ComponentPanel from './ComponentPanel';
+// import ComponentPanel from './ComponentPanel';
 import DesignView from './DesignView';
 import ObjectView from './ObjectView/_index';
 import PropertyView from './PropertyView';
@@ -168,7 +168,7 @@ class App extends React.Component {
                 <TimelineView isHidden={this.state.activeFunc != null
                               || this.state.activeVar != null}/>
 
-                <div className={$class({"hidden":!this.state.editDb})}>
+                <div className={$class({"hidden": !this.state.editDb})}>
                     <EditDb editDbHide={ this.editDbHide } ref="EditDb"  />
                 </div>
                 {

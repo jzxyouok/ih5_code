@@ -110,15 +110,14 @@ class TimelineView extends React.Component {
 				node.children.map(item => {
 					if (item.className === 'track') {
 						changed.currentTrack = item;
-                        //console.log(item);
-
-                        if(item.node.startTime || item.node.endTime){
-                            if(item.node.startTime){
+                        console.log(item);
+                        if(item.node.startTime !== -1 || item.node.endTime !== -1){
+                            if(item.node.startTime !== -1){
                                 this.setState({
                                     startTime : parseFloat(item.node.startTime)
                                 })
                             }
-                            if(item.node.endTime){
+                            if(item.node.endTime !== -1){
                                 this.setState({
                                     endTime : parseFloat(item.node.endTime)
                                 })
@@ -137,13 +136,13 @@ class TimelineView extends React.Component {
                 if(node.className === 'track'){
                     changed.currentTrack = node;
 
-                    if(node.node.startTime || node.node.endTime){
-                        if(node.node.startTime){
+                    if(node.node.startTime !== -1 || node.node.endTime !== -1){
+                        if(node.node.startTime !== -1){
                             this.setState({
                                 startTime : parseFloat(node.node.startTime)
                             })
                         }
-                        if(node.node.endTime){
+                        if(node.node.endTime !== -1){
                             this.setState({
                                 endTime : parseFloat(node.node.endTime)
                             })

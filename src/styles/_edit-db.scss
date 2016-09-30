@@ -195,6 +195,7 @@
 }
 
 .DbTable {
+    position: relative;
     width: 100%;
     height: 100%;
     background: #353535;
@@ -327,11 +328,23 @@
             }
         }
 
+        .no-tips {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            font-size: 18px;
+            color: #858585;
+        }
+
         .add-btn{
             position: absolute;
             right: 0;
             top: 0;
             bottom: 14px;
+            z-index: 2;
             width: 38px;
             background: #292929;
             border: 1px solid #5d513a;
@@ -370,6 +383,7 @@
             position: absolute;
             left: 0;
             bottom: 0;
+            z-index: 3;
             width: 100%;
             height: 14px;
 
@@ -461,6 +475,114 @@
 
                 &:hover { background: #fff; }
                 &:active { background: #545454; }
+            }
+        }
+    }
+
+    .Dt-pop {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+
+        .pop-layer{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .pop-main {
+            position: relative;
+            z-index: 1;
+            width: 320px;
+            height: 232px;
+
+            .pop-header {
+                width: 320px;
+                height: 40px;
+                font-size: 14px;
+                color: #fff;
+                background: #545454;
+                padding-left: 30px;
+            }
+
+            .pop-content{
+                width: 100%;
+                height: 192px;
+                background: #353535;
+                padding: 10px 30px 0 30px;
+
+                .title {
+                    width: 100%;
+                    height: 32px;
+                    line-height: 32px;
+                    font-size: 14px;
+                    color: #b5b5b5;
+                }
+
+                .btn-group{
+                    @include border-radius(2px);
+                    width: 100%;
+                    height: 24px;
+                    border: 1px solid #7b7b7b;
+
+                    .btn {
+                        font-size: 14px;
+                        color: #7b7b7b;
+                        cursor: pointer;
+                        background: #353535;
+
+                        &.active {
+                            color: #353535;
+                            background: #7b7b7b;
+                        }
+                    }
+                }
+
+                input {
+                    @include border-radius(2px);
+                    width: 100%;
+                    height: 32px;
+                    line-height: 32px;
+                    font-size: 14px;
+                    color: #b5b5b5;
+                    border: none;
+                    outline: none;
+                    background: #232323;
+                    padding-left: 20px;
+                }
+
+                .pop-footer {
+                    height: 63px;
+
+                    .btn {
+                        @include border-radius(2px);
+                        width: 92px;
+                        height: 26px;
+                        font-size: 14px;
+                        color: #151515;
+                        cursor: pointer;
+                    }
+
+                    .cancel-btn {
+                        background: #7b7b7b;
+                        margin-right: 40px;
+
+                        &:hover { background: #b5b5b5; }
+                        &:active { background: #545454; }
+                    }
+
+                    .save-btn {
+                        background: #b5b5b5;
+
+                        &:hover { background: #fff; }
+                        &:active { background: #545454; }
+                    }
+                }
             }
         }
     }

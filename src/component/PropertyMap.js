@@ -208,6 +208,19 @@ propertyMap['html'] = [
     { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
+propertyMap['input'] = [
+    ...propertyMap['box'],
+    { addRequires: widgetFlags.DomOnly},
+    { name: 'value', type: propertyType.String, default: '', isProperty: true },
+    { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true },
+    { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: true},
+    { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'color', type: propertyType.Color, default:'#FFFFFF', isProperty: true },
+    { name: 'fontSize', type: propertyType.Number, default: 26, isProperty: true },
+    { name: 'fontFamily', type: propertyType.String, default: '', isProperty: true },
+    { name: 'fontFill', type: propertyType.Color, default: '#000000', isProperty: true },
+];
 propertyMap['ellipse'] = [
     ...propertyMap['graphics']
 ];
@@ -228,6 +241,7 @@ propertyMap['container'] = [
 ];
 propertyMap['canvas'] = [
     ...propertyMap['container'],
+    { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
     { name: 'width', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'height', type: propertyType.Integer, default: 0, group:'position', isProperty: true}
 ];
@@ -329,14 +343,14 @@ propertyMap['db'] = [
             {'name':'option', showName:'选项', 'value':null, 'type':propertyType.String},
             {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
-    { name: 'insert', showName:'插入', isFunc: true, info:'(data, callback(err, result))',
+    { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',
         property:[
             {'name':'data', showName:'数据', 'value':null, 'type':propertyType.String},
             {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'update', showName:'更新', isFunc: true, info:'(data, callback(err, result))',
         property:[
-            {'name':'data', showName:'数据', 'value':null, 'type':propertyType.String},
+            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.String},
             {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]}
 ];
@@ -371,7 +385,9 @@ for (var n in propertyMap) {
 
 function checkChildClass(selected, className) {
     // 对函数,变量,自定义的处理
-    if (selected.className === 'func' || selected.className === 'var' || isCustomizeWidget(selected.className)) {
+    if (selected.className === 'func' ||
+        selected.className === 'var' ||
+        isCustomizeWidget(selected.className)) {
         return false;
     }
     var provides = propertyFlags[selected.className].provides;
