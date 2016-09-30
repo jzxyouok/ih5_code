@@ -90,6 +90,8 @@ class ToolBoxButton extends Component {
                 this.props.param.positionY = data.positionY;
                 this.props.param.shapeWidth = data.shapeWidth;
                 this.props.param.shapeHeight = data.shapeHeight;
+                this.props.param.width = data.width;
+                this.props.param.height = data.height;
             }
             if (this.props.upload) {
                 //上传
