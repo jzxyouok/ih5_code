@@ -679,7 +679,7 @@ export default Reflux.createStore({
           this.reorderEventTreeList();
         }
         this.trigger({selectWidget: this.currentWidget});
-        // this.render();
+        this.render();
       }
     },
     cutWidget: function() {
@@ -720,7 +720,7 @@ export default Reflux.createStore({
             bridge.reorderWidget(this.currentWidget.node, delta);
             this.trigger({redrawTree: true});
             this.reorderEventTreeList();
-            // this.render();
+            this.render();
           }
       }
     },

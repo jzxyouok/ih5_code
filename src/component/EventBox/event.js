@@ -14,17 +14,14 @@ const MenuItem = Menu.Item;
 class Event extends React.Component {
     constructor (props) {
         super(props);
-
-
         this.state = {
+            treeList:[], //事件面板树
             expanded: true,
-
+            objName:[],
             eventList:this.props.eventList,
-
             selectWidget:this.props.widget,
             allWidgetsList:null,
             activeKey:this.props.activeKey,  //当前激活事件的key
-
             specialObject:['counter','text','strVar','intVar'],
 
             conOption:[],
@@ -61,7 +58,7 @@ class Event extends React.Component {
 
         this.getSelectOption = this.getSelectOption.bind(this);   //获取触发条件
 
-
+        this.setTreeList= this.setTreeList.bind(this);   //获取事件面板树
 
 
         this.getSelectFull =this.getSelectFull.bind(this);
@@ -72,9 +69,7 @@ class Event extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
         nextProps.eventList.map((v,i)=>{
-          console.log(v);
             if(!v.children){
               //改造,有空后改造下tree
               v.children=[{
@@ -96,7 +91,6 @@ class Event extends React.Component {
             activeKey:nextProps.activeKey,
             eventList:nextProps.eventList
         })
-
     }
 
     componentDidMount() {
@@ -121,6 +115,21 @@ class Event extends React.Component {
                 this.forceUpdate();
             }
         }
+        if(widget.allWidgets){
+
+            this.setTreeList(widget.allWidgets);
+
+
+            let arr=[];
+
+            widget.allWidgets.map((v,i)=>{
+                arr.push([v.className,v.props.name]);
+            });
+
+            this.setState({objName:arr});
+        }
+
+
 
         if (widget.selectWidget) {
             this.setState({
@@ -139,17 +148,43 @@ class Event extends React.Component {
                 arr.push(item.props.name);
             });
 
-
-
             this.setState({
                 allWidgetsList: widget.allWidgets,
                 judgeObjOption:arr,
                 compareObjOption:arr
             });
         }
-
     }
 
+    setTreeList(allWidgets){
+        let treeList=[];
+        allWidgets.map((v,index)=>{
+             let eventList=[];
+            if(v.props.eventTree){
+                v.props.eventTree.map((v2,i2)=>{
+                    let judgeArr =[];
+                    if(v2.children){
+                        v2.children.map((v3,i3)=>{
+                            judgeArr.push({
+                                judgeObjFlag:v3.judgeObjFlag,
+                                judgeValFlag:v3.judgeValFlag,
+                                compareFlag:v3.compareFlag,
+                                compareObjFlag:v3.compareObjFlag,
+                                compareValFlag:v3.compareValFlag
+                            });
+                        });
+                    }
+                    eventList.push({
+                        name:v2.conFlag,
+                        judgeFlag:'and',
+                        judgeArr:judgeArr
+                    });
+                });
+            }
+            treeList.push(eventList);
+        });
+        this.setState({treeList:treeList});
+    }
 
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);
@@ -158,6 +193,17 @@ class Event extends React.Component {
     addEventBtn(e) {
         e.stopPropagation();
         WidgetActions['addEvent']();
+    }
+
+    getClassNameByobjName(name){
+
+        let val=null;
+        this.state.objName.map((v,i)=>{
+            if(v[1]==name){
+                val = v[0];
+            }
+        });
+        return val;
     }
 
     delEvent(index){
@@ -227,7 +273,6 @@ class Event extends React.Component {
             }
             this.setState({eventList:eventList});
         }else{
-            console.log(this.curEventIndex);
            WidgetActions['addEventChildren'](this.state.eventList[this.curEventIndex]);
         }
     }
@@ -246,6 +291,7 @@ class Event extends React.Component {
                  arr.push(v.name);
              }
            });
+
        return arr;
     }
 
@@ -261,8 +307,6 @@ class Event extends React.Component {
             eventList[this.curEventIndex].children[key][flag]=e.item.props.object;
         }
 
-
-
         this.setState({eventList:eventList});
 
         let arrHidden;
@@ -270,13 +314,16 @@ class Event extends React.Component {
 
         let initFlag=this.state.eventList[this.curEventIndex].children[this.curChildrenIndex]; //初始化
 
-        let chooseEventClassName =e.item.props.object.match(/^[A-Za-z]+/);
+    //    let chooseEventClassName =e.item.props.object.match(/^[A-Za-z]+/);
+
+        let chooseEventClassName =   this.getClassNameByobjName(e.item.props.object);
+
 
 
         switch (flag){
             case 'judgeObjFlag':
                 let judgeValOption=[];
-                if(this.state.specialObject.indexOf(chooseEventClassName[0])>=0){
+                if(this.state.specialObject.indexOf(chooseEventClassName)>=0){
                     arrHidden=[false,false,true,false,false,true];
                 }else{
                     arrHidden=[false,false,false,true,true,true];
@@ -314,7 +361,7 @@ class Event extends React.Component {
 
                 let compareValOption;
 
-                if (this.state.specialObject.indexOf(chooseEventClassName[0]) >= 0) {
+                if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
                     arrHidden[5]=true;
                     initFlag.operationManager={
                         arrHidden: arrHidden
