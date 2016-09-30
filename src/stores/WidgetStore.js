@@ -191,6 +191,11 @@ function resolveEventTree(node, list) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
       item.specificList.forEach(cmd => {
+          if(!cmd.action){
+              cmd.action=null;
+              cmd.object=null;
+              return;
+          }
         var obj = list[cmd.action.id];
         delete(cmd.action.id);
         if (cmd.action.var !== undefined) {
@@ -250,10 +255,10 @@ function generateId(node) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
       item.specificList.forEach(cmd => {
-        if (cmd.object.className == 'var') {
+        if (cmd.object&&cmd.object.className == 'var') {
           if (cmd.object.widget.props['id'] === undefined)
             cmd.object.widget.props['id'] = 'id_' + (maxSeq++);
-        } else if (cmd.object.props['id'] === undefined)
+        } else if (cmd.object&&cmd.object.props['id'] === undefined)
           cmd.object.props['id'] = 'id_' + (maxSeq++);
       });
     });
@@ -273,14 +278,20 @@ function saveTree(data, node) {
       data['id'] = node.props['id'];
     else if (name == 'eventTree') {
       var etree = [];
+        if(!node.props['eventTree']){
+            return;
+        }
       node.props['eventTree'].forEach(item => {
         var cmds = [];
         item.specificList.forEach(cmd => {
-          if (!cmd.action)
-            return;
-          var c = {name:cmd.action.name,
-            showName:cmd.action.showName,
-            type:cmd.action.type};
+            var c = {};
+          if (!cmd.action) {
+          } else {
+              c = {name:cmd.action.name,
+                  showName:cmd.action.showName,
+                  type:cmd.action.type};
+          }
+          if(cmd.object){
           if (cmd.object.className == 'var') {
             c.id = cmd.object.widget.props['id'];
             var vid;
@@ -296,7 +307,8 @@ function saveTree(data, node) {
           } else {
             c.id = cmd.object.props['id'];
           }
-          if (cmd.action.property)
+          }
+          if (cmd.action&&cmd.action.property)
             c.property = cmd.action.property;
           cmds.push(c);
         });
