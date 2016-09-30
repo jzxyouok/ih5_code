@@ -527,7 +527,6 @@ export default Reflux.createStore({
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
-            this.getAllWidgets();
             this.currentWidget = null;
             if(shouldChooseParent) {
                 this.selectWidget(parentWidget);
@@ -882,6 +881,7 @@ export default Reflux.createStore({
             }
             this.currentWidget['funcList'].unshift(func);
         }
+        this.trigger({updateFunction: {widget:this.currentWidget}});
         this.trigger({redrawTree: true});
         // this.render();
     },
@@ -904,6 +904,7 @@ export default Reflux.createStore({
             }
             if(index>-1){
                 this.currentWidget.funcList.splice(index,1);
+                this.trigger({updateFunction: {widget:this.currentWidget}});
                 this.selectWidget(this.currentWidget);
             }
         }
@@ -1014,7 +1015,6 @@ export default Reflux.createStore({
                 default:
                     break;
             }
-            this.getAllWidgets();
         }
     },
     copyVariable: function () {
@@ -1137,9 +1137,11 @@ export default Reflux.createStore({
                 break;
             case nodeType.var:
                 this.removeVariable();
+                this.getAllWidgets();
                 break;
             default:
                 this.removeWidget(true);
+                this.getAllWidgets();
                 break;
         }
     },
@@ -1416,4 +1418,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType, keepType, isCustomizeWidget}
+export {globalToken, nodeType, varType, funcType, keepType, isCustomizeWidget}

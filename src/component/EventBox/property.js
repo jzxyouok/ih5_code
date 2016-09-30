@@ -1,7 +1,7 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
-import WidgetStore, {varType} from '../../stores/WidgetStore'
+import WidgetStore, {varType, funcType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
 import { Input, InputNumber, Select} from 'antd';
@@ -54,8 +54,8 @@ class Property extends React.Component {
                 currentAction: nextProps.specific.action
             }, ()=>{
                 //获取动作
-                if(this.state.currentObject&&this.state.currentObject.className){
-                    this.onGetActionList(this.state.currentObject.className, this.state.currentObject.type);
+                if(this.state.currentObject){
+                    this.onGetActionList(this.state.currentObject);
                 }
             });
         }
@@ -78,12 +78,18 @@ class Property extends React.Component {
             this.setState({
                 objectList: widget.allWidgets
             });
+        } else if (widget.updateFunction){
+            if(widget.updateFunction.widget&&this.state.currentObject){
+                if(widget.updateFunction.widget.key == this.state.currentObject.key){
+                    this.onGetActionList(this.state.currentObject);
+                }
+            }
         }
     }
 
-    onGetActionList(objClassName, type){
+    onGetActionList(obj, type){
         let actionList = [];
-        let className = objClassName;
+        let className = obj.className;
         if(className === 'var'){
             switch (type) {
                 case varType.number:
@@ -96,6 +102,14 @@ class Property extends React.Component {
                     break;
             }
         }
+
+        //添加自定义func
+        for(let i=0; i<obj.funcList.length; i++){
+            let func = obj.funcList[i];
+            let act = { name: func.name, showName:func.props.name, type: funcType.customize, widget:obj};
+            actionList.push(act);
+        }
+
         propertyMap[className].map((item, index) => { 
             if (item.isFunc) {
                 let temp = JSON.parse(JSON.stringify(item));
@@ -103,7 +117,8 @@ class Property extends React.Component {
                     delete temp.info;
                 }
                 delete temp.isFunc;
-                actionList.push(item);
+                temp.type = funcType.default;
+                actionList.push(temp);
             }
          });
         this.setState({
