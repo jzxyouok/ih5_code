@@ -19,7 +19,9 @@ class DbTable extends React.Component {
             inputText : null,
             inputStyle : null,
             node: null,
-            allDbHeader : []
+            allDbHeader : [],
+            isAddCul : false,
+            addType : 0
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -31,6 +33,9 @@ class DbTable extends React.Component {
         this.saveBtn = this.saveBtn.bind(this);
         this.createContent =  this.createContent.bind(this);
         this.getDbList = this.getDbList.bind(this);
+        this.popShow = this.popShow.bind(this);
+        this.popHide = this.popHide.bind(this);
+        this.whichAddType = this.whichAddType.bind(this);
     }
 
     componentDidMount() {
@@ -191,8 +196,19 @@ class DbTable extends React.Component {
 
 
     addColumn(){
-        //let header = this.state.dbHeader;
-        //header[which] = "请命名" + which;
+        let header = this.state.dbHeader;
+        let value = null;
+        let list = this.state.dbList;
+        if(this.state.addType == 0){
+            value = "T" + this.refs.inputType.value;
+        }
+        else {
+            value = "I" + this.refs.inputType.value;
+        }
+        header.push(value);
+        list.map((v,i)=>{
+            list[i][value] = "";
+        });
     }
 
     inputClick(key,value){
@@ -237,9 +253,9 @@ class DbTable extends React.Component {
                 });
                 //console.log(list);
                 header[which] = this.state.inputText;
-                if(which == header.length-1){
-                    this.addColumn();
-                }
+                //if(which == header.length-1){
+                //    this.addColumn();
+                //}
                 this.setState({
                     dbHeader : header,
                     inputNow : null
@@ -273,6 +289,24 @@ class DbTable extends React.Component {
                 inputNow : null
             })
         }
+    }
+
+    popHide(){
+        this.setState({
+            isAddCul: false
+        })
+    }
+
+    popShow(){
+        this.setState({
+            isAddCul: true
+        })
+    }
+
+    whichAddType(i){
+        this.setState({
+            addType:i
+        })
     }
 
     render() {
@@ -369,9 +403,9 @@ class DbTable extends React.Component {
                         </div>
                     </div>
 
-                    <p className="no-tips f--hcc">请点击右上角添加按钮创建字段</p>
+                    <p className={$class("no-tips f--hcc",{"hidden":  this.state.dbHeader.length === 0})}>请点击右上角添加按钮创建字段</p>
 
-                    <div className="add-btn f--s" onClick={ this.addColumn }>
+                    <div className="add-btn f--s" onClick={ this.popShow }>
                         <button className="btn btn-clear">
                             <span className="icon" />
                             添加
@@ -400,6 +434,30 @@ class DbTable extends React.Component {
                     <div className="right f--hlc">
                         <button className="btn btn-clear cancel-btn" onClick={ this.props.editDbHide }>取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
+                    </div>
+                </div>
+
+                <div className={ $class("Dt-pop f--hcc",{"hidden" : !this.state.isAddCul})}>
+                    <div className="pop-layer"></div>
+
+                    <div className="pop-main">
+                        <div className="pop-header f--hlc">添加字段</div>
+                        <div className="pop-content">
+                            <div className="title">字段类型：</div>
+                            <div className="btn-group f--h">
+                                <div className={$class("btn f--hcc flex-1",{"active": 0 === this.state.addType})}
+                                     onClick={ this.whichAddType.bind(this, 0)}>文本</div>
+                                <div className={$class("btn f--hcc flex-1",{"active": 1 === this.state.addType})}
+                                     onClick={ this.whichAddType.bind(this, 1)}>数值</div>
+                            </div>
+                            <div className="title">字段名称：</div>
+                            <input placeholder="请输入名称" ref="inputType" />
+
+                            <div className="pop-footer f--hcc">
+                                <button className="btn btn-clear cancel-btn" onClick={ this.popHide }>取消</button>
+                                <button className="btn btn-clear save-btn">确定</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
