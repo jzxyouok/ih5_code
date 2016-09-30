@@ -29,6 +29,8 @@ class DbTable extends React.Component {
         this.updateHeader = this.updateHeader.bind(this);
         this.getNewData = this.getNewData.bind(this);
         this.saveBtn = this.saveBtn.bind(this);
+        this.createContent =  this.createContent.bind(this);
+        this.getDbList = this.getDbList.bind(this);
     }
 
     componentDidMount() {
@@ -77,7 +79,12 @@ class DbTable extends React.Component {
         if(widget.selectWidget){
            if(widget.selectWidget.className == "db"){
                this.setState({
-                   node : widget.selectWidget.node
+                   node : widget.selectWidget.node,
+                   dbList : [],
+                   dbHeader: [],
+                   inputNow : null,
+                   inputText : null,
+                   inputStyle : null
                });
            }
         }
@@ -86,28 +93,58 @@ class DbTable extends React.Component {
     getNewData() {
         let self = this;
         let allDbHeader = this.state.allDbHeader;
-        if (allDbHeader.length !== 0) {
-            console.log(1,allDbHeader);
+        allDbHeader.map((v,i)=>{
+            if(allDbHeader[i].id === this.state.node.dbid){
+                let headerData = allDbHeader[i].header.split(",");
+                //console.log(454,headerData,headerData.length);
+                if(headerData.length !== 0){
+                    let dbHeader = headerData;
+                    this.state.node.find({}, function (err, data) {
+                        //console.log(2,data);
+                        if(data == undefined) return;
 
+                        let list = [];
+                        list = data;
+                        //console.log(dbHeader,list);
+                        self.setState({
+                            dbHeader : dbHeader,
+                            dbList : list
+                        });
 
-            this.state.node.find({}, function (err, data) {
-                console.log(2,data);
-                //if(data == undefined) return;
-                //
-                //let list = [];
-                //list = data;
-                //
-                //if(list.length > 0){
-                //    self.setState({
-                //        dbHeader : dbHeader,
-                //        dbList : list
-                //    });
-                //}
-            });
-            this.scrollBtn();
-        }
+                        if(list.length === 0){
+                            self.createContent();
+                        }
+                    });
+                    this.scrollBtn();
+                }
+            }
+        });
     }
 
+    createContent(){
+        let dbHeader = this.state.dbHeader;
+        let newList = {};
+        let list = [];
+        newList['id'] = this.state.node.dbid;
+        dbHeader.map((v,i)=>{
+            newList[v] = "";
+        });
+        list.push(newList);
+        this.state.node.insert(list[0]);
+        this.getDbList();
+    }
+
+    getDbList(){
+        this.state.node.find({}, function (err, data) {
+            if(data == undefined) return;
+
+            let list = [];
+            list = data;
+            self.setState({
+                dbList : list
+            });
+        });
+    }
 
     updateHeader(){
         let array = this.state.dbHeader;
