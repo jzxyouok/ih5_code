@@ -14,7 +14,8 @@ import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
 import FunctionView from './FunctionView/FunctionView';
 import VariableView from './VariableView/VariableView';
-import EditDb from './edit-db/index'
+import EditDb from './edit-db/index';
+import DBItemView from './DBItemView/DBItemView';
 
 import WidgetStore from '../stores/WidgetStore';
 import ToolBoxStore from '../stores/ToolBoxStore';
@@ -162,6 +163,9 @@ class App extends React.Component {
 
                 <VariableView expanded={this.state.expandedToolbox}
                               isHidden={!(this.state.activeVar != null)}/>
+
+                <DBItemView expanded={this.state.expandedToolbox}
+                            isHidden={true}/>
 
                 <ObjectView />
 

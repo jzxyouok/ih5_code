@@ -276,7 +276,7 @@ class Event extends React.Component {
         switch (flag){
             case 'judgeObjFlag':
                 let judgeValOption=[];
-                if(this.state.specialObject.indexOf(chooseEventClassName)>=0){
+                if(this.state.specialObject.indexOf(chooseEventClassName[0])>=0){
                     arrHidden=[false,false,true,false,false,true];
                 }else{
                     arrHidden=[false,false,false,true,true,true];
@@ -313,22 +313,24 @@ class Event extends React.Component {
                  arrHidden =this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
 
                 let compareValOption;
-                if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
+
+                if (this.state.specialObject.indexOf(chooseEventClassName[0]) >= 0) {
                     arrHidden[5]=true;
+                    initFlag.operationManager={
+                        arrHidden: arrHidden
+                    }
                 }else{
                     arrHidden[5]=false;
                     //非五类
                     compareValOption =  this.setObjProperty(chooseEventClassName);
-                }
-                //初始化后一个
-
-                this.setState({compareValOption:compareValOption});
-
-                initFlag.compareValOption=compareValOption;
-                initFlag.compareValFlag=compareValOption[0];
-                initFlag.operationManager={
+                    this.setState({compareValOption:compareValOption});
+                    initFlag.compareValOption=compareValOption;
+                    initFlag.compareValFlag=compareValOption[0];
+                    initFlag.operationManager={
                         arrHidden: arrHidden
                     }
+                }
+                //初始化后一个
 
                 break;
            default : isRun =false;
