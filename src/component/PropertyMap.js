@@ -67,7 +67,7 @@ propertyMap['root'] = [
             {'name':'class', showName:'类别', 'value':null, 'type':propertyType.String},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
             {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
-            {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Integer},
+            {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true },
     { name: 'gotoPage', showName:'跳转到页面', info:'(page)',
         property:[
@@ -112,6 +112,8 @@ propertyMap['box'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'show', showName:'显示', isEvent: true },
     { name: 'hide', showName:'隐藏', isEvent: true },
+    { name: 'show', showName:'显示', isFunc: true },
+    { name: 'hide', showName:'隐藏', isFunc: true },
 ];
 
 propertyMap['sprite'] = [
@@ -245,7 +247,7 @@ propertyMap['container'] = [
             {'name':'class', showName:'类别', 'value':null, 'type':propertyType.String},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
             {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
-            {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Integer},
+            {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true }
 ];
 

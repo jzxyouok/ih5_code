@@ -1,11 +1,11 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
-import WidgetStore, {varType} from '../../stores/WidgetStore'
+import WidgetStore, {varType, funcType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
 import { Input, InputNumber, Select} from 'antd';
-// import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
+import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
 import { propertyMap, propertyType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
@@ -54,8 +54,8 @@ class Property extends React.Component {
                 currentAction: nextProps.specific.action
             }, ()=>{
                 //获取动作
-                if(this.state.currentObject&&this.state.currentObject.className){
-                    this.onGetActionList(this.state.currentObject.className, this.state.currentObject.type);
+                if(this.state.currentObject){
+                    this.onGetActionList(this.state.currentObject);
                 }
             });
         }
@@ -78,14 +78,30 @@ class Property extends React.Component {
             this.setState({
                 objectList: widget.allWidgets
             });
+        } else if (widget.updateFunction){
+            if(widget.updateFunction.widget&&this.state.currentObject){
+                if(widget.updateFunction.widget.key == this.state.currentObject.key){
+                    this.onGetActionList(this.state.currentObject);
+                }
+            }
         }
     }
 
-    onGetActionList(objClassName, type){
+    onGetActionList(obj){
         let actionList = [];
-        let className = objClassName;
+        let className = obj.className;
+
+        //添加自定义func
+        if(className !== 'var') {
+            for(let i=0; i<obj.funcList.length; i++){
+                let func = obj.funcList[i];
+                let act = { name: func.name, showName:func.props.name, type: funcType.customize, widget:obj};
+                actionList.push(act);
+            }
+        }
+
         if(className === 'var'){
-            switch (type) {
+            switch (obj.type) {
                 case varType.number:
                     className = 'intVar';
                     break;
@@ -103,7 +119,8 @@ class Property extends React.Component {
                     delete temp.info;
                 }
                 delete temp.isFunc;
-                actionList.push(item);
+                temp.type = funcType.default;
+                actionList.push(temp);
             }
          });
         this.setState({
@@ -126,7 +143,7 @@ class Property extends React.Component {
 
     }
 
-    expandBtn(expanded, event) {
+    expandBtn(expanded) {
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -138,14 +155,12 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
-        // let currentObj =  {
-        //     name:object.props.name,
-        //     id:object.props.id,
-        //     className: object.className
-        // };
-        // if(object.className === 'var'){
-        //     currentObj.type = object.type;
-        // }
+        if(this.state.currentObject&&this.state.currentObject.key === object.key) {
+            this.setState({
+                objectDropdownVisible: false
+            });
+            return;
+        }
         this.setState({
             currentObject: object,
             objectDropdownVisible: false
@@ -155,26 +170,18 @@ class Property extends React.Component {
     }
 
     onObjectVisibleChange(flag) {
-        if(this.state.activeKey == this.state.wKey) {
-            this.setState({
-                objectDropdownVisible: flag
-            });
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
         }
+        this.setState({
+            objectDropdownVisible: flag
+        });
     }
 
     onActionSelect(e){
         e.domEvent.stopPropagation();
         let action = e.item.props.action;
-        // let property =[];
-        // if(action.property){
-        //     property = action.property;
-        // }
         this.setState({
-            // currentAction: {
-            //     'name': action.name,
-            //     'showName': action.showName,
-            //     'property': property,
-            // },
             currentAction: action,
             actionDropdownVisible: false
         }, ()=> {
@@ -183,28 +190,30 @@ class Property extends React.Component {
     }
 
     onActionVisibleChange(flag) {
-        if(this.state.activeKey == this.state.wKey) {
-            this.setState({
-                actionDropdownVisible: flag
-            });
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
         }
+        this.setState({
+            actionDropdownVisible: flag
+        });
     }
 
     onChangePropDom(prop, index, e){
-        let value = null;
-        switch (prop) {
-            case prop.String:
+        var value = null;
+        switch (prop.type) {
+            case propertyType.String:
                 value = e.target.value;
                 break;
-            case prop.Integer:
-            case prop.Float:
+            case propertyType.Integer:
+            case propertyType.Float:
+            case propertyType.Boolean2:
                 value = e;
                 break;
-            case prop:Function:
+            case propertyType.Function:
                 break;
             default:
                 break;
-        };
+        }
         prop.value = value;
         let property = this.state.currentAction.property;
         property[index] = prop;
@@ -212,20 +221,46 @@ class Property extends React.Component {
         action.property = property;
         this.setState({
             currentAction: action,
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
         });
-        WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+    }
+
+
+    getProps(item, index) {
+        var defaultProp = {
+            size: 'small',
+            onChange:  this.onChangePropDom.bind(this, item, index)
+        };
+        switch (item.type) {
+            case propertyType.String:
+            case propertyType.Integer:
+            case propertyType.Float:
+                defaultProp.value = item.value;
+                break;
+            case propertyType.Boolean2:
+                if(item.value==false){
+                    defaultProp.checked = 2;
+                }else if(item.value==true){
+                    defaultProp.checked = 0;
+                }else{
+                    defaultProp.checked = 1;
+                }
+                break;
+            case propertyType.Function:
+                break;
+            default:
+                break;
+        }
+        return defaultProp;
     }
 
     render() {
         let content = (v1,i1)=>{
             //设置通用默认参数和事件
-            let defaultProp = {
-                size: 'small',
-                onChange:  this.onChangePropDom.bind(this, v1, i1)
-            };
             return  <div className="pp--list f--hlc" key={i1}>
                         <div className="pp--name">{ v1.showName }</div>
-                        { type(v1.type, v1.value, defaultProp) }
+                        { type(v1.type, v1.value, this.getProps(v1, i1))}
                     </div>
         };
 
@@ -239,10 +274,10 @@ class Property extends React.Component {
                     return <Input {...defaultProp}/>;
                     {/*return <input {...defaultProp} className="flex-1" type="text" placeholder={value}/>;*/}
                 case propertyType.Integer:
-                    return <InputNumber {...defaultProp} />;
+                    return <InputNumber {...defaultProp}/>;
                     // return <input className="flex-1" type="text" placeholder={value}/>;
                 case propertyType.Float:
-                    return <InputNumber step={0.1} {...defaultProp} />;
+                    return <InputNumber step={0.1} {...defaultProp}/>;
                     {/*return <input className="flex-1" type="text" placeholder={value}/>;*/}
                 case propertyType.Function:
                     return <Select defaultValue="目标函数"  {...defaultProp}>
@@ -252,6 +287,8 @@ class Property extends React.Component {
                                 : this.state.currentObject.funcList.map(func)
                         }
                     </Select>;
+                case propertyType.Boolean2:
+                    return <SwitchMore   {...defaultProp}/>;
                 default:
                     return <div>未定义类型</div>;
             }

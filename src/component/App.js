@@ -127,10 +127,10 @@ class App extends React.Component {
         this.setState({
             editDb : true
         });
-        //console.log(this.state.dbNode);
-        //this.state.dbNode.find({},function(err,data){
-        //    console.log(data);
-        //});
+        console.log(this.state.dbNode);
+        this.state.dbNode.find({},function(err,data){
+            console.log(data);
+        });
     }
 
     editDbHide(){
