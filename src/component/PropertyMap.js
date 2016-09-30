@@ -253,6 +253,7 @@ propertyMap['container'] = [
 
 propertyMap['canvas'] = [
     ...propertyMap['container'],
+    { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
     { name: 'width', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'height', type: propertyType.Integer, default: 0, group:'position', isProperty: true}
 ];
@@ -408,7 +409,9 @@ for (var n in propertyMap) {
 
 function checkChildClass(selected, className) {
     // 对函数,变量,自定义的处理
-    if (selected.className === 'func' || selected.className === 'var' || isCustomizeWidget(selected.className)) {
+    if (selected.className === 'func' ||
+        selected.className === 'var' ||
+        isCustomizeWidget(selected.className)) {
         return false;
     }
     var provides = propertyFlags[selected.className].provides;

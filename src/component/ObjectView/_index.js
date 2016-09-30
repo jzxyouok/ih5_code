@@ -31,7 +31,8 @@ class ObjectView extends React.Component {
             canHaveEventTree: false,    //是否可有事件树
             hasEventTree: false, //是否有事件树
             activeEventTreeKey: null, //激活事件的key
-            enableContainer: true
+            enableContainer: true,
+            enablePage: true,
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
@@ -59,9 +60,11 @@ class ObjectView extends React.Component {
     onStatusChange(widget) {
         //获取选中图层的父级id
         if(widget.selectWidget){
+            debugger;
             this.setState({
                 currentNode : widget.selectWidget,
-                enableContainer: checkChildClass(widget.selectWidget, 'container')
+                enableContainer: checkChildClass(widget.selectWidget, 'container'),
+                enablePage: checkChildClass(widget.selectWidget, 'page')
             });
             if(widget.selectWidget.parent){
                 this.setState({
@@ -73,13 +76,15 @@ class ObjectView extends React.Component {
         } else if (widget.selectFunction) {
             this.setState({
                 currentNode : widget.selectFunction,
-                enableContainer: checkChildClass(widget.selectFunction, 'container')
+                enableContainer: checkChildClass(widget.selectFunction, 'container'),
+                enablePage: checkChildClass(widget.selectWidget, 'page')
             });
             this.onInitButtons(widget.selectFunction);
         } else if (widget.selectVariable) {
             this.setState({
                 currentNode : widget.selectVariable,
-                enableContainer: checkChildClass(widget.selectVariable, 'container')
+                enableContainer: checkChildClass(widget.selectVariable, 'container'),
+                enablePage: checkChildClass(widget.selectWidget, 'page')
             });
             this.onInitButtons(widget.selectVariable);
         } else if(widget.activeEventTreeKey) {
@@ -162,11 +167,9 @@ class ObjectView extends React.Component {
 
     delete(){
         if(this.state.activeEventTreeKey != null) {
-            console.log(1)
             WidgetActions['removeEventTree']();
             WidgetActions['selectWidget'](this.state.currentNode);
         } else {
-            console.log(2)
             WidgetActions['deleteTreeNode'](this.state.currentNode.className);
         }
     }
@@ -249,7 +252,11 @@ class ObjectView extends React.Component {
                             title='事件'
                             disabled={!this.state.canHaveEventTree||this.state.hasEventTree}
                             onClick={ this.initEvent.bind(this, 'event', null)}/>
-                    {/*<button className='btn btn-clear new-btn' title='新建'  onClick={ this.create.bind(this,'page',null)} />*/}
+                    <button className={$class('btn btn-clear page-btn',
+                            {'not-allowed':!this.state.enablePage})}
+                            title='页面'
+                            disabled={!this.state.enablePage}
+                            onClick={ this.create.bind(this,'page', {})} />
                     <button className={$class('btn btn-clear delete-btn',
                                 {'not-allowed': !this.state.canDelete&&this.state.activeEventTreeKey== null})}
                             disabled={!this.state.canDelete&&this.state.activeEventTreeKey== null}
