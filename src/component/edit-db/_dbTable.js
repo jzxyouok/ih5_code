@@ -5,6 +5,7 @@ import $ from 'jquery';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
+import DbHeaderStores from '../../stores/DbHeader'
 
 var PREFIX = 'app/';
 
@@ -14,11 +15,11 @@ class DbTable extends React.Component {
         this.state = {
             dbList : [],
             dbHeader: [],
-            columnNum : 1,
             inputNow : null,
             inputText : null,
             inputStyle : null,
-            node: null
+            node: null,
+            allDbHeader : []
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -33,23 +34,17 @@ class DbTable extends React.Component {
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         this.onStatusChange(WidgetStore.getStore());
-        //WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ea32507f8472077f7384f1", null, null, function(text) {
+        DbHeaderStores.listen(this.DbHeaderData.bind(this));
+        //57ee37ce7f8472077f7384f7
+        //57ee37e67f84726aa75f0036
+        //WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
         //    let result = JSON.parse(text);
+        //    console.log(result.d);
         //    if(result.d.length > 0){
         //        let dbHeader = [];
         //        for(let i in result.d[0]){
         //            if (i != "_id"){
         //                dbHeader.push(i);
-        //            }
-        //        }
-        //        let add = this.state.columnNum - dbHeader.length;
-        //        if(add > 0){
-        //            for(let a = 0 ; a< add ; a++){
-        //                let num = dbHeader.length + a;
-        //                dbHeader.push("请命名" + num);
-        //                result.d.map((v,i)=>{
-        //                    result.d[i]["请命名" + num] = "";
-        //                });
         //            }
         //        }
         //        let newList = [];
@@ -71,6 +66,13 @@ class DbTable extends React.Component {
         this.unsubscribe();
     }
 
+    DbHeaderData(data){
+        console.log(data);
+        this.setState({
+            allDbHeader : data
+        })
+    }
+
     onStatusChange(widget) {
         if(widget.selectWidget){
            if(widget.selectWidget.className == "db"){
@@ -81,67 +83,31 @@ class DbTable extends React.Component {
         }
     }
 
-    getNewData(){
+    getNewData() {
         let self = this;
-        this.state.node.find({},function(err,data){
-            //console.log(data);
-            if(data == undefined) return;
+        let allDbHeader = this.state.allDbHeader;
+        if (allDbHeader.length !== 0) {
+            console.log(1,allDbHeader);
 
-            let list = [];
-            list = data;
 
-            if(list.length > 0){
-                let dbHeader = [];
-                for(let i in list[0]){
-                    if (i != "_id"){
-                        dbHeader.push(i);
-                    }
-                }
-
-                let add = self.state.columnNum - dbHeader.length;
-                if(add > 0){
-                    for(let a = 0 ; a< add ; a++){
-                        let num = dbHeader.length + a;
-                        dbHeader.push("请命名" + num);
-                        list.map((v,i)=>{
-                            list[i]["请命名" + num] = "";
-                        });
-                    }
-                }
-
-                let newList = [];
-                dbHeader.map((v,i)=>{
-                    newList[v] = ""
-                });
-                list.push(newList);
-
-                self.setState({
-                    dbHeader : dbHeader,
-                    dbList : list
-                });
-                self.updateHeader();
-            }
-            else {
-                let dbHeader = [];
-                for(let i = 0; i< self.state.columnNum; i++ ){
-                    let num = i;
-                    dbHeader.push("请命名" + num);
-                }
-                let newList = [];
-                dbHeader.map((v,i)=>{
-                    newList[v] = ""
-                });
-                list.push(newList);
-
-                self.setState({
-                    dbHeader : dbHeader,
-                    dbList : list
-                });
-                self.updateHeader();
-            }
-        });
-        this.scrollBtn();
+            this.state.node.find({}, function (err, data) {
+                console.log(2,data);
+                //if(data == undefined) return;
+                //
+                //let list = [];
+                //list = data;
+                //
+                //if(list.length > 0){
+                //    self.setState({
+                //        dbHeader : dbHeader,
+                //        dbList : list
+                //    });
+                //}
+            });
+            this.scrollBtn();
+        }
     }
+
 
     updateHeader(){
         let array = this.state.dbHeader;
@@ -159,8 +125,8 @@ class DbTable extends React.Component {
     }
 
     saveBtn(){
-        this.updateHeader();
-        this.state.node.updata(this.state.dbList);
+        //this.updateHeader();
+        //this.state.node.updata(this.state.dbList);
     }
 
     scrollBtn(){
@@ -187,12 +153,8 @@ class DbTable extends React.Component {
 
 
     addColumn(){
-        let header = this.state.dbHeader;
-        let which = this.state.columnNum;
-        header[which] = "请命名" + which;
-        this.setState({
-            columnNum : which + 1
-        })
+        //let header = this.state.dbHeader;
+        //header[which] = "请命名" + which;
     }
 
     inputClick(key,value){
@@ -249,13 +211,13 @@ class DbTable extends React.Component {
         else {
             let value = header[which2];
             list[which][value] = this.state.inputText;
-            if(which == list.length-1){
-                let newList = [];
-                header.map((v,i)=>{
-                    newList[v] = ""
-                });
-                list.push(newList);
-            }
+            //if(which == list.length-1){
+            //    let newList = [];
+            //    header.map((v,i)=>{
+            //        newList[v] = ""
+            //    });
+            //    list.push(newList);
+            //}
             this.setState({
                 dbHeader : header,
                 dbList : list,
@@ -283,10 +245,10 @@ class DbTable extends React.Component {
                             <table>
                                 <thead>
                                     <tr>
-                                        <td></td>
+                                        <td className={ $class({"hidden": this.state.dbHeader.length == 0})}> </td>
 
                                         {
-                                            this.state.dbList.length > 0
+                                            this.state.dbHeader.length > 0
                                             ? this.state.dbHeader.map((v,i)=>{
                                                 let id = "header" + i;
                                                 return  <td key={i}
