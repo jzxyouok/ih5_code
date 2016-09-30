@@ -101,7 +101,7 @@ class NavBar extends React.Component {
 
     newWork() {
         this.workid = null;
-        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040}, links:[]}});
+        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040, 'color':'#FFFFFF'}, links:[]}});
     }
 
     getWorks(token) {
