@@ -19,7 +19,9 @@ class DbTable extends React.Component {
             inputText : null,
             inputStyle : null,
             node: null,
-            allDbHeader : []
+            allDbHeader : [],
+            isAddCul : false,
+            addType : 0
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -29,6 +31,11 @@ class DbTable extends React.Component {
         this.updateHeader = this.updateHeader.bind(this);
         this.getNewData = this.getNewData.bind(this);
         this.saveBtn = this.saveBtn.bind(this);
+        this.createContent =  this.createContent.bind(this);
+        this.getDbList = this.getDbList.bind(this);
+        this.popShow = this.popShow.bind(this);
+        this.popHide = this.popHide.bind(this);
+        this.whichAddType = this.whichAddType.bind(this);
     }
 
     componentDidMount() {
@@ -77,7 +84,12 @@ class DbTable extends React.Component {
         if(widget.selectWidget){
            if(widget.selectWidget.className == "db"){
                this.setState({
-                   node : widget.selectWidget.node
+                   node : widget.selectWidget.node,
+                   dbList : [],
+                   dbHeader: [],
+                   inputNow : null,
+                   inputText : null,
+                   inputStyle : null
                });
            }
         }
@@ -86,28 +98,59 @@ class DbTable extends React.Component {
     getNewData() {
         let self = this;
         let allDbHeader = this.state.allDbHeader;
-        if (allDbHeader.length !== 0) {
-            console.log(1,allDbHeader);
+        allDbHeader.map((v,i)=>{
+            if(allDbHeader[i].id === this.state.node.dbid){
+                let headerData = allDbHeader[i].header.split(",");
+                //console.log(454,headerData,headerData.length);
+                let index = headerData.indexOf("null");
+                if(headerData.length !== 0 && index < 0){
+                    let dbHeader = headerData;
+                    this.state.node.find({}, function (err, data) {
+                        //console.log(2,data);
+                        if(data == undefined) return;
 
+                        let list = [];
+                        list = data;
+                        //console.log(dbHeader,list);
+                        self.setState({
+                            dbHeader : dbHeader,
+                            dbList : list
+                        });
 
-            this.state.node.find({}, function (err, data) {
-                console.log(2,data);
-                //if(data == undefined) return;
-                //
-                //let list = [];
-                //list = data;
-                //
-                //if(list.length > 0){
-                //    self.setState({
-                //        dbHeader : dbHeader,
-                //        dbList : list
-                //    });
-                //}
-            });
-            this.scrollBtn();
-        }
+                        if(list.length === 0){
+                            self.createContent();
+                        }
+                    });
+                    this.scrollBtn();
+                }
+            }
+        });
     }
 
+    createContent(){
+        let dbHeader = this.state.dbHeader;
+        let newList = {};
+        let list = [];
+        newList['id'] = this.state.node.dbid;
+        dbHeader.map((v,i)=>{
+            newList[v] = "";
+        });
+        list.push(newList);
+        this.state.node.insert(list[0]);
+        this.getDbList();
+    }
+
+    getDbList(){
+        this.state.node.find({}, function (err, data) {
+            if(data == undefined) return;
+
+            let list = [];
+            list = data;
+            self.setState({
+                dbList : list
+            });
+        });
+    }
 
     updateHeader(){
         let array = this.state.dbHeader;
@@ -125,7 +168,8 @@ class DbTable extends React.Component {
     }
 
     saveBtn(){
-        //this.updateHeader();
+        this.updateHeader();
+        console.log(this.state.dbHeader,this.state.dbList);
         //this.state.node.updata(this.state.dbList);
     }
 
@@ -153,8 +197,33 @@ class DbTable extends React.Component {
 
 
     addColumn(){
-        //let header = this.state.dbHeader;
-        //header[which] = "请命名" + which;
+        let header = this.state.dbHeader;
+        let value = null;
+        let list = this.state.dbList;
+        if(this.state.addType == 0){
+            value = "s" + this.refs.inputType.value;
+        }
+        else {
+            value = "i" + this.refs.inputType.value;
+        }
+        header.push(value);
+        if(list.length == 0){
+            let newList = [];
+            header.map((v,i)=>{
+                newList[v] = "";
+            });
+            list.push(newList);
+        }
+        else {
+            list.map((v,i)=>{
+                list[i][value] = "";
+            });
+        }
+
+        this.setState({
+            dbHeader:header,
+            dbList : list
+        })
     }
 
     inputClick(key,value){
@@ -199,9 +268,9 @@ class DbTable extends React.Component {
                 });
                 //console.log(list);
                 header[which] = this.state.inputText;
-                if(which == header.length-1){
-                    this.addColumn();
-                }
+                //if(which == header.length-1){
+                //    this.addColumn();
+                //}
                 this.setState({
                     dbHeader : header,
                     inputNow : null
@@ -210,20 +279,49 @@ class DbTable extends React.Component {
         }
         else {
             let value = header[which2];
-            list[which][value] = this.state.inputText;
-            //if(which == list.length-1){
-            //    let newList = [];
-            //    header.map((v,i)=>{
-            //        newList[v] = ""
-            //    });
-            //    list.push(newList);
-            //}
+            let type = value.charAt(0);
+            let text = "";
+            text = this.state.inputText;
+            if(type == "s" ){
+                list[which][value] = text;
+            }
+            else if( type == "i" ){
+                list[which][value] = parseFloat(text);
+            }
+            else {
+                list[which][value] = text;
+            }
+            if(which == list.length-1 && text.length){
+                let newList = [];
+                header.map((v,i)=>{
+                    newList[v] = ""
+                });
+                list.push(newList);
+            }
             this.setState({
                 dbHeader : header,
                 dbList : list,
                 inputNow : null
             })
         }
+    }
+
+    popHide(){
+        this.setState({
+            isAddCul: false
+        })
+    }
+
+    popShow(){
+        this.setState({
+            isAddCul: true
+        })
+    }
+
+    whichAddType(i){
+        this.setState({
+            addType:i
+        })
     }
 
     render() {
@@ -251,10 +349,21 @@ class DbTable extends React.Component {
                                             this.state.dbHeader.length > 0
                                             ? this.state.dbHeader.map((v,i)=>{
                                                 let id = "header" + i;
+                                                let name ;
+                                                let type = v.charAt(0);
+                                                if(type == "s" ){
+                                                    name = v.substr(1);
+                                                }
+                                                else if( type == "i" ){
+                                                    name = v.substr(1);
+                                                }
+                                                else {
+                                                    name = v;
+                                                }
                                                 return  <td key={i}
                                                             className={ 't'+id}
-                                                            onClick={ this.inputClick.bind(this, id, v)}>
-                                                            {v}
+                                                            onClick={ this.inputClick.bind(this, id, name)}>
+                                                            {name}
 
                                                             {
                                                                 id === this.state.inputNow
@@ -320,7 +429,9 @@ class DbTable extends React.Component {
                         </div>
                     </div>
 
-                    <div className="add-btn f--s" onClick={ this.addColumn }>
+                    <p className={$class("no-tips f--hcc",{"hidden":  this.state.dbHeader.length > 0})}>请点击右上角添加按钮创建字段</p>
+
+                    <div className="add-btn f--s" onClick={ this.popShow }>
                         <button className="btn btn-clear">
                             <span className="icon" />
                             添加
@@ -349,6 +460,30 @@ class DbTable extends React.Component {
                     <div className="right f--hlc">
                         <button className="btn btn-clear cancel-btn" onClick={ this.props.editDbHide }>取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
+                    </div>
+                </div>
+
+                <div className={ $class("Dt-pop f--hcc",{"hidden" : !this.state.isAddCul})}>
+                    <div className="pop-layer"></div>
+
+                    <div className="pop-main">
+                        <div className="pop-header f--hlc">添加字段</div>
+                        <div className="pop-content">
+                            <div className="title">字段类型：</div>
+                            <div className="btn-group f--h">
+                                <div className={$class("btn f--hcc flex-1",{"active": 0 === this.state.addType})}
+                                     onClick={ this.whichAddType.bind(this, 0)}>文本</div>
+                                <div className={$class("btn f--hcc flex-1",{"active": 1 === this.state.addType})}
+                                     onClick={ this.whichAddType.bind(this, 1)}>数值</div>
+                            </div>
+                            <div className="title">字段名称：</div>
+                            <input placeholder="请输入名称" ref="inputType" />
+
+                            <div className="pop-footer f--hcc">
+                                <button className="btn btn-clear cancel-btn" onClick={ this.popHide }>取消</button>
+                                <button className="btn btn-clear save-btn" onClick={ this.addColumn }>确定</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

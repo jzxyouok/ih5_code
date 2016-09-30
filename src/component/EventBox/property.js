@@ -13,6 +13,7 @@ const MenuItem = Menu.Item;
 class Property extends React.Component {
     constructor (props) {
         super(props);
+
         this.state = {
             expanded: true,
 
@@ -155,7 +156,7 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
-        if(this.state.currentObject&&this.state.currentObject.key === object.key) {
+        if(this.state.currentObject && this.state.currentObject.key === object.key) {
             this.setState({
                 objectDropdownVisible: false
             });
@@ -165,7 +166,7 @@ class Property extends React.Component {
             currentObject: object,
             objectDropdownVisible: false
         }, ()=> {
-            WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
+           WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
         });
     }
 
