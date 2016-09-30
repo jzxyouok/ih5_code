@@ -137,6 +137,14 @@ function loadTree(parent, node, idList) {
       item.cmds.forEach(cmd => {
         r.specificList.push({action:cmd, sid:_specificCount++});
       });
+      //没有的时候添加一个空的
+      if(r.specificList.length === 0){
+          r.specificList.push({
+              'sid': _specificCount++,
+              'object': null,
+              'action': null
+          })
+      }
       eventTree.push(r);
     });
     current.props.eventTree = eventTree;
