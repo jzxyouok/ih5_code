@@ -68,7 +68,7 @@ const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse
     'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'html', 'canvas'];
 var currentLoading;
 
-function loadTree(parent, node) {
+function loadTree(parent, node, idList) {
   let current = {};
   current.parent = parent;
   current.key = _keyCount++;
@@ -124,8 +124,27 @@ function loadTree(parent, node) {
     // }
   }
 
-  if (node['id'])
+  if (node['etree']) {
+    var eventTree = [];
+    node['etree'].forEach(item => {
+      var r = {};
+      r.children = null;
+      r.condition = null
+      r.eid = (_eventCount++);
+      r.specificList = [];
+      item.cmds.forEach(cmd => {
+        r.specificList.push({action:cmd, sid:_specificCount++});
+      });
+      eventTree.push(r);
+    });
+    current.props.eventTree = eventTree;
+  }
+
+  if (node['id']) {
     current.props['id'] = node['id'];
+    if (idList !== undefined)
+      idList[node['id']] = current;
+  }
 
   var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
   current.node = bridge.addWidget(renderer, (parent) ? parent.node : null, node['cls'], null, node['props'], (parent && parent.timerWidget) ? parent.timerWidget.node : null);
@@ -152,10 +171,34 @@ function loadTree(parent, node) {
   let children = node['children'];
   if (children) {
     for (let i = 0; i < children.length; i++) {
-      loadTree(current, children[i]);
+      loadTree(current, children[i], idList);
     }
   }
   return current;
+}
+
+function resolveEventTree(node, list) {
+  if (node.props['eventTree']) {
+    node.props['eventTree'].forEach(item => {
+      item.specificList.forEach(cmd => {
+        var obj = list[cmd.action.id];
+        delete(cmd.action.id);
+        if (cmd.action.var !== undefined) {
+          var v = cmd.action.var;
+          delete(cmd.action.var);
+          var vl = (v.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
+          cmd.object = vl[parseInt(v.substr(1))];
+        } else {
+          cmd.object = obj;
+        }
+      });
+    });
+  }
+  if (node.children.length > 0) {
+    node.children.map(item => {
+      resolveEventTree(item, list);
+    });
+  }
 }
 
 function trimTreeNode(node, links) {
@@ -175,21 +218,90 @@ function trimTree(node) {
   bridge.setLinks(node.node, links);
 }
 
+var maxSeq;
+
+function getMaxSeq(node) {
+  if (node.props['id']) {
+    var id = node.props['id'];
+    if (id.substr(0, 3) == 'id_') {
+      var n = parseInt(id.substr(3));
+      if (n >= maxSeq)
+        maxSeq = n + 1;
+    }
+  }
+  if (node.children.length > 0) {
+    node.children.map(item => {
+      getMaxSeq(item);
+    });
+  }
+}
+
+function generateId(node) {
+  if (node.props['eventTree']) {
+    node.props['eventTree'].forEach(item => {
+      item.specificList.forEach(cmd => {
+        if (cmd.object.className == 'var') {
+          if (cmd.object.widget.props['id'] === undefined)
+            cmd.object.widget.props['id'] = 'id_' + (maxSeq++);
+        } else if (cmd.object.props['id'] === undefined)
+          cmd.object.props['id'] = 'id_' + (maxSeq++);
+      });
+    });
+  }
+  if (node.children.length > 0) {
+    node.children.map(item => {
+      generateId(item);
+    });
+  }
+}
+
 function saveTree(data, node) {
   data['cls'] = node.className;
   let props = {};
   for (let name in node.props) {
     if (name === 'id')
       data['id'] = node.props['id'];
-    else
+    else if (name == 'eventTree') {
+      var etree = [];
+      node.props['eventTree'].forEach(item => {
+        var cmds = [];
+        item.specificList.forEach(cmd => {
+          if (!cmd.action)
+            return;
+          var c = {name:cmd.action.name,
+            showName:cmd.action.showName,
+            type:cmd.action.type};
+          if (cmd.object.className == 'var') {
+            c.id = cmd.object.widget.props['id'];
+            var vid;
+            var vlist;
+            if (cmd.object.type == 'string') {
+              vid = 's';
+              vlist = cmd.object.widget.strVarList;
+            } else {
+              vid = 'i';
+              vlist = cmd.object.widget.intVarList;
+            }
+            c.var = vid + vlist.indexOf(cmd.object);
+          } else {
+            c.id = cmd.object.props['id'];
+          }
+          if (cmd.action.property)
+            c.property = cmd.action.property;
+          cmds.push(c);
+        });
+        etree.push({cmds:cmds});
+      });
+      data['etree'] = etree;
+    } else
       props[name] = node.props[name];
   }
   if (props)
     data['props'] = props;
   if (node.events)
     data['events'] = node.events;
+  data['vars'] = [];
   if (node.intVarList.length > 0) {
-      data['vars'] = [];
       // for (let i = node.varList.length-1; i >=0 ; i--) {
       //     let o = {};
       //     o['__name'] = node.varList[i].name;
@@ -1159,12 +1271,17 @@ export default Reflux.createStore({
         classList = [];
         bridge.resetClass();
         stageTree = [];
+        var idList;
+        var tree;
 
         if (data['defs']) {
             for (let n in data['defs']) {
                 bridge.addClass(n);
                 classList.push(n);
-                stageTree.push({name: n, tree: loadTree(null, data['defs'][n])});
+                idList = [];
+                tree = loadTree(null, data['defs'][n], idList);
+                stageTree.push({name: n, tree: tree});
+                resolveEventTree(tree, idList);
             }
         }
 
@@ -1172,7 +1289,10 @@ export default Reflux.createStore({
         if (data['stage']){
             data['stage']['props']['name'] = 'stage';
         }
-        stageTree.unshift({name: 'stage', tree: loadTree(null, data['stage'])});
+        idList = [];
+        tree = loadTree(null, data['stage'], idList);
+        resolveEventTree(tree, idList);
+        stageTree.unshift({name: 'stage', tree: tree});
         // bridge.createSelector(null);
 
         if (!rootDiv) {
@@ -1311,6 +1431,9 @@ export default Reflux.createStore({
       let images = [];
       data['stage'] = {};
       trimTree(stageTree[0].tree);
+      maxSeq = 0;
+      getMaxSeq(stageTree[0].tree);
+      generateId(stageTree[0].tree);
       saveTree(data['stage'], stageTree[0].tree);
       data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
       // data['stage']['links'] = stageTree[0].tree.imageList.length;
@@ -1323,6 +1446,9 @@ export default Reflux.createStore({
           let name = stageTree[i].name;
           data['defs'][name] = {};
           trimTree(stageTree[i].tree);
+          maxSeq = 0;
+          getMaxSeq(stageTree[i].tree);
+          generateId(stageTree[i].tree);
           saveTree(data['defs'][name], stageTree[i].tree);
           data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
           // data['defs'][name]['links'] = stageTree[i].tree.imageList.length;
