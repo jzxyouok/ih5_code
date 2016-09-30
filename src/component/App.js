@@ -127,10 +127,7 @@ class App extends React.Component {
         this.setState({
             editDb : true
         });
-        console.log(this.state.dbNode);
-        this.state.dbNode.find({},function(err,data){
-            console.log(data);
-        });
+        this.refs.EditDb.getNewData();
     }
 
     editDbHide(){
@@ -172,7 +169,7 @@ class App extends React.Component {
                               || this.state.activeVar != null}/>
 
                 <div className={$class({"hidden":!this.state.editDb})}>
-                    <EditDb editDbHide={ this.editDbHide }  />
+                    <EditDb editDbHide={ this.editDbHide } ref="EditDb"  />
                 </div>
                 {
                     //<Row gutter={5}>
