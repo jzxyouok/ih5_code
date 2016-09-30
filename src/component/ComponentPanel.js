@@ -41,6 +41,7 @@ let cominterfaceIcon = require('../images/base/comInterface.svg');
 let htmlIcon = require('../images/base/html.svg');
 let pageIcon = require('../images/base/page.svg');
 let canvasIcon = require('../images/base/canvas.svg');
+let inputIcon = require('../images/base/input.svg');
 
 let worldIcon = require('../images/worldNormal.png');
 let bodyIcon = require('../images/bodyNormal.png');
@@ -92,9 +93,10 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:composingcontainerIcon, className:'composingcontainer'},
                 {cid:this.cid++,icon:cominterfaceIcon, className:'cominterface'},
 
-                {cid:this.cid++,icon:htmlIcon, className:'html', drawRect:true},
+                {cid:this.cid++,icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}},
                 {cid:this.cid++,icon:pageIcon, className:'page'},
-                {cid:this.cid++,icon:canvasIcon, className:'canvas', drawRect:true}
+                {cid:this.cid++,icon:canvasIcon, className:'canvas', drawRect:true, param: {'width': 300, 'height': 300}},
+                {cid:this.cid++,icon:inputIcon, className:'input', param:{'shapeWidth': 200, 'shapeHeight': 50}},
             ]
             }
         ];
