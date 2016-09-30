@@ -26,6 +26,7 @@ class DbTable extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.inputBlur = this.inputBlur.bind(this);
         this.updateHeader = this.updateHeader.bind(this);
+        this.getNewData = this.getNewData.bind(this);
     }
 
     componentDidMount() {
@@ -72,42 +73,54 @@ class DbTable extends React.Component {
     onStatusChange(widget) {
         if(widget.selectWidget){
            if(widget.selectWidget.className == "db"){
-               let data = widget.selectWidget.node.dbid;
-               WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/"+ data , null, null, function(text) {
-                   let result = JSON.parse(text);
-                   if(result.d.length > 0){
-                       let dbHeader = [];
-                       for(let i in result.d[0]){
-                           if (i != "_id"){
-                               dbHeader.push(i);
-                           }
-                       }
-                       let add = this.state.columnNum - dbHeader.length;
-                       if(add > 0){
-                           for(let a = 0 ; a< add ; a++){
-                               let num = dbHeader.length + a;
-                               dbHeader.push("请命名" + num);
-                               result.d.map((v,i)=>{
-                                   result.d[i]["请命名" + num] = "";
-                               });
-                           }
-                       }
-                       let newList = [];
-                       dbHeader.map((v,i)=>{
-                           newList[v] = ""
-                       });
-                       dbList.push(newList);
-                       this.setState({
-                           dbHeader : dbHeader,
-                           dbList : result.d,
-                           node : widget.selectWidget.node
-                       });
-                       this.updateHeader(false);
-                   }
-               }.bind(this));
-               this.scrollBtn();
+               this.setState({
+                   node : widget.selectWidget.node
+               });
            }
         }
+    }
+
+    getNewData(){
+        let self = this;
+        this.state.node.find({},function(err,data){
+            if(data == undefined) return;
+
+            let list = [];
+            list = data;
+
+            if(list.length > 0){
+                let dbHeader = [];
+                for(let i in list[0]){
+                    if (i != "_id"){
+                        dbHeader.push(i);
+                    }
+                }
+
+                let add = self.state.columnNum - dbHeader.length;
+                if(add > 0){
+                    for(let a = 0 ; a< add ; a++){
+                        let num = dbHeader.length + a;
+                        dbHeader.push("请命名" + num);
+                        list.map((v,i)=>{
+                            list[i]["请命名" + num] = "";
+                        });
+                    }
+                }
+
+                let newList = [];
+                dbHeader.map((v,i)=>{
+                    newList[v] = ""
+                });
+                list.push(newList);
+
+                self.setState({
+                    dbHeader : dbHeader,
+                    dbList : list
+                });
+                self.updateHeader(false);
+            }
+        });
+        this.scrollBtn();
     }
 
     updateHeader(bool){
