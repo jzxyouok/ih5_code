@@ -328,7 +328,19 @@ class NavBar extends React.Component {
 
     addDb(id,name){
         if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
-            WidgetActions['addWidget']('db', {'dbid': id }, null, name);
+            let bool = true;
+            let data = this.state.selectWidget.children;
+            for(let i =0 ; i<data.length; i++){
+                if(data[i].className == "db"){
+                    if(data[i].node.dbid == id){
+                        bool = false;
+                        return bool;
+                    }
+                }
+            }
+            if(bool){
+                WidgetActions['addWidget']('db', {'dbid': id }, null, name);
+            }
         }
     }
 
