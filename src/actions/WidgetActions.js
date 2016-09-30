@@ -30,6 +30,10 @@ export default Reflux.createActions([
   'deleteSpecific',               //删除事件目标
   'changeSpecific',               //修改事件目标
 
+  'addEventChildren'  ,          //添加新的判断逻辑
+  'delEventChildren'  ,          //删除判断逻辑
+   'delEvent',                   //删除整条判断逻辑
+
   'selectFunction',               //选择函数
   'addFunction',                  //添加函数
   'changeFunction',               //修改函数

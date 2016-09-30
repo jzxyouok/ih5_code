@@ -15,6 +15,8 @@ let _keyCount = 1;
 let _eventCount = 0;    //事件id
 let _specificCount = 0; //事件内目标对象id
 
+let _childrenCount =0; //逻辑判断目标对象id
+
 var prevObj;
 var prevNewObj;
 var dragTag;
@@ -400,6 +402,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addSpecific'], this.addSpecific);
         this.listenTo(WidgetActions['deleteSpecific'], this.deleteSpecific);
         this.listenTo(WidgetActions['changeSpecific'], this.changeSpecific);
+        //判断逻辑事件
+        this.listenTo(WidgetActions['addEventChildren'], this.addEventChildren);
+        this.listenTo(WidgetActions['delEventChildren'], this.delEventChildren);
+        this.listenTo(WidgetActions['delEvent'], this.delEvent);
+
         //函数
         this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
         this.listenTo(WidgetActions['addFunction'], this.addFunction);
@@ -822,6 +829,37 @@ export default Reflux.createStore({
             this.trigger({redrawEventTree: true});
         }
     },
+    addEventChildren:function(event){
+
+        if(event && event['children']){
+            event['children'].push({
+                'cid': _childrenCount++,
+                logicalFlag:'and',
+                judgeObjFlag:'判断对象',
+                judgeValFlag:'计算',
+                compareFlag:'=',
+                compareObjFlag:'比较对象',
+                compareValFlag:'比较',
+                operationManager: {  //下拉框显现管理
+                    arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                }
+            });
+
+            this.trigger({redrawEventTree: true});
+        }
+    },
+    delEventChildren:function(event,index){
+
+        if(event && event['children']){
+            event.children.splice(index,1);
+        }
+        this.trigger({redrawEventTree: true});
+    },
+    delEvent:function(eventList,index){
+       eventList.splice(index,1);
+        this.trigger({redrawEventTree: true});
+    },
+
     deleteSpecific: function(sid, event){
         if(event&&event.specificList) {
             if(event.specificList.length==1) {
