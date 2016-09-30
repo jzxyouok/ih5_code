@@ -201,10 +201,10 @@ class DbTable extends React.Component {
         let value = null;
         let list = this.state.dbList;
         if(this.state.addType == 0){
-            value = "T" + this.refs.inputType.value;
+            value = "s" + this.refs.inputType.value;
         }
         else {
-            value = "I" + this.refs.inputType.value;
+            value = "i" + this.refs.inputType.value;
         }
         header.push(value);
         if(list.length == 0){
@@ -242,20 +242,8 @@ class DbTable extends React.Component {
     }
 
     inputChange(event){
-        let value = event.target.value;
-        let type = value.charAt(0);
-        let text ;
-        if(type == "T" ){
-            text = value.substr(1);
-        }
-        else if( type == "I" ){
-            text = value.substr(1);
-        }
-        else {
-            text = value;
-        }
         this.setState({
-            inputText : text
+            inputText : event.target.value
         })
     }
 
@@ -294,10 +282,10 @@ class DbTable extends React.Component {
             let type = value.charAt(0);
             let text = "";
             text = this.state.inputText;
-            if(type == "T" ){
+            if(type == "s" ){
                 list[which][value] = text;
             }
-            else if( type == "I" ){
+            else if( type == "i" ){
                 list[which][value] = parseFloat(text);
             }
             else {
@@ -363,10 +351,10 @@ class DbTable extends React.Component {
                                                 let id = "header" + i;
                                                 let name ;
                                                 let type = v.charAt(0);
-                                                if(type == "T" ){
+                                                if(type == "s" ){
                                                     name = v.substr(1);
                                                 }
-                                                else if( type == "I" ){
+                                                else if( type == "i" ){
                                                     name = v.substr(1);
                                                 }
                                                 else {
@@ -374,7 +362,7 @@ class DbTable extends React.Component {
                                                 }
                                                 return  <td key={i}
                                                             className={ 't'+id}
-                                                            onClick={ this.inputClick.bind(this, id, v)}>
+                                                            onClick={ this.inputClick.bind(this, id, name)}>
                                                             {name}
 
                                                             {
