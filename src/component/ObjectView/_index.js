@@ -58,9 +58,7 @@ class ObjectView extends React.Component {
     }
 
     onStatusChange(widget) {
-        //获取选中图层的父级id
         if(widget.selectWidget){
-            debugger;
             this.setState({
                 currentNode : widget.selectWidget,
                 enableContainer: checkChildClass(widget.selectWidget, 'container'),
@@ -77,14 +75,14 @@ class ObjectView extends React.Component {
             this.setState({
                 currentNode : widget.selectFunction,
                 enableContainer: checkChildClass(widget.selectFunction, 'container'),
-                enablePage: checkChildClass(widget.selectWidget, 'page')
+                enablePage: checkChildClass(widget.selectFunction, 'page')
             });
             this.onInitButtons(widget.selectFunction);
         } else if (widget.selectVariable) {
             this.setState({
                 currentNode : widget.selectVariable,
                 enableContainer: checkChildClass(widget.selectVariable, 'container'),
-                enablePage: checkChildClass(widget.selectWidget, 'page')
+                enablePage: checkChildClass(widget.selectVariable, 'page')
             });
             this.onInitButtons(widget.selectVariable);
         } else if(widget.activeEventTreeKey) {

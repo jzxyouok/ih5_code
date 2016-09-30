@@ -2,8 +2,6 @@
  * 默认工具栏配置
  */
 
-import bridge from 'bridge';
-
 let img = (path) => `img/icons/${path}`;
 
 let rectIcon = img('rect.svg');
@@ -41,8 +39,8 @@ let htmlIcon = img('html.svg');
 // let effectIcon = img('effect.svg');
 
 let modeType = {
-    canvas: 0,
-    dom: 1
+    canvas: 2,  //canvas模式
+    dom: 1      //dom模式
 };
 
 var cid = 1;
@@ -259,4 +257,5 @@ var DEFAULT_TOOLBOX = {
     // }
 };
 
+export {modeType};
 export default DEFAULT_TOOLBOX;
