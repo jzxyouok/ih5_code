@@ -1,5 +1,5 @@
 import bridge from 'bridge';
-import {isCustomizeWidget, varType} from '../stores/WidgetStore';
+import {isCustomizeWidget} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
