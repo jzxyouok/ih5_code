@@ -625,8 +625,8 @@ export default Reflux.createStore({
         }
         return props;
     },
-    renameWidget: function (newname) {
-        this.currentWidget.props['name'] = newname;
+    renameWidget: function (newName) {
+        this.currentWidget.props['name'] = newName;
         this.updateProperties({'name':this.currentWidget.props['name']});
         // this.render();
         this.trigger({redrawTree: true});
@@ -712,16 +712,8 @@ export default Reflux.createStore({
     emptyEventSpecific: function() {
         let eventSpecific = {
             'sid': _specificCount++,
-            'object': {
-                'name': null,
-                'id': null,
-                'className':null
-            },
-            'action': {
-                'name': null,
-                'showName': null,
-                'property': []
-            }
+            'object': null,
+            'action': null
         };
         return eventSpecific;
     },
@@ -848,9 +840,7 @@ export default Reflux.createStore({
         if(params){
             if(params.object){
                 specific.object = params.object;
-                specific.action.name = null;
-                specific.action.showName = null;
-                specific.action.property = [];
+                specific.action = null;
             } else if(params.action){
                 specific.action = params.action;
             } else if(params.property){
@@ -982,6 +972,7 @@ export default Reflux.createStore({
                     break;
             }
         }
+        this.getAllWidgets();
         this.trigger({redrawTree: true});
     },
     changeVariable: function (props) {
@@ -1018,6 +1009,7 @@ export default Reflux.createStore({
                 default:
                     break;
             }
+            this.getAllWidgets();
         }
     },
     copyVariable: function () {

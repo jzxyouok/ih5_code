@@ -17,14 +17,12 @@ class Property extends React.Component {
             expanded: true,
 
             activeKey: this.props.activeKey,//当前激活的widgetkey
-            event: this.props.event,        //对应的事件
             wKey: this.props.wKey,      //specfic所在的widgetkey
+            event: this.props.event,        //对应的事件
             specific: this.props.specific,  //specfic
-            sid: this.props.specific.sid,
 
             objectList: null,    //目标对象的列表
             actionList: null,    //对象动作列表
-            funcList: null,      //当前目标对象的函数列表
             objectDropdownVisible: false, //是否显示对象的下拉框
             actionDropdownVisible: false, //是否显示动作的下拉框
 
@@ -51,13 +49,12 @@ class Property extends React.Component {
                 event: nextProps.event,
                 wKey: nextProps.wKey,
                 specific: nextProps.specific,
-                sid: nextProps.specific.sid,
 
                 currentObject: nextProps.specific.object,
                 currentAction: nextProps.specific.action
             }, ()=>{
                 //获取动作
-                if(this.state.currentObject.className){
+                if(this.state.currentObject&&this.state.currentObject.className){
                     this.onGetActionList(this.state.currentObject.className, this.state.currentObject.type);
                 }
             });
@@ -84,9 +81,9 @@ class Property extends React.Component {
         }
     }
 
-    onGetActionList(classname, type){
+    onGetActionList(objClassName, type){
         let actionList = [];
-        let className = classname;
+        let className = objClassName;
         if(className === 'var'){
             switch (type) {
                 case varType.number:
@@ -100,8 +97,14 @@ class Property extends React.Component {
             }
         }
         propertyMap[className].map((item, index) => { 
-            if (item.isFunc)
-                actionList.push({'name':item.name, 'showName':item.showName, 'property':item.property});
+            if (item.isFunc) {
+                let temp = JSON.parse(JSON.stringify(item));
+                if (temp.info) {
+                    delete temp.info;
+                }
+                delete temp.isFunc;
+                actionList.push(item);
+            }
          });
         this.setState({
             actionList: actionList
@@ -119,7 +122,7 @@ class Property extends React.Component {
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
-        WidgetActions['deleteSpecific'](this.state.sid ,this.state.event);
+        WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
 
     }
 
@@ -135,17 +138,16 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
-        let currentObj =  {
-            name:object.props.name,
-            id:object.props.id,
-            className: object.className
-        };
-        if(object.className === 'var'){
-            currentObj.type = object.type;
-        }
+        // let currentObj =  {
+        //     name:object.props.name,
+        //     id:object.props.id,
+        //     className: object.className
+        // };
+        // if(object.className === 'var'){
+        //     currentObj.type = object.type;
+        // }
         this.setState({
-            currentObject: currentObj,
-            funcList: object.funcList,
+            currentObject: object,
             objectDropdownVisible: false
         }, ()=> {
             WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
@@ -163,19 +165,20 @@ class Property extends React.Component {
     onActionSelect(e){
         e.domEvent.stopPropagation();
         let action = e.item.props.action;
-        let property =[];
-        if(action.property){
-            property = action.property;
-        }
+        // let property =[];
+        // if(action.property){
+        //     property = action.property;
+        // }
         this.setState({
-            currentAction: {
-                'name': action.name,
-                'showName': action.showName,
-                'property': property,
-            },
+            // currentAction: {
+            //     'name': action.name,
+            //     'showName': action.showName,
+            //     'property': property,
+            // },
+            currentAction: action,
             actionDropdownVisible: false
         }, ()=> {
-            WidgetActions['changeSpecific'](this.state.specific, {'action':this.state.currentAction});
+            WidgetActions['changeSpecific'](this.state.specific, {action:this.state.currentAction});
         });
     }
 
@@ -205,13 +208,12 @@ class Property extends React.Component {
         prop.value = value;
         let property = this.state.currentAction.property;
         property[index] = prop;
+        let action = this.state.currentAction;
+        action.property = property;
         this.setState({
-            currentAction: {
-                'name': this.state.currentAction.name,
-                'property': property,
-            },
+            currentAction: action,
         });
-        WidgetActions['changeSpecific'](this.state.specific, {'property':this.state.currentAction.property});
+        WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
     }
 
     render() {
@@ -245,9 +247,9 @@ class Property extends React.Component {
                 case propertyType.Function:
                     return <Select defaultValue="目标函数"  {...defaultProp}>
                         {
-                            !this.state.funcList||this.state.funcList.length==0
+                            !this.state.currentObject.funcList||this.state.currentObject.funcList.length==0
                                 ? null
-                                : this.state.funcList.map(func)
+                                : this.state.currentObject.funcList.map(func)
                         }
                     </Select>;
                 default:
@@ -284,7 +286,7 @@ class Property extends React.Component {
             </Menu>
         );
 
-        let propertyId = 'spec-item-'+ this.state.sid;
+        let propertyId = 'spec-item-'+ this.state.specific.sid;
 
         return (
             <div className="Property f--h" id={propertyId}>
@@ -301,9 +303,10 @@ class Property extends React.Component {
                                           visible={this.state.objectDropdownVisible}>
                                     <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
                                         <div className="title f--hlc">
-                                            { !this.state.currentObject.name
+                                            { !this.state.currentObject ||
+                                              !this.state.currentObject.props.name
                                                 ?'目标对象'
-                                                :this.state.currentObject.name
+                                                :this.state.currentObject.props.name
                                             }
                                             <span className="icon" />
                                         </div>
@@ -328,7 +331,8 @@ class Property extends React.Component {
                                     <div className={$class("p--dropDown long", {'active':this.state.actionDropdownVisible})}>
                                         <div className="title f--hlc">
                                             <span className="pp--icon" />
-                                            { !this.state.currentAction.showName
+                                            { !this.state.currentAction||
+                                              !this.state.currentAction.showName
                                                 ? '目标动作'
                                                 : this.state.currentAction.showName
                                             }
@@ -339,7 +343,9 @@ class Property extends React.Component {
                                 {/*是否展开属性内容*/}
                                 <div className={$class("pp-content f--h", {'hidden': !this.state.expanded} )}>
                                     {
-                                        !this.state.currentAction.property || this.state.currentAction.property.length === 0
+                                        !this.state.currentAction ||
+                                        !this.state.currentAction.property ||
+                                         this.state.currentAction.property.length === 0
                                             ? null
                                             : <div className="pp--list-layer flex-1">
                                             {
@@ -351,13 +357,17 @@ class Property extends React.Component {
 
                                 <button className={$class("up-btn", {'expanded-props': this.state.expanded})}
                                         onClick={this.expandBtn.bind(this, false)}
-                                        disabled={!this.state.currentAction.property || this.state.currentAction.property.length==0}>
+                                        disabled={!this.state.currentAction||
+                                        !this.state.currentAction.property ||
+                                         this.state.currentAction.property.length==0}>
                                     <div className="btn-layer">
                                     </div>
                                 </button>
                                 <button className={$class("down-btn", {'expanded-props': (this.state.expanded)})}
                                         onClick={this.expandBtn.bind(this, true)}
-                                        disabled={!this.state.currentAction.property || this.state.currentAction.property.length==0}>
+                                        disabled={!this.state.currentAction||
+                                        !this.state.currentAction.property ||
+                                        this.state.currentAction.property.length==0}>
                                     <div className="btn-layer">
                                     </div>
                                 </button>
