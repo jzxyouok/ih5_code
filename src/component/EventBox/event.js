@@ -22,23 +22,25 @@ class Event extends React.Component {
             specialObject:['计数器','文本','strVar','intVar','输入框'],
 
             conOption:[],
-            bindOption:['and','or'],  //下拉选项
-            objectOption:['计数器','文本','strVar','intVar','输入框','图片'],
-            actionOption:['计算1','计算2'],
-            judgmentOption:['=','>','<','!=','>=','<='],
-            valueOption:['计数器','文本','strVar','intVar','输入框','图片'],
+            logicalOption:['and','or'],  //下拉选项
+            judgeObjOption:['计数器','文本','strVar','intVar','输入框','图片'],
+            judgeValOption:['计算1','计算2'],
+            compareOption:['=','>','<','!=','>=','<='],
+            compareObjOption:['计数器','文本','strVar','intVar','输入框','图片'],
+            compareValOption:['比较值1','比较值2'],
 
-            conFlag:null,  //初始值
-            bindFlag:'and',
-            objectFlag:'请选择判断对象',
-            actionFlag:'计算',
-            judgmentFlag:'=',
-            valueFlag:'请选择比较对象',
+            conFlag:'触发条件',  //初始值
+            logicalFlag:'and',
+            judgeObjFlag:'判断对象',
+            judgeValFlag:'计算',
+            compareFlag:'=',
+            compareObjFlag:'比较对象',
+            compareValFlag:'比较',
 
             operationManager: {  //下拉框显现管理
-                zhongHidden:true,
+                zhongHidden:false,
                 curShow:-1,
-                showArr: [true,true,true,true,true]
+                arrHidden: [false,false,false,false,false,false]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             }
         };
 
@@ -156,7 +158,7 @@ class Event extends React.Component {
 
     plusOperation(){
         let count = this.state.operationManager.curShow;
-        let arr =this.state.operationManager.showArr;
+        let arr =this.state.operationManager.arrHidden;
         if(count<4) {
             ++count;
         }
@@ -169,7 +171,7 @@ class Event extends React.Component {
 
             case 2:
 
-                if(this.state.specialObject.indexOf(this.state.objectFlag)>=0){
+                if(this.state.specialObject.indexOf(this.state.judgeObjFlag)>=0){
                     count=4;
                     arr=[false,false,true,false,false,true];
                 }else{
@@ -184,7 +186,7 @@ class Event extends React.Component {
 
                 break;
             case 4:
-                if(this.state.specialObject.indexOf(this.state.valueFlag)<0){
+                if(this.state.specialObject.indexOf(this.state.compareObjFlag)<0){
 
                     arr=[false,false,true,false,false,false];
                 }else{
@@ -196,7 +198,7 @@ class Event extends React.Component {
                 operationManager:{
                    zhongHidden:false,
                    curShow:count,
-                   showArr:arr
+                    arrHidden:arr
                }
             });
     }
@@ -205,7 +207,7 @@ class Event extends React.Component {
             operationManager:{
                 zhongHidden:true,
                 curShow:-1,
-                showArr:[true,true,true,true,true]
+                arrHidden:[true,true,true,true,true,true]
             }
         });
     }
@@ -247,7 +249,7 @@ class Event extends React.Component {
                                             overlay={menuList('conFlag')}
                                             trigger={['click']}>
                                             <div className='title f--hlc'>
-                                                { this.state.conFlag==null? '触发条件': this.state.conFlag}
+                                                {this.state.conFlag}
                                                 <span className='icon' /></div>
                                         </Dropdown>
                                         <div className='dropDown'></div>
@@ -259,61 +261,71 @@ class Event extends React.Component {
                                    <div className={$class('zhong',{'hidden':this.state.operationManager.zhongHidden})}>
                                               <div className="list f--hlc" >
                                                 <span className="supplement-line" />
-                                                <div className={$class('dropDown-layer short',{'hidden':this.state.operationManager.showArr[0]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':this.state.operationManager.arrHidden[0]})} >
                                                         <Dropdown
-                                                            overlay={ menuList('bindFlag')}
+                                                            overlay={ menuList('logicalFlag')}
                                                             trigger={['click']}>
                                                             <div className='title f--hlc'>
-                                                                {this.state.bindFlag}
+                                                                {this.state.logicalFlag}
                                                                 <span className='icon' /></div>
                                                         </Dropdown>
                                                 </div>
 
-                                                  <div className={$class('dropDown-layer long',{'hidden':this.state.operationManager.showArr[1]})} >
+                                                  <div className={$class('dropDown-layer long',{'hidden':this.state.operationManager.arrHidden[1]})} >
 
                                                       <Dropdown
-                                                          overlay={menuList('objectFlag')}
+                                                          overlay={menuList('judgeObjFlag')}
                                                           trigger={['click']}>
                                                           <div className='title f--hlc'>
-                                                              {this.state.objectFlag}
+                                                              {this.state.judgeObjFlag}
                                                               <span className='icon' /></div>
                                                       </Dropdown>
 
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                  <div className={$class('dropDown-layer long',{'hidden':this.state.operationManager.showArr[2]})} >
+                                                  <div className={$class('dropDown-layer middle',{'hidden':this.state.operationManager.arrHidden[2]})} >
 
                                                       <Dropdown
-                                                          overlay={menuList('actionFlag')}
+                                                          overlay={menuList('judgeValFlag')}
                                                           trigger={['click']}>
                                                           <div className='title f--hlc'>
-                                                              {this.state.actionFlag}
+                                                              {this.state.judgeValFlag}
                                                               <span className='icon' /></div>
                                                       </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                  <div className={$class('dropDown-layer short',{'hidden':this.state.operationManager.showArr[3]})} >
+                                                  <div className={$class('dropDown-layer short',{'hidden':this.state.operationManager.arrHidden[3]})} >
 
                                                       <Dropdown
-                                                          overlay={menuList('judgmentFlag')}
+                                                          overlay={menuList('compareFlag')}
                                                           trigger={['click']}>
                                                           <div className='title f--hlc'>
-                                                              {this.state.judgmentFlag}
+                                                              {this.state.compareFlag}
                                                               <span className='icon' /></div>
                                                       </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
 
-
-
-                                                  <div className={$class('dropDown-layer long',{'hidden':this.state.operationManager.showArr[4]})} >
+                                                  <div className={$class('dropDown-layer long',{'hidden':this.state.operationManager.arrHidden[4]})} >
                                                       <Dropdown
-                                                          overlay={menuList('valueFlag')}
+                                                          overlay={menuList('compareObjFlag')}
                                                           trigger={['click']}>
                                                           <div className='title f--hlc'>
-                                                              {this.state.valueFlag}
+                                                              {this.state.compareObjFlag}
+                                                              <span className='icon' /></div>
+                                                      </Dropdown>
+                                                      <div className="dropDown"></div>
+                                                  </div>
+
+                                                  <div className={$class('dropDown-layer middle',{'hidden':this.state.operationManager.arrHidden[5]})} >
+
+                                                      <Dropdown
+                                                          overlay={menuList('compareValFlag')}
+                                                          trigger={['click']}>
+                                                          <div className='title f--hlc'>
+                                                              {this.state.compareValFlag}
                                                               <span className='icon' /></div>
                                                       </Dropdown>
                                                       <div className="dropDown"></div>
