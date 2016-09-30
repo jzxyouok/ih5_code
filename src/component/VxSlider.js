@@ -295,8 +295,8 @@ class VxRcSlider extends RcSlider {
             let value = this.trimAlignValue(this.startValue + diffValue);
             let points = this.props.points;
 
-            let startTime = this.props.refTrack.node.startTime;
-            let endTime = this.props.refTrack.node.endTime;
+            //let startTime = this.props.refTrack.node.startTime;
+            //let endTime = this.props.refTrack.node.endTime;
             //if(startTime){
             //    if(value < startTime){
             //        value = startTime;
@@ -401,7 +401,7 @@ class VxRcSlider extends RcSlider {
             _x=e.pageX;
             //self.selectTrack();
             let startTime = self.props.refTrack.node.startTime;
-            if(startTime){
+            if(startTime !== -1){
                 if(self.props.multiple > 0){
                     dragLocusLeft = startTime * 61 * self.props.multiple
                 }
@@ -466,7 +466,7 @@ class VxRcSlider extends RcSlider {
             move=true;
             _x=e.pageX;
             let endTime = self.props.refTrack.node.endTime;
-            if(endTime){
+            if(endTime !== -1){
                 if( self.props.multiple > 0){
                     dragLocusRight =  (self.props.totalTime - endTime) * 61 * self.props.multiple
                 }
@@ -604,9 +604,8 @@ class VxRcSlider extends RcSlider {
         let dragLocusRight = null;
         let startTime = this.props.refTrack.node.startTime;
         let endTime = this.props.refTrack.node.endTime;
-        //console.log(this.props.multiple);
 
-        if(startTime){
+        if(startTime !== -1){
             if(this.props.multiple > 0){
                 dragLocusLeft = startTime * 61 * this.props.multiple
             }
@@ -618,7 +617,7 @@ class VxRcSlider extends RcSlider {
             dragLocusLeft = 0
         }
 
-        if(endTime){
+        if(endTime  !== -1){
             if(this.props.multiple > 0){
                 dragLocusRight = (this.props.totalTime - endTime) * 61 * this.props.multiple
             }
