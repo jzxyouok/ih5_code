@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 import $class from 'classnames';
 
 import NavBar from  './NavBar';
-import ComponentPanel from './ComponentPanel';
+// import ComponentPanel from './ComponentPanel';
 import DesignView from './DesignView';
 import ObjectView from './ObjectView/_index';
 import PropertyView from './PropertyView';
