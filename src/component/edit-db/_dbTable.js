@@ -5,7 +5,8 @@ import $ from 'jquery';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
-import DbHeaderStores from '../../stores/DbHeader'
+import DbHeaderStores from '../../stores/DbHeader';
+import DbHeaderAction from '../../actions/DbHeader';
 
 var PREFIX = 'app/';
 
@@ -165,11 +166,12 @@ class DbTable extends React.Component {
                 this.state.node['header'] = header;
             }
         }.bind(this));
+        DbHeaderAction['DbHeaderData'](header);
     }
 
     saveBtn(){
         this.updateHeader();
-        console.log(this.state.dbHeader,this.state.dbList);
+        //console.log(this.state.dbHeader,this.state.dbList);
         //this.state.node.updata(this.state.dbList);
     }
 
