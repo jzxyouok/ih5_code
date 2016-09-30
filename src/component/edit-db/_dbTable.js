@@ -168,7 +168,7 @@ class DbTable extends React.Component {
     }
 
     saveBtn(){
-        //this.updateHeader();
+        this.updateHeader();
         //this.state.node.updata(this.state.dbList);
     }
 
@@ -334,10 +334,22 @@ class DbTable extends React.Component {
                                             this.state.dbHeader.length > 0
                                             ? this.state.dbHeader.map((v,i)=>{
                                                 let id = "header" + i;
+                                                let name ;
+                                                let type = v.charAt(0);
+                                                text = this.state.inputText;
+                                                if(type == "T" ){
+                                                    name = v.substr(1);
+                                                }
+                                                else if( type == "I" ){
+                                                    name = v.substr(1);
+                                                }
+                                                else {
+                                                    name = v;
+                                                }
                                                 return  <td key={i}
                                                             className={ 't'+id}
                                                             onClick={ this.inputClick.bind(this, id, v)}>
-                                                            {v}
+                                                            {name}
 
                                                             {
                                                                 id === this.state.inputNow
@@ -455,7 +467,7 @@ class DbTable extends React.Component {
 
                             <div className="pop-footer f--hcc">
                                 <button className="btn btn-clear cancel-btn" onClick={ this.popHide }>取消</button>
-                                <button className="btn btn-clear save-btn">确定</button>
+                                <button className="btn btn-clear save-btn" onClick={ this.addColumn }>确定</button>
                             </div>
                         </div>
                     </div>
