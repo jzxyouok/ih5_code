@@ -169,6 +169,7 @@ class DbTable extends React.Component {
 
     saveBtn(){
         this.updateHeader();
+        console.log(this.state.dbHeader,this.state.dbList);
         //this.state.node.updata(this.state.dbList);
     }
 
@@ -206,9 +207,23 @@ class DbTable extends React.Component {
             value = "I" + this.refs.inputType.value;
         }
         header.push(value);
-        list.map((v,i)=>{
-            list[i][value] = "";
-        });
+        if(list.length == 0){
+            let newList = [];
+            header.map((v,i)=>{
+                newList[v] = "";
+            });
+            list.push(newList);
+        }
+        else {
+            list.map((v,i)=>{
+                list[i][value] = "";
+            });
+        }
+
+        this.setState({
+            dbHeader:header,
+            dbList : list
+        })
     }
 
     inputClick(key,value){
@@ -227,8 +242,20 @@ class DbTable extends React.Component {
     }
 
     inputChange(event){
+        let value = event.target.value;
+        let type = value.charAt(0);
+        let text ;
+        if(type == "T" ){
+            text = value.substr(1);
+        }
+        else if( type == "I" ){
+            text = value.substr(1);
+        }
+        else {
+            text = value;
+        }
         this.setState({
-            inputText : event.target.value
+            inputText : text
         })
     }
 
