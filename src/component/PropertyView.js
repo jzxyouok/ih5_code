@@ -43,8 +43,6 @@ class PropertyView extends React.Component {
      //获取封装的form组件
      getInputBox(type, defaultProp) {
         switch (type) {
-
-
             case propertyType.Integer:
                 return <InputNumber {...defaultProp} />;
 

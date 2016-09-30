@@ -5,29 +5,76 @@ import $class from 'classnames'
 import Property from './Property'
 import WidgetStore from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-
 import  {propertyMap} from '../PropertyMap'
+
+import { Menu, Dropdown, Icon } from 'antd';
+const MenuItem = Menu.Item;
+
 
 class Event extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
             expanded: true,
+            selectWidget:this.props.widget,
+            activeKey:this.props.activeKey,  //当前激活事件的key
+
+            specialObject:['计数器','文本','strVar','intVar','输入框'],
+
+            conOption:[],
+            logicalOption:['and','or'],  //下拉选项
+            judgeObjOption:['计数器','文本','strVar','intVar','输入框','图片'],
+            judgeValOption:['计算1','计算2'],
+            compareOption:['=','>','<','!=','>=','<='],
+            compareObjOption:['计数器','文本','strVar','intVar','输入框','图片'],
+            compareValOption:['比较值1','比较值2'],
+
+            conFlag:'触发条件',  //初始值
+            logicalFlag:'and',
+            judgeObjFlag:'判断对象',
+            judgeValFlag:'计算',
+            compareFlag:'=',
+            compareObjFlag:'比较对象',
+            compareValFlag:'比较',
+
+            operationManager: {  //下拉框显现管理
+                zhongHidden:false,
+                curShow:-1,
+                arrHidden: [false,false,false,false,false,false]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+            }
         };
 
-        this.curSelectNode =null;
-        this.conditionList=[];
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        this.setCondition = this.setCondition.bind(this);
+
+        this.getSelectOption = this.getSelectOption.bind(this);   //获取触发条件
+
+
+
+        this.plusOperation=this.plusOperation.bind(this);                   //添加下拉框
+        this.deleteOperation=this.deleteOperation.bind(this);              //删除下拉框
+
+        this.getSelectFull =this.getSelectFull.bind(this);
+        this.getSelectHalf =this.getSelectHalf.bind(this);
+        this.getSwitchHalf =this.getSwitchHalf.bind(this);
+
+
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            activeKey:this.props.activeKey
+        })
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+        //获取当前事件对象的触发条件
+        this.getSelectOption();
     }
 
     componentWillUnmount() {
@@ -35,36 +82,24 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
+
         //触发更新目标对象列表
-        if(widget.redrawEventTree){
-            if(this.props.wKey === this.props.activeKey) {
+        if (widget.redrawEventTree) {
+            if (this.props.wKey === this.props.activeKey) {
                 this.forceUpdate();
             }
         }
-        console.log(widget);
-        if(widget.activeEventTreeKey){
-           this.curSelectNode =  widget.activeEventTreeKey.widget;
-            if(this.curSelectNode){
-                this.setCondition(this.curSelectNode.className);
-            }
+
+        if (widget.selectWidget) {
+            this.setState({
+                selectWidget: widget.selectWidget
+            }, ()=> {
+                this.getSelectOption();
+            });
         }
-    }
-
-    setCondition(className){
-        propertyMap[className].map((item,index)=>{
-            if(item.isEvent ===true){
-                this.conditionList.push(item);
-            }
-        });
-
-        console.log(this.state.eventList);
-
-        this.state.eventList.map((item,index)=>{
-            item.condition='哈哈';
-        });
-        console.log(1);
 
     }
+
 
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);
@@ -73,7 +108,7 @@ class Event extends React.Component {
     addEventBtn(e) {
         e.stopPropagation();
         WidgetActions['addEvent']();
-        // this.forceUpdate();
+
     }
 
     expandedBtn(expanded, event){
@@ -83,9 +118,123 @@ class Event extends React.Component {
         });
     }
 
+    getSelectFull(){
+      return   <div className='dropDown-input dropDown-input-select dropDown-input-full'>
+            <input defaultValue='碰撞对象'  className='dropDown-input-content' />
+            <div className='dropDown-icon-select dropDown-select-down'></div>
+        </div>
+    }
+
+    getSelectHalf(){
+      return    <div className='dropDown-input2 dropDown-input-full '>
+            <div className='dropDown-input-txt-half'>中心距离</div>
+            <div className='dropDown-input-half'>
+                <input defaultValue='中心'   className='dropDown-input-content' />
+            </div>
+            <div className='dropDown-icon-select dropDown-select-down'></div>
+        </div>
+    }
+
+    getSwitchHalf(){
+        return   <div className='dropDown-input2 dropDown-input-full '>
+            <div className='dropDown-input-txt-half'>优化速度</div>
+            <div className='dropDown-switch dropDown-switch-right '>
+                <div className='on'>ON</div>
+                <div className='off'>OFF</div>
+            </div>
+        </div>
+    }
+
+    getSelectOption(){
+        let aOption=[];
+        let className = this.state.selectWidget.className;
+        propertyMap[className].map((item,index)=>{
+            if(item.isEvent === true){
+                aOption.push(item.name);
+            }
+        });
+        this.setState({conOption:aOption});
+    }
+
+    plusOperation(){
+        let count = this.state.operationManager.curShow;
+        let arr =this.state.operationManager.arrHidden;
+        if(count<4) {
+            ++count;
+        }
+
+        switch (count){
+            case 0:
+                count=1;
+                arr=[false,false,true,true,true,true];
+                break;
+
+            case 2:
+
+                if(this.state.specialObject.indexOf(this.state.judgeObjFlag)>=0){
+                    count=4;
+                    arr=[false,false,true,false,false,true];
+                }else{
+
+                    arr=[false,false,false,true,true,true];
+                }
+
+                break;
+            case 3:
+
+                arr=[false,false,false,false,true,true];
+
+                break;
+            case 4:
+                if(this.state.specialObject.indexOf(this.state.compareObjFlag)<0){
+
+                    arr=[false,false,true,false,false,false];
+                }else{
+                    arr=[false,false,true,false,false,true];
+                }
+                break;
+        }
+        this.setState({
+                operationManager:{
+                   zhongHidden:false,
+                   curShow:count,
+                    arrHidden:arr
+               }
+            });
+    }
+    deleteOperation(){
+        this.setState({
+            operationManager:{
+                zhongHidden:true,
+                curShow:-1,
+                arrHidden:[true,true,true,true,true,true]
+            }
+        });
+    }
+
+
+    onMenuClick(flag,e){
+        e.domEvent.stopPropagation();
+        let obj={};
+        obj[flag] =e.item.props.object;
+        this.setState(obj);
+    }
+
+
     render() {
+
+        let menuList = (flag)=>{
+            let option = flag.replace('Flag','Option');
+           return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
+                { this.state[option].map((v,i)=>{
+                    return <MenuItem key={i} object={v} >{v}</MenuItem>;
+                })}
+            </Menu>)
+        }
+
+
+
         let content = ((v,i)=>{
-            console.log(2);
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
                 <div className='item-main flex-1'>
@@ -96,86 +245,99 @@ class Event extends React.Component {
                                 <div className='left-layer  f--h'>
                                     <span className='title-icon' />
                                     <div className='dropDown-layer long'>
-                                        <div className='title f--hlc'>
-                                            {
-                                                v.condition==null
-                                                    ? '触发条件'
-                                                    :v.condition
-                                            }
-                                            <span className='icon' />
-                                        </div>
+                                        <Dropdown
+                                            overlay={menuList('conFlag')}
+                                            trigger={['click']}>
+                                            <div className='title f--hlc'>
+                                                {this.state.conFlag}
+                                                <span className='icon' /></div>
+                                        </Dropdown>
                                         <div className='dropDown'></div>
                                     </div>
                                 </div>
                             </div>
                             {
-                                !v.children || v.children.length === 0
-                                    ? null
-                                    : <div className="zhong">
-                                    {
-                                        v.children.map((v1,i1)=>{
-                                            return  <div className="list f--hlc" key={i1}>
+
+                                   <div className={$class('zhong',{'hidden':this.state.operationManager.zhongHidden})}>
+                                              <div className="list f--hlc" >
                                                 <span className="supplement-line" />
-                                                <div className="dropDown-layer short">
-                                                    <div className="title f--hlc">
-                                                        { v1.bind }
-                                                        <span className="icon" />
-                                                    </div>
+                                                <div className={$class('dropDown-layer middle',{'hidden':this.state.operationManager.arrHidden[0]})} >
+                                                        <Dropdown
+                                                            overlay={ menuList('logicalFlag')}
+                                                            trigger={['click']}>
+                                                            <div className='title f--hlc'>
+                                                                {this.state.logicalFlag}
+                                                                <span className='icon' /></div>
+                                                        </Dropdown>
+                                                </div>
+
+                                                  <div className={$class('dropDown-layer long',{'hidden':this.state.operationManager.arrHidden[1]})} >
+
+                                                      <Dropdown
+                                                          overlay={menuList('judgeObjFlag')}
+                                                          trigger={['click']}>
+                                                          <div className='title f--hlc'>
+                                                              {this.state.judgeObjFlag}
+                                                              <span className='icon' /></div>
+                                                      </Dropdown>
+
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                <div className="dropDown-layer long">
-                                                    <div className="title f--hlc">
-                                                        { v1.object }
-                                                        <span className="icon" />
-                                                    </div>
+                                                  <div className={$class('dropDown-layer middle',{'hidden':this.state.operationManager.arrHidden[2]})} >
+
+                                                      <Dropdown
+                                                          overlay={menuList('judgeValFlag')}
+                                                          trigger={['click']}>
+                                                          <div className='title f--hlc'>
+                                                              {this.state.judgeValFlag}
+                                                              <span className='icon' /></div>
+                                                      </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                <div className="dropDown-layer long">
-                                                    <div className="title f--hlc">
-                                                        { v1.action }
-                                                        <span className="icon" />
-                                                    </div>
+                                                  <div className={$class('dropDown-layer short',{'hidden':this.state.operationManager.arrHidden[3]})} >
+
+                                                      <Dropdown
+                                                          overlay={menuList('compareFlag')}
+                                                          trigger={['click']}>
+                                                          <div className='title f--hlc'>
+                                                              {this.state.compareFlag}
+                                                              <span className='icon' /></div>
+                                                      </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                <div className="dropDown-layer short">
-                                                    <div className="title f--hlc">
-                                                        { v1.judgment }
-                                                        <span className="icon" />
-                                                    </div>
-                                                    <div className="dropDown"></div>
-                                                </div>
+                                                  <div className={$class('dropDown-layer long',{'hidden':this.state.operationManager.arrHidden[4]})} >
+                                                      <Dropdown
+                                                          overlay={menuList('compareObjFlag')}
+                                                          trigger={['click']}>
+                                                          <div className='title f--hlc'>
+                                                              {this.state.compareObjFlag}
+                                                              <span className='icon' /></div>
+                                                      </Dropdown>
+                                                      <div className="dropDown"></div>
+                                                  </div>
 
-                                                {
-                                                    v1.calculator
-                                                        ? <div className="number f--hlc">
-                                                        <input />
-                                                        <div className="number-icon flex-1">
-                                                            <div className="shang-btn"><span/></div>
-                                                            <div className="xia-btn"><span/></div>
-                                                        </div>
-                                                    </div>
+                                                  <div className={$class('dropDown-layer middle',{'hidden':this.state.operationManager.arrHidden[5]})} >
 
-                                                        : <div className="dropDown-layer middle">
-                                                        <div className="title f--hlc">
-                                                            { v1.value }
-                                                            <span className="icon" />
-                                                        </div>
-                                                        <div className="dropDown"></div>
-                                                    </div>
-                                                }
+                                                      <Dropdown
+                                                          overlay={menuList('compareValFlag')}
+                                                          trigger={['click']}>
+                                                          <div className='title f--hlc'>
+                                                              {this.state.compareValFlag}
+                                                              <span className='icon' /></div>
+                                                      </Dropdown>
+                                                      <div className="dropDown"></div>
+                                                  </div>
 
-                                                <span className="close-btn" />
+                                                <span className="close-btn" onClick={this.deleteOperation} />
                                             </div>
-                                        })
-                                    }
                                 </div>
                             }
                             <div className='right flex-1'>
                                 <div className='right-layer'>
-                                    <div className='plus-btn'>
+                                    <div className='plus-btn' onClick={this.plusOperation}>
                                         <div className='btn'>
                                             <span className='heng' />
                                             <span className='shu' />
@@ -215,7 +377,6 @@ class Event extends React.Component {
                              onClick={this.expandedBtn.bind(this, true)}>
                             <span className='heng'/><span className='shu'/>
                         </div>
-
                         <div className='name flex-1'>{ this.props.name }</div>
                     </div>
 

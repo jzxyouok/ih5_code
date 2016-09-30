@@ -36,6 +36,11 @@ var varType = {
     string: 'string'    //字串
 };
 
+var funcType = {
+    customize: 'customize', //自定义
+    default: 'default'      //系统自带
+};
+
 var copyObj = {};
 
 function isEmptyString( str ){
@@ -522,7 +527,6 @@ export default Reflux.createStore({
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
-            this.getAllWidgets();
             this.currentWidget = null;
             if(shouldChooseParent) {
                 this.selectWidget(parentWidget);
@@ -625,8 +629,8 @@ export default Reflux.createStore({
         }
         return props;
     },
-    renameWidget: function (newname) {
-        this.currentWidget.props['name'] = newname;
+    renameWidget: function (newName) {
+        this.currentWidget.props['name'] = newName;
         this.updateProperties({'name':this.currentWidget.props['name']});
         // this.render();
         this.trigger({redrawTree: true});
@@ -712,16 +716,8 @@ export default Reflux.createStore({
     emptyEventSpecific: function() {
         let eventSpecific = {
             'sid': _specificCount++,
-            'object': {
-                'name': null,
-                'id': null,
-                'className':null
-            },
-            'action': {
-                'name': null,
-                'showName': null,
-                'property': []
-            }
+            'object': null,
+            'action': null
         };
         return eventSpecific;
     },
@@ -848,9 +844,7 @@ export default Reflux.createStore({
         if(params){
             if(params.object){
                 specific.object = params.object;
-                specific.action.name = null;
-                specific.action.showName = null;
-                specific.action.property = [];
+                specific.action = null;
             } else if(params.action){
                 specific.action = params.action;
             } else if(params.property){
@@ -887,6 +881,7 @@ export default Reflux.createStore({
             }
             this.currentWidget['funcList'].unshift(func);
         }
+        this.trigger({updateFunction: {widget:this.currentWidget}});
         this.trigger({redrawTree: true});
         // this.render();
     },
@@ -909,6 +904,7 @@ export default Reflux.createStore({
             }
             if(index>-1){
                 this.currentWidget.funcList.splice(index,1);
+                this.trigger({updateFunction: {widget:this.currentWidget}});
                 this.selectWidget(this.currentWidget);
             }
         }
@@ -982,6 +978,7 @@ export default Reflux.createStore({
                     break;
             }
         }
+        this.getAllWidgets();
         this.trigger({redrawTree: true});
     },
     changeVariable: function (props) {
@@ -1140,9 +1137,11 @@ export default Reflux.createStore({
                 break;
             case nodeType.var:
                 this.removeVariable();
+                this.getAllWidgets();
                 break;
             default:
                 this.removeWidget(true);
+                this.getAllWidgets();
                 break;
         }
     },
@@ -1419,4 +1418,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType, keepType, isCustomizeWidget}
+export {globalToken, nodeType, varType, funcType, keepType, isCustomizeWidget}
