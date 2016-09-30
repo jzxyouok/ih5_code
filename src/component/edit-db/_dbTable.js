@@ -248,14 +248,25 @@ class DbTable extends React.Component {
         }
         else {
             let value = header[which2];
-            list[which][value] = this.state.inputText;
-            //if(which == list.length-1){
-            //    let newList = [];
-            //    header.map((v,i)=>{
-            //        newList[v] = ""
-            //    });
-            //    list.push(newList);
-            //}
+            let type = value.charAt(0);
+            let text = "";
+            text = this.state.inputText;
+            if(type == "T" ){
+                list[which][value] = text;
+            }
+            else if( type == "I" ){
+                list[which][value] = parseFloat(text);
+            }
+            else {
+                list[which][value] = text;
+            }
+            if(which == list.length-1 && text.length){
+                let newList = [];
+                header.map((v,i)=>{
+                    newList[v] = ""
+                });
+                list.push(newList);
+            }
             this.setState({
                 dbHeader : header,
                 dbList : list,
@@ -357,6 +368,8 @@ class DbTable extends React.Component {
                             </table>
                         </div>
                     </div>
+
+                    <p className="no-tips f--hcc">请点击右上角添加按钮创建字段</p>
 
                     <div className="add-btn f--s" onClick={ this.addColumn }>
                         <button className="btn btn-clear">

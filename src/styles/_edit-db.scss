@@ -327,11 +327,23 @@
             }
         }
 
+        .no-tips {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            font-size: 18px;
+            color: #858585;
+        }
+
         .add-btn{
             position: absolute;
             right: 0;
             top: 0;
             bottom: 14px;
+            z-index: 2;
             width: 38px;
             background: #292929;
             border: 1px solid #5d513a;
@@ -370,6 +382,7 @@
             position: absolute;
             left: 0;
             bottom: 0;
+            z-index: 3;
             width: 100%;
             height: 14px;
 
