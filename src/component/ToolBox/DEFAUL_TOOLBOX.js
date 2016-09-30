@@ -218,7 +218,7 @@ var DEFAULT_TOOLBOX = {
         gid:16,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.DATABASE, name:'数据库', icon: databaseIcon, className:'database'}]
+            {cid:TOOL_ID.DATABASE, name:'数据库', icon: databaseIcon, className:'db'}]
     },{
         name:'二维变量',
         key:17,
