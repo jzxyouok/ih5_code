@@ -6,6 +6,8 @@ import $ from 'jquery';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
+var PREFIX = 'app/';
+
 class DbTable extends React.Component {
     constructor (props) {
         super(props);
@@ -15,13 +17,15 @@ class DbTable extends React.Component {
             columnNum : 5,
             inputNow : null,
             inputText : null,
-            inputStyle : null
+            inputStyle : null,
+            node: null
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
         this.inputClick = this.inputClick.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.inputBlur = this.inputBlur.bind(this);
+        this.updateHeader = this.updateHeader.bind(this);
     }
 
     componentDidMount() {
@@ -36,13 +40,29 @@ class DbTable extends React.Component {
         //                dbHeader.push(i);
         //            }
         //        }
+        //        let add = this.state.columnNum - dbHeader.length;
+        //        if(add > 0){
+        //            for(let a = 0 ; a< add ; a++){
+        //                let num = dbHeader.length + a;
+        //                dbHeader.push("请命名" + num);
+        //                result.d.map((v,i)=>{
+        //                    result.d[i]["请命名" + num] = "";
+        //                });
+        //            }
+        //        }
+        //        let newList = [];
+        //        dbHeader.map((v,i)=>{
+        //            newList[v] = ""
+        //        });
+        //        result.d.push(newList);
+        //        //console.log(result.d);
         //        this.setState({
         //            dbHeader : dbHeader,
         //            dbList : result.d
-        //        })
+        //        });
         //    }
         //}.bind(this));
-        //this.scrollBtn();
+        this.scrollBtn();
     }
 
     componentWillUnmount() {
@@ -62,15 +82,50 @@ class DbTable extends React.Component {
                                dbHeader.push(i);
                            }
                        }
+                       let add = this.state.columnNum - dbHeader.length;
+                       if(add > 0){
+                           for(let a = 0 ; a< add ; a++){
+                               let num = dbHeader.length + a;
+                               dbHeader.push("请命名" + num);
+                               result.d.map((v,i)=>{
+                                   result.d[i]["请命名" + num] = "";
+                               });
+                           }
+                       }
+                       let newList = [];
+                       dbHeader.map((v,i)=>{
+                           newList[v] = ""
+                       });
+                       dbList.push(newList);
                        this.setState({
                            dbHeader : dbHeader,
-                           dbList : result.d
-                       })
+                           dbList : result.d,
+                           node : widget.selectWidget.node
+                       });
+                       this.updateHeader(false);
                    }
                }.bind(this));
                this.scrollBtn();
            }
         }
+    }
+
+    updateHeader(bool){
+        let array = this.state.dbHeader;
+        let header = array.join(',');
+        let name = this.state.node.name;
+        let id = this.state.node.dbid;
+        let data = "id=" + id + "&name=" + encodeURIComponent(name) + "&header=" + encodeURIComponent(header);
+        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
+            var result = JSON.parse(text);
+            if (result['id']) {
+                this.state.node['name'] = name;
+                this.state.node['header'] = header;
+            }
+            if(bool){
+
+            }
+        }.bind(this));
     }
 
     scrollBtn(){
@@ -97,8 +152,11 @@ class DbTable extends React.Component {
 
 
     addColumn(){
+        let header = this.state.dbHeader;
+        let which = this.state.columnNum;
+        header[which] = "请命名" + which;
         this.setState({
-            columnNum : this.state.columnNum + 1
+            columnNum : which + 1
         })
     }
 
@@ -123,32 +181,46 @@ class DbTable extends React.Component {
         })
     }
 
-    inputBlur(){
-        this.setState({
-            inputNow : null
-        })
+    inputBlur(type,which,which2){
+        let header = this.state.dbHeader;
+        let list = this.state.dbList;
+        if(type == 0) {
+            let value = header[which];
+            let text = this.state.inputText;
+            list.map((v,i)=>{
+                list[i][text] = list[i][value];
+                delete list[i][value];
+            });
+            //console.log(list);
+            header[which] = this.state.inputText;
+            if(which == header.length-1){
+                this.addColumn();
+            }
+            this.setState({
+                dbHeader : header,
+                inputNow : null
+            })
+        }
+        else {
+            let value = header[which2];
+            list[which][value] = this.state.inputText;
+            if(which == list.length-1){
+                let newList = [];
+                header.map((v,i)=>{
+                    newList[v] = ""
+                });
+                list.push(newList);
+            }
+            this.setState({
+                dbHeader : header,
+                dbList : list,
+                inputNow : null
+            })
+        }
     }
 
     render() {
         let width = this.props.isBig ? 769 : 928;
-
-        let shuFuc = (data,num)=>{
-            let a = num - data;
-            let fuc = [];
-            if(a < 0){
-                fuc = [0];
-            }
-            else{
-                for(let index = 0; index < a; index++){
-                    fuc[index] = index;
-                }
-            }
-            return fuc.map((v,i)=>{
-                return  <td key={i}>
-
-                        </td>
-            })
-        };
 
         return (
             <div className='DbTable'>
@@ -182,7 +254,7 @@ class DbTable extends React.Component {
                                                                 ? <input value={ this.state.inputText }
                                                                          style={ this.state.inputStyle }
                                                                          className={ 'i'+id}
-                                                                         onBlur={ this.inputBlur.bind(this) }
+                                                                         onBlur={ this.inputBlur.bind(this,0,i) }
                                                                          onChange={ this.inputChange.bind(this) } />
                                                                 : null
                                                             }
@@ -190,7 +262,6 @@ class DbTable extends React.Component {
                                               })
                                             : null
                                         }
-                                        { shuFuc(this.state.dbHeader.length,this.state.columnNum)}
                                     </tr>
                                 </thead>
 
@@ -203,6 +274,7 @@ class DbTable extends React.Component {
                                                     for(let i=0;i< index.length;i++){
                                                         data.push(index.charAt(i))
                                                     }
+                                                    let id = "content" + i;
                                                     return  <tr key={i}>
                                                                 <td>
                                                                     {
@@ -215,18 +287,27 @@ class DbTable extends React.Component {
                                                                 </td>
                                                                 {
                                                                     this.state.dbHeader.map((v2,i2)=>{
-                                                                        return <td key={ i2 }>{ v[v2] }</td>
+                                                                        return  <td key={ i2 }
+                                                                                    className={ 't'+id+"-"+i2}
+                                                                                    onClick={ this.inputClick.bind(this, id+"-"+i2, v[v2])}>
+                                                                                    { v[v2] }
+
+                                                                                    {
+                                                                                        id+"-"+i2 === this.state.inputNow
+                                                                                            ? <input value={ this.state.inputText }
+                                                                                                     style={ this.state.inputStyle }
+                                                                                                     className={ 'i'+id+"-"+i2}
+                                                                                                     onBlur={ this.inputBlur.bind(this,1,i,i2) }
+                                                                                                     onChange={ this.inputChange.bind(this) } />
+                                                                                            : null
+                                                                                    }
+                                                                                </td>
                                                                     })
                                                                 }
-                                                                {shuFuc(this.state.dbHeader.length,this.state.columnNum)}
                                                             </tr>
                                                 })
                                             : null
                                     }
-
-                                    <tr>
-                                        {shuFuc(-1,this.state.columnNum)}
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
