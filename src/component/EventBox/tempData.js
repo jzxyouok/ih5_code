@@ -21,7 +21,8 @@ let eventTempData = [
                 }
             ]
         }
-    },{
+    },
+    {
         key: 2,
         name:'rect',
         props: {
@@ -112,7 +113,8 @@ let eventTempData = [
                 }
             ]
         }
-    },{
+    },
+    {
         key: 3,
         name:'cccc',
         props: {
@@ -136,7 +138,8 @@ let eventTempData = [
                 }
             ]
         }
-    },{
+    },
+    {
         key: 4,
         name:'dddd',
         props: {
