@@ -223,6 +223,11 @@
                 &:hover{ background-position: -720px -40px; }
                 &:active{ background-position: -720px -80px;}
             }
+            &.db-item-btn {
+                background-position: -1000px 0;
+                &:hover{ background-position: -1000px -40px; }
+                &:active{ background-position: -1000px -80px;}
+            }
         }
     }
 }
