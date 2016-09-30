@@ -336,7 +336,6 @@ class DbTable extends React.Component {
                                                 let id = "header" + i;
                                                 let name ;
                                                 let type = v.charAt(0);
-                                                text = this.state.inputText;
                                                 if(type == "T" ){
                                                     name = v.substr(1);
                                                 }
