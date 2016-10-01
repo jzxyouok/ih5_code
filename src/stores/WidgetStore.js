@@ -131,7 +131,7 @@ function loadTree(parent, node, idList) {
     node['etree'].forEach(item => {
       var r = {};
       r.children = null;
-      r.condition = null
+      r.condition = null;
       r.eid = (_eventCount++);
       r.specificList = [];
       item.cmds.forEach(cmd => {
@@ -191,11 +191,6 @@ function resolveEventTree(node, list) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
       item.specificList.forEach(cmd => {
-          if(!cmd.action){
-              cmd.action=null;
-              cmd.object=null;
-              return;
-          }
         var obj = list[cmd.action.id];
         delete(cmd.action.id);
         if (cmd.action.var !== undefined) {
@@ -205,6 +200,14 @@ function resolveEventTree(node, list) {
           cmd.object = vl[parseInt(v.substr(1))];
         } else {
           cmd.object = obj;
+        }
+        //不存在目标对象
+        if(!cmd.object){
+            cmd.object = null;
+        }
+        //不存在目标动作
+        if(!cmd.action.name) {
+            cmd.action = null;
         }
       });
     });
