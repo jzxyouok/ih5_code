@@ -1041,6 +1041,7 @@ export default Reflux.createStore({
             func['value'] = param.value||'';
             func['className']  = 'func';
             func['key'] = _keyCount++;
+            func['params'] = [{type:null, name:null}];    //函数类型
             func['widget'] = this.currentWidget;
             func['props'] = {};
             func['props']['unlockPropsName'] = true;
@@ -1061,6 +1062,8 @@ export default Reflux.createStore({
                 this.currentFunction['name'] = props['name'];
             } else if(props['value']) {
                 this.currentFunction['value'] = props['value'];
+            } else if(props['params']) {
+                this.currentFunction['params'] = props['params'];
             }
         }
     },
