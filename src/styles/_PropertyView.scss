@@ -503,6 +503,9 @@ $toBottom:14px;
   .ant-select-dropdown-menu{
 	overflow: visible;
 	max-height: 300px;
+	.optionline{
+	  border-bottom:1px solid #666;
+	}
   }
   .originIcon{
 	width: 20px;

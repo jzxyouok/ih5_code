@@ -168,6 +168,31 @@
                     &:last-child .left-line {
                         height: 14.5px;
                     }
+
+                    //下拉框
+                    .dropDownMenu{
+                        &.ant-dropdown-menu    {
+                            background: #3c516f;
+                            border: none;
+                            box-shadow: none;
+                            margin-top: -4px;
+                            border-radius: 0 0 2px 2px;
+                        }
+                        .ant-dropdown-menu-item {
+                            color: white;
+                            padding: 2px 10px;
+                        }
+                        .ant-dropdown-menu-item-active {
+                            background: #19222e;
+                        }
+                        .ant-dropdown-menu-item:first-child {
+                            border-radius: 0;
+                        }
+                        .ant-dropdown-menu-item:last-child {
+                            border-radius: 0 0 2px 2px;
+                        }
+                    }
+
                 }
 
                 .left-line {
@@ -229,7 +254,9 @@
 
                         .dropDown-layer {
                             position: relative;
-
+                            .title-gray{
+                                color: #858585  !important;
+                            }
                             .title {
                                 @include border-radius(2px);
                                 position: relative;
@@ -240,11 +267,33 @@
                                 color: #b5b5b5;
                                 padding-left: 10px;
                                 cursor: pointer;
-
                                 &:hover {
                                     background: #19222e;
                                 }
-
+                                .judgeObjFlag-input{
+                                    background: transparent;
+                                    border: 0;
+                                    width: 100%;
+                                    outline: none;
+                                }
+                                .judgeValFlag-input{
+                                    background: transparent;
+                                    border: 0;
+                                    width: 100%;
+                                    outline: none;
+                                }
+                                .compareObjFlag-input{
+                                    background: transparent;
+                                    border: 0;
+                                    width: 100%;
+                                    outline: none;
+                                }
+                                .compareValFlag-input{
+                                    background: transparent;
+                                    border: 0;
+                                    width: 100%;
+                                    outline: none;
+                                }
                                 .icon {
                                     position: absolute;
                                     right: 8px;
@@ -882,27 +931,3 @@
 }
 
 
-
-//下拉框
-.dropDownMenu{
-    &.ant-dropdown-menu    {
-        background: #3c516f;
-        border: none;
-        box-shadow: none;
-        margin-top: -4px;
-        border-radius: 0 0 2px 2px;
-    }
-    .ant-dropdown-menu-item {
-        color: white;
-        padding: 2px 10px;
-    }
-    .ant-dropdown-menu-item-active {
-        background: #19222e;
-    }
-    .ant-dropdown-menu-item:first-child {
-        border-radius: 0;
-    }
-    .ant-dropdown-menu-item:last-child {
-        border-radius: 0 0 2px 2px;
-    }
-}

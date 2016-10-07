@@ -201,10 +201,16 @@ class PropertyView extends React.Component {
                       this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
                       v = value;
 
+                  }else if(prop.name == 'type'){
+                      this.selectNode.props.type=value;
+                      v = value;
+
+                  }else if(prop.name == 'forwardTransition' ||prop.name == 'backwardTransition'){
+                      this.selectNode.props[prop.name]=this.getScaleTypeDefault(value,prop.options);
+                       v = value;
                   }else if(prop.name == 'font'){
                       if(value == 0){
                           chooseFile('font', true, function(){
-
                               let  fontObj =eval("("+arguments[1]+")");
                               let oProgress=document.getElementById('ant-progress');
                               //回调完成
@@ -304,6 +310,7 @@ class PropertyView extends React.Component {
             }
         }
     }
+
    //获取下拉框默认值
     getSelectDefault(originPos,options){
         for(let i in options){
@@ -379,6 +386,10 @@ class PropertyView extends React.Component {
                     defaultValue = node.props.fontKey;
                 }else if( item.name=='fontFamily'  && node.props.fontFamilyKey){
                     defaultValue = node.props.fontFamily;
+                }else if( item.name=='forwardTransition' || item.name=='backwardTransition' ){
+                    defaultValue = node.props[item.name];
+                }else if( item.name=='type'  && node.props.type){
+                    defaultValue = node.props.type;
                 }
             } else if(item.type === propertyType.Boolean2 ){
 
@@ -436,6 +447,13 @@ class PropertyView extends React.Component {
                   for(let i in this.fontList){
                       defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
                   }
+              }else if(item.name=='type'){
+                  for(let i in  item.options){
+
+                          selectClassName= (i=='slideInUp' || i== 'jello')? 'optionline':'';
+
+                      defaultProp.options.push(<Option  key={item.options[i]} className={selectClassName}>{i}</Option>);
+                  }
               }
                 if(defaultProp.options.length==0){
                     for(var i in  item.options){
@@ -455,7 +473,7 @@ class PropertyView extends React.Component {
             if (groups[groupName] === undefined)   groups[groupName] = [];
 
             //设置布局结构和图标
-            let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY'].indexOf(item.showName) >= 0;//左右结构显示
+            let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;//左右结构显示
             let hasPx=['x','y','w','h'].indexOf(item.showName)>=0; //判断input中是否添加px单位
             let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
             let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
