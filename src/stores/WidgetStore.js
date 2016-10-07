@@ -1043,7 +1043,7 @@ export default Reflux.createStore({
             func['value'] = param.value||'';
             func['className']  = 'func';
             func['key'] = _keyCount++;
-            func['params'] = cpJson(param.params)||[{type:null, name:null}];    //函数类型
+            func['params'] = param.params?cpJson(param.params):[{type:null, name:null}];    //函数类型
             func['widget'] = this.currentWidget;
             func['props'] = {};
             func['props']['unlockPropsName'] = true;

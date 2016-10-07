@@ -95,7 +95,8 @@
           cursor: pointer;
           .dropDown-div {
             &.active {
-              background: white;
+              border: 1px solid #7b5815;
+              border-radius: 2px;
             }
           }
           .icon {
