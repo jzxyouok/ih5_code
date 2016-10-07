@@ -13,7 +13,7 @@ const MenuItem = Menu.Item;
 
 const paramTypes = [
     {name: 'Number', value: propertyType.Number, showName: '数字'},
-    {name: 'String', value: propertyType.String, showName: '字符'},
+    {name: 'String', value: propertyType.String, showName: '字符'}
 ];
 
 class FunctionView extends React.Component {
@@ -166,13 +166,17 @@ class FunctionView extends React.Component {
 
             //设置通用参数
             return <div className={$class('f--hlc','ant-row','ant-form-item','ant-form-full', 'params-item')} id={propertyId} key={i1}>
-                    <div className='ant-col-l ant-form-item-label'>
-                        <label>参数{i1+1}</label>
-                    </div>
-                    <div className='ant-col-r'>
+                <div className='ant-col-l ant-form-item-label'>
+                    <label>参数{i1+1}</label>
+                </div>
+                <div className='ant-col-r'>
+                    <div className="right-col-container">
+                        <div className='ant-form-item-label'>
+                            <label>类型</label>
+                        </div>
                         <div className= {$class('ant-form-item-control params-dropdown')}>
                             <Dropdown overlay={typeMenu} trigger={['click']}
-                                      getPopupContainer={() => document.getElementById(propertyId)}
+                                      getPopupContainer={() => document.getElementById('function-body-layer')}
                                       onVisibleChange={this.onParamsTypeVisibleChange.bind(this, i1)}>
                                 <div className={$class("dropDown-div", {'active':this.state.paramVisibleIndex === i1})}>
                                     <div className="title f--hlc">
@@ -186,7 +190,10 @@ class FunctionView extends React.Component {
                                 </div>
                             </Dropdown>
                         </div>
-                        <div className= {$class('ant-form-item-control')}>
+                        <div className='ant-form-item-label'>
+                            <label>名称</label>
+                        </div>
+                        <div className= {$class('ant-form-item-control params-name' )}>
                             <Input type="text" size="small" placeholder="输入名称"
                                    onChange={this.onEditParamsChange.bind(this, i1)}
                                    onBlur={this.endEditParams}
@@ -195,8 +202,10 @@ class FunctionView extends React.Component {
                         <div className= {$class('ant-form-item-control params-delete')} onClick={this.onRemoveParamsBtn.bind(this, i1)}>
                             x
                         </div>
+
                     </div>
                 </div>
+            </div>
         };
 
         return <div id="FuncView"
@@ -207,7 +216,7 @@ class FunctionView extends React.Component {
                 <button className='btn btn-clear' title='收起' onClick={this.toggle}/>
             </div>
             <div id='FunctionViewBody' className="propertyViewBody clearfix">
-                <div className={$class("function-body-layer",{'hidden':this.state.minSize})}>
+                <div id='function-body-layer' className={$class("function-body-layer",{'hidden':this.state.minSize})}>
                     <Form horizontal>
                         <div className={$class('f--hlc','ant-row','ant-form-item','ant-form-full')}>
                             <div className='ant-col-l ant-form-item-label'>
@@ -226,8 +235,8 @@ class FunctionView extends React.Component {
                     <Form horizontal>
                         {
                             !this.state.params||this.state.params.length==0
-                            ? null
-                            : this.state.params.map(params)
+                                ? null
+                                : this.state.params.map(params)
                         }
                         <div className="add-btn" onClick={this.onAddParamsBtn}>
                             <div className="btn-layer">
@@ -236,6 +245,7 @@ class FunctionView extends React.Component {
                             </div>
                         </div>
                     </Form>
+
 
 
                     {/*<Form horizontal>*/}

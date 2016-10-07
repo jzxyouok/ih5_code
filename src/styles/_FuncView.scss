@@ -47,6 +47,33 @@
       overflow: scroll;
     }
 
+    .function-body-layer {
+      .ant-dropdown-menu    {
+        background: #353535;
+        border: none;
+        box-shadow: none;
+        margin-top: -4px;
+        border-radius: 0 0 2px 2px;
+      }
+      .ant-dropdown-menu-item {
+        color: #666;
+        padding: 2px 14px;
+      }
+      .ant-dropdown-menu-item-active {
+        background: #151515;
+      }
+      .ant-dropdown-menu-item:first-child {
+        border-radius: 0;
+      }
+      .ant-dropdown-menu-item:last-child {
+        border-radius: 0 0 2px 2px;
+      }
+
+      .ant-form-horizontal {
+        padding-right: 25px;
+      }
+    }
+
     .ant-form {
       ////padding: 20px;
       //
@@ -78,56 +105,60 @@
       }
 
       .params-item {
+        margin-bottom: 7px;
         .ant-form-item-control {
           display: inline-block;
-          width: 317px;
+          width: 200px;
 
           .ant-input {
             width: 100%;
           }
         }
+        .ant-col-r {
+          background-color: #353535;
+          border-radius: 2px;
+          .right-col-container{
+            padding: 5px 2px;
+          }
+        }
+        .ant-form-item-control {
+          background-color: #232323;
+          border-radius: 2px;
+        }
+        .ant-input {
+          background-color: #232323;
+        }
         .params-delete {
-          width: 20px;
-          text-align: right;
+          width: 15px;
+          text-align: center;
           cursor: pointer;
+          margin-left: 3.5px;
+          background-color: #353535;
+        }
+        .params-name {
+          width: 306px;
         }
         .params-dropdown {
           cursor: pointer;
+          width: 203px;
+          line-height: 22px;
           .dropDown-div {
+            border: 1px solid #353535;
+            border-radius: 2px;
+            padding-left: 5px;
             &.active {
               border: 1px solid #7b5815;
-              border-radius: 2px;
             }
           }
           .icon {
             position: absolute;
             right: 8px;
-            top: -4px;
+            top: 0;
             width: 10px;
             height: 22px;
             background: url("img/button-icon.svg") no-repeat -1680px -40px;
             display: block;
           }
-        }
-        .ant-dropdown-menu    {
-          background: #353535;
-          border: none;
-          box-shadow: none;
-          margin-top: -4px;
-          border-radius: 0 0 2px 2px;
-        }
-        .ant-dropdown-menu-item {
-          color: #666;
-          padding: 2px 14px;
-        }
-        .ant-dropdown-menu-item-active {
-          background: #151515;
-        }
-        .ant-dropdown-menu-item:first-child {
-          border-radius: 0;
-        }
-        .ant-dropdown-menu-item:last-child {
-          border-radius: 0 0 2px 2px;
         }
       }
 
