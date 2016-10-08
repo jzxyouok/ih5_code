@@ -49,7 +49,8 @@
         position: relative;
         display: inline-block;
         background-color: #151515;
-        overflow-y: auto;
+        overflow-y: hidden;
+        overflow-x: scroll;
         width: 650px;
         border: 1px solid #353535;
         border-radius: 2px;
@@ -69,7 +70,6 @@
           height: 100%;
           .item {
             width: 130px;
-            height: 68px;
             display: inline-block;
             vertical-align: middle;
             background-color: #353535;
@@ -83,20 +83,99 @@
             }
             .inner-item {
               height: 34px;
-              text-align: center;
               padding: 4px;
               &:first-child {
                 border-bottom: 1px solid #232323;
+              }
+              .title {
+                @extend %font-omitted;
               }
               .drop-down {
                 background-color: #232323;
                 border-radius: 2px;
                 height: 100%;
+                position: relative;
+
+                .dropDown-div {
+                  border: 1px solid #232323;
+                  border-radius: 2px;
+                  cursor: pointer;
+                  transition-duration: 0.3s;
+                  .ant-input {
+                    background-color: #232323;
+                    border: none;
+                    height: auto;
+                    border-radius: 2px;
+                    &:hover {
+                      background-color: #151515 !important;
+                      box-shadow: none !important;
+                    }
+                    &:active,
+                    &:focus {
+                      background-color: #353535 !important;
+                      box-shadow: none !important;
+                      color: white;
+                    }
+                  }
+                  .ant-fade-input {
+                    &:active,
+                    &:focus {
+                      background-color: #151515 !important;
+                      color: #666 !important;
+                    }
+                  }
+
+                  &.active {
+                    border: 1px solid #7b5815;
+                  }
+                  &.on-focus,
+                  &:hover {
+                    background-color: #151515;
+                    .ant-input {
+                      background-color: #151515;
+                    }
+                  }
+                  .ant-form-item-control {
+                    width: 95px;
+                    margin: 2px;
+                  }
+                }
+
+                .icon {
+                  position: absolute;
+                  right: 8px;
+                  top: 0;
+                  width: 10px;
+                  height: 22px;
+                  background: url("img/button-icon.svg") no-repeat -1680px -40px;
+                  display: block;
+                }
               }
             }
           }
         }
       }
+    }
+
+    .ant-dropdown-menu    {
+      background: #353535;
+      border: none;
+      box-shadow: none;
+      margin-top: -4px;
+      border-radius: 0 0 2px 2px;
+    }
+    .ant-dropdown-menu-item {
+      color: #666;
+      padding: 2px 14px;
+    }
+    .ant-dropdown-menu-item-active {
+      background: #151515;
+    }
+    .ant-dropdown-menu-item:first-child {
+      border-radius: 0;
+    }
+    .ant-dropdown-menu-item:last-child {
+      border-radius: 0 0 2px 2px;
     }
   }
 }
