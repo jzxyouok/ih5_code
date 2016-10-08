@@ -135,6 +135,7 @@ function loadTree(parent, node, idList) {
   }
 
   if (node['etree']) {
+    console.log(node['etree']);
     var eventTree = [];
     node['etree'].forEach(item => {
       var r = {};
@@ -144,7 +145,6 @@ function loadTree(parent, node, idList) {
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
       r.children = judgesObj.children;
-
 
       r.eid = (_eventCount++);
       r.specificList = [];
@@ -201,21 +201,36 @@ function loadTree(parent, node, idList) {
   return current;
 }
 
+function idToObject(list, idName, varName) {
+  if (!varName)
+    return null;
+  var obj = list[idName];
+  if (obj && varName) {
+    var vl = (varName.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
+    return vl[parseInt(varName.substr(1))];
+  } else {
+    return obj;
+  }
+}
+
 function resolveEventTree(node, list) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
+      item.children.forEach(judge => {
+        judge.judgeObj = idToObject(list, judge.judgeObjId, judge.judgeVarId);
+        delete(judge.judgeObjId);
+        delete(judge.judgeVarId);
+
+        judge.compareObj = idToObject(list, judge.compareObjId, judge.compareVarId);
+        delete(judge.compareObjId);
+        delete(judge.compareVarId);
+      });
 
       item.specificList.forEach(cmd => {
-        var obj = list[cmd.action.id];
+        cmd.object = idToObject(list, cmd.action.id, cmd.action.var);
         delete(cmd.action.id);
-        if (cmd.action.var !== undefined) {
-          var v = cmd.action.var;
-          delete(cmd.action.var);
-          var vl = (v.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
-          cmd.object = vl[parseInt(v.substr(1))];
-        } else {
-          cmd.object = obj;
-        }
+        delete(cmd.action.var);
+
         //不存在目标对象
         if(!cmd.object){
             cmd.object = null;
@@ -270,15 +285,25 @@ function getMaxSeq(node) {
   }
 }
 
+function generateObjectId(object) {
+  if (object&&object.className == 'var') {
+    if (object.widget.props['id'] === undefined)
+      object.widget.props['id'] = 'id_' + (maxSeq++);
+  } else if (object&&object.props['id'] === undefined) {
+    object.props['id'] = 'id_' + (maxSeq++);
+  }
+}
+
 function generateId(node) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
+      item.children.forEach(judge => {
+        generateObjectId(judge.judgeObj);
+        generateObjectId(judge.compareObj);
+      });
+
       item.specificList.forEach(cmd => {
-        if (cmd.object&&cmd.object.className == 'var') {
-          if (cmd.object.widget.props['id'] === undefined)
-            cmd.object.widget.props['id'] = 'id_' + (maxSeq++);
-        } else if (cmd.object&&cmd.object.props['id'] === undefined)
-          cmd.object.props['id'] = 'id_' + (maxSeq++);
+        generateObjectId(cmd.object);
       });
     });
   }
@@ -287,6 +312,21 @@ function generateId(node) {
       generateId(item);
     });
   }
+}
+
+function objectToId(object) {
+  var idName, varName;
+  if (object.className == 'var') {
+    idName = object.widget.props['id'];
+    if (object.type == 'string') {
+      varName = 's' + object.widget.strVarList.indexOf(object);
+    } else {
+      varName = 'i' + object.widget.intVarList.indexOf(object);
+    }
+  } else {
+    idName = object.props['id'];
+  }
+  return [idName, varName];
 }
 
 function saveTree(data, node) {
@@ -312,7 +352,13 @@ function saveTree(data, node) {
             item.children.map((v,i)=>{
                    let obj={};
 
-             obj.judgeObj =v.judgeObj?v.judgeObj:null;//判断对象
+                   if (v.judgeObj) {
+                      let o = objectToId(v.judgeObj);
+                      obj.judgeObjId = o[0];
+                      if (o[1])
+                        obj.judgeVarId = o[1];
+                   }
+
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
 
@@ -321,7 +367,12 @@ function saveTree(data, node) {
 
              obj.compareFlag=v.compareFlag;//比较运算符
 
-             obj.compareObj=v.compareObj?v.compareObj:null;//比较对象
+                   if (v.compareObj) {
+                      var o = objectToId(v.compareObj);
+                      obj.compareObjId = o[0];
+                      if (o[1])
+                        obj.compareVarId = o[1];
+                   }
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
              obj.compareValFlag =v.compareValFlag;//比较对象的属性
@@ -341,21 +392,10 @@ function saveTree(data, node) {
                   type:cmd.action.type};
           }
           if(cmd.object){
-          if (cmd.object.className == 'var') {
-            c.id = cmd.object.widget.props['id'];
-            var vid;
-            var vlist;
-            if (cmd.object.type == 'string') {
-              vid = 's';
-              vlist = cmd.object.widget.strVarList;
-            } else {
-              vid = 'i';
-              vlist = cmd.object.widget.intVarList;
-            }
-            c.var = vid + vlist.indexOf(cmd.object);
-          } else {
-            c.id = cmd.object.props['id'];
-          }
+            let o = objectToId(cmd.object);
+            c.id = o[0];
+            if (o[1])
+              c.var = o[1];
           }
           if (cmd.action&&cmd.action.property)
             c.property = cmd.action.property;
@@ -366,6 +406,7 @@ function saveTree(data, node) {
 
       });
       data['etree'] = etree;
+      console.log(etree);
     } else
       props[name] = node.props[name];
   }
