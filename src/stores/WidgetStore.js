@@ -135,7 +135,6 @@ function loadTree(parent, node, idList) {
   }
 
   if (node['etree']) {
-    console.log(node['etree']);
     var eventTree = [];
     node['etree'].forEach(item => {
       var r = {};
@@ -202,7 +201,7 @@ function loadTree(parent, node, idList) {
 }
 
 function idToObject(list, idName, varName) {
-  if (!varName)
+  if (!idName)
     return null;
   var obj = list[idName];
   if (obj && varName) {
@@ -406,7 +405,6 @@ function saveTree(data, node) {
 
       });
       data['etree'] = etree;
-      console.log(etree);
     } else
       props[name] = node.props[name];
   }
