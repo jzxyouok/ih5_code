@@ -56,15 +56,21 @@ class App extends React.Component {
     onStatusChange(widget) {
         if(widget.selectFunction !== undefined) {
             this.setState({
-                activeFunc: widget.selectFunction
+                activeFunc: widget.selectFunction,
+                editDb : false,
+                lastSelectID: null
             })
         } else if(widget.selectVariable !== undefined) {
             this.setState({
-                activeVar: widget.selectVariable
+                activeVar: widget.selectVariable,
+                editDb : false,
+                lastSelectID: null
             })
         } else if(widget.activeEventTreeKey) {
             this.setState({
-                activeEventTreeKey: widget.activeEventTreeKey.key
+                activeEventTreeKey: widget.activeEventTreeKey.key,
+                editDb : false,
+                lastSelectID: null
             })
         }
         else if(widget.selectWidget){
