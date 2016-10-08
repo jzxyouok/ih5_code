@@ -29,7 +29,8 @@ class App extends React.Component {
             activeEventTreeKey: null,
             activeFunc: null,
             activeVar: null,
-            editDb : false
+            editDb : false,
+            lastSelectID :null
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -68,7 +69,12 @@ class App extends React.Component {
         }
         else if(widget.selectWidget){
             if(widget.selectWidget.className == "db"){
-                this.editDbShow();
+                if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
+                    this.editDbShow();
+                    this.setState({
+                        lastSelectID : widget.selectWidget.node.dbid
+                    })
+                }
             }
             else {
                 this.editDbHide();
@@ -128,6 +134,7 @@ class App extends React.Component {
         this.setState({
             editDb : true
         });
+        this.refs.NavBar.sendDbData();
     }
 
     editDbHide(){
@@ -141,7 +148,7 @@ class App extends React.Component {
             <div id="iH5-App">
                 <DesignView stageZoom={this.state.stageZoom} />
 
-                <NavBar />
+                <NavBar ref="NavBar" />
 
                 <ToolBox stageZoom={this.state.stageZoom}
                          stageZoomEdit={this.stageZoomEdit}

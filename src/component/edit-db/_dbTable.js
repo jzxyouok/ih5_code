@@ -80,7 +80,7 @@ class DbTable extends React.Component {
         this.setState({
             allDbHeader : data
         },()=>{
-            if(bool && this.state.node !== null){
+            if(bool){
                 this.getNewData();
             }
         })
