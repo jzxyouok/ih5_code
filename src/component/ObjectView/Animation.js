@@ -46,6 +46,8 @@ class Animation extends React.Component {
             this.checkAnimationEnable(widget.selectFunction);
         } else if (widget.selectVariable) {
             this.checkAnimationEnable(widget.selectVariable);
+        } else if (widget.selectDBItem) {
+            this.checkAnimationEnable(widget.selectDBItem);
         }
     }
 
@@ -64,13 +66,15 @@ class Animation extends React.Component {
                 }
             } else if(data[i].className === 'func'&&
                 (widget.className !== 'func'&&
-                widget.className !== 'var')) {
+                widget.className !== 'var'&&
+                widget.className !== 'dbItem')) {
                 data[i].disabled = false;
             } else if((data[i].className === 'var')
                 &&(widget.className !== 'twodvar'&&
                 widget.className !== 'counter' &&
                 widget.className !== 'func' &&
-                widget.className !== 'var')) {
+                widget.className !== 'var'&&
+                widget.className !== 'dbItem')) {
                 data[i].disabled = false;
             } else {
                 if (checkChildClass(widget, data[i].className)) {

@@ -587,6 +587,7 @@ function checkChildClass(selected, className) {
     // 对函数,变量,自定义的处理
     if (selected.className === 'func' ||
         selected.className === 'var' ||
+        selected.className === 'dbItem' ||
         isCustomizeWidget(selected.className)) {
         return false;
     }

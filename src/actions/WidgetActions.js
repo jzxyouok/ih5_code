@@ -42,9 +42,9 @@ export default Reflux.createActions([
   'addVariable',                  //添加变量
   'changeVariable',               //添加变量
 
-  'selectDBItem',
-    'addDBItem',
-    'changeDBItem',
+  'selectDBItem',                 //选择数据库Item
+  'addDBItem',                    //添加数据库Item
+  'changeDBItem',                 //修改数据库Item
 
   'pasteTreeNode',                  //黏贴功能入口
   'cutTreeNode',                    //剪切功能入口

@@ -1234,7 +1234,7 @@ export default Reflux.createStore({
         this.copyVariable();
         this.removeVariable();
     },
-    renameFuncOrVar: function (type, name, fromTree) {
+    renameFadeWidget: function (type, name, fromTree) {
         switch (type){
             case nodeType.func:
                 if(this.currentFunction&&!isEmptyString(name)){
@@ -1263,6 +1263,12 @@ export default Reflux.createStore({
                             this.currentVariable.props.name = name;
                         }
                     }
+                    this.trigger({redrawTree: true});
+                }
+                break;
+            case nodeType.dbItem:
+                if(this.currentDBItem&&!isEmptyString(name)) {
+                    this.currentDBItem.props.name = name;
                     this.trigger({redrawTree: true});
                 }
                 break;
@@ -1298,6 +1304,23 @@ export default Reflux.createStore({
         }
         this.trigger({redrawTree: true});
     },
+    changeDBItem: function () {
+
+    },
+    removeDBItem: function() {
+        if(this.currentDBItem) {
+            let index = -1;
+            for(let i=0; i<this.currentWidget.dbItemList.length; i++) {
+                if(this.currentWidget.dbItemList[i].key == this.currentDBItem.key) {
+                    index = i;
+                }
+            }
+            if(index>-1){
+                this.currentWidget.dbItemList.splice(index,1);
+                this.selectWidget(this.currentWidget);
+            }
+        }
+    },
     pasteTreeNode: function () {
        switch (copyObj.className) {
            case nodeType.func:
@@ -1305,6 +1328,9 @@ export default Reflux.createStore({
                break;
            case nodeType.var:
                this.pasteVariable();
+               break;
+           case nodeType.dbItem:
+               //TODO: PASTE DBITEM
                break;
            default:
                this.pasteWidget();
@@ -1319,6 +1345,9 @@ export default Reflux.createStore({
             case nodeType.var:
                 this.cutVariable();
                 break;
+            case nodeType.dbItem:
+                //TODO: CUT DBITEM
+                break;
             default:
                 this.cutWidget();
                 break;
@@ -1328,7 +1357,8 @@ export default Reflux.createStore({
         switch(type){
             case nodeType.func:
             case nodeType.var:
-                this.renameFuncOrVar(type, value, fromTree);
+            case nodeType.dbItem:
+                this.renameFadeWidget(type, value, fromTree);
                 break;
             default:
                 this.renameWidget(value);
@@ -1343,6 +1373,9 @@ export default Reflux.createStore({
             case nodeType.var:
                 this.copyVariable();
                 break;
+            case nodeType.dbItem:
+                //TODO: COPY DBITEM
+                break;
             default:
                 this.copyWidget();
                 break;
@@ -1356,6 +1389,9 @@ export default Reflux.createStore({
             case nodeType.var:
                 this.removeVariable();
                 this.getAllWidgets();
+                break;
+            case nodeType.dbItem:
+                this.removeDBItem();
                 break;
             default:
                 this.removeWidget(true);
