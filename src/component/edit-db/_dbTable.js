@@ -447,20 +447,27 @@ class DbTable extends React.Component {
                                             ? this.state.dbHeader.map((v,i)=>{
                                                 let id = "header" + i;
                                                 let name ;
+                                                let whichType;
                                                 let type = v.charAt(0);
                                                 if(type == "s" ){
                                                     name = v.substr(1);
+                                                    whichType = true;
                                                 }
                                                 else if( type == "i" ){
                                                     name = v.substr(1);
+                                                    whichType = false;
                                                 }
                                                 else {
                                                     name = v;
+                                                    whichType = true;
                                                 }
                                                 return  <td key={i}
                                                             className={ 't'+id}
                                                             onClick={ this.inputClick.bind(this, id, name)}>
+
                                                             {name}
+
+                                                            <span className={ whichType ? "icon sType-icon" : "icon iType-icon" } />
 
                                                             {
                                                                 id === this.state.inputNow
