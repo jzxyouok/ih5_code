@@ -15,7 +15,6 @@ class Event extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            treeList: [], //事件面板树
             expanded: true,
             objName: [],
             eventList: this.props.eventList,
@@ -24,28 +23,14 @@ class Event extends React.Component {
             activeKey: this.props.activeKey,  //当前激活事件的key
             specialObject: ['counter', 'text', 'strVar', 'intVar'],
 
-            conOption: [],
+            //用于下拉框显示
+            conOption: [],//每次点击后赋值
             logicalOption: ['and', 'or', 'not'],  //下拉选项
-            judgeObjOption: [],
-            judgeValOption: ['计算1', '计算2'],
-            compareOption: ['=', '>', '<', '!=', '>=', '<='],
-            compareObjOption: [],
-            compareValOption: ['比较值1', '比较值2'],
-
-
-            conFlag: '触发条件',  //初始值
-            logicalFlag: 'and',
-            judgeObjFlag: '判断对象',
-            judgeValFlag: '判断值',
-            compareFlag: '=',
-            compareObjFlag: '比较对象',
-            compareValFlag: '比较值',
-
-            operationManager: {  //下拉框显现管理
-                zhongHidden: true,
-                curShow: -1,
-                arrHidden: [true, true, true, true, true, true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
-            }
+            judgeObjOption: [],//出现新的widget则更新
+            judgeValOption: ['判断值1', '判断值2'],
+            compareOption: ['=', '>', '<', '!=', '≥', '≤'],
+            compareObjOption: [],//出现新的widget则更新
+            compareValOption: ['比较值1', '比较值2']
         };
 
         this.curChildrenIndex = 0;
@@ -57,14 +42,11 @@ class Event extends React.Component {
         this.onStatusChange = this.onStatusChange.bind(this);
 
         this.getConditionOption = this.getConditionOption.bind(this);   //获取触发条件
+        this.getChooseObjByIndex=this.getChooseObjByIndex.bind(this);
 
-        this.setTreeList = this.setTreeList.bind(this);   //获取事件面板树
         this.getJudgeValType =this.getJudgeValType.bind(this);
         this.getCompareValOption =this.getCompareValOption.bind(this);
 
-        this.getSelectFull = this.getSelectFull.bind(this);
-        this.getSelectHalf = this.getSelectHalf.bind(this);
-        this.getSwitchHalf = this.getSwitchHalf.bind(this);
     }
 
 
@@ -79,7 +61,7 @@ class Event extends React.Component {
                   compareFlag:'=',
                   compareObjFlag:'比较对象',
                   compareValFlag:'比较值',
-                  operationManager: {  //下拉框显现管理
+                  operationManager: {
                       arrHidden: [true,true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
                   }
               }];
@@ -116,8 +98,6 @@ class Event extends React.Component {
         }
 
         if(widget.allWidgets){
-            this.setTreeList(widget.allWidgets);
-
             let arr=[];
             let arr2=[];
 
@@ -132,6 +112,8 @@ class Event extends React.Component {
                 allWidgetsList: widget.allWidgets,
                 judgeObjOption:arr2,  //命名
                 compareObjOption:arr2 //命名
+            },()=>{
+                console.log('w',widget.allWidgets);
             });
         }
 
@@ -142,37 +124,7 @@ class Event extends React.Component {
                 this.getConditionOption();
             });
         }
-    }
 
-
-    setTreeList(allWidgets){
-        let treeList=[];
-        allWidgets.map((v,index)=>{
-             let eventList=[];
-            if(v.props.eventTree){
-                v.props.eventTree.map((v2,i2)=>{
-                    let judgeArr =[];
-                    if(v2.children){
-                        v2.children.map((v3,i3)=>{
-                            judgeArr.push({
-                                judgeObjFlag:v3.judgeObjFlag,  //改成obj
-                                judgeValFlag:v3.judgeValFlag, 
-                                compareFlag:v3.compareFlag,
-                                compareObjFlag:v3.compareObjFlag,  //改成obj
-                                compareValFlag:v3.compareValFlag
-                            });
-                        });
-                    }
-                    eventList.push({
-                        name:v2.conFlag,
-                        judgeFlag:'and',
-                        judgeArr:judgeArr
-                    });
-                });
-            }
-            treeList.push(eventList);
-        });
-        this.setState({treeList:treeList});
     }
 
     getJudgeValType(val){
@@ -230,37 +182,10 @@ class Event extends React.Component {
         });
     }
 
-    getSelectFull(){
-      return   <div className='dropDown-input dropDown-input-select dropDown-input-full'>
-            <input defaultValue='碰撞对象'  className='dropDown-input-content' />
-            <div className='dropDown-icon-select dropDown-select-down'></div>
-        </div>
-    }
-
-    getSelectHalf(){
-      return    <div className='dropDown-input2 dropDown-input-full '>
-            <div className='dropDown-input-txt-half'>中心距离</div>
-            <div className='dropDown-input-half'>
-                <input defaultValue='中心'   className='dropDown-input-content' />
-            </div>
-            <div className='dropDown-icon-select dropDown-select-down'></div>
-        </div>
-    }
-
-    getSwitchHalf(){
-        return   <div className='dropDown-input2 dropDown-input-full '>
-            <div className='dropDown-input-txt-half'>优化速度</div>
-            <div className='dropDown-switch dropDown-switch-right '>
-                <div className='on'>ON</div>
-                <div className='off'>OFF</div>
-            </div>
-        </div>
-    }
-
+    //触发条件
     getConditionOption(){
         let aOption=[];
         let className = this.state.selectWidget.className;
-
         propertyMap[className].map((item,index)=>{
             if(item.isEvent === true){
                 aOption.push(item.name);
@@ -268,6 +193,10 @@ class Event extends React.Component {
         });
 
         this.setState({conOption:aOption});
+    }
+
+    getChooseObjByIndex(index){
+        return this.state.allWidgetsList[index];
     }
 
     plusOperation(eventIndex){
@@ -291,6 +220,7 @@ class Event extends React.Component {
         WidgetActions['delEventChildren'](this.state.eventList[curEventIndex],curChildrenIndex);
     }
 
+    //获取对象属性
     setObjProperty(chooseEventClassName){
         let propArr=[];
         let nameArr=[];
@@ -315,15 +245,16 @@ class Event extends React.Component {
         e.domEvent.stopPropagation();
 
         let eventList = this.state.eventList;
-
+        let index =e.item.props.index;
+        let value =e.item.props.object
         let key = this.curChildrenIndex;
 
         if (flag == 'conFlag') {
-            eventList[this.curEventIndex][flag] = e.item.props.object;
+            eventList[this.curEventIndex][flag] = value;
         } else if(flag == 'logicalFlag'){
-            eventList[this.curEventIndex].logicalFlag = e.item.props.object;
+            eventList[this.curEventIndex].logicalFlag =value;
         }else {
-            eventList[this.curEventIndex].children[key][flag] = e.item.props.object;
+            eventList[this.curEventIndex].children[key][flag] = value;
         }
 
         this.setState({eventList: eventList});
@@ -333,7 +264,7 @@ class Event extends React.Component {
 
         let initFlag = this.state.eventList[this.curEventIndex].children[this.curChildrenIndex]; //初始化
 
-        let chooseEventClassName = this.getClassNameByobjName(e.item.props.object);
+        let chooseEventClassName = this.getClassNameByobjName(value);
 
 
         switch (flag) {
@@ -352,10 +283,11 @@ class Event extends React.Component {
 
                 this.setState({judgeValOption: judgeValOption});
 
+                initFlag.judgeObj =this.getChooseObjByIndex(index);
+
                 initFlag.judgeValOption = judgeValOption;
 
                 initFlag.judgeValFlag = '判断值';
-
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较对象';
                 initFlag.compareValFlag = '比较值';
@@ -374,7 +306,7 @@ class Event extends React.Component {
                 }
 
                 //设定选中比较值的类型
-                initFlag.judgeValType=this.getJudgeValType(e.item.props.object);
+                initFlag.judgeValType=this.getJudgeValType(value);
                 break;
             case 'compareObjFlag':
                 arrHidden = this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
@@ -395,6 +327,8 @@ class Event extends React.Component {
                     compareValOption =this.getCompareValOption(propObj.nameArr);
 
                     this.setState({compareValOption: compareValOption});
+
+                    initFlag.compareObj =this.getChooseObjByIndex(index);
 
                     initFlag.compareValOption =compareValOption;
 
@@ -434,7 +368,7 @@ class Event extends React.Component {
             return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
                 {
                     this.state[option].map((v, i)=> {
-                        return <MenuItem key={i} object={v}>{v}</MenuItem>;
+                        return <MenuItem key={i} index={i}  object={v}>{v}</MenuItem>;
                     })
                 }
             </Menu>)
