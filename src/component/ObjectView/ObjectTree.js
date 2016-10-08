@@ -4,7 +4,7 @@ import $class from 'classnames';
 
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore, {nodeType, keepType, isCustomizeWidget} from '../../stores/WidgetStore';
+import WidgetStore, {nodeType, keepType, varType, isCustomizeWidget} from '../../stores/WidgetStore';
 
 class ObjectTree extends React.Component {
     constructor (props) {
@@ -40,9 +40,8 @@ class ObjectTree extends React.Component {
         this.itemKeyAction = this.itemKeyAction.bind(this);
         this.itemPaste = this.itemPaste.bind(this);
 
-        //函数相关
-        this.funcBtn = this.funcBtn.bind(this);
-        this.varBtn = this.varBtn.bind(this);
+        //伪对象相关
+        this.fadeWidgetBtn = this.fadeWidgetBtn.bind(this);
 
         this.startEditObjName = this.startEditObjName.bind(this);
         this.endEditObjName = this.endEditObjName.bind(this);
@@ -94,7 +93,7 @@ class ObjectTree extends React.Component {
             this.forceUpdate();
         }
 
-        else if(widget.selectWidget || widget.selectFunction || widget.selectVariable){
+        else if(widget.selectWidget || widget.selectFunction || widget.selectVariable || widget.selectDBItem){
             //触发失焦
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
@@ -118,6 +117,12 @@ class ObjectTree extends React.Component {
                     selectWidget: null,
                     nid: widget.selectVariable.key,
                     nodeType: nodeType.var
+                });
+            } else if (widget.selectDBItem) {
+                this.setState({
+                    selectWidget: null,
+                    nid: widget.selectDBItem.key,
+                    nodeType: nodeType.dbItem
                 });
             }
 
@@ -295,24 +300,36 @@ class ObjectTree extends React.Component {
         }
     }
 
-    funcBtn(nid, data) {
-        this.setState({
-            nid : nid,
-            editMode: false
-        },()=>{
-            WidgetActions['selectWidget'](data.widget, false, keepType.func);
-            WidgetActions['selectFunction'](data);
-        });
-    }
-
-    varBtn(nid, data) {
-        this.setState({
-            nid : nid,
-            editMode: false
-        },()=>{
-            WidgetActions['selectWidget'](data.widget, false, keepType.var);
-            WidgetActions['selectVariable'](data);
-        });
+    fadeWidgetBtn(nid, data, type) {
+        switch (type){
+            case nodeType.func:
+                this.setState({
+                    nid : nid,
+                    editMode: false
+                },()=>{
+                    WidgetActions['selectWidget'](data.widget, false, keepType.func);
+                    WidgetActions['selectFunction'](data);
+                });
+                break;
+            case nodeType.var:
+                this.setState({
+                    nid : nid,
+                    editMode: false
+                },()=>{
+                    WidgetActions['selectWidget'](data.widget, false, keepType.var);
+                    WidgetActions['selectVariable'](data);
+                });
+                break;
+            case nodeType.dbItem:
+                this.setState({
+                    nid : nid,
+                    editMode: false
+                },()=>{
+                    WidgetActions['selectWidget'](data.widget, false, keepType.dbItem);
+                    WidgetActions['selectDBItem'](data);
+                });
+                break;
+        }
     }
 
     startEditObjName(id, data, event) {
@@ -525,49 +542,23 @@ class ObjectTree extends React.Component {
             return btn;
         };
 
-        let funcList = (data, num)=> {
+        let fadeWidgetList = (data, num, type)=> {
             let content = data.map((item, i)=> {
-                return <div className={"func-title-wrap clearfix"} key={i}
+                return <div className={"fade-widget-title-wrap clearfix"} key={i}
                             id={'tree-item-'+ item.key}
                             tabIndex={item.key}
                             onFocus={this.itemAddKeyListener.bind(this)}
                             onBlur={this.itemRemoveKeyListener.bind(this)}>
-                    <div className={$class('func-title f--h f--hlc',
-                         {'active': item.key === this.state.nid})}
-                         onClick={this.funcBtn.bind(this, item.key, item)}
-                         style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
-                        <span className='item-icon func-var-icon func-icon' />
-                        <div className='func-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
-                            <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
-                            <input id={'item-name-input-'+item.key} type="text"
-                                   onBlur={this.endEditObjName}
-                                   onClick={this.editStopPropagation}
-                                   className={$class('item-name-input',{'hidden':!((item.key === this.state.nid)&&this.state.editMode)})}/>
-                        </div>
-                    </div>
-                    <div className={$class('item-event')}>
-                        <div className={$class('item-event-empty',{'active': item.key === this.state.nid})}
-                             onClick={this.funcBtn.bind(this, item.key, item)}></div>
-                    </div>
-                </div>
-            });
-            return content
-        };
-
-        let varList = (data, num)=> {
-            let content = data.map((item, i)=> {
-                return <div className="var-title-wrap clearfix" key={i}
-                            id={'tree-item-'+ item.key}
-                            tabIndex={item.key}
-                            onFocus={this.itemAddKeyListener.bind(this)}
-                            onBlur={this.itemRemoveKeyListener.bind(this)}>
-                    <div className={$class('func-title f--h f--hlc',
+                    <div className={$class('fade-widget-title f--h f--hlc',
                         {'active': item.key === this.state.nid})}
-                         onClick={this.varBtn.bind(this, item.key, item)}
+                         onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
-                        <span className={$class('item-icon func-var-icon', {'var-num-icon': item.type==='number'},
-                            {'var-str-icon': item.type==='string'})} />
-                        <div className='var-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
+                        <span className={$class('item-icon fade-widget-icon',
+                            {'func-icon':type===nodeType.func},
+                            {'var-num-icon': item.type===varType.number&&type===nodeType.var},
+                            {'var-str-icon': item.type===varType.string&&type===nodeType.var},
+                            {'db-item-icon': item.type===nodeType.dbItem})}/>
+                        <div className='fade-widget-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
                             <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
                             <input id={'item-name-input-'+item.key} type="text"
                                    onBlur={this.endEditObjName}
@@ -577,7 +568,7 @@ class ObjectTree extends React.Component {
                     </div>
                     <div className={$class('item-event')}>
                         <div className={$class('item-event-empty',{'active': item.key === this.state.nid})}
-                             onClick={this.varBtn.bind(this, item.key, item)}></div>
+                             onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}></div>
                     </div>
                 </div>
             });
@@ -695,22 +686,33 @@ class ObjectTree extends React.Component {
                         }
                     </div>
                 </div>
-                <div className={$class('item-var-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                {
+                    v.className === 'db'
+                        ?  <div className={$class('clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                            {
+                                v.dbItemList.length === 0
+                                ? null
+                                : fadeWidgetList(v.dbItemList, num+1, nodeType.dbItem)
+                            }
+                        </div>
+                        : null
+                }
+                <div className={$class('clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
                     {v.intVarList.length === 0
                         ? null
-                        : varList(v.intVarList, num+1)
+                        : fadeWidgetList(v.intVarList, num+1, nodeType.var)
                     }
                 </div>
-                <div className={$class('item-var-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                <div className={$class('clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
                     {v.strVarList.length === 0
                         ? null
-                        : varList(v.strVarList, num+1)
+                        : fadeWidgetList(v.strVarList, num+1, nodeType.var)
                     }
                 </div>
-                <div className={$class('item-function-content clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
+                <div className={$class('clearfix', {'hidden': this.state.openData.indexOf(v.key) < 0 })}>
                     {v.funcList.length === 0
                         ? null
-                        : funcList(v.funcList, num+1)
+                        : fadeWidgetList(v.funcList, num+1, nodeType.func)
                     }
                 </div>
                 <div className={$class({'hidden': this.state.openData.indexOf(v.key) < 0 }) }>
@@ -772,22 +774,22 @@ class ObjectTree extends React.Component {
                                          }
                                      </div>
                                  </div>
-                                 <div className={$class('stage-var-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
+                                 <div className={$class('clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
                                      {v.tree.intVarList.length === 0
                                          ? null
-                                         : varList(v.tree.intVarList, 1)
+                                         : fadeWidgetList(v.tree.intVarList, 1, nodeType.var)
                                      }
                                  </div>
-                                 <div className={$class('stage-var-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
+                                 <div className={$class('clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
                                      {v.tree.strVarList.length === 0
                                          ? null
-                                         : varList(v.tree.strVarList, 1)
+                                         : fadeWidgetList(v.tree.strVarList, 1, nodeType.var)
                                      }
                                  </div>
-                                 <div className={$class('stage-function-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
+                                 <div className={$class('clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
                                      {v.tree.funcList.length === 0
                                          ? null
-                                         : funcList(v.tree.funcList, 1)
+                                         : fadeWidgetList(v.tree.funcList, 1, nodeType.func)
                                      }
                                  </div>
                                  <div className={$class('stage-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}

@@ -29,6 +29,7 @@ class App extends React.Component {
             activeEventTreeKey: null,
             activeFunc: null,
             activeVar: null,
+            activeDBItem: null,
             editDb : false,
             lastSelectID :null
         };
@@ -69,6 +70,12 @@ class App extends React.Component {
         } else if(widget.activeEventTreeKey) {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key,
+                editDb : false,
+                lastSelectID: null
+            })
+        }   else if(widget.selectDBItem !== undefined) {
+            this.setState({
+                activeDBItem: widget.selectDBItem,
                 editDb : false,
                 lastSelectID: null
             })
@@ -165,6 +172,7 @@ class App extends React.Component {
                               isHidden={this.state.activeEventTreeKey != null
                               || this.state.activeFunc != null
                               || this.state.activeVar != null
+                              || this.state.activeDBItem != null
                               || this.state.editDb} />
 
                 <EventBox expanded={this.state.expandedToolbox}
@@ -177,7 +185,7 @@ class App extends React.Component {
                               isHidden={!(this.state.activeVar != null)}/>
 
                 <DBItemView expanded={this.state.expandedToolbox}
-                            isHidden={true}/>
+                            isHidden={!(this.state.activeDBItem != null)}/>
 
                 <ObjectView />
 

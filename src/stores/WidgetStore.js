@@ -24,13 +24,15 @@ var dragTag;
 var nodeType = {
     widget: 'widget',  //树对象
     func: 'func',    //函数
-    var: 'var'      //属性
+    var: 'var',     //属性
+    dbItem: 'dbItem',
 };
 
 var keepType = {
     event: 'event',
     func: 'func',
-    var: 'var'
+    var: 'var',
+    dbItem: 'dbItem',
 };
 
 var varType = {
@@ -81,6 +83,11 @@ function loadTree(parent, node, idList) {
   // current.varList = [];
   current.strVarList = [];
   current.intVarList = [];
+
+  if(current.className === 'db'){
+    current.dbItemList = [];
+  }
+
   if (node['vars']) {
     for (let i = 0; i<node['vars'].length; i++) {
         let temp = {};
@@ -548,6 +555,10 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
         this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
+        //db item
+        this.listenTo(WidgetActions['selectDBItem'], this.selectDBItem);
+        this.listenTo(WidgetActions['addDBItem'], this.addDBItem);
+        this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
 
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
@@ -580,6 +591,10 @@ export default Reflux.createStore({
           //取选var状态
           if(!(keepValueType&&keepValueType==keepType.var)&&this.currentVariable) {
             this.selectVariable(null);
+          }
+          //取选dbItem
+          if(!(keepValueType&&keepValueType==keepType.dbItem)&&this.currentDBItem) {
+            this.selectDBItem(null);
           }
         }
         this.currentWidget = widget;
@@ -1254,6 +1269,34 @@ export default Reflux.createStore({
             default:
                 break;
         }
+    },
+    selectDBItem: function(data){
+        if (data!=null) {
+            //取消在canvas上的widget选择
+            bridge.selectWidget(this.currentWidget.node);
+            this.currentDBItem = data;
+        } else {
+            this.currentDBItem = null;
+        }
+        this.trigger({selectDBItem: this.currentDBItem});
+    },
+    addDBItem: function(param, defaultName){
+        if(this.currentWidget) {
+            let dbItem = {};
+            dbItem['name'] = param.name||'';
+            dbItem['params'] = param.params||null; //字段s
+            dbItem['className']  = 'dbItem';
+            dbItem['key'] = _keyCount++;
+            dbItem['widget'] = this.currentWidget;
+            dbItem['props'] = {};
+            if(defaultName!=undefined) {
+                dbItem['props']['name'] = defaultName;
+            } else {
+                dbItem['props']['name'] = 'dbItem' + (this.currentWidget['dbItemList'].length + 1);
+            }
+            this.currentWidget['dbItemList'].unshift(dbItem);
+        }
+        this.trigger({redrawTree: true});
     },
     pasteTreeNode: function () {
        switch (copyObj.className) {

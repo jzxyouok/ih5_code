@@ -16,8 +16,7 @@
 
         .stage-title ,
         .item-title,
-        .func-title,
-        .var-title{
+        .fade-widget-title{
             float: left;
             position: relative;
             width: 220px; //244px;
@@ -80,8 +79,7 @@
 
             .stage-name-wrap,
             .item-name-wrap,
-            .var-name-wrap,
-            .func-name-wrap {
+            .fade-widget-name-wrap{
                 @extend %font-omitted;
                 width: 100%;
                 padding-right: 18px;
@@ -166,8 +164,7 @@
             }
         }
 
-        .var-title-wrap,
-        .func-title-wrap {
+        .fade-widget-title-wrap {
             outline: 0;
         }
 
@@ -177,8 +174,7 @@
             }
         }
 
-        .var-title-wrap,
-        .func-title-wrap {
+        .fade-widget-title-wrap{
             .item-event {
                 height: 23px;
             }
@@ -191,8 +187,7 @@
             .func-icon {
                 background: url("img/object-tree.svg") no-repeat -760px 0;
             }
-            .var-name-wrap,
-            .func-name-wrap {
+            .fade-widget-name-wrap{
                 margin: 0 0 0 9px;
                 text-overflow: ellipsis;
                 overflow: hidden;
@@ -231,7 +226,7 @@
         filter: Gray;
         -webkit-filter: grayscale(100%);
     }
-    .func-var-icon {
+    .fade-widget-icon {
         margin-left: 11px;
     }
     .item-icon {
