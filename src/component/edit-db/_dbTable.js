@@ -24,7 +24,7 @@ class DbTable extends React.Component {
             isAddCul : false,
             addType : 0,
             lastSelectID : null,
-            isHaveContent : true
+            isHaveContent : false
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -126,7 +126,7 @@ class DbTable extends React.Component {
                         self.setState({
                             dbHeader : dbHeader,
                             dbList : list,
-                            isHaveContent : true
+                            isHaveContent : false
                         });
 
                         if(list.length === 0){
@@ -139,7 +139,7 @@ class DbTable extends React.Component {
                     self.setState({
                         dbHeader : [],
                         dbList : [],
-                        isHaveContent : false
+                        isHaveContent : true
                     });
                 }
             }
@@ -457,7 +457,7 @@ class DbTable extends React.Component {
                         </div>
                     </div>
 
-                    <p className={$class("no-tips f--hcc",{"hidden": this.state.isHaveContent})}>请点击右上角添加按钮创建字段</p>
+                    <p className={$class("no-tips f--hcc",{"hidden": !this.state.isHaveContent})}>请点击右上角添加按钮创建字段</p>
 
                     <div className="add-btn f--s" onClick={ this.popShow }>
                         <button className="btn btn-clear">
