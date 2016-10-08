@@ -244,7 +244,8 @@ propertyMap['canvas'] = [
     { name: 'height', type: propertyType.Integer, default: 0, group:'position', isProperty: true}
 ];
 propertyMap['page'] = [
-    ...propertyMap['container'],
+    //...propertyMap['container'],
+    ...propertyMap['widget'],
     { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
     { name: 'forwardTransition',showName:'前翻效果', type: propertyType.Select, default:'无',options:{
          '无':0,

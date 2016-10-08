@@ -287,8 +287,8 @@ class Event extends React.Component {
         }
     }
 
-    deleteOperation(index){
-        WidgetActions['delEventChildren'](this.state.eventList[this.curEventIndex],index);
+    deleteOperation(curChildrenIndex,curEventIndex){
+        WidgetActions['delEventChildren'](this.state.eventList[curEventIndex],curChildrenIndex);
     }
 
     setObjProperty(chooseEventClassName){
@@ -455,7 +455,7 @@ class Event extends React.Component {
                                             onClick={this.setCurChildrenIndex.bind(this,null,i)}
                                             getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                             trigger={['click']}>
-                                            <div className='title f--hlc'>
+                                            <div  className={$class('title f--hlc',{'title-gray':v.conFlag==this.state.conFlag})} >
                                                 {v.conFlag}
                                                 <span className='icon' /></div>
                                         </Dropdown>
@@ -547,7 +547,7 @@ class Event extends React.Component {
                                                     </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
-                                                <span className={$class('close-btn')} onClick={this.deleteOperation.bind(this,i1)} />
+                                                <span className={$class('close-btn')} onClick={this.deleteOperation.bind(this,i1,i)} />
                                             </div>
                                         })
                                     }
