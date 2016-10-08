@@ -24,7 +24,7 @@ require("jscolor/jscolor");
 class PropertyView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {fields: null};
+        this.state = {fields: null,propertyName:null};
         this.selectNode = null;
         this.currentPage = null;
         this.fontList=[];
@@ -546,6 +546,8 @@ class PropertyView extends React.Component {
 
     onStatusChange(widget) {
 
+        console.log('haha',widget);
+
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
         }
@@ -558,7 +560,7 @@ class PropertyView extends React.Component {
 
         if (widget.selectWidget !== undefined){
             this.selectNode = widget.selectWidget;
-            this.setState({fields: this.getFields()});
+            this.setState({fields: this.getFields(),propertyName:this.selectNode.props.name});
             let node = this.selectNode;
 
             while (node != null) {
@@ -610,9 +612,10 @@ class PropertyView extends React.Component {
     }
 
     render() {
+
         return (
             <div id='PropertyView' style={{ left : this.props.expanded? '65px':'37px'}} className={cls({'hidden':this.props.isHidden})}>
-                <h1 id='PropertyViewHeader'>属性</h1>
+                <h1 id='PropertyViewHeader'>{this.state.propertyName}的属性</h1>
                 <div id='PropertyViewBody'>
                     {this.state.fields}
                 </div>
