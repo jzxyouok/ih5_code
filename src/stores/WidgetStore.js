@@ -138,8 +138,14 @@ function loadTree(parent, node, idList) {
     var eventTree = [];
     node['etree'].forEach(item => {
       var r = {};
-      r.children = null;
-      r.condition = null;
+      var judgesObj = item.judges;
+
+      r.conFlag = judgesObj.conFlag;
+      r.logicalFlag = judgesObj.logicalFlag;
+      r.zhongHidden = judgesObj.zhongHidden;
+      r.children = judgesObj.children;
+
+
       r.eid = (_eventCount++);
       r.specificList = [];
       item.cmds.forEach(cmd => {
@@ -198,6 +204,7 @@ function loadTree(parent, node, idList) {
 function resolveEventTree(node, list) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
+
       item.specificList.forEach(cmd => {
         var obj = list[cmd.action.id];
         delete(cmd.action.id);
@@ -218,6 +225,7 @@ function resolveEventTree(node, list) {
             cmd.action = null;
         }
       });
+
     });
   }
   if (node.children.length > 0) {
@@ -289,8 +297,42 @@ function saveTree(data, node) {
       data['id'] = node.props['id'];
     else if (name == 'eventTree') {
       var etree = [];
-      node.props['eventTree'].forEach(item => {
+
+        node.props['eventTree'].forEach(item => {
         var cmds = [];
+
+        var judges={};
+        judges.conFlag =null; //触发条件
+            if(item.conFlag !='触发条件'){
+                judges.conFlag = item.conFlag;
+            }
+        judges.logicalFlag =item.logicalFlag; //逻辑判断符
+        judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
+        judges.children=[];
+            item.children.map((v,i)=>{
+                   let obj={};
+
+             obj.judgeObj =v.judgeObj?v.judgeObj:null;//判断对象
+             obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
+
+
+
+             obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
+
+             obj.compareFlag=v.compareFlag;//比较运算符
+
+             obj.compareObj=v.compareObj?v.compareObj:null;//比较对象
+             obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
+
+             obj.compareValFlag =v.compareValFlag;//比较对象的属性
+
+             obj.operationManager={};
+
+             obj.operationManager.arrHidden=v.operationManager.arrHidden;
+
+             judges.children.push(obj);
+         });
+
         item.specificList.forEach(cmd => {
             var c = {};
           if (cmd.action) {
@@ -319,7 +361,9 @@ function saveTree(data, node) {
             c.property = cmd.action.property;
           cmds.push(c);
         });
-        etree.push({cmds:cmds});
+
+        etree.push({cmds:cmds,judges:judges});
+
       });
       data['etree'] = etree;
     } else
@@ -983,10 +1027,10 @@ export default Reflux.createStore({
             event['children'].push({
                 'cid': _childrenCount++,
                 judgeObjFlag:'判断对象',
-                judgeValFlag:'计算',
+                judgeValFlag:'计算值',
                 compareFlag:'=',
                 compareObjFlag:'比较对象',
-                compareValFlag:'比较',
+                compareValFlag:'比较值',
                 operationManager: {  //下拉框显现管理
                     arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
                 }
