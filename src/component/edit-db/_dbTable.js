@@ -175,7 +175,14 @@ class DbTable extends React.Component {
                 this.state.node['header'] = header;
             }
         }.bind(this));
-        DbHeaderAction['DbHeaderData'](array, false);
+
+        let allDbHeader = this.state.allDbHeader;
+        allDbHeader.map((v,i)=>{
+            if(allDbHeader[i].id === this.state.node.dbid) {
+                allDbHeader[i].header = header;
+                DbHeaderAction['DbHeaderData'](allDbHeader, false);
+            }
+        });
     }
 
     saveBtn(){

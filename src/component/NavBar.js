@@ -120,6 +120,7 @@ class NavBar extends React.Component {
                     fontList: result['font'],
                     dbList: result['db']
                 });
+                DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
             } else {
                 this.setState({loginVisible: true});
