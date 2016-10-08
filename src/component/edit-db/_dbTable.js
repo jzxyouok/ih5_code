@@ -22,7 +22,8 @@ class DbTable extends React.Component {
             node: null,
             allDbHeader : [],
             isAddCul : false,
-            addType : 0
+            addType : 0,
+            lastSelectID : null
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -89,14 +90,17 @@ class DbTable extends React.Component {
     onStatusChange(widget) {
         if(widget.selectWidget){
            if(widget.selectWidget.className == "db"){
-               this.setState({
-                   node : widget.selectWidget.node,
-                   dbList : [],
-                   dbHeader: [],
-                   inputNow : null,
-                   inputText : null,
-                   inputStyle : null
-               });
+               if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
+                   this.setState({
+                       lastSelectID : widget.selectWidget.node.dbid,
+                       node : widget.selectWidget.node,
+                       dbList : [],
+                       dbHeader: [],
+                       inputNow : null,
+                       inputText : null,
+                       inputStyle : null
+                   })
+               }
            }
         }
     }
