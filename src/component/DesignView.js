@@ -16,6 +16,7 @@ class DesignView extends React.Component {
         this.isDraging =false;
         this.whichDrag=null;
         this.selectNode=null;
+        this.rootWidget=null;
         this.stageZoom=100;
         this.stageZoomRate=1;
         this.stageZoomTop=0;
@@ -50,6 +51,7 @@ class DesignView extends React.Component {
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
             if(widget.selectWidget.className == "root" && widget.selectWidget.key == 1){
+                this.rootWidget =widget.selectWidget;
                 document.body.addEventListener('keyup', this.onKeyScroll);
                 document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown_top);
                 document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);
@@ -86,8 +88,8 @@ class DesignView extends React.Component {
             this.stageZoomRate =this.stageZoom/100;
 
             let k= (100-this.props.stageZoom)/200;
-            this.stageZoomTop=  this.selectNode.node.height*k;
-            this.stageZoomLeft=this.selectNode.node.width*k;
+            this.stageZoomTop=  this.rootWidget.node.height*k;
+            this.stageZoomLeft=this.rootWidget.node.width*k;
 
             let aODiv =this.aODiv;
             this.drawLine(aODiv);
