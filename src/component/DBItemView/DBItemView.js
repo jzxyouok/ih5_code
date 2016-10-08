@@ -16,7 +16,8 @@ class DBItemView extends React.Component {
         super(props);
         this.state = {
             minSize: false,
-            itemId: null,
+            name: null,
+            fields: [],
             fieldDropdownVisibleIndex: null,
             fieldDropdownVisible: false,
             fieldFocusIndex: null,
@@ -30,8 +31,8 @@ class DBItemView extends React.Component {
 
         this.toggle = this.toggle.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-        this.onEditChange = this.onEditChange.bind(this);
-        this.endEdit = this.endEdit.bind(this);
+        this.onEditChangeName = this.onEditChangeName.bind(this);
+        this.onEndEditName = this.onEndEditName.bind(this);
         this.onSourceSelect = this.onSourceSelect.bind(this);
         this.onFieldDropdownVisibleChange = this.onFieldDropdownVisibleChange.bind(this);
         this.onStartEditField = this.onStartEditField.bind(this);
@@ -54,15 +55,22 @@ class DBItemView extends React.Component {
     }
 
     onStatusChange(widget) {
-
+        if(widget.selectDBItem) {
+            this.setState({
+                name: widget.selectDBItem.name
+            })
+        }
     }
 
-    onEditChange(v) {
-
+    onEditChangeName(v) {
+        let name = v.target.value;
+        this.setState({
+            name: name
+        });
     }
 
-    endEdit(event) {
-
+    onEndEditName() {
+        WidgetActions['changeDBItem']({'name': this.state.name});
     }
 
     onFieldDropdownVisibleChange(index, visible){
@@ -188,9 +196,10 @@ class DBItemView extends React.Component {
                         <div className='ant-col-r'>
                             <div className= {$class('ant-form-item-control')}>
                                 <Input type="text" size="small" placeholder="请输入ID"
-                                       onChange={this.onEditChange.bind(this)}
-                                       onBlur={this.endEdit.bind(this)}
-                                       value={this.state.itemId}/>
+                                       onChange={this.onEditChangeName.bind(this)}
+                                       onBlur={this.onEndEditName.bind(this)}
+                                       onPressEnter={this.onEndEditName.bind(this)}
+                                       value={this.state.name}/>
                             </div>
                         </div>
                     </div>

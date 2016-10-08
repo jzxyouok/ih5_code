@@ -641,25 +641,29 @@ class PropertyView extends React.Component {
     }
 
     mouseUp(e){
-        let subW =e.pageX-this.PropertyViewPosition.subW;
-        let subH =e.pageY-this.PropertyViewPosition.subH;
-        let  clientWidth =document.body.clientWidth;
-        let subRight =clientWidth- subW-260;
+        if( this.PropertyViewPosition.isDown) {
 
 
-        if( subW<76){
-            this.PropertyViewPosition.oPropertyView.style.left='37px';
+            let subW = e.pageX - this.PropertyViewPosition.subW;
+            let subH = e.pageY - this.PropertyViewPosition.subH;
+            let clientWidth = document.body.clientWidth;
+            let subRight = clientWidth - subW - 260;
 
+
+            if (subW < 76) {
+                this.PropertyViewPosition.oPropertyView.style.left = '37px';
+
+            }
+            if (subH < 76) {
+                this.PropertyViewPosition.oPropertyView.style.top = '36px';
+            }
+
+            if (subRight < 76) {
+                this.PropertyViewPosition.oPropertyView.style.left = (clientWidth - 296) + 'px';
+            }
+            this.PropertyViewPosition.isDown = false;
+            this.PropertyViewPosition.oPropertyView = null;
         }
-        if( subH<76){
-            this.PropertyViewPosition.oPropertyView.style.top='36px';
-        }
-
-        if(subRight<76){
-            this.PropertyViewPosition.oPropertyView.style.left=clientWidth-296+'px';
-        }
-        this.PropertyViewPosition.isDown=false;
-        this.PropertyViewPosition.oPropertyView=null;
     }
 
     render() {
