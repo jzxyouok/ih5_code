@@ -45,6 +45,8 @@ var funcType = {
     default: 'default'      //系统自带
 };
 
+var PREFIX = 'app/';
+
 var copyObj = {};
 
 function isEmptyString( str ){
@@ -780,6 +782,9 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
+          if (!copyObj.className) {
+              return;
+          }
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
         loadTree(this.currentWidget, copyObj);
@@ -1370,7 +1375,7 @@ export default Reflux.createStore({
         if(this.currentWidget) {
             let dbItem = {};
             dbItem['name'] = param.name||'';
-            dbItem['params'] = param.params||null; //字段s
+            dbItem['fields'] = param.fields||[]; //字段s
             dbItem['className']  = 'dbItem';
             dbItem['key'] = _keyCount++;
             dbItem['widget'] = this.currentWidget;
@@ -1389,6 +1394,8 @@ export default Reflux.createStore({
             if(props) {
                 if(props['name']) {
                     this.currentDBItem['name'] = props['name'];
+                } else if (props['fields']){
+                    this.currentDBItem['fields'] = props['fields'];
                 }
             }
         }

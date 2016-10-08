@@ -314,6 +314,22 @@
                         color: #b5b5b5;
                         background: #222222;
 
+                        .icon{
+                            position: absolute;
+                            right: 0;
+                            top: 0;
+                            width: 14px;
+                            height: 14px;
+                            background: url("img/button-icon.svg") no-repeat;
+
+                            &.sType-icon{
+                                background-position: -1120px -200px;
+                            }
+                            &.iType-icon{
+                                background-position: -1160px -200px;
+                            }
+                        }
+
                         input{
                             position: absolute;
                             left: 0;
@@ -406,6 +422,7 @@
             height: 14px;
 
             .icon {
+                min-width: 18px;
                 width: 18px;
                 height: 14px;
                 border: 1px solid #434343;

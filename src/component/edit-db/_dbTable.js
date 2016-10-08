@@ -26,7 +26,11 @@ class DbTable extends React.Component {
             lastSelectID : null,
             isHaveContent : false,
             isError : false,
-            errorText : ""
+            errorText : "",
+            moveLength : 0,
+            multiple : 1,
+            scrollWidth :　"100%",
+            marginLeft : 0
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -41,6 +45,7 @@ class DbTable extends React.Component {
         this.popShow = this.popShow.bind(this);
         this.popHide = this.popHide.bind(this);
         this.whichAddType = this.whichAddType.bind(this);
+        this.updateNewScrollData = this.updateNewScrollData.bind(this);
     }
 
     componentDidMount() {
@@ -68,6 +73,8 @@ class DbTable extends React.Component {
         //                let headerData = allDbHeader[i].header.split(",");
         //                this.setState({
         //                    dbHeader: headerData
+        //                },()=>{
+        //                    this.updateNewScrollData();
         //                });
         //            }
         //        });
@@ -129,7 +136,10 @@ class DbTable extends React.Component {
                             dbHeader : dbHeader,
                             dbList : list,
                             isHaveContent : false
+                        },()=>{
+                            self.updateNewScrollData();
                         });
+
 
                         if(list.length === 0){
                             self.createContent();
@@ -202,26 +212,55 @@ class DbTable extends React.Component {
         //this.state.node.updata(this.state.dbList);
     }
 
+    updateNewScrollData(){
+        let widthShow = this.props.isBig ? 535 : 689;
+        let getWidth = parseFloat($(".DT-content table").css('width'));
+        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll span").css('width'));
+        let width = getWidth > widthShow ? getWidth : widthShow;
+        let moveLength = width - widthShow;
+        let multiple = width / widthShow;
+        let scrollWidth = getScrollWidth / multiple;
+        console.log(width,getWidth,widthShow,getScrollWidth,moveLength,multiple,scrollWidth);
+        this.setState({
+            widthShow : widthShow,
+            moveLength : moveLength,
+            multiple : multiple,
+            scrollWidth :　scrollWidth
+        })
+    }
+
+
     scrollBtn(){
-        //let move = false;
-        //let _x;
-        //let self = this;
-        //let left = 0;
-        //let width = parseFloat($(".DT-content table").css('width'));
-        //let widthShow = this.props.isBig ?
-        //console.log(width,widthShow);
-        //
-        //$(".DbTable .scroll span").mousedown(function(e){
-        //    move=true;
-        //    _x=e.pageX;
-        //});
-        //$(document).mousemove(function(e){
-        //    if(move){
-        //        let x =  e.pageX - _x;
-        //    }
-        //}).mouseup(function(){
-        //    move=false;
-        //});
+        let move = false;
+        let _x;
+        let self = this;
+        let left = this.state.marginLeft;
+        let moveLength;
+
+        $(".DbTable .scroll span").mousedown(function(e){
+            move=true;
+            _x=e.pageX;
+            moveLength = self.state.moveLength / self.state.multiple;
+        });
+        $(document).mousemove(function(e){
+            if(move && moveLength !== 0){
+                let x =  e.pageX - _x;
+                let value = left + x;
+                if(left + x <=0){
+                    value = 0;
+                }
+                if(left + x >= moveLength){
+                    value = moveLength;
+                }
+                //console.log(value);
+                self.setState({
+                    marginLeft : value
+                });
+            }
+        }).mouseup(function(){
+            move=false;
+            left = self.state.marginLeft
+        });
     }
 
 
@@ -230,30 +269,33 @@ class DbTable extends React.Component {
         let inputText = this.refs.inputType.value;
         let value = null;
         let list = this.state.dbList;
-
+        if(this.state.addType == 0){
+            value = "s" + inputText;
+        }
+        else {
+            value = "i" + inputText;
+        }
+        let index = header.indexOf(value);
+        let index2 = header.indexOf(inputText);
         let error = (data)=>{
             this.setState({
                 isError: true,
                 errorText: data
             })
         };
-
         if(inputText.length === 0){
-            error("名称不能为空");
+            error("字段名称不能为空");
         }
         else if(inputText.startsWith(" ")){
-            error("名称不能以空格开头");
+            error("字段名称不能以空格开头");
         }
         else if(inputText.endsWith(" ")){
-            error("名称不能以空格结尾");
+            error("字段名称不能以空格结尾");
+        }
+        else if(index>=0 || index2 >=0){
+            error("字段名称不能重复");
         }
         else {
-            if(this.state.addType == 0){
-                value = "s" + inputText;
-            }
-            else {
-                value = "i" + inputText;
-            }
             header.push(value);
             if(list.length == 0){
                 let newList = [];
@@ -267,11 +309,12 @@ class DbTable extends React.Component {
                     list[i][value] = "";
                 });
             }
-
             this.setState({
                 dbHeader : header,
-                dbList : listis,
+                dbList : list,
                 isError: false
+            },()=>{
+                this.updateNewScrollData();
             })
         }
     }
@@ -358,8 +401,11 @@ class DbTable extends React.Component {
     }
 
     popHide(){
+        this.refs.inputType.value = "";
         this.setState({
-            isAddCul: false
+            isAddCul: false,
+            isError : false,
+            errorText : ""
         })
     }
 
@@ -391,7 +437,7 @@ class DbTable extends React.Component {
                 <div className="DT-main">
                     <div className="DT-scroll">
                         <div className="DT-content" style={{ width : width }}>
-                            <table>
+                            <table style={{ marginLeft : -(this.state.marginLeft) * this.state.multiple}}>
                                 <thead>
                                     <tr>
                                         <td className={ $class({"hidden": this.state.dbHeader.length == 0})}> </td>
@@ -401,20 +447,27 @@ class DbTable extends React.Component {
                                             ? this.state.dbHeader.map((v,i)=>{
                                                 let id = "header" + i;
                                                 let name ;
+                                                let whichType;
                                                 let type = v.charAt(0);
                                                 if(type == "s" ){
                                                     name = v.substr(1);
+                                                    whichType = true;
                                                 }
                                                 else if( type == "i" ){
                                                     name = v.substr(1);
+                                                    whichType = false;
                                                 }
                                                 else {
                                                     name = v;
+                                                    whichType = true;
                                                 }
                                                 return  <td key={i}
                                                             className={ 't'+id}
                                                             onClick={ this.inputClick.bind(this, id, name)}>
+
                                                             {name}
+
+                                                            <span className={ whichType ? "icon sType-icon" : "icon iType-icon" } />
 
                                                             {
                                                                 id === this.state.inputNow
@@ -494,7 +547,7 @@ class DbTable extends React.Component {
                     <div className="scroll-div f--h">
                         <span className="icon"/>
                         <span className="scroll flex-1 f--hlc">
-                            <span style={{ }} />
+                            <span style={{ width : this.state.scrollWidth, marginLeft : this.state.marginLeft }} />
                         </span>
                     </div>
                 </div>
