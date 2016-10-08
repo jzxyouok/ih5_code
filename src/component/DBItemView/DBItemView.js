@@ -24,7 +24,7 @@ class DBItemView extends React.Component {
             fieldDropdownVisible: false,
             fieldFocusIndex: null,
             itemList: [],
-            sourceList: [{name:'src1'},{name:'src2'},{name:'src3'}]
+            sourceList: []
         };
 
         this.toggle = this.toggle.bind(this);
@@ -94,6 +94,19 @@ class DBItemView extends React.Component {
             }
         } else if (widget.allWidgets){
             //widgetList
+            let sourceList = [];
+            widget.allWidgets.map((v,i)=>{
+                if(v.className === 'var'||
+                    v.className === 'text'||
+                    v.className === 'counter'||
+                    v.className === 'input' ||
+                    v.className === 'bitmaptext') {
+                    sourceList.push(v);
+                }
+            });
+            this.setState({
+                sourceList: sourceList
+            })
         }
     }
 
@@ -162,7 +175,7 @@ class DBItemView extends React.Component {
             let itemList = this.state.itemList;
             let fieldInput = 'dbItemFiledInput'+index;
             let inputDomNode = findDOMNode(this.refs[fieldInput]).firstChild;
-            inputDomNode.value = itemList[index].value?itemList[index].value.name:'';
+            inputDomNode.value = itemList[index].value?itemList[index].value.props.name:'';
             inputDomNode.focus();
         });
     }
@@ -172,17 +185,19 @@ class DBItemView extends React.Component {
         if(e.target.value){
             let sourceList = this.state.sourceList;
             sourceList.forEach((v,i)=>{
-                if(v.name === e.target.value){
+                if(v.props.name === e.target.value){
                     source = v;
                 }
             })
         }
         let itemList = this.state.itemList;
         itemList[index].value = source;
-        e.target.value = itemList[index].value?itemList[index].value.name:'';
+        e.target.value = itemList[index].value?itemList[index].value.props.name:'';
         this.setState({
             fieldFocusIndex: null,
             itemList: itemList
+        }, ()=>{
+            WidgetActions['changeDBItem']({'fields':itemList});
         });
     }
 
@@ -194,7 +209,7 @@ class DBItemView extends React.Component {
                         !this.state.sourceList||this.state.sourceList.length==0
                             ? null
                             : this.state.sourceList.map((v2, i2)=>{
-                            return <MenuItem key={i2} source={v2}>{v2.name}</MenuItem>
+                            return <MenuItem key={i2} source={v2}>{v2.props.name}</MenuItem>
                         })
                     }
                 </Menu>
@@ -220,7 +235,7 @@ class DBItemView extends React.Component {
                                         {'hidden':this.state.fieldFocusIndex!=null&&this.state.fieldFocusIndex==i1})}>
                                         {
                                             v1.value
-                                                ? v1.value.name
+                                                ? v1.value.props.name
                                                 : '数据来源'
                                         }
                                     </div>
