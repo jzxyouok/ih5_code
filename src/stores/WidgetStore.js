@@ -785,6 +785,9 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
+          if (!copyObj.className) {
+              return;
+          }
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
         loadTree(this.currentWidget, copyObj);

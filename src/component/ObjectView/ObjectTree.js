@@ -417,7 +417,9 @@ class ObjectTree extends React.Component {
         //黏贴 86
         if (didPressCtrl && event.keyCode == 86) {
             //当前选中func or var就不理会
-            if(this.state.nodeType === nodeType.func || this.state.nodeType==nodeType.var) {
+            if(this.state.nodeType === nodeType.func ||
+                this.state.nodeType==nodeType.var ||
+                this.state.nodeType == nodeType.dbItem) {
                 window.macKeys.reset();
                 return;
             }
