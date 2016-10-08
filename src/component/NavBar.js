@@ -442,7 +442,8 @@ class NavBar extends React.Component {
                                                                         <span className="li-icon" />
                                                                         <div className="TitleName">{v}</div>
                                                                     </div>
-                                                                    <span className="edit-btn" />
+
+                                                                    {<span className="edit-btn" />}
                                                                 </li>
                                                       })
                                                     : null
