@@ -278,6 +278,9 @@ class DbTable extends React.Component {
     inputBlur(type,which,which2){
         let header = this.state.dbHeader;
         let list = this.state.dbList;
+        this.setState({
+            inputNow : null
+        })
         if(type == 0) {
             let value = header[which];
             let text = this.state.inputText;
@@ -300,8 +303,7 @@ class DbTable extends React.Component {
                 //    this.addColumn();
                 //}
                 this.setState({
-                    dbHeader : header,
-                    inputNow : null
+                    dbHeader : header
                 })
             }
         }
@@ -328,8 +330,7 @@ class DbTable extends React.Component {
             }
             this.setState({
                 dbHeader : header,
-                dbList : list,
-                inputNow : null
+                dbList : list
             })
         }
     }
@@ -353,13 +354,13 @@ class DbTable extends React.Component {
     }
 
     render() {
-        let width = this.props.isBig ? 769 : 928;
+        let width = this.props.isBig ? 535 : 689;
 
         return (
             <div className='DbTable'>
                 <div className="DT-header f--h">
-                    <p className="flex-1">列表</p>
-                    <div className="btn-group">
+                    <p className="flex-1">表格</p>
+                    <div className="btn-group f--hlc">
                         <button className="btn btn-clear">导入</button>
                         <button className="btn btn-clear">导出</button>
                     </div>
@@ -478,14 +479,14 @@ class DbTable extends React.Component {
 
                 <div className="DT-footer f--h">
                     <div className="left flex-1 f--hlc ">
-                        <div className="account">总数： 100</div>
+                        <div className="account">总数：100</div>
                         <div className="page">共 10 页</div>
                         <button className="btn btn-clear last-btn">上一页</button>
-                        <div className="now-page">当前页： 1</div>
+                        <div className="now-page">当前页：1</div>
                         <button className="btn btn-clear next-bnt">下一页</button>
                     </div>
 
-                    <div className="right f--hlc">
+                    <div className="right">
                         <button className="btn btn-clear cancel-btn" >取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
                     </div>
