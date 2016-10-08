@@ -42,6 +42,10 @@ export default Reflux.createActions([
   'addVariable',                  //添加变量
   'changeVariable',               //添加变量
 
+  'selectDBItem',
+    'addDBItem',
+    'changeDBItem',
+
   'pasteTreeNode',                  //黏贴功能入口
   'cutTreeNode',                    //剪切功能入口
   'copyTreeNode',                   //复制功能入口

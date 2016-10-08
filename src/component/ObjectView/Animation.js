@@ -10,7 +10,7 @@ const animationData = [
     {name:'数字变量', class:'var-num-btn', className:'var', disabled:false, param:{name:'', value:null, type:varType.number}},
     {name:'文本变量', class:'var-str-btn', className:'var', disabled:false, param:{name:'', value:null, type:varType.string}},
     {name:'函数', class:'func-btn', className:'func', disabled:false, param:{key:'',value:''}},
-    {name:'数据库变量', class:'db-item-btn', className:'dbItem', disabled:false, param:{name:'', value:null, type:varType.string}},
+    {name:'数据库变量', class:'db-item-btn', className:'dbItem', disabled:false, param:{name:''}},
     {name:'轨迹', class:'locus-btn', className:'track', disabled:false},
     {name:'动效', class:'rotation-btn', className:'effect', disabled:false, mode:modeType.dom},
     {name:'3D旋转', class:'dx-btn', className:'3dRotate', disabled:false, mode:modeType.dom},
@@ -55,9 +55,13 @@ class Animation extends React.Component {
         for(let i = 0; i<data.length; i++) {
             if(isCustomizeWidget(widget.className)){
                 data[i].disabled = true;
-            } else if(data[i].className ==='dbItem'&&widget.className !== 'db'){
+            } else if(data[i].className ==='dbItem'){
                 //dbItem的disable
-                data[i].disabled = true;
+                if(widget.className !== 'db'){
+                    data[i].disabled = true;
+                } else {
+                    data[i].disabled = false;
+                }
             } else if(data[i].className === 'func'&&
                 (widget.className !== 'func'&&
                 widget.className !== 'var')) {
@@ -87,8 +91,7 @@ class Animation extends React.Component {
         } else if(className === 'var') {
             WidgetActions['addVariable'](param);
         } else if(className === 'dbItem'){
-            //TODO: 添加数据库item
-            // WidgetActions['addDBItem'](param);
+            WidgetActions['addDBItem'](param);
         } else {
             WidgetActions['addWidget'](className, param);
         }
