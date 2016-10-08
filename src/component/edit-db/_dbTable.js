@@ -23,7 +23,8 @@ class DbTable extends React.Component {
             allDbHeader : [],
             isAddCul : false,
             addType : 0,
-            lastSelectID : null
+            lastSelectID : null,
+            isHaveContent : true
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -124,7 +125,8 @@ class DbTable extends React.Component {
                         //console.log(dbHeader,list);
                         self.setState({
                             dbHeader : dbHeader,
-                            dbList : list
+                            dbList : list,
+                            isHaveContent : true
                         });
 
                         if(list.length === 0){
@@ -132,6 +134,13 @@ class DbTable extends React.Component {
                         }
                     });
                     this.scrollBtn();
+                }
+                else {
+                    self.setState({
+                        dbHeader : [],
+                        dbList : [],
+                        isHaveContent : false
+                    });
                 }
             }
         });
@@ -216,13 +225,14 @@ class DbTable extends React.Component {
 
     addColumn(){
         let header = this.state.dbHeader;
+        let inputText = this.refs.inputType.value;
         let value = null;
         let list = this.state.dbList;
         if(this.state.addType == 0){
-            value = "s" + this.refs.inputType.value;
+            value = "s" + inputText;
         }
         else {
-            value = "i" + this.refs.inputType.value;
+            value = "i" + inputText;
         }
         header.push(value);
         if(list.length == 0){
@@ -447,7 +457,7 @@ class DbTable extends React.Component {
                         </div>
                     </div>
 
-                    <p className={$class("no-tips f--hcc",{"hidden":  this.state.dbHeader.length > 0})}>请点击右上角添加按钮创建字段</p>
+                    <p className={$class("no-tips f--hcc",{"hidden": this.state.isHaveContent})}>请点击右上角添加按钮创建字段</p>
 
                     <div className="add-btn f--s" onClick={ this.popShow }>
                         <button className="btn btn-clear">
@@ -476,7 +486,7 @@ class DbTable extends React.Component {
                     </div>
 
                     <div className="right f--hlc">
-                        <button className="btn btn-clear cancel-btn" onClick={ this.props.editDbHide }>取消</button>
+                        <button className="btn btn-clear cancel-btn" >取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
                     </div>
                 </div>
@@ -498,7 +508,7 @@ class DbTable extends React.Component {
                             <input placeholder="请输入名称" ref="inputType" />
 
                             <div className="pop-footer f--hcc">
-                                <button className="btn btn-clear cancel-btn">取消</button>
+                                <button className="btn btn-clear cancel-btn" onClick={ this.popHide }>取消</button>
                                 <button className="btn btn-clear save-btn" onClick={ this.addColumn }>确定</button>
                             </div>
                         </div>
