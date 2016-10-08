@@ -166,7 +166,7 @@ class DbTable extends React.Component {
                 this.state.node['header'] = header;
             }
         }.bind(this));
-        DbHeaderAction['DbHeaderData'](header);
+        DbHeaderAction['DbHeaderData'](array);
     }
 
     saveBtn(){
