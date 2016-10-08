@@ -967,7 +967,6 @@ export default Reflux.createStore({
         if(event && event['children']){
             event['children'].push({
                 'cid': _childrenCount++,
-                logicalFlag:'and',
                 judgeObjFlag:'判断对象',
                 judgeValFlag:'计算',
                 compareFlag:'=',

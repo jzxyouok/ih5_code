@@ -503,6 +503,9 @@ $toBottom:14px;
   .ant-select-dropdown-menu{
 	overflow: visible;
 	max-height: 300px;
+	.optionline{
+	  border-bottom:1px solid #666;
+	}
   }
   .originIcon{
 	width: 20px;
@@ -521,9 +524,8 @@ form .ant-select, form .ant-cascader-picker{width:100%;}
 *自定义组件
 */
 .switchMore{
-   background: #151515;
-   width: 93px;
-  border: 1px solid #151515;
+   background: #353535;
+   width: 120px;
   height: 18px;
    overflow: hidden;
   border-radius: 20px;
@@ -538,8 +540,16 @@ form .ant-select, form .ant-cascader-picker{width:100%;}
   }
   .switchMore-ul{
 	overflow: hidden;
-	width:90px;
+	width:120px;
 	height: 100%;
+	.cur{
+	  background: #151515;
+	  color: #eb9b02;
+	  &:hover{
+		background: #151515;
+		color: #eb9b02;
+	  }
+	}
 	&.off:after{
 	  left: 63px;
 	}
@@ -555,31 +565,18 @@ form .ant-select, form .ant-cascader-picker{width:100%;}
 	   height: 100%;
 	  text-align: center;
 	  line-height: 1.5em;
+	  color: #858585;
 	 }
-	.switchMore-ul-on{color: #ffa800}
+	li:hover{
+	  color: white;
+	  background: #474747;
+	}
+	.switchMore-ul-on{}
 	.switchMore-ul-mid{
-	   div{
-		 width: 12px;
-		 height: 12px;
-		 border-radius: 50%;
-		 background: #ffa800;
-		 margin-left: 8px;
-		 margin-top: 2px;
-	   }
+	   border-left:1px solid #151515 ;
+	   border-right:1px solid #151515 ;
 	}
-	.switchMore-ul-off{color: #ffa800}
-	&:after{
-		width: 26px;
-		height: 16px;
-		top: 0;
-		left: 0;
-		background-color: #858585;
-		position: absolute;
-		border-radius: 18px;
-		content: " ";
-		cursor: pointer;
-		transition: left 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86), width 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-	}
+	.switchMore-ul-off{}
   }
 }
 

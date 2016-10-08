@@ -59,6 +59,9 @@ let eventTempData = [
                     ]
                 }, {
                     eid: 3,
+                    zhongHidden:true,
+                    logicalFlag:'and',
+                    conFlag:'触发条件',
                     condition: '触发条件',
                     children: [],
                     specificList: [

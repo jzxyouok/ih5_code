@@ -23,33 +23,50 @@ class SwitchMore extends React.Component {
                 break;
         }
     }
+
+    componentWillReceiveProps(nextProps){
+        switch (nextProps.checked){
+            case 0 :
+                this.on('init');
+                break;
+            case 1 :
+                this.mid('init');
+                break;
+            case 2 :
+                this.off('init');
+                break;
+        }
+    }
+
     componentWillUnmount() {
 
     }
     on(flag){
-        this.refs.switchMoreUl.classList.remove('off');
-        this.refs.switchMoreUl.classList.remove('mid');
-        this.refs.switchMoreUl.classList.add('on');
-        this.refs.switchMoreMidCrl.classList.remove('bg_gray');
+        this.refs.on.classList.add('cur');
+        this.refs.mid.classList.remove('cur');
+        this.refs.off.classList.remove('cur');
+
         if(flag !== 'init') {
             this.onChange(true);
         }
     }
 
     mid(flag){
-        this.refs.switchMoreUl.classList.remove('off');
-        this.refs.switchMoreUl.classList.add('mid');
-        this.refs.switchMoreUl.classList.remove('on');
+        this.refs.on.classList.remove('cur');
+        this.refs.mid.classList.add('cur');
+        this.refs.off.classList.remove('cur');
+
         if(flag !== 'init') {
             this.onChange(null);
         }
     }
 
     off(flag){
-        this.refs.switchMoreUl.classList.add('off');
-        this.refs.switchMoreUl.classList.remove('mid');
-        this.refs.switchMoreUl.classList.remove('on');
-        this.refs.switchMoreMidCrl.classList.add('bg_gray');
+        this.refs.on.classList.remove('cur');
+        this.refs.mid.classList.remove('cur');
+        this.refs.off.classList.add('cur');
+
+
         if(flag !== 'init') {
             this.onChange(false);
         }
@@ -58,9 +75,9 @@ class SwitchMore extends React.Component {
         return (
              <div className='switchMore'>
                   <ul className='switchMore-ul' ref='switchMoreUl'>
-                    <li className='switchMore-ul-on'  onClick={this.on.bind(this)}>ON</li>
-                    <li className='switchMore-ul-mid'  onClick={this.mid.bind(this)}><div ref='switchMoreMidCrl'></div></li>
-                    <li className='switchMore-ul-off' onClick={this.off.bind(this)}>OFF</li>
+                    <li className='switchMore-ul-on'  ref='on' onClick={this.on.bind(this)}>开</li>
+                    <li className='switchMore-ul-mid cur'  ref='mid' onClick={this.mid.bind(this)}>自动</li>
+                    <li className='switchMore-ul-off'  ref='off' onClick={this.off.bind(this)}>关</li>
                   </ul>
              </div>
         );
