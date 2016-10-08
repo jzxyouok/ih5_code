@@ -91,6 +91,9 @@ class App extends React.Component {
             }
             else {
                 this.editDbHide();
+                this.setState({
+                    lastSelectID : null
+                })
             }
         }
     }
