@@ -55,31 +55,31 @@ class DbTable extends React.Component {
         //57ee37ce7f8472077f7384f7
         //57ee37e67f84726aa75f0036
         //TODO:为了本地测试虚拟获取数据
-        WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
-            let result = JSON.parse(text);
-            if(result.d.length > 0){
-                this.setState({
-                    dbList : result.d
-                });
-            }
-        }.bind(this));
-        let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvYXBwXC91c2VyXC9sb2dpbiIsImlhdCI6MTQ3NDE2NjcxOSwiZXhwIjozNjAwMDAwMTQ3NDE2NjcxOSwibmJmIjoxNDc0MTY2NzE5LCJqdGkiOiI3ZDMxNDU3NzEwZTU1ZDIzNDBiMzQ3NTZkNzIwNTBlZSJ9.Y8FtW80CmGwKHXrn9jjOVGDrGRlT-eGeACMsnVvGcjI";
-        WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
-            let result = JSON.parse(text);
-            if (result['name']) {
-                let allDbHeader = result['db'];
-                allDbHeader.map((v,i)=>{
-                    if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
-                        let headerData = allDbHeader[i].header.split(",");
-                        this.setState({
-                            dbHeader: headerData
-                        },()=>{
-                            this.updateNewScrollData();
-                        });
-                    }
-                });
-            }
-        }.bind(this));
+        //WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if(result.d.length > 0){
+        //        this.setState({
+        //            dbList : result.d
+        //        });
+        //    }
+        //}.bind(this));
+        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvYXBwXC91c2VyXC9sb2dpbiIsImlhdCI6MTQ3NDE2NjcxOSwiZXhwIjozNjAwMDAwMTQ3NDE2NjcxOSwibmJmIjoxNDc0MTY2NzE5LCJqdGkiOiI3ZDMxNDU3NzEwZTU1ZDIzNDBiMzQ3NTZkNzIwNTBlZSJ9.Y8FtW80CmGwKHXrn9jjOVGDrGRlT-eGeACMsnVvGcjI";
+        //WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if (result['name']) {
+        //        let allDbHeader = result['db'];
+        //        allDbHeader.map((v,i)=>{
+        //            if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
+        //                let headerData = allDbHeader[i].header.split(",");
+        //                this.setState({
+        //                    dbHeader: headerData
+        //                },()=>{
+        //                    this.updateNewScrollData();
+        //                });
+        //            }
+        //        });
+        //    }
+        //}.bind(this));
         this.scrollBtn();
     }
 

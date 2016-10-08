@@ -173,7 +173,7 @@ class App extends React.Component {
                               || this.state.activeFunc != null
                               || this.state.activeVar != null
                               || this.state.activeDBItem != null
-                              || !this.state.editDb} />
+                              || this.state.editDb} />
 
                 <EventBox expanded={this.state.expandedToolbox}
                           isHidden={!(this.state.activeEventTreeKey != null)} />
@@ -192,7 +192,7 @@ class App extends React.Component {
                 <TimelineView isHidden={this.state.activeFunc != null
                               || this.state.activeVar != null}/>
 
-                <div className={$class({"hidden": this.state.editDb})}>
+                <div className={$class({"hidden": !this.state.editDb})}>
                     <EditDb />
                 </div>
                 {
