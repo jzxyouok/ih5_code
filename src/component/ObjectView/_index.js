@@ -85,6 +85,13 @@ class ObjectView extends React.Component {
                 enablePage: checkChildClass(widget.selectVariable, 'page')
             });
             this.onInitButtons(widget.selectVariable);
+        } else if (widget.selectDBItem) {
+            this.setState({
+                currentNode : widget.selectDBItem,
+                enableContainer: checkChildClass(widget.selectDBItem, 'container'),
+                enablePage: checkChildClass(widget.selectDBItem, 'page')
+            });
+            this.onInitButtons(widget.selectDBItem);
         } else if(widget.activeEventTreeKey) {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
@@ -101,7 +108,9 @@ class ObjectView extends React.Component {
     onInitHasEventTree(selectWidget){
         let hasEventTree = false;
         let canHaveEventTree = true;
-        if(selectWidget.className === 'func'|| selectWidget.className === 'var') {
+        if(selectWidget.className === 'func' ||
+            selectWidget.className === 'var' ||
+            selectWidget.className === 'dbItem') {
             canHaveEventTree = false;
             hasEventTree = false;
         } else
@@ -116,7 +125,10 @@ class ObjectView extends React.Component {
 
     onInitLock(selectWidget) {
         let canLock = false;
-        if(selectWidget.className === 'root'||selectWidget.className === 'func'|| selectWidget.className === 'var') {
+        if(selectWidget.className === 'root'||
+            selectWidget.className === 'func'||
+            selectWidget.className === 'var' ||
+            selectWidget.className === 'dbItem') {
             canLock = false;
         } else {
             canLock = true;

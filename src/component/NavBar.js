@@ -19,6 +19,7 @@ const PREFIX = 'app/';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import DbHeaderAction from '../actions/DbHeader'
+import DbHeaderStores from '../stores/DbHeader';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -81,6 +82,7 @@ class NavBar extends React.Component {
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         this.onStatusChange(WidgetStore.getStore());
+        DbHeaderStores.listen(this.DbHeaderData.bind(this));
     }
 
     componentWillUnmount() {
@@ -118,6 +120,7 @@ class NavBar extends React.Component {
                     fontList: result['font'],
                     dbList: result['db']
                 });
+                DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
             } else {
                 this.setState({loginVisible: true});
@@ -126,7 +129,15 @@ class NavBar extends React.Component {
     }
 
     sendDbData(){
-        DbHeaderAction['DbHeaderData'](this.state.dbList);
+        DbHeaderAction['DbHeaderData'](this.state.dbList,true);
+    }
+
+    DbHeaderData(data,bool){
+        if(!bool){
+            this.setState({
+                dbList : data
+            })
+        }
     }
 
     login(name, pass) {

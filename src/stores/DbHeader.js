@@ -8,8 +8,8 @@ var DbHeaderStores = Reflux.createStore({
             this.listenTo(DbHeaderAction.DbHeaderData,this.DbHeaderData);
         },
 
-        DbHeaderData: function(value) {
-            this.trigger(value);
+        DbHeaderData: function(value,bool) {
+            this.trigger(value,bool);
         }
     }
 );

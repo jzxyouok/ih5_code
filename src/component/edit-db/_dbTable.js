@@ -22,7 +22,9 @@ class DbTable extends React.Component {
             node: null,
             allDbHeader : [],
             isAddCul : false,
-            addType : 0
+            addType : 0,
+            lastSelectID : null,
+            isHaveContent : false
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -76,25 +78,30 @@ class DbTable extends React.Component {
         this.unsubscribe();
     }
 
-    DbHeaderData(data){
+    DbHeaderData(data,bool){
         this.setState({
             allDbHeader : data
         },()=>{
-            this.getNewData();
+            if(bool){
+                this.getNewData();
+            }
         })
     }
 
     onStatusChange(widget) {
         if(widget.selectWidget){
            if(widget.selectWidget.className == "db"){
-               this.setState({
-                   node : widget.selectWidget.node,
-                   dbList : [],
-                   dbHeader: [],
-                   inputNow : null,
-                   inputText : null,
-                   inputStyle : null
-               });
+               if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
+                   this.setState({
+                       lastSelectID : widget.selectWidget.node.dbid,
+                       node : widget.selectWidget.node,
+                       dbList : [],
+                       dbHeader: [],
+                       inputNow : null,
+                       inputText : null,
+                       inputStyle : null
+                   })
+               }
            }
         }
     }
@@ -118,7 +125,8 @@ class DbTable extends React.Component {
                         //console.log(dbHeader,list);
                         self.setState({
                             dbHeader : dbHeader,
-                            dbList : list
+                            dbList : list,
+                            isHaveContent : false
                         });
 
                         if(list.length === 0){
@@ -126,6 +134,13 @@ class DbTable extends React.Component {
                         }
                     });
                     this.scrollBtn();
+                }
+                else {
+                    self.setState({
+                        dbHeader : [],
+                        dbList : [],
+                        isHaveContent : true
+                    });
                 }
             }
         });
@@ -169,7 +184,14 @@ class DbTable extends React.Component {
                 this.state.node['header'] = header;
             }
         }.bind(this));
-        //DbHeaderAction['DbHeaderData'](array);
+
+        let allDbHeader = this.state.allDbHeader;
+        allDbHeader.map((v,i)=>{
+            if(allDbHeader[i].id === this.state.node.dbid) {
+                allDbHeader[i].header = header;
+                DbHeaderAction['DbHeaderData'](allDbHeader, false);
+            }
+        });
     }
 
     saveBtn(){
@@ -203,13 +225,14 @@ class DbTable extends React.Component {
 
     addColumn(){
         let header = this.state.dbHeader;
+        let inputText = this.refs.inputType.value;
         let value = null;
         let list = this.state.dbList;
         if(this.state.addType == 0){
-            value = "s" + this.refs.inputType.value;
+            value = "s" + inputText;
         }
         else {
-            value = "i" + this.refs.inputType.value;
+            value = "i" + inputText;
         }
         header.push(value);
         if(list.length == 0){
@@ -255,6 +278,9 @@ class DbTable extends React.Component {
     inputBlur(type,which,which2){
         let header = this.state.dbHeader;
         let list = this.state.dbList;
+        this.setState({
+            inputNow : null
+        })
         if(type == 0) {
             let value = header[which];
             let text = this.state.inputText;
@@ -277,8 +303,7 @@ class DbTable extends React.Component {
                 //    this.addColumn();
                 //}
                 this.setState({
-                    dbHeader : header,
-                    inputNow : null
+                    dbHeader : header
                 })
             }
         }
@@ -305,8 +330,7 @@ class DbTable extends React.Component {
             }
             this.setState({
                 dbHeader : header,
-                dbList : list,
-                inputNow : null
+                dbList : list
             })
         }
     }
@@ -330,13 +354,13 @@ class DbTable extends React.Component {
     }
 
     render() {
-        let width = this.props.isBig ? 769 : 928;
+        let width = this.props.isBig ? 535 : 689;
 
         return (
             <div className='DbTable'>
                 <div className="DT-header f--h">
-                    <p className="flex-1">列表</p>
-                    <div className="btn-group">
+                    <p className="flex-1">表格</p>
+                    <div className="btn-group f--hlc">
                         <button className="btn btn-clear">导入</button>
                         <button className="btn btn-clear">导出</button>
                     </div>
@@ -434,7 +458,7 @@ class DbTable extends React.Component {
                         </div>
                     </div>
 
-                    <p className={$class("no-tips f--hcc",{"hidden":  this.state.dbHeader.length > 0})}>请点击右上角添加按钮创建字段</p>
+                    <p className={$class("no-tips f--hcc",{"hidden": !this.state.isHaveContent})}>请点击右上角添加按钮创建字段</p>
 
                     <div className="add-btn f--s" onClick={ this.popShow }>
                         <button className="btn btn-clear">
@@ -455,15 +479,15 @@ class DbTable extends React.Component {
 
                 <div className="DT-footer f--h">
                     <div className="left flex-1 f--hlc ">
-                        <div className="account">总数： 100</div>
+                        <div className="account">总数：100</div>
                         <div className="page">共 10 页</div>
                         <button className="btn btn-clear last-btn">上一页</button>
-                        <div className="now-page">当前页： 1</div>
+                        <div className="now-page">当前页：1</div>
                         <button className="btn btn-clear next-bnt">下一页</button>
                     </div>
 
-                    <div className="right f--hlc">
-                        <button className="btn btn-clear cancel-btn" onClick={ this.props.editDbHide }>取消</button>
+                    <div className="right">
+                        <button className="btn btn-clear cancel-btn" >取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
                     </div>
                 </div>
@@ -485,7 +509,7 @@ class DbTable extends React.Component {
                             <input placeholder="请输入名称" ref="inputType" />
 
                             <div className="pop-footer f--hcc">
-                                <button className="btn btn-clear cancel-btn">取消</button>
+                                <button className="btn btn-clear cancel-btn" onClick={ this.popHide }>取消</button>
                                 <button className="btn btn-clear save-btn" onClick={ this.addColumn }>确定</button>
                             </div>
                         </div>

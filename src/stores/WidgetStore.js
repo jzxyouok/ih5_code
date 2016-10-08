@@ -24,13 +24,15 @@ var dragTag;
 var nodeType = {
     widget: 'widget',  //树对象
     func: 'func',    //函数
-    var: 'var'      //属性
+    var: 'var',     //属性
+    dbItem: 'dbItem',
 };
 
 var keepType = {
     event: 'event',
     func: 'func',
-    var: 'var'
+    var: 'var',
+    dbItem: 'dbItem',
 };
 
 var varType = {
@@ -81,6 +83,11 @@ function loadTree(parent, node, idList) {
   // current.varList = [];
   current.strVarList = [];
   current.intVarList = [];
+
+  if(current.className === 'db'){
+    current.dbItemList = [];
+  }
+
   if (node['vars']) {
     for (let i = 0; i<node['vars'].length; i++) {
         let temp = {};
@@ -592,6 +599,10 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
         this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
+        //db item
+        this.listenTo(WidgetActions['selectDBItem'], this.selectDBItem);
+        this.listenTo(WidgetActions['addDBItem'], this.addDBItem);
+        this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
 
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
@@ -624,6 +635,10 @@ export default Reflux.createStore({
           //取选var状态
           if(!(keepValueType&&keepValueType==keepType.var)&&this.currentVariable) {
             this.selectVariable(null);
+          }
+          //取选dbItem
+          if(!(keepValueType&&keepValueType==keepType.dbItem)&&this.currentDBItem) {
+            this.selectDBItem(null);
           }
         }
         this.currentWidget = widget;
@@ -1263,7 +1278,7 @@ export default Reflux.createStore({
         this.copyVariable();
         this.removeVariable();
     },
-    renameFuncOrVar: function (type, name, fromTree) {
+    renameFadeWidget: function (type, name, fromTree) {
         switch (type){
             case nodeType.func:
                 if(this.currentFunction&&!isEmptyString(name)){
@@ -1295,8 +1310,59 @@ export default Reflux.createStore({
                     this.trigger({redrawTree: true});
                 }
                 break;
+            case nodeType.dbItem:
+                if(this.currentDBItem&&!isEmptyString(name)) {
+                    this.currentDBItem.props.name = name;
+                    this.trigger({redrawTree: true});
+                }
+                break;
             default:
                 break;
+        }
+    },
+    selectDBItem: function(data){
+        if (data!=null) {
+            //取消在canvas上的widget选择
+            bridge.selectWidget(this.currentWidget.node);
+            this.currentDBItem = data;
+        } else {
+            this.currentDBItem = null;
+        }
+        this.trigger({selectDBItem: this.currentDBItem});
+    },
+    addDBItem: function(param, defaultName){
+        if(this.currentWidget) {
+            let dbItem = {};
+            dbItem['name'] = param.name||'';
+            dbItem['params'] = param.params||null; //字段s
+            dbItem['className']  = 'dbItem';
+            dbItem['key'] = _keyCount++;
+            dbItem['widget'] = this.currentWidget;
+            dbItem['props'] = {};
+            if(defaultName!=undefined) {
+                dbItem['props']['name'] = defaultName;
+            } else {
+                dbItem['props']['name'] = 'dbItem' + (this.currentWidget['dbItemList'].length + 1);
+            }
+            this.currentWidget['dbItemList'].unshift(dbItem);
+        }
+        this.trigger({redrawTree: true});
+    },
+    changeDBItem: function () {
+
+    },
+    removeDBItem: function() {
+        if(this.currentDBItem) {
+            let index = -1;
+            for(let i=0; i<this.currentWidget.dbItemList.length; i++) {
+                if(this.currentWidget.dbItemList[i].key == this.currentDBItem.key) {
+                    index = i;
+                }
+            }
+            if(index>-1){
+                this.currentWidget.dbItemList.splice(index,1);
+                this.selectWidget(this.currentWidget);
+            }
         }
     },
     pasteTreeNode: function () {
@@ -1306,6 +1372,9 @@ export default Reflux.createStore({
                break;
            case nodeType.var:
                this.pasteVariable();
+               break;
+           case nodeType.dbItem:
+               //TODO: PASTE DBITEM
                break;
            default:
                this.pasteWidget();
@@ -1320,6 +1389,9 @@ export default Reflux.createStore({
             case nodeType.var:
                 this.cutVariable();
                 break;
+            case nodeType.dbItem:
+                //TODO: CUT DBITEM
+                break;
             default:
                 this.cutWidget();
                 break;
@@ -1329,7 +1401,8 @@ export default Reflux.createStore({
         switch(type){
             case nodeType.func:
             case nodeType.var:
-                this.renameFuncOrVar(type, value, fromTree);
+            case nodeType.dbItem:
+                this.renameFadeWidget(type, value, fromTree);
                 break;
             default:
                 this.renameWidget(value);
@@ -1344,6 +1417,9 @@ export default Reflux.createStore({
             case nodeType.var:
                 this.copyVariable();
                 break;
+            case nodeType.dbItem:
+                //TODO: COPY DBITEM
+                break;
             default:
                 this.copyWidget();
                 break;
@@ -1357,6 +1433,9 @@ export default Reflux.createStore({
             case nodeType.var:
                 this.removeVariable();
                 this.getAllWidgets();
+                break;
+            case nodeType.dbItem:
+                this.removeDBItem();
                 break;
             default:
                 this.removeWidget(true);

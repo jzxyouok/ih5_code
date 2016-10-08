@@ -29,7 +29,9 @@ class App extends React.Component {
             activeEventTreeKey: null,
             activeFunc: null,
             activeVar: null,
-            editDb : false
+            activeDBItem: null,
+            editDb : false,
+            lastSelectID :null
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -55,20 +57,37 @@ class App extends React.Component {
     onStatusChange(widget) {
         if(widget.selectFunction !== undefined) {
             this.setState({
-                activeFunc: widget.selectFunction
+                activeFunc: widget.selectFunction,
+                editDb : false,
+                lastSelectID: null
             })
         } else if(widget.selectVariable !== undefined) {
             this.setState({
-                activeVar: widget.selectVariable
+                activeVar: widget.selectVariable,
+                editDb : false,
+                lastSelectID: null
             })
         } else if(widget.activeEventTreeKey) {
             this.setState({
-                activeEventTreeKey: widget.activeEventTreeKey.key
+                activeEventTreeKey: widget.activeEventTreeKey.key,
+                editDb : false,
+                lastSelectID: null
+            })
+        }   else if(widget.selectDBItem !== undefined) {
+            this.setState({
+                activeDBItem: widget.selectDBItem,
+                editDb : false,
+                lastSelectID: null
             })
         }
         else if(widget.selectWidget){
             if(widget.selectWidget.className == "db"){
-                this.editDbShow();
+                if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
+                    this.editDbShow();
+                    this.setState({
+                        lastSelectID : widget.selectWidget.node.dbid
+                    })
+                }
             }
             else {
                 this.editDbHide();
@@ -153,6 +172,7 @@ class App extends React.Component {
                               isHidden={this.state.activeEventTreeKey != null
                               || this.state.activeFunc != null
                               || this.state.activeVar != null
+                              || this.state.activeDBItem != null
                               || this.state.editDb} />
 
                 <EventBox expanded={this.state.expandedToolbox}
@@ -165,7 +185,7 @@ class App extends React.Component {
                               isHidden={!(this.state.activeVar != null)}/>
 
                 <DBItemView expanded={this.state.expandedToolbox}
-                            isHidden={true}/>
+                            isHidden={!(this.state.activeDBItem != null)}/>
 
                 <ObjectView />
 
