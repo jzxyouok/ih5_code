@@ -29,8 +29,7 @@ class App extends React.Component {
             activeEventTreeKey: null,
             activeFunc: null,
             activeVar: null,
-            editDb : false,
-            dbNode : null
+            editDb : false
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -69,9 +68,10 @@ class App extends React.Component {
         }
         else if(widget.selectWidget){
             if(widget.selectWidget.className == "db"){
-                this.setState({
-                    dbNode : widget.selectWidget.node
-                });
+                this.editDbShow();
+            }
+            else {
+                this.editDbHide();
             }
         }
     }
@@ -128,7 +128,6 @@ class App extends React.Component {
         this.setState({
             editDb : true
         });
-        this.refs.EditDb.getNewData();
         this.refs.NavBar.sendDbData();
     }
 
@@ -153,8 +152,8 @@ class App extends React.Component {
                 <PropertyView expanded={this.state.expandedToolbox}
                               isHidden={this.state.activeEventTreeKey != null
                               || this.state.activeFunc != null
-                              || this.state.activeVar != null}
-                              editDbShow={ this.editDbShow }  />
+                              || this.state.activeVar != null
+                              || this.state.editDb} />
 
                 <EventBox expanded={this.state.expandedToolbox}
                           isHidden={!(this.state.activeEventTreeKey != null)} />
@@ -174,7 +173,7 @@ class App extends React.Component {
                               || this.state.activeVar != null}/>
 
                 <div className={$class({"hidden": !this.state.editDb})}>
-                    <EditDb editDbHide={ this.editDbHide } ref="EditDb"  />
+                    <EditDb />
                 </div>
                 {
                     //<Row gutter={5}>
