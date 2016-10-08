@@ -58,6 +58,9 @@ class ObjectView extends React.Component {
     }
 
     onStatusChange(widget) {
+        if(widget.redrawTree&&widget.redrawWidget) {
+            this.onInitButtons(widget.redrawWidget);
+        }
         if(widget.selectWidget){
             this.setState({
                 currentNode : widget.selectWidget,
