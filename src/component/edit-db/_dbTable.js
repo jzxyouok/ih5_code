@@ -24,7 +24,9 @@ class DbTable extends React.Component {
             isAddCul : false,
             addType : 0,
             lastSelectID : null,
-            isHaveContent : false
+            isHaveContent : false,
+            isError : false,
+            errorText : ""
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -228,30 +230,50 @@ class DbTable extends React.Component {
         let inputText = this.refs.inputType.value;
         let value = null;
         let list = this.state.dbList;
-        if(this.state.addType == 0){
-            value = "s" + inputText;
-        }
-        else {
-            value = "i" + inputText;
-        }
-        header.push(value);
-        if(list.length == 0){
-            let newList = [];
-            header.map((v,i)=>{
-                newList[v] = "";
-            });
-            list.push(newList);
-        }
-        else {
-            list.map((v,i)=>{
-                list[i][value] = "";
-            });
-        }
 
-        this.setState({
-            dbHeader:header,
-            dbList : list
-        })
+        let error = (data)=>{
+            this.setState({
+                isError: true,
+                errorText: data
+            })
+        };
+
+        if(inputText.length === 0){
+            error("名称不能为空");
+        }
+        else if(inputText.startsWith(" ")){
+            error("名称不能以空格开头");
+        }
+        else if(inputText.endsWith(" ")){
+            error("名称不能以空格结尾");
+        }
+        else {
+            if(this.state.addType == 0){
+                value = "s" + inputText;
+            }
+            else {
+                value = "i" + inputText;
+            }
+            header.push(value);
+            if(list.length == 0){
+                let newList = [];
+                header.map((v,i)=>{
+                    newList[v] = "";
+                });
+                list.push(newList);
+            }
+            else {
+                list.map((v,i)=>{
+                    list[i][value] = "";
+                });
+            }
+
+            this.setState({
+                dbHeader : header,
+                dbList : listis,
+                isError: false
+            })
+        }
     }
 
     inputClick(key,value){
@@ -505,7 +527,14 @@ class DbTable extends React.Component {
                                 <div className={$class("btn f--hcc flex-1",{"active": 1 === this.state.addType})}
                                      onClick={ this.whichAddType.bind(this, 1)}>数值</div>
                             </div>
-                            <div className="title">字段名称：</div>
+                            <div className="title">
+                                字段名称：
+                                {
+                                    this.state.isError
+                                    ? <span>({ this.state.errorText })</span>
+                                    : null
+                                }
+                            </div>
                             <input placeholder="请输入名称" ref="inputType" />
 
                             <div className="pop-footer f--hcc">
