@@ -126,7 +126,7 @@ class NavBar extends React.Component {
     }
 
     sendDbData(){
-        DbHeaderAction['DbHeaderData'](this.state.dbList);
+        DbHeaderAction['DbHeaderData'](this.state.dbList,true);
     }
 
     login(name, pass) {
