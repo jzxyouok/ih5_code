@@ -123,8 +123,7 @@ class App extends React.Component {
 
     editDbShow(){
         this.setState({
-            editDb : true,
-            activeEventTreeKey : false
+            editDb : true
         });
         this.refs.NavBar.sendDbData();
     }
@@ -150,7 +149,8 @@ class App extends React.Component {
                 <PropertyView expanded={this.state.expandedToolbox}
                               isHidden={this.state.activeEventTreeKey != null
                               || this.state.activeFunc != null
-                              || this.state.activeVar != null} />
+                              || this.state.activeVar != null
+                              || !this.state.editDb} />
 
                 <EventBox expanded={this.state.expandedToolbox}
                           isHidden={!(this.state.activeEventTreeKey != null)} />
