@@ -47,9 +47,10 @@ class Event extends React.Component {
         this.getJudgeValType =this.getJudgeValType.bind(this);
         this.getCompareValOption =this.getCompareValOption.bind(this);
 
+
+        this.menuList_pub =this.menuList_pub.bind(this);
+
     }
-
-
 
     componentWillReceiveProps(nextProps) {
         nextProps.eventList.map((v,i)=>{
@@ -284,7 +285,6 @@ class Event extends React.Component {
                 this.setState({judgeValOption: judgeValOption});
 
                 initFlag.judgeObj =this.getChooseObjByIndex(index);
-
                 initFlag.judgeValOption = judgeValOption;
 
                 initFlag.judgeValFlag = '判断值';
@@ -300,7 +300,7 @@ class Event extends React.Component {
                 //初始化后三个
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较对象';
-                initFlag.compareValFlag = '比较';
+                initFlag.compareValFlag = '比较值';
                 initFlag.operationManager = {
                     arrHidden: arrHidden
                 }
@@ -362,16 +362,28 @@ class Event extends React.Component {
             eventList: eventList
         });
     }
+
+    menuList_pub(flag) {
+        let option = flag.replace('Flag', 'Option');
+        return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
+            {
+                this.state[option].map((v, i)=> {
+                    return <MenuItem key={i} index={i} object={v}>{v}</MenuItem>;
+                })
+            }
+        </Menu>)
+    }
+
     render() {
         let menuList = (flag)=> {
             let option = flag.replace('Flag', 'Option');
-            return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
-                {
-                    this.state[option].map((v, i)=> {
-                        return <MenuItem key={i} index={i}  object={v}>{v}</MenuItem>;
-                    })
-                }
-            </Menu>)
+                    return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
+                        {
+                            this.state[option].map((v, i)=> {
+                                return <MenuItem key={i} index={i}  object={v}>{v}</MenuItem>;
+                            })
+                        }
+                    </Menu>)
         }
         let content = ((v,i)=>{
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
@@ -385,7 +397,7 @@ class Event extends React.Component {
                                     <span className='title-icon' />
                                     <div className='dropDown-layer long'>
                                         <Dropdown
-                                            overlay={menuList('conFlag')}
+                                            overlay={this.menuList_pub('conFlag')}
                                             onClick={this.setCurChildrenIndex.bind(this,null,i)}
                                             getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                             trigger={['click']}>
@@ -407,7 +419,7 @@ class Event extends React.Component {
                                                 <span className="supplement-line" />
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[0]})} >
                                                     <Dropdown
-                                                        overlay={ menuList('logicalFlag')}
+                                                        overlay={this.menuList_pub('logicalFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
@@ -445,7 +457,7 @@ class Event extends React.Component {
                                                 </div>
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[3]})} >
                                                     <Dropdown
-                                                        overlay={menuList('compareFlag')}
+                                                        overlay={this.menuList_pub('compareFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>

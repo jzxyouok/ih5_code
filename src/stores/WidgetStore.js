@@ -343,10 +343,7 @@ function saveTree(data, node) {
         var cmds = [];
 
         var judges={};
-        judges.conFlag =null; //触发条件
-            if(item.conFlag !='触发条件'){
-                judges.conFlag = item.conFlag;
-            }
+        judges.conFlag = item.conFlag;
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
         judges.children=[];
@@ -362,9 +359,8 @@ function saveTree(data, node) {
 
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
-
-
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
+
 
              obj.compareFlag=v.compareFlag;//比较运算符
 
@@ -377,6 +373,7 @@ function saveTree(data, node) {
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
              obj.compareValFlag =v.compareValFlag;//比较对象的属性
+
 
              obj.operationManager={};
 

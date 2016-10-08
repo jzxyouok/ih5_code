@@ -3,7 +3,8 @@
     left: 36px;//296px;
     top: 37px;
     //bottom: 201px;
-    width: 733px;
+    min-width: 740px;
+    max-width: 800px;
     //height: 716px;
     bottom: 1px;
     background: #232323;
@@ -47,7 +48,7 @@
         overflow: scroll;
 
         .EB--content {
-            width: 733px;
+            width: 100%;
             padding: 10px;
         }
 
@@ -547,6 +548,8 @@
                             cursor: pointer;
                             padding: 2px;
                             width: 22px;
+                            margin-right:4px ;
+
 
                             &:hover .btn span{ background: #b5b5b5;}
                             &:active .btn span{ background: #fff;}
