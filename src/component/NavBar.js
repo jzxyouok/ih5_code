@@ -62,7 +62,6 @@ class NavBar extends React.Component {
         this.addDb = this.addDb.bind(this);
         this.arrangeDbShow = this.arrangeDbShow.bind(this);
         this.arrangeDbHide = this.arrangeDbHide.bind(this);
-        this.sendDbData = this.sendDbData.bind(this);
 
         this.token = null;
         this.playUrl = null;
