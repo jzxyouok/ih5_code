@@ -626,16 +626,6 @@ class PropertyView extends React.Component {
                 <h1 id='PropertyViewHeader'>属性</h1>
                 <div id='PropertyViewBody'>
                     {this.state.fields}
-                    {
-                        this.selectNode
-                        ? this.selectNode.className === "db"
-                            ? <div className="db-btn-group f--hcc">
-                                <button className="btn btn-clear">上传数据库</button>
-                                <button className="btn btn-clear" onClick={ this.props.editDbShow }>编辑数据库</button>
-                              </div>
-                            : null
-                        : null
-                    }
                 </div>
             </div>
         );

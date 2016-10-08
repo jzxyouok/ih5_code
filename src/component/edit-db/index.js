@@ -16,7 +16,6 @@ class EditDb extends React.Component {
         };
         this.smallBtn = this.smallBtn.bind(this);
         this.bigBtn = this.bigBtn.bind(this);
-        this.getNewData = this.getNewData.bind(this);
     }
 
     componentDidMount() {
@@ -39,10 +38,6 @@ class EditDb extends React.Component {
         })
     }
 
-    getNewData(){
-        this.refs.DbTable.getNewData();
-    }
-
     render() {
         return (
             <div className='EditDb f--h'>
@@ -54,7 +49,6 @@ class EditDb extends React.Component {
 
                 <div className="ED-right flex-1">
                     <DbTable editDbHide={this.props.editDbHide}
-                             ref="DbTable"
                              isBig={ this.state.isBig } />
                 </div>
             </div>

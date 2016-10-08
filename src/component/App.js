@@ -29,8 +29,7 @@ class App extends React.Component {
             activeEventTreeKey: null,
             activeFunc: null,
             activeVar: null,
-            editDb : false,
-            dbNode : null
+            editDb : false
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -69,9 +68,7 @@ class App extends React.Component {
         }
         else if(widget.selectWidget){
             if(widget.selectWidget.className == "db"){
-                this.setState({
-                    dbNode : widget.selectWidget.node
-                });
+                this.editDbShow();
             }
         }
     }
@@ -126,9 +123,9 @@ class App extends React.Component {
 
     editDbShow(){
         this.setState({
-            editDb : true
+            editDb : true,
+            activeEventTreeKey : false
         });
-        this.refs.EditDb.getNewData();
         this.refs.NavBar.sendDbData();
     }
 
@@ -153,8 +150,7 @@ class App extends React.Component {
                 <PropertyView expanded={this.state.expandedToolbox}
                               isHidden={this.state.activeEventTreeKey != null
                               || this.state.activeFunc != null
-                              || this.state.activeVar != null}
-                              editDbShow={ this.editDbShow }  />
+                              || this.state.activeVar != null} />
 
                 <EventBox expanded={this.state.expandedToolbox}
                           isHidden={!(this.state.activeEventTreeKey != null)} />

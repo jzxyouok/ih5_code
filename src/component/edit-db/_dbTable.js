@@ -45,25 +45,27 @@ class DbTable extends React.Component {
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         //57ee37ce7f8472077f7384f7
         //57ee37e67f84726aa75f0036
+        //TODO:为了本地测试虚拟获取数据
         //WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
         //    let result = JSON.parse(text);
-        //    console.log(result.d);
         //    if(result.d.length > 0){
-        //        let dbHeader = [];
-        //        for(let i in result.d[0]){
-        //            if (i != "_id"){
-        //                dbHeader.push(i);
-        //            }
-        //        }
-        //        let newList = [];
-        //        dbHeader.map((v,i)=>{
-        //            newList[v] = ""
-        //        });
-        //        result.d.push(newList);
-        //        //console.log(result.d);
         //        this.setState({
-        //            dbHeader : dbHeader,
         //            dbList : result.d
+        //        });
+        //    }
+        //}.bind(this));
+        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvYXBwXC91c2VyXC9sb2dpbiIsImlhdCI6MTQ3NDE2NjcxOSwiZXhwIjozNjAwMDAwMTQ3NDE2NjcxOSwibmJmIjoxNDc0MTY2NzE5LCJqdGkiOiI3ZDMxNDU3NzEwZTU1ZDIzNDBiMzQ3NTZkNzIwNTBlZSJ9.Y8FtW80CmGwKHXrn9jjOVGDrGRlT-eGeACMsnVvGcjI";
+        //WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if (result['name']) {
+        //        let allDbHeader = result['db'];
+        //        allDbHeader.map((v,i)=>{
+        //            if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
+        //                let headerData = allDbHeader[i].header.split(",");
+        //                this.setState({
+        //                    dbHeader: headerData
+        //                });
+        //            }
         //        });
         //    }
         //}.bind(this));
@@ -183,7 +185,7 @@ class DbTable extends React.Component {
         //let left = 0;
         //let width = parseFloat($(".DT-content table").css('width'));
         //let widthShow = this.props.isBig ?
-        //console.log(width);
+        //console.log(width,widthShow);
         //
         //$(".DbTable .scroll span").mousedown(function(e){
         //    move=true;
