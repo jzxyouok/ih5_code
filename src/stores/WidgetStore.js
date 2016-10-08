@@ -1304,8 +1304,14 @@ export default Reflux.createStore({
         }
         this.trigger({redrawTree: true});
     },
-    changeDBItem: function () {
-
+    changeDBItem: function (props) {
+        if(this.currentDBItem){
+            if(props) {
+                if(props['name']) {
+                    this.currentDBItem['name'] = props['name'];
+                }
+            }
+        }
     },
     removeDBItem: function() {
         if(this.currentDBItem) {
