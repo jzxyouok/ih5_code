@@ -46,11 +46,12 @@
     }
     .ant-col-r {
       .container-scroll {
+        min-height: 78px;
         position: relative;
         display: inline-block;
         background-color: #151515;
         overflow-y: hidden;
-        overflow-x: scroll;
+        overflow-x: auto;
         width: 650px;
         border: 1px solid #353535;
         border-radius: 2px;

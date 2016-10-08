@@ -4,6 +4,7 @@ import {Form, Input, InputNumber} from 'antd';
 import { Menu, Dropdown } from 'antd';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {nodeType, varType} from '../../stores/WidgetStore';
+import DbHeaderStores from '../../stores/DbHeader';
 
 const FormItem = Form.Item;
 const MenuItem = Menu.Item;
@@ -16,16 +17,13 @@ class DBItemView extends React.Component {
         super(props);
         this.state = {
             minSize: false,
+            dbList: null, //保存当前的dblist
+            dbChanged: false, //db是否有改变
             name: null,
-            fields: [],
             fieldDropdownVisibleIndex: null,
             fieldDropdownVisible: false,
             fieldFocusIndex: null,
-            itemList: [{name:'姓名', value:null},
-                {name:'手机', value:null},
-                {name:'type', value:null},
-                {name:'name', value:null},
-                {name:'email', value:null}],
+            itemList: [],
             sourceList: [{name:'src1'},{name:'src2'},{name:'src3'}]
         };
 
@@ -37,6 +35,8 @@ class DBItemView extends React.Component {
         this.onFieldDropdownVisibleChange = this.onFieldDropdownVisibleChange.bind(this);
         this.onStartEditField = this.onStartEditField.bind(this);
         this.onEndEditField = this.onEndEditField.bind(this);
+
+        this.onSetFields = this.onSetFields.bind(this);
     }
 
     toggle(){
@@ -48,18 +48,76 @@ class DBItemView extends React.Component {
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+        DbHeaderStores.listen(this.DbHeaderData.bind(this));
     }
 
     componentWillUnmount() {
         this.unsubscribe();
     }
 
+    DbHeaderData(data,bool){
+        this.setState({
+            dbList: data,
+            dbChanged: true
+        });
+    }
+
     onStatusChange(widget) {
         if(widget.selectDBItem) {
-            this.setState({
-                name: widget.selectDBItem.name
-            })
+            let dbItem = widget.selectDBItem;
+            let dbId = widget.selectDBItem.widget.node.dbid;
+            let dbList = this.state.dbList;
+            if(this.state.dbChanged){
+                let fields = [];
+                dbList.map((v,i)=>{
+                    if(dbList[i].id === dbId){
+                        let headerData = dbList[i].header.split(",");
+                        let index = headerData.indexOf("null");
+                        if(headerData.length !== 0 && index < 0){
+                            fields = this.onSetFields(dbItem, headerData);
+                        }
+                    }
+                });
+                this.setState({
+                    name: widget.selectDBItem.name,
+                    itemList: fields,
+                    dbChanged: false
+                }, ()=>{
+                    WidgetActions['changeDBItem']({'fields':fields});
+                })
+            } else {
+                this.setState({
+                    name: widget.selectDBItem.name,
+                    itemList: widget.selectDBItem.fields,
+                    dbChanged: false
+                })
+            }
+        } else if (widget.allWidgets){
+            //widgetList
         }
+    }
+
+    onSetFields(item, headers) {
+        let newFields = [];
+        if(item.fields.length>0) {
+            headers.map((v)=>{
+                let index = -1;
+                item.fields.map((vItem, i)=>{
+                    if(vItem.name === v) {
+                        index = i;
+                        newFields.push({name:v, value:vItem.value});
+                    }
+                });
+                if (index === -1) {
+                    newFields.push({name:v, value:null});
+                }
+            });
+        } else {
+            headers.map((v)=>{
+                newFields.push({name:v, value:null});
+            });
+        }
+        return newFields;
     }
 
     onEditChangeName(v) {
