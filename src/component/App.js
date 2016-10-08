@@ -128,7 +128,6 @@ class App extends React.Component {
         this.setState({
             editDb : true
         });
-        this.refs.NavBar.sendDbData();
     }
 
     editDbHide(){
@@ -142,7 +141,7 @@ class App extends React.Component {
             <div id="iH5-App">
                 <DesignView stageZoom={this.state.stageZoom} />
 
-                <NavBar ref="NavBar" />
+                <NavBar />
 
                 <ToolBox stageZoom={this.state.stageZoom}
                          stageZoomEdit={this.stageZoomEdit}

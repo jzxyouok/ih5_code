@@ -76,11 +76,13 @@ class DbTable extends React.Component {
         this.unsubscribe();
     }
 
-    DbHeaderData(data){
+    DbHeaderData(data,bool){
         this.setState({
             allDbHeader : data
         },()=>{
-            this.getNewData();
+            if(bool){
+                this.getNewData();
+            }
         })
     }
 
@@ -169,7 +171,7 @@ class DbTable extends React.Component {
                 this.state.node['header'] = header;
             }
         }.bind(this));
-        //DbHeaderAction['DbHeaderData'](array);
+        DbHeaderAction['DbHeaderData'](array, false);
     }
 
     saveBtn(){
