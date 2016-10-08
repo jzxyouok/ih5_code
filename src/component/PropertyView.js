@@ -256,11 +256,10 @@ class PropertyView extends React.Component {
                     v =value;
                     break;
                 case propertyType.Boolean2:
-                    v =value;
-                    if(v===null){
+                    if(value===null){
                        delete  this.selectNode.props.initVisible;
                     }else{
-                        this.selectNode.props.initVisible = v;
+                        this.selectNode.props.initVisible = value;
                     }
                     bTag=false;
                     break;
@@ -311,6 +310,7 @@ class PropertyView extends React.Component {
             }
         }
     }
+
     getFontDefault(value){
         for(let i in this.fontList){
             if(value == this.fontList[i].file){
