@@ -557,7 +557,7 @@ class ObjectTree extends React.Component {
                             {'func-icon':type===nodeType.func},
                             {'var-num-icon': item.type===varType.number&&type===nodeType.var},
                             {'var-str-icon': item.type===varType.string&&type===nodeType.var},
-                            {'db-item-icon': item.type===nodeType.dbItem})}/>
+                            {'db-item-icon': type===nodeType.dbItem})}/>
                         <div className='fade-widget-name-wrap' onDoubleClick={this.startEditObjName.bind(this, item.key, item)}>
                             <p className={$class({'hidden':((item.key === this.state.nid)&&this.state.editMode)})} >{item.props.name}</p>
                             <input id={'item-name-input-'+item.key} type="text"
