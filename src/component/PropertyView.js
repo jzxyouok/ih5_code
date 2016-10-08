@@ -30,6 +30,13 @@ class PropertyView extends React.Component {
         this.fontList=[];
         this.textSizeObj=null;
 
+        this.PropertyViewPosition={
+            subW:null,
+            subH:null,
+            isDown:false,
+            oPropertyView:null
+        }
+
         this.defaultData = {
             width: null,
             height: null
@@ -546,7 +553,7 @@ class PropertyView extends React.Component {
 
     onStatusChange(widget) {
 
-        console.log('haha',widget);
+
 
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
@@ -605,17 +612,68 @@ class PropertyView extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+
+        document.addEventListener('mousemove', this.mouseMove.bind(this));
+        document.addEventListener('mouseup', this.mouseUp.bind(this));
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+
+    }
+
+    mouseDown(e){
+        let oPropertyView = this.refs.PropertyView;
+        this.PropertyViewPosition.oPropertyView = oPropertyView;
+        this.PropertyViewPosition.isDown=true;
+        oPropertyView.style.zIndex=1000;
+
+        this.PropertyViewPosition.subW =e.pageX-oPropertyView.offsetLeft;
+        this.PropertyViewPosition.subH =e.pageY-oPropertyView.offsetTop;
+    }
+
+    mouseMove(e){
+        if( this.PropertyViewPosition.isDown){
+            this.PropertyViewPosition.oPropertyView.style.left =(e.pageX-this.PropertyViewPosition.subW)+'px';
+            this.PropertyViewPosition.oPropertyView.style.top =(e.pageY-this.PropertyViewPosition.subH)+'px';
+        }
+
+    }
+
+    mouseUp(e){
+        let subW =e.pageX-this.PropertyViewPosition.subW;
+        let subH =e.pageY-this.PropertyViewPosition.subH;
+        let  clientWidth =document.body.clientWidth;
+        let subRight =clientWidth- subW-260;
+
+
+        if( subW<76){
+            this.PropertyViewPosition.oPropertyView.style.left='37px';
+
+        }
+        if( subH<76){
+            this.PropertyViewPosition.oPropertyView.style.top='36px';
+        }
+
+        if(subRight<76){
+            this.PropertyViewPosition.oPropertyView.style.left=clientWidth-296+'px';
+        }
+        this.PropertyViewPosition.isDown=false;
+        this.PropertyViewPosition.oPropertyView=null;
     }
 
     render() {
 
         return (
-            <div id='PropertyView' style={{ left : this.props.expanded? '65px':'37px'}} className={cls({'hidden':this.props.isHidden})}>
-                <h1 id='PropertyViewHeader'>{this.state.propertyName}的属性</h1>
+            <div id='PropertyView'
+                 ref='PropertyView'
+
+
+                 style={{ left : this.props.expanded? '65px':'37px'}}
+                 className={cls({'hidden':this.props.isHidden})}>
+                <h1 id='PropertyViewHeader'
+                    onMouseDown={this.mouseDown.bind(this)}
+                    >{this.state.propertyName}的属性</h1>
                 <div id='PropertyViewBody'>
                     {this.state.fields}
                 </div>

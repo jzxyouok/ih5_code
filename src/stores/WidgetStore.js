@@ -313,9 +313,8 @@ function saveTree(data, node) {
                    let obj={};
 
              obj.judgeObj =v.judgeObj?v.judgeObj:null;//判断对象
+
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
-
-
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
 

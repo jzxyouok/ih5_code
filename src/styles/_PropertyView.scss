@@ -38,6 +38,9 @@ $toBottom:14px;
 		margin: 0;
 		padding: 4px 12px;
 		height: 30px;
+	    &:hover{
+		   cursor:move;
+		}
 	}
 	#PropertyViewBody,
 	.propertyViewBody{
