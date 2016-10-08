@@ -272,7 +272,7 @@ class PropertyView extends React.Component {
            const obj = {};
            obj[prop.name] = v;
            this.onStatusChange({updateProperties: obj});
-          WidgetActions['updateProperties'](obj, false, true);
+           WidgetActions['updateProperties'](obj, false, true);
        }
     }
 
@@ -319,7 +319,7 @@ class PropertyView extends React.Component {
         }
     }
 
-   //获取下拉框默认值
+   //获取中心点下拉框默认值
     getSelectDefault(originPos,options){
         for(let i in options){
              if(options[i][0]==originPos.x && options[i][1]==originPos.y  ){
@@ -336,8 +336,6 @@ class PropertyView extends React.Component {
             if(this.selectNode.props.isLock){
                 oLock.classList.add('ant-lock-checked');
                 let k =this.selectNode.props.scaleX;
-                //设定原始宽高比
-                // WidgetActions['updateProperties']({scaleX:1,scaleY:1}, false, false);
                 WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
             }else{
                 oLock.classList.remove('ant-lock-checked');
@@ -347,7 +345,6 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;
-
 
         if (!node)  return null;
 
@@ -367,7 +364,6 @@ class PropertyView extends React.Component {
             if (item.readOnly ) {
                 defaultValue = node.node[item.name];
             }else if(item.type==propertyType.Float) {
-
                 if(node.className=='html') {
                     let str = item.name == 'scaleX' ? 'shapeWidth' : 'shapeHeight';
                     let str2 = item.name == 'scaleX' ? 'width' : 'height';
@@ -431,8 +427,6 @@ class PropertyView extends React.Component {
                          defaultValue=1;
                      }
                 }
-
-
             }else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default
@@ -465,7 +459,6 @@ class PropertyView extends React.Component {
                 defaultProp.value = defaultValue;
               if(item.name=='originY' ||item.name=='originPos') {
                   selectClassName='originIcon';
-
               }else if(item.name=='fontFamily'){
                   for(let i in this.fontList){
                       defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
@@ -494,14 +487,12 @@ class PropertyView extends React.Component {
                 defaultProp.value = defaultValue;
             }
 
-
-
             let groupName = item.group || 'basic';
             if (groups[groupName] === undefined)   groups[groupName] = [];
 
             //设置布局结构和图标
-            let hasTwin = ['x','y','w','h','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;//左右结构显示
-            let hasPx=['x','y','w','h'].indexOf(item.showName)>=0; //判断input中是否添加px单位
+            let hasTwin = ['X','Y','W','H','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;//左右结构显示
+            let hasPx=['X','Y','W','H'].indexOf(item.showName)>=0; //判断input中是否添加px单位
             let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
             let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
 
@@ -534,6 +525,7 @@ class PropertyView extends React.Component {
                 if(item.name=='visible' || item.name=='initVisible' ){
                     saveArr.push(item);
                 }else{
+                    //去除属性
                     if((className == 'timer' || className == 'container') && ( item.name=='scaleX' ||  item.name=='scaleY')){
                         ;
                     }else{
@@ -560,15 +552,12 @@ class PropertyView extends React.Component {
 
         if(widget.imageTextSizeObj){
            this.textSizeObj = widget.imageTextSizeObj;
-
             WidgetActions['render']();
             this.setState({fields: this.getFields()});
         }
 
         if (widget.selectWidget !== undefined){
-
             this.selectNode = widget.selectWidget;
-
             this.setState({fields: this.getFields()});
             let node = this.selectNode;
 
@@ -630,6 +619,7 @@ class PropertyView extends React.Component {
             </div>
         );
     }
+
 }
 
 module.exports = PropertyView;

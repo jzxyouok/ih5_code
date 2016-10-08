@@ -75,8 +75,8 @@ class SwitchMore extends React.Component {
         return (
              <div className='switchMore'>
                   <ul className='switchMore-ul' ref='switchMoreUl'>
-                    <li className='switchMore-ul-on'  ref='on' onClick={this.on.bind(this)}>开</li>
                     <li className='switchMore-ul-mid cur'  ref='mid' onClick={this.mid.bind(this)}>自动</li>
+                    <li className='switchMore-ul-on'  ref='on' onClick={this.on.bind(this)}>开</li>
                     <li className='switchMore-ul-off'  ref='off' onClick={this.off.bind(this)}>关</li>
                   </ul>
              </div>
