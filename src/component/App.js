@@ -70,6 +70,9 @@ class App extends React.Component {
             if(widget.selectWidget.className == "db"){
                 this.editDbShow();
             }
+            else {
+                this.editDbHide();
+            }
         }
     }
 
@@ -150,7 +153,7 @@ class App extends React.Component {
                               isHidden={this.state.activeEventTreeKey != null
                               || this.state.activeFunc != null
                               || this.state.activeVar != null
-                              || !this.state.editDb} />
+                              || this.state.editDb} />
 
                 <EventBox expanded={this.state.expandedToolbox}
                           isHidden={!(this.state.activeEventTreeKey != null)} />
@@ -170,7 +173,7 @@ class App extends React.Component {
                               || this.state.activeVar != null}/>
 
                 <div className={$class({"hidden": !this.state.editDb})}>
-                    <EditDb editDbHide={ this.editDbHide } ref="EditDb"  />
+                    <EditDb />
                 </div>
                 {
                     //<Row gutter={5}>

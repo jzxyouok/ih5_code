@@ -48,8 +48,7 @@ class EditDb extends React.Component {
                 </div>
 
                 <div className="ED-right flex-1">
-                    <DbTable editDbHide={this.props.editDbHide}
-                             isBig={ this.state.isBig } />
+                    <DbTable isBig={ this.state.isBig } />
                 </div>
             </div>
         );

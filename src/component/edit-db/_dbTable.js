@@ -485,7 +485,7 @@ class DbTable extends React.Component {
                             <input placeholder="请输入名称" ref="inputType" />
 
                             <div className="pop-footer f--hcc">
-                                <button className="btn btn-clear cancel-btn" onClick={ this.popHide }>取消</button>
+                                <button className="btn btn-clear cancel-btn">取消</button>
                                 <button className="btn btn-clear save-btn" onClick={ this.addColumn }>确定</button>
                             </div>
                         </div>
