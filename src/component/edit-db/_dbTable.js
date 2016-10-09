@@ -195,6 +195,7 @@ class DbTable extends React.Component {
             self.setState({
                 dbList : list
             });
+            this.getOriginalData();
         });
     }
 
