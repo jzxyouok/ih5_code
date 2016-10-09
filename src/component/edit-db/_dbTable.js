@@ -141,12 +141,11 @@ class DbTable extends React.Component {
                 if(headerData.length !== 0){
                     let dbHeader = headerData;
                     this.state.node.find({}, function (err, data) {
-                        //console.log(2,data);
+                        console.log(2,data);
                         if(data == undefined) return;
 
                         let list = [];
                         list = data;
-                        console.log(3,dbHeader,list);
                         self.setState({
                             dbHeader : dbHeader,
                             dbList : list,
@@ -212,7 +211,6 @@ class DbTable extends React.Component {
         this.state.node.find({}, function (err, data) {
             let list = [];
             list = data;
-            console.log(4,list);
             self.setState({
                 originalData : list
             });
@@ -265,7 +263,6 @@ class DbTable extends React.Component {
                 this.state.node['header'] = header;
             }
         }.bind(this));
-        console.log(2,this.state.dbList);
         let allDbHeader = this.state.allDbHeader;
         allDbHeader.map((v,i)=>{
             if(allDbHeader[i].id === this.state.node.dbid) {
@@ -413,6 +410,7 @@ class DbTable extends React.Component {
             inputNow : key
         },()=>{
             $(".i" + key).focus();
+            $(".i" + key).select();
         })
     }
 
@@ -531,11 +529,14 @@ class DbTable extends React.Component {
                 this.state.node.insert({}, function (err, data) {
                     //if(data == undefined) return;
                     //console.log(data);
-                    let newList = [];
+                    let newList = {};
                     newList['_id'] = data;
                     list.push(newList);
+                    let fkList = self.state.originalData;
+                    fkList.push(newList);
                     self.setState({
-                        dbList : list
+                        dbList : list,
+                        originalData : fkList
                     })
                 });
                 //this.getDbList();

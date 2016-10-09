@@ -394,6 +394,29 @@ function objectToId(object) {
   return [idName, varName];
 }
 
+function generateJsFunc(etree) {
+  var output = {};
+
+  etree.forEach(function(item) {
+    if (item.judges.conFlag) {
+      var out = output[item.judges.conFlag] || '';
+      item.cmds.forEach(cmd => {
+        if (cmd.id && cmd.type == 'default' && cmd.name) {
+          out += 'ids.' + cmd.id + '.' + cmd.name + '(';
+          if (cmd.property) {
+            out += cmd.property.map(function(p) {
+              return JSON.stringify(p['value']);
+            }).join(',');
+          }
+          out += ');';
+        }
+      });
+      output[item.judges.conFlag] = out;
+    }
+  });
+  return output;
+}
+
 function saveTree(data, node) {
   data['cls'] = node.className;
   let props = {};
@@ -478,14 +501,17 @@ function saveTree(data, node) {
 
       });
       data['etree'] = etree;
+      var js = generateJsFunc(etree);
+      if (js)
+        data['events'] = js;
     } else {
         props[name] = node.props[name];
     }
   }
   if (props)
     data['props'] = props;
-  if (node.events)
-    data['events'] = node.events;
+  // if (node.events)
+  //   data['events'] = node.events;
   data['vars'] = [];
   if (node.intVarList.length > 0) {
       //int vars list
@@ -864,11 +890,26 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
-          if (!copyObj.className) {
+          if (!copyObj.className&&!copyObj.cls) {
               return;
           }
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
+          //清event
+          let clearEvent = copyObj =>{
+              if(copyObj.etree&&copyObj.etree.length>0){
+                  copyObj.etree.forEach(i =>(
+                      i.cmds = []
+                  ));
+              }
+              if(copyObj.children&&copyObj.children.length>0){
+                copyObj.children.forEach(value =>{
+                    clearEvent(value);
+                });
+              }
+          };
+          clearEvent(copyObj);
+
         loadTree(this.currentWidget, copyObj);
         if(copyObj.props.eventTree){
           this.reorderEventTreeList();
