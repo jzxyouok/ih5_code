@@ -260,27 +260,13 @@ class ToolBoxButton extends Component {
     }
 
     addDb(id,type,name){
-        if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
-            let bool = true;
-            let data = this.state.selectWidget.children;
-            for(let i =0 ; i<data.length; i++){
-                if(data[i].className == "db"){
-                    if(data[i].node.dbid == id){
-                        bool = false;
-                        return bool;
-                    }
-                }
-            }
-            if(bool){
-                if(type){
-                    WidgetActions['addWidget']('db', {'dbid': id }, null, name);
-                }
-                else {
-                    WidgetActions['addWidget']('db', {'dbid': id });
-                }
-                ToolBoxAction['deselect']();
-            }
+        if(type){
+            WidgetActions['addWidget']('db', {'dbid': id }, null, name);
         }
+        else {
+            WidgetActions['addWidget']('db', {'dbid': id },null);
+        }
+        ToolBoxAction['deselect']();
     }
 
     render() {
