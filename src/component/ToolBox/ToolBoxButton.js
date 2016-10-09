@@ -264,7 +264,7 @@ class ToolBoxButton extends Component {
             WidgetActions['addWidget']('db', {'dbid': id }, null, name);
         }
         else {
-            WidgetActions['addWidget']('db', {'dbid': id },null);
+            WidgetActions['addWidget']('db', {'dbid': id },null,"db",true);
         }
         ToolBoxAction['deselect']();
     }

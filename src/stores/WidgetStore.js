@@ -21,6 +21,8 @@ var prevObj;
 var prevNewObj;
 var dragTag;
 
+var dbCumulative = 1;
+
 var nodeType = {
     widget: 'widget',  //树对象
     func: 'func',    //函数
@@ -808,13 +810,13 @@ export default Reflux.createStore({
                 this.render();
         }
     },
-    addWidget: function(className, props, link, name) {
+    addWidget: function(className, props, link, name,dbType) {
 
       if (!this.currentWidget)
           return;
 
       if(className == "db"){
-          props = this.addWidgetDefaultName(className, props, true, false, name);
+          props = this.addWidgetDefaultName(className, props, true, false, name,dbType);
       }
       else{
           props = this.addWidgetDefaultName(className, props, true, false);
@@ -967,7 +969,7 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties ,name) {
+    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties ,name,dbType) {
         if(properties === undefined || properties === null) {
             properties = {};
         }
@@ -982,7 +984,13 @@ export default Reflux.createStore({
             props['name'] = className;
         }
         else if( className == "db"){
-            props['name'] = name;
+            if(dbType){
+                props['name'] = name + dbCumulative;
+                dbCumulative++;
+            }
+            else {
+                props['name'] = name;
+            }
         }
         else {
             if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
