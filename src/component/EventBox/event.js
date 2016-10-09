@@ -121,8 +121,6 @@ class Event extends React.Component {
                 allWidgetsList: widget.allWidgets,
                 judgeObjOption:arr2,  //命名
                 compareObjOption:arr2 //命名
-            },()=>{
-                console.log('w',widget.allWidgets);
             });
         }
 
@@ -399,6 +397,7 @@ class Event extends React.Component {
     setEventBoxWidth(eventList){
         let tag=false;
         let oEventBox=document.getElementsByClassName('EventBox')[0];
+        let oContentLayer =document.getElementsByClassName('EB--content-layer')[0];
         let elist=eventList?eventList:this.state.eventList;
 
             elist.map((v,i)=>{
@@ -411,6 +410,7 @@ class Event extends React.Component {
                 }
         });
         oEventBox.style.width=tag?'820px':'740px';
+        oContentLayer.style.width=tag?'840px':'760px';
         this.setState({toLong:tag});
     }
 
