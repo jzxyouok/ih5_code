@@ -190,6 +190,26 @@ class Property extends React.Component {
     onActionSelect(e){
         e.domEvent.stopPropagation();
         let action = e.item.props.action;
+        if(this.state.currentAction&&action.type===this.state.currentAction.type) {
+            switch (action.type){
+                case funcType.customize:
+                    if(action.func.key == this.state.currentAction.func.key){
+                        this.setState({
+                            actionDropdownVisible: false
+                        });
+                        return;
+                    }
+                    break;
+                default:
+                    if(action.name == this.state.currentAction.name){
+                        this.setState({
+                            actionDropdownVisible: false
+                        });
+                        return;
+                    }
+                    break;
+            }
+        }
         this.setState({
             currentAction: action,
             actionDropdownVisible: false
