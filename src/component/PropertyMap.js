@@ -107,8 +107,8 @@ propertyMap['box'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'show', showName:'显示', isEvent: true },
     { name: 'hide', showName:'隐藏', isEvent: true },
-    { name: 'toggleVisible', isFunc: true },
-    { name: 'hideSibling', isFunc: true },
+    { name: 'toggleVisible', showName:'交替显示', isFunc: true },
+    { name: 'hideSibling', showName:'隐藏同层控件', isFunc: true },
     { name: 'show', showName:'显示', isFunc: true },
     { name: 'hide', showName:'隐藏', isFunc: true },
 ];
