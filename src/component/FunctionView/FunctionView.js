@@ -12,8 +12,8 @@ const FormItem = Form.Item;
 const MenuItem = Menu.Item;
 
 const paramTypes = [
-    {name: 'Number', value: propertyType.Number, showName: '数字'},
-    {name: 'String', value: propertyType.String, showName: '字符'}
+    {name: 'Number', type: propertyType.Number, showName: '数字'},
+    {name: 'String', type: propertyType.String, showName: '字符'}
 ];
 
 class FunctionView extends React.Component {
