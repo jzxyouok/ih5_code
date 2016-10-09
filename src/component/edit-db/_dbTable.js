@@ -410,6 +410,7 @@ class DbTable extends React.Component {
             inputNow : key
         },()=>{
             $(".i" + key).focus();
+            $(".i" + key).select();
         })
     }
 
