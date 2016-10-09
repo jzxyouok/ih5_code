@@ -314,6 +314,10 @@
                         color: #b5b5b5;
                         background: #222222;
 
+                        &.active {
+                            background: #202f20;
+                        }
+
                         .icon{
                             position: absolute;
                             right: 0;
