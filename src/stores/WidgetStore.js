@@ -257,6 +257,9 @@ function resolveEventTree(node, list) {
                   case funcType.customize:
                       cmd.action.func = idToObject(list, cmd.action.funcId[0], cmd.action.funcId[1]);
                       delete(cmd.action.funcId);
+                      if(!cmd.action.func){
+                          cmd.action = null;
+                      }
                       break;
                   default:
                       break;
@@ -1245,6 +1248,7 @@ export default Reflux.createStore({
             } else if(props['params']) {
                 this.currentFunction['params'] = props['params'];
             }
+            this.trigger({updateFunction: {widget:this.currentWidget}});
         }
     },
     removeFunction: function () {

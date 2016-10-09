@@ -567,10 +567,11 @@ propertyMap['strVar'] = [
         ], isFunc: true },
 ];
 propertyMap['intVar'] = [
-    { name: 'changeValue', showName:'赋值', info:'(value)',
+       { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
+        ],
+           isFunc: true },
 ];
 
 for (var n in propertyMap) {
