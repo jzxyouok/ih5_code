@@ -394,6 +394,7 @@ function saveTree(data, node) {
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
+             obj.judgeValOption=v.judgeValOption;
 
 
              obj.compareFlag=v.compareFlag;//比较运算符
@@ -407,7 +408,7 @@ function saveTree(data, node) {
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
              obj.compareValFlag =v.compareValFlag;//比较对象的属性
-
+                obj.compareValOption=v.compareValOption;
 
              obj.operationManager={};
 
