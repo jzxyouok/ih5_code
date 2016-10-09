@@ -31,7 +31,9 @@ let tapAreaIcon = require('../images/base/tapArea.svg');
 let qrcodeIcon = require('../images/base/qrCode.svg');
 let fileIcon = require('../images/base/file.svg');
 let counterIcon = require('../images/base/counter.svg');
-let databaseIcon = require('../images/base/database.svg');
+let shareDbIcon = require('../images/base/shareDb.svg');
+let personalDbIcon = require('../images/base/personalDb.svg');
+
 let remotedeviceIcon = require('../images/base/remoteDevice.svg');
 let pcdeviceIcon = require('../images/base/pcDevice.svg');
 let twodvarIcon = require('../images/base/twoDvar.svg');
@@ -86,7 +88,8 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:qrcodeIcon, className:'qrcode', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100, 'data': '0'}},
                 {cid:this.cid++,icon:fileIcon, className:'file'},
                 {cid:this.cid++,icon:counterIcon, className:'counter', drawRect:true, param: {'value':0}},
-                {cid:this.cid++,icon:databaseIcon, className:'database'},
+                {cid:this.cid++,icon:shareDbIcon, className:'shareDb'},
+                {cid:this.cid++,icon:personalDbIcon, className:'personalDb'},
                 {cid:this.cid++,icon:remotedeviceIcon, className:'remotedevice'},
                 {cid:this.cid++,icon:pcdeviceIcon, className:'pcdevice'},
                 {cid:this.cid++,icon:twodvarIcon, className:'twodvar'},

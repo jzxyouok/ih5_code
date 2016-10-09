@@ -24,7 +24,9 @@ let tapAreaIcon = img('tapArea.svg');
 let qrcodeIcon = img('qrCode.svg');
 let fileIcon = img('file.svg');
 let counterIcon = img('counter.svg');
-let databaseIcon = img('database.svg');
+let shareDbIcon = img('shareDb.svg');
+let personalDbIcon = img('personalDb.svg');
+
 let remotedeviceIcon = img('remoteDevice.svg');
 let pcdeviceIcon = img('pcDevice.svg');
 let twodvarIcon = img('twoDvar.svg');
@@ -72,7 +74,7 @@ var TOOL_ID = {
     QRCODE: 23,
     FILE: 24,
     COUNTER: 25,
-    DATABASE: 26,
+    ShAREDB: 26,
     REMOTEDEVICE: 27,
     PCDEVICE: 28,
     TWODVAR: 29,
@@ -81,6 +83,7 @@ var TOOL_ID = {
 
     HTML:32,
     INPUT:33,
+    PERSONSALDB:34
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -213,12 +216,19 @@ var DEFAULT_TOOLBOX = {
         secondary: [
             {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0}}]
     },{
-        name:'数据库',
+        name:'共享数据库',
         key:16,
         gid:16,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.DATABASE, name:'数据库', icon: databaseIcon, className:'db'}]
+            {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, className:'db'}]
+    },{
+        name:'私有数据库',
+        key:24,
+        gid:24,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.REMOTEDEVICE, name:'私有数据库', icon: personalDbIcon, className:'db'}]
     },{
         name:'二维变量',
         key:17,
@@ -249,6 +259,8 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [{cid:TOOL_ID.WECAHT,name:'微信',icon:wechatIcon, className:'wechat'}]
     }]
+
+    //TODO:24已经用了
     // ,{
     //     name:'容器',
     //     key:7,
