@@ -86,7 +86,7 @@ class ObjectTree extends React.Component {
     }
 
     onStatusChange(widget) {
-        //console.log(widget);
+        console.log(widget);
         //initTree : 初始化对象树
         if (widget.initTree !== undefined){
             this.setState({
@@ -646,7 +646,12 @@ class ObjectTree extends React.Component {
                     picIsImage = false;
                 }
                 else if(v.className == 'db'){
-                    pic = 'db-icon';
+                    if(v.node.dbType == "shareDb"){
+                        pic = 'shareDb-icon';
+                    }
+                    else {
+                        pic = 'personalDb-icon';
+                    }
                     picIsImage = false;
                 }
                 else if (v1.className === v.className){

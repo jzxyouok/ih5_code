@@ -240,8 +240,11 @@
     .component-icon {
         background: url("img/button-icon.svg") no-repeat -280px -200px;
     }
-    .db-icon {
-        background: url("img/button-icon.svg") no-repeat -689px -212px;
+    .shareDb-icon{
+        background: url("img/icons/shareDb.svg");
+    }
+    .personalDb-icon {
+        background: url("img/icons/personalDb.svg");
     }
 }
 

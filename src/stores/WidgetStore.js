@@ -1015,10 +1015,12 @@ export default Reflux.createStore({
         else if( className == "db"){
             if(dbType){
                 props['name'] = name + dbCumulative;
+                props['dbType'] = "personalDb";
                 dbCumulative++;
             }
             else {
                 props['name'] = name;
+                props['dbType'] = "shareDb";
             }
         }
         else {
