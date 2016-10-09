@@ -864,11 +864,26 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
-          if (!copyObj.className) {
+          if (!copyObj.className&&!copyObj.cls) {
               return;
           }
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
+          //清event
+          let clearEvent = copyObj =>{
+              if(copyObj.etree&&copyObj.etree.length>0){
+                  copyObj.etree.forEach(i =>(
+                      i.cmds = []
+                  ));
+              }
+              if(copyObj.children&&copyObj.children.length>0){
+                copyObj.children.forEach(value =>{
+                    clearEvent(value);
+                });
+              }
+          };
+          clearEvent(copyObj);
+
         loadTree(this.currentWidget, copyObj);
         if(copyObj.props.eventTree){
           this.reorderEventTreeList();

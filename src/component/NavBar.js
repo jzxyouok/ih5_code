@@ -67,6 +67,7 @@ class NavBar extends React.Component {
 
         this.token = null;
         this.playUrl = null;
+        this.fileUrl = null;
         var name = Cookies.get('ih5token');
         //console.log(name);
         if (name) {
@@ -113,6 +114,8 @@ class NavBar extends React.Component {
             let result = JSON.parse(text);
             if (result['name']) {
                 this.playUrl = result['playUrl'];
+                this.fileUrl = result['fileUrl'];
+                bridge.setFilePath(this.fileUrl + 'files/');
                 this.setState({
                     loginVisible: false,
                     username: result['name'],
