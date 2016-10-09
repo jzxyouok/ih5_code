@@ -51,7 +51,7 @@ class ToolBoxButton extends Component {
         });
     }
 
-    DbHeaderData(){
+    DbHeaderData(data,bool){
         this.setState({
             dbList : data
         })
