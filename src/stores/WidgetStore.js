@@ -408,6 +408,35 @@ function objectToId(object) {
   return [idName, varName];
 }
 
+function generateJsFunc(etree) {
+  var output = {};
+
+  etree.forEach(function(item) {
+    if (item.judges.conFlag) {
+      var out = output[item.judges.conFlag] || '';
+      item.cmds.forEach(cmd => {
+        if (cmd.id && cmd.type == 'default' && cmd.name) {
+          if (cmd.name === 'changeValue') {
+            if (cmd.property.length >= 1)
+              out += 'ids.' + cmd.id + '.value=' + JSON.stringify(cmd.property[0]['value']) + ';';
+          } else {
+            out += 'ids.' + cmd.id + '.' + cmd.name + '(';
+            if (cmd.property) {
+              out += cmd.property.map(function(p) {
+                return JSON.stringify(p['value']);
+              }).join(',');
+            }
+            out += ');';
+          }
+        }
+      });
+      output[item.judges.conFlag] = out;
+    }
+  });
+  console.log(output);
+  return output;
+}
+
 function saveTree(data, node) {
   data['cls'] = node.className;
   let props = {};
@@ -507,14 +536,18 @@ function saveTree(data, node) {
 
       });
       data['etree'] = etree;
+      var js = generateJsFunc(etree);
+      if (js)
+        data['events'] = js;
+      console.log(etree);
     } else {
         props[name] = node.props[name];
     }
   }
   if (props)
     data['props'] = props;
-  if (node.events)
-    data['events'] = node.events;
+  // if (node.events)
+  //   data['events'] = node.events;
   data['vars'] = [];
   if (node.intVarList.length > 0) {
       //int vars list

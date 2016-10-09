@@ -8,6 +8,10 @@ import ToolBoxStore, {isActiveButton} from '../../stores/ToolBoxStore';
 import DrawRect from './DrawRect';
 import {chooseFile} from  '../../utils/upload';
 
+import DbHeaderAction from '../../actions/DbHeader'
+import DbHeaderStores from '../../stores/DbHeader';
+var PREFIX = 'app/';
+
 // 工具栏按钮（最小单位）
 class ToolBoxButton extends Component {
     constructor (props) {
@@ -17,7 +21,9 @@ class ToolBoxButton extends Component {
             modal: {
                 isVisible: false,
                 value: ''
-            }
+            },
+            dbList : [],
+            selectWidget : null
         };
         this.drawRect = null;
         this.onDrawRect = this.onDrawRect.bind(this);
@@ -27,10 +33,12 @@ class ToolBoxButton extends Component {
         this.onModalCancel = this.onModalCancel.bind(this);
         this.onModalClear = this.onModalClear.bind(this);
         this.onModalTextAreaChange = this.onModalTextAreaChange.bind(this);
+        this.addDb = this.addDb.bind(this);
     }
 
     componentDidMount() {
         this.unsubscribe = ToolBoxStore.listen(this.onStatusChange.bind(this));
+        DbHeaderStores.listen(this.DbHeaderData.bind(this));
     }
 
     componentWillUnmount() {
@@ -43,6 +51,17 @@ class ToolBoxButton extends Component {
         this.setState({
             selected: status
         });
+        if(store.selectWidget){
+            this.setState({
+                selectWidget : widget.selectWidget
+            })
+        }
+    }
+
+    DbHeaderData(data,bool){
+        this.setState({
+            dbList : data
+        })
     }
 
     onClick() {
@@ -64,7 +83,36 @@ class ToolBoxButton extends Component {
                 this.onDrawRect();
             }
             else if(this.props.className === "db"){
-                
+                //共享数据库
+                if(this.props.DbType == 0){
+                    let name = '数据库' + this.state.dbList.length;
+                    let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
+                    //console.log(data);
+                    WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
+                        var result = JSON.parse(text);
+                        if (result['id']) {
+                            //console.log(result);
+                            var list = this.state.dbList;
+                            list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
+                            this.addDb(result['id'],true,name);
+                            this.setState({
+                                dbList : list
+                            },()=>{
+                                DbHeaderAction['DbHeaderData'](this.state.dbList,false);
+                            })
+                        }
+                    }.bind(this));
+                }
+                //私有数据库
+                else if(this.props.DbType == 1){
+                    WidgetActions['ajaxSend'](null, 'POST', 'app/dbSetParm', null, null, function(text) {
+                        var result = JSON.parse(text);
+                        if (result['id']) {
+                            //console.log(result);
+                            this.addDb(result['id'],false);
+                        }
+                    }.bind(this));
+                }
             }
             else {
                 WidgetActions['addWidget'](this.props.className, this.props.param);
@@ -209,6 +257,16 @@ class ToolBoxButton extends Component {
                 value: ''
             }
         });
+    }
+
+    addDb(id,type,name){
+        if(type){
+            WidgetActions['addWidget']('db', {'dbid': id }, null, name);
+        }
+        else {
+            WidgetActions['addWidget']('db', {'dbid': id },null);
+        }
+        ToolBoxAction['deselect']();
     }
 
     render() {

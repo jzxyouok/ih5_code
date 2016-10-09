@@ -54,6 +54,7 @@ class Event extends React.Component {
         this.menuList_pub =this.menuList_pub.bind(this);
         this.menuList =this.menuList.bind(this);
         this.setEventBoxWidth=this.setEventBoxWidth.bind(this);
+        this.setCompareObjOption=this.setCompareObjOption.bind(this);
 
         this.onSetSpecificListProperty = this.onSetSpecificListProperty.bind(this);
 
@@ -107,6 +108,7 @@ class Event extends React.Component {
             if (this.props.wKey === this.props.activeKey) {
                 this.forceUpdate();
             }
+             this.setEventBoxWidth();
         }
 
         if(widget.allWidgets){
@@ -201,7 +203,7 @@ class Event extends React.Component {
         });
         if(saveVal=='number'){
             saveVal=0;
-        }else if(saveVal=='number'){
+        }else if(saveVal=='string'){
             saveVal=2;
         }
         return saveVal;
@@ -339,12 +341,9 @@ class Event extends React.Component {
 
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
                     arrHidden = [false, false, true, false, false, true];
-
-
-
                     initFlag.judgeValType=this.getSpacJudgeValType(value);
-                    console.log(initFlag.judgeValType);
-
+                    //选中后,需要判断哪些判断对象可以选择,也就是更改compareObjOption
+                    this.setCompareObjOption(initFlag.judgeValType);
                 } else {
                     arrHidden = [false, false, false, true, true, true];
                     //非五类
@@ -355,8 +354,6 @@ class Event extends React.Component {
                 //初始化后四个
 
                 initFlag.judgeObj =this.getChooseObjByIndex(index);
-
-
                 initFlag.judgeValFlag = '判断值';
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较对象';
@@ -377,6 +374,8 @@ class Event extends React.Component {
 
                 //设定选中比较值的类型
                 initFlag.judgeValType=this.getJudgeValType(value);
+                //选中后,需要判断哪些判断对象可以选择,也就是更改compareObjOption
+                this.setCompareObjOption(initFlag.judgeValType);
                 break;
             case 'compareObjFlag':
                 arrHidden = this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
@@ -478,6 +477,37 @@ class Event extends React.Component {
         oEventBox.style.width=tag?'820px':'740px';
 
         this.setState({toLong:tag});
+    }
+    setCompareObjOption(type){
+        let arr=[];
+
+       this.state.allWidgetsList.map((v,i)=>{
+           let tag=true;
+           let classname= v.className;
+
+           if(classname=='var'){
+
+               if(type==0){
+                   type='number';
+               }else if(type==2){
+                   type='string';
+               }
+
+               if(v.type==type){
+                   arr.push(v.props.name);
+               }
+
+           } else{
+               propertyMap[classname].map((v1,i1)=>{
+
+                   if(tag && v1.isProperty && v1.name !='id' && v1.type ==type){
+                       arr.push(v.props.name);
+                       tag=false;
+                   }
+               });
+           }
+       });
+       this.setState({compareObjOption:arr});
     }
 
     render() {
