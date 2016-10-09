@@ -229,11 +229,9 @@
                 &:active{ background-position: -1000px -80px;}
             }
             &.event-btn {
-                background: url("img/button-icon.svg") no-repeat;
-                background-position: -1400px 0;
-                &:hover{ background-position: -1400px -80px; }
-                &:active{ background-position: -1400px -120px; }
-                &.not-allowed{ background-position: -1400px -40px; }
+                background-position: -1080px 0;
+                &:hover{ background-position: -1080px -40px; }
+                &:active{ background-position: -1080px -80px; }
             }
         }
     }

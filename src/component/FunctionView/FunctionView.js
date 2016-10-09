@@ -200,9 +200,7 @@ class FunctionView extends React.Component {
                             </Dropdown>
                         </div>
                         <div className= {$class('ant-form-item-control params-delete')} onClick={this.onRemoveParamsBtn.bind(this, i1)}>
-                            x
                         </div>
-
                     </div>
                 </div>
             </div>
