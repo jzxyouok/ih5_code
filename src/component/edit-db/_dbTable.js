@@ -94,7 +94,8 @@ class DbTable extends React.Component {
 
     DbHeaderData(data,bool){
         this.setState({
-            allDbHeader : data
+            allDbHeader : data,
+            originalHeader:data
         },()=>{
             if(bool){
                 this.getNewData();
@@ -140,7 +141,6 @@ class DbTable extends React.Component {
                         self.setState({
                             dbHeader : dbHeader,
                             dbList : list,
-                            originalHeader : dbHeader,
                             isHaveContent : false
                         },()=>{
                             self.updateNewScrollData();
@@ -394,10 +394,12 @@ class DbTable extends React.Component {
                 }
             }
             else {
-                list.map((v,i)=>{
-                    list[i][text] = list[i][value];
-                    delete list[i][value];
-                });
+                if(value !== text ){
+                    list.map((v,i)=>{
+                        list[i][text] = list[i][value];
+                        delete list[i][value];
+                    });
+                }
                 //console.log(list);
                 header[which] = text;
                 console.log(header,this.state.originalHeader);
