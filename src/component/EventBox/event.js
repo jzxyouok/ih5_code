@@ -17,6 +17,7 @@ class Event extends React.Component {
         this.state = {
             expanded: true,
             objName: [],
+            toLong:false,
             eventList: this.props.eventList,
             selectWidget: this.props.widget,
             allWidgetsList: null,
@@ -32,6 +33,7 @@ class Event extends React.Component {
             compareObjOption: [],//出现新的widget则更新
             compareValOption: ['比较值1', '比较值2']
         };
+
 
         this.curChildrenIndex = 0;
         this.curEventIndex = 0;
@@ -49,6 +51,8 @@ class Event extends React.Component {
 
 
         this.menuList_pub =this.menuList_pub.bind(this);
+        this.menuList =this.menuList.bind(this);
+        this.setEventBoxWidth=this.setEventBoxWidth.bind(this);
 
     }
 
@@ -282,8 +286,6 @@ class Event extends React.Component {
                 }
                 //初始化后四个
 
-                this.setState({judgeValOption: judgeValOption});
-
                 initFlag.judgeObj =this.getChooseObjByIndex(index);
                 initFlag.judgeValOption = judgeValOption;
 
@@ -326,7 +328,6 @@ class Event extends React.Component {
                     let propObj = this.setObjProperty(chooseEventClassName);
                     compareValOption =this.getCompareValOption(propObj.nameArr);
 
-                    this.setState({compareValOption: compareValOption});
 
                     initFlag.compareObj =this.getChooseObjByIndex(index);
 
@@ -337,7 +338,7 @@ class Event extends React.Component {
                         arrHidden: arrHidden
                     }
                 }
-                //初始化后一个
+
                 break;
             default :
                 isRun = false;
@@ -346,13 +347,18 @@ class Event extends React.Component {
         if (isRun) {
             let eventList = this.state.eventList;
             eventList[this.curEventIndex].children[this.curChildrenIndex] = initFlag;
+            //判断事件面板所需宽度
+            this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
         }
     }
 
-    setCurChildrenIndex(index,eventIndex,e){
+    setCurChildrenIndex(index,eventIndex,isUpdate,e){
         this.curChildrenIndex =index;
         this.curEventIndex=eventIndex;
+        if(isUpdate){
+            this.forceUpdate();
+        }
     }
 
     inputChange(val,event) {
@@ -373,18 +379,36 @@ class Event extends React.Component {
             }
         </Menu>)
     }
+    menuList(flag) {
+        let option = flag.replace('Flag', 'Option');
+        if( this.state.eventList[this.curEventIndex].children[this.curChildrenIndex][option]){
+            return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
+                {
+                    this.state.eventList[this.curEventIndex].children[this.curChildrenIndex][option].map((v, i)=> {
+                        return <MenuItem key={i} index={i}  object={v}>{v}</MenuItem>;
+                    })
+                }
+            </Menu>)
+        }
+        return (<Menu></Menu>)
+    }
+    setEventBoxWidth(eventList){
+        let tag=false;
+        let oEventBox=document.getElementsByClassName('EventBox')[0];
+
+        eventList.map((v,i)=>{
+            v.children.map((item,index)=>{
+                  if(!item.operationManager.arrHidden[5]){
+                      tag=true;
+                  }
+            });
+        });
+        oEventBox.style.width=tag?'800px':'740px';
+        this.setState({toLong:tag});
+
+    }
 
     render() {
-        let menuList = (flag)=> {
-            let option = flag.replace('Flag', 'Option');
-                    return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
-                        {
-                            this.state[option].map((v, i)=> {
-                                return <MenuItem key={i} index={i}  object={v}>{v}</MenuItem>;
-                            })
-                        }
-                    </Menu>)
-        }
         let content = ((v,i)=>{
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
@@ -412,12 +436,12 @@ class Event extends React.Component {
                             {
                                 !v.children || v.children.length === 0
                                     ? null
-                                    :   <div className={$class('zhong',{'hidden':v.zhongHidden})}>
+                                    :   <div className={$class('zhong',{'hidden':v.zhongHidden,'zhongToLong':this.state.toLong})}>
                                     {
                                         v.children.map((v1,i1)=>{
                                             return  <div className="list f--hlc" key={i1}>
                                                 <span className="supplement-line" />
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[0]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[0]})} >
                                                     <Dropdown
                                                         overlay={this.menuList_pub('logicalFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i)}
@@ -429,9 +453,9 @@ class Event extends React.Component {
                                                     </Dropdown>
                                                 </div>
 
-                                                <div className={$class('dropDown-layer long',{'hidden':v1.operationManager.arrHidden[1]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[1]})} >
                                                     <Dropdown
-                                                        overlay={menuList('judgeObjFlag')}
+                                                        overlay={this.menuList_pub('judgeObjFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
@@ -442,10 +466,10 @@ class Event extends React.Component {
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                <div className={$class('dropDown-layer long',{'hidden':v1.operationManager.arrHidden[2]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[2]})} >
                                                     <Dropdown
-                                                        overlay={menuList('judgeValFlag')}
-                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i)}
+                                                        overlay={this.menuList('judgeValFlag')}
+                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i,true)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div    className={$class('title f--hlc',{'title-gray':v1.judgeValFlag==this.state.judgeValFlag})} >
@@ -455,7 +479,7 @@ class Event extends React.Component {
                                                     </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[3]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[3]})} >
                                                     <Dropdown
                                                         overlay={this.menuList_pub('compareFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i)}
@@ -468,9 +492,9 @@ class Event extends React.Component {
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                <div className={$class('dropDown-layer long',{'hidden':v1.operationManager.arrHidden[4]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[4]})} >
                                                     <Dropdown
-                                                        overlay={menuList('compareObjFlag')}
+                                                        overlay={this.menuList_pub('compareObjFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
@@ -480,10 +504,10 @@ class Event extends React.Component {
                                                     </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
-                                                <div className={$class('dropDown-layer long',{'hidden':v1.operationManager.arrHidden[5]})} >
+                                                <div className={$class('dropDown-layer mr20 middle',{'hidden':v1.operationManager.arrHidden[5]})} >
                                                     <Dropdown
-                                                        overlay={menuList('compareValFlag')}
-                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i)}
+                                                        overlay={this.menuList('compareValFlag')}
+                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i,true)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div   className={$class('title f--hlc',{'title-gray':v1.compareValFlag==this.state.compareValFlag})} >

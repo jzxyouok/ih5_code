@@ -125,7 +125,7 @@ class App extends React.Component {
                 }
             }
         };
-        if (zoomObject.keyCode == 13 && zoomObject.type == 'keydown') {
+        if (zoomObject && zoomObject.keyCode == 13 && zoomObject.type == 'keydown') {
             setZoomState(parseFloat(zoomObject.target.value), zoomObject);
         } else {
             setZoomState(zoomObject);
