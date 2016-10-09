@@ -22,11 +22,15 @@ class Animation extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            data: animationData
+            data: animationData,
+            canHaveEventTree: false,    //是否可有事件树
+            hasEventTree: false, //是否有事件树
         };
         this.onStatusChange = this.onStatusChange.bind(this);
         this.checkAnimationEnable = this.checkAnimationEnable.bind(this);
         this.addWidgetBtn = this.addWidgetBtn.bind(this);
+        this.onInitHasEventTree = this.onInitHasEventTree.bind(this);
+        this.initEvent = this.initEvent.bind(this);
     }
 
     componentDidMount() {
@@ -40,15 +44,47 @@ class Animation extends React.Component {
 
     onStatusChange(widget) {
         //是否选中图层或者舞台上的组件
+        if(widget.redrawTree&&widget.redrawWidget) {
+            this.onInitHasEventTree(widget.redrawWidget);
+        }
         if(widget.selectWidget){
             this.checkAnimationEnable(widget.selectWidget);
+            this.onInitHasEventTree(widget.selectWidget);
         } else if (widget.selectFunction) {
             this.checkAnimationEnable(widget.selectFunction);
+            this.onInitHasEventTree(widget.selectFunction);
         } else if (widget.selectVariable) {
             this.checkAnimationEnable(widget.selectVariable);
+            this.onInitHasEventTree(widget.selectVariable);
         } else if (widget.selectDBItem) {
             this.checkAnimationEnable(widget.selectDBItem);
+            this.onInitHasEventTree(widget.selectDBItem);
         }
+    }
+
+    onInitHasEventTree(selectWidget){
+        let hasEventTree = false;
+        let canHaveEventTree = true;
+        if(selectWidget.className === 'func' ||
+            selectWidget.className === 'var' ||
+            selectWidget.className === 'dbItem') {
+            canHaveEventTree = false;
+            hasEventTree = false;
+        } else
+        if (selectWidget.props.eventTree) {
+            hasEventTree = true;
+        }
+        this.setState({
+            hasEventTree: hasEventTree,
+            canHaveEventTree: canHaveEventTree
+        });
+    }
+
+    initEvent(className,param) {
+        WidgetActions['initEventTree'](className,param);
+        this.setState({
+            hasEventTree: !this.state.hasEventTree
+        });
     }
 
     checkAnimationEnable(widget) {
@@ -104,6 +140,10 @@ class Animation extends React.Component {
     render() {
         return (
             <div className='Animation'>
+                <button className={ 'btn btn-clear btn-animation event-btn'}
+                        disabled={!this.state.canHaveEventTree||this.state.hasEventTree}
+                        title='事件'
+                        onClick={ this.initEvent.bind(this, 'event', null) }/>
                 {
                     this.state.data.map((v,i)=>{
                         return <button key={i}

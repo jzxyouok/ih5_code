@@ -26,7 +26,14 @@ class DbTable extends React.Component {
             lastSelectID : null,
             isHaveContent : false,
             isError : false,
-            errorText : ""
+            errorText : "",
+            moveLength : 0,
+            multiple : 1,
+            scrollWidth :　"100%",
+            marginLeft : 0,
+            selectArray : [],
+            originalData : [],
+            originalHeader : []
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -41,6 +48,9 @@ class DbTable extends React.Component {
         this.popShow = this.popShow.bind(this);
         this.popHide = this.popHide.bind(this);
         this.whichAddType = this.whichAddType.bind(this);
+        this.updateNewScrollData = this.updateNewScrollData.bind(this);
+        this.getOriginalData = this.getOriginalData.bind(this);
+        this.getOriginalHeader = this.getOriginalHeader.bind(this);
     }
 
     componentDidMount() {
@@ -56,6 +66,7 @@ class DbTable extends React.Component {
         //        this.setState({
         //            dbList : result.d
         //        });
+        //        this.getOriginalData();
         //    }
         //}.bind(this));
         //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvYXBwXC91c2VyXC9sb2dpbiIsImlhdCI6MTQ3NDE2NjcxOSwiZXhwIjozNjAwMDAwMTQ3NDE2NjcxOSwibmJmIjoxNDc0MTY2NzE5LCJqdGkiOiI3ZDMxNDU3NzEwZTU1ZDIzNDBiMzQ3NTZkNzIwNTBlZSJ9.Y8FtW80CmGwKHXrn9jjOVGDrGRlT-eGeACMsnVvGcjI";
@@ -68,7 +79,10 @@ class DbTable extends React.Component {
         //                let headerData = allDbHeader[i].header.split(",");
         //                this.setState({
         //                    dbHeader: headerData
+        //                },()=>{
+        //                    this.updateNewScrollData();
         //                });
+        //                this.getOriginalHeader();
         //            }
         //        });
         //    }
@@ -82,10 +96,12 @@ class DbTable extends React.Component {
 
     DbHeaderData(data,bool){
         this.setState({
-            allDbHeader : data
+            allDbHeader : data,
+            originalHeader:data
         },()=>{
             if(bool){
                 this.getNewData();
+                this.getOriginalHeader();
             }
         })
     }
@@ -99,6 +115,9 @@ class DbTable extends React.Component {
                        node : widget.selectWidget.node,
                        dbList : [],
                        dbHeader: [],
+                       selectArray : [],
+                       originalData : [],
+                       originalHeader : [],
                        inputNow : null,
                        inputText : null,
                        inputStyle : null
@@ -116,19 +135,24 @@ class DbTable extends React.Component {
                 let headerData = allDbHeader[i].header.split(",");
                 //console.log(454,headerData,headerData.length);
                 let index = headerData.indexOf("null");
-                if(headerData.length !== 0 && index < 0){
+                if(index >= 0){
+                    headerData.splice(index,1)
+                }
+                if(headerData.length !== 0){
                     let dbHeader = headerData;
                     this.state.node.find({}, function (err, data) {
-                        //console.log(2,data);
+                        console.log(2,data);
                         if(data == undefined) return;
 
                         let list = [];
                         list = data;
-                        //console.log(dbHeader,list);
                         self.setState({
                             dbHeader : dbHeader,
                             dbList : list,
                             isHaveContent : false
+                        },()=>{
+                            self.updateNewScrollData();
+                            self.getOriginalData();
                         });
 
                         if(list.length === 0){
@@ -149,19 +173,20 @@ class DbTable extends React.Component {
     }
 
     createContent(){
-        let dbHeader = this.state.dbHeader;
-        let newList = {};
-        let list = [];
-        newList['id'] = this.state.node.dbid;
-        dbHeader.map((v,i)=>{
-            newList[v] = "";
-        });
-        list.push(newList);
-        this.state.node.insert(list[0]);
+        //let dbHeader = this.state.dbHeader;
+        //let newList = {};
+        //let list = [];
+        //newList['id'] = this.state.node.dbid;
+        //dbHeader.map((v,i)=>{
+        //    newList[v] = "";
+        //});
+        //list.push(newList);
+        this.state.node.insert({});
         this.getDbList();
     }
 
     getDbList(){
+        let self = this;
         this.state.node.find({}, function (err, data) {
             if(data == undefined) return;
 
@@ -173,55 +198,148 @@ class DbTable extends React.Component {
         });
     }
 
+    getOriginalData(){
+        let self = this;
+        //WidgetActions['ajaxSend'](null,'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if(result.d.length > 0){
+        //        self.setState({
+        //            originalData : result.d
+        //        })
+        //    }
+        //}.bind(this));
+        this.state.node.find({}, function (err, data) {
+            let list = [];
+            list = data;
+            self.setState({
+                originalData : list
+            });
+        });
+    }
+
+    getOriginalHeader(){
+        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvYXBwXC91c2VyXC9sb2dpbiIsImlhdCI6MTQ3NDE2NjcxOSwiZXhwIjozNjAwMDAwMTQ3NDE2NjcxOSwibmJmIjoxNDc0MTY2NzE5LCJqdGkiOiI3ZDMxNDU3NzEwZTU1ZDIzNDBiMzQ3NTZkNzIwNTBlZSJ9.Y8FtW80CmGwKHXrn9jjOVGDrGRlT-eGeACMsnVvGcjI";
+        //WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if (result['name']) {
+        //        let allDbHeader = result['db'];
+        //        allDbHeader.map((v,i)=>{
+        //            if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
+        //                let headerData = allDbHeader[i].header.split(",");
+        //                this.setState({
+        //                    originalHeader : headerData
+        //                });
+        //            }
+        //        });
+        //    }
+        //}.bind(this));
+        let data = this.state.originalHeader;
+        data.map((v,i)=>{
+            if(data[i].id === this.state.node.dbid){
+                let headerData = data[i].header.split(",");
+                let index = headerData.indexOf("null");
+                if(index >= 0){
+                    headerData.splice(index,1)
+                }
+                if(headerData.length > 0 ){
+                   this.setState({
+                       originalHeader : headerData
+                   })
+                }
+            }
+        });
+    }
+
     updateHeader(){
         let array = this.state.dbHeader;
         let header = array.join(',');
         let name = this.state.node.name;
         let id = this.state.node.dbid;
         let data = "id=" + id + "&name=" + encodeURIComponent(name) + "&header=" + encodeURIComponent(header);
-        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
+        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
             var result = JSON.parse(text);
             if (result['id']) {
                 this.state.node['name'] = name;
                 this.state.node['header'] = header;
             }
         }.bind(this));
-
         let allDbHeader = this.state.allDbHeader;
         allDbHeader.map((v,i)=>{
             if(allDbHeader[i].id === this.state.node.dbid) {
                 allDbHeader[i].header = header;
-                DbHeaderAction['DbHeaderData'](allDbHeader, false);
+                DbHeaderAction['DbHeaderData'](allDbHeader, true);
             }
         });
     }
 
     saveBtn(){
-        this.updateHeader();
-        //console.log(this.state.dbHeader,this.state.dbList);
-        //this.state.node.updata(this.state.dbList);
+        console.log(1,this.state.dbHeader,this.state.dbList);
+        let self = this;
+        this.state.node.update(this.state.dbList,function(err,data){
+           if(data){
+               self.setState({
+                   dbList : [],
+                   selectArray : [],
+                   originalData : [],
+                   originalHeader : [],
+                   inputNow : null,
+                   inputText : null,
+                   inputStyle : null
+               });
+               self.updateHeader();
+           }
+        });
     }
 
+    updateNewScrollData(){
+        let widthShow = this.props.isBig ? 535 : 689;
+        let getWidth = parseFloat($(".DT-content table").css('width'));
+        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll span").css('width'));
+        let width = getWidth > widthShow ? getWidth : widthShow;
+        let moveLength = width - widthShow;
+        let multiple = width / widthShow;
+        let scrollWidth = getScrollWidth / multiple;
+        //console.log(width,getWidth,widthShow,getScrollWidth,moveLength,multiple,scrollWidth);
+        this.setState({
+            widthShow : widthShow,
+            moveLength : moveLength,
+            multiple : multiple,
+            scrollWidth :　scrollWidth
+        })
+    }
+
+
     scrollBtn(){
-        //let move = false;
-        //let _x;
-        //let self = this;
-        //let left = 0;
-        //let width = parseFloat($(".DT-content table").css('width'));
-        //let widthShow = this.props.isBig ?
-        //console.log(width,widthShow);
-        //
-        //$(".DbTable .scroll span").mousedown(function(e){
-        //    move=true;
-        //    _x=e.pageX;
-        //});
-        //$(document).mousemove(function(e){
-        //    if(move){
-        //        let x =  e.pageX - _x;
-        //    }
-        //}).mouseup(function(){
-        //    move=false;
-        //});
+        let move = false;
+        let _x;
+        let self = this;
+        let left = this.state.marginLeft;
+        let moveLength;
+
+        $(".DbTable .scroll span").mousedown(function(e){
+            move=true;
+            _x=e.pageX;
+            moveLength = self.state.moveLength / self.state.multiple;
+        });
+        $(document).mousemove(function(e){
+            if(move && moveLength !== 0){
+                let x =  e.pageX - _x;
+                let value = left + x;
+                if(left + x <=0){
+                    value = 0;
+                }
+                if(left + x >= moveLength){
+                    value = moveLength;
+                }
+                //console.log(value);
+                self.setState({
+                    marginLeft : value
+                });
+            }
+        }).mouseup(function(){
+            move=false;
+            left = self.state.marginLeft
+        });
     }
 
 
@@ -230,30 +348,33 @@ class DbTable extends React.Component {
         let inputText = this.refs.inputType.value;
         let value = null;
         let list = this.state.dbList;
-
+        if(this.state.addType == 0){
+            value = "s" + inputText;
+        }
+        else {
+            value = "i" + inputText;
+        }
+        let index = header.indexOf(value);
+        let index2 = header.indexOf(inputText);
         let error = (data)=>{
             this.setState({
                 isError: true,
                 errorText: data
             })
         };
-
         if(inputText.length === 0){
-            error("名称不能为空");
+            error("字段名称不能为空");
         }
         else if(inputText.startsWith(" ")){
-            error("名称不能以空格开头");
+            error("字段名称不能以空格开头");
         }
         else if(inputText.endsWith(" ")){
-            error("名称不能以空格结尾");
+            error("字段名称不能以空格结尾");
+        }
+        else if(index>=0 || index2 >=0){
+            error("字段名称不能重复");
         }
         else {
-            if(this.state.addType == 0){
-                value = "s" + inputText;
-            }
-            else {
-                value = "i" + inputText;
-            }
             header.push(value);
             if(list.length == 0){
                 let newList = [];
@@ -267,11 +388,12 @@ class DbTable extends React.Component {
                     list[i][value] = "";
                 });
             }
-
             this.setState({
                 dbHeader : header,
-                dbList : listis,
+                dbList : list,
                 isError: false
+            },()=>{
+                this.updateNewScrollData();
             })
         }
     }
@@ -288,6 +410,7 @@ class DbTable extends React.Component {
             inputNow : key
         },()=>{
             $(".i" + key).focus();
+            $(".i" + key).select();
         })
     }
 
@@ -302,12 +425,22 @@ class DbTable extends React.Component {
         let list = this.state.dbList;
         this.setState({
             inputNow : null
-        })
+        });
         if(type == 0) {
             let value = header[which];
-            let text = this.state.inputText;
+            let type = value.charAt(0);
+            let text;
+            if(type == "s" ){
+                text = "s" + this.state.inputText;
+            }
+            else if( type == "i" ){
+                text = "i" + this.state.inputText;
+            }
+            else {
+                text = this.state.inputText;
+            }
             let index = header.indexOf(text);
-            if(index >=0 ){
+            if(index >=0 && value !== text ){
                 if(index !== which){
                     this.setState({
                         inputText : "重命名！！！"
@@ -315,17 +448,40 @@ class DbTable extends React.Component {
                 }
             }
             else {
-                list.map((v,i)=>{
-                    list[i][text] = list[i][value];
-                    delete list[i][value];
-                });
+                if(value !== text ){
+                    list.map((v,i)=>{
+                        list[i][text] = list[i][value];
+                        delete list[i][value];
+                    });
+
+                    let fc = this.state.originalHeader;
+                    let id = "theader"+which;
+                    let idArray = this.state.selectArray;
+                    let index2 = idArray.indexOf(id);
+                    if(fc[which] != text){
+                        if(index2 < 0) {
+                            idArray.push(id);
+                        }
+                    }
+                    else{
+                        if(index2 >=0){
+                            idArray.splice(index2,1);
+                        }
+                    }
+                    //console.log(idArray);
+                    this.setState({
+                        selectArray : idArray
+                    })
+                }
                 //console.log(list);
-                header[which] = this.state.inputText;
+                header[which] = text;
+                //console.log(header,this.state.originalHeader);
                 //if(which == header.length-1){
                 //    this.addColumn();
                 //}
                 this.setState({
-                    dbHeader : header
+                    dbHeader : header,
+                    dbList : list
                 })
             }
         }
@@ -333,33 +489,72 @@ class DbTable extends React.Component {
             let value = header[which2];
             let type = value.charAt(0);
             let text = "";
-            text = this.state.inputText;
+            let id = "tcontent"+which+"-"+which2;
+            let idArray = this.state.selectArray;
+            let index = idArray.indexOf(id);
+            text = this.state.inputText ? this.state.inputText : "";
+            let fuc = (test)=>{
+                let fc = this.state.originalData;
+                if((fc[which][value] != test && fc[which][value] != undefined && test)
+                    || (fc[which][value] == undefined && test)){
+                    if(index < 0) {
+                        idArray.push(id);
+                    }
+                }
+                else{
+                    if(index >=0){
+                        idArray.splice(index,1);
+                    }
+                }
+                //console.log(idArray);
+                this.setState({
+                    selectArray : idArray
+                })
+            };
+
             if(type == "s" ){
+                fuc(text);
                 list[which][value] = text;
             }
             else if( type == "i" ){
+                fuc(parseFloat(text));
                 list[which][value] = parseFloat(text);
             }
             else {
+                fuc(text);
                 list[which][value] = text;
             }
-            if(which == list.length-1 && text.length){
-                let newList = [];
-                header.map((v,i)=>{
-                    newList[v] = ""
+            if(which == list.length-1 && text.length > 0){
+                let self = this;
+                this.state.node.insert({}, function (err, data) {
+                    //if(data == undefined) return;
+                    //console.log(data);
+                    let newList = {};
+                    newList['_id'] = data;
+                    list.push(newList);
+                    let fkList = self.state.originalData;
+                    fkList.push(newList);
+                    self.setState({
+                        dbList : list,
+                        originalData : fkList
+                    })
                 });
-                list.push(newList);
+                //this.getDbList();
             }
-            this.setState({
-                dbHeader : header,
-                dbList : list
-            })
+            else {
+                this.setState({
+                    dbList : list
+                })
+            }
         }
     }
 
     popHide(){
+        this.refs.inputType.value = "";
         this.setState({
-            isAddCul: false
+            isAddCul: false,
+            isError : false,
+            errorText : ""
         })
     }
 
@@ -391,7 +586,7 @@ class DbTable extends React.Component {
                 <div className="DT-main">
                     <div className="DT-scroll">
                         <div className="DT-content" style={{ width : width }}>
-                            <table>
+                            <table style={{ marginLeft : -(this.state.marginLeft) * this.state.multiple}}>
                                 <thead>
                                     <tr>
                                         <td className={ $class({"hidden": this.state.dbHeader.length == 0})}> </td>
@@ -401,20 +596,28 @@ class DbTable extends React.Component {
                                             ? this.state.dbHeader.map((v,i)=>{
                                                 let id = "header" + i;
                                                 let name ;
+                                                let whichType;
+                                                let classname =  't'+id;
                                                 let type = v.charAt(0);
                                                 if(type == "s" ){
                                                     name = v.substr(1);
+                                                    whichType = true;
                                                 }
                                                 else if( type == "i" ){
                                                     name = v.substr(1);
+                                                    whichType = false;
                                                 }
                                                 else {
                                                     name = v;
+                                                    whichType = true;
                                                 }
                                                 return  <td key={i}
-                                                            className={ 't'+id}
+                                                            className={$class(classname,{"active": this.state.selectArray.indexOf(classname)>=0})}
                                                             onClick={ this.inputClick.bind(this, id, name)}>
+
                                                             {name}
+
+                                                            <span className={ whichType ? "icon sType-icon" : "icon iType-icon" } />
 
                                                             {
                                                                 id === this.state.inputNow
@@ -454,8 +657,12 @@ class DbTable extends React.Component {
                                                                 </td>
                                                                 {
                                                                     this.state.dbHeader.map((v2,i2)=>{
+                                                                        let classname = 't'+id+"-"+i2;
+                                                                        let array = this.state.selectArray;
                                                                         return  <td key={ i2 }
-                                                                                    className={ 't'+id+"-"+i2}
+                                                                                    className={
+                                                                                        $class(classname,{"active": array.indexOf(classname) >=0 })
+                                                                                    }
                                                                                     onClick={ this.inputClick.bind(this, id+"-"+i2, v[v2])}>
                                                                                     { v[v2] }
 
@@ -494,7 +701,7 @@ class DbTable extends React.Component {
                     <div className="scroll-div f--h">
                         <span className="icon"/>
                         <span className="scroll flex-1 f--hlc">
-                            <span style={{ }} />
+                            <span style={{ width : this.state.scrollWidth, marginLeft : this.state.marginLeft }} />
                         </span>
                     </div>
                 </div>

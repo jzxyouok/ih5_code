@@ -45,6 +45,8 @@ var funcType = {
     default: 'default'      //系统自带
 };
 
+var PREFIX = 'app/';
+
 var copyObj = {};
 
 function isEmptyString( str ){
@@ -89,54 +91,61 @@ function loadTree(parent, node, idList) {
   }
 
   if (node['vars']) {
-    for (let i = 0; i<node['vars'].length; i++) {
-        let temp = {};
-        temp['name'] = node['vars'][i].name;
-        temp['value'] = node['vars'][i].value;
-        temp['props'] = node['vars'][i].props;
-        temp['type'] = node['vars'][i].type;
-        temp['className'] = 'var';
-        temp['key'] = _keyCount++;
-        temp['widget'] = current;
-        switch (temp['type']){
-            case varType.number:
-                current.intVarList.unshift(temp);
-                break;
-            case varType.string:
-                current.strVarList.unshift(temp);
-                break;
-            default:
-                break;
-        }
-      // if (n.length >= 3 && n.substr(0, 2) == '__') {
-      //     current.varList.unshift({n.substr(2) : node['vars'][n]});
-      // }
-    }
+      node['vars'].forEach(item =>{
+          let temp = {};
+          temp['name'] = item.name;
+          temp['value'] = item.value;
+          temp['props'] = item.props;
+          temp['type'] = item.type;
+          temp['className'] = 'var';
+          temp['key'] = _keyCount++;
+          temp['widget'] = current;
+          switch (temp['type']){
+              case varType.number:
+                  current.intVarList.push(temp);
+                  break;
+              case varType.string:
+                  current.strVarList.push(temp);
+                  break;
+              default:
+                  break;
+          }
+      });
   }
   current.funcList = [];
   if (node['funcs']) {
-    for (let i = 0; i<node['funcs'].length; i++) {
-        let temp = {};
-        temp['name'] = node['funcs'][i].name;
-        temp['value'] = node['funcs'][i].value;
-        temp['params']  = node['funcs'][i].params;
-        temp['props'] = node['funcs'][i].props;
-        temp['className'] = 'func';
-        temp['key'] = _keyCount++;
-        temp['widget'] = current;
-        current.funcList.unshift(temp);
-    }
+      node['funcs'].forEach(item =>{
+          let temp = {};
+          temp['name'] = item.name;
+          temp['value'] = item.value;
+          temp['params']  = item.params;
+          temp['props'] = item.props;
+          temp['className'] = 'func';
+          temp['key'] = _keyCount++;
+          temp['widget'] = current;
+          current.funcList.push(temp);
+      });
+  }
 
-      // if (n.length >= 3 && n.substr(0, 2) == '__') {
-      //
-      // }
-        // current.funcList.unshift({key:n.substr(2), value:node['funcs'][n]});
-    // }
+  if(current.className==='db') {
+      if (node['dbItems']) {
+          current.dbItemList = [];
+          node['dbItems'].forEach(item => {
+              let temp = {};
+              temp['name'] = item.name;
+              temp['props'] = item.props;
+              temp['className'] = 'dbItem';
+              temp['key'] = _keyCount++;
+              temp['widget'] = current;
+              temp['fields'] = item.fields; //需要解析
+              current.dbItemList.push(temp);
+          })
+      }
   }
 
   if (node['etree']) {
     var eventTree = [];
-    node['etree'].forEach(item => {
+    node['etree'].forEach(item =>{
       var r = {};
       var judgesObj = item.judges;
 
@@ -205,8 +214,13 @@ function idToObject(list, idName, varName) {
     return null;
   var obj = list[idName];
   if (obj && varName) {
-    var vl = (varName.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
-    return vl[parseInt(varName.substr(1))];
+      if(varName.substr(0, 1) == 'f'){
+          var vl = obj.funcList;
+          return vl[parseInt(varName.substr(1))];
+      } else {
+          var vl = (varName.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
+          return vl[parseInt(varName.substr(1))];
+      }
   } else {
     return obj;
   }
@@ -234,10 +248,23 @@ function resolveEventTree(node, list) {
         if(!cmd.object){
             cmd.object = null;
         }
-        //不存在目标动作
-        if(!cmd.action.name) {
-            cmd.action = null;
-        }
+
+          //不存在目标动作
+          if(!cmd.action.type) {
+              cmd.action = null;
+          } else {
+              switch (cmd.action.type) {
+                  case funcType.customize:
+                      cmd.action.func = idToObject(list, cmd.action.funcId[0], cmd.action.funcId[1]);
+                      delete(cmd.action.funcId);
+                      if(!cmd.action.func){
+                          cmd.action = null;
+                      }
+                      break;
+                  default:
+                      break;
+              }
+          }
       });
 
     });
@@ -247,6 +274,26 @@ function resolveEventTree(node, list) {
       resolveEventTree(item, list);
     });
   }
+}
+
+function resolveDBItemList(node, list) {
+    if (node.dbItemList) {
+        node.dbItemList.forEach(v => {
+            v.fields.forEach(item => {
+                if(item.wid){
+                    item.value = idToObject(list, item.wid[0], item.wid[1]);
+                    delete(item.wid);
+                } else {
+                    item.value = null;
+                }
+            });
+        });
+    }
+    if (node.children.length > 0) {
+        node.children.map(item => {
+            resolveDBItemList(item, list);
+        });
+    }
 }
 
 function trimTreeNode(node, links) {
@@ -285,7 +332,7 @@ function getMaxSeq(node) {
 }
 
 function generateObjectId(object) {
-  if (object&&object.className == 'var') {
+  if (object&&(object.className == 'var'||object.className == 'func')) {
     if (object.widget.props['id'] === undefined)
       object.widget.props['id'] = 'id_' + (maxSeq++);
   } else if (object&&object.props['id'] === undefined) {
@@ -303,8 +350,24 @@ function generateId(node) {
 
       item.specificList.forEach(cmd => {
         generateObjectId(cmd.object);
+          if(cmd.action){
+              switch (cmd.action.type){
+                  case funcType.customize:
+                      generateObjectId(cmd.action.func);
+                      break;
+                  default:
+                      break;
+              }
+          }
       });
     });
+  }
+  if(node.dbItemList){
+      node.dbItemList.forEach(item => {
+          item.fields.forEach(judge => {
+              generateObjectId(judge.value);
+          });
+      });
   }
   if (node.children.length > 0) {
     node.children.map(item => {
@@ -322,6 +385,9 @@ function objectToId(object) {
     } else {
       varName = 'i' + object.widget.intVarList.indexOf(object);
     }
+  } else if (object.className == 'func'){
+      idName = object.widget.props['id'];
+      varName = 'f' + object.widget.funcList.indexOf(object);
   } else {
     idName = object.props['id'];
   }
@@ -364,31 +430,25 @@ function saveTree(data, node) {
         var cmds = [];
 
         var judges={};
-        judges.conFlag =null; //触发条件
-            if(item.conFlag !='触发条件'){
-                judges.conFlag = item.conFlag;
-            }
+        judges.conFlag = item.conFlag;
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
         judges.children=[];
             item.children.map((v,i)=>{
                    let obj={};
-
                    if (v.judgeObj) {
                       let o = objectToId(v.judgeObj);
                       obj.judgeObjId = o[0];
                       if (o[1])
                         obj.judgeVarId = o[1];
                    }
-
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
-
-
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
+             obj.judgeValOption=v.judgeValOption;
+             obj.judgeValType=v.judgeValType; //判断对象的属性的类型
 
              obj.compareFlag=v.compareFlag;//比较运算符
-
                    if (v.compareObj) {
                       var o = objectToId(v.compareObj);
                       obj.compareObjId = o[0];
@@ -398,30 +458,43 @@ function saveTree(data, node) {
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
              obj.compareValFlag =v.compareValFlag;//比较对象的属性
-
+             obj.compareValOption=v.compareValOption;
              obj.operationManager={};
-
              obj.operationManager.arrHidden=v.operationManager.arrHidden;
-
              judges.children.push(obj);
          });
 
         item.specificList.forEach(cmd => {
             var c = {};
-          if (cmd.action) {
-              c = {name:cmd.action.name,
-                  showName:cmd.action.showName,
-                  type:cmd.action.type};
-          }
-          if(cmd.object){
-            let o = objectToId(cmd.object);
-            c.id = o[0];
-            if (o[1])
-              c.var = o[1];
-          }
-          if (cmd.action&&cmd.action.property)
-            c.property = cmd.action.property;
-          cmds.push(c);
+            if (cmd.action) {
+                switch (cmd.action.type) {
+                    case funcType.customize:
+                        c = {
+                            funcId: objectToId(cmd.action.func),
+                            type: cmd.action.type
+                        };
+                        break;
+                    default:
+                        c = {
+                            name: cmd.action.name,
+                            showName: cmd.action.showName,
+                            type: cmd.action.type
+                        };
+                        break;
+                }
+            }
+            if(cmd.object){
+                let o = objectToId(cmd.object);
+                c.id = o[0];
+                if (o[1]) {
+                    c.var = o[1];
+                }
+            }
+            if (cmd.action&&cmd.action.property) {
+                c.property = cmd.action.property;
+            }
+
+            cmds.push(c);
         });
 
         etree.push({cmds:cmds,judges:judges});
@@ -431,8 +504,9 @@ function saveTree(data, node) {
       var js = generateJsFunc(etree);
       if (js)
         data['events'] = js;
-    } else
-      props[name] = node.props[name];
+    } else {
+        props[name] = node.props[name];
+    }
   }
   if (props)
     data['props'] = props;
@@ -440,49 +514,56 @@ function saveTree(data, node) {
   //   data['events'] = node.events;
   data['vars'] = [];
   if (node.intVarList.length > 0) {
-      // for (let i = node.varList.length-1; i >=0 ; i--) {
-      //     let o = {};
-      //     o['name'] = node.varList[i].name;
-      //     o['value'] = node.varList[i].value;
-      //     o['className'] = node.varList[i].className;
-      //     o['props'] = node.varList[i].props;
-      //     o['type'] = node.varList[i].type;
-      //     data['vars'].push(o);
-      // }
       //int vars list
-      for (let i = node.intVarList.length - 1; i >= 0; i--) {
+      node.intVarList.forEach(item =>{
           let o = {};
-          o['name'] = node.intVarList[i].name;
-          o['value'] = node.intVarList[i].value==null?node.intVarList[i].value:parseInt(node.intVarList[i].value);
-          o['props'] = node.intVarList[i].props;
-          o['type'] = node.intVarList[i].type;
+          o['name'] = item.name;
+          o['value'] = item.value==null?item.value:parseInt(item.value);
+          o['props'] = item.props;
+          o['type'] = item.type;
           data['vars'].push(o);
-      }
+      });
   }
   if(node.strVarList.length > 0){
     //str vars list
-    for (let i = node.strVarList.length-1; i >=0 ; i--) {
-        let o = {};
-        o['name'] = node.strVarList[i].name;
-        o['value'] = node.strVarList[i].value;
-        o['props'] = node.strVarList[i].props;
-        o['type'] = node.strVarList[i].type;
-        data['vars'].push(o);
-    }
-    // data['vars'] = o;
+      node.strVarList.forEach(item =>{
+          let o = {};
+          o['name'] = item.name;
+          o['value'] = item.value;
+          o['props'] = item.props;
+          o['type'] = item.type;
+          data['vars'].push(o);
+      });
   }
+  data['funcs'] = [];
   if (node.funcList.length > 0) {
-    data['funcs'] = [];
-    for (let i = node.funcList.length-1; i >=0 ; i--) {
-        var o = {};
-      // o['' + node.funcList[i].key] = node.funcList[i].key;
-        o['name'] = node.funcList[i].name;
-        o['value'] = node.funcList[i].value;
-        o['params'] = node.funcList[i].params;
-        o['props'] = node.funcList[i].props;
-        data['funcs'].push(o);
-    }
-    // data['funcs'] = o;
+      node.funcList.forEach(item =>{
+          var o = {};
+          o['name'] = item.name;
+          o['value'] = item.value;
+          o['params'] = item.params;
+          o['props'] = item.props;
+          data['funcs'].push(o);
+      });
+  }
+  if(node.className==='db'&&node.dbItemList.length >0) {
+      //db
+      data['dbItems'] = [];
+      node.dbItemList.forEach(item =>{
+          var o = {};
+          o['name'] = item.name;
+          o['fields'] = [];
+          item.fields.forEach(field =>{
+              let name = field.name;
+              let wid = null;
+              if(field.value){
+                  wid = objectToId(field.value);
+              }
+              o['fields'].push({name: name, wid: wid});
+          });
+          o['props'] = item.props;
+          data['dbItems'].push(o);
+      });
   }
   if (node.children.length > 0) {
     data['children'] = [];
@@ -809,8 +890,26 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
       if (this.currentWidget) {
+          if (!copyObj.className&&!copyObj.cls) {
+              return;
+          }
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
+          //清event
+          let clearEvent = copyObj =>{
+              if(copyObj.etree&&copyObj.etree.length>0){
+                  copyObj.etree.forEach(i =>(
+                      i.cmds = []
+                  ));
+              }
+              if(copyObj.children&&copyObj.children.length>0){
+                copyObj.children.forEach(value =>{
+                    clearEvent(value);
+                });
+              }
+          };
+          clearEvent(copyObj);
+
         loadTree(this.currentWidget, copyObj);
         if(copyObj.props.eventTree){
           this.reorderEventTreeList();
@@ -1034,7 +1133,7 @@ export default Reflux.createStore({
             this.currentWidget.props['eventTree'] = [];
             this.currentWidget.props['eventTree'].push(this.emptyEventTree(className));
         }
-        this.trigger({redrawTree: true});
+        this.trigger({redrawTree: true, redrawWidget: this.currentWidget});
         this.reorderEventTreeList();
         // this.render();
     },
@@ -1190,6 +1289,7 @@ export default Reflux.createStore({
             } else if(props['params']) {
                 this.currentFunction['params'] = props['params'];
             }
+            this.trigger({updateFunction: {widget:this.currentWidget}});
         }
     },
     removeFunction: function () {
@@ -1399,7 +1499,7 @@ export default Reflux.createStore({
         if(this.currentWidget) {
             let dbItem = {};
             dbItem['name'] = param.name||'';
-            dbItem['params'] = param.params||null; //字段s
+            dbItem['fields'] = param.fields||[]; //字段s
             dbItem['className']  = 'dbItem';
             dbItem['key'] = _keyCount++;
             dbItem['widget'] = this.currentWidget;
@@ -1418,6 +1518,8 @@ export default Reflux.createStore({
             if(props) {
                 if(props['name']) {
                     this.currentDBItem['name'] = props['name'];
+                } else if (props['fields']){
+                    this.currentDBItem['fields'] = props['fields'];
                 }
             }
         }
@@ -1445,7 +1547,7 @@ export default Reflux.createStore({
                this.pasteVariable();
                break;
            case nodeType.dbItem:
-               //TODO: PASTE DBITEM
+               //DBITEM DO NOTHING
                break;
            default:
                this.pasteWidget();
@@ -1461,7 +1563,7 @@ export default Reflux.createStore({
                 this.cutVariable();
                 break;
             case nodeType.dbItem:
-                //TODO: CUT DBITEM
+                //DBITEM DO NOTHING
                 break;
             default:
                 this.cutWidget();
@@ -1489,7 +1591,7 @@ export default Reflux.createStore({
                 this.copyVariable();
                 break;
             case nodeType.dbItem:
-                //TODO: COPY DBITEM
+                //DBITEM DO NOTHING
                 break;
             default:
                 this.copyWidget();
@@ -1538,6 +1640,7 @@ export default Reflux.createStore({
                 tree = loadTree(null, data['defs'][n], idList);
                 stageTree.push({name: n, tree: tree});
                 resolveEventTree(tree, idList);
+                resolveDBItemList(tree, idList);
             }
         }
 
@@ -1548,6 +1651,7 @@ export default Reflux.createStore({
         idList = [];
         tree = loadTree(null, data['stage'], idList);
         resolveEventTree(tree, idList);
+        resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
         // bridge.createSelector(null);
 
@@ -1560,6 +1664,7 @@ export default Reflux.createStore({
 
         this.trigger({initTree: stageTree, classList: classList});
         this.selectWidget(stageTree[0].tree);
+        this.getAllWidgets();
     },
     addClass: function(name, bool) {
         if(bool){

@@ -3,7 +3,7 @@ import React from 'react';
 import $class from 'classnames'
 
 import Property from './Property'
-import WidgetStore from '../../stores/WidgetStore'
+import WidgetStore, {funcType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import  {propertyMap} from '../PropertyMap'
 import {eventTempData} from './tempData'
@@ -17,11 +17,12 @@ class Event extends React.Component {
         this.state = {
             expanded: true,
             objName: [],
+            toLong:false,
             eventList: this.props.eventList,
             selectWidget: this.props.widget,
             allWidgetsList: null,
             activeKey: this.props.activeKey,  //当前激活事件的key
-            specialObject: ['counter', 'text', 'strVar', 'intVar'],
+            specialObject: ['counter', 'text', 'var'],
 
             //用于下拉框显示
             conOption: [],//每次点击后赋值
@@ -32,6 +33,7 @@ class Event extends React.Component {
             compareObjOption: [],//出现新的widget则更新
             compareValOption: ['比较值1', '比较值2']
         };
+
 
         this.curChildrenIndex = 0;
         this.curEventIndex = 0;
@@ -45,11 +47,17 @@ class Event extends React.Component {
         this.getChooseObjByIndex=this.getChooseObjByIndex.bind(this);
 
         this.getJudgeValType =this.getJudgeValType.bind(this);
+        this.getSpacJudgeValType=this.getSpacJudgeValType.bind(this);
         this.getCompareValOption =this.getCompareValOption.bind(this);
 
+
+        this.menuList_pub =this.menuList_pub.bind(this);
+        this.menuList =this.menuList.bind(this);
+        this.setEventBoxWidth=this.setEventBoxWidth.bind(this);
+
+        this.onSetSpecificListProperty = this.onSetSpecificListProperty.bind(this);
+
     }
-
-
 
     componentWillReceiveProps(nextProps) {
         nextProps.eventList.map((v,i)=>{
@@ -70,10 +78,12 @@ class Event extends React.Component {
              v.conFlag='触发条件';
           }
         });
+
         this.setState({
             activeKey:nextProps.activeKey,
             eventList:nextProps.eventList
         })
+
     }
 
     componentDidMount() {
@@ -82,6 +92,7 @@ class Event extends React.Component {
 
         //获取当前事件对象的触发条件
         this.getConditionOption();
+        this.setEventBoxWidth();
     }
 
     componentWillUnmount() {
@@ -89,6 +100,7 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
+
 
         //触发更新目标对象列表
         if (widget.redrawEventTree) {
@@ -102,7 +114,7 @@ class Event extends React.Component {
             let arr2=[];
 
             widget.allWidgets.map((v,i)=>{
-                arr.push([v.className,v.props.name]);
+                arr.push([v.className,v.props.name,v.type]);
                 arr2.push(v.props.name);
             });
 
@@ -112,8 +124,6 @@ class Event extends React.Component {
                 allWidgetsList: widget.allWidgets,
                 judgeObjOption:arr2,  //命名
                 compareObjOption:arr2 //命名
-            },()=>{
-                console.log('w',widget.allWidgets);
             });
         }
 
@@ -124,7 +134,51 @@ class Event extends React.Component {
                 this.getConditionOption();
             });
         }
+        else if (widget.updateFunction&&widget.updateFunction.widget){
+            let eventList = this.state.eventList;
+            eventList.forEach(v=>{
+                v.specificList.forEach(s=>{
+                    if(s.action&&s.action.type === funcType.customize){
+                        if (s.action.func.widget.key === widget.updateFunction.widget.key) {
+                            let property = this.onSetSpecificListProperty(s.action, s.action.func.params);
+                            s.action.property = property;
+                        }
+                    }
+                });
+            });
+            this.setState({
+                eventList:eventList
+            })
+        }
 
+    }
+
+    onSetSpecificListProperty(action, params) {
+        //params
+        let newProperty = null;
+        if(params&&params.length>0){
+            newProperty = [];
+            params.forEach(p =>{
+                if(p.name&&p.type){
+                    let index = -1;
+                    if(action.property){
+                        action.property.forEach((i,ind) =>{
+                            if(i.name === p.name){
+                                index = ind;
+                                newProperty.push(i);
+                            }
+                        });
+                    }
+                    if(index === -1) {
+                        newProperty.push({'name':p.name, 'showName':p.name, 'value':null, 'type':p.type.type});
+                    }
+                }
+            });
+            if(newProperty.length==0){
+                newProperty = null;
+            }
+        }
+        return newProperty;
     }
 
     getJudgeValType(val){
@@ -138,6 +192,20 @@ class Event extends React.Component {
         return saveVal;
     }
 
+    getSpacJudgeValType(val){
+        let saveVal=null;
+        this.state.objName.map((v,i)=>{
+            if(v[1]== val){
+                saveVal =  v[2];
+            }
+        });
+        if(saveVal=='number'){
+            saveVal=0;
+        }else if(saveVal=='number'){
+            saveVal=2;
+        }
+        return saveVal;
+    }
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);
     }
@@ -157,9 +225,8 @@ class Event extends React.Component {
         return val;
     }
 
-    getCompareValOption(nameArr){
+    getCompareValOption(propArr){
         let judgeValType =this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].judgeValType;
-        let propArr =this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr;
         let arr=[];
         propArr.map((v,i)=>{
             if(v.type == judgeValType){
@@ -269,23 +336,26 @@ class Event extends React.Component {
 
         switch (flag) {
             case 'judgeObjFlag':
-                let judgeValOption = [];
+
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
                     arrHidden = [false, false, true, false, false, true];
+
+
+
+                    initFlag.judgeValType=this.getSpacJudgeValType(value);
+                    console.log(initFlag.judgeValType);
+
                 } else {
                     arrHidden = [false, false, false, true, true, true];
                     //非五类
                     let propObj = this.setObjProperty(chooseEventClassName);
-                    judgeValOption =propObj.nameArr;
                     initFlag.propArr =propObj.propArr;
+                    initFlag.judgeValOption = propObj.nameArr;
                 }
                 //初始化后四个
 
-                this.setState({judgeValOption: judgeValOption});
-
                 initFlag.judgeObj =this.getChooseObjByIndex(index);
 
-                initFlag.judgeValOption = judgeValOption;
 
                 initFlag.judgeValFlag = '判断值';
                 initFlag.compareFlag = '=';
@@ -300,7 +370,7 @@ class Event extends React.Component {
                 //初始化后三个
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较对象';
-                initFlag.compareValFlag = '比较';
+                initFlag.compareValFlag = '比较值';
                 initFlag.operationManager = {
                     arrHidden: arrHidden
                 }
@@ -324,9 +394,7 @@ class Event extends React.Component {
                     compareValOption = this.setObjProperty(chooseEventClassName);
 
                     let propObj = this.setObjProperty(chooseEventClassName);
-                    compareValOption =this.getCompareValOption(propObj.nameArr);
-
-                    this.setState({compareValOption: compareValOption});
+                    compareValOption =this.getCompareValOption(propObj.propArr);
 
                     initFlag.compareObj =this.getChooseObjByIndex(index);
 
@@ -337,7 +405,7 @@ class Event extends React.Component {
                         arrHidden: arrHidden
                     }
                 }
-                //初始化后一个
+
                 break;
             default :
                 isRun = false;
@@ -346,13 +414,19 @@ class Event extends React.Component {
         if (isRun) {
             let eventList = this.state.eventList;
             eventList[this.curEventIndex].children[this.curChildrenIndex] = initFlag;
+            //判断事件面板所需宽度
+            this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
         }
     }
 
-    setCurChildrenIndex(index,eventIndex,e){
+    setCurChildrenIndex(index,eventIndex,isUpdate,e){
         this.curChildrenIndex =index;
         this.curEventIndex=eventIndex;
+
+        if(isUpdate){
+            this.forceUpdate();
+        }
     }
 
     inputChange(val,event) {
@@ -362,17 +436,51 @@ class Event extends React.Component {
             eventList: eventList
         });
     }
-    render() {
-        let menuList = (flag)=> {
-            let option = flag.replace('Flag', 'Option');
+
+    menuList_pub(flag) {
+        let option = flag.replace('Flag', 'Option');
+        return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
+            {
+                this.state[option].map((v, i)=> {
+                    return <MenuItem key={i} index={i} object={v}>{v}</MenuItem>;
+                })
+            }
+        </Menu>)
+    }
+    menuList(flag) {
+        let option = flag.replace('Flag', 'Option');
+        let children = this.state.eventList[this.curEventIndex].children[this.curChildrenIndex];
+        if( children && children[option]){
             return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
                 {
-                    this.state[option].map((v, i)=> {
+                    children[option].map((v, i)=> {
                         return <MenuItem key={i} index={i}  object={v}>{v}</MenuItem>;
                     })
                 }
             </Menu>)
         }
+        return (<Menu></Menu>)
+    }
+    setEventBoxWidth(eventList){
+        let tag=false;
+        let oEventBox=document.getElementsByClassName('EventBox')[0];
+
+        let elist=eventList?eventList:this.state.eventList;
+            elist.map((v,i)=>{
+                if(v.children){
+                    v.children.map((item,index)=>{
+                        if( !item.operationManager.arrHidden[2] && !item.operationManager.arrHidden[5]){
+                            tag=true;
+                        }
+                    });
+                }
+        });
+        oEventBox.style.width=tag?'820px':'740px';
+
+        this.setState({toLong:tag});
+    }
+
+    render() {
         let content = ((v,i)=>{
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
@@ -385,8 +493,8 @@ class Event extends React.Component {
                                     <span className='title-icon' />
                                     <div className='dropDown-layer long'>
                                         <Dropdown
-                                            overlay={menuList('conFlag')}
-                                            onClick={this.setCurChildrenIndex.bind(this,null,i)}
+                                            overlay={this.menuList_pub('conFlag')}
+                                            onClick={this.setCurChildrenIndex.bind(this,null,i,false)}
                                             getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                             trigger={['click']}>
                                             <div  className={$class('title f--hlc',{'title-gray':v.conFlag==this.state.conFlag})} >
@@ -400,15 +508,15 @@ class Event extends React.Component {
                             {
                                 !v.children || v.children.length === 0
                                     ? null
-                                    :   <div className={$class('zhong',{'hidden':v.zhongHidden})}>
+                                    :   <div className={$class('zhong',{'hidden':v.zhongHidden,'zhongToLong':this.state.toLong})}>
                                     {
                                         v.children.map((v1,i1)=>{
                                             return  <div className="list f--hlc" key={i1}>
                                                 <span className="supplement-line" />
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[0]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[0]})} >
                                                     <Dropdown
-                                                        overlay={ menuList('logicalFlag')}
-                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i)}
+                                                        overlay={this.menuList_pub('logicalFlag')}
+                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i,false)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div className='title f--hlc'>
@@ -417,10 +525,10 @@ class Event extends React.Component {
                                                     </Dropdown>
                                                 </div>
 
-                                                <div className={$class('dropDown-layer long',{'hidden':v1.operationManager.arrHidden[1]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[1]})} >
                                                     <Dropdown
-                                                        overlay={menuList('judgeObjFlag')}
-                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i)}
+                                                        overlay={this.menuList_pub('judgeObjFlag')}
+                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i,false)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div   className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag==this.state.judgeObjFlag})} >
@@ -430,10 +538,10 @@ class Event extends React.Component {
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                <div className={$class('dropDown-layer long',{'hidden':v1.operationManager.arrHidden[2]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[2]})} >
                                                     <Dropdown
-                                                        overlay={menuList('judgeValFlag')}
-                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i)}
+                                                        overlay={this.menuList('judgeValFlag')}
+                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i,true)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div    className={$class('title f--hlc',{'title-gray':v1.judgeValFlag==this.state.judgeValFlag})} >
@@ -443,10 +551,10 @@ class Event extends React.Component {
                                                     </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[3]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[3]})} >
                                                     <Dropdown
-                                                        overlay={menuList('compareFlag')}
-                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i)}
+                                                        overlay={this.menuList_pub('compareFlag')}
+                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i,false)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div className='title f--hlc'>
@@ -456,10 +564,10 @@ class Event extends React.Component {
                                                     <div className="dropDown"></div>
                                                 </div>
 
-                                                <div className={$class('dropDown-layer long',{'hidden':v1.operationManager.arrHidden[4]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[4]})} >
                                                     <Dropdown
-                                                        overlay={menuList('compareObjFlag')}
-                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i)}
+                                                        overlay={this.menuList_pub('compareObjFlag')}
+                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i,false)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div  className={$class('title f--hlc',{'title-gray':v1.compareObjFlag==this.state.compareObjFlag})} >
@@ -468,10 +576,10 @@ class Event extends React.Component {
                                                     </Dropdown>
                                                     <div className="dropDown"></div>
                                                 </div>
-                                                <div className={$class('dropDown-layer long',{'hidden':v1.operationManager.arrHidden[5]})} >
+                                                <div className={$class('dropDown-layer mr20 middle',{'hidden':v1.operationManager.arrHidden[5]})} >
                                                     <Dropdown
-                                                        overlay={menuList('compareValFlag')}
-                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i)}
+                                                        overlay={this.menuList('compareValFlag')}
+                                                        onClick={this.setCurChildrenIndex.bind(this,i1,i,true)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div   className={$class('title f--hlc',{'title-gray':v1.compareValFlag==this.state.compareValFlag})} >

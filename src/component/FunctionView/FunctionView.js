@@ -12,8 +12,8 @@ const FormItem = Form.Item;
 const MenuItem = Menu.Item;
 
 const paramTypes = [
-    {name: 'Number', value: propertyType.Number, showName: '数字'},
-    {name: 'String', value: propertyType.String, showName: '字符'}
+    {name: 'Number', type: propertyType.Number, showName: '数值'},
+    {name: 'String', type: propertyType.String, showName: '字符'}
 ];
 
 class FunctionView extends React.Component {
@@ -172,6 +172,15 @@ class FunctionView extends React.Component {
                 <div className='ant-col-r'>
                     <div className="right-col-container">
                         <div className='ant-form-item-label'>
+                            <label>名称</label>
+                        </div>
+                        <div className= {$class('ant-form-item-control params-name' )}>
+                            <Input type="text" size="small" placeholder="输入名称"
+                                   onChange={this.onEditParamsChange.bind(this, i1)}
+                                   onBlur={this.endEditParams}
+                                   value={this.state.params[i1].name}/>
+                        </div>
+                        <div className='ant-form-item-label'>
                             <label>类型</label>
                         </div>
                         <div className= {$class('ant-form-item-control params-dropdown')}>
@@ -190,19 +199,8 @@ class FunctionView extends React.Component {
                                 </div>
                             </Dropdown>
                         </div>
-                        <div className='ant-form-item-label'>
-                            <label>名称</label>
-                        </div>
-                        <div className= {$class('ant-form-item-control params-name' )}>
-                            <Input type="text" size="small" placeholder="输入名称"
-                                   onChange={this.onEditParamsChange.bind(this, i1)}
-                                   onBlur={this.endEditParams}
-                                   value={this.state.params[i1].name}/>
-                        </div>
                         <div className= {$class('ant-form-item-control params-delete')} onClick={this.onRemoveParamsBtn.bind(this, i1)}>
-                            x
                         </div>
-
                     </div>
                 </div>
             </div>

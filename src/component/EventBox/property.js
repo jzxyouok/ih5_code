@@ -13,20 +13,16 @@ const MenuItem = Menu.Item;
 class Property extends React.Component {
     constructor (props) {
         super(props);
-
         this.state = {
             expanded: true,
-
             activeKey: this.props.activeKey,//当前激活的widgetkey
             wKey: this.props.wKey,      //specfic所在的widgetkey
             event: this.props.event,        //对应的事件
-            specific: this.props.specific,  //specfic
-
+            specific: this.props.specific,  //specific
             objectList: null,    //目标对象的列表
             actionList: null,    //对象动作列表
             objectDropdownVisible: false, //是否显示对象的下拉框
             actionDropdownVisible: false, //是否显示动作的下拉框
-
             currentObject: this.props.specific.object,
             currentAction: this.props.specific.action,  //name&property
         };
@@ -96,7 +92,19 @@ class Property extends React.Component {
         if(className !== 'var') {
             for(let i=0; i<obj.funcList.length; i++){
                 let func = obj.funcList[i];
-                let act = { name: func.name, showName:func.props.name, type: funcType.customize, widget:obj};
+                let act = { func:func, type: funcType.customize};
+                //params
+                if(func.params){
+                    let property = [];
+                    func.params.forEach(p =>{
+                        if(p.name&&p.type){
+                            property.push({'name':p.name, 'showName':p.name, 'value':null, 'type':p.type.type});
+                        }
+                    });
+                    if(property.length>0){
+                        act['property']= property;
+                    }
+                }
                 actionList.push(act);
             }
         }
@@ -182,6 +190,26 @@ class Property extends React.Component {
     onActionSelect(e){
         e.domEvent.stopPropagation();
         let action = e.item.props.action;
+        if(this.state.currentAction&&action.type===this.state.currentAction.type) {
+            switch (action.type){
+                case funcType.customize:
+                    if(action.func.key == this.state.currentAction.func.key){
+                        this.setState({
+                            actionDropdownVisible: false
+                        });
+                        return;
+                    }
+                    break;
+                default:
+                    if(action.name == this.state.currentAction.name){
+                        this.setState({
+                            actionDropdownVisible: false
+                        });
+                        return;
+                    }
+                    break;
+            }
+        }
         this.setState({
             currentAction: action,
             actionDropdownVisible: false
@@ -208,6 +236,7 @@ class Property extends React.Component {
             case propertyType.Integer:
             case propertyType.Float:
             case propertyType.Boolean2:
+            case propertyType.Number:
                 value = e;
                 break;
             case propertyType.Function:
@@ -237,6 +266,7 @@ class Property extends React.Component {
             case propertyType.String:
             case propertyType.Integer:
             case propertyType.Float:
+            case propertyType.Number:
                 defaultProp.value = item.value;
                 break;
             case propertyType.Boolean2:
@@ -278,6 +308,7 @@ class Property extends React.Component {
                     return <InputNumber {...defaultProp}/>;
                     // return <input className="flex-1" type="text" placeholder={value}/>;
                 case propertyType.Float:
+                case propertyType.Number:
                     return <InputNumber step={0.1} {...defaultProp}/>;
                     {/*return <input className="flex-1" type="text" placeholder={value}/>;*/}
                 case propertyType.Function:
@@ -311,7 +342,12 @@ class Property extends React.Component {
         );
 
         let actionMenuItem = (v2, i)=>{
-            return <MenuItem key={i} action={v2}>{v2.showName}</MenuItem>
+            switch (v2.type) {
+                case funcType.customize:
+                    return <MenuItem key={i} action={v2}>{v2.func.props.name}</MenuItem>;
+                case funcType.default:
+                    return <MenuItem key={i} action={v2}>{v2.showName}</MenuItem>;
+            }
         };
 
         let actionMenu = (
@@ -369,10 +405,12 @@ class Property extends React.Component {
                                     <div className={$class("p--dropDown long", {'active':this.state.actionDropdownVisible})}>
                                         <div className="title f--hlc">
                                             <span className="pp--icon" />
-                                            { !this.state.currentAction||
-                                              !this.state.currentAction.showName
-                                                ? '目标动作'
-                                                : this.state.currentAction.showName
+                                            {
+                                                !this.state.currentAction
+                                                    ? '目标动作'
+                                                    : this.state.currentAction.type === funcType.customize
+                                                        ? this.state.currentAction.func.props.name
+                                                        : this.state.currentAction.showName
                                             }
                                             <span className="icon" />
                                         </div>
