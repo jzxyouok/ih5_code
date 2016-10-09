@@ -137,12 +137,10 @@ class Event extends React.Component {
             let eventList = this.state.eventList;
             eventList.forEach(v=>{
                 v.specificList.forEach(s=>{
-                    if(s.action){
-                        if(s.action.type === funcType.customize) {
-                            if (s.action.func.widget.key === widget.updateFunction.widget.key) {
-                                let property = this.onSetSpecificListProperty(s.action, s.action.func.params);
-                                s.action.property = property;
-                            }
+                    if(s.action&&s.action.type === funcType.customize){
+                        if (s.action.func.widget.key === widget.updateFunction.widget.key) {
+                            let property = this.onSetSpecificListProperty(s.action, s.action.func.params);
+                            s.action.property = property;
                         }
                     }
                 });
@@ -163,14 +161,15 @@ class Event extends React.Component {
                 if(p.name&&p.type){
                     let index = -1;
                     if(action.property){
-                        action.property.forEach(i =>{
+                        action.property.forEach((i,ind) =>{
                             if(i.name === p.name){
+                                index = ind;
                                 newProperty.push(i);
                             }
                         });
                     }
                     if(index === -1) {
-                        newProperty.push({'name':p.name, showName:p.name, 'value':null, 'type':p.type.type});
+                        newProperty.push({'name':p.name, 'showName':p.name, 'value':null, 'type':p.type.type});
                     }
                 }
             });
