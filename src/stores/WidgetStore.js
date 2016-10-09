@@ -1483,6 +1483,7 @@ export default Reflux.createStore({
             } else {
                 dbItem['props']['name'] = 'dbItem' + (this.currentWidget['dbItemList'].length + 1);
             }
+            this.trigger({updateDBItem: {widget:this.currentWidget}});
             this.currentWidget['dbItemList'].unshift(dbItem);
         }
         this.trigger({redrawTree: true});
@@ -1508,6 +1509,7 @@ export default Reflux.createStore({
             }
             if(index>-1){
                 this.currentWidget.dbItemList.splice(index,1);
+                this.trigger({updateDBItem: {widget:this.currentWidget}});
                 this.selectWidget(this.currentWidget);
             }
         }

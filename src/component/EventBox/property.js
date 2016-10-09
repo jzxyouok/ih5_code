@@ -83,6 +83,12 @@ class Property extends React.Component {
                     this.onGetActionList(this.state.currentObject);
                 }
             }
+        } else if (widget.updateDBItem) {
+            if(widget.updateDBItem.widget&&this.state.currentObject&&this.state.currentAction){
+                if(this.state.currentObject.className === 'db' && this.state.currentAction.name){
+                    this.forceUpdate();
+                }
+            }
         }
     }
 
