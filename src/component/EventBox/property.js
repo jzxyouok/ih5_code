@@ -18,7 +18,7 @@ class Property extends React.Component {
             activeKey: this.props.activeKey,//当前激活的widgetkey
             wKey: this.props.wKey,      //specfic所在的widgetkey
             event: this.props.event,        //对应的事件
-            specific: this.props.specific,  //specfic
+            specific: this.props.specific,  //specific
             objectList: null,    //目标对象的列表
             actionList: null,    //对象动作列表
             objectDropdownVisible: false, //是否显示对象的下拉框
@@ -79,7 +79,6 @@ class Property extends React.Component {
             if(widget.updateFunction.widget&&this.state.currentObject){
                 if(widget.updateFunction.widget.key == this.state.currentObject.key){
                     this.onGetActionList(this.state.currentObject);
-                    //TODO: 还需要更新目标函数
                 }
             }
         }

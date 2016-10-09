@@ -214,8 +214,13 @@ function idToObject(list, idName, varName) {
     return null;
   var obj = list[idName];
   if (obj && varName) {
-    var vl = (varName.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
-    return vl[parseInt(varName.substr(1))];
+      if(varName.substr(0, 1) == 'f'){
+          var vl = obj.funcList;
+          return vl[parseInt(varName.substr(1))];
+      } else {
+          var vl = (varName.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
+          return vl[parseInt(varName.substr(1))];
+      }
   } else {
     return obj;
   }
@@ -243,10 +248,20 @@ function resolveEventTree(node, list) {
         if(!cmd.object){
             cmd.object = null;
         }
-        //不存在目标动作
-        if(!cmd.action.name) {
-            cmd.action = null;
-        }
+
+          //不存在目标动作
+          if(!cmd.action.type) {
+              cmd.action = null;
+          } else {
+              switch (cmd.action.type) {
+                  case funcType.customize:
+                      cmd.action.func = idToObject(list, cmd.action.funcId[0], cmd.action.funcId[1]);
+                      delete(cmd.action.funcId);
+                      break;
+                  default:
+                      break;
+              }
+          }
       });
 
     });
@@ -314,7 +329,7 @@ function getMaxSeq(node) {
 }
 
 function generateObjectId(object) {
-  if (object&&object.className == 'var') {
+  if (object&&(object.className == 'var'||object.className == 'func')) {
     if (object.widget.props['id'] === undefined)
       object.widget.props['id'] = 'id_' + (maxSeq++);
   } else if (object&&object.props['id'] === undefined) {
@@ -332,6 +347,15 @@ function generateId(node) {
 
       item.specificList.forEach(cmd => {
         generateObjectId(cmd.object);
+          if(cmd.action){
+              switch (cmd.action.type){
+                  case funcType.customize:
+                      generateObjectId(cmd.action.func);
+                      break;
+                  default:
+                      break;
+              }
+          }
       });
     });
   }
@@ -358,6 +382,9 @@ function objectToId(object) {
     } else {
       varName = 'i' + object.widget.intVarList.indexOf(object);
     }
+  } else if (object.className == 'func'){
+      idName = object.widget.props['id'];
+      varName = 'f' + object.widget.funcList.indexOf(object);
   } else {
     idName = object.props['id'];
   }
@@ -419,20 +446,35 @@ function saveTree(data, node) {
 
         item.specificList.forEach(cmd => {
             var c = {};
-          if (cmd.action) {
-              c = {name:cmd.action.name,
-                  showName:cmd.action.showName,
-                  type:cmd.action.type};
-          }
-          if(cmd.object){
-            let o = objectToId(cmd.object);
-            c.id = o[0];
-            if (o[1])
-              c.var = o[1];
-          }
-          if (cmd.action&&cmd.action.property)
-            c.property = cmd.action.property;
-          cmds.push(c);
+            if (cmd.action) {
+                switch (cmd.action.type) {
+                    case funcType.customize:
+                        c = {
+                            funcId: objectToId(cmd.action.func),
+                            type: cmd.action.type
+                        };
+                        break;
+                    default:
+                        c = {
+                            name: cmd.action.name,
+                            showName: cmd.action.showName,
+                            type: cmd.action.type
+                        };
+                        break;
+                }
+            }
+            if(cmd.object){
+                let o = objectToId(cmd.object);
+                c.id = o[0];
+                if (o[1]) {
+                    c.var = o[1];
+                }
+            }
+            if (cmd.action&&cmd.action.property) {
+                c.property = cmd.action.property;
+            }
+
+            cmds.push(c);
         });
 
         etree.push({cmds:cmds,judges:judges});
