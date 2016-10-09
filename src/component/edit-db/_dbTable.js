@@ -274,7 +274,7 @@ class DbTable extends React.Component {
     saveBtn(){
         this.updateHeader();
         //console.log(this.state.dbHeader,this.state.dbList);
-        //this.state.node.updata(this.state.dbList);
+        this.state.node.update(this.state.dbList);
     }
 
     updateNewScrollData(){
@@ -454,6 +454,9 @@ class DbTable extends React.Component {
                         }
                     }
                     //console.log(idArray);
+                    this.setState({
+                        selectArray : idArray
+                    })
                 }
                 //console.log(list);
                 header[which] = text;
@@ -463,8 +466,7 @@ class DbTable extends React.Component {
                 //}
                 this.setState({
                     dbHeader : header,
-                    dbList : list,
-                    selectArray : idArray
+                    dbList : list
                 })
             }
         }
