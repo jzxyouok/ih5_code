@@ -9,6 +9,7 @@ import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
 import { propertyMap, propertyType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
+const Option = Select.Option;
 
 class Property extends React.Component {
     constructor (props) {
@@ -37,6 +38,7 @@ class Property extends React.Component {
         this.onActionSelect = this.onActionSelect.bind(this);
         this.onGetActionList = this.onGetActionList.bind(this);
         this.onChangePropDom = this.onChangePropDom.bind(this);
+        this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -256,6 +258,21 @@ class Property extends React.Component {
         });
     }
 
+    onPropertyContentSelect(prop, index, e) {
+        e.domEvent.stopPropagation();
+        let data = e.item.props.data;
+        prop.value = data;
+        let property = this.state.currentAction.property;
+        property[index] = prop;
+        let action = this.state.currentAction;
+        action.property = property;
+        this.setState({
+            currentAction: action,
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+        });
+    }
+
 
     getProps(item, index) {
         var defaultProp = {
@@ -279,7 +296,7 @@ class Property extends React.Component {
                 }
                 break;
             case propertyType.Function:
-                break;
+            case propertyType.Select:
             default:
                 break;
         }
@@ -287,19 +304,24 @@ class Property extends React.Component {
     }
 
     render() {
-        let content = (v1,i1)=>{
+        let propertyId = 'spec-item-'+ this.state.specific.sid;
+        let propertyContent = (v1,i1)=>{
             //设置通用默认参数和事件
             return  <div className="pp--list f--hlc" key={i1}>
                         <div className="pp--name">{ v1.showName }</div>
-                        { type(v1.type, v1.value, this.getProps(v1, i1))}
+                        { type(v1.type, this.getProps(v1, i1), v1, i1)}
                     </div>
         };
 
-        let func = (v1, i2)=>{
-            return <Option value={v1}>{v1.props.name}</Option>;
+        // let funcList = (v2, i2)=>{
+        //     return <MenuItem data={v2} key={i2}>{v2.props.name}</MenuItem>;
+        // };
+
+        let dbList = (v3, i3)=>{
+            return <MenuItem data={v3} key={i3}>{v3.props.name}</MenuItem>;
         };
 
-        let type = (type, value, defaultProp)=>{
+        let type = (type, defaultProp, item, index)=>{
             switch (type) {
                 case propertyType.String:
                     return <Input {...defaultProp}/>;
@@ -310,17 +332,36 @@ class Property extends React.Component {
                 case propertyType.Float:
                 case propertyType.Number:
                     return <InputNumber step={0.1} {...defaultProp}/>;
-                    {/*return <input className="flex-1" type="text" placeholder={value}/>;*/}
-                case propertyType.Function:
-                    return <Select defaultValue="目标函数"  {...defaultProp}>
-                        {
-                            !this.state.currentObject.funcList||this.state.currentObject.funcList.length==0
-                                ? null
-                                : this.state.currentObject.funcList.map(func)
-                        }
-                    </Select>;
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
+                case propertyType.Select:
+                    if(this.state.currentObject.className === 'db'&& item.name ==='data'){
+                        let menu = (
+                            <Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
+                                {
+                                    !this.state.currentObject.dbItemList||this.state.currentObject.dbItemList.length==0
+                                        ? null
+                                        : this.state.currentObject.dbItemList.map(dbList)
+                                }
+                            </Menu>
+                        );
+                        return <Dropdown overlay={menu} trigger={['click']}
+                                         getPopupContainer={() => document.getElementById(propertyId)}>
+                            <div className={$class("p--dropDown short")}>
+                                <div className="title f--hlc">
+                                    { !item.value || !item.value.props.name
+                                        ?'来源'
+                                        :item.value.props.name
+                                    }
+                                    <span className="icon" />
+                                </div>
+                            </div>
+                        </Dropdown>;
+                    } else {
+                        return <div>未定义类型</div>;
+                    }
+                case propertyType.Function:
+                    return <div>未定义类型</div>;
                 default:
                     return <div>未定义类型</div>;
             }
@@ -359,8 +400,6 @@ class Property extends React.Component {
                 }
             </Menu>
         );
-
-        let propertyId = 'spec-item-'+ this.state.specific.sid;
 
         return (
             <div className="Property f--h" id={propertyId}>
@@ -425,7 +464,7 @@ class Property extends React.Component {
                                             ? null
                                             : <div className="pp--list-layer flex-1">
                                             {
-                                                this.state.currentAction.property.map(content)
+                                                this.state.currentAction.property.map(propertyContent)
                                             }
                                         </div>
                                     }

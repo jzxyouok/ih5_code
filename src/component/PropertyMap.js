@@ -538,20 +538,20 @@ propertyMap['track'] = [
 propertyMap['db'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'find', showName:'查找', isFunc: true, info:'(option, callback(err, result))',
+    { name: 'find', showName:'输出', isFunc: true, info:'(option, callback(err, result))',
         property:[
             {'name':'option', showName:'选项', 'value':null, 'type':propertyType.String},
-            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',
         property:[
-            {'name':'data', showName:'数据', 'value':null, 'type':propertyType.String},
-            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.Select},
+            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'update', showName:'更新', isFunc: true, info:'(data, callback(err, result))',
         property:[
-            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.String},
-            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.Select},
+            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]}
 ];
 propertyMap['sock'] = [
