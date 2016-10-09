@@ -20,10 +20,10 @@ class DBItemView extends React.Component {
             dbList: null, //保存当前的dblist
             dbChanged: false, //db是否有改变
             name: null,
+            fields: [],
             fieldDropdownVisibleIndex: null,
             fieldDropdownVisible: false,
             fieldFocusIndex: null,
-            itemList: [],
             sourceList: []
         };
 
@@ -80,7 +80,7 @@ class DBItemView extends React.Component {
                 });
                 this.setState({
                     name: widget.selectDBItem.name,
-                    itemList: fields,
+                    fields: fields,
                     dbChanged: false
                 }, ()=>{
                     WidgetActions['changeDBItem']({'fields':fields});
@@ -88,7 +88,7 @@ class DBItemView extends React.Component {
             } else {
                 this.setState({
                     name: widget.selectDBItem.name,
-                    itemList: widget.selectDBItem.fields,
+                    fields: widget.selectDBItem.fields,
                     dbChanged: false
                 })
             }
@@ -156,12 +156,12 @@ class DBItemView extends React.Component {
     onSourceSelect(index, e){
         e.domEvent.stopPropagation();
         let source = e.item.props.source;
-        let itemList = this.state.itemList;
-        itemList[index].value = source;
+        let fields = this.state.fields;
+        fields[index].value = source;
         this.setState({
             fieldDropdownVisibleIndex: null,
             fieldDropdownVisible: false,
-            itemList: itemList
+            fields: fields
         });
     }
 
@@ -172,16 +172,16 @@ class DBItemView extends React.Component {
             fieldDropdownVisibleIndex: null,
             fieldDropdownVisible: false
         }, ()=>{
-            let itemList = this.state.itemList;
+            let fields = this.state.fields;
             let fieldInput = 'dbItemFiledInput'+index;
             let inputDomNode = findDOMNode(this.refs[fieldInput]).firstChild;
-            inputDomNode.value = itemList[index].value?itemList[index].value.props.name:'';
+            inputDomNode.value = fields[index].value?fields[index].value.props.name:'';
             inputDomNode.focus();
         });
     }
 
     onEndEditField(index, e){
-        let source = this.state.itemList[index].value;
+        let source = this.state.fields[index].value;
         if(e.target.value){
             let sourceList = this.state.sourceList;
             sourceList.forEach((v,i)=>{
@@ -190,14 +190,14 @@ class DBItemView extends React.Component {
                 }
             })
         }
-        let itemList = this.state.itemList;
-        itemList[index].value = source;
-        e.target.value = itemList[index].value?itemList[index].value.props.name:'';
+        let fields = this.state.fields;
+        fields[index].value = source;
+        e.target.value = fields[index].value?fields[index].value.props.name:'';
         this.setState({
             fieldFocusIndex: null,
-            itemList: itemList
+            fields: fields
         }, ()=>{
-            WidgetActions['changeDBItem']({'fields':itemList});
+            WidgetActions['changeDBItem']({'fields':fields});
         });
     }
 
@@ -285,9 +285,9 @@ class DBItemView extends React.Component {
                         <div className='ant-col-r'>
                             <div className="container-scroll" id="db-item-container-scroll">
                                 <div className={$class('item-container')}
-                                style={{width: this.state.itemList.length*130+10+'px'}}>
+                                style={{width: this.state.fields.length*130+10+'px'}}>
                                     {
-                                        this.state.itemList.map(content)
+                                        this.state.fields.map(content)
                                     }
                                 </div>
                             </div>
