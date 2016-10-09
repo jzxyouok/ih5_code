@@ -76,9 +76,8 @@ class ToolBoxButton extends Component {
                 this.onDrawRect();
             }
             else if(this.props.className === "db"){
-                console.log(this.props.key);
                 //共享数据库
-                if(this.props.key == 16){
+                if(this.props.type == 0){
                     let name = '数据库' + this.state.dbList.length;
                     let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
                     console.log(data);
@@ -99,7 +98,7 @@ class ToolBoxButton extends Component {
                     }.bind(this));
                 }
                 //私有数据库
-                else if(this.props.key == 24){
+                else if(this.props.type == 1){
                     WidgetActions['ajaxSend'](null, 'POST', 'app/dbSetParm', null, null, function(text) {
                         var result = JSON.parse(text);
                         if (result['id']) {
