@@ -1,6 +1,7 @@
 var bridge = window['VxBridge'];
 module.exports = {
 'create':bridge.create,
+'setFilePath':bridge.setFilePath,
 'getRenderer':bridge.getRenderer,
 'getRendererType':bridge.getRendererType,
 'getDomElement':bridge.getDomElement,
