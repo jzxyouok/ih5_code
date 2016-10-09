@@ -9,7 +9,7 @@
     background: #232323;
     overflow: hidden;
     z-index: 50;
-
+    ::-webkit-scrollbar{width:0px}
     &.keep {
         height: 30px;
         transition: 0.5s;
@@ -45,7 +45,7 @@
         top: 30px;
         bottom: -20px;
         overflow: scroll;
-        width: 760px;
+        width: 100%;
 
         .EB--content {
             width: 100%;
