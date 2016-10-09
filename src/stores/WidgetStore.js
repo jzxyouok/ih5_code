@@ -1011,7 +1011,7 @@ export default Reflux.createStore({
             this.currentWidget.props['eventTree'] = [];
             this.currentWidget.props['eventTree'].push(this.emptyEventTree(className));
         }
-        this.trigger({redrawTree: true});
+        this.trigger({redrawTree: true, redrawWidget: this.currentWidget});
         this.reorderEventTreeList();
         // this.render();
     },
