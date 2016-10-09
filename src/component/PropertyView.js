@@ -223,7 +223,7 @@ class PropertyView extends React.Component {
 
                   }else if(prop.name == 'forwardTransition' ||prop.name == 'backwardTransition'){
                       this.selectNode.props[prop.name]=this.getScaleTypeDefault(value,prop.options);
-                       v = value;
+                       v =  parseInt(value);
                   }else if(prop.name == 'font'){
                       if(value == 0){
                           chooseFile('font', true, function(){
