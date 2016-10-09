@@ -383,22 +383,19 @@ function saveTree(data, node) {
         judges.children=[];
             item.children.map((v,i)=>{
                    let obj={};
-
                    if (v.judgeObj) {
                       let o = objectToId(v.judgeObj);
                       obj.judgeObjId = o[0];
                       if (o[1])
                         obj.judgeVarId = o[1];
                    }
-
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
              obj.judgeValOption=v.judgeValOption;
-
+             obj.judgeValType=v.judgeValType; //判断对象的属性的类型
 
              obj.compareFlag=v.compareFlag;//比较运算符
-
                    if (v.compareObj) {
                       var o = objectToId(v.compareObj);
                       obj.compareObjId = o[0];
@@ -408,12 +405,9 @@ function saveTree(data, node) {
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
              obj.compareValFlag =v.compareValFlag;//比较对象的属性
-                obj.compareValOption=v.compareValOption;
-
+             obj.compareValOption=v.compareValOption;
              obj.operationManager={};
-
              obj.operationManager.arrHidden=v.operationManager.arrHidden;
-
              judges.children.push(obj);
          });
 
