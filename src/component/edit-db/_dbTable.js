@@ -195,7 +195,6 @@ class DbTable extends React.Component {
             self.setState({
                 dbList : list
             });
-            this.getOriginalData();
         });
     }
 
@@ -349,6 +348,7 @@ class DbTable extends React.Component {
         let inputText = this.refs.inputType.value;
         let value = null;
         let list = this.state.dbList;
+        let fkList = this.state.originalData;
         if(this.state.addType == 0){
             value = "s" + inputText;
         }
@@ -378,20 +378,26 @@ class DbTable extends React.Component {
         else {
             header.push(value);
             if(list.length == 0){
-                let newList = [];
-                header.map((v,i)=>{
-                    newList[v] = "";
+                this.state.node.insert({}, function (err, data) {
+                    let newList = {};
+                    newList['_id'] = data[0];
+                    list.push(newList);
+                    fkList.push(newList);
                 });
-                list.push(newList);
             }
             else {
                 list.map((v,i)=>{
                     list[i][value] = "";
                 });
+                fkList.map((v,i)=>{
+                    fkList[i][value] = "";
+                });
             }
             this.setState({
                 dbHeader : header,
                 dbList : list,
+                originalData : fkList,
+                isHaveContent : false,
                 isError: false
             },()=>{
                 this.updateNewScrollData();
@@ -531,7 +537,7 @@ class DbTable extends React.Component {
                     //if(data == undefined) return;
                     //console.log(data);
                     let newList = {};
-                    newList['_id'] = data;
+                    newList['_id'] = data[0];
                     list.push(newList);
                     let fkList = self.state.originalData;
                     fkList.push(newList);
