@@ -76,6 +76,7 @@ class ToolBoxButton extends Component {
                 this.onDrawRect();
             }
             else if(this.props.className === "db"){
+                console.log(this.props.key);
                 //共享数据库
                 if(this.props.key == 16){
                     let name = '数据库' + this.state.dbList.length;
@@ -88,6 +89,7 @@ class ToolBoxButton extends Component {
                             var list = this.state.dbList;
                             list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
                             WidgetActions['addWidget']('db', {'dbid': result['id']});
+                            ToolBoxAction['deselect']();
                             this.setState({
                                 dbList : list
                             },()=>{
@@ -103,6 +105,7 @@ class ToolBoxButton extends Component {
                         if (result['id']) {
                             console.log(result);
                             WidgetActions['addWidget']('db', {'dbid': result['id']});
+                            ToolBoxAction['deselect']();
                         }
                     }.bind(this));
                 }
