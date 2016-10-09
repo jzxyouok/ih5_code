@@ -480,7 +480,7 @@ class Event extends React.Component {
     }
     setCompareObjOption(type){
         let arr=[];
-        console.log(this.state.allWidgetsList);
+
        this.state.allWidgetsList.map((v,i)=>{
            let tag=true;
            let classname= v.className;
