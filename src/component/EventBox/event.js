@@ -22,7 +22,7 @@ class Event extends React.Component {
             selectWidget: this.props.widget,
             allWidgetsList: null,
             activeKey: this.props.activeKey,  //当前激活事件的key
-            specialObject: ['counter', 'text', 'strVar', 'intVar'],
+            specialObject: ['counter', 'text', 'var'],
 
             //用于下拉框显示
             conOption: [],//每次点击后赋值
@@ -47,6 +47,7 @@ class Event extends React.Component {
         this.getChooseObjByIndex=this.getChooseObjByIndex.bind(this);
 
         this.getJudgeValType =this.getJudgeValType.bind(this);
+        this.getSpacJudgeValType=this.getSpacJudgeValType.bind(this);
         this.getCompareValOption =this.getCompareValOption.bind(this);
 
 
@@ -113,7 +114,7 @@ class Event extends React.Component {
             let arr2=[];
 
             widget.allWidgets.map((v,i)=>{
-                arr.push([v.className,v.props.name]);
+                arr.push([v.className,v.props.name,v.type]);
                 arr2.push(v.props.name);
             });
 
@@ -191,6 +192,20 @@ class Event extends React.Component {
         return saveVal;
     }
 
+    getSpacJudgeValType(val){
+        let saveVal=null;
+        this.state.objName.map((v,i)=>{
+            if(v[1]== val){
+                saveVal =  v[2];
+            }
+        });
+        if(saveVal=='number'){
+            saveVal=0;
+        }else if(saveVal=='number'){
+            saveVal=2;
+        }
+        return saveVal;
+    }
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);
     }
@@ -321,20 +336,26 @@ class Event extends React.Component {
 
         switch (flag) {
             case 'judgeObjFlag':
-                let judgeValOption = [];
+
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
                     arrHidden = [false, false, true, false, false, true];
+
+
+
+                    initFlag.judgeValType=this.getSpacJudgeValType(value);
+                    console.log(initFlag.judgeValType);
+
                 } else {
                     arrHidden = [false, false, false, true, true, true];
                     //非五类
                     let propObj = this.setObjProperty(chooseEventClassName);
-                    judgeValOption =propObj.nameArr;
                     initFlag.propArr =propObj.propArr;
+                    initFlag.judgeValOption = propObj.nameArr;
                 }
                 //初始化后四个
 
                 initFlag.judgeObj =this.getChooseObjByIndex(index);
-                initFlag.judgeValOption = judgeValOption;
+
 
                 initFlag.judgeValFlag = '判断值';
                 initFlag.compareFlag = '=';
@@ -445,11 +466,10 @@ class Event extends React.Component {
         let oEventBox=document.getElementsByClassName('EventBox')[0];
 
         let elist=eventList?eventList:this.state.eventList;
-
             elist.map((v,i)=>{
                 if(v.children){
                     v.children.map((item,index)=>{
-                        if(!item.operationManager.arrHidden[5]){
+                        if( !item.operationManager.arrHidden[2] && !item.operationManager.arrHidden[5]){
                             tag=true;
                         }
                     });

@@ -85,7 +85,7 @@ class CreateDb extends React.Component {
         else {
             let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
             //console.log(data);
-            WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
+            WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
                 var result = JSON.parse(text);
                 //console.log(result);
                 if (result['id']) {
