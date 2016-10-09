@@ -653,6 +653,7 @@ class ObjectTree extends React.Component {
                             ||v.funcList.length > 0
                             ||v.intVarList.length > 0
                             ||v.strVarList.length > 0
+                            ||v.dbItemList&&v.dbItemList.length>0
                                 ? icon( 1 , v.key)
                                 : icon( 0 , v.key)
                         }

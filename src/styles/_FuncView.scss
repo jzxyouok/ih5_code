@@ -75,33 +75,9 @@
     }
 
     .ant-form {
-      ////padding: 20px;
-      //
-      //.ant-form-item {
-      //  margin-bottom: 15px;
-      //}
-      //
-      //.ant-form-item-label {
-      //  //width: 100%;
-      //  //text-align: left;
-      //  padding-bottom: 5px;
-      //  color: #b5b5b5;
-      //}
-      //
       .ant-input {
-        width: 340px;
-        //background-color: #353535;
-        //border-color: #444;
-        //border-radius: 2px;
-        //color: #858585;
-      //  &:hover {
-      //    border-color: #1a1a1a;
-      //  }
-      //  &:focus {
-      //    border-color: #444;
-      //    outline: 0;
-      //    box-shadow: 0 0 0 2px rgba(255, 168, 0, 0.4);
-      //  }
+        width: 270px;
+        border: 1px solid #353535;
       }
 
       .params-item {
@@ -118,7 +94,10 @@
           background-color: #353535;
           border-radius: 2px;
           .right-col-container{
-            padding: 5px 2px;
+            padding: 5px 0;
+            label {
+              width: 56px;
+            }
           }
         }
         .ant-form-item-control {
@@ -126,21 +105,27 @@
           border-radius: 2px;
         }
         .ant-input {
+          border: 1px solid #232323;
           background-color: #232323;
         }
         .params-delete {
-          width: 15px;
+          width: 32px;
+          height: 32px;
           text-align: center;
           cursor: pointer;
-          margin-left: 3.5px;
-          background-color: #353535;
+          position: absolute;
+          top: 1px;
+          right: 0;
+          background: url("img/button-icon.svg") no-repeat -1200px -200px;
+          &:hover{ background-position: -1200px -240px; }
+          &:active{ background-position: -840px -280px; }
         }
         .params-name {
-          width: 306px;
+          width: 214px;
         }
         .params-dropdown {
           cursor: pointer;
-          width: 203px;
+          width: 297px;
           line-height: 22px;
           .dropDown-div {
             border: 1px solid #353535;
