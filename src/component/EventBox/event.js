@@ -3,7 +3,7 @@ import React from 'react';
 import $class from 'classnames'
 
 import Property from './Property'
-import WidgetStore from '../../stores/WidgetStore'
+import WidgetStore, {funcType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import  {propertyMap} from '../PropertyMap'
 import {eventTempData} from './tempData'
@@ -54,6 +54,8 @@ class Event extends React.Component {
         this.menuList_pub =this.menuList_pub.bind(this);
         this.menuList =this.menuList.bind(this);
         this.setEventBoxWidth=this.setEventBoxWidth.bind(this);
+
+        this.onSetSpecificListProperty = this.onSetSpecificListProperty.bind(this);
 
     }
 
@@ -132,7 +134,51 @@ class Event extends React.Component {
                 this.getConditionOption();
             });
         }
+        else if (widget.updateFunction&&widget.updateFunction.widget){
+            let eventList = this.state.eventList;
+            eventList.forEach(v=>{
+                v.specificList.forEach(s=>{
+                    if(s.action&&s.action.type === funcType.customize){
+                        if (s.action.func.widget.key === widget.updateFunction.widget.key) {
+                            let property = this.onSetSpecificListProperty(s.action, s.action.func.params);
+                            s.action.property = property;
+                        }
+                    }
+                });
+            });
+            this.setState({
+                eventList:eventList
+            })
+        }
 
+    }
+
+    onSetSpecificListProperty(action, params) {
+        //params
+        let newProperty = null;
+        if(params&&params.length>0){
+            newProperty = [];
+            params.forEach(p =>{
+                if(p.name&&p.type){
+                    let index = -1;
+                    if(action.property){
+                        action.property.forEach((i,ind) =>{
+                            if(i.name === p.name){
+                                index = ind;
+                                newProperty.push(i);
+                            }
+                        });
+                    }
+                    if(index === -1) {
+                        newProperty.push({'name':p.name, 'showName':p.name, 'value':null, 'type':p.type.type});
+                    }
+                }
+            });
+            if(newProperty.length==0){
+                newProperty = null;
+            }
+        }
+        return newProperty;
     }
 
     getJudgeValType(val){

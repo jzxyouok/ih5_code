@@ -12,7 +12,7 @@ const FormItem = Form.Item;
 const MenuItem = Menu.Item;
 
 const paramTypes = [
-    {name: 'Number', type: propertyType.Number, showName: '数字'},
+    {name: 'Number', type: propertyType.Number, showName: '数值'},
     {name: 'String', type: propertyType.String, showName: '字符'}
 ];
 
