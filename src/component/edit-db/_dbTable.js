@@ -377,6 +377,7 @@ class DbTable extends React.Component {
         }
         else {
             header.push(value);
+            console.log(list.length);
             if(list.length == 0){
                 this.state.node.insert({}, function (err, data) {
                     let newList = {};
