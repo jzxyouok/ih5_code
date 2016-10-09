@@ -402,18 +402,24 @@ function generateJsFunc(etree) {
       var out = output[item.judges.conFlag] || '';
       item.cmds.forEach(cmd => {
         if (cmd.id && cmd.type == 'default' && cmd.name) {
-          out += 'ids.' + cmd.id + '.' + cmd.name + '(';
-          if (cmd.property) {
-            out += cmd.property.map(function(p) {
-              return JSON.stringify(p['value']);
-            }).join(',');
+          if (cmd.name === 'changeValue') {
+            if (cmd.property.length >= 1)
+              out += 'ids.' + cmd.id + '.value=' + JSON.stringify(cmd.property[0]['value']) + ';';
+          } else {
+            out += 'ids.' + cmd.id + '.' + cmd.name + '(';
+            if (cmd.property) {
+              out += cmd.property.map(function(p) {
+                return JSON.stringify(p['value']);
+              }).join(',');
+            }
+            out += ');';
           }
-          out += ');';
         }
       });
       output[item.judges.conFlag] = out;
     }
   });
+  console.log(output);
   return output;
 }
 
@@ -504,6 +510,7 @@ function saveTree(data, node) {
       var js = generateJsFunc(etree);
       if (js)
         data['events'] = js;
+      console.log(etree);
     } else {
         props[name] = node.props[name];
     }
