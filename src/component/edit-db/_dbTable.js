@@ -529,14 +529,14 @@ class DbTable extends React.Component {
                 this.state.node.insert({}, function (err, data) {
                     //if(data == undefined) return;
                     //console.log(data);
-                    let newList = [];
+                    let newList = {};
                     newList['_id'] = data;
-                    header.map((v,i)=>{
-                        newList[v] = "";
-                    });
                     list.push(newList);
+                    let fkList = self.state.originalData;
+                    fkList.push(newList);
                     self.setState({
-                        dbList : list
+                        dbList : list,
+                        originalData : fkList
                     })
                 });
                 //this.getDbList();
