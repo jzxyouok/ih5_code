@@ -219,6 +219,9 @@ function idToObject(list, idName, varName) {
       if(varName.substr(0, 1) == 'f'){
           var vl = obj.funcList;
           return vl[parseInt(varName.substr(1))];
+      } else if (varName.substr(0, 1) == 'd') {
+          var vl = obj.dbItemList;
+          return vl[parseInt(varName.substr(1))];
       } else {
           var vl = (varName.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
           return vl[parseInt(varName.substr(1))];
@@ -264,6 +267,14 @@ function resolveEventTree(node, list) {
                       }
                       break;
                   default:
+                      if(cmd.object&&cmd.object.className === 'db') {
+                          cmd.action.property.forEach(v=> {
+                              if(v.name === 'data' && v.valueId) {
+                                  v.value = idToObject(list, v.valueId[0], v.valueId[1]);
+                                  (delete v.valueId);
+                              }
+                          });
+                      }
                       break;
               }
           }
@@ -390,6 +401,9 @@ function objectToId(object) {
   } else if (object.className == 'func'){
       idName = object.widget.props['id'];
       varName = 'f' + object.widget.funcList.indexOf(object);
+  } else if (object.className == 'dbItem'){
+      idName = object.widget.props['id'];
+      varName = 'd' + object.widget.dbItemList.indexOf(object);
   } else {
     idName = object.props['id'];
   }
@@ -499,7 +513,22 @@ function saveTree(data, node) {
                 }
             }
             if (cmd.action&&cmd.action.property) {
-                c.property = cmd.action.property;
+                let property = [];
+                if(cmd.object&&cmd.object.className === 'db') {
+                    cmd.action.property.forEach(v=> {
+                        if(v.name === 'data' && v.value) {
+                            property.push({
+                                name:v.name,
+                                showName: v.showName,
+                                type: v.type,
+                                valueId: objectToId(v.value),
+                            })
+                        } else {
+                            property.push(v);
+                        }
+                    });
+                }
+                c.property = property;
             }
 
             cmds.push(c);
@@ -1524,6 +1553,7 @@ export default Reflux.createStore({
             } else {
                 dbItem['props']['name'] = 'dbItem' + (this.currentWidget['dbItemList'].length + 1);
             }
+            this.trigger({updateDBItem: {widget:this.currentWidget}});
             this.currentWidget['dbItemList'].unshift(dbItem);
         }
         this.trigger({redrawTree: true});
@@ -1549,6 +1579,7 @@ export default Reflux.createStore({
             }
             if(index>-1){
                 this.currentWidget.dbItemList.splice(index,1);
+                this.trigger({updateDBItem: {widget:this.currentWidget}});
                 this.selectWidget(this.currentWidget);
             }
         }

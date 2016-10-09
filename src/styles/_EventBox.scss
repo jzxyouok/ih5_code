@@ -850,6 +850,13 @@
                             color: #b5b5b5;
                         }
 
+                        .p--dropDown {
+                            background-color: #294140;
+                            .title {
+                                background-color: #294140;
+                            }
+                        }
+
                         input {
                             @include border-radius(2px);
                             height: 22px;
