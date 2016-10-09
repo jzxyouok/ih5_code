@@ -1,6 +1,7 @@
 //对象树
 import React from 'react';
 import $class from 'classnames';
+import $ from 'jquery';
 
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
@@ -25,6 +26,8 @@ class ObjectTree extends React.Component {
             , allTreeData : [],
             nodeType: nodeType.widget
         };
+        this.chooseMoreStatus=false;
+
         this.chooseBtn = this.chooseBtn.bind(this);
         this.openBtn = this.openBtn.bind(this);
         this.closeBtn = this.closeBtn.bind(this);
@@ -61,11 +64,21 @@ class ObjectTree extends React.Component {
         this.placeholder.className = 'placeholder';
         this.dragTip = document.createElement('div');
         this.dragTip.className = 'dragTip';
+
+        //多选
+        this.onKeyDown =this.onKeyDown.bind(this);
+        this.onKeyUp =this.onKeyUp.bind(this);
+        this.chooseMore=this.chooseMore.bind(this);
+
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+
+        //多选
+        document.body.addEventListener('keydown', this.onKeyDown);
+        document.body.addEventListener('keyup', this.onKeyUp);
     }
 
     componentWillUnmount() {
@@ -510,6 +523,31 @@ class ObjectTree extends React.Component {
         this.over.parentNode.insertBefore(this.placeholder, this.over);
     }
 
+    onKeyDown(e){
+        let  evt = e ? e : window.event;
+        if (!this.chooseMoreStatus && evt.ctrlKey) {
+            this.chooseMoreStatus=true;
+        }
+    }
+    onKeyUp(e){
+        let  evt = e ? e : window.event;
+        if(evt.keyCode==17){
+            this.chooseMoreStatus=false;
+
+        }
+    }
+    chooseMore(e){
+        if(this.chooseMoreStatus){
+            let $oItem =$(e.currentTarget);
+
+            let $oItemTitle =  $oItem.find('.item-title:eq(0)');
+
+           let $oItemEventEmpty =  $oItem.find('.item-event-empty:eq(0)');
+
+
+        }
+    }
+
     render() {
         //console.log(this.state.widgetTree);
         //let objectData = this.state.widgetTree;
@@ -632,6 +670,7 @@ class ObjectTree extends React.Component {
                 <div className='item-title-wrap clearfix'
                      id={'tree-item-'+ v.key}
                      tabIndex={v.key}
+                     onClick={this.chooseMore}
                      onFocus={this.itemAddKeyListener.bind(this)}
                      onBlur={this.itemRemoveKeyListener.bind(this)}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
@@ -666,7 +705,8 @@ class ObjectTree extends React.Component {
                                 ? <div className='item-name-wrap'>
                                     <p>{v.props.name}</p>
                                   </div>
-                                : <div className='item-name-wrap' onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>
+                                : <div className='item-name-wrap'
+                                       onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>
                                     <p className={$class({'hidden':((v.key === this.state.nid)&&this.state.editMode)})} >{v.props.name}</p>
                                     <input id={'item-name-input-'+v.key} type="text"
                                            onBlur={this.endEditObjName}
