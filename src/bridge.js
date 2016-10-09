@@ -14,7 +14,6 @@ module.exports = {
 'createGraphics':bridge.createGraphics,
 'encryptData':bridge.encryptData,
 'decryptData':bridge.decryptData,
-'createSelector':bridge.createSelector,
 'selectWidget':bridge.selectWidget,
 'reorderWidget':bridge.reorderWidget,
 'updateSelector':bridge.updateSelector,
