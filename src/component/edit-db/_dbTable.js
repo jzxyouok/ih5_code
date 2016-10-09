@@ -50,6 +50,7 @@ class DbTable extends React.Component {
         this.whichAddType = this.whichAddType.bind(this);
         this.updateNewScrollData = this.updateNewScrollData.bind(this);
         this.getOriginalData = this.getOriginalData.bind(this);
+        this.getOriginalHeader = this.getOriginalHeader.bind(this);
     }
 
     componentDidMount() {
@@ -81,6 +82,7 @@ class DbTable extends React.Component {
         //                },()=>{
         //                    this.updateNewScrollData();
         //                });
+        //                this.getOriginalHeader();
         //            }
         //        });
         //    }
@@ -100,6 +102,7 @@ class DbTable extends React.Component {
             if(bool){
                 this.getNewData();
             }
+            this.getOriginalHeader();
         })
     }
 
@@ -129,7 +132,10 @@ class DbTable extends React.Component {
                 let headerData = allDbHeader[i].header.split(",");
                 //console.log(454,headerData,headerData.length);
                 let index = headerData.indexOf("null");
-                if(headerData.length !== 0 && index < 0){
+                if(index >= 0){
+                    headerData.splice(index,1)
+                }
+                if(headerData.length !== 0){
                     let dbHeader = headerData;
                     this.state.node.find({}, function (err, data) {
                         //console.log(2,data);
@@ -206,6 +212,39 @@ class DbTable extends React.Component {
             self.setState({
                 originalData : list
             });
+        });
+    }
+
+    getOriginalHeader(){
+        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvYXBwXC91c2VyXC9sb2dpbiIsImlhdCI6MTQ3NDE2NjcxOSwiZXhwIjozNjAwMDAwMTQ3NDE2NjcxOSwibmJmIjoxNDc0MTY2NzE5LCJqdGkiOiI3ZDMxNDU3NzEwZTU1ZDIzNDBiMzQ3NTZkNzIwNTBlZSJ9.Y8FtW80CmGwKHXrn9jjOVGDrGRlT-eGeACMsnVvGcjI";
+        //WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if (result['name']) {
+        //        let allDbHeader = result['db'];
+        //        allDbHeader.map((v,i)=>{
+        //            if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
+        //                let headerData = allDbHeader[i].header.split(",");
+        //                this.setState({
+        //                    originalHeader : headerData
+        //                });
+        //            }
+        //        });
+        //    }
+        //}.bind(this));
+        let data = this.state.originalHeader;
+        data.map((v,i)=>{
+            if(data[i].id === this.state.node.dbid){
+                let headerData = data[i].header.split(",");
+                let index = headerData.indexOf("null");
+                if(index >= 0){
+                    headerData.splice(index,1)
+                }
+                if(headerData.length > 0 ){
+                   this.setState({
+                       originalHeader : headerData
+                   })
+                }
+            }
         });
     }
 
@@ -399,16 +438,33 @@ class DbTable extends React.Component {
                         list[i][text] = list[i][value];
                         delete list[i][value];
                     });
+
+                    let fc = this.state.originalHeader;
+                    let id = "theader"+which;
+                    let idArray = this.state.selectArray;
+                    let index2 = idArray.indexOf(id);
+                    if(fc[which] != text){
+                        if(index2 < 0) {
+                            idArray.push(id);
+                        }
+                    }
+                    else{
+                        if(index2 >=0){
+                            idArray.splice(index2,1);
+                        }
+                    }
+                    //console.log(idArray);
                 }
                 //console.log(list);
                 header[which] = text;
-                console.log(header,this.state.originalHeader);
+                //console.log(header,this.state.originalHeader);
                 //if(which == header.length-1){
                 //    this.addColumn();
                 //}
                 this.setState({
                     dbHeader : header,
-                    dbList : list
+                    dbList : list,
+                    selectArray : idArray
                 })
             }
         }
@@ -521,6 +577,7 @@ class DbTable extends React.Component {
                                                 let id = "header" + i;
                                                 let name ;
                                                 let whichType;
+                                                let classname =  't'+id;
                                                 let type = v.charAt(0);
                                                 if(type == "s" ){
                                                     name = v.substr(1);
@@ -535,7 +592,7 @@ class DbTable extends React.Component {
                                                     whichType = true;
                                                 }
                                                 return  <td key={i}
-                                                            className={ 't'+id}
+                                                            className={$class(classname,{"active": this.state.selectArray.indexOf(classname)>=0})}
                                                             onClick={ this.inputClick.bind(this, id, name)}>
 
                                                             {name}
