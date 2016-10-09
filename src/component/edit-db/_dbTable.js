@@ -140,6 +140,7 @@ class DbTable extends React.Component {
                 }
                 if(headerData.length !== 0){
                     let dbHeader = headerData;
+                    console.log(3);
                     this.state.node.find({}, function (err, data) {
                         //console.log(2,data);
                         if(data == undefined) return;
@@ -188,6 +189,7 @@ class DbTable extends React.Component {
 
     getDbList(){
         let self = this;
+        console.log(2);
         this.state.node.find({}, function (err, data) {
             if(data == undefined) return;
 
@@ -209,6 +211,7 @@ class DbTable extends React.Component {
         //        })
         //    }
         //}.bind(this));
+        console.log(1);
         this.state.node.find({}, function (err, data) {
             let list = [];
             list = data;
@@ -276,9 +279,19 @@ class DbTable extends React.Component {
 
     saveBtn(){
         console.log(this.state.dbHeader,this.state.dbList);
-        let list = this.state.dbList;
-        this.state.node.update({list},function(err,data){
-           console.log(data);
+        let self = this;
+        this.state.node.update(this.state.dbList,function(err,data){
+           if(data){
+               self.setState({
+                   selectArray : [],
+                   originalData : [],
+                   originalHeader : [],
+                   inputNow : null,
+                   inputText : null,
+                   inputStyle : null
+               });
+               self.updateHeader();
+           }
         });
     }
 
