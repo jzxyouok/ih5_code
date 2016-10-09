@@ -146,7 +146,7 @@ class DbTable extends React.Component {
 
                         let list = [];
                         list = data;
-                        //console.log(dbHeader,list);
+                        console.log(3,dbHeader,list);
                         self.setState({
                             dbHeader : dbHeader,
                             dbList : list,
@@ -212,6 +212,7 @@ class DbTable extends React.Component {
         this.state.node.find({}, function (err, data) {
             let list = [];
             list = data;
+            console.log(4,list);
             self.setState({
                 originalData : list
             });
@@ -257,14 +258,14 @@ class DbTable extends React.Component {
         let name = this.state.node.name;
         let id = this.state.node.dbid;
         let data = "id=" + id + "&name=" + encodeURIComponent(name) + "&header=" + encodeURIComponent(header);
-        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbParm?' + data, null, null, function(text) {
+        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
             var result = JSON.parse(text);
             if (result['id']) {
                 this.state.node['name'] = name;
                 this.state.node['header'] = header;
             }
         }.bind(this));
-
+        console.log(2,this.state.dbList);
         let allDbHeader = this.state.allDbHeader;
         allDbHeader.map((v,i)=>{
             if(allDbHeader[i].id === this.state.node.dbid) {
@@ -275,10 +276,21 @@ class DbTable extends React.Component {
     }
 
     saveBtn(){
-        console.log(this.state.dbHeader,this.state.dbList);
-        let list = this.state.dbList;
-        this.state.node.update({list},function(err,data){
-           console.log(data);
+        console.log(1,this.state.dbHeader,this.state.dbList);
+        let self = this;
+        this.state.node.update(this.state.dbList,function(err,data){
+           if(data){
+               self.setState({
+                   dbList : [],
+                   selectArray : [],
+                   originalData : [],
+                   originalHeader : [],
+                   inputNow : null,
+                   inputText : null,
+                   inputStyle : null
+               });
+               self.updateHeader();
+           }
         });
     }
 
