@@ -425,6 +425,22 @@ function generateJsFunc(etree) {
             out += 'ids.' + cmd.id + '.' + cmd.name + '(';
             if (cmd.property) {
               out += cmd.property.map(function(p) {
+                if (p['binding'] !== undefined) {
+                  var list = [];
+                  p['binding'].fields.forEach(function(v) {
+                    if (v.name && v.value) {
+                      if (v.name.substr(0, 1) == 'i') {
+                        list.push('\'' + v.name.substr(1) + '\':parseFloat(ids.' + v.value.props['id'] + '.value)');
+                      } else if (v.name.substr(0, 1) == 's') {
+                        list.push('\'' + v.name.substr(1) + '\':ids.' + v.value.props['id'] + '.value');
+                      } else {
+                        list.push('\'' + v.name + '\':ids.' + v.value.props['id'] + '.value');
+                      }
+                    }
+                  });
+                  delete(p['binding']);
+                  return '{' + list.join(',') + '}';
+                }
                 return JSON.stringify(p['value']);
               }).join(',');
             }
@@ -435,7 +451,6 @@ function generateJsFunc(etree) {
       output[item.judges.conFlag] = out;
     }
   });
-  console.log(output);
   return output;
 }
 
@@ -522,6 +537,7 @@ function saveTree(data, node) {
                                 showName: v.showName,
                                 type: v.type,
                                 valueId: objectToId(v.value),
+                                binding: v.value
                             })
                         } else {
                             property.push(v);
@@ -541,7 +557,6 @@ function saveTree(data, node) {
       var js = generateJsFunc(etree);
       if (js)
         data['events'] = js;
-      console.log(etree);
     } else {
         props[name] = node.props[name];
     }
