@@ -101,8 +101,8 @@ class DbTable extends React.Component {
         },()=>{
             if(bool){
                 this.getNewData();
+                this.getOriginalHeader();
             }
-            this.getOriginalHeader();
         })
     }
 
