@@ -101,8 +101,8 @@ class DbTable extends React.Component {
         },()=>{
             if(bool){
                 this.getNewData();
+                this.getOriginalHeader();
             }
-            this.getOriginalHeader();
         })
     }
 
@@ -115,6 +115,9 @@ class DbTable extends React.Component {
                        node : widget.selectWidget.node,
                        dbList : [],
                        dbHeader: [],
+                       selectArray : [],
+                       originalData : [],
+                       originalHeader : [],
                        inputNow : null,
                        inputText : null,
                        inputStyle : null
@@ -266,15 +269,17 @@ class DbTable extends React.Component {
         allDbHeader.map((v,i)=>{
             if(allDbHeader[i].id === this.state.node.dbid) {
                 allDbHeader[i].header = header;
-                DbHeaderAction['DbHeaderData'](allDbHeader, false);
+                DbHeaderAction['DbHeaderData'](allDbHeader, true);
             }
         });
     }
 
     saveBtn(){
-        this.updateHeader();
-        //console.log(this.state.dbHeader,this.state.dbList);
-        //this.state.node.updata(this.state.dbList);
+        console.log(this.state.dbHeader,this.state.dbList);
+        let list = this.state.dbList;
+        this.state.node.update({list},function(err,data){
+           console.log(data);
+        });
     }
 
     updateNewScrollData(){
@@ -454,6 +459,9 @@ class DbTable extends React.Component {
                         }
                     }
                     //console.log(idArray);
+                    this.setState({
+                        selectArray : idArray
+                    })
                 }
                 //console.log(list);
                 header[which] = text;
@@ -463,8 +471,7 @@ class DbTable extends React.Component {
                 //}
                 this.setState({
                     dbHeader : header,
-                    dbList : list,
-                    selectArray : idArray
+                    dbList : list
                 })
             }
         }
