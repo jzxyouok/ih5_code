@@ -221,14 +221,14 @@ var DEFAULT_TOOLBOX = {
         gid:16,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, type:0, className:'db'}]
+            {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, DbType:0, className:'db'}]
     },{
         name:'私有数据库',
         key:24,
         gid:24,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.REMOTEDEVICE, name:'私有数据库', icon: personalDbIcon, type:1, className:'db'}]
+            {cid:TOOL_ID.REMOTEDEVICE, name:'私有数据库', icon: personalDbIcon, DbType:1, className:'db'}]
     },{
         name:'二维变量',
         key:17,
