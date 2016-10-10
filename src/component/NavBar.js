@@ -39,7 +39,8 @@ class NavBar extends React.Component {
             dbList : [],
             createDb : false,
             selectWidget : null,
-            arrangeDb : false
+            arrangeDb : false,
+            zoomInputState: 0
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -64,6 +65,7 @@ class NavBar extends React.Component {
         this.arrangeDbShow = this.arrangeDbShow.bind(this);
         this.arrangeDbHide = this.arrangeDbHide.bind(this);
         this.sendDbData = this.sendDbData.bind(this);
+        this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -373,6 +375,16 @@ class NavBar extends React.Component {
         })
     }
 
+    focusOrBlurZoomInput(e) {
+        let currentState = 0;
+        if (e.type == 'focus') {
+            currentState = 1;
+        }
+        this.setState({
+            zoomInputState: currentState
+        });
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -614,6 +626,29 @@ class NavBar extends React.Component {
 
                     <button className='btn btn-clear history-btn' title='历史'  />
 
+                    <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
+                        <span className='heng' />
+                    </button>
+
+                    <div className={$class('size-input', {'size-input-focus': this.state.zoomInputState },
+                                                             {'size-input-blur':!this.state.zoomInputState})}>
+
+                        <InputNumber step={1}
+                                     min={10}
+                                     size='small'
+                                     defaultValue={this.props.stageZoom + "%"}
+                                     value={this.props.stageZoom  + "%"}
+                                     onFocus={this.focusOrBlurZoomInput}
+                                     onBlur={this.focusOrBlurZoomInput}
+                                     onChange={this.props.stageZoomEdit}
+                                     onKeyDown={this.props.stageZoomEdit} />
+                    </div>
+
+                    <button className='btn-clear plus-btn'  title='放大' onClick={ this.props.stageZoomPlus }>
+                        <span className='heng' />
+                        <span className='shu' />
+                    </button>
+
                     <button className='btn-clear home-btn'  title='在线课程'  />
                 </div>
 
@@ -760,30 +795,5 @@ module.exports = NavBar;
 //            <li className='vertical-icon'><span className='icon' />垂直分布</li>
 //        </ul>
 //    </div>
-//</div>
-
-//<div>
-//    <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
-//        <span className='heng' />
-//    </button>
-//    <div className={$class('size-input', {'size-input-focus': this.state.zoomInputState }, {'size-input-blur':!this.state.zoomInputState})}>
-//        <InputNumber step={1}
-//                     min={10}
-//                     size='small'
-//                     defaultValue={this.props.stageZoom}
-//                     value={this.props.stageZoom}
-//                     onFocus={this.focusOrBlurZoomInput}
-//                     onBlur={this.focusOrBlurZoomInput}
-//                     onChange={this.props.stageZoomEdit}
-//                     onKeyDown={this.props.stageZoomEdit}/>
-//        <div className='input-percentage'>
-//            %
-//        </div>
-//    </div>
-//    {/*<div className='size'>{ this.props.stageZoom }%</div>*/}
-//    <button className='btn-clear plus-btn'  title='放大' onClick={ this.props.stageZoomPlus }>
-//        <span className='heng' />
-//        <span className='shu' />
-//    </button>
 //</div>
 }

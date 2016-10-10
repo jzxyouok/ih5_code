@@ -96,25 +96,25 @@
 			}
 		}
 
-        .stage-zoom{
-            height: 40px;
-
-            .less-btn{
-                bottom: 0;
-                left: 38px;
-            }
-
-            .plus-btn {
-                top: 24px;
-                left: 10px;
-            }
-
-            .size-input {
-                top: 0;
-                width: 44px;
-                margin-left: 10px;
-            }
-        }
+        //.stage-zoom{
+        //    height: 40px;
+        //
+        //    .less-btn{
+        //        bottom: 0;
+        //        left: 38px;
+        //    }
+        //
+        //    .plus-btn {
+        //        top: 24px;
+        //        left: 10px;
+        //    }
+        //
+        //    .size-input {
+        //        top: 0;
+        //        width: 44px;
+        //        margin-left: 10px;
+        //    }
+        //}
 	}
 
 	#ToolBoxHeader {
@@ -245,114 +245,114 @@
 		}
 	}
 
-    .stage-zoom{
-        position: absolute;
-        left: 0;
-        bottom: 16px;
-        width: 100%;
-        height: 56px;
-
-        .less-btn{
-            bottom: 0;
-            left: 10px;
-        }
-
-        .plus-btn {
-            top: 0;
-            left: 10px;
-        }
-
-        .less-btn ,
-        .plus-btn{
-            @include border-radius(8px);
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: #b5b5b5;
-
-            &:hover {
-                background: #fff;
-            }
-
-            &:active {
-                background: #b5b5b5;
-            }
-
-            span {
-                position: absolute;
-                background: #353535;
-                display: block;
-            }
-
-            .heng {
-                width: 10px;
-                height: 2px;
-                left: 3px;
-                top: 7px;
-            }
-
-            .shu {
-                width: 2px;
-                height: 10px;
-                left: 7px;
-                top: 3px;
-            }
-        }
-
-        .size-input {
-            position: absolute;
-            top: 19px;
-            color: #b5b5b5;
-            width: 100%;
-            height: 18px;
-            border-radius: 2px;
-            -webkit-transition:background-color 0.5s ease-in-out;
-            -moz-transition:background-color 0.5s ease-in-out;
-            -o-transition:background-color 0.5s ease-in-out;
-            transition:background-color 0.5s ease-in-out;
-            background: none;
-
-            &:hover {
-                background-color: #232323;
-            }
-
-            .ant-input-number {
-                border: none;
-                background: none;
-                width: 100%;
-                height: 18px;
-                //margin-left: 2px;
-
-                .ant-input-number-handler-wrap {
-                    display: none;
-                }
-                .ant-input-number-input-wrap{
-                    height: 18px;
-                    line-height: 18px;
-                }
-                .ant-input-number-input {
-                    margin-top: 0;
-                    width: 100%;
-                    text-align: center;
-                    height: 18px;
-                    line-height: 18px;
-                    background: none;
-                    padding: 0;
-                    color: #b5b5b5;
-                    border: none;
-                    &:focus {
-                        color: #fefefe;
-                    }
-                }
-            }
-            .ant-input-number-focused {
-                background-color: #1b1b1b;
-                outline: none;
-                border: none;
-                box-shadow: none;
-            }
-        }
-    }
+    //.stage-zoom{
+    //    position: absolute;
+    //    left: 0;
+    //    bottom: 16px;
+    //    width: 100%;
+    //    height: 56px;
+    //
+    //    .less-btn{
+    //        bottom: 0;
+    //        left: 10px;
+    //    }
+    //
+    //    .plus-btn {
+    //        top: 0;
+    //        left: 10px;
+    //    }
+    //
+    //    .less-btn ,
+    //    .plus-btn{
+    //        @include border-radius(8px);
+    //        position: absolute;
+    //        width: 16px;
+    //        height: 16px;
+    //        background: #b5b5b5;
+    //
+    //        &:hover {
+    //            background: #fff;
+    //        }
+    //
+    //        &:active {
+    //            background: #b5b5b5;
+    //        }
+    //
+    //        span {
+    //            position: absolute;
+    //            background: #353535;
+    //            display: block;
+    //        }
+    //
+    //        .heng {
+    //            width: 10px;
+    //            height: 2px;
+    //            left: 3px;
+    //            top: 7px;
+    //        }
+    //
+    //        .shu {
+    //            width: 2px;
+    //            height: 10px;
+    //            left: 7px;
+    //            top: 3px;
+    //        }
+    //    }
+    //
+    //    .size-input {
+    //        position: absolute;
+    //        top: 19px;
+    //        color: #b5b5b5;
+    //        width: 100%;
+    //        height: 18px;
+    //        border-radius: 2px;
+    //        -webkit-transition:background-color 0.5s ease-in-out;
+    //        -moz-transition:background-color 0.5s ease-in-out;
+    //        -o-transition:background-color 0.5s ease-in-out;
+    //        transition:background-color 0.5s ease-in-out;
+    //        background: none;
+    //
+    //        &:hover {
+    //            background-color: #232323;
+    //        }
+    //
+    //        .ant-input-number {
+    //            border: none;
+    //            background: none;
+    //            width: 100%;
+    //            height: 18px;
+    //            //margin-left: 2px;
+    //
+    //            .ant-input-number-handler-wrap {
+    //                display: none;
+    //            }
+    //            .ant-input-number-input-wrap{
+    //                height: 18px;
+    //                line-height: 18px;
+    //            }
+    //            .ant-input-number-input {
+    //                margin-top: 0;
+    //                width: 100%;
+    //                text-align: center;
+    //                height: 18px;
+    //                line-height: 18px;
+    //                background: none;
+    //                padding: 0;
+    //                color: #b5b5b5;
+    //                border: none;
+    //                &:focus {
+    //                    color: #fefefe;
+    //                }
+    //            }
+    //        }
+    //        .ant-input-number-focused {
+    //            background-color: #1b1b1b;
+    //            outline: none;
+    //            border: none;
+    //            box-shadow: none;
+    //        }
+    //    }
+    //}
 }
 
 .ant-modal-mask {
