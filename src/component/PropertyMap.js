@@ -1,5 +1,5 @@
 import bridge from 'bridge';
-import {isCustomizeWidget} from '../stores/WidgetStore';
+import {isCustomizeWidget, dataType} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
@@ -445,91 +445,83 @@ propertyMap['effect'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box | widgetFlags.DomOnly, addProvides:widgetFlags.Leaf},
     { name: 'type',showName:'动效类型', type: propertyType.Select,  default:'无',options:{
-     'bounceIn':'bounceIn',
-     'bounceInDown':'bounceInDown',
-     'bounceInLeft':'bounceInLeft',
-     'bounceInRight':'bounceInRight',
-     'bounceInUp':'bounceInUp',
-     'fadeIn':'fadeIn',
-     'fadeInDown':'fadeInDown',
-     'fadeInDownBig':'fadeInDownBig',
-     'fadeInLeft':'fadeInLeft',
-     'fadeInLeftBig':'fadeInLeftBig',
-     'fadeInRight':'fadeInRight',
-     'fadeInRightBig':'fadeInRightBig',
-     'fadeInUp':'fadeInUp',
-     'fadeInUpBig':'fadeInUpBig',
-     'flipInX':'flipInX',
-     'flipInY':'flipInY',
-     'lightSpeedIn':'lightSpeedIn',
-     'rollIn':'rollIn',
-     'rotateIn':'rotateIn',
-     'rotateInDownLeft':'rotateInDownLeft',
-     'rotateInDownRight':'rotateInDownRight',
-     'rotateInUpLeft':'rotateInUpLeft',
-     'rotateInUpRight':'rotateInUpRight',
-     'zoomIn':'zoomIn',
-     'zoomInDown':'zoomInDown',
-     'zoomInLeft':'zoomInLeft',
-     'zoomInRight':'zoomInRight',
-     'zoomInUp':'zoomInUp',
-     'slideInDown':'slideInDown',
-     'slideInLeft':'slideInLeft',
-     'slideInRight':'slideInRight',
-     'slideInUp':'slideInUp',
+     '弹性进入':'bounceIn',
+     '弹性进入（从上）':'bounceInDown',
+     '弹性进入（从左）':'bounceInLeft',
+     '弹性进入（从右）':'bounceInRight',
+     '弹性进入（从下）':'bounceInUp',
+     '淡入':'fadeIn',
+     '自上淡入':'fadeInDown',
+     ' 自上淡入（长距离）':'fadeInDownBig',
+     '自左淡入':'fadeInLeft',
+     '自左淡入（长距离）':'fadeInLeftBig',
+     '自右淡入':'fadeInRight',
+     '自右淡入（长距离）':'fadeInRightBig',
+     '自下淡入':'fadeInUp',
+     '自下淡入（长距离）':'fadeInUpBig',
+     '翻转进入（上下）':'flipInX',
+     '翻转进入（左右）':'flipInY',
+     '光速进入':'lightSpeedIn',
+     '滚动进入':'rollIn',
+     '旋转进入':'rotateIn',
+     '旋转进入（自左上）':'rotateInDownLeft',
+     '旋转进入（自右上）':'rotateInDownRight',
+     '旋转进入（自左下）':'rotateInUpLeft',
+     '旋转进入（自右下）':'rotateInUpRight',
+     '放大出现':'zoomIn',
+     ' 放大出现（自上）':'zoomInDown',
+     '放大出现（自左）':'zoomInLeft',
+     '放大出现（自右）':'zoomInRight',
+     '放大出现（自下）':'zoomInUp',
+     '飞入（自上）':'slideInDown',
+     '飞入（自左）':'slideInLeft',
+     '飞入（自右）':'slideInRight',
+     '飞入（自下）':'slideInUp',
 
+        '弹跳':'bounce',
+        '闪烁':'flash',
+        '心跳':'pulse',
+        '弹弹球':'rubberBand',
+        '左右晃动（大幅）':'shake',
+        '左右晃动（小幅）':'headShake',
+        '摇动':'swing',
+        '旋转晃动':'tada',
+        '抖动':'wobble',
+        '扭动':'jello',
 
-
-
-
-        'bounce':'bounce',
-        'flash':'flash',
-        'pulse':'pulse',
-        'rubberBand':'rubberBand',
-        'shake':'shake',
-        'headShake':'headShake',
-        'swing':'swing',
-        'tada':'tada',
-        'wobble':'wobble',
-        'jello':'jello',
-
-
-
-
-
-        'bounceOut':'bounceOut',
-        'bounceOutDown':'bounceOutDown',
-        'bounceOutLeft':'bounceOutLeft',
-        'bounceOutRight':'bounceOutRight',
-        'bounceOutUp':'bounceOutUp',
-        'fadeOut':'fadeOut',
-        'fadeOutDown':'fadeOutDown',
-        'fadeOutDownBig':'fadeOutDownBig',
-        'fadeOutLeft':'fadeOutLeft',
-        'fadeOutLeftBig':'fadeOutLeftBig',
-        'fadeOutRight':'fadeOutRight',
-        'fadeOutRightBig':'fadeOutRightBig',
-        'fadeOutUp':'fadeOutUp',
-        'fadeOutUpBig':'fadeOutUpBig',
-        'flipOutX':'flipOutX',
-        'flipOutY':'flipOutY',
-        'lightSpeedOut':'lightSpeedOut',
-        'rotateOut':'rotateOut',
-        'rotateOutDownLeft':'rotateOutDownLeft',
-        'rotateOutDownRight':'rotateOutDownRight',
-        'rotateOutUpLeft':'rotateOutUpLeft',
-        'rotateOutUpRight':'rotateOutUpRight',
-        'hinge':'hinge',
-        'rollOut':'rollOut',
-        'zoomOut':'zoomOut',
-        'zoomOutDown':'zoomOutDown',
-        'zoomOutLeft':'zoomOutLeft',
-        'zoomOutRight':'zoomOutRight',
-        'zoomOutUp':'zoomOutUp',
-        'slideOutDown':'slideOutDown',
-        'slideOutLeft':'slideOutLeft',
-        'slideOutRight':'slideOutRight',
-        'slideOutUp':'slideOutUp'
+        '弹性离开':'bounceOut',
+        '弹性离开（向下）':'bounceOutDown',
+        '弹性离开（向左）':'bounceOutLeft',
+        '弹性离开（向右）':'bounceOutRight',
+        '弹性离开（向上）':'bounceOutUp',
+        '淡出':'fadeOut',
+        '向下淡入':'fadeOutDown',
+        ' 向下淡入（长距离）':'fadeOutDownBig',
+        '向左淡入':'fadeOutLeft',
+        '向左淡入（长距离）':'fadeOutLeftBig',
+        '向右淡入':'fadeOutRight',
+        ' 向右淡入（长距离）':'fadeOutRightBig',
+        '向上淡入':'fadeOutUp',
+        '向上淡入（长距离）':'fadeOutUpBig',
+        '翻转消失（上下）':'flipOutX',
+        '翻转消失（左右）':'flipOutY',
+        '光速离开':'lightSpeedOut',
+        '旋转离开':'rotateOut',
+        '旋转离开（向左下）':'rotateOutDownLeft',
+        '旋转离开（向右下）':'rotateOutDownRight',
+        '旋转离开（向左上）':'rotateOutUpLeft',
+        '旋转离开（向右上）':'rotateOutUpRight',
+        '掉落':'hinge',
+        '滚动离开':'rollOut',
+        '缩小消失':'zoomOut',
+        '缩小消失（向下）':'zoomOutDown',
+        '缩小消失（向左）':'zoomOutLeft',
+        '缩小消失（向右）':'zoomOutRight',
+        '缩小消失（向上）':'zoomOutUp',
+        '飞出（向下）':'slideOutDown',
+        '飞出（向左）':'slideOutLeft',
+        '飞出（向右）':'slideOutRight',
+        '飞出（向上）':'slideOutUp'
 }, isProperty: true },
 
     { name: 'duration',showName:'时长', type: propertyType.Number, default: 1, isProperty: true },
@@ -582,6 +574,13 @@ propertyMap['intVar'] = [
         ],
            isFunc: true },
 ];
+propertyMap[dataType.oneDArr] = [
+    ...propertyMap['data'],
+
+];
+propertyMap[dataType.twoDArr] = [
+    ...propertyMap['data'],
+];
 
 for (var n in propertyMap) {
     propertyFlags[n] = {provides: 0, requires: 0};
@@ -590,6 +589,27 @@ for (var n in propertyMap) {
             propertyFlags[n].provides |= propertyMap[n][index].addProvides;
         if (propertyMap[n][index].addRequires !== undefined)
             propertyFlags[n].requires |= propertyMap[n][index].addRequires;
+    }
+}
+
+function checkEventClass(selected) {
+    if(selected.className === 'func' ||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function checkLockClass(selected) {
+    if(selected.className === 'root'||
+        selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        return false;
+    } else {
+        return true;
     }
 }
 
@@ -612,7 +632,8 @@ function checkChildClass(selected, className) {
         }
     }
     if(className === 'var') {
-        if((selected.className === 'twodvar' ||
+        if((selected.className === 'oneDArr' ||
+            selected.className === 'twoDArr' ||
             selected.className === 'counter' ||
             selected.className === 'func' ||
             selected.className === 'var' ||
@@ -653,4 +674,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass, propertyFlags };
+export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass};

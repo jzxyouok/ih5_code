@@ -47,7 +47,10 @@ var funcType = {
     default: 'default'      //系统自带
 };
 
-var PREFIX = 'app/';
+var dataType = {
+    oneDArr: 'oneDArr',
+    twoDArr: 'twoDArr'
+};
 
 var copyObj = {};
 
@@ -854,7 +857,7 @@ export default Reflux.createStore({
                 this.render();
         }
     },
-    addWidget: function(className, props, link, name,dbType) {
+    addWidget: function(className, props, link, name, dbType) {
 
       if (!this.currentWidget)
           return;
@@ -987,12 +990,12 @@ export default Reflux.createStore({
             //递归遍历加锁
             let parentLock = this.currentWidget.props['locked'];
             let loopLock = (children) => {
-                for(let i=0; i<children.length; i++) {
-                    children[i].props['locked'] = parentLock;
-                    if(children[i].children&&children[i].children.length>0) {
-                        loopLock(children[i].children);
+                children.forEach(v=>{
+                    v.props['locked'] = parentLock;
+                    if(v.children&&v.children.length>0) {
+                        loopLock(v.children);
                     }
-                }
+                });
             };
             loopLock(this.currentWidget.children);
 
@@ -1026,8 +1029,7 @@ export default Reflux.createStore({
         //自定义组件就不重命名
         if(isCustomizeWidget(className)){
             props['name'] = className;
-        }
-        else if( className == "db"){
+        } else if( className == "db"){
             if(dbType){
                 props['name'] = name + dbCumulative;
                 props['dbType'] = "personalDb";
@@ -1037,18 +1039,25 @@ export default Reflux.createStore({
                 props['name'] = name;
                 props['dbType'] = "shareDb";
             }
-        }
-        else {
+        } else if (className === 'data') {
+            let cOrder = 1;
+            this.currentWidget.children.forEach(cW => {
+                if(cW.className === className && cW.props.type === props.type){
+                    cOrder+=1;
+                }
+            });
+            props['name'] = props.type + cOrder;
+        } else {
             if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
                 props['name'] = props.value;
             } else {
                 let cOrder = 1;
                 //查找当前widget有多少个相同className的，然后＋1处理名字
-                for(let i = 0; i<this.currentWidget.children.length; i++){
-                    if(this.currentWidget.children[i].className === className){
+                this.currentWidget.children.forEach(cW => {
+                    if(cW.className === className) {
                         cOrder+=1;
                     }
-                }
+                });
                 props['name'] = className + cOrder;
             }
         }
@@ -1113,14 +1122,14 @@ export default Reflux.createStore({
             }
             //递归遍历添加有事件widget到eventTreeList
             let loopEventTree = (children) => {
-                for(let i=0; i<children.length; i++) {
-                    if (children[i].props.eventTree) {
-                        this.eventTreeList.push(children[i]);
+                children.forEach(ch => {
+                    if(ch.props.eventTree){
+                        this.eventTreeList.push(ch);
                     }
-                    if (children[i].children && children[i].children.length > 0) {
-                        loopEventTree(children[i].children);
+                    if(ch.children&&ch.children.length>0) {
+                        loopEventTree(ch.children);
                     }
-                }
+                });
             };
             loopEventTree(this.currentWidget.rootWidget.children);
             this.trigger({eventTreeList: this.eventTreeList});
@@ -1155,34 +1164,34 @@ export default Reflux.createStore({
             if(this.currentWidget.rootWidget){
                 widgetList.push(root);
                 if(root.intVarList.length>0){
-                    for(let j=0; j<root.intVarList.length; j++){
-                        widgetList.push(root.intVarList[j]);
-                    }
+                    root.intVarList.forEach(v => {
+                        widgetList.push(v);
+                    });
                 }
                 if(root.strVarList.length>0){
-                    for(let k=0; k<root.strVarList.length; k++){
-                        widgetList.push(root.strVarList[k]);
-                    }
+                    root.strVarList.forEach(v => {
+                        widgetList.push(v);
+                    });
                 }
             }
             //递归遍历添加有事件widget到eventTreeList
             let loopWidgetTree = (children) => {
-                for(let i=0; i<children.length; i++) {
-                    widgetList.push(children[i]);
-                    if(children[i].intVarList.length>0){
-                        for(let j=0; j<children[i].intVarList.length; j++){
-                            widgetList.push(children[i].intVarList[j]);
-                        }
+                children.forEach(ch=>{
+                    widgetList.push(ch);
+                    if(ch.intVarList.length>0){
+                        ch.intVarList.forEach(v=> {
+                            widgetList.push(v);
+                        });
                     }
-                    if(children[i].strVarList.length>0){
-                        for(let k=0; k<children[i].strVarList.length; k++){
-                            widgetList.push(children[i].strVarList[k]);
-                        }
+                    if(ch.strVarList.length>0){
+                        ch.strVarList.forEach(v=> {
+                            widgetList.push(v);
+                        });
                     }
-                    if (children[i].children && children[i].children.length > 0) {
-                        loopWidgetTree(children[i].children);
+                    if (ch.children && ch.children.length > 0) {
+                        loopWidgetTree(ch.children);
                     }
-                }
+                });
             };
             loopWidgetTree(this.currentWidget.rootWidget.children);
             this.trigger({allWidgets: widgetList});
@@ -1282,12 +1291,11 @@ export default Reflux.createStore({
                 event.specificList = [this.emptyEventSpecific()];
             } else {
                 let index = -1;
-                for(let j=0; j<event.specificList.length; j++){
-                    let specific = event.specificList[j];
-                    if(sid == specific.sid){
-                        index = j;
+                event.specificList.forEach((v, i)=>{
+                    if(sid == v.sid){
+                        index = i;
                     }
-                }
+                });
                 if(index>-1){
                     event.specificList.splice(index, 1);
                 }
@@ -1356,11 +1364,11 @@ export default Reflux.createStore({
     removeFunction: function () {
         if(this.currentFunction) {
             let index = -1;
-            for(let i=0; i<this.currentWidget.funcList.length; i++) {
-                if(this.currentWidget.funcList[i].key == this.currentFunction.key) {
+            this.currentWidget.funcList.forEach((v,i)=>{
+                if(v.key == this.currentFunction.key) {
                     index = i;
                 }
-            }
+            });
             if(index>-1){
                 this.currentWidget.funcList.splice(index,1);
                 this.trigger({updateFunction: {widget:this.currentWidget}});
@@ -1454,11 +1462,11 @@ export default Reflux.createStore({
         if(this.currentVariable) {
             let removeV = (list, key) => {
                 let index = -1;
-                for(let i=0; i<list.length; i++) {
-                    if(list[i].key == key) {
+                list.forEach((v, i)=>{
+                    if(v.key == key) {
                         index = i;
                     }
-                }
+                });
                 if(index>-1){
                     list.splice(index,1);
                     this.selectWidget(this.currentWidget);
@@ -1589,11 +1597,11 @@ export default Reflux.createStore({
     removeDBItem: function() {
         if(this.currentDBItem) {
             let index = -1;
-            for(let i=0; i<this.currentWidget.dbItemList.length; i++) {
-                if(this.currentWidget.dbItemList[i].key == this.currentDBItem.key) {
+            this.currentWidget.dbItemList.forEach((v,i)=>{
+                if(v.key === this.currentDBItem.key){
                     index = i;
                 }
-            }
+            });
             if(index>-1){
                 this.currentWidget.dbItemList.splice(index,1);
                 this.trigger({updateDBItem: {widget:this.currentWidget}});
@@ -1969,4 +1977,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType, funcType, keepType, isCustomizeWidget}
+export {globalToken, nodeType, varType, funcType, keepType, isCustomizeWidget, dataType}

@@ -2,6 +2,8 @@
  * 默认工具栏配置
  */
 
+import {dataType} from '../../stores/WidgetStore';
+
 let img = (path) => `img/icons/${path}`;
 
 let rectIcon = img('rect.svg');
@@ -29,7 +31,8 @@ let personalDbIcon = img('personalDb.svg');
 
 let remotedeviceIcon = img('remoteDevice.svg');
 let pcdeviceIcon = img('pcDevice.svg');
-let twodvarIcon = img('twoDvar.svg');
+let onedarrIcon = img('oneDArr.svg');
+let twodarrIcon = img('twoDArr.svg');
 let composingcontainerIcon = img('composingContainer.svg');
 let cominterfaceIcon = img('comInterface.svg');
 let htmlIcon = img('html.svg');
@@ -77,7 +80,8 @@ var TOOL_ID = {
     ShAREDB: 26,
     REMOTEDEVICE: 27,
     PCDEVICE: 28,
-    TWODVAR: 29,
+    TWODARR: 29,
+    ONEDARR: 35,
     COMPOSINGCONTAINER:30,
     COMINTERFACE:31,
 
@@ -225,12 +229,13 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, DbType: 0, className:'db'}
         ]
     },{
-        name:'二维变量',
+        name:'二维数组',
         key:17,
         gid:17,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.TWODVAR, name:'二维变量', icon: twodvarIcon, className:'twodvar'}]
+            {cid:TOOL_ID.TWODARR, name:'二维数组', icon: twodarrIcon, className:'data', param:{'type': dataType.twoDArr}},
+            {cid:TOOL_ID.ONEDARR, name:'一维数组', icon: onedarrIcon, className:'data', param:{'type': dataType.oneDArr}}]
     },{
         name:'通信接口',
         key:19,

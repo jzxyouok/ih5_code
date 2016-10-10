@@ -36,7 +36,8 @@ let counterIcon = require('../images/base/counter.svg');
 
 let remotedeviceIcon = require('../images/base/remoteDevice.svg');
 let pcdeviceIcon = require('../images/base/pcDevice.svg');
-let twodvarIcon = require('../images/base/twoDvar.svg');
+let onedarrIcon = require('../images/base/oneDArr.svg');
+let twodarrIcon = require('../images/base/twoDArr.svg');
 let composingcontainerIcon = require('../images/base/composingContainer.svg');
 let cominterfaceIcon = require('../images/base/comInterface.svg');
 
@@ -92,7 +93,8 @@ class ComponentPanel extends React.Component {
                 //{cid:this.cid++,icon:personalDbIcon, className:'personalDb'},
                 {cid:this.cid++,icon:remotedeviceIcon, className:'remotedevice'},
                 {cid:this.cid++,icon:pcdeviceIcon, className:'pcdevice'},
-                {cid:this.cid++,icon:twodvarIcon, className:'twodvar'},
+                {cid:this.cid++,icon:onedarrIcon, className:'oneDArr'},
+                {cid:this.cid++,icon:twodarrIcon, className:'twoDArr'},
                 {cid:this.cid++,icon:composingcontainerIcon, className:'composingcontainer'},
                 {cid:this.cid++,icon:cominterfaceIcon, className:'cominterface'},
 

@@ -3,7 +3,7 @@ import React from 'react';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {varType, isCustomizeWidget} from '../../stores/WidgetStore';
-import {checkChildClass} from '../PropertyMap';
+import {checkChildClass, checkEventClass} from '../PropertyMap';
 import {modeType} from '../ToolBox/DEFAUL_TOOLBOX'
 
 const animationData = [
@@ -49,29 +49,22 @@ class Animation extends React.Component {
         }
         if(widget.selectWidget){
             this.checkAnimationEnable(widget.selectWidget);
-            this.onInitHasEventTree(widget.selectWidget);
         } else if (widget.selectFunction) {
             this.checkAnimationEnable(widget.selectFunction);
-            this.onInitHasEventTree(widget.selectFunction);
         } else if (widget.selectVariable) {
             this.checkAnimationEnable(widget.selectVariable);
-            this.onInitHasEventTree(widget.selectVariable);
         } else if (widget.selectDBItem) {
             this.checkAnimationEnable(widget.selectDBItem);
-            this.onInitHasEventTree(widget.selectDBItem);
         }
     }
 
     onInitHasEventTree(selectWidget){
         let hasEventTree = false;
         let canHaveEventTree = true;
-        if(selectWidget.className === 'func' ||
-            selectWidget.className === 'var' ||
-            selectWidget.className === 'dbItem') {
+        if(!checkEventClass(selectWidget)) {
             canHaveEventTree = false;
             hasEventTree = false;
-        } else
-        if (selectWidget.props.eventTree) {
+        } else if (selectWidget.props.eventTree) {
             hasEventTree = true;
         }
         this.setState({
@@ -88,6 +81,7 @@ class Animation extends React.Component {
     }
 
     checkAnimationEnable(widget) {
+        this.onInitHasEventTree(widget);
         //过滤可选的功能组件
         let data = animationData;
         for(let i = 0; i<data.length; i++) {
