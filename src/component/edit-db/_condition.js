@@ -10,16 +10,44 @@ class Condition extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-
+            node : null,
+            Dbname : ""
         };
+        this.inputChange = this.inputChange.bind(this);
+        this.inputBlur = this.inputBlur.bind(this);
     }
 
     componentDidMount() {
-
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
+        this.unsubscribe();
+    }
 
+    inputChange(event){
+        this.setState({
+            Dbname : event.target.value
+        })
+    }
+
+    inputBlur(){
+        let name = this.state.Dbname;
+        this.props.saveFuc(name);
+    }
+
+    onStatusChange(widget) {
+        if(widget.selectWidget){
+            if(widget.selectWidget.className == "db"){
+                if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
+                    this.setState({
+                        node : widget.selectWidget.node,
+                        Dbname :  widget.selectWidget.name
+                    })
+                }
+            }
+        }
     }
 
     render() {
@@ -34,10 +62,17 @@ class Condition extends React.Component {
                                 <input placeholder="" />
                             </li>
 
-                            <li>
-                                <label>名称：</label>
-                                <input placeholder="" />
-                            </li>
+                            {
+                                this.state.node.dbType == "shareDb"
+                                    ?   <li>
+                                            <label>名称：</label>
+                                            <input value={ this.state.Dbname }
+                                                   ref="dbname"
+                                                   onBlur={ this.inputBlur.bind(this) }
+                                                   onChange={ this.inputChange.bind(this) } />
+                                        </li>
+                                    :   null
+                            }
 
                             <li className="line"><span /></li>
 

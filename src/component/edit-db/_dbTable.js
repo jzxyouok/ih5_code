@@ -24,7 +24,7 @@ class DbTable extends React.Component {
             isAddCul : false,
             addType : 0,
             lastSelectID : null,
-            isHaveContent : false,
+            isHaveContent : true,
             isError : false,
             errorText : "",
             moveLength : 0,
@@ -130,7 +130,8 @@ class DbTable extends React.Component {
                        originalHeader : [],
                        inputNow : null,
                        inputText : null,
-                       inputStyle : null
+                       inputStyle : null,
+                       isHaveContent : true
                    })
                }
            }
@@ -336,10 +337,10 @@ class DbTable extends React.Component {
         }.bind(this));
     }
 
-    updateHeader(){
+    updateHeader(DdName){
         let array = this.state.dbHeader;
         let header = array.join(',');
-        let name = this.state.node.name;
+        let name = DdName ? DdName : this.state.node.name;
         let id = this.state.node.dbid;
         let data = "id=" + id + "&name=" + encodeURIComponent(name) + "&header=" + encodeURIComponent(header);
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
