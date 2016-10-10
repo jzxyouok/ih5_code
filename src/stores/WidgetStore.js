@@ -854,7 +854,7 @@ export default Reflux.createStore({
                 this.render();
         }
     },
-    addWidget: function(className, props, link, name,dbType) {
+    addWidget: function(className, props, link, name, dbType) {
 
       if (!this.currentWidget)
           return;
