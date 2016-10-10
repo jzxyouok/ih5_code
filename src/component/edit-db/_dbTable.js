@@ -350,7 +350,9 @@ class DbTable extends React.Component {
             if (result['id']) {
                 this.state.node['name'] = name;
                 this.state.node['header'] = header;
-                WidgetActions['renameWidget'](name);
+                if(DdName){
+                    WidgetActions['renameWidget'](name);
+                }
             }
         }.bind(this));
         let allDbHeader = this.state.allDbHeader;
@@ -662,19 +664,19 @@ class DbTable extends React.Component {
                     selectArray : idArray
                 })
             };
-
+            fuc(text);
             if(type == "s" ){
                 value = value.substr(1);
-                fuc(text);
+                //fuc(text);
                 list[which][value] = text;
             }
             else if( type == "i" ){
                 value = value.substr(1);
-                fuc(parseFloat(text));
+                //fuc(parseFloat(text));
                 list[which][value] = parseFloat(text);
             }
             else {
-                fuc(text);
+                //fuc(text);
                 list[which][value] = text;
             }
             console.log(list);
