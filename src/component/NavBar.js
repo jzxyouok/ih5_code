@@ -136,7 +136,7 @@ class NavBar extends React.Component {
     }
 
     DbHeaderData(data,bool){
-        if(!bool){
+        if(bool){
             this.setState({
                 dbList : data
             })

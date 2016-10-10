@@ -16,6 +16,7 @@ class EditDb extends React.Component {
         };
         this.smallBtn = this.smallBtn.bind(this);
         this.bigBtn = this.bigBtn.bind(this);
+        this.saveFuc = this.saveFuc.bind(this);
     }
 
     componentDidMount() {
@@ -38,6 +39,10 @@ class EditDb extends React.Component {
         })
     }
 
+    saveFuc(data){
+        this.refs.DbTable.saveBtn(data);
+    }
+
     render() {
         return (
             <div className='EditDb'>
@@ -47,11 +52,13 @@ class EditDb extends React.Component {
                     <div className={$class("ED-left",{"action": !this.state.isBig})}>
                         <Condition smallBtn={ this.smallBtn }
                                    isBig={ this.state.isBig }
-                                   bigBtn={ this.bigBtn } />
+                                   ref="Condition"
+                                   bigBtn={ this.bigBtn }
+                                   saveFuc={this.saveFuc} />
                     </div>
 
                     <div className="ED-right flex-1">
-                        <DbTable isBig={ this.state.isBig } />
+                        <DbTable isBig={ this.state.isBig } ref="DbTable" />
                     </div>
                 </div>
             </div>
