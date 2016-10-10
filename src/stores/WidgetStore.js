@@ -351,6 +351,26 @@ function generateObjectId(object) {
   if (object&&(object.className == 'var'||object.className == 'func')) {
     if (object.widget.props['id'] === undefined)
       object.widget.props['id'] = 'id_' + (maxSeq++);
+    if (object.name == '') {
+      var list;
+      var type;
+      var id = 0;
+      if (object.type == 'string') {
+        type = 's';
+        list = object.widget.strVarList;
+      } else {
+        type = 'i';
+        list = object.widget.intVarList;
+      }
+      list.forEach(value => {
+        if (value.name.substr(0, 1) == type) {
+          var seq = parseInt(value.name.substr(1));
+          if (seq >= id)
+            id = seq + 1;
+        }
+      });
+      object.name = type + id;
+    }
   } else if (object&&object.props['id'] === undefined) {
     object.props['id'] = 'id_' + (maxSeq++);
   }
@@ -401,24 +421,29 @@ function generateId(node) {
 }
 
 function objectToId(object) {
-  var idName, varName;
+  var idName, varKey, varName;
   if (object.className == 'var') {
     idName = object.widget.props['id'];
+    varName = object.name;
     if (object.type == 'string') {
-      varName = 's' + object.widget.strVarList.indexOf(object);
+      varKey = 's' + object.widget.strVarList.indexOf(object);
     } else {
-      varName = 'i' + object.widget.intVarList.indexOf(object);
+      varKey = 'i' + object.widget.intVarList.indexOf(object);
     }
   } else if (object.className == 'func'){
       idName = object.widget.props['id'];
-      varName = 'f' + object.widget.funcList.indexOf(object);
+      varKey = 'f' + object.widget.funcList.indexOf(object);
   } else if (object.className == 'dbItem'){
       idName = object.widget.props['id'];
-      varName = 'd' + object.widget.dbItemList.indexOf(object);
+      varKey = 'd' + object.widget.dbItemList.indexOf(object);
   } else {
     idName = object.props['id'];
   }
-  return [idName, varName];
+  return [idName, varKey, varName];
+}
+
+function getIdsName(idName, varName, propName) {
+  return 'ids.' + idName + '.' + ((varName) ? '_' + varName : propName);
 }
 
 function generateJsFunc(etree) {
@@ -443,9 +468,9 @@ function generateJsFunc(etree) {
             else
               jsop = op;
 
-            var o = 'ids.' + c.judgeObjId + '.' + c.judgeValFlag + jsop;
+            var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
             if (c.compareObjId) {
-              o += 'ids.' + c.compareObjId + '.' + c.compareValFlag;
+              o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
               o += JSON.stringfy(compareObjFlag);
             }
@@ -457,9 +482,9 @@ function generateJsFunc(etree) {
         if (cmd.id && cmd.type == 'default' && cmd.name) {
           if (cmd.name === 'changeValue') {
             if (cmd.property.length >= 1)
-              lines.push('ids.' + cmd.id + '.value=' + JSON.stringify(cmd.property[0]['value']));
+              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + JSON.stringify(cmd.property[0]['value']));
           } else {
-            var line = 'ids.' + cmd.id + '.' + cmd.name + '(';
+            var line = getIdsName(cmd.id, cmd.varName, cmd.name) + '(';
             if (cmd.property) {
               line += cmd.property.map(function(p) {
                 if (p['binding'] !== undefined) {
@@ -533,8 +558,10 @@ function saveTree(data, node) {
                    if (v.judgeObj) {
                       let o = objectToId(v.judgeObj);
                       obj.judgeObjId = o[0];
-                      if (o[1])
+                      if (o[1]) {
                         obj.judgeVarId = o[1];
+                        obj.judgeVarName = o[2];
+                      }
                    }
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
@@ -546,8 +573,10 @@ function saveTree(data, node) {
                    if (v.compareObj) {
                       var o = objectToId(v.compareObj);
                       obj.compareObjId = o[0];
-                      if (o[1])
+                      if (o[1]) {
                         obj.compareVarId = o[1];
+                        obj.compareVarName = o[2];
+                      }
                    }
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
@@ -582,6 +611,7 @@ function saveTree(data, node) {
                 c.id = o[0];
                 if (o[1]) {
                     c.var = o[1];
+                    c.varName = o[2];
                 }
             }
             if (cmd.action&&cmd.action.property) {
@@ -631,7 +661,7 @@ function saveTree(data, node) {
     data['props'] = props;
   // if (node.events)
   //   data['events'] = node.events;
-  data['vars'] = [];
+  var list = [];
   if (node.intVarList.length > 0) {
       //int vars list
       node.intVarList.forEach(item =>{
@@ -640,7 +670,7 @@ function saveTree(data, node) {
           o['value'] = item.value==null?item.value:parseInt(item.value);
           o['props'] = item.props;
           o['type'] = item.type;
-          data['vars'].push(o);
+          list.push(o);
       });
   }
   if(node.strVarList.length > 0){
@@ -651,10 +681,12 @@ function saveTree(data, node) {
           o['value'] = item.value;
           o['props'] = item.props;
           o['type'] = item.type;
-          data['vars'].push(o);
+          list.push(o);
       });
   }
-  data['funcs'] = [];
+  if (list.length)
+    data['vars'] = list;
+  list = [];
   if (node.funcList.length > 0) {
       node.funcList.forEach(item =>{
           var o = {};
@@ -662,9 +694,11 @@ function saveTree(data, node) {
           o['value'] = item.value;
           o['params'] = item.params;
           o['props'] = item.props;
-          data['funcs'].push(o);
+          list.push(o);
       });
   }
+  if (list.length)
+    data['funcs'] = list;
   if(node.className==='db'&&node.dbItemList.length >0) {
       //db
       data['dbItems'] = [];
