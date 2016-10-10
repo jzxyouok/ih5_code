@@ -561,7 +561,7 @@ propertyMap['db'] = [
     { addRequires: widgetFlags.Root},
     { name: 'find', showName:'输出', isFunc: true, info:'(option, callback(err, result))',
         property:[
-            {'name':'option', showName:'选项', 'value':null, 'type':propertyType.Select},
+            {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.Select},
             // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',

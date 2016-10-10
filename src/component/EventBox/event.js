@@ -534,14 +534,16 @@ class Event extends React.Component {
            let tag=true;
            let classname= v.className;
 
+           console.log(classname,type,v.props.name);
+
            //特殊五类
            if(classname=='var'){
-               if(type==0){
-                   type='number';
-               }else if(type==2){
-                   type='string';
+               if(v.type=='number'){
+                   v.type=[0,1,5];
+               }else if(v.type=='string'){
+                   v.type=[2,3];
                }
-               if(v.type==type){
+               if(v.type.indexOf(type)>=0){
                    arr.push(v.props.name);
                }
            }else if(classname=='text' ){
