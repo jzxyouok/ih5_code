@@ -51,6 +51,9 @@ class DbTable extends React.Component {
         this.updateNewScrollData = this.updateNewScrollData.bind(this);
         this.getOriginalData = this.getOriginalData.bind(this);
         this.getOriginalHeader = this.getOriginalHeader.bind(this);
+        this.getPDbHeader = this.getPDbHeader.bind(this);
+        this.updatePDbHeader = this.updatePDbHeader.bind(this);
+        this.getPDbList = this.getPDbList.bind(this);
     }
 
     componentDidMount() {
@@ -99,9 +102,16 @@ class DbTable extends React.Component {
             allDbHeader : data,
             originalHeader:data
         },()=>{
-            if(bool){
-                this.getNewData();
-                this.getOriginalHeader();
+            //console.log(bool);
+            if(bool && this.state.node){
+                if(this.state.node.dbType == "shareDb"){
+                    this.getOriginalHeader();
+                    this.getNewData();
+                }
+                else {
+                    this.getPDbHeader();
+                    this.getPDbList();
+                }
             }
         })
     }
@@ -127,6 +137,44 @@ class DbTable extends React.Component {
         }
     }
 
+    getPDbList(){
+        let self = this;
+        let id = this.state.node.dbid;
+        WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + id, null, null, function(text) {
+            var result = JSON.parse(text);
+            console.log(result);
+            if (result['header']) {
+                let headerData = result['header'].split(",");
+                this.setState({
+                    dbHeader : headerData
+                });
+                this.state.node.find({}, function (err, data) {
+                    //console.log(2,data);
+                    if(data == undefined) return;
+
+                    let list = [];
+                    list = data;
+                    self.setState({
+                        dbList : list
+                    },()=>{
+                        self.updateNewScrollData();
+                    });
+
+                    if(list.length === 0){
+                        self.createContent();
+                    }
+                });
+                this.scrollBtn();
+            }
+            else {
+                this.setState({
+                    isHaveContent : true,
+                    dbHeader : []
+                })
+            }
+        }.bind(this));
+    }
+
     getNewData() {
         let self = this;
         let allDbHeader = this.state.allDbHeader;
@@ -141,7 +189,7 @@ class DbTable extends React.Component {
                 if(headerData.length !== 0){
                     let dbHeader = headerData;
                     this.state.node.find({}, function (err, data) {
-                        console.log(2,data);
+                        //console.log(2,data);
                         if(data == undefined) return;
 
                         let list = [];
@@ -250,6 +298,43 @@ class DbTable extends React.Component {
         });
     }
 
+    getPDbHeader(){
+        let id = this.state.node.dbid;
+        let self = this;
+        WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + id, null, null, function(text) {
+            var result = JSON.parse(text);
+            console.log(result);
+            if (result['header']) {
+                let headerData = result['header'].split(",");
+                this.setState({
+                    dbHeader : headerData
+                });
+            }
+        }.bind(this));
+        this.state.node.find({}, function (err, data) {
+            let list = [];
+            list = data;
+            self.setState({
+                originalData : list
+            });
+        });
+    }
+
+    updatePDbHeader(){
+        let array = this.state.dbHeader;
+        let header = array.join(',');
+        let id = this.state.node.dbid;
+        let data = "id=" + id + "&header=" + encodeURIComponent(header);
+        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
+            var result = JSON.parse(text);
+            if (result['id']) {
+                this.state.node['header'] = header;
+                this.getPDbHeader();
+                this.getPDbList();
+            }
+        }.bind(this));
+    }
+
     updateHeader(){
         let array = this.state.dbHeader;
         let header = array.join(',');
@@ -265,6 +350,7 @@ class DbTable extends React.Component {
         }.bind(this));
         let allDbHeader = this.state.allDbHeader;
         allDbHeader.map((v,i)=>{
+            //console.log(2,allDbHeader[i].id === this.state.node.dbid);
             if(allDbHeader[i].id === this.state.node.dbid) {
                 allDbHeader[i].header = header;
                 DbHeaderAction['DbHeaderData'](allDbHeader, true);
@@ -276,18 +362,25 @@ class DbTable extends React.Component {
         console.log(1,this.state.dbHeader,this.state.dbList);
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
-           if(data){
-               self.setState({
-                   dbList : [],
-                   selectArray : [],
-                   originalData : [],
-                   originalHeader : [],
-                   inputNow : null,
-                   inputText : null,
-                   inputStyle : null
-               });
-               self.updateHeader();
-           }
+            //console.log("1-2",data);
+            if(data == undefined) return;
+
+            self.setState({
+                selectArray : [],
+                originalData : [],
+                originalHeader : [],
+                inputNow : null,
+                inputText : null,
+                inputStyle : null
+            },()=>{
+                console.log(self.state.node);
+                if(self.state.node.dbType == "shareDb"){
+                    self.updateHeader();
+                }
+                else {
+                    self.updatePDbHeader();
+                }
+            });
         });
     }
 
