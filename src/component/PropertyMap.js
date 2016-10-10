@@ -594,7 +594,34 @@ for (var n in propertyMap) {
 }
 
 function checkChildClass(selected, className) {
-    // 对函数,变量,自定义的处理
+    // 对函数,变量,自定义函数等的处理
+    if(className ==='dbItem'){
+        if(selected.className === 'db'){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    if(className === 'func'){
+        if(selected.className === 'func' ||
+            selected.className === 'var' ||
+            selected.className === 'dbItem') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    if(className === 'var') {
+        if((selected.className === 'twodvar' ||
+            selected.className === 'counter' ||
+            selected.className === 'func' ||
+            selected.className === 'var' ||
+            selected.className === 'dbItem')){
+            return false;
+        } else {
+            return true;
+        }
+    }
     if (selected.className === 'func' ||
         selected.className === 'var' ||
         selected.className === 'dbItem' ||
