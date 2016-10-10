@@ -54,6 +54,7 @@ class DbTable extends React.Component {
         this.getPDbHeader = this.getPDbHeader.bind(this);
         this.updatePDbHeader = this.updatePDbHeader.bind(this);
         this.getPDbList = this.getPDbList.bind(this);
+        this.cancelBtn = this.cancelBtn.bind(this);
     }
 
     componentDidMount() {
@@ -388,6 +389,17 @@ class DbTable extends React.Component {
                 }
             });
         });
+    }
+
+    cancelBtn(){
+        if(this.state.node.dbType == "shareDb"){
+            this.getOriginalHeader();
+            this.getNewData();
+        }
+        else {
+            this.getPDbHeader();
+            this.getPDbList();
+        }
     }
 
     updateNewScrollData(){
@@ -841,7 +853,7 @@ class DbTable extends React.Component {
                         <button className="btn btn-clear next-bnt">下一页</button>
                     </div>
 
-                    <div className="right">
+                    <div className={ $class("right",{"hidden": this.state.selectArray.length > 0}) }>
                         <button className="btn btn-clear cancel-btn" >取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
                     </div>
