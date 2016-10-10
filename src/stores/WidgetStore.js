@@ -272,7 +272,7 @@ function resolveEventTree(node, list) {
                   default:
                       if(cmd.object&&cmd.object.className === 'db') {
                           cmd.action.property.forEach(v=> {
-                              if(v.name === 'data' && v.valueId) {
+                              if((v.name === 'data'||v.name=='option') && v.valueId) {
                                   v.value = idToObject(list, v.valueId[0], v.valueId[1]);
                                   (delete v.valueId);
                               }
@@ -372,6 +372,14 @@ function generateId(node) {
                       generateObjectId(cmd.action.func);
                       break;
                   default:
+                      if(cmd.action.property){
+                          cmd.action.property.forEach(v=>{
+                              //看是否需要generateid
+                              if(v.value&&v.value.className){
+                                  generateObjectId(v.value);
+                              }
+                          })
+                      }
                       break;
               }
           }
@@ -542,12 +550,21 @@ function saveTree(data, node) {
                                 valueId: objectToId(v.value),
                                 binding: v.value
                             })
+                        } else if (v.name === 'option'&& v.value) {
+                            property.push({
+                                name:v.name,
+                                showName: v.showName,
+                                type: v.type,
+                                valueId: objectToId(v.value)
+                            })
                         } else {
                             property.push(v);
                         }
                     });
+                    c.property = property;
+                } else {
+                    c.property = cmd.action.property;
                 }
-                c.property = property;
             }
 
             cmds.push(c);
