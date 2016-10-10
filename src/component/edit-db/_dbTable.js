@@ -102,7 +102,7 @@ class DbTable extends React.Component {
             allDbHeader : data,
             originalHeader:data
         },()=>{
-            //console.log(bool);
+            console.log(bool,this.state.node);
             if(bool && this.state.node){
                 if(this.state.node.dbType == "shareDb"){
                     this.getOriginalHeader();
@@ -146,7 +146,8 @@ class DbTable extends React.Component {
             if (result['header']) {
                 let headerData = result['header'].split(",");
                 this.setState({
-                    dbHeader : headerData
+                    dbHeader : headerData,
+                    isHaveContent : false,
                 });
                 this.state.node.find({}, function (err, data) {
                     //console.log(2,data);

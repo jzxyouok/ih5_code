@@ -244,12 +244,16 @@ class ObjectTree extends React.Component {
 
     chooseBtn(nid, data){
 
-        this.setState({
-            nid : nid,
-            editMode: false
-        },()=>{
-            WidgetActions['selectWidget'](data, true);
-        });
+        if(this.chooseMoreStatus){
+            //ctrl键按下
+        }else{
+            this.setState({
+                nid : nid,
+                editMode: false
+            },()=>{
+                WidgetActions['selectWidget'](data, true);
+            });
+        }
     }
 
     openBtn(event){

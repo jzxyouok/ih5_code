@@ -255,7 +255,8 @@ propertyMap['page'] = [
     // ...propertyMap['container'],
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root | widgetFlags.Container | widgetFlags.DomOnly, addProvides: widgetFlags.Container},
-    { name: 'backwardTransition',showName:'前翻效果',  type: propertyType.Select, default:'无',options:{
+    { name: 'backwardTransition',showName:'前翻效果',  type: propertyType.Select, default:'同上一页',options:{
+        '同上一页':-1,
         '无':0,
         '向左滑走（平移）':1,
         '向右滑走（平移）':2,
@@ -313,7 +314,8 @@ propertyMap['page'] = [
         '交替翻页':66,
         '碰撞翻页':67
     },isProperty: true },
-    { name: 'forwardTransition',showName:'后翻效果', type: propertyType.Select, default:'无',options:{
+    { name: 'forwardTransition',showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:{
+        '同上一页':-1,
          '无':0,
         '向左滑走（平移）':1,
         '向右滑走（平移）':2,
