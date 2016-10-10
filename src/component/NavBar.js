@@ -330,9 +330,26 @@ class NavBar extends React.Component {
     }
 
     createDbShow(){
-        this.setState({
-            createDb : true
-        })
+        let name = '数据库' + this.state.dbList.length;
+        let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
+        //console.log(data);
+        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
+            var result = JSON.parse(text);
+            if (result['id']) {
+                //console.log(result);
+                var list = this.state.dbList;
+                list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
+                WidgetActions['addWidget']('db', {'dbid': id }, null, name);
+                this.setState({
+                    dbList : list
+                },()=>{
+                    DbHeaderAction['DbHeaderData'](this.state.dbList,false);
+                })
+            }
+        }.bind(this));
+        //this.setState({
+        //    createDb : true
+        //})
     }
 
     createDbHide(){
@@ -401,7 +418,7 @@ class NavBar extends React.Component {
                     return;
                 }
                 else{
-                    for(let index = 0; index < 3-b; index++){
+                    for(let index = 1; index < 3-b; index++){
                         fuc[index] = index;
                     }
                 }
@@ -457,7 +474,9 @@ class NavBar extends React.Component {
                                                                         <div className="TitleName">{v}</div>
                                                                     </div>
 
-                                                                    {<span className="edit-btn" />}
+                                                                    {
+                                                                        //<span className="edit-btn" />
+                                                                    }
                                                                 </li>
                                                       })
                                                     : null
@@ -679,11 +698,13 @@ class NavBar extends React.Component {
                                    createClassBtn={ this.createClassBtn } />
                 </div>
 
-                <div className={$class({"hidden": !this.state.createDb }) }>
-                    <CreateDb createDbHide={ this.createDbHide }
-                              onUpdateDb={this.onUpdateDb.bind(this)}
-                              dbList = { this.state.dbList } />
-                </div>
+                {
+                    //<div className={$class({"hidden": !this.state.createDb }) }>
+                    //    <CreateDb createDbHide={ this.createDbHide }
+                    //              onUpdateDb={this.onUpdateDb.bind(this)}
+                    //              dbList = { this.state.dbList } />
+                    //</div>
+                }
 
                 <div className={$class({"hidden": !this.state.arrangeDb})}>
                     <ArrangeDb  arrangeDbHide={ this.arrangeDbHide }
