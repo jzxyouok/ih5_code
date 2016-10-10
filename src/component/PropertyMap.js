@@ -44,6 +44,12 @@ propertyMap['widget'] = [
     { name: 'id',showName:'ID', type: propertyType.String, default: '', isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
+
+propertyMap['data'] = [
+    ...propertyMap['widget'],
+    { addRequires: widgetFlags.Root}
+];
+
 propertyMap['root'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Root | widgetFlags.Container},
