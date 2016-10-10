@@ -147,6 +147,22 @@ propertyMap['counter'] = [
         property:[
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
         ], isFunc: true },
+    { name: 'add1', showName:'加1', isFunc: true },
+    { name: 'minus1', showName:'减1', isFunc: true },
+    { name: 'addN', showName:'加N',
+        property:[
+            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'minusN', showName:'减N',
+        property:[
+            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'getInt', showName:'取整', isFunc: true },
+    { name: 'randomValue', showName:'生成随机数',
+        property:[
+            {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
+            {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
