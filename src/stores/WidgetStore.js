@@ -911,7 +911,6 @@ export default Reflux.createStore({
         this.render();
       }
     },
-
     removeWidget: function(shouldChooseParent) {
         let parentWidget;
         if (this.currentWidget&&shouldChooseParent) {
@@ -1000,6 +999,7 @@ export default Reflux.createStore({
             // this.render();
         }
     },
+
     reorderWidget: function(delta) {
       if (this.currentWidget && this.currentWidget.parent) {
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);

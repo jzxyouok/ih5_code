@@ -243,7 +243,7 @@ class ObjectTree extends React.Component {
     }
 
     chooseBtn(nid, data){
-        //console.log(data);
+
         this.setState({
             nid : nid,
             editMode: false
@@ -541,8 +541,7 @@ class ObjectTree extends React.Component {
             let $oItem =$(e.currentTarget);
 
             let $oItemTitle =  $oItem.find('.item-title:eq(0)');
-
-           let $oItemEventEmpty =  $oItem.find('.item-event-empty:eq(0)');
+            let $oItemEventEmpty =  $oItem.find('.item-event-empty:eq(0)');
 
 
         }
@@ -670,12 +669,12 @@ class ObjectTree extends React.Component {
                          key={i}
                          data-keyId={i}
                          draggable='true'
+                         onClick={this.chooseMore}
                          onDragStart={this.itemDragStart.bind(this,v.key, v)}
                          onDragEnd={this.itemDragEnd}>
                 <div className='item-title-wrap clearfix'
                      id={'tree-item-'+ v.key}
                      tabIndex={v.key}
-                     onClick={this.chooseMore}
                      onFocus={this.itemAddKeyListener.bind(this)}
                      onBlur={this.itemRemoveKeyListener.bind(this)}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
