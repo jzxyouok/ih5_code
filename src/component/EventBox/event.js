@@ -416,11 +416,10 @@ class Event extends React.Component {
                     arrHidden[5] = false;
                     //非五类
                     compareValOption = this.setObjProperty(chooseEventClassName);
-
                     let propObj = this.setObjProperty(chooseEventClassName);
                     compareValOption =this.getCompareValOption(propObj.propArr);
 
-                    initFlag.compareObj =this.getChooseObjByIndex(index);
+
 
                     initFlag.compareValOption =compareValOption;
 
@@ -429,6 +428,7 @@ class Event extends React.Component {
                         arrHidden: arrHidden
                     }
                 }
+                initFlag.compareObj =this.getChooseObjByIndex(index);
 
                 break;
             default :
@@ -534,7 +534,7 @@ class Event extends React.Component {
            let tag=true;
            let classname= v.className;
 
-           console.log(classname,type,v.props.name);
+
 
            //特殊五类
            if(classname=='var'){
