@@ -72,6 +72,7 @@ class NavBar extends React.Component {
         this.createSockShow = this.createSockShow.bind(this);
         this.createSockHide = this.createSockHide.bind(this);
         this.updateSock = this.updateSock.bind(this);
+        this.addSock = this.addSock.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -425,6 +426,10 @@ class NavBar extends React.Component {
         this.setState({
             sockList : data
         })
+    }
+
+    addSock(id){
+        //WidgetActions['addWidget']('sock', {'sid': id});
     }
 
     render() {
