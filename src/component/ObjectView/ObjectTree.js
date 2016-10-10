@@ -7,6 +7,10 @@ import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget} from '../../stores/WidgetStore';
 
+const drapTipId = 'treeDragTip';
+const placeholderId = 'treeDragPlaceholder';
+const appId = 'iH5-App';
+
 class ObjectTree extends React.Component {
     constructor (props) {
         super(props);
@@ -61,9 +65,9 @@ class ObjectTree extends React.Component {
         this.destroyDragTip = this.destroyDragTip.bind(this);
         //有关拖动的相关参数
         this.placeholder = document.createElement('div');
-        this.placeholder.className = 'placeholder';
+        this.placeholder.id = 'treeDragPlaceholder';
         this.dragTip = document.createElement('div');
-        this.dragTip.className = 'dragTip';
+        this.dragTip.id = drapTipId;
 
         //多选
         this.onKeyDown =this.onKeyDown.bind(this);
@@ -463,14 +467,17 @@ class ObjectTree extends React.Component {
 
     initialDragTip(content, isShow){
         this.dragTip.innerHTML = content;
-        document.getElementById('iH5-App').appendChild(this.dragTip);
+        document.getElementById(appId).appendChild(this.dragTip);
         isShow?this.dragTip.style.display='block':this.dragTip.style.display='none';
     }
 
     destroyDragTip(){
         this.dragTip.innerHTML = '';
         this.dragTip.style.display = 'none';
-        this.dragTip.parentNode.removeChild(this.dragTip);
+        var elem = document.getElementById(drapTipId);
+        if(elem){
+            elem.parentElement.removeChild(elem);
+        }
     }
 
     itemDragStart(nid, data, e){
@@ -479,7 +486,7 @@ class ObjectTree extends React.Component {
             e.preventDefault();
             return;
         }
-
+        e.stopPropagation();
         this.initialDragTip('拖拽对象到此', false);
         //拖动同时把item设为被选中
         this.chooseBtn(nid, data);
@@ -494,15 +501,25 @@ class ObjectTree extends React.Component {
             e.preventDefault();
             return;
         }
-
+        e.stopPropagation();
         this.destroyDragTip();
-        // this.dragged.style.display = 'block';
-        this.dragged.parentNode.removeChild(this.placeholder);
-        // update state
-        let from = Number(this.dragged.dataset.keyid);
-        let to = Number(this.over.dataset.keyid);
-        if (from != to){
-            WidgetActions['reorderWidget'](from-to>0?-(from-to):-(from-(--to)));
+        // 删除placeholder
+        var elem = document.getElementById(placeholderId);
+        if(elem) {
+            elem.parentElement.removeChild(elem);
+        }
+        let srcKeyId = Number(this.dragged.dataset.keyid);
+        let srcKey = Number(this.dragged.dataset.wkey);
+        let srcParentKey = Number(this.dragged.dataset.parentkey);
+        let destKeyId = Number(this.over.dataset.keyid);
+        let destKey = Number(this.over.dataset.wkey);
+        let destParentKey = Number(this.over.dataset.parentkey);
+        if (srcKeyId !== destKeyId && srcParentKey === destParentKey){
+            //同层
+            WidgetActions['reorderWidget'](srcKeyId-destKeyId>0?-(srcKeyId-destKeyId):-(srcKeyId-(--destKeyId)));
+        } else {
+            //跨层
+            WidgetActions['moveWidget'](srcKey, destParentKey, destKeyId);
         }
     }
 
@@ -512,10 +529,9 @@ class ObjectTree extends React.Component {
             e.preventDefault();
             return;
         }
-
+        e.stopPropagation();
         this.dragWithTip(e.clientX, e.clientY, true);
-        // this.dragged.style.display = 'none';
-        if(e.target.className === 'placeholder') return;
+        if(e.target.id === placeholderId) return;
         //递归找到并获取名字叫item的div
         let findItemDiv = (target,cName) => {
             if(target.className === cName) {
@@ -537,7 +553,7 @@ class ObjectTree extends React.Component {
         let  evt = e ? e : window.event;
         if(evt.keyCode==17){
             this.chooseMoreStatus=false;
-
+            console.log('haha');
         }
     }
     chooseMore(e){
@@ -678,9 +694,11 @@ class ObjectTree extends React.Component {
             });
             return  <div className='item'
                          key={i}
-                         data-keyId={i}
-                         draggable='true'
                          onClick={this.chooseMore}
+                         data-keyId={i}
+                         data-wKey={v.key}
+                         data-parentKey={v.parent.key}
+                         draggable='true'
                          onDragStart={this.itemDragStart.bind(this,v.key, v)}
                          onDragEnd={this.itemDragEnd}>
                 <div className='item-title-wrap clearfix'

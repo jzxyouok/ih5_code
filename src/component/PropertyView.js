@@ -216,7 +216,6 @@ class PropertyView extends React.Component {
                   }else if(prop.name == 'fontFamily'){
                       this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
                       v = value;
-
                   }else if(prop.name == 'type'){
                       this.selectNode.props.type=this.getScaleTypeDefault(value,prop.options);
                       v = value;
@@ -380,6 +379,7 @@ class PropertyView extends React.Component {
  
         const getInput = (item, index) => {
 
+
             //设置默认值,用于展示
             let defaultValue;
             if (item.readOnly ) {
@@ -449,6 +449,7 @@ class PropertyView extends React.Component {
                      }
                 }
             }else  if (node.props[item.name] === undefined){
+
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default
                 }else if(item.type === propertyType.Percentage && item.name=='alpha'){
@@ -456,6 +457,7 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue='';
                 }
+
             } else {
                 defaultValue = node.props[item.name];
                 if (item.name == 'alpha') {

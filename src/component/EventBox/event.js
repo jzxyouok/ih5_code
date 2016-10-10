@@ -7,7 +7,7 @@ import WidgetStore, {funcType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import  {propertyMap} from '../PropertyMap'
 import {eventTempData} from './tempData'
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown, Icon ,InputNumber,Input} from 'antd';
 const MenuItem = Menu.Item;
 
 
@@ -25,6 +25,7 @@ class Event extends React.Component {
             specialObject: ['counter', 'text', 'var'],
 
             //用于下拉框显示
+            conProps:[], //条件属性
             conOption: [],//每次点击后赋值
             logicalOption: ['and', 'or', 'not'],  //下拉选项
             judgeObjOption: [],//出现新的widget则更新
@@ -57,7 +58,7 @@ class Event extends React.Component {
         this.setCompareObjOption=this.setCompareObjOption.bind(this);
 
         this.onSetSpecificListProperty = this.onSetSpecificListProperty.bind(this);
-
+        this.getAntdComponent=this.getAntdComponent.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -196,15 +197,20 @@ class Event extends React.Component {
 
     getSpacJudgeValType(val){
         let saveVal=null;
+
         this.state.objName.map((v,i)=>{
             if(v[1]== val){
-                saveVal =  v[2];
+                saveVal =  v[2] ?v[2]:v[0];
             }
         });
         if(saveVal=='number'){
             saveVal=0;
         }else if(saveVal=='string'){
             saveVal=2;
+        }else if(saveVal=='text'){
+            saveVal=3;
+        }else if(saveVal=='counter'){
+            saveVal=0;
         }
         return saveVal;
     }
@@ -254,14 +260,16 @@ class Event extends React.Component {
     //触发条件
     getConditionOption(){
         let aOption=[];
+        let aProps=[];
         let className = this.state.selectWidget.className;
         propertyMap[className].map((item,index)=>{
             if(item.isEvent === true){
                 aOption.push(item.name);
+                aProps.push(item);
             }
         });
 
-        this.setState({conOption:aOption});
+        this.setState({conOption:aOption,conProps:aProps});
     }
 
     getChooseObjByIndex(index){
@@ -310,6 +318,21 @@ class Event extends React.Component {
        };
     }
 
+    setNeedFill(value){
+         //判定是否需要显示填入值的样式
+        let isShow=false;
+        let eventList = this.state.eventList;
+        let needFill=[];
+        this.state.conProps.map((v,i)=>{
+             if(v.name==value && v.needFill){
+                 isShow=true;
+                 needFill=v.needFill;
+             }
+         });
+        eventList[this.curEventIndex].needFill=isShow?needFill:undefined;
+        this.setState({eventList:eventList});
+    }
+
     onMenuClick(flag,e) {
         e.domEvent.stopPropagation();
 
@@ -320,6 +343,8 @@ class Event extends React.Component {
 
         if (flag == 'conFlag') {
             eventList[this.curEventIndex][flag] = value;
+            //设置需要填入的值
+            this.setNeedFill(value);
         } else if(flag == 'logicalFlag'){
             eventList[this.curEventIndex].logicalFlag =value;
         }else {
@@ -422,7 +447,6 @@ class Event extends React.Component {
     setCurChildrenIndex(index,eventIndex,isUpdate,e){
         this.curChildrenIndex =index;
         this.curEventIndex=eventIndex;
-
         if(isUpdate){
             this.forceUpdate();
         }
@@ -435,7 +459,15 @@ class Event extends React.Component {
             eventList: eventList
         });
     }
-
+    onChangeProp(index,type,value){
+            let eventList =this.state.eventList;
+        if(type=='number'){
+            eventList[this.curEventIndex].needFill[index].default =value;
+        }else if(type=='string'){
+            eventList[this.curEventIndex].needFill[index].default =value.target.value;
+        }
+            this.setState({eventList:eventList});
+    }
     menuList_pub(flag) {
         let option = flag.replace('Flag', 'Option');
         return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this,flag)}>
@@ -478,6 +510,23 @@ class Event extends React.Component {
 
         this.setState({toLong:tag});
     }
+    getTypeArr(type){
+        if(type==0||type==1||type==5){
+            //Integer,Number
+            return [0,1,5];
+        }else if(type==2||type==3){
+            //String,Text
+            return [2,3];
+        }else if(type==4||type==10){
+            //Boolean,Boolean2
+            return [4,10];
+        }else if(type==6||type ==9){
+            //Color ,Color2
+            return [4,9];
+        }else{
+            return [type];
+        }
+    }
     setCompareObjOption(type){
         let arr=[];
 
@@ -485,22 +534,28 @@ class Event extends React.Component {
            let tag=true;
            let classname= v.className;
 
+           //特殊五类
            if(classname=='var'){
-
                if(type==0){
                    type='number';
                }else if(type==2){
                    type='string';
                }
-
                if(v.type==type){
                    arr.push(v.props.name);
                }
-
+           }else if(classname=='text' ){
+               if([2,3].indexOf(type)>=0){
+                   arr.push(v.props.name);
+               }
+           } else if(classname=='counter'){
+               if([0,1].indexOf(type)>=0){
+                   arr.push(v.props.name);
+               }
            } else{
                propertyMap[classname].map((v1,i1)=>{
-
-                   if(tag && v1.isProperty && v1.name !='id' && v1.type ==type){
+                   let typeArr= this.getTypeArr(v1.type);
+                   if(tag && v1.isProperty && v1.name !='id' && typeArr.indexOf(type)>=0 ){  //需要兼容判断
                        arr.push(v.props.name);
                        tag=false;
                    }
@@ -508,6 +563,14 @@ class Event extends React.Component {
            }
        });
        this.setState({compareObjOption:arr});
+    }
+    getAntdComponent(item,index){
+        if(item.type=='number'){
+            return    <InputNumber step={1}  min={0} className='dropDown-input-content'   defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
+        }
+        if(item.type=='string'){
+            return    <Input  className='dropDown-input-content'   defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
+        }
     }
 
     render() {
@@ -531,7 +594,23 @@ class Event extends React.Component {
                                                 {v.conFlag}
                                                 <span className='icon' /></div>
                                         </Dropdown>
-                                        <div className='dropDown'></div>
+                                        <div   className={$class('dropDown',{'hidden':v.needFill===undefined})} >
+                                            {
+                                                v.needFill===undefined
+                                                    ?''
+                                                    :v.needFill.map((n,m)=>{
+                                                    return  <div key={m} className='dropDown-input2 dropDown-input-full '>
+                                                        <div className='dropDown-input-txt-half'>{n.showName}</div>
+                                                        <div className='dropDown-input-half'>
+                                                            {/*    <input  className='dropDown-input-content' />*/}
+                                                             {this.getAntdComponent(n,m)}
+                                                        </div>
+                                                            {/*  <div className='dropDown-icon-select dropDown-select-down'></div>*/}
+                                                    </div>
+
+                                                })
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -544,6 +623,11 @@ class Event extends React.Component {
                                             return  <div className="list f--hlc" key={i1}>
                                                 <span className="supplement-line" />
                                                 <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[0]})} >
+
+                                                    <div className="title f--hlc cursor_default">
+                                                        and
+                                                    </div>
+                                                    {/*
                                                     <Dropdown
                                                         overlay={this.menuList_pub('logicalFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i,false)}
@@ -553,6 +637,7 @@ class Event extends React.Component {
                                                             {v.logicalFlag}
                                                             <span className='icon' /></div>
                                                     </Dropdown>
+                                                     */}
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[1]})} >
@@ -565,7 +650,7 @@ class Event extends React.Component {
                                                             <input value= {v1.judgeObjFlag}  onChange={this.inputChange.bind(this,'judgeObjFlag')}  className='judgeObjFlag-input'/>
                                                             <span className='icon' /></div>
                                                     </Dropdown>
-                                                    <div className="dropDown"></div>
+
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[2]})} >
@@ -579,7 +664,7 @@ class Event extends React.Component {
                                                             <input value= {v1.judgeValFlag}  onChange={this.inputChange.bind(this,'judgeValFlag')}  className='judgeValFlag-input'/>
                                                             <span className='icon' /></div>
                                                     </Dropdown>
-                                                    <div className="dropDown"></div>
+
                                                 </div>
                                                 <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[3]})} >
                                                     <Dropdown
@@ -591,7 +676,7 @@ class Event extends React.Component {
                                                             {v1.compareFlag}
                                                             <span className='icon' /></div>
                                                     </Dropdown>
-                                                    <div className="dropDown"></div>
+
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[4]})} >
@@ -604,7 +689,7 @@ class Event extends React.Component {
                                                             <input value= {v1.compareObjFlag}  onChange={this.inputChange.bind(this,'compareObjFlag')}  className='compareObjFlag-input'/>
                                                             <span className='icon' /></div>
                                                     </Dropdown>
-                                                    <div className="dropDown"></div>
+
                                                 </div>
                                                 <div className={$class('dropDown-layer mr20 middle',{'hidden':v1.operationManager.arrHidden[5]})} >
                                                     <Dropdown
@@ -617,7 +702,6 @@ class Event extends React.Component {
 
                                                             <span className='icon' /></div>
                                                     </Dropdown>
-                                                    <div className="dropDown"></div>
                                                 </div>
                                                 <span className={$class('close-btn')} onClick={this.deleteOperation.bind(this,i1,i)} />
                                             </div>

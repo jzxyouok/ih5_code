@@ -67,26 +67,50 @@ class DBItemView extends React.Component {
         if(widget.selectDBItem) {
             let dbItem = widget.selectDBItem;
             let dbId = widget.selectDBItem.widget.node.dbid;
+            let dbType = widget.selectDBItem.widget.node.dbType;
             let dbList = this.state.dbList;
             if(!this.state.dbItem || this.state.dbItem.key !== widget.selectDBItem.key || this.state.dbChanged){
                 let fields = [];
-                dbList.map((v,i)=>{
-                    if(dbList[i].id === dbId){
-                        let headerData = dbList[i].header.split(",");
-                        let index = headerData.indexOf("null");
-                        if(headerData.length !== 0 && index < 0){
-                            fields = this.onSetFields(dbItem, headerData);
+                if(dbType === 'personalDb'){
+                    this.setState({
+                        fields: [],
+                    },()=>{
+                        WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + dbId, null, null, function(text) {
+                            var result = JSON.parse(text);
+                            //console.log(result);
+                            if (result['header']) {
+                                let headerData = result['header'].split(",");
+                                fields = this.onSetFields(dbItem, headerData);
+                                this.setState({
+                                    dbItem: widget.selectDBItem,
+                                    name: widget.selectDBItem.name,
+                                    fields: fields,
+                                    dbChanged: false
+                                }, ()=>{
+                                    WidgetActions['changeDBItem']({'fields':fields});
+                                })
+                            }
+                        }.bind(this));
+                    })
+                } else {
+                    dbList.map((v)=>{
+                        if(v.id === dbId){
+                            let headerData = v.header.split(",");
+                            let index = headerData.indexOf("null");
+                            if(headerData.length !== 0 && index < 0){
+                                fields = this.onSetFields(dbItem, headerData);
+                            }
                         }
-                    }
-                });
-                this.setState({
-                    dbItem: widget.selectDBItem,
-                    name: widget.selectDBItem.name,
-                    fields: fields,
-                    dbChanged: false
-                }, ()=>{
-                    WidgetActions['changeDBItem']({'fields':fields});
-                })
+                    });
+                    this.setState({
+                        dbItem: widget.selectDBItem,
+                        name: widget.selectDBItem.name,
+                        fields: fields,
+                        dbChanged: false
+                    }, ()=>{
+                        WidgetActions['changeDBItem']({'fields':fields});
+                    })
+                }
             } else {
                 this.setState({
                     dbItem: widget.selectDBItem,

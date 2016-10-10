@@ -155,6 +155,7 @@ function loadTree(parent, node, idList) {
       var judgesObj = item.judges;
 
       r.conFlag = judgesObj.conFlag;
+      r.needFill = judgesObj.needFill;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
       r.children = judgesObj.children;
@@ -547,9 +548,9 @@ function saveTree(data, node) {
 
         node.props['eventTree'].forEach(item => {
         var cmds = [];
-
         var judges={};
         judges.conFlag = item.conFlag;
+            judges.needFill=item.needFill;   //触发条件的值
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
         judges.children=[];
@@ -646,6 +647,7 @@ function saveTree(data, node) {
             cmds.push(c);
         });
 
+        console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges});
 
       });
@@ -840,6 +842,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectWidget'], this.selectWidget);
         this.listenTo(WidgetActions['addWidget'], this.addWidget);
         this.listenTo(WidgetActions['reorderWidget'], this.reorderWidget);
+        this.listenTo(WidgetActions['moveWidget'], this.moveWidget);
         this.listenTo(WidgetActions['addClass'], this.addClass);
         this.listenTo(WidgetActions['sortClass'], this.sortClass);
         this.listenTo(WidgetActions['deleteClass'], this.deleteClass);
@@ -1100,7 +1103,62 @@ export default Reflux.createStore({
             // this.render();
         }
     },
+    findWidget: function(key){
+        let root = this.currentWidget.rootWidget;
+        let target = null;
 
+        //递归遍历添加有事件widget到eventTreeList
+        let loopWidgetTree = (children) => {
+            children.forEach(ch=>{
+                if (ch.key === key) {
+                    target = ch;
+                } else {
+                    if (ch.children && ch.children.length > 0) {
+                        loopWidgetTree(ch.children);
+                    }
+                }
+            });
+        };
+
+        if(root.key === key ){
+            target = root;
+        } else {
+            loopWidgetTree(root.children);
+        }
+        return target;
+    },
+    moveWidget: function(srcKey, destKey, index) {
+        let src = null;
+        let dest = null;
+        if(this.currentWidget&&this.currentWidget.rootWidget){
+            src = this.findWidget(srcKey);
+            dest = this.findWidget(destKey);
+        }
+        if (src&&dest) {
+            var saved = {};
+            saveTree(saved, src);
+            bridge.removeWidget(src.node);
+            src.parent.children.splice(src.parent.children.indexOf(src), 1);
+
+            //获取名字
+            this.currentWidget = dest;
+            let props = this.addWidgetDefaultName(src.className, src.props, false, true);
+            var obj = loadTree(dest, saved);
+            this.currentWidget = obj;
+
+            var destIndex = dest.children.indexOf(obj);
+            if (destIndex != index) {
+                obj.props['name'] = props['name'];
+                dest.children.splice(destIndex, 1);
+                dest.children.splice(index, 0, obj);
+                var delta = index - destIndex;
+                bridge.reorderWidget(obj.node, index - destIndex);
+                this.render();
+            }
+            this.trigger({selectWidget: obj});
+            this.trigger({redrawTree: true});
+        }
+    },
     reorderWidget: function(delta) {
       if (this.currentWidget && this.currentWidget.parent) {
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
