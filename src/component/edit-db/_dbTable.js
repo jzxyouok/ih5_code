@@ -146,10 +146,13 @@ class DbTable extends React.Component {
             var result = JSON.parse(text);
             //console.log(result);
             if (result['header']) {
-                let headerData = result['header'].split(",");
+                let headerData = [];
+                if(result['header'] != null){
+                    headerData= result['header'].split(",");
+                }
                 this.setState({
                     dbHeader : headerData,
-                    isHaveContent : false,
+                    isHaveContent : false
                 });
                 this.state.node.find({}, function (err, data) {
                     //console.log(2,data);
@@ -183,7 +186,10 @@ class DbTable extends React.Component {
         let allDbHeader = this.state.allDbHeader;
         allDbHeader.map((v,i)=>{
             if(allDbHeader[i].id === this.state.node.dbid){
-                let headerData = allDbHeader[i].header.split(",");
+                let headerData = [];
+                if(allDbHeader[i].header != null){
+                    headerData = allDbHeader[i].header.split(",");
+                }
                 //console.log(454,headerData,headerData.length);
                 let index = headerData.indexOf("null");
                 if(index >= 0){
@@ -287,7 +293,10 @@ class DbTable extends React.Component {
         let data = this.state.originalHeader;
         data.map((v,i)=>{
             if(data[i].id === this.state.node.dbid){
-                let headerData = data[i].header.split(",");
+                let headerData = [];
+                if(data[i].header != null){
+                    headerData = data[i].header.split(",");
+                }
                 let index = headerData.indexOf("null");
                 if(index >= 0){
                     headerData.splice(index,1)
@@ -308,7 +317,10 @@ class DbTable extends React.Component {
             var result = JSON.parse(text);
             //console.log(result);
             if (result['header']) {
-                let headerData = result['header'].split(",");
+                let headerData = [];
+                if(result['header']  != null){
+                    headerData= result['header'].split(",");
+                }
                 this.setState({
                     dbHeader : headerData
                 });
@@ -338,11 +350,18 @@ class DbTable extends React.Component {
         }.bind(this));
     }
 
-    updateHeader(DdName){
+    updateHeader(bool,DdName){
         let array = this.state.dbHeader;
-        let header = array.join(',');
+        let header;
+        if(array.length == 0){
+            header = null;
+        }
+        else {
+            header = array.join(',');
+        }
         //console.log(3,DdName);
-        let name = DdName ? DdName : this.state.node.name;
+        let name = bool ? DdName : this.state.node.name;
+        //console.log(name);
         let id = this.state.node.dbid;
         let data = "id=" + id + "&name=" + encodeURIComponent(name) + "&header=" + encodeURIComponent(header);
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
@@ -350,7 +369,7 @@ class DbTable extends React.Component {
             if (result['id']) {
                 this.state.node['name'] = name;
                 this.state.node['header'] = header;
-                if(DdName){
+                if(bool){
                     WidgetActions['renameWidget'](name);
                 }
             }
@@ -366,7 +385,7 @@ class DbTable extends React.Component {
         });
     }
 
-    saveBtn(DdName){
+    saveBtn(bool,DdName){
         //console.log(1,this.state.dbHeader,this.state.dbList);
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
@@ -383,8 +402,7 @@ class DbTable extends React.Component {
             },()=>{
                 //console.log(self.state.node);
                 if(self.state.node.dbType == "shareDb"){
-                    //console.log(2,DdName);
-                    self.updateHeader(DdName);
+                    self.updateHeader(bool,DdName);
                 }
                 else {
                     self.updatePDbHeader();
@@ -524,7 +542,7 @@ class DbTable extends React.Component {
                     },()=>{
                         self.updateNewScrollData();
                         self.popHide();
-                        self.saveBtn();
+                        self.saveBtn(false);
                     })
                 });
             }
@@ -545,7 +563,7 @@ class DbTable extends React.Component {
                 },()=>{
                     this.updateNewScrollData();
                     this.popHide();
-                    this.saveBtn();
+                    this.saveBtn(false);
                 })
             }
         }
@@ -679,7 +697,7 @@ class DbTable extends React.Component {
                 //fuc(text);
                 list[which][value] = text;
             }
-            console.log(list);
+            //console.log(list);
             if(which == list.length-1 && text.length > 0){
                 let self = this;
                 this.state.node.insert({}, function (err, data) {
@@ -884,7 +902,7 @@ class DbTable extends React.Component {
 
                     <div className={ $class("right",{"hidden": this.state.selectArray.length == 0}) }>
                         <button className="btn btn-clear cancel-btn" onClick={ this.cancelBtn } >取消</button>
-                        <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
+                        <button className="btn btn-clear save-btn" onClick={ this.saveBtn.bind(this,false) }>保存</button>
                     </div>
                 </div>
 
