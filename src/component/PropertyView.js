@@ -12,7 +12,7 @@ import cls from 'classnames';
 
 import { SwitchMore } from  './PropertyView/PropertyViewComponet';
 
-import WidgetStore from '../stores/WidgetStore';
+import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
 
 import {propertyType, propertyMap} from './PropertyMap';
@@ -362,6 +362,18 @@ class PropertyView extends React.Component {
         }
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
+
+        if(className == 'data') {
+            switch (node.props.type) {
+                case dataType.oneDArr:
+                    className = dataType.oneDArr;
+                    break;
+                case dataType.twoDArr:
+                    className = dataType.twoDArr;
+                    break;
+            }
+        }
+
         if (!propertyMap[className])    return null;
 
         const groups = {};

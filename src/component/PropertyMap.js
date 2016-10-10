@@ -577,13 +577,16 @@ propertyMap['intVar'] = [
            isFunc: true },
 ];
 propertyMap[dataType.oneDArr] = [
-    ...propertyMap['data'],
-    { name: 'width',showName:'W', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
-    { name: 'height', showName:'H',type: propertyType.Integer, default: 0, group:'position', isProperty: true }
-
+    { addRequires: widgetFlags.Root},
+    { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
+    { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
+    { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 propertyMap[dataType.twoDArr] = [
-    ...propertyMap['data'],
+    { addRequires: widgetFlags.Root},
+    { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
+    { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
+    { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 
 for (var n in propertyMap) {
