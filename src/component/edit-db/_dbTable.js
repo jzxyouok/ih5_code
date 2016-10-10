@@ -102,7 +102,7 @@ class DbTable extends React.Component {
             allDbHeader : data,
             originalHeader:data
         },()=>{
-            console.log(bool,this.state.node);
+            //console.log(bool,this.state.node);
             if(bool && this.state.node){
                 if(this.state.node.dbType == "shareDb"){
                     this.getOriginalHeader();
@@ -143,7 +143,7 @@ class DbTable extends React.Component {
         let id = this.state.node.dbid;
         WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + id, null, null, function(text) {
             var result = JSON.parse(text);
-            console.log(result);
+            //console.log(result);
             if (result['header']) {
                 let headerData = result['header'].split(",");
                 this.setState({
@@ -305,7 +305,7 @@ class DbTable extends React.Component {
         let self = this;
         WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + id, null, null, function(text) {
             var result = JSON.parse(text);
-            console.log(result);
+            //console.log(result);
             if (result['header']) {
                 let headerData = result['header'].split(",");
                 this.setState({
@@ -340,10 +340,8 @@ class DbTable extends React.Component {
     updateHeader(DdName){
         let array = this.state.dbHeader;
         let header = array.join(',');
+        //console.log(3,DdName);
         let name = DdName ? DdName : this.state.node.name;
-        if(DdName){
-            this.state.node.name = DdName;
-        }
         let id = this.state.node.dbid;
         let data = "id=" + id + "&name=" + encodeURIComponent(name) + "&header=" + encodeURIComponent(header);
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
@@ -351,6 +349,7 @@ class DbTable extends React.Component {
             if (result['id']) {
                 this.state.node['name'] = name;
                 this.state.node['header'] = header;
+                WidgetActions['renameWidget'](name);
             }
         }.bind(this));
         let allDbHeader = this.state.allDbHeader;
@@ -358,13 +357,14 @@ class DbTable extends React.Component {
             //console.log(2,allDbHeader[i].id === this.state.node.dbid);
             if(allDbHeader[i].id === this.state.node.dbid) {
                 allDbHeader[i].header = header;
+                allDbHeader[i].name = name;
                 DbHeaderAction['DbHeaderData'](allDbHeader, true);
             }
         });
     }
 
     saveBtn(DdName){
-        console.log(1,this.state.dbHeader,this.state.dbList);
+        //console.log(1,this.state.dbHeader,this.state.dbList);
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
             //console.log("1-2",data);
@@ -378,8 +378,9 @@ class DbTable extends React.Component {
                 inputText : null,
                 inputStyle : null
             },()=>{
-                console.log(self.state.node);
+                //console.log(self.state.node);
                 if(self.state.node.dbType == "shareDb"){
+                    //console.log(2,DdName);
                     self.updateHeader(DdName);
                 }
                 else {

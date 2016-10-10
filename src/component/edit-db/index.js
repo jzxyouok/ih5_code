@@ -40,6 +40,7 @@ class EditDb extends React.Component {
     }
 
     saveFuc(data){
+        //console.log(1,data);
         this.refs.DbTable.saveBtn(data);
     }
 
@@ -54,7 +55,7 @@ class EditDb extends React.Component {
                                    isBig={ this.state.isBig }
                                    ref="Condition"
                                    bigBtn={ this.bigBtn }
-                                   saveFuc={this.saveFuc} />
+                                   saveFuc={this.saveFuc.bind(this)} />
                     </div>
 
                     <div className="ED-right flex-1">
