@@ -272,8 +272,14 @@ class Event extends React.Component {
         this.setState({conOption:aOption,conProps:aProps});
     }
 
-    getChooseObjByIndex(index){
-        return this.state.allWidgetsList[index];
+    getChooseObjByIndex(name){
+        let widget={};
+        this.state.allWidgetsList.map((v,i)=>{
+            if(v.props.name==name){
+                widget =v;
+            }
+        });
+        return widget;
     }
 
     plusOperation(eventIndex){
@@ -337,7 +343,7 @@ class Event extends React.Component {
         e.domEvent.stopPropagation();
 
         let eventList = this.state.eventList;
-        let index =e.item.props.index;
+
         let value =e.item.props.object
         let key = this.curChildrenIndex;
 
@@ -378,7 +384,8 @@ class Event extends React.Component {
                 }
                 //初始化后四个
 
-                initFlag.judgeObj =this.getChooseObjByIndex(index);
+                initFlag.judgeObj =this.getChooseObjByIndex(value);
+
                 initFlag.judgeValFlag = '判断值';
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较对象';
@@ -428,7 +435,8 @@ class Event extends React.Component {
                         arrHidden: arrHidden
                     }
                 }
-                initFlag.compareObj =this.getChooseObjByIndex(index);
+
+                initFlag.compareObj =this.getChooseObjByIndex(value);
 
                 break;
             default :
