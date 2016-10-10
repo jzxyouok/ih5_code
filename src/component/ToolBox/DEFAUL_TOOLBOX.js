@@ -216,19 +216,14 @@ var DEFAULT_TOOLBOX = {
         secondary: [
             {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0}}]
     },{
-        name:'共享数据库',
+        name:'数据库',
         key:16,
         gid:16,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, DbType:0, className:'db'}]
-    },{
-        name:'私有数据库',
-        key:24,
-        gid:24,
-        primary: 0,
-        secondary: [
-            {cid:TOOL_ID.REMOTEDEVICE, name:'私有数据库', icon: personalDbIcon, DbType:1, className:'db'}]
+            {cid:TOOL_ID.REMOTEDEVICE, name:'私有数据库', icon: personalDbIcon, className:'db'},
+            {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, className:'db'}
+        ]
     },{
         name:'二维变量',
         key:17,
@@ -260,7 +255,6 @@ var DEFAULT_TOOLBOX = {
         secondary: [{cid:TOOL_ID.WECAHT,name:'微信',icon:wechatIcon, className:'wechat'}]
     }]
 
-    //TODO:24已经用了
     // ,{
     //     name:'容器',
     //     key:7,

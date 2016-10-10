@@ -241,10 +241,16 @@
         background: url("img/button-icon.svg") no-repeat -280px -200px;
     }
     .shareDb-icon{
-        background: url("img/icons/shareDb.svg");
+        width: 18px;
+        min-width: 18px;
+        height: 18px;
+        background: url("img/shareDb.svg");
     }
     .personalDb-icon {
-        background: url("img/icons/personalDb.svg");
+        width: 18px;
+        min-width: 18px;
+        height: 18px;
+        background: url("img/personalDb.svg");
     }
 }
 

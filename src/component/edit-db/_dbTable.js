@@ -402,6 +402,7 @@ class DbTable extends React.Component {
                 isError: false
             },()=>{
                 this.updateNewScrollData();
+                this.popHide();
             })
         }
     }
