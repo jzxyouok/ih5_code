@@ -39,9 +39,9 @@ class EditDb extends React.Component {
         })
     }
 
-    saveFuc(data){
+    saveFuc(bool,data){
         //console.log(1,data);
-        this.refs.DbTable.saveBtn(data);
+        this.refs.DbTable.saveBtn(bool,data);
     }
 
     render() {
