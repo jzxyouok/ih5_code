@@ -659,6 +659,16 @@ function checkLockClass(selected) {
     }
 }
 
+function checkNotInDomMode(selected, className) {
+    if(propertyFlags[className]===undefined){
+        return false;
+    }
+    var requires = propertyFlags[className].requires;
+    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selected.node) != 1)
+        return true;
+    return false;
+}
+
 function checkChildClass(selected, className) {
     // 对函数,变量,自定义函数等的处理
     if(className ==='dbItem'){
@@ -721,4 +731,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass};
+export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass, checkNotInDomMode};

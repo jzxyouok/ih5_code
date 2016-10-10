@@ -274,7 +274,8 @@ class ToolBoxButton extends Component {
                 className={cls('ToolBoxButton',
                 {'ToolBoxButtonPrimary': this.props.isPrimary},
                 {'active': this.state.selected},
-                {'tool-expanded':this.props.expanded})}
+                {'tool-expanded':this.props.expanded},
+                {'hidden': this.props.hidden})}
                 title={this.props.name}
                 disabled={this.props.disabled}
                 onClick={this.onClick.bind(this)}

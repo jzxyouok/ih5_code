@@ -246,8 +246,10 @@ class ObjectTree extends React.Component {
         }
     }
 
-    chooseBtn(nid, data){
-
+    chooseBtn(nid, data, event){
+        if(event){
+            event.stopPropagation();
+        }
         if(this.chooseMoreStatus){
             //ctrl键按下
         }else{
@@ -508,18 +510,20 @@ class ObjectTree extends React.Component {
         if(elem) {
             elem.parentElement.removeChild(elem);
         }
-        let srcKeyId = Number(this.dragged.dataset.keyid);
-        let srcKey = Number(this.dragged.dataset.wkey);
-        let srcParentKey = Number(this.dragged.dataset.parentkey);
-        let destKeyId = Number(this.over.dataset.keyid);
-        let destKey = Number(this.over.dataset.wkey);
-        let destParentKey = Number(this.over.dataset.parentkey);
-        if (srcKeyId !== destKeyId && srcParentKey === destParentKey){
-            //同层
-            WidgetActions['reorderWidget'](srcKeyId-destKeyId>0?-(srcKeyId-destKeyId):-(srcKeyId-(--destKeyId)));
-        } else {
-            //跨层
-            WidgetActions['moveWidget'](srcKey, destParentKey, destKeyId);
+        if(this.dragged&&this.over){
+            let srcKeyId = Number(this.dragged.dataset.keyid);
+            let srcKey = Number(this.dragged.dataset.wkey);
+            let srcParentKey = Number(this.dragged.dataset.parentkey);
+            let destKeyId = Number(this.over.dataset.keyid);
+            let destKey = Number(this.over.dataset.wkey);
+            let destParentKey = Number(this.over.dataset.parentkey);
+            if (srcKeyId !== destKeyId && srcParentKey === destParentKey){
+                //同层
+                WidgetActions['reorderWidget'](srcKeyId-destKeyId>0?-(srcKeyId-destKeyId):-(srcKeyId-(--destKeyId)));
+            } else {
+                //跨层
+                WidgetActions['moveWidget'](srcKey, destParentKey, destKeyId);
+            }
         }
     }
 
@@ -534,13 +538,19 @@ class ObjectTree extends React.Component {
         if(e.target.id === placeholderId) return;
         //递归找到并获取名字叫item的div
         let findItemDiv = (target,cName) => {
-            if(target.className === cName) {
-                return target;
+            if(target) {
+                if(target.className === cName) {
+                    return target;
+                }
+            } else {
+                return null;
             }
             return findItemDiv(target.parentNode, cName);
         };
-        this.over = findItemDiv(e.target, 'item');
-        this.over.parentNode.insertBefore(this.placeholder, this.over);
+        this.over = findItemDiv(e.target, 'item-title-wrap clearfix');
+        if(this.over) {
+            this.over.parentNode.insertBefore(this.placeholder, this.over);
+        }
     }
 
     onKeyDown(e){
@@ -694,16 +704,16 @@ class ObjectTree extends React.Component {
             });
             return  <div className='item'
                          key={i}
-                         onClick={this.chooseMore}
-                         data-keyId={i}
-                         data-wKey={v.key}
-                         data-parentKey={v.parent.key}
-                         draggable='true'
-                         onDragStart={this.itemDragStart.bind(this,v.key, v)}
-                         onDragEnd={this.itemDragEnd}>
+                         onClick={this.chooseMore}>
                 <div className='item-title-wrap clearfix'
                      id={'tree-item-'+ v.key}
                      tabIndex={v.key}
+                     data-keyId={i}
+                     data-wKey={v.key}
+                     data-parentKey={v.parent.key}
+                     draggable='true'
+                     onDragStart={this.itemDragStart.bind(this,v.key, v)}
+                     onDragEnd={this.itemDragEnd}
                      onFocus={this.itemAddKeyListener.bind(this)}
                      onBlur={this.itemRemoveKeyListener.bind(this)}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
