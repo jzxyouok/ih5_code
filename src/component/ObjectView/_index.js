@@ -13,7 +13,7 @@ import Animation from './Animation';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
-import {checkChildClass} from '../PropertyMap';
+import {checkChildClass, checkEventClass, checkLockClass} from '../PropertyMap';
 
 class ObjectView extends React.Component {
     constructor (props) {
@@ -111,9 +111,7 @@ class ObjectView extends React.Component {
     onInitHasEventTree(selectWidget){
         let hasEventTree = false;
         let canHaveEventTree = true;
-        if(selectWidget.className === 'func' ||
-            selectWidget.className === 'var' ||
-            selectWidget.className === 'dbItem') {
+        if(!checkEventClass(selectWidget)) {
             canHaveEventTree = false;
             hasEventTree = false;
         } else
@@ -128,10 +126,7 @@ class ObjectView extends React.Component {
 
     onInitLock(selectWidget) {
         let canLock = false;
-        if(selectWidget.className === 'root'||
-            selectWidget.className === 'func'||
-            selectWidget.className === 'var' ||
-            selectWidget.className === 'dbItem') {
+        if(!checkLockClass(selectWidget)) {
             canLock = false;
         } else {
             canLock = true;

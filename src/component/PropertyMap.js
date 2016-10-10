@@ -1,5 +1,5 @@
 import bridge from 'bridge';
-import {isCustomizeWidget} from '../stores/WidgetStore';
+import {isCustomizeWidget, dataType} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
@@ -574,6 +574,13 @@ propertyMap['intVar'] = [
         ],
            isFunc: true },
 ];
+propertyMap[dataType.oneDArr] = [
+    ...propertyMap['data'],
+
+];
+propertyMap[dataType.twoDArr] = [
+    ...propertyMap['data'],
+];
 
 for (var n in propertyMap) {
     propertyFlags[n] = {provides: 0, requires: 0};
@@ -582,6 +589,27 @@ for (var n in propertyMap) {
             propertyFlags[n].provides |= propertyMap[n][index].addProvides;
         if (propertyMap[n][index].addRequires !== undefined)
             propertyFlags[n].requires |= propertyMap[n][index].addRequires;
+    }
+}
+
+function checkEventClass(selected) {
+    if(selected.className === 'func' ||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function checkLockClass(selected) {
+    if(selected.className === 'root'||
+        selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        return false;
+    } else {
+        return true;
     }
 }
 
@@ -604,7 +632,8 @@ function checkChildClass(selected, className) {
         }
     }
     if(className === 'var') {
-        if((selected.className === 'twodvar' ||
+        if((selected.className === 'oneDArr' ||
+            selected.className === 'twoDArr' ||
             selected.className === 'counter' ||
             selected.className === 'func' ||
             selected.className === 'var' ||
@@ -645,4 +674,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass, propertyFlags };
+export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass};
