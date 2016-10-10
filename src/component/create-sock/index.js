@@ -72,6 +72,7 @@ class CreateSock extends React.Component {
                     if (r['id']) {
                         list.push({'id':r['id'], 'name':value});
                         this.props.updateSock(list);
+                        this.cancelBtn();
                     }
 
             }.bind(this));
