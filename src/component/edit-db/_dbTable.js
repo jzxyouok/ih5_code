@@ -380,11 +380,10 @@ class DbTable extends React.Component {
             //console.log(list.length);
             if(list.length == 0){
                 this.state.node.insert({}, function (err, data) {
+                    if(data == undefined) return;
+                    
                     let newList = {};
-                    let getData = [];
-                    getData = data;
-                    console.log(typeof(data),typeof(getData));
-                    newList['_id'] = getData[0];
+                    newList['_id'] = data[0];
                     list.push(newList);
                     fkList.push(newList);
 
@@ -409,7 +408,7 @@ class DbTable extends React.Component {
                 fkList.map((v,i)=>{
                     fkList[i][value] = "";
                 });
-                console.log(list);
+                //console.log(list);
                 this.setState({
                     dbHeader : header,
                     dbList : list,
