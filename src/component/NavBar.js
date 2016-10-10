@@ -428,8 +428,22 @@ class NavBar extends React.Component {
         })
     }
 
-    addSock(id){
-        //WidgetActions['addWidget']('sock', {'sid': id});
+    addSock(id,name){
+        if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
+            let bool = true;
+            let data = this.state.selectWidget.children;
+            for(let i =0 ; i<data.length; i++){
+                if(data[i].className == "sock"){
+                    if(data[i].node.dbid == id){
+                        bool = false;
+                        return bool;
+                    }
+                }
+            }
+            if(bool){
+                WidgetActions['addWidget']('sock', {'sid': id},null,name);
+            }
+        }
     }
 
     render() {
@@ -592,7 +606,7 @@ class NavBar extends React.Component {
                                                 {
                                                     this.state.sockList.length > 0
                                                         ? this.state.sockList.map((v,i)=>{
-                                                            return  <li className="" key={i} >
+                                                            return  <li className="" key={i} onClick={this.addSock.bind(this,v.id,v.name)}>
                                                                         <div className="title f--hlc">
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{ v.name }</div>
