@@ -392,14 +392,23 @@ class DbTable extends React.Component {
     }
 
     cancelBtn(){
-        if(this.state.node.dbType == "shareDb"){
-            this.getOriginalHeader();
-            this.getNewData();
-        }
-        else {
-            this.getPDbHeader();
-            this.getPDbList();
-        }
+        this.setState({
+            selectArray : [],
+            originalData : [],
+            originalHeader : [],
+            inputNow : null,
+            inputText : null,
+            inputStyle : null
+        },()=>{
+            if(this.state.node.dbType == "shareDb"){
+                this.getOriginalHeader();
+                this.getNewData();
+            }
+            else {
+                this.getPDbHeader();
+                this.getPDbList();
+            }
+        })
     }
 
     updateNewScrollData(){
@@ -460,14 +469,18 @@ class DbTable extends React.Component {
         let value = null;
         let list = this.state.dbList;
         let fkList = this.state.originalData;
+        let SValue =  null;
         if(this.state.addType == 0){
             value = "s" + inputText;
+            SValue = "i" + inputText;
         }
         else {
             value = "i" + inputText;
+            SValue = "s" + inputText;
         }
         let index = header.indexOf(value);
         let index2 = header.indexOf(inputText);
+        let index3 = header.indexOf(SValue);
         let error = (data)=>{
             this.setState({
                 isError: true,
@@ -483,7 +496,7 @@ class DbTable extends React.Component {
         else if(inputText.endsWith(" ")){
             error("字段名称不能以空格结尾");
         }
-        else if(index>=0 || index2 >=0){
+        else if(index>=0 || index2 >=0 || index3 >= 0){
             error("字段名称不能重复");
         }
         else {
@@ -611,7 +624,7 @@ class DbTable extends React.Component {
                         selectArray : idArray
                     })
                 }
-                //console.log(list);
+                console.log(header,list);
                 header[which] = text;
                 //console.log(header,this.state.originalHeader);
                 //if(which == header.length-1){
@@ -651,10 +664,12 @@ class DbTable extends React.Component {
             };
 
             if(type == "s" ){
+                value = value.substr(1);
                 fuc(text);
                 list[which][value] = text;
             }
             else if( type == "i" ){
+                value = value.substr(1);
                 fuc(parseFloat(text));
                 list[which][value] = parseFloat(text);
             }
@@ -662,6 +677,7 @@ class DbTable extends React.Component {
                 fuc(text);
                 list[which][value] = text;
             }
+            console.log(list);
             if(which == list.length-1 && text.length > 0){
                 let self = this;
                 this.state.node.insert({}, function (err, data) {
@@ -797,12 +813,23 @@ class DbTable extends React.Component {
                                                                     this.state.dbHeader.map((v2,i2)=>{
                                                                         let classname = 't'+id+"-"+i2;
                                                                         let array = this.state.selectArray;
+                                                                        let name;
+                                                                        let type = v2.charAt(0);
+                                                                        if(type == "s" ){
+                                                                            name = v2.substr(1);
+                                                                        }
+                                                                        else if( type == "i" ){
+                                                                            name = v2.substr(1);
+                                                                        }
+                                                                        else {
+                                                                            name = v2;
+                                                                        }
                                                                         return  <td key={ i2 }
                                                                                     className={
                                                                                         $class(classname,{"active": array.indexOf(classname) >=0 })
                                                                                     }
-                                                                                    onClick={ this.inputClick.bind(this, id+"-"+i2, v[v2])}>
-                                                                                    { v[v2] }
+                                                                                    onClick={ this.inputClick.bind(this, id+"-"+i2, v[name])}>
+                                                                                    { v[name] }
 
                                                                                     {
                                                                                         id+"-"+i2 === this.state.inputNow
@@ -853,8 +880,8 @@ class DbTable extends React.Component {
                         <button className="btn btn-clear next-bnt">下一页</button>
                     </div>
 
-                    <div className={ $class("right",{"hidden": this.state.selectArray.length > 0}) }>
-                        <button className="btn btn-clear cancel-btn" >取消</button>
+                    <div className={ $class("right",{"hidden": this.state.selectArray.length == 0}) }>
+                        <button className="btn btn-clear cancel-btn" onClick={ this.cancelBtn } >取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
                     </div>
                 </div>
