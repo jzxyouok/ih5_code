@@ -426,16 +426,42 @@ function generateJsFunc(etree) {
 
   etree.forEach(function(item) {
     if (item.judges.conFlag) {
-      var out = output[item.judges.conFlag] || '';
+      var out = '';
+      var lines = [];
+      var conditions = [];
+      if (item.judges.children.length) {
+        item.judges.children.forEach(function(c) {
+          if (c.judgeObjId && c.judgeValFlag) {
+            var op = c.compareFlag;
+            var jsop;
+            if (op == '=')
+              jsop = '=='
+            else if (op == '≥')
+              jsop = '>=';
+            else if (op == '≤')
+              jsop = '<=';
+            else
+              jsop = op;
+
+            var o = 'ids.' + c.judgeObjId + '.' + c.judgeValFlag + jsop;
+            if (c.compareObjId) {
+              o += 'ids.' + c.compareObjId + '.' + c.compareValFlag;
+            } else {
+              o += JSON.stringfy(compareObjFlag);
+            }
+            conditions.push('(' + o + ')');
+          }
+        });
+      }
       item.cmds.forEach(cmd => {
         if (cmd.id && cmd.type == 'default' && cmd.name) {
           if (cmd.name === 'changeValue') {
             if (cmd.property.length >= 1)
-              out += 'ids.' + cmd.id + '.value=' + JSON.stringify(cmd.property[0]['value']) + ';';
+              lines.push('ids.' + cmd.id + '.value=' + JSON.stringify(cmd.property[0]['value']));
           } else {
-            out += 'ids.' + cmd.id + '.' + cmd.name + '(';
+            var line = 'ids.' + cmd.id + '.' + cmd.name + '(';
             if (cmd.property) {
-              out += cmd.property.map(function(p) {
+              line += cmd.property.map(function(p) {
                 if (p['binding'] !== undefined) {
                   var list = [];
                   p['binding'].fields.forEach(function(v) {
@@ -455,11 +481,31 @@ function generateJsFunc(etree) {
                 return JSON.stringify(p['value']);
               }).join(',');
             }
-            out += ');';
+            lines.push(line + ')');
           }
         }
       });
-      output[item.judges.conFlag] = out;
+      if (lines.length) {
+        var out;
+        if (conditions.length == 1) {
+          out = 'if' + conditions[0];
+        } else if (conditions.length) {
+          var logicalFlag = item.judges.logicalFlag;
+          var lop;
+          if (logicalFlag == 'and')
+            lop = '&&'
+          else if (logicalFlag == 'or')
+            lop = '||';
+          if (lop)
+            out = 'if(' + conditions.join(lop) + ')';
+        }
+        if (lines.length == 1)
+          out += lines[0];
+        else
+          out += '{' + lines.join(';'); + '}'
+        output[item.judges.conFlag] = output[item.judges.conFlag] || '';
+        output[item.judges.conFlag] += out;
+      }
     }
   });
   return output;
