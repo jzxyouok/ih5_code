@@ -377,13 +377,30 @@ class DbTable extends React.Component {
         }
         else {
             header.push(value);
-            console.log(list.length);
+            //console.log(list.length);
             if(list.length == 0){
                 this.state.node.insert({}, function (err, data) {
                     let newList = {};
-                    newList['_id'] = data[0];
+                    data.map((v,i)=>{
+                        if(i == 0){
+                            newList['_id'] = v;
+                        }
+                    });
+                    //newList['_id'] = data[0];
                     list.push(newList);
                     fkList.push(newList);
+
+                    //console.log(list);
+                    this.setState({
+                        dbHeader : header,
+                        dbList : list,
+                        originalData : fkList,
+                        isHaveContent : false,
+                        isError: false
+                    },()=>{
+                        this.updateNewScrollData();
+                        this.popHide();
+                    })
                 });
             }
             else {
@@ -393,17 +410,18 @@ class DbTable extends React.Component {
                 fkList.map((v,i)=>{
                     fkList[i][value] = "";
                 });
+                console.log(list);
+                this.setState({
+                    dbHeader : header,
+                    dbList : list,
+                    originalData : fkList,
+                    isHaveContent : false,
+                    isError: false
+                },()=>{
+                    this.updateNewScrollData();
+                    this.popHide();
+                })
             }
-            this.setState({
-                dbHeader : header,
-                dbList : list,
-                originalData : fkList,
-                isHaveContent : false,
-                isError: false
-            },()=>{
-                this.updateNewScrollData();
-                this.popHide();
-            })
         }
     }
 

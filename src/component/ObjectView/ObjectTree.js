@@ -86,7 +86,7 @@ class ObjectTree extends React.Component {
     }
 
     onStatusChange(widget) {
-        console.log(widget);
+        //console.log(widget);
         //initTree : 初始化对象树
         if (widget.initTree !== undefined){
             this.setState({

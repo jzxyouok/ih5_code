@@ -221,8 +221,8 @@ var DEFAULT_TOOLBOX = {
         gid:16,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.REMOTEDEVICE, name:'私有数据库', icon: personalDbIcon, className:'db'},
-            {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, className:'db'}
+            {cid:TOOL_ID.REMOTEDEVICE, name:'私有数据库', icon: personalDbIcon, DbType:1, className:'db'},
+            {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, DbType: 0, className:'db'}
         ]
     },{
         name:'二维变量',

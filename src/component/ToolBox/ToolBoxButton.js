@@ -73,7 +73,6 @@ class ToolBoxButton extends Component {
 
         //点击的时候清除一下overlay
         new DrawRect().cleanUp();
-
         //第一层已经选择了或者打开了，被选了的话，再点击取消选择
         if(this.state.selected&&(this.props.level==1||(this.props.expanded&&this.props.level==2))) {
             ToolBoxAction['deselect']();
