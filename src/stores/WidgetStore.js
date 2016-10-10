@@ -967,6 +967,9 @@ export default Reflux.createStore({
       if(className == "db"){
           props = this.addWidgetDefaultName(className, props, true, false, name,dbType);
       }
+      else if(className == "sock"){
+          props = this.addWidgetDefaultName(className, props, true, false, name);
+      }
       else{
           props = this.addWidgetDefaultName(className, props, true, false);
       }
@@ -1196,6 +1199,8 @@ export default Reflux.createStore({
                 props['name'] = name;
                 props['dbType'] = "shareDb";
             }
+        } else if( className == "sock"){
+            props['name'] = name;
         } else if (className === 'data') {
             let cOrder = 1;
             this.currentWidget.children.forEach(cW => {
