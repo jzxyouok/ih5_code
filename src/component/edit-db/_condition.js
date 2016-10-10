@@ -11,7 +11,8 @@ class Condition extends React.Component {
         super(props);
         this.state = {
             node : null,
-            Dbname : ""
+            Dbname : "",
+            lastName : null
         };
         this.inputChange = this.inputChange.bind(this);
         this.inputBlur = this.inputBlur.bind(this);
@@ -27,7 +28,20 @@ class Condition extends React.Component {
         this.unsubscribe();
     }
 
+    onStatusChange(widget) {
+        if(widget.selectWidget){
+            if(widget.selectWidget.className == "db"){
+                this.setState({
+                    node : widget.selectWidget.node,
+                    Dbname :  widget.selectWidget.node.name,
+                    lastName : widget.selectWidget.node.name
+                })
+            }
+        }
+    }
+
     inputClick(key){
+        console.log(key);
         $('.'+key).select();
     }
 
@@ -38,22 +52,10 @@ class Condition extends React.Component {
     }
 
     inputBlur(){
-        let name = this.refs.dbname.value;
+        let name = this.state.Dbname;
+        console.log(name != this.state.lastName,name,this.state.lastName);
         if(name != this.state.Dbname){
             this.props.saveFuc(name);
-        }
-    }
-
-    onStatusChange(widget) {
-        if(widget.selectWidget){
-            if(widget.selectWidget.className == "db"){
-                if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
-                    this.setState({
-                        node : widget.selectWidget.node,
-                        Dbname :  widget.selectWidget.node.name
-                    })
-                }
-            }
         }
     }
 
