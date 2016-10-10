@@ -373,7 +373,6 @@ propertyMap['page'] = [
         '交替翻页':66,
         '碰撞翻页':67
     },isProperty: true },
-
     { name: 'bgColor',showName:'背景颜色', type: propertyType.Color, default: '', isProperty: true }
 ];
 propertyMap['class'] = [
