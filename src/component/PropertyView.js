@@ -480,7 +480,7 @@ class PropertyView extends React.Component {
                   }
               }else if(item.name=='type'){
                   for(let i in  item.options){
-                      selectClassName= (i=='slideInUp' || i== 'jello')? 'optionline':'';
+                      selectClassName= (item.options[i]=='slideInUp' || item.options[i]== 'jello')? 'optionline':'';
                       defaultProp.options.push(<Option  key={item.options[i]} className={selectClassName}>{i}</Option>);
                   }
               }
