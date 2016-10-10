@@ -127,6 +127,8 @@
 
             .dropDown-btn{
                 &:hover {
+                    position: relative;
+                    z-index: 99;
                     &:before{
                         display: block;
                     }
@@ -643,7 +645,7 @@
                 border: none;
                 background: none;
                 width: 100%;
-                height: 18px;
+                height: 1px;
                 //margin-left: 2px;
 
                 .ant-input-number-handler-wrap {
