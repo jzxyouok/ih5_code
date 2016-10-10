@@ -1,5 +1,5 @@
 import bridge from 'bridge';
-import {isCustomizeWidget} from '../stores/WidgetStore';
+import {isCustomizeWidget, dataType} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
@@ -582,13 +582,12 @@ propertyMap['intVar'] = [
         ],
            isFunc: true },
 ];
-propertyMap['oneDArr'] = [
+propertyMap[dataType.oneDArr] = [
     ...propertyMap['data'],
 
 ];
-propertyMap['twoDArr'] = [
+propertyMap[dataType.twoDArr] = [
     ...propertyMap['data'],
-
 ];
 
 for (var n in propertyMap) {
@@ -683,4 +682,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass };
+export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass};

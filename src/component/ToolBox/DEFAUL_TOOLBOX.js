@@ -2,6 +2,8 @@
  * 默认工具栏配置
  */
 
+import {dataType} from '../../stores/WidgetStore';
+
 let img = (path) => `img/icons/${path}`;
 
 let rectIcon = img('rect.svg');
@@ -232,8 +234,8 @@ var DEFAULT_TOOLBOX = {
         gid:17,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.TWODARR, name:'二维数组', icon: twodarrIcon, className:'data', param:{'type': 'twoDArr'}},
-            {cid:TOOL_ID.ONEDARR, name:'一维数组', icon: onedarrIcon, className:'data', param:{'type': 'oneDArr'}}]
+            {cid:TOOL_ID.TWODARR, name:'二维数组', icon: twodarrIcon, className:'data', param:{'type': dataType.twoDArr}},
+            {cid:TOOL_ID.ONEDARR, name:'一维数组', icon: onedarrIcon, className:'data', param:{'type': dataType.oneDArr}}]
     },{
         name:'通信接口',
         key:19,

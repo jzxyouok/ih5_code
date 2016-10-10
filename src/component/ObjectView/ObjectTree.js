@@ -5,7 +5,7 @@ import $ from 'jquery';
 
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore, {nodeType, keepType, varType, isCustomizeWidget} from '../../stores/WidgetStore';
+import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget} from '../../stores/WidgetStore';
 
 class ObjectTree extends React.Component {
     constructor (props) {
@@ -651,6 +651,13 @@ class ObjectTree extends React.Component {
                     }
                     else {
                         pic = 'personalDb-icon';
+                    }
+                    picIsImage = false;
+                } else if(v.className === 'data'){
+                    if(v.props.type === dataType.twoDArr) {
+                        pic = 'twoDArr-icon';
+                    } else if (v.props.type === dataType.oneDArr) {
+                        pic = 'oneDArr-icon';
                     }
                     picIsImage = false;
                 }
