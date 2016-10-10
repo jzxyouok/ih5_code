@@ -1,4 +1,5 @@
 .CreateModule ,
+.CreateSock ,
 .CreateDb {
     position: fixed;
     left: 0;
@@ -27,6 +28,7 @@
         .CM-header {
             width: 100%;
             height: 40px;
+            line-height: 40px;
             background: #545454;
             font-size: 14px;
             color: #fff;

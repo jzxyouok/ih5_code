@@ -13,6 +13,7 @@ import CreateModule from './create-module/index'
 import ArrangeModule from './arrange-module/index'
 import CreateDb from './create-db/index'
 import ArrangeDb from './arrange-db/index'
+import CreateSock from './create-sock/index'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -40,7 +41,9 @@ class NavBar extends React.Component {
             createDb : false,
             selectWidget : null,
             arrangeDb : false,
-            zoomInputState: 0
+            zoomInputState: 0,
+            sockList : [],
+            createSock : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -66,6 +69,9 @@ class NavBar extends React.Component {
         this.arrangeDbHide = this.arrangeDbHide.bind(this);
         this.sendDbData = this.sendDbData.bind(this);
         this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
+        this.createSockShow = this.createSockShow.bind(this);
+        this.createSockHide = this.createSockHide.bind(this);
+        this.updateSock = this.updateSock.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -123,7 +129,8 @@ class NavBar extends React.Component {
                     username: result['name'],
                     workList: result['list'].reverse(),
                     fontList: result['font'],
-                    dbList: result['db']
+                    dbList: result['db'],
+                    sockList: result['sock']
                 });
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
@@ -402,6 +409,24 @@ class NavBar extends React.Component {
         });
     }
 
+    createSockShow(){
+        this.setState({
+            createSock : true
+        })
+    }
+
+    createSockHide(){
+        this.setState({
+            createSock : false
+        })
+    }
+
+    updateSock(data){
+        this.setState({
+            sockList : data
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -543,17 +568,49 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <div className='dropDown-btn f--hlc hidden'>
+                        <div className='dropDown-btn link-dropDown f--hlc'>
                             <button className='btn btn-clear link-btn' title='连接'>
                                 <span className="icon" />
                                 <span className="title">连接</span>
                             </button>
-                        </div>
 
-                        <button className='btn btn-clear link-btn' title='连接'>
-                            <span className="icon" />
-                            <span className="title">连接</span>
-                        </button>
+                            <div className='dropDownToggle'>
+                                <div className="dropDownToggle-main">
+                                    <div className="dropDown-title f--hlc">
+                                        <span className="flex-1">全部连接：</span>
+                                        <span className="set-btn" />
+                                    </div>
+
+                                    <div className="dropDown-main">
+                                        <div className="dropDown-scroll">
+                                            <ul className="dropDown-content">
+                                                {
+                                                    this.state.sockList.length > 0
+                                                        ? this.state.sockList.map((v,i)=>{
+                                                            return  <li className="" key={i} >
+                                                                        <div className="title f--hlc">
+                                                                            <span className="li-icon" />
+                                                                            <div className="TitleName">{ v.name }</div>
+                                                                        </div>
+                                                                    </li>
+                                                          })
+                                                        : null
+                                                }
+                                                <li className="add-btn f--hcc" onClick={ this.createSockShow }>
+                                                    <div className="icon">
+                                                        <span className="heng" />
+                                                        <span className="shu" />
+                                                    </div>
+                                                </li>
+                                                {
+                                                    moduleFuc(this.state.sockList.length, 14)
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <button className='btn btn-clear shape-btn' title='形状'>
                             <span className="icon" />
@@ -712,6 +769,12 @@ class NavBar extends React.Component {
                                 createDbShow={ this.createDbShow }
                                 onUpdateDb={this.onUpdateDb.bind(this)}
                                 dbList = { this.state.dbList } />
+                </div>
+
+                <div className={$class({"hidden": !this.state.createSock})}>
+                    <CreateSock createSockHide={ this.createSockHide }
+                                updateSock={ this.updateSock }
+                                sockList={ this.state.sockList }  />
                 </div>
 
             </div>
