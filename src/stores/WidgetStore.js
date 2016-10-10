@@ -473,7 +473,7 @@ function generateJsFunc(etree) {
             if (c.compareObjId) {
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
-              o += JSON.stringfy(compareObjFlag);
+              o += JSON.stringify(c.compareObjFlag);
             }
             conditions.push('(' + o + ')');
           }
@@ -564,6 +564,7 @@ function saveTree(data, node) {
                         obj.judgeVarName = o[2];
                       }
                    }
+                console.log(v);
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
