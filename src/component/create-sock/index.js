@@ -28,6 +28,10 @@ class CreateSock extends React.Component {
         this.props.createSockHide();
     }
 
+    sureBtn(){
+
+    }
+
     render() {
         return (
             <div className='CreateSock f--hcc'>
@@ -47,7 +51,7 @@ class CreateSock extends React.Component {
                         </div>
 
                         <div className="btn-group f--hcc">
-                            <button className="btn btn-clear cancel-btn">取消</button>
+                            <button className="btn btn-clear cancel-btn" onClick={ this.cancelBtn }>取消</button>
                             <button className="btn btn-clear sure-btn">确定</button>
                         </div>
                     </div>
