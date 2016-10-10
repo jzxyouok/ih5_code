@@ -5,6 +5,7 @@ import $ from 'jquery';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
+import DbHeaderStores from '../../stores/DbHeader';
 
 class Condition extends React.Component {
     constructor (props) {
@@ -12,16 +13,18 @@ class Condition extends React.Component {
         this.state = {
             node : null,
             Dbname : "",
-            lastName : null
+            lastName : null,
+            allDbHeader : [],
+            dbNameError : ""
         };
         this.inputChange = this.inputChange.bind(this);
         this.inputBlur = this.inputBlur.bind(this);
-        this.inputClick = this.inputClick.bind(this);
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         this.onStatusChange(WidgetStore.getStore());
+        DbHeaderStores.listen(this.DbHeaderData.bind(this));
     }
 
     componentWillUnmount() {
@@ -40,9 +43,10 @@ class Condition extends React.Component {
         }
     }
 
-    inputClick(key){
-        console.log(key);
-        $('.'+key).select();
+    DbHeaderData(data){
+        this.setState({
+            allDbHeader : data
+        })
     }
 
     inputChange(event){
@@ -53,9 +57,24 @@ class Condition extends React.Component {
 
     inputBlur(){
         let name = this.state.Dbname;
-        console.log(name != this.state.lastName,name,this.state.lastName);
-        if(name != this.state.Dbname){
-            this.props.saveFuc(name);
+        let allDbHeader = this.state.allDbHeader;
+        let bool = true;
+        if(name != this.state.lastName){
+            allDbHeader.map((v,i)=>{
+               if(v.name == name){
+                   bool = false;
+                   this.setState({
+                       dbNameError : "（已存在该数据库）"
+                   })
+               }
+                return bool;
+            });
+            if(bool){
+                this.setState({
+                    dbNameError : ""
+                });
+                this.props.saveFuc(name);
+            }
         }
     }
 
@@ -75,11 +94,16 @@ class Condition extends React.Component {
                                 this.state.node
                                 ? this.state.node.dbType == "shareDb"
                                     ?   <li>
-                                            <label>名称：</label>
+                                            <label>
+                                                名称：
+                                                <span style={{ color : "#ffa800"}}
+                                                      className={ $class({"hidden": this.state.dbNameError.length == 0 })}>
+                                                    {this.state.dbNameError }
+                                                </span>
+                                            </label>
                                             <input value={ this.state.Dbname }
                                                    className="dbname"
                                                    ref="dbname"
-                                                   inputClick={ this.inputClick.bind(this,"dbname") }
                                                    onBlur={ this.inputBlur.bind(this) }
                                                    onChange={ this.inputChange.bind(this) } />
                                         </li>

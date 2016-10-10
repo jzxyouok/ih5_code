@@ -164,12 +164,13 @@ class App extends React.Component {
             <div id="iH5-App">
                 <DesignView stageZoom={this.state.stageZoom} />
 
-                <NavBar ref="NavBar" />
+                <NavBar ref="NavBar"
+                        stageZoom={this.state.stageZoom}
+                        stageZoomEdit={this.stageZoomEdit}
+                        stageZoomPlus={this.stageZoomPlus}
+                        stageZoomLess={this.stageZoomLess}/>
 
-                <ToolBox stageZoom={this.state.stageZoom}
-                         stageZoomEdit={this.stageZoomEdit}
-                         stageZoomPlus={this.stageZoomPlus}
-                         stageZoomLess={this.stageZoomLess} />
+                <ToolBox />
 
                 <PropertyView expanded={this.state.expandedToolbox}
                               isHidden={this.state.activeEventTreeKey != null

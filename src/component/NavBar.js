@@ -13,6 +13,7 @@ import CreateModule from './create-module/index'
 import ArrangeModule from './arrange-module/index'
 import CreateDb from './create-db/index'
 import ArrangeDb from './arrange-db/index'
+import CreateSock from './create-sock/index'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -39,7 +40,10 @@ class NavBar extends React.Component {
             dbList : [],
             createDb : false,
             selectWidget : null,
-            arrangeDb : false
+            arrangeDb : false,
+            zoomInputState: 0,
+            sockList : [],
+            createSock : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -64,6 +68,10 @@ class NavBar extends React.Component {
         this.arrangeDbShow = this.arrangeDbShow.bind(this);
         this.arrangeDbHide = this.arrangeDbHide.bind(this);
         this.sendDbData = this.sendDbData.bind(this);
+        this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
+        this.createSockShow = this.createSockShow.bind(this);
+        this.createSockHide = this.createSockHide.bind(this);
+        this.updateSock = this.updateSock.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -121,7 +129,8 @@ class NavBar extends React.Component {
                     username: result['name'],
                     workList: result['list'].reverse(),
                     fontList: result['font'],
-                    dbList: result['db']
+                    dbList: result['db'],
+                    sockList: result['sock']
                 });
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
@@ -136,11 +145,10 @@ class NavBar extends React.Component {
     }
 
     DbHeaderData(data,bool){
-        if(bool){
-            this.setState({
-                dbList : data
-            })
-        }
+        //console.log(45646,data);
+        this.setState({
+            dbList : data
+        })
     }
 
     login(name, pass) {
@@ -329,9 +337,26 @@ class NavBar extends React.Component {
     }
 
     createDbShow(){
-        this.setState({
-            createDb : true
-        })
+        let name = '数据库' + this.state.dbList.length;
+        let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
+        //console.log(data);
+        WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
+            var result = JSON.parse(text);
+            if (result['id']) {
+                //console.log(result);
+                var list = this.state.dbList;
+                list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
+                WidgetActions['addWidget']('db', {'dbid': result['id'] }, null, name);
+                this.setState({
+                    dbList : list
+                },()=>{
+                    DbHeaderAction['DbHeaderData'](this.state.dbList,false);
+                })
+            }
+        }.bind(this));
+        //this.setState({
+        //    createDb : true
+        //})
     }
 
     createDbHide(){
@@ -374,6 +399,34 @@ class NavBar extends React.Component {
         })
     }
 
+    focusOrBlurZoomInput(e) {
+        let currentState = 0;
+        if (e.type == 'focus') {
+            currentState = 1;
+        }
+        this.setState({
+            zoomInputState: currentState
+        });
+    }
+
+    createSockShow(){
+        this.setState({
+            createSock : true
+        })
+    }
+
+    createSockHide(){
+        this.setState({
+            createSock : false
+        })
+    }
+
+    updateSock(data){
+        this.setState({
+            sockList : data
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -385,7 +438,7 @@ class NavBar extends React.Component {
                 }
             }
             if(a < 0){
-                let b = num % 3;
+                let b = (num + 1) % 3;
                 if(3-b == 0){
                     return;
                 }
@@ -446,7 +499,7 @@ class NavBar extends React.Component {
                                                                         <div className="TitleName">{v}</div>
                                                                     </div>
 
-                                                                    {<span className="edit-btn" />}
+                                                                    <span className="edit-btn" />
                                                                 </li>
                                                       })
                                                     : null
@@ -491,7 +544,10 @@ class NavBar extends React.Component {
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{ v.name }</div>
                                                                         </div>
-                                                                        <span className="edit-btn" />
+
+                                                                        {
+                                                                            //<span className="edit-btn" />
+                                                                        }
                                                                     </li>
                                                           })
                                                         : null
@@ -512,17 +568,49 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <div className='dropDown-btn f--hlc hidden'>
+                        <div className='dropDown-btn link-dropDown f--hlc'>
                             <button className='btn btn-clear link-btn' title='连接'>
                                 <span className="icon" />
                                 <span className="title">连接</span>
                             </button>
-                        </div>
 
-                        <button className='btn btn-clear link-btn' title='连接'>
-                            <span className="icon" />
-                            <span className="title">连接</span>
-                        </button>
+                            <div className='dropDownToggle'>
+                                <div className="dropDownToggle-main">
+                                    <div className="dropDown-title f--hlc">
+                                        <span className="flex-1">全部连接：</span>
+                                        <span className="set-btn" />
+                                    </div>
+
+                                    <div className="dropDown-main">
+                                        <div className="dropDown-scroll">
+                                            <ul className="dropDown-content">
+                                                {
+                                                    this.state.sockList.length > 0
+                                                        ? this.state.sockList.map((v,i)=>{
+                                                            return  <li className="" key={i} >
+                                                                        <div className="title f--hlc">
+                                                                            <span className="li-icon" />
+                                                                            <div className="TitleName">{ v.name }</div>
+                                                                        </div>
+                                                                    </li>
+                                                          })
+                                                        : null
+                                                }
+                                                <li className="add-btn f--hcc" onClick={ this.createSockShow }>
+                                                    <div className="icon">
+                                                        <span className="heng" />
+                                                        <span className="shu" />
+                                                    </div>
+                                                </li>
+                                                {
+                                                    moduleFuc(this.state.sockList.length, 14)
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <button className='btn btn-clear shape-btn' title='形状'>
                             <span className="icon" />
@@ -615,6 +703,29 @@ class NavBar extends React.Component {
 
                     <button className='btn btn-clear history-btn' title='历史'  />
 
+                    <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
+                        <span className='heng' />
+                    </button>
+
+                    <div className={$class('size-input', {'size-input-focus': this.state.zoomInputState },
+                                                             {'size-input-blur':!this.state.zoomInputState})}>
+
+                        <InputNumber step={1}
+                                     min={10}
+                                     size='small'
+                                     defaultValue={this.props.stageZoom + "%"}
+                                     value={this.props.stageZoom  + "%"}
+                                     onFocus={this.focusOrBlurZoomInput}
+                                     onBlur={this.focusOrBlurZoomInput}
+                                     onChange={this.props.stageZoomEdit}
+                                     onKeyDown={this.props.stageZoomEdit} />
+                    </div>
+
+                    <button className='btn-clear plus-btn'  title='放大' onClick={ this.props.stageZoomPlus }>
+                        <span className='heng' />
+                        <span className='shu' />
+                    </button>
+
                     <button className='btn-clear home-btn'  title='在线课程'  />
                 </div>
 
@@ -645,17 +756,25 @@ class NavBar extends React.Component {
                                    createClassBtn={ this.createClassBtn } />
                 </div>
 
-                <div className={$class({"hidden": !this.state.createDb }) }>
-                    <CreateDb createDbHide={ this.createDbHide }
-                              onUpdateDb={this.onUpdateDb.bind(this)}
-                              dbList = { this.state.dbList } />
-                </div>
+                {
+                    //<div className={$class({"hidden": !this.state.createDb }) }>
+                    //    <CreateDb createDbHide={ this.createDbHide }
+                    //              onUpdateDb={this.onUpdateDb.bind(this)}
+                    //              dbList = { this.state.dbList } />
+                    //</div>
+                }
 
                 <div className={$class({"hidden": !this.state.arrangeDb})}>
                     <ArrangeDb  arrangeDbHide={ this.arrangeDbHide }
                                 createDbShow={ this.createDbShow }
                                 onUpdateDb={this.onUpdateDb.bind(this)}
                                 dbList = { this.state.dbList } />
+                </div>
+
+                <div className={$class({"hidden": !this.state.createSock})}>
+                    <CreateSock createSockHide={ this.createSockHide }
+                                updateSock={ this.updateSock }
+                                sockList={ this.state.sockList }  />
                 </div>
 
             </div>
@@ -761,30 +880,5 @@ module.exports = NavBar;
 //            <li className='vertical-icon'><span className='icon' />垂直分布</li>
 //        </ul>
 //    </div>
-//</div>
-
-//<div>
-//    <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
-//        <span className='heng' />
-//    </button>
-//    <div className={$class('size-input', {'size-input-focus': this.state.zoomInputState }, {'size-input-blur':!this.state.zoomInputState})}>
-//        <InputNumber step={1}
-//                     min={10}
-//                     size='small'
-//                     defaultValue={this.props.stageZoom}
-//                     value={this.props.stageZoom}
-//                     onFocus={this.focusOrBlurZoomInput}
-//                     onBlur={this.focusOrBlurZoomInput}
-//                     onChange={this.props.stageZoomEdit}
-//                     onKeyDown={this.props.stageZoomEdit}/>
-//        <div className='input-percentage'>
-//            %
-//        </div>
-//    </div>
-//    {/*<div className='size'>{ this.props.stageZoom }%</div>*/}
-//    <button className='btn-clear plus-btn'  title='放大' onClick={ this.props.stageZoomPlus }>
-//        <span className='heng' />
-//        <span className='shu' />
-//    </button>
 //</div>
 }

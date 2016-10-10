@@ -39,6 +39,8 @@ class Property extends React.Component {
         this.onGetActionList = this.onGetActionList.bind(this);
         this.onChangePropDom = this.onChangePropDom.bind(this);
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
+
+        this.arrList = []; //数组类型变量列表
     }
 
     componentWillReceiveProps(nextProps) {
@@ -76,6 +78,13 @@ class Property extends React.Component {
         if(widget.allWidgets){
             this.setState({
                 objectList: widget.allWidgets
+            }, ()=>{
+                this.arrList = [];
+                this.state.objectList.forEach(v=>{
+                    if(v.className === 'data') {
+                        this.arrList.push(v);
+                    }
+                });
             });
         } else if (widget.updateFunction){
             if(widget.updateFunction.widget&&this.state.currentObject){
@@ -341,22 +350,34 @@ class Property extends React.Component {
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Select:
-                    if(this.state.currentObject.className === 'db'&& item.name ==='data'){
-                        let menu = (
-                            <Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
+                    if(this.state.currentObject.className === 'db'){
+                        let menu = (<Menu></Menu>);
+                        let titleTemp = '类别';
+                        if(item.name ==='data') {
+                            titleTemp = '来源';
+                            menu = (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
                                 {
                                     !this.state.currentObject.dbItemList||this.state.currentObject.dbItemList.length==0
                                         ? null
                                         : this.state.currentObject.dbItemList.map(dbList)
                                 }
-                            </Menu>
-                        );
+                            </Menu>);
+                        } else if (item.name ==='option'){
+                            titleTemp = '选项';
+                            menu = (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
+                                {
+                                    !this.arrList||this.arrList.length==0
+                                        ? null
+                                        : this.arrList.map(dbList)
+                                }
+                            </Menu>);
+                        }
                         return <Dropdown overlay={menu} trigger={['click']}
                                          getPopupContainer={() => document.getElementById(propertyId)}>
                             <div className={$class("p--dropDown short")}>
                                 <div className="title f--hlc">
                                     { !item.value || !item.value.props.name
-                                        ?'来源'
+                                        ?titleTemp
                                         :item.value.props.name
                                     }
                                     <span className="icon" />

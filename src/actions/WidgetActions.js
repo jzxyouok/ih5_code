@@ -12,6 +12,7 @@ export default Reflux.createActions([
   'cutWidget',                    //剪切组件
   'lockWidget',                   //锁定组件
   'reorderWidget',                //移动组件
+  'moveWidget',                   //跨层移动组件
   'initTree',                     //对象树的数据
   'render',                       //重新加载数据
   'updateProperties',             //更新属性
@@ -62,4 +63,7 @@ export default Reflux.createActions([
   'imageTextSize',             //用于实时获取字体图片的宽高
   'ajaxSend',
   'saveFontList',
-  'activeHandle']);
+  'activeHandle',
+
+  'renameWidget'
+]);

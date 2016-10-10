@@ -54,6 +54,7 @@ class DbTable extends React.Component {
         this.getPDbHeader = this.getPDbHeader.bind(this);
         this.updatePDbHeader = this.updatePDbHeader.bind(this);
         this.getPDbList = this.getPDbList.bind(this);
+        this.cancelBtn = this.cancelBtn.bind(this);
     }
 
     componentDidMount() {
@@ -102,7 +103,7 @@ class DbTable extends React.Component {
             allDbHeader : data,
             originalHeader:data
         },()=>{
-            console.log(bool,this.state.node);
+            //console.log(bool,this.state.node);
             if(bool && this.state.node){
                 if(this.state.node.dbType == "shareDb"){
                     this.getOriginalHeader();
@@ -143,7 +144,7 @@ class DbTable extends React.Component {
         let id = this.state.node.dbid;
         WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + id, null, null, function(text) {
             var result = JSON.parse(text);
-            console.log(result);
+            //console.log(result);
             if (result['header']) {
                 let headerData = result['header'].split(",");
                 this.setState({
@@ -305,7 +306,7 @@ class DbTable extends React.Component {
         let self = this;
         WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + id, null, null, function(text) {
             var result = JSON.parse(text);
-            console.log(result);
+            //console.log(result);
             if (result['header']) {
                 let headerData = result['header'].split(",");
                 this.setState({
@@ -340,10 +341,8 @@ class DbTable extends React.Component {
     updateHeader(DdName){
         let array = this.state.dbHeader;
         let header = array.join(',');
+        //console.log(3,DdName);
         let name = DdName ? DdName : this.state.node.name;
-        if(DdName){
-            this.state.node.name = DdName;
-        }
         let id = this.state.node.dbid;
         let data = "id=" + id + "&name=" + encodeURIComponent(name) + "&header=" + encodeURIComponent(header);
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
@@ -351,6 +350,9 @@ class DbTable extends React.Component {
             if (result['id']) {
                 this.state.node['name'] = name;
                 this.state.node['header'] = header;
+                if(DdName){
+                    WidgetActions['renameWidget'](name);
+                }
             }
         }.bind(this));
         let allDbHeader = this.state.allDbHeader;
@@ -358,13 +360,14 @@ class DbTable extends React.Component {
             //console.log(2,allDbHeader[i].id === this.state.node.dbid);
             if(allDbHeader[i].id === this.state.node.dbid) {
                 allDbHeader[i].header = header;
+                allDbHeader[i].name = name;
                 DbHeaderAction['DbHeaderData'](allDbHeader, true);
             }
         });
     }
 
     saveBtn(DdName){
-        console.log(1,this.state.dbHeader,this.state.dbList);
+        //console.log(1,this.state.dbHeader,this.state.dbList);
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
             //console.log("1-2",data);
@@ -378,8 +381,9 @@ class DbTable extends React.Component {
                 inputText : null,
                 inputStyle : null
             },()=>{
-                console.log(self.state.node);
+                //console.log(self.state.node);
                 if(self.state.node.dbType == "shareDb"){
+                    //console.log(2,DdName);
                     self.updateHeader(DdName);
                 }
                 else {
@@ -387,6 +391,26 @@ class DbTable extends React.Component {
                 }
             });
         });
+    }
+
+    cancelBtn(){
+        this.setState({
+            selectArray : [],
+            originalData : [],
+            originalHeader : [],
+            inputNow : null,
+            inputText : null,
+            inputStyle : null
+        },()=>{
+            if(this.state.node.dbType == "shareDb"){
+                this.getOriginalHeader();
+                this.getNewData();
+            }
+            else {
+                this.getPDbHeader();
+                this.getPDbList();
+            }
+        })
     }
 
     updateNewScrollData(){
@@ -447,14 +471,18 @@ class DbTable extends React.Component {
         let value = null;
         let list = this.state.dbList;
         let fkList = this.state.originalData;
+        let SValue =  null;
         if(this.state.addType == 0){
             value = "s" + inputText;
+            SValue = "i" + inputText;
         }
         else {
             value = "i" + inputText;
+            SValue = "s" + inputText;
         }
         let index = header.indexOf(value);
         let index2 = header.indexOf(inputText);
+        let index3 = header.indexOf(SValue);
         let error = (data)=>{
             this.setState({
                 isError: true,
@@ -470,7 +498,7 @@ class DbTable extends React.Component {
         else if(inputText.endsWith(" ")){
             error("字段名称不能以空格结尾");
         }
-        else if(index>=0 || index2 >=0){
+        else if(index>=0 || index2 >=0 || index3 >= 0){
             error("字段名称不能重复");
         }
         else {
@@ -598,7 +626,7 @@ class DbTable extends React.Component {
                         selectArray : idArray
                     })
                 }
-                //console.log(list);
+                console.log(header,list);
                 header[which] = text;
                 //console.log(header,this.state.originalHeader);
                 //if(which == header.length-1){
@@ -636,19 +664,22 @@ class DbTable extends React.Component {
                     selectArray : idArray
                 })
             };
-
+            fuc(text);
             if(type == "s" ){
-                fuc(text);
+                value = value.substr(1);
+                //fuc(text);
                 list[which][value] = text;
             }
             else if( type == "i" ){
-                fuc(parseFloat(text));
+                value = value.substr(1);
+                //fuc(parseFloat(text));
                 list[which][value] = parseFloat(text);
             }
             else {
-                fuc(text);
+                //fuc(text);
                 list[which][value] = text;
             }
+            console.log(list);
             if(which == list.length-1 && text.length > 0){
                 let self = this;
                 this.state.node.insert({}, function (err, data) {
@@ -784,12 +815,23 @@ class DbTable extends React.Component {
                                                                     this.state.dbHeader.map((v2,i2)=>{
                                                                         let classname = 't'+id+"-"+i2;
                                                                         let array = this.state.selectArray;
+                                                                        let name;
+                                                                        let type = v2.charAt(0);
+                                                                        if(type == "s" ){
+                                                                            name = v2.substr(1);
+                                                                        }
+                                                                        else if( type == "i" ){
+                                                                            name = v2.substr(1);
+                                                                        }
+                                                                        else {
+                                                                            name = v2;
+                                                                        }
                                                                         return  <td key={ i2 }
                                                                                     className={
                                                                                         $class(classname,{"active": array.indexOf(classname) >=0 })
                                                                                     }
-                                                                                    onClick={ this.inputClick.bind(this, id+"-"+i2, v[v2])}>
-                                                                                    { v[v2] }
+                                                                                    onClick={ this.inputClick.bind(this, id+"-"+i2, v[name])}>
+                                                                                    { v[name] }
 
                                                                                     {
                                                                                         id+"-"+i2 === this.state.inputNow
@@ -840,8 +882,8 @@ class DbTable extends React.Component {
                         <button className="btn btn-clear next-bnt">下一页</button>
                     </div>
 
-                    <div className="right">
-                        <button className="btn btn-clear cancel-btn" >取消</button>
+                    <div className={ $class("right",{"hidden": this.state.selectArray.length == 0}) }>
+                        <button className="btn btn-clear cancel-btn" onClick={ this.cancelBtn } >取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn }>保存</button>
                     </div>
                 </div>

@@ -273,7 +273,7 @@ function resolveEventTree(node, list) {
                   default:
                       if(cmd.object&&cmd.object.className === 'db') {
                           cmd.action.property.forEach(v=> {
-                              if(v.name === 'data' && v.valueId) {
+                              if((v.name === 'data'||v.name=='option') && v.valueId) {
                                   v.value = idToObject(list, v.valueId[0], v.valueId[1]);
                                   (delete v.valueId);
                               }
@@ -352,6 +352,26 @@ function generateObjectId(object) {
   if (object&&(object.className == 'var'||object.className == 'func')) {
     if (object.widget.props['id'] === undefined)
       object.widget.props['id'] = 'id_' + (maxSeq++);
+    if (object.name == '') {
+      var list;
+      var type;
+      var id = 0;
+      if (object.type == 'string') {
+        type = 's';
+        list = object.widget.strVarList;
+      } else {
+        type = 'i';
+        list = object.widget.intVarList;
+      }
+      list.forEach(value => {
+        if (value.name.substr(0, 1) == type) {
+          var seq = parseInt(value.name.substr(1));
+          if (seq >= id)
+            id = seq + 1;
+        }
+      });
+      object.name = type + id;
+    }
   } else if (object&&object.props['id'] === undefined) {
     object.props['id'] = 'id_' + (maxSeq++);
   }
@@ -373,6 +393,14 @@ function generateId(node) {
                       generateObjectId(cmd.action.func);
                       break;
                   default:
+                      if(cmd.action.property){
+                          cmd.action.property.forEach(v=>{
+                              //看是否需要generateid
+                              if(v.value&&v.value.className){
+                                  generateObjectId(v.value);
+                              }
+                          })
+                      }
                       break;
               }
           }
@@ -394,24 +422,29 @@ function generateId(node) {
 }
 
 function objectToId(object) {
-  var idName, varName;
+  var idName, varKey, varName;
   if (object.className == 'var') {
     idName = object.widget.props['id'];
+    varName = object.name;
     if (object.type == 'string') {
-      varName = 's' + object.widget.strVarList.indexOf(object);
+      varKey = 's' + object.widget.strVarList.indexOf(object);
     } else {
-      varName = 'i' + object.widget.intVarList.indexOf(object);
+      varKey = 'i' + object.widget.intVarList.indexOf(object);
     }
   } else if (object.className == 'func'){
       idName = object.widget.props['id'];
-      varName = 'f' + object.widget.funcList.indexOf(object);
+      varKey = 'f' + object.widget.funcList.indexOf(object);
   } else if (object.className == 'dbItem'){
       idName = object.widget.props['id'];
-      varName = 'd' + object.widget.dbItemList.indexOf(object);
+      varKey = 'd' + object.widget.dbItemList.indexOf(object);
   } else {
     idName = object.props['id'];
   }
-  return [idName, varName];
+  return [idName, varKey, varName];
+}
+
+function getIdsName(idName, varName, propName) {
+  return 'ids.' + idName + '.' + ((varName) ? '_' + varName : propName);
 }
 
 function generateJsFunc(etree) {
@@ -419,16 +452,42 @@ function generateJsFunc(etree) {
 
   etree.forEach(function(item) {
     if (item.judges.conFlag) {
-      var out = output[item.judges.conFlag] || '';
+      var out = '';
+      var lines = [];
+      var conditions = [];
+      if (item.judges.children.length) {
+        item.judges.children.forEach(function(c) {
+          if (c.judgeObjId && c.judgeValFlag) {
+            var op = c.compareFlag;
+            var jsop;
+            if (op == '=')
+              jsop = '=='
+            else if (op == '≥')
+              jsop = '>=';
+            else if (op == '≤')
+              jsop = '<=';
+            else
+              jsop = op;
+
+            var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
+            if (c.compareObjId) {
+              o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
+            } else {
+              o += JSON.stringfy(compareObjFlag);
+            }
+            conditions.push('(' + o + ')');
+          }
+        });
+      }
       item.cmds.forEach(cmd => {
         if (cmd.id && cmd.type == 'default' && cmd.name) {
           if (cmd.name === 'changeValue') {
             if (cmd.property.length >= 1)
-              out += 'ids.' + cmd.id + '.value=' + JSON.stringify(cmd.property[0]['value']) + ';';
+              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + JSON.stringify(cmd.property[0]['value']));
           } else {
-            out += 'ids.' + cmd.id + '.' + cmd.name + '(';
+            var line = getIdsName(cmd.id, cmd.varName, cmd.name) + '(';
             if (cmd.property) {
-              out += cmd.property.map(function(p) {
+              line += cmd.property.map(function(p) {
                 if (p['binding'] !== undefined) {
                   var list = [];
                   p['binding'].fields.forEach(function(v) {
@@ -448,11 +507,31 @@ function generateJsFunc(etree) {
                 return JSON.stringify(p['value']);
               }).join(',');
             }
-            out += ');';
+            lines.push(line + ')');
           }
         }
       });
-      output[item.judges.conFlag] = out;
+      if (lines.length) {
+        var out;
+        if (conditions.length == 1) {
+          out = 'if' + conditions[0];
+        } else if (conditions.length) {
+          var logicalFlag = item.judges.logicalFlag;
+          var lop;
+          if (logicalFlag == 'and')
+            lop = '&&'
+          else if (logicalFlag == 'or')
+            lop = '||';
+          if (lop)
+            out = 'if(' + conditions.join(lop) + ')';
+        }
+        if (lines.length == 1)
+          out += lines[0];
+        else
+          out += '{' + lines.join(';'); + '}'
+        output[item.judges.conFlag] = output[item.judges.conFlag] || '';
+        output[item.judges.conFlag] += out;
+      }
     }
   });
   return output;
@@ -480,8 +559,10 @@ function saveTree(data, node) {
                    if (v.judgeObj) {
                       let o = objectToId(v.judgeObj);
                       obj.judgeObjId = o[0];
-                      if (o[1])
+                      if (o[1]) {
                         obj.judgeVarId = o[1];
+                        obj.judgeVarName = o[2];
+                      }
                    }
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
@@ -493,8 +574,10 @@ function saveTree(data, node) {
                    if (v.compareObj) {
                       var o = objectToId(v.compareObj);
                       obj.compareObjId = o[0];
-                      if (o[1])
+                      if (o[1]) {
                         obj.compareVarId = o[1];
+                        obj.compareVarName = o[2];
+                      }
                    }
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
@@ -529,6 +612,7 @@ function saveTree(data, node) {
                 c.id = o[0];
                 if (o[1]) {
                     c.var = o[1];
+                    c.varName = o[2];
                 }
             }
             if (cmd.action&&cmd.action.property) {
@@ -543,12 +627,21 @@ function saveTree(data, node) {
                                 valueId: objectToId(v.value),
                                 binding: v.value
                             })
+                        } else if (v.name === 'option'&& v.value) {
+                            property.push({
+                                name:v.name,
+                                showName: v.showName,
+                                type: v.type,
+                                valueId: objectToId(v.value)
+                            })
                         } else {
                             property.push(v);
                         }
                     });
+                    c.property = property;
+                } else {
+                    c.property = cmd.action.property;
                 }
-                c.property = property;
             }
 
             cmds.push(c);
@@ -570,7 +663,7 @@ function saveTree(data, node) {
     data['props'] = props;
   // if (node.events)
   //   data['events'] = node.events;
-  data['vars'] = [];
+  var list = [];
   if (node.intVarList.length > 0) {
       //int vars list
       node.intVarList.forEach(item =>{
@@ -579,7 +672,7 @@ function saveTree(data, node) {
           o['value'] = item.value==null?item.value:parseInt(item.value);
           o['props'] = item.props;
           o['type'] = item.type;
-          data['vars'].push(o);
+          list.push(o);
       });
   }
   if(node.strVarList.length > 0){
@@ -590,10 +683,12 @@ function saveTree(data, node) {
           o['value'] = item.value;
           o['props'] = item.props;
           o['type'] = item.type;
-          data['vars'].push(o);
+          list.push(o);
       });
   }
-  data['funcs'] = [];
+  if (list.length)
+    data['vars'] = list;
+  list = [];
   if (node.funcList.length > 0) {
       node.funcList.forEach(item =>{
           var o = {};
@@ -601,9 +696,11 @@ function saveTree(data, node) {
           o['value'] = item.value;
           o['params'] = item.params;
           o['props'] = item.props;
-          data['funcs'].push(o);
+          list.push(o);
       });
   }
+  if (list.length)
+    data['funcs'] = list;
   if(node.className==='db'&&node.dbItemList.length >0) {
       //db
       data['dbItems'] = [];
@@ -745,6 +842,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectWidget'], this.selectWidget);
         this.listenTo(WidgetActions['addWidget'], this.addWidget);
         this.listenTo(WidgetActions['reorderWidget'], this.reorderWidget);
+        this.listenTo(WidgetActions['moveWidget'], this.moveWidget);
         this.listenTo(WidgetActions['addClass'], this.addClass);
         this.listenTo(WidgetActions['sortClass'], this.sortClass);
         this.listenTo(WidgetActions['deleteClass'], this.deleteClass);
@@ -807,6 +905,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectDBItem'], this.selectDBItem);
         this.listenTo(WidgetActions['addDBItem'], this.addDBItem);
         this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
+        this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
@@ -1004,7 +1103,62 @@ export default Reflux.createStore({
             // this.render();
         }
     },
+    findWidget: function(key){
+        let root = this.currentWidget.rootWidget;
+        let target = null;
 
+        //递归遍历添加有事件widget到eventTreeList
+        let loopWidgetTree = (children) => {
+            children.forEach(ch=>{
+                if (ch.key === key) {
+                    target = ch;
+                } else {
+                    if (ch.children && ch.children.length > 0) {
+                        loopWidgetTree(ch.children);
+                    }
+                }
+            });
+        };
+
+        if(root.key === key ){
+            target = root;
+        } else {
+            loopWidgetTree(root.children);
+        }
+        return target;
+    },
+    moveWidget: function(srcKey, destKey, index) {
+        let src = null;
+        let dest = null;
+        if(this.currentWidget&&this.currentWidget.rootWidget){
+            src = this.findWidget(srcKey);
+            dest = this.findWidget(destKey);
+        }
+        if (src&&dest) {
+            var saved = {};
+            saveTree(saved, src);
+            bridge.removeWidget(src.node);
+            src.parent.children.splice(src.parent.children.indexOf(src), 1);
+
+            //获取名字
+            this.currentWidget = dest;
+            let props = this.addWidgetDefaultName(src.className, src.props, false, true);
+            var obj = loadTree(dest, saved);
+            this.currentWidget = obj;
+
+            var destIndex = dest.children.indexOf(obj);
+            if (destIndex != index) {
+                obj.props['name'] = props['name'];
+                dest.children.splice(destIndex, 1);
+                dest.children.splice(index, 0, obj);
+                var delta = index - destIndex;
+                bridge.reorderWidget(obj.node, index - destIndex);
+                this.render();
+            }
+            this.trigger({selectWidget: obj});
+            this.trigger({redrawTree: true});
+        }
+    },
     reorderWidget: function(delta) {
       if (this.currentWidget && this.currentWidget.parent) {
           let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
