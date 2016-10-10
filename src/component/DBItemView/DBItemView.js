@@ -260,7 +260,7 @@ class DBItemView extends React.Component {
                     className={$class('propertyView', {'keep':this.state.minSize}, {'hidden':this.props.isHidden})}
                     style={{ left : this.props.expanded? '64px':'37px'}}>
             <div id='DBItemViewHeader' className="f--hlc">
-                <span className="flex-1">属性</span>
+                <span className="flex-1">数据库对象属性</span>
                 <button className='btn btn-clear' title='收起' onClick={this.toggle}/>
             </div>
             <div id='DBItemViewBody' className="propertyViewBody clearfix">

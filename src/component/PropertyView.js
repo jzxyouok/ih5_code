@@ -571,9 +571,6 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
-
-
-
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
         }
@@ -607,6 +604,17 @@ class PropertyView extends React.Component {
             let obj = widget.updateProperties;
             let className = selectNode.className;
             if (className.charAt(0) == '_')  className = 'class';
+
+            if(className == 'data') {
+                switch (selectNode.props.type) {
+                    case dataType.oneDArr:
+                        className = dataType.oneDArr;
+                        break;
+                    case dataType.twoDArr:
+                        className = dataType.twoDArr;
+                        break;
+                }
+            }
 
             propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
