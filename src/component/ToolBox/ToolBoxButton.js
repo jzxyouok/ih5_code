@@ -73,7 +73,6 @@ class ToolBoxButton extends Component {
 
         //点击的时候清除一下overlay
         new DrawRect().cleanUp();
-
         //第一层已经选择了或者打开了，被选了的话，再点击取消选择
         if(this.state.selected&&(this.props.level==1||(this.props.expanded&&this.props.level==2))) {
             ToolBoxAction['deselect']();
@@ -260,27 +259,13 @@ class ToolBoxButton extends Component {
     }
 
     addDb(id,type,name){
-        if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
-            let bool = true;
-            let data = this.state.selectWidget.children;
-            for(let i =0 ; i<data.length; i++){
-                if(data[i].className == "db"){
-                    if(data[i].node.dbid == id){
-                        bool = false;
-                        return bool;
-                    }
-                }
-            }
-            if(bool){
-                if(type){
-                    WidgetActions['addWidget']('db', {'dbid': id }, null, name);
-                }
-                else {
-                    WidgetActions['addWidget']('db', {'dbid': id });
-                }
-                ToolBoxAction['deselect']();
-            }
+        if(type){
+            WidgetActions['addWidget']('db', {'dbid': id }, null, name);
         }
+        else {
+            WidgetActions['addWidget']('db', {'dbid': id },null,"db",true);
+        }
+        ToolBoxAction['deselect']();
     }
 
     render() {

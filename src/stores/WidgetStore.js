@@ -21,6 +21,8 @@ var prevObj;
 var prevNewObj;
 var dragTag;
 
+var dbCumulative = 1;
+
 var nodeType = {
     widget: 'widget',  //树对象
     func: 'func',    //函数
@@ -217,6 +219,9 @@ function idToObject(list, idName, varName) {
       if(varName.substr(0, 1) == 'f'){
           var vl = obj.funcList;
           return vl[parseInt(varName.substr(1))];
+      } else if (varName.substr(0, 1) == 'd') {
+          var vl = obj.dbItemList;
+          return vl[parseInt(varName.substr(1))];
       } else {
           var vl = (varName.substr(0, 1) == 's') ? obj.strVarList : obj.intVarList;
           return vl[parseInt(varName.substr(1))];
@@ -262,6 +267,14 @@ function resolveEventTree(node, list) {
                       }
                       break;
                   default:
+                      if(cmd.object&&cmd.object.className === 'db') {
+                          cmd.action.property.forEach(v=> {
+                              if(v.name === 'data' && v.valueId) {
+                                  v.value = idToObject(list, v.valueId[0], v.valueId[1]);
+                                  (delete v.valueId);
+                              }
+                          });
+                      }
                       break;
               }
           }
@@ -388,6 +401,9 @@ function objectToId(object) {
   } else if (object.className == 'func'){
       idName = object.widget.props['id'];
       varName = 'f' + object.widget.funcList.indexOf(object);
+  } else if (object.className == 'dbItem'){
+      idName = object.widget.props['id'];
+      varName = 'd' + object.widget.dbItemList.indexOf(object);
   } else {
     idName = object.props['id'];
   }
@@ -409,6 +425,22 @@ function generateJsFunc(etree) {
             out += 'ids.' + cmd.id + '.' + cmd.name + '(';
             if (cmd.property) {
               out += cmd.property.map(function(p) {
+                if (p['binding'] !== undefined) {
+                  var list = [];
+                  p['binding'].fields.forEach(function(v) {
+                    if (v.name && v.value) {
+                      if (v.name.substr(0, 1) == 'i') {
+                        list.push('\'' + v.name.substr(1) + '\':parseFloat(ids.' + v.value.props['id'] + '.value)');
+                      } else if (v.name.substr(0, 1) == 's') {
+                        list.push('\'' + v.name.substr(1) + '\':ids.' + v.value.props['id'] + '.value');
+                      } else {
+                        list.push('\'' + v.name + '\':ids.' + v.value.props['id'] + '.value');
+                      }
+                    }
+                  });
+                  delete(p['binding']);
+                  return '{' + list.join(',') + '}';
+                }
                 return JSON.stringify(p['value']);
               }).join(',');
             }
@@ -419,7 +451,6 @@ function generateJsFunc(etree) {
       output[item.judges.conFlag] = out;
     }
   });
-  console.log(output);
   return output;
 }
 
@@ -497,7 +528,23 @@ function saveTree(data, node) {
                 }
             }
             if (cmd.action&&cmd.action.property) {
-                c.property = cmd.action.property;
+                let property = [];
+                if(cmd.object&&cmd.object.className === 'db') {
+                    cmd.action.property.forEach(v=> {
+                        if(v.name === 'data' && v.value) {
+                            property.push({
+                                name:v.name,
+                                showName: v.showName,
+                                type: v.type,
+                                valueId: objectToId(v.value),
+                                binding: v.value
+                            })
+                        } else {
+                            property.push(v);
+                        }
+                    });
+                }
+                c.property = property;
             }
 
             cmds.push(c);
@@ -510,7 +557,6 @@ function saveTree(data, node) {
       var js = generateJsFunc(etree);
       if (js)
         data['events'] = js;
-      console.log(etree);
     } else {
         props[name] = node.props[name];
     }
@@ -808,13 +854,13 @@ export default Reflux.createStore({
                 this.render();
         }
     },
-    addWidget: function(className, props, link, name) {
+    addWidget: function(className, props, link, name,dbType) {
 
       if (!this.currentWidget)
           return;
 
       if(className == "db"){
-          props = this.addWidgetDefaultName(className, props, true, false, name);
+          props = this.addWidgetDefaultName(className, props, true, false, name,dbType);
       }
       else{
           props = this.addWidgetDefaultName(className, props, true, false);
@@ -967,7 +1013,7 @@ export default Reflux.createStore({
           }
       }
     },
-    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties ,name) {
+    addWidgetDefaultName: function(className, properties, valueAsTextName, copyProperties ,name,dbType) {
         if(properties === undefined || properties === null) {
             properties = {};
         }
@@ -982,7 +1028,15 @@ export default Reflux.createStore({
             props['name'] = className;
         }
         else if( className == "db"){
-            props['name'] = name;
+            if(dbType){
+                props['name'] = name + dbCumulative;
+                props['dbType'] = "personalDb";
+                dbCumulative++;
+            }
+            else {
+                props['name'] = name;
+                props['dbType'] = "shareDb";
+            }
         }
         else {
             if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
@@ -1516,6 +1570,7 @@ export default Reflux.createStore({
             } else {
                 dbItem['props']['name'] = 'dbItem' + (this.currentWidget['dbItemList'].length + 1);
             }
+            this.trigger({updateDBItem: {widget:this.currentWidget}});
             this.currentWidget['dbItemList'].unshift(dbItem);
         }
         this.trigger({redrawTree: true});
@@ -1541,6 +1596,7 @@ export default Reflux.createStore({
             }
             if(index>-1){
                 this.currentWidget.dbItemList.splice(index,1);
+                this.trigger({updateDBItem: {widget:this.currentWidget}});
                 this.selectWidget(this.currentWidget);
             }
         }

@@ -18,8 +18,9 @@ class DBItemView extends React.Component {
         this.state = {
             minSize: false,
             dbList: null, //保存当前的dblist
-            dbChanged: false, //db是否有改变
+            dbChanged: true, //db是否有改变
             name: null,
+            dbItem: null,
             fields: [],
             fieldDropdownVisibleIndex: null,
             fieldDropdownVisible: false,
@@ -67,7 +68,7 @@ class DBItemView extends React.Component {
             let dbItem = widget.selectDBItem;
             let dbId = widget.selectDBItem.widget.node.dbid;
             let dbList = this.state.dbList;
-            if(this.state.dbChanged){
+            if(!this.state.dbItem || this.state.dbItem.key !== widget.selectDBItem.key || this.state.dbChanged){
                 let fields = [];
                 dbList.map((v,i)=>{
                     if(dbList[i].id === dbId){
@@ -79,6 +80,7 @@ class DBItemView extends React.Component {
                     }
                 });
                 this.setState({
+                    dbItem: widget.selectDBItem,
                     name: widget.selectDBItem.name,
                     fields: fields,
                     dbChanged: false
@@ -87,6 +89,7 @@ class DBItemView extends React.Component {
                 })
             } else {
                 this.setState({
+                    dbItem: widget.selectDBItem,
                     name: widget.selectDBItem.name,
                     fields: widget.selectDBItem.fields,
                     dbChanged: false

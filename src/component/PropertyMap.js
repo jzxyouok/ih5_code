@@ -44,6 +44,12 @@ propertyMap['widget'] = [
     { name: 'id',showName:'ID', type: propertyType.String, default: '', isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
+
+propertyMap['data'] = [
+    ...propertyMap['widget'],
+    { addRequires: widgetFlags.Root}
+];
+
 propertyMap['root'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Root | widgetFlags.Container},
@@ -107,6 +113,8 @@ propertyMap['box'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'show', showName:'显示', isEvent: true },
     { name: 'hide', showName:'隐藏', isEvent: true },
+    { name: 'toggleVisible', showName:'交替显示', isFunc: true },
+    { name: 'hideSibling', showName:'隐藏同层控件', isFunc: true },
     { name: 'show', showName:'显示', isFunc: true },
     { name: 'hide', showName:'隐藏', isFunc: true },
 ];
@@ -531,20 +539,20 @@ propertyMap['track'] = [
 propertyMap['db'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'find', showName:'查找', isFunc: true, info:'(option, callback(err, result))',
+    { name: 'find', showName:'输出', isFunc: true, info:'(option, callback(err, result))',
         property:[
             {'name':'option', showName:'选项', 'value':null, 'type':propertyType.String},
-            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',
         property:[
-            {'name':'data', showName:'数据', 'value':null, 'type':propertyType.String},
-            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.Select},
+            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'update', showName:'更新', isFunc: true, info:'(data, callback(err, result))',
         property:[
-            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.String},
-            {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.Select},
+            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]}
 ];
 propertyMap['sock'] = [
@@ -578,7 +586,34 @@ for (var n in propertyMap) {
 }
 
 function checkChildClass(selected, className) {
-    // 对函数,变量,自定义的处理
+    // 对函数,变量,自定义函数等的处理
+    if(className ==='dbItem'){
+        if(selected.className === 'db'){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    if(className === 'func'){
+        if(selected.className === 'func' ||
+            selected.className === 'var' ||
+            selected.className === 'dbItem') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    if(className === 'var') {
+        if((selected.className === 'twodvar' ||
+            selected.className === 'counter' ||
+            selected.className === 'func' ||
+            selected.className === 'var' ||
+            selected.className === 'dbItem')){
+            return false;
+        } else {
+            return true;
+        }
+    }
     if (selected.className === 'func' ||
         selected.className === 'var' ||
         selected.className === 'dbItem' ||
