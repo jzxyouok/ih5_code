@@ -91,33 +91,10 @@ class Animation extends React.Component {
         //过滤可选的功能组件
         let data = animationData;
         for(let i = 0; i<data.length; i++) {
-            if(isCustomizeWidget(widget.className)){
-                data[i].disabled = true;
-            } else if(data[i].className ==='dbItem'){
-                //dbItem的disable
-                if(widget.className !== 'db'){
-                    data[i].disabled = true;
-                } else {
-                    data[i].disabled = false;
-                }
-            } else if(data[i].className === 'func'&&
-                (widget.className !== 'func'&&
-                widget.className !== 'var'&&
-                widget.className !== 'dbItem')) {
-                data[i].disabled = false;
-            } else if((data[i].className === 'var')
-                &&(widget.className !== 'twodvar'&&
-                widget.className !== 'counter' &&
-                widget.className !== 'func' &&
-                widget.className !== 'var'&&
-                widget.className !== 'dbItem')) {
+            if (checkChildClass(widget, data[i].className)) {
                 data[i].disabled = false;
             } else {
-                if (checkChildClass(widget, data[i].className)) {
-                    data[i].disabled = false;
-                } else {
-                    data[i].disabled = true;
-                }
+                data[i].disabled = true;
             }
         }
         this.setState({
