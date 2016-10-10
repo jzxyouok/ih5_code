@@ -578,6 +578,8 @@ propertyMap['intVar'] = [
 ];
 propertyMap[dataType.oneDArr] = [
     ...propertyMap['data'],
+    { name: 'width',showName:'W', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
+    { name: 'height', showName:'H',type: propertyType.Integer, default: 0, group:'position', isProperty: true }
 
 ];
 propertyMap[dataType.twoDArr] = [
@@ -597,7 +599,8 @@ for (var n in propertyMap) {
 function checkEventClass(selected) {
     if(selected.className === 'func' ||
         selected.className === 'var' ||
-        selected.className === 'dbItem'){
+        selected.className === 'dbItem'||
+        (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))){
         return false;
     } else {
         return true;
@@ -608,7 +611,8 @@ function checkLockClass(selected) {
     if(selected.className === 'root'||
         selected.className === 'func'||
         selected.className === 'var' ||
-        selected.className === 'dbItem'){
+        selected.className === 'dbItem'||
+        (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))){
         return false;
     } else {
         return true;
@@ -627,19 +631,19 @@ function checkChildClass(selected, className) {
     if(className === 'func'){
         if(selected.className === 'func' ||
             selected.className === 'var' ||
-            selected.className === 'dbItem') {
+            selected.className === 'dbItem'||
+            (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))) {
             return false;
         } else {
             return true;
         }
     }
     if(className === 'var') {
-        if((selected.className === 'oneDArr' ||
-            selected.className === 'twoDArr' ||
-            selected.className === 'counter' ||
+        if( selected.className === 'counter' ||
             selected.className === 'func' ||
             selected.className === 'var' ||
-            selected.className === 'dbItem')){
+            selected.className === 'dbItem' ||
+            (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))){
             return false;
         } else {
             return true;
@@ -648,7 +652,8 @@ function checkChildClass(selected, className) {
     if (selected.className === 'func' ||
         selected.className === 'var' ||
         selected.className === 'dbItem' ||
-        isCustomizeWidget(selected.className)) {
+        isCustomizeWidget(selected.className) ||
+        (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))) {
         return false;
     }
     var provides = propertyFlags[selected.className].provides;
