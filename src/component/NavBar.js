@@ -543,17 +543,49 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <div className='dropDown-btn f--hlc hidden'>
+                        <div className='dropDown-btn link-dropDown f--hlc'>
                             <button className='btn btn-clear link-btn' title='连接'>
                                 <span className="icon" />
                                 <span className="title">连接</span>
                             </button>
-                        </div>
 
-                        <button className='btn btn-clear link-btn' title='连接'>
-                            <span className="icon" />
-                            <span className="title">连接</span>
-                        </button>
+                            <div className='dropDownToggle'>
+                                <div className="dropDownToggle-main">
+                                    <div className="dropDown-title f--hlc">
+                                        <span className="flex-1">全部连接：</span>
+                                        <span className="set-btn" />
+                                    </div>
+
+                                    <div className="dropDown-main">
+                                        <div className="dropDown-scroll">
+                                            <ul className="dropDown-content">
+                                                {
+                                                    //this.state.dbList.length > 0
+                                                    //    ? this.state.dbList.map((v,i)=>{
+                                                    //        return  <li className="" key={i} >
+                                                    //            <div className="title" onClick={this.addDb.bind(this,v.id,v.name)}>
+                                                    //                <span className="li-icon" />
+                                                    //                <div className="TitleName">{ v.name }</div>
+                                                    //            </div>
+                                                    //        </li>
+                                                    //      })
+                                                    //    : null
+                                                }
+                                                <li className="add-btn f--hcc">
+                                                    <div className="icon">
+                                                        <span className="heng" />
+                                                        <span className="shu" />
+                                                    </div>
+                                                </li>
+                                                {
+                                                    moduleFuc(1, 14)
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <button className='btn btn-clear shape-btn' title='形状'>
                             <span className="icon" />
