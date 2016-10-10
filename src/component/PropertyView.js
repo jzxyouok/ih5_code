@@ -218,12 +218,12 @@ class PropertyView extends React.Component {
                       v = value;
 
                   }else if(prop.name == 'type'){
-                      this.selectNode.props.type=value;
+                      this.selectNode.props.type=this.getScaleTypeDefault(value,prop.options);
                       v = value;
 
                   }else if(prop.name == 'forwardTransition' ||prop.name == 'backwardTransition'){
-                      this.selectNode.props[prop.name]=this.getScaleTypeDefault(value,prop.options);
-                       v =  parseInt(value);
+                      this.selectNode.props[prop.name+'_val']=this.getScaleTypeDefault(value,prop.options);
+                       v = parseInt(value);
                   }else if(prop.name == 'font'){
                       if(value == 0){
                           chooseFile('font', true, function(){
@@ -318,6 +318,7 @@ class PropertyView extends React.Component {
         }
     }
 
+
     getFontDefault(value){
         for(let i in this.fontList){
             if(value == this.fontList[i].file){
@@ -351,6 +352,7 @@ class PropertyView extends React.Component {
     }
 
     getFields() {
+
         let node = this.selectNode;
 
         if (!node)  return null;
@@ -417,8 +419,8 @@ class PropertyView extends React.Component {
                     defaultValue = node.props.fontKey;
                 }else if( item.name=='fontFamily'  && node.props.fontFamilyKey){
                     defaultValue = node.props.fontFamily;
-                }else if( item.name=='forwardTransition' || item.name=='backwardTransition' ){
-                    defaultValue = node.props[item.name];
+                }else if( (item.name=='forwardTransition' || item.name=='backwardTransition') &&  node.props[item.name+'_val'] ){
+                    defaultValue = node.props[item.name+'_val'];
                 }else if( item.name=='type'  && node.props.type){
                     defaultValue = node.props.type;
                 }
@@ -478,7 +480,7 @@ class PropertyView extends React.Component {
                   }
               }else if(item.name=='type'){
                   for(let i in  item.options){
-                          selectClassName= (i=='slideInUp' || i== 'jello')? 'optionline':'';
+                      selectClassName= (i=='slideInUp' || i== 'jello')? 'optionline':'';
                       defaultProp.options.push(<Option  key={item.options[i]} className={selectClassName}>{i}</Option>);
                   }
               }

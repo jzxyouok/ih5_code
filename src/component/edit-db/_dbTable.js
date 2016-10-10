@@ -379,25 +379,26 @@ class DbTable extends React.Component {
             header.push(value);
             //console.log(list.length);
             if(list.length == 0){
+                let self = this;
                 this.state.node.insert({}, function (err, data) {
                     if(data == undefined) return;
-                    
+
                     let newList = {};
                     newList['_id'] = data[0];
                     list.push(newList);
                     fkList.push(newList);
 
                     //console.log(list);
-                    this.setState({
+                    self.setState({
                         dbHeader : header,
                         dbList : list,
                         originalData : fkList,
                         isHaveContent : false,
                         isError: false
                     },()=>{
-                        this.updateNewScrollData();
-                        this.popHide();
-                        this.saveBtn();
+                        self.updateNewScrollData();
+                        self.popHide();
+                        self.saveBtn();
                     })
                 });
             }
