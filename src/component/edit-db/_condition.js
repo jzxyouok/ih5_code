@@ -43,7 +43,7 @@ class Condition extends React.Component {
                 if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
                     this.setState({
                         node : widget.selectWidget.node,
-                        Dbname :  widget.selectWidget.name
+                        Dbname :  widget.selectWidget.node.name
                     })
                 }
             }
