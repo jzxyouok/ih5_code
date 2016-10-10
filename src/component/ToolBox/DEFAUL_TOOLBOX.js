@@ -106,7 +106,7 @@ var DEFAULT_TOOLBOX = {
         gid:2,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', drawRectText:true, param: {'value': 'Text'}},
+            {cid:TOOL_ID.TEXT,name:'文本',icon:textIcon, className:'text', drawRectText:true, param: {'value': 'Text', 'fontSize':26}},
             {cid:TOOL_ID.BITMAPTEXT,name:'位图文字',icon:bitmaptextIcon, className:'bitmaptext', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
     },{
         name:'输入框',
@@ -115,7 +115,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         mode: modeType.dom,
         secondary: [
-            {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50}}]
+            {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50, 'fontSize':26}}]
     },{
         name:'几何图形',
         key:4,
@@ -218,7 +218,7 @@ var DEFAULT_TOOLBOX = {
         gid:15,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0}}]
+            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0, 'fontSize':26}}]
     },{
         name:'数据库',
         key:16,

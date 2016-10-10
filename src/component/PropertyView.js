@@ -12,7 +12,7 @@ import cls from 'classnames';
 
 import { SwitchMore } from  './PropertyView/PropertyViewComponet';
 
-import WidgetStore from '../stores/WidgetStore';
+import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
 
 import {propertyType, propertyMap} from './PropertyMap';
@@ -362,6 +362,18 @@ class PropertyView extends React.Component {
         }
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
+
+        if(className == 'data') {
+            switch (node.props.type) {
+                case dataType.oneDArr:
+                    className = dataType.oneDArr;
+                    break;
+                case dataType.twoDArr:
+                    className = dataType.twoDArr;
+                    break;
+            }
+        }
+
         if (!propertyMap[className])    return null;
 
         const groups = {};
@@ -554,9 +566,6 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
-
-
-
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
         }
@@ -590,6 +599,17 @@ class PropertyView extends React.Component {
             let obj = widget.updateProperties;
             let className = selectNode.className;
             if (className.charAt(0) == '_')  className = 'class';
+
+            if(className == 'data') {
+                switch (selectNode.props.type) {
+                    case dataType.oneDArr:
+                        className = dataType.oneDArr;
+                        break;
+                    case dataType.twoDArr:
+                        className = dataType.twoDArr;
+                        break;
+                }
+            }
 
             propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
