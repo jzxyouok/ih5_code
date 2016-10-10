@@ -15,6 +15,7 @@ class Condition extends React.Component {
         };
         this.inputChange = this.inputChange.bind(this);
         this.inputBlur = this.inputBlur.bind(this);
+        this.inputClick = this.inputClick.bind(this);
     }
 
     componentDidMount() {
@@ -26,6 +27,10 @@ class Condition extends React.Component {
         this.unsubscribe();
     }
 
+    inputClick(key){
+        $('.'+key).select();
+    }
+
     inputChange(event){
         this.setState({
             Dbname : event.target.value
@@ -33,8 +38,10 @@ class Condition extends React.Component {
     }
 
     inputBlur(){
-        let name = this.state.Dbname;
-        this.props.saveFuc(name);
+        let name = this.refs.dbname.value;
+        if(name != this.state.Dbname){
+            this.props.saveFuc(name);
+        }
     }
 
     onStatusChange(widget) {
@@ -68,7 +75,9 @@ class Condition extends React.Component {
                                     ?   <li>
                                             <label>名称：</label>
                                             <input value={ this.state.Dbname }
+                                                   className="dbname"
                                                    ref="dbname"
+                                                   inputClick={ this.inputClick.bind(this,"dbname") }
                                                    onBlur={ this.inputBlur.bind(this) }
                                                    onChange={ this.inputChange.bind(this) } />
                                         </li>

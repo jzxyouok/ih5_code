@@ -341,6 +341,9 @@ class DbTable extends React.Component {
         let array = this.state.dbHeader;
         let header = array.join(',');
         let name = DdName ? DdName : this.state.node.name;
+        if(DdName){
+            this.state.node.name = DdName;
+        }
         let id = this.state.node.dbid;
         let data = "id=" + id + "&name=" + encodeURIComponent(name) + "&header=" + encodeURIComponent(header);
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
@@ -360,7 +363,7 @@ class DbTable extends React.Component {
         });
     }
 
-    saveBtn(){
+    saveBtn(DdName){
         console.log(1,this.state.dbHeader,this.state.dbList);
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
@@ -377,7 +380,7 @@ class DbTable extends React.Component {
             },()=>{
                 console.log(self.state.node);
                 if(self.state.node.dbType == "shareDb"){
-                    self.updateHeader();
+                    self.updateHeader(DdName);
                 }
                 else {
                     self.updatePDbHeader();
