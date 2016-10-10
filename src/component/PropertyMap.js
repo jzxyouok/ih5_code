@@ -252,9 +252,9 @@ propertyMap['canvas'] = [
     { name: 'height', type: propertyType.Integer, default: 0, group:'position', isProperty: true}
 ];
 propertyMap['page'] = [
-    //...propertyMap['container'],
+    // ...propertyMap['container'],
     ...propertyMap['widget'],
-    { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
+    { addRequires: widgetFlags.Root | widgetFlags.Container | widgetFlags.DomOnly, addProvides: widgetFlags.Container},
     { name: 'backwardTransition',showName:'前翻效果',  type: propertyType.Select, default:'无',options:{
         '无':0,
         '向左滑走（平移）':1,
@@ -591,6 +591,9 @@ for (var n in propertyMap) {
             propertyFlags[n].provides |= propertyMap[n][index].addProvides;
         if (propertyMap[n][index].addRequires !== undefined)
             propertyFlags[n].requires |= propertyMap[n][index].addRequires;
+        if (propertyMap[n][index].removeProvides !== undefined) {
+            propertyFlags[n].provides &= ~propertyMap[n][index].removeProvides;
+        }
     }
 }
 
