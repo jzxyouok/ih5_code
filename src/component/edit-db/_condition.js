@@ -63,7 +63,8 @@ class Condition extends React.Component {
                             </li>
 
                             {
-                                this.state.node.dbType == "shareDb"
+                                this.state.node
+                                ? this.state.node.dbType == "shareDb"
                                     ?   <li>
                                             <label>名称：</label>
                                             <input value={ this.state.Dbname }
@@ -72,6 +73,7 @@ class Condition extends React.Component {
                                                    onChange={ this.inputChange.bind(this) } />
                                         </li>
                                     :   null
+                                : null
                             }
 
                             <li className="line"><span /></li>
