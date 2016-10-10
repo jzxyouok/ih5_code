@@ -822,6 +822,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectDBItem'], this.selectDBItem);
         this.listenTo(WidgetActions['addDBItem'], this.addDBItem);
         this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
+        this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
