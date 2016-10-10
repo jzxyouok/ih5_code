@@ -268,7 +268,6 @@ class Event extends React.Component {
                 aProps.push(item);
             }
         });
-
         this.setState({conOption:aOption,conProps:aProps});
     }
 
