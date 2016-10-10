@@ -383,6 +383,7 @@ class DbTable extends React.Component {
                     let newList = {};
                     let getData = [];
                     getData = data;
+                    console.log(typeof(data),typeof(getData));
                     newList['_id'] = getData[0];
                     list.push(newList);
                     fkList.push(newList);
@@ -397,6 +398,7 @@ class DbTable extends React.Component {
                     },()=>{
                         this.updateNewScrollData();
                         this.popHide();
+                        this.saveBtn();
                     })
                 });
             }
@@ -417,6 +419,7 @@ class DbTable extends React.Component {
                 },()=>{
                     this.updateNewScrollData();
                     this.popHide();
+                    this.saveBtn();
                 })
             }
         }
