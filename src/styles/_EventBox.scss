@@ -238,8 +238,11 @@
 
                             .dropDown-layer {
                                 margin-right: 2px;
-
                                 &:last-child { margin-right: 0; }
+                                .cursor_default{
+                                    cursor: default;
+                                    &:hover{background: #1d2736;}
+                                }
                             }
                             .mr20{margin-right: 20px;}
                         }
@@ -334,16 +337,12 @@
                             }
 
                             .dropDown{
-                                width: 140px;
+                                width: 100%;
                                 background: #1d2736;
                                 border-radius: 2px;
                                 margin-top: 1px;
                                 margin-bottom: 2px;
-                                display: none;
                                 overflow: hidden;
-
-
-
 
                                 .dropDown-icon-select{
                                     position: absolute;
@@ -416,6 +415,8 @@
                                         width: 50%;
                                         float: left;
                                         padding-left: 8px;
+                                        height: 18px;
+                                        line-height: 18px;
                                     }
                                     .dropDown-input-half{
                                         width: 50%;
@@ -423,11 +424,41 @@
                                         height: 18px;
                                         float: left;
                                         .dropDown-input-content{
-                                            width: 80%;
-                                            border: 0;
                                             background-color: #283549;
                                             outline: none;
-                                            padding-left: 8px;
+                                            border: 0;
+                                            height: 100%;
+                                            width: 100%;
+                                            border-radius: 0;
+                                            &.ant-input-number-focused{
+                                               box-shadow: none;
+                                            }
+                                            .ant-input-number-handler-wrap{
+                                                .ant-input-number-handler-up{
+                                                    height: 9px;
+                                                    &:hover{
+                                                        height: 9px;
+                                                        color: #283549;
+                                                    }
+                                                }
+                                                .ant-input-number-handler-down{
+                                                    height: 9px;
+                                                    &:hover{
+                                                        height: 9px;
+                                                        color: #283549;
+                                                    }
+                                                }
+                                            }
+
+                                            .ant-input-number-input-wrap{
+                                                height: 100%;
+                                                line-height: 18px;
+
+                                                .ant-input-number-input{
+                                                    background: #283549;
+                                                    height: 100% !important;
+                                                }
+                                            }
                                         }
                                     }
                                 }

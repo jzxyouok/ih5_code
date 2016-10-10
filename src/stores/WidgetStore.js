@@ -155,6 +155,7 @@ function loadTree(parent, node, idList) {
       var judgesObj = item.judges;
 
       r.conFlag = judgesObj.conFlag;
+      r.needFill = judgesObj.needFill;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
       r.children = judgesObj.children;
@@ -547,9 +548,9 @@ function saveTree(data, node) {
 
         node.props['eventTree'].forEach(item => {
         var cmds = [];
-
         var judges={};
         judges.conFlag = item.conFlag;
+            judges.needFill=item.needFill;   //触发条件的值
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
         judges.children=[];
@@ -646,6 +647,7 @@ function saveTree(data, node) {
             cmds.push(c);
         });
 
+        console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges});
 
       });
