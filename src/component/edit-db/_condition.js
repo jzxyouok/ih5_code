@@ -10,16 +10,53 @@ class Condition extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-
+            node : null,
+            Dbname : "",
+            lastName : null
         };
+        this.inputChange = this.inputChange.bind(this);
+        this.inputBlur = this.inputBlur.bind(this);
+        this.inputClick = this.inputClick.bind(this);
     }
 
     componentDidMount() {
-
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.onStatusChange(WidgetStore.getStore());
     }
 
     componentWillUnmount() {
+        this.unsubscribe();
+    }
 
+    onStatusChange(widget) {
+        if(widget.selectWidget){
+            if(widget.selectWidget.className == "db"){
+                this.setState({
+                    node : widget.selectWidget.node,
+                    Dbname :  widget.selectWidget.node.name,
+                    lastName : widget.selectWidget.node.name
+                })
+            }
+        }
+    }
+
+    inputClick(key){
+        console.log(key);
+        $('.'+key).select();
+    }
+
+    inputChange(event){
+        this.setState({
+            Dbname : event.target.value
+        })
+    }
+
+    inputBlur(){
+        let name = this.state.Dbname;
+        console.log(name != this.state.lastName,name,this.state.lastName);
+        if(name != this.state.Dbname){
+            this.props.saveFuc(name);
+        }
     }
 
     render() {
@@ -34,10 +71,21 @@ class Condition extends React.Component {
                                 <input placeholder="" />
                             </li>
 
-                            <li>
-                                <label>名称：</label>
-                                <input placeholder="" />
-                            </li>
+                            {
+                                this.state.node
+                                ? this.state.node.dbType == "shareDb"
+                                    ?   <li>
+                                            <label>名称：</label>
+                                            <input value={ this.state.Dbname }
+                                                   className="dbname"
+                                                   ref="dbname"
+                                                   inputClick={ this.inputClick.bind(this,"dbname") }
+                                                   onBlur={ this.inputBlur.bind(this) }
+                                                   onChange={ this.inputChange.bind(this) } />
+                                        </li>
+                                    :   null
+                                : null
+                            }
 
                             <li className="line"><span /></li>
 
