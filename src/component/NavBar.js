@@ -413,12 +413,12 @@ class NavBar extends React.Component {
                 }
             }
             if(a < 0){
-                let b = num % 3;
+                let b = (num + 1) % 3;
                 if(3-b == 0){
                     return;
                 }
                 else{
-                    for(let index = 1; index < 3-b; index++){
+                    for(let index = 0; index < 3-b; index++){
                         fuc[index] = index;
                     }
                 }
