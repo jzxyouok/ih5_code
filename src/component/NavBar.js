@@ -339,7 +339,7 @@ class NavBar extends React.Component {
                 //console.log(result);
                 var list = this.state.dbList;
                 list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
-                WidgetActions['addWidget']('db', {'dbid': id }, null, name);
+                WidgetActions['addWidget']('db', {'dbid': result['id'] }, null, name);
                 this.setState({
                     dbList : list
                 },()=>{
@@ -474,9 +474,7 @@ class NavBar extends React.Component {
                                                                         <div className="TitleName">{v}</div>
                                                                     </div>
 
-                                                                    {
-                                                                        //<span className="edit-btn" />
-                                                                    }
+                                                                    <span className="edit-btn" />
                                                                 </li>
                                                       })
                                                     : null
@@ -521,7 +519,10 @@ class NavBar extends React.Component {
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{ v.name }</div>
                                                                         </div>
-                                                                        <span className="edit-btn" />
+
+                                                                        {
+                                                                            //<span className="edit-btn" />
+                                                                        }
                                                                     </li>
                                                           })
                                                         : null
