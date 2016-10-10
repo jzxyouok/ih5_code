@@ -134,6 +134,13 @@ propertyMap['text'] = [
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
+    { name: 'match', showName:'匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
+    { name: 'unMatch', showName:'不匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
+    { name: 'Contain', showName:'包含文本', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
+    { name: 'onChange', showName:'内容改变', isEvent: true},
+
+
+
 ];
 propertyMap['counter'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
@@ -144,6 +151,18 @@ propertyMap['counter'] = [
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
     ...propertyMap['textBox'],
+    //事件面板所需触发条件
+    { name: 'equal', showName:'等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
+    { name: 'unequal', showName:'不等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
+    { name: 'bigThan', showName:'大于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
+    { name: 'lessThan', showName:'小于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
+    { name: 'valRange', showName:'数值范围', isEvent: true,needFill:[{showName:'最大值',type:'number',default:''},{showName:'最小值',type:'number',default:''}]},
+    { name: 'valChange', showName:'数值改变', isEvent: true },
+    { name: 'positive', showName:'为正数', isEvent: true },
+    { name: 'negative', showName:'为负数', isEvent: true },
+    { name: 'odd', showName:'为奇数', isEvent: true },
+    { name: 'even', showName:'为偶数', isEvent: true },
+    { name: 'remainder', showName:'余数为', isEvent: true ,needFill:[{showName:'除数',default:''},{showName:'余数',default:''}]},
 ];
 propertyMap['video'] = [
     ...propertyMap['sprite'],

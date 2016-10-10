@@ -216,7 +216,6 @@ class PropertyView extends React.Component {
                   }else if(prop.name == 'fontFamily'){
                       this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
                       v = value;
-
                   }else if(prop.name == 'type'){
                       this.selectNode.props.type=this.getScaleTypeDefault(value,prop.options);
                       v = value;
@@ -460,9 +459,7 @@ class PropertyView extends React.Component {
                 }
 
             } else {
-
                 defaultValue = node.props[item.name];
-
                 if (item.name == 'alpha') {
                     defaultValue = defaultValue * 100;
                 }
