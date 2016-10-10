@@ -544,10 +544,14 @@ class Event extends React.Component {
                if(v.type==type){
                    arr.push(v.props.name);
                }
-           }else if(classname=='text' &&[2,3].indexOf(type)>=0){
-               arr.push(v.props.name);
-           } else if(classname=='counter' &&[0,1].indexOf(type)>=0){
-               arr.push(v.props.name);
+           }else if(classname=='text' ){
+               if([2,3].indexOf(type)>=0){
+                   arr.push(v.props.name);
+               }
+           } else if(classname=='counter'){
+               if([0,1].indexOf(type)>=0){
+                   arr.push(v.props.name);
+               }
            } else{
                propertyMap[classname].map((v1,i1)=>{
                    let typeArr= this.getTypeArr(v1.type);

@@ -37,7 +37,8 @@ class Condition extends React.Component {
                 this.setState({
                     node : widget.selectWidget.node,
                     Dbname :  widget.selectWidget.node.name,
-                    lastName : widget.selectWidget.node.name
+                    lastName : widget.selectWidget.node.name,
+                    dbNameError : ""
                 })
             }
         }
@@ -64,8 +65,10 @@ class Condition extends React.Component {
                if(v.name == name){
                    bool = false;
                    this.setState({
-                       dbNameError : "（已存在该数据库）"
-                   })
+                       dbNameError : "（该名称已被占用）"
+                   });
+                   $(".dbname").focus();
+                   $(".dbname").select();
                }
                 return bool;
             });
@@ -73,7 +76,7 @@ class Condition extends React.Component {
                 this.setState({
                     dbNameError : ""
                 });
-                this.props.saveFuc(name);
+                this.props.saveFuc(true,name);
             }
         }
     }
