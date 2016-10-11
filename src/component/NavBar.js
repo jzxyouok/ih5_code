@@ -50,7 +50,10 @@ class NavBar extends React.Component {
             sockList : [],
             createSock : false,
             shapeList : pathData,
-            isAddShape : true
+            isAddShape : true,
+            workShow : false,
+            specialLayer : false,
+            openWork : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -81,6 +84,10 @@ class NavBar extends React.Component {
         //this.updateSock = this.updateSock.bind(this);
         this.addSock = this.addSock.bind(this);
         this.onDrawRect = this.onDrawRect.bind(this);
+        this.openWorkShow = this.openWorkShow.bind(this);
+        this.openWorkHide = this.openWorkHide.bind(this);
+        this.specialLayerToogle = this.specialLayerToogle.bind(this);
+        this.clickOthersHide = this.clickOthersHide.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -203,6 +210,9 @@ class NavBar extends React.Component {
 
     onSave() {
         this.onPlaySave(false);
+        this.setState({
+            specialLayer : false
+        })
     }
 
     onHideRulerLine(value){
@@ -246,6 +256,9 @@ class NavBar extends React.Component {
 
     onOpen(id) {
         this.onImportUrl(PREFIX + 'work/' + id, id);
+        this.setState({
+            specialLayer : false
+        })
     }
 
     onImportUrl(url, id) {
@@ -520,6 +533,50 @@ class NavBar extends React.Component {
         }));
     }
 
+    openWorkShow(){
+        this.setState({
+            openWork : true
+        })
+    }
+
+    openWorkHide(){
+        this.setState({
+            openWork : false
+        })
+    }
+
+    specialLayerToogle(){
+        this.setState({
+            specialLayer : !this.state.specialLayer
+        },()=>{
+            if(this.state.specialLayer){
+                this.clickOthersHide();
+            }
+        })
+    }
+
+    clickOthersHide(){
+        let self = this;
+        let fuc = function(e){
+            let _con = $('.special-layer');   // 设置目标区域
+            if(
+                (!_con.is(e.target) && _con.has(e.target).length === 0)
+            ){
+                self.setState({
+                    specialLayer : false
+                },()=>{
+                    $(document).off("mouseup", fuc);
+                })
+            }
+        };
+        if(this.state.whichdropdown !== -1){
+            $(document).on("mouseup", fuc);
+        }
+        else {
+            $(document).off("mouseup", fuc);
+        }
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -549,8 +606,46 @@ class NavBar extends React.Component {
         return (
             <div className='NavBar f--h'>
                 <div className='nb--left f--h'>
-                    <div className='import'>
+                    <div className='import' onClick={ this.specialLayerToogle }>
                         <span className='icon' />
+                    </div>
+
+                    <div className={$class("special-layer",{"hidden": !this.state.specialLayer})}>
+                        <ul className="special-list">
+                            <li>新建作品</li>
+                            <li className="f--hlc open-li"
+                                onMouseOver={ this.openWorkShow }
+                                onMouseOut={ this.openWorkHide }>
+                                <div className="title">
+                                    最近打开
+                                    <span className="icon" />
+                                </div>
+                            </li>
+                            <li className="line" />
+                            <li className="save-li" onClick={this.onSave} >保存</li>
+                            <li>另存为</li>
+                            <li className="line" />
+                            <li>导入PSD</li>
+                            <li>我的字体库</li>
+                        </ul>
+
+                        <div className={ $class("open-li-content",{"hidden": !this.state.openWork})}
+                             onMouseOver={ this.openWorkShow }
+                             onMouseOut={ this.openWorkHide }>
+                            <ul>
+                                {
+                                    this.state.workList.length === 0
+                                        ? <li>你还没创建文件!</li>
+                                        : this.state.workList.map((v,i)=>{
+                                        return  <li key={i}
+                                                    className={$class({'hidden': i >= 10})}
+                                                    onClick={ this.onOpen.bind(this, v.id)}>
+                                            { i >= 10 ? null : v.name}
+                                        </li>
+                                    })
+                                }
+                            </ul>
+                        </div>
                     </div>
 
                     <div className='left-group f--hlc'>
@@ -744,7 +839,7 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <div className='dropDown-btn2 f--hlc'>
+                        <div className='dropDown-btn2 f--hlc hidden'>
                             <button className='btn btn-clear open-btn' title='作品' >
                                 <span className="icon" />
                                 <span className="title">作品</span>
