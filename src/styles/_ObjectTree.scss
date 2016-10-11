@@ -67,11 +67,11 @@
 
             .icon {
                 //width: 8px;
-                width: 10px;
+                width: 12px;
                 height: 6px;
                 background: url("img/button-icon.svg") no-repeat -1280px 0;
                 //margin-right: 3px;
-                padding-right: 13px;
+                margin-right: 4px;
 
                 &.close-icon {
                     transform: rotate(-90deg);

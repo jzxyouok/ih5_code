@@ -1131,36 +1131,34 @@ export default Reflux.createStore({
         }
         return target;
     },
-    moveWidget: function(srcKey, destKey, index) {
-        let src = null;
-        let dest = null;
+    moveWidget: function(src, destKey, index) {
         if(this.currentWidget&&this.currentWidget.rootWidget){
-            src = this.findWidget(srcKey);
-            dest = this.findWidget(destKey);
-        }
-        if (src&&dest) {
-            var saved = {};
-            saveTree(saved, src);
-            bridge.removeWidget(src.node);
-            src.parent.children.splice(src.parent.children.indexOf(src), 1);
+            // src = this.findWidget(srcKey);
+            let dest = this.findWidget(destKey);
 
-            //获取名字
-            this.currentWidget = dest;
-            let props = this.addWidgetDefaultName(src.className, src.props, false, true);
-            var obj = loadTree(dest, saved);
-            this.currentWidget = obj;
+            if (src&&dest) {
+                var saved = {};
+                saveTree(saved, src);
+                bridge.removeWidget(src.node);
+                src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
-            var destIndex = dest.children.indexOf(obj);
-            if (destIndex != index) {
-                obj.props['name'] = props['name'];
-                dest.children.splice(destIndex, 1);
-                dest.children.splice(index, 0, obj);
-                var delta = index - destIndex;
-                bridge.reorderWidget(obj.node, index - destIndex);
-                this.render();
+                //获取名字
+                // this.currentWidget = dest;
+                // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
+                var obj = loadTree(dest, saved);
+
+                var destIndex = dest.children.indexOf(obj);
+                if (destIndex != index) {
+                    // obj.props['name'] = props['name'];
+                    dest.children.splice(destIndex, 1);
+                    dest.children.splice(index, 0, obj);
+                    // var delta = index - destIndex;
+                    bridge.reorderWidget(obj.node, -(index - destIndex));
+                    this.render();
+                }
+                this.selectWidget(obj);
+                this.reorderEventTreeList();
             }
-            this.trigger({selectWidget: obj});
-            this.trigger({redrawTree: true});
         }
     },
     reorderWidget: function(delta) {
@@ -1169,10 +1167,11 @@ export default Reflux.createStore({
           if (delta > 0 && index < this.currentWidget.parent.children.length - 1 || delta < 0 && index > 0) {
             this.currentWidget.parent.children.splice(index, 1);
             this.currentWidget.parent.children.splice(index + delta, 0, this.currentWidget);
-            bridge.reorderWidget(this.currentWidget.node, delta);
+            bridge.reorderWidget(this.currentWidget.node, -delta);
+            this.render();
             this.trigger({redrawTree: true});
             this.reorderEventTreeList();
-            this.render();
+
           }
       }
     },
