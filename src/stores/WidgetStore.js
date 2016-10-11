@@ -1156,8 +1156,8 @@ export default Reflux.createStore({
                     dest.children.splice(index, 0, obj);
                     // var delta = index - destIndex;
                     bridge.reorderWidget(obj.node, -(index - destIndex));
-                    this.render();
                 }
+                this.render();
                 this.selectWidget(obj);
                 this.reorderEventTreeList();
             }
