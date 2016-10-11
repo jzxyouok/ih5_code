@@ -10,6 +10,8 @@ import {chooseFile} from  '../../utils/upload';
 
 import DbHeaderAction from '../../actions/DbHeader'
 import DbHeaderStores from '../../stores/DbHeader';
+import getSockListAction from '../../actions/getSockListAction';
+import getSockListStore from '../../stores/getSockListStore';
 var PREFIX = 'app/';
 
 // 工具栏按钮（最小单位）
@@ -23,7 +25,8 @@ class ToolBoxButton extends Component {
                 value: ''
             },
             dbList : [],
-            selectWidget : null
+            selectWidget : null,
+            sockList : []
         };
         this.drawRect = null;
         this.onDrawRect = this.onDrawRect.bind(this);
@@ -39,6 +42,7 @@ class ToolBoxButton extends Component {
     componentDidMount() {
         this.unsubscribe = ToolBoxStore.listen(this.onStatusChange.bind(this));
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
+        getSockListStore.listen(this.getSockList.bind(this));
     }
 
     componentWillUnmount() {
@@ -112,6 +116,25 @@ class ToolBoxButton extends Component {
                         }
                     }.bind(this));
                 }
+            }
+            else if(this.props.className === "sock"){
+                let list = this.state.sockList;
+                let value = "连接" + (this.state.sockList.length +1);
+                WidgetActions['ajaxSend'](null, 'POST', 'app/createSock',
+                    'application/x-www-form-urlencoded',
+                    'name=' + encodeURIComponent(value),
+                    function(text) {
+
+                        let r = JSON.parse(text);
+                        if (r['id']) {
+                            list.push({'id':r['id'], 'name':value});
+                            //this.updateSock(list);
+                            WidgetActions['addWidget']('sock', {'sid': id},null,name);
+                            ToolBoxAction['deselect']();
+                            getSockListAction['getSockList'](list);
+                        }
+
+                    }.bind(this));
             }
             else {
                 WidgetActions['addWidget'](this.props.className, this.props.param);
@@ -266,6 +289,12 @@ class ToolBoxButton extends Component {
             WidgetActions['addWidget']('db', {'dbid': id },null,"db",true);
         }
         ToolBoxAction['deselect']();
+    }
+
+    getSockList(data){
+        this.setState({
+            sockList : data
+        })
     }
 
     render() {

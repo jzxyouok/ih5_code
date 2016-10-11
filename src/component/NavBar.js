@@ -24,6 +24,8 @@ import DbHeaderAction from '../actions/DbHeader'
 import DbHeaderStores from '../stores/DbHeader';
 import DrawRect from './ToolBox/DrawRect';
 import {checkChildClass} from './PropertyMap';
+import getSockListAction from '../actions/getSockListAction';
+import getSockListStore from '../stores/getSockListStore';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -76,7 +78,7 @@ class NavBar extends React.Component {
         this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
         this.createSockShow = this.createSockShow.bind(this);
         this.createSockHide = this.createSockHide.bind(this);
-        this.updateSock = this.updateSock.bind(this);
+        //this.updateSock = this.updateSock.bind(this);
         this.addSock = this.addSock.bind(this);
         this.onDrawRect = this.onDrawRect.bind(this);
 
@@ -101,6 +103,7 @@ class NavBar extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         this.onStatusChange(WidgetStore.getStore());
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
+        getSockListStore.listen(this.getSockList.bind(this));
     }
 
     componentWillUnmount() {
@@ -144,6 +147,7 @@ class NavBar extends React.Component {
                 });
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
+                getSockListAction['getSockList'](result['sock']);
             } else {
                 this.setState({loginVisible: true});
             }
@@ -431,8 +435,9 @@ class NavBar extends React.Component {
                 let r = JSON.parse(text);
                 if (r['id']) {
                     list.push({'id':r['id'], 'name':value});
-                    this.updateSock(list);
+                    //this.updateSock(list);
                     this.addSock(r['id'],value);
+                    getSockListAction['getSockList'](list);
                 }
 
             }.bind(this));
@@ -448,7 +453,13 @@ class NavBar extends React.Component {
         })
     }
 
-    updateSock(data){
+    //updateSock(data){
+    //    this.setState({
+    //        sockList : data
+    //    })
+    //}
+
+    getSockList(data){
         this.setState({
             sockList : data
         })
