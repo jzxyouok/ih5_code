@@ -437,6 +437,12 @@
                             color: #454545;
                         }
 
+                        &.not-active .title{
+                            background: #232323;
+                            color: #454545;
+                            cursor: not-allowed;
+                        }
+
                         &.not-active:active{
                             background: none;
                         }
@@ -514,6 +520,11 @@
             .link-dropDown {
                 .dropDown-content{
                     li {
+                        &.not-active .title{
+                            background: #232323;
+                            color: #454545;
+                            cursor: not-allowed;
+                        }
                         .li-icon {
                             width: 14px;
                             height: 10.6px;

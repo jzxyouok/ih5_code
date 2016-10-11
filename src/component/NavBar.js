@@ -26,6 +26,7 @@ import DrawRect from './ToolBox/DrawRect';
 import {checkChildClass} from './PropertyMap';
 import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
+import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -53,7 +54,11 @@ class NavBar extends React.Component {
             isAddShape : true,
             workShow : false,
             specialLayer : false,
-            openWork : false
+            openWork : false,
+            isAddDb : true,
+            isAddSock : true,
+            reAddDbId : [],
+            reAddSockId : []
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -111,6 +116,7 @@ class NavBar extends React.Component {
         this.onStatusChange(WidgetStore.getStore());
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         getSockListStore.listen(this.getSockList.bind(this));
+        ReDbOrSockIdStore.listen(this.reDbOrSockId.bind(this));
     }
 
     componentWillUnmount() {
@@ -118,8 +124,8 @@ class NavBar extends React.Component {
     }
 
     onStatusChange(widget) {
+        //console.log(widget);
         if (widget.classList !== undefined) {
-            //console.log(widget);
             this.setState({
                 classList: widget.classList
             });
@@ -128,7 +134,19 @@ class NavBar extends React.Component {
             this.setState({
                 selectWidget : widget.selectWidget,
                 isAddShape : checkChildClass(widget.selectWidget, 'path')
-            })
+            });
+            if(widget.selectWidget.className == "root"){
+                this.setState({
+                    isAddDb : true,
+                    isAddSock : true
+                })
+            }
+            else {
+                this.setState({
+                    isAddDb : false,
+                    isAddSock : false
+                })
+            }
         }
     }
 
@@ -411,6 +429,11 @@ class NavBar extends React.Component {
             }
             if(bool){
                 WidgetActions['addWidget']('db', {'dbid': id }, null, name);
+                let reAddDbId = this.state.reAddDbId;
+                reAddDbId.push(id);
+                this.setState({
+                    reAddDbId : reAddDbId
+                })
             }
         }
     }
@@ -492,6 +515,11 @@ class NavBar extends React.Component {
             }
             if(bool){
                 WidgetActions['addWidget']('sock', {'sid': id},null,name);
+                let reAddSockId = this.state.reAddSockId;
+                reAddSockId.push(id);
+                this.setState({
+                    reAddSockId : reAddSockId
+                })
             }
         }
     }
@@ -574,6 +602,29 @@ class NavBar extends React.Component {
         }
         else {
             $(document).off("mouseup", fuc);
+        }
+    }
+
+    reDbOrSockId(type,id){
+        if(type == "db"){
+            let reAddDbId = this.state.reAddDbId;
+            let index = reAddDbId.indexOf(id);
+            if(index >= 0){
+                reAddDbId.splice(index , 1);
+                this.setState({
+                    reAddDbId : reAddDbId
+                })
+            }
+        }
+        else if(type == "sock"){
+            let reAddSockId = this.state.reAddSockId;
+            let index = reAddSockId.indexOf(id);
+            if(index >= 0){
+                reAddSockId.splice(index , 1);
+                this.setState({
+                    reAddSockId : reAddSockId
+                })
+            }
         }
     }
 
@@ -725,7 +776,11 @@ class NavBar extends React.Component {
                                                 {
                                                     this.state.dbList.length > 0
                                                         ? this.state.dbList.map((v,i)=>{
-                                                            return  <li className="" key={i} >
+                                                            return  <li className={$class({"not-active" : !this.state.isAddDb
+                                                                                            && this.state.reAddDbId.indexOf(v.id)< 0
+                                                                                        })}
+                                                                        key={i} >
+
                                                                         <div className="title" onClick={this.addDb.bind(this,v.id,v.name)}>
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{ v.name }</div>
@@ -773,7 +828,11 @@ class NavBar extends React.Component {
                                                 {
                                                     this.state.sockList.length > 0
                                                         ? this.state.sockList.map((v,i)=>{
-                                                            return  <li className="" key={i} onClick={this.addSock.bind(this,v.id,v.name)}>
+                                                            return  <li className={$class({"not-active" : !this.state.isAddSock
+                                                                                            && this.state.reAddSockId.indexOf(v.id)< 0
+                                                                                        })}
+                                                                        key={i}
+                                                                        onClick={this.addSock.bind(this,v.id,v.name)}>
                                                                         <div className="title f--hlc">
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{ v.name }</div>
