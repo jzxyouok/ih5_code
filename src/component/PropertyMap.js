@@ -622,6 +622,10 @@ propertyMap['sock'] = [
     { name: 'sockName' , showName:'名称：',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
     { name: 'listened', showName:'是否监听：', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'message', showName:'消息', isEvent: true, info:'data'},
+    { name: 'send', showName:'发送', isFunc: true, info:'(data)',
+        property:[
+            {'name':'value', showName:'内容', 'value':null, 'type':propertyType.String},
+        ]},
 ];
 propertyMap['strVar'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',

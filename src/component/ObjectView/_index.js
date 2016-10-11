@@ -13,6 +13,8 @@ import Animation from './Animation';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
+import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
+
 import {checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode} from '../PropertyMap';
 
 class ObjectView extends React.Component {
@@ -188,6 +190,14 @@ class ObjectView extends React.Component {
             WidgetActions['selectWidget'](this.state.currentNode);
         } else {
             WidgetActions['deleteTreeNode'](this.state.currentNode.className);
+            if(this.state.currentNode.className == "db"){
+                if(this.state.currentNode.node.dbType = "shareDb"){
+                    ReDbOrSockIdAction['reDbOrSockId']("db",this.state.currentNode.node.dbid);
+                }
+            }
+            if(this.state.currentNode.className == "sock"){
+                ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.currentNode.node.sid);
+            }
         }
     }
 

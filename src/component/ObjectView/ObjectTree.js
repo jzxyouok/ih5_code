@@ -17,6 +17,8 @@ const overPosition = {
     bot: 3,
 };
 
+import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
+
 class ObjectTree extends React.Component {
     constructor (props) {
         super(props);
@@ -471,6 +473,15 @@ class ObjectTree extends React.Component {
         if (!didPressCtrl && event.keyCode == 8) {
             WidgetActions['deleteTreeNode'](this.state.nodeType);
             window.macKeys.reset();
+
+            if(this.state.selectWidget.className == "db"){
+                if(this.state.selectWidget.node.dbType = "shareDb"){
+                    ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
+                }
+            }
+            if(this.state.selectWidget.className == "sock"){
+                ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+            }
         }
     }
 

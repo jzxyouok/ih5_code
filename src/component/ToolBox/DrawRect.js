@@ -53,7 +53,7 @@ export default class DrawRect {
         drawRectOverlay.style.top = 0;
         drawRectOverlay.backgroundColor = 'black';
         drawRectOverlay.tabIndex = 'drawRectOverlay';
-        drawRectOverlay.style.zIndex = 101;
+        drawRectOverlay.style.zIndex = 120;
         this.designerView.appendChild(drawRectOverlay);
     }
 

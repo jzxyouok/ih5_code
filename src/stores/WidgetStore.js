@@ -484,6 +484,22 @@ function generateJsFunc(etree) {
           if (cmd.name === 'changeValue') {
             if (cmd.property.length >= 1)
               lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + JSON.stringify(cmd.property[0]['value']));
+          } else if (cmd.name === 'add1') {
+              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '++');
+          } else if (cmd.name === 'minus1') {
+              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '--');
+          } else if (cmd.name === 'addN') {
+              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '+=' + JSON.stringify(cmd.property[0]['value']));
+          } else if (cmd.name === 'minusN') {
+              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '-=' + JSON.stringify(cmd.property[0]['value']));
+          } else if (cmd.name === 'getInt') {
+              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + 'Math.round(' + getIdsName(cmd.id, cmd.varName, 'value') + ')');
+          } else if (cmd.name === 'randomValue') {
+              let max = JSON.stringify(cmd.property[1]['value']);
+              let min = JSON.stringify(cmd.property[0]['value']);
+              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + 'Math.round(Math.random()*('
+                  + max + '-'
+                  + min + '+1)+' + min + ')');
           } else {
             var line = getIdsName(cmd.id, cmd.varName, cmd.name) + '(';
             if (cmd.property) {
