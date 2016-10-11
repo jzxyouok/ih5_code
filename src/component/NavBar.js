@@ -429,7 +429,7 @@ class NavBar extends React.Component {
                 if (r['id']) {
                     list.push({'id':r['id'], 'name':value});
                     this.updateSock(list);
-                    this.addSock();
+                    this.addSock(r['id'],value);
                 }
 
             }.bind(this));
