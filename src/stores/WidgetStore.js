@@ -1280,13 +1280,12 @@ export default Reflux.createStore({
           prevObj =cpJson(obj);
           obj =newObj;
           prevNewObj =cpJson(newObj);
-      }
-        if(obj){
-            if( obj.alpha && isNaN(parseFloat(obj.alpha))){
-                obj.alpha = null;
-            }
         }
-        //console.log(obj);
+
+        if(obj && obj.alpha){
+            if( isNaN(obj.alpha)){
+            obj.alpha = null;
+        }
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;
