@@ -338,7 +338,7 @@ class NavBar extends React.Component {
     }
 
     createDbShow(){
-        let name = '数据库' + this.state.dbList.length;
+        let name = '数据库' + this.state.dbList.length + 1;
         let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
         //console.log(data);
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
@@ -412,7 +412,7 @@ class NavBar extends React.Component {
 
     createSockShow(){
         let list = this.state.sockList;
-        let value = "连接" + this.state.sockList.length;
+        let value = "连接" + this.state.sockList.length +1;
         WidgetActions['ajaxSend'](null, 'POST', 'app/createSock',
             'application/x-www-form-urlencoded',
             'name=' + encodeURIComponent(value),
