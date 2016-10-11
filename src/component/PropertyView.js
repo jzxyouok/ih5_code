@@ -383,12 +383,16 @@ class PropertyView extends React.Component {
  
         const getInput = (item, index) => {
 
-
             //设置默认值,用于展示
             let defaultValue;
             if (item.readOnly ) {
                 defaultValue = node.node[item.name];
-            }else if(item.type==propertyType.Float) {
+                //console.log(item);
+                if(item.name=='sockName'){
+                    defaultValue = this.state.sockName
+                }
+            }
+            else if(item.type==propertyType.Float) {
                 if(node.className=='html') {
                     let str = item.name == 'scaleX' ? 'shapeWidth' : 'shapeHeight';
                     let str2 = item.name == 'scaleX' ? 'width' : 'height';
@@ -466,9 +470,6 @@ class PropertyView extends React.Component {
                 defaultValue = node.props[item.name];
                 if (item.name == 'alpha') {
                     defaultValue = defaultValue * 100;
-                }
-                if(item.name=='sockName'){
-                    defaultValue = this.state.sockName
                 }
             }
 
