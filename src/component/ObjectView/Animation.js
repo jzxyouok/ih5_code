@@ -48,6 +48,9 @@ class Animation extends React.Component {
         if(widget.redrawTree&&widget.redrawWidget) {
             this.onInitHasEventTree(widget.redrawWidget);
         }
+        if(widget.redrawTree&&widget.updateTrack) {
+          this.checkAnimationEnable(widget.updateTrack.parent);
+        }
         if(widget.selectWidget){
             this.checkAnimationEnable(widget.selectWidget);
         } else if (widget.selectFunction) {
