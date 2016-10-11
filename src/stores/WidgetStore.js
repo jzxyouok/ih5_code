@@ -1262,7 +1262,7 @@ export default Reflux.createStore({
           prevNewObj =cpJson(newObj);
       }
         if(obj){
-            if(isNaN(parseFloat(obj.alpha))){
+            if( obj.alpha && isNaN(parseFloat(obj.alpha))){
                 obj.alpha = null;
             }
         }
