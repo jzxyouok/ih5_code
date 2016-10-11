@@ -612,7 +612,7 @@ class NavBar extends React.Component {
                                 <div className="dropDownToggle-main">
                                     <div className="dropDown-title f--hlc">
                                         <span className="flex-1">全部连接：</span>
-                                        <span className="set-btn" />
+                                        <span className="set-btn hidden" />
                                     </div>
 
                                     <div className="dropDown-main">
