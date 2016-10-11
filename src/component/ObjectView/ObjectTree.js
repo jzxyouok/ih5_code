@@ -540,31 +540,39 @@ class ObjectTree extends React.Component {
                 return;
             }
             let destWidget = null;
-            //还需判断是否是目标对象是否是来源对象的子对象，如果是就不允许
-            if((srcKey == destKey && srcParentKey === destParentKey)) {
+
+            if(isNaN(destParentKey)) {
+                //自定义模块
+            } else if(destParentKey === -1) {
+                //stage类
+                if (srcParentKey !== destKey) {
+                    destWidget = WidgetStore.findWidget(destKey);
+                    if(destWidget) {
+                        if(checkChildClass(destWidget, this.selectDragData.className)) {
+                            WidgetActions['moveWidget'](this.selectDragData, destWidget, 0);
+                        }
+                    }
+                }
+            } else if((srcKey == destKey && srcParentKey === destParentKey)) {
                 //相同位置
-                return;
             } else if (srcParentKey === destKey) {
                 //目标为来源的父节点
-                switch (this.overPosition){
-                    case overPosition.top:
-                        destWidget = WidgetStore.findWidget(destParentKey);
-                        if(destWidget) {
-                            if(checkChildClass(destWidget, this.selectDragData.className)) {
-                                WidgetActions['moveWidget'](this.selectDragData, destWidget, destOrder);
-                            }
+                if(this.overPosition !== overPosition.mid) {
+                    let pOrder = null;
+                    switch (this.overPosition){
+                        case overPosition.top:
+                            pOrder = destOrder;
+                            break;
+                        case overPosition.bot:
+                            pOrder = ++destOrder;
+                            break;
+                    }
+                    destWidget = WidgetStore.findWidget(destParentKey);
+                    if(destWidget) {
+                        if(checkChildClass(destWidget, this.selectDragData.className)) {
+                            WidgetActions['moveWidget'](this.selectDragData, destWidget, pOrder);
                         }
-                        break;
-                    case overPosition.bot:
-                        destWidget = WidgetStore.findWidget(destParentKey);
-                        if(destWidget) {
-                            if(checkChildClass(destWidget, this.selectDragData.className)) {
-                                WidgetActions['moveWidget'](this.selectDragData, destWidget, ++destOrder);
-                            }
-                        }
-                        break;
-                    default:
-                        break;
+                    }
                 }
             } else if (srcKey !== destKey && srcParentKey === destParentKey){
                 //同层同源
@@ -580,13 +588,10 @@ class ObjectTree extends React.Component {
                         break;
                     case overPosition.bot:
                         destOrder++;
-                        if(srcOrder == destOrder) {
-                            //来源在目标元素下面
-                            break;
-                        } else {
+                        if(srcOrder != destOrder) {
                             WidgetActions['reorderWidget'](srcOrder-destOrder>0?-(srcOrder-destOrder):-(srcOrder-(--destOrder)));
-                            break;
                         }
+                        break;
                     default:
                         WidgetActions['reorderWidget'](srcOrder-destOrder>0?-(srcOrder-destOrder):-(srcOrder-(--destOrder)));
                         break;
@@ -597,34 +602,27 @@ class ObjectTree extends React.Component {
                 let keyList = this.getChildrenKeys(this.selectDragData);
                 if(!(keyList.indexOf(destKey)>=0)){
                     //不是的话就实现跨层
+                    let pKey = null;
+                    let pOrder = null;
                     switch (this.overPosition){
                         case overPosition.mid:
-                            destWidget = WidgetStore.findWidget(destKey);
-                            if(destWidget) {
-                                if(checkChildClass(destWidget, this.selectDragData.className)) {
-                                    //放入跨层元素内部
-                                    WidgetActions['moveWidget'](this.selectDragData, destWidget, 0);
-                                }
-                            }
+                            pKey = destKey;
+                            pOrder = 0;
                             break;
                         case overPosition.bot:
-                            destWidget = WidgetStore.findWidget(destParentKey);
-                            if(destWidget) {
-                                if(checkChildClass(destWidget, this.selectDragData.className)) {
-                                    //放入跨层元素内部
-                                    WidgetActions['moveWidget'](this.selectDragData, destWidget, ++destOrder);
-                                }
-                            }
+                            pKey = destParentKey;
+                            pOrder = ++destOrder;
                             break;
                         default:
-                            destWidget = WidgetStore.findWidget(destParentKey);
-                            if(destWidget) {
-                                if(checkChildClass(destWidget, this.selectDragData.className)) {
-                                    //放入跨层元素内部
-                                    WidgetActions['moveWidget'](this.selectDragData, destWidget, destOrder);
-                                }
-                            }
-                            break;
+                            pKey = destParentKey;
+                            pOrder = destOrder;
+                    }
+                    destWidget = WidgetStore.findWidget(pKey);
+                    if(destWidget) {
+                        if(checkChildClass(destWidget, this.selectDragData.className)) {
+                            //放入跨层元素内部
+                            WidgetActions['moveWidget'](this.selectDragData, destWidget, pOrder);
+                        }
                     }
                 }
             }
@@ -649,12 +647,12 @@ class ObjectTree extends React.Component {
             return;
         }
         //递归找到并获取名字叫item的div
-        let findItemDiv = (target,cName) => {
+        let findItemDiv = (target,cNameList) => {
             if(target) {
-                if(target.className === cName) {
+                if(cNameList.indexOf(target.className)>=0) {
                     return target;
                 } else {
-                    return findItemDiv(target.parentNode, cName);
+                    return findItemDiv(target.parentNode, cNameList);
                 }
             } else {
                 return null;
@@ -667,34 +665,44 @@ class ObjectTree extends React.Component {
             this.placeholder.style.display = 'block';
             this.placeholder.style.marginLeft = '';
         }
-        this.over = findItemDiv(e.target, 'item-title-wrap clearfix');
+        this.over = findItemDiv(e.target, ['item-title-wrap clearfix', 'stage-title-wrap clearfix']);
         if(this.over) {
             if (this.over.dataset.wkey == this.dragged.dataset.wkey) {
                 if(this.placeholder&&this.placeholder.parentElement) {
                     this.placeholder.parentElement.removeChild(this.placeholder);
                 }
             } else {
-                let deltaTop = e.clientY-this.getDeltaY(this.over)+document.body.scrollTop;
-                let maxHeight = this.over.offsetHeight;
-                let layer = this.over.dataset.layer;
-                let mid1 = maxHeight/3;
-                let mid2 = maxHeight*2/3;
-                if(deltaTop>=0&&deltaTop<=mid1) {
-                    this.overPosition = overPosition.top;
-                    this.over.style.backgroundColor = '';
-                    this.placeholder.style.marginLeft = layer === '1' ? '' : layer * 20 + 22 + 'px';
-                    this.over.parentNode.insertBefore(this.placeholder, this.over);
-                } else if(deltaTop>mid1&&deltaTop<mid2){
-                    this.overPosition=overPosition.mid;
+                if(isNaN(Number(this.over.dataset.parentkey))) {
+                    //自定义模块
+                } else if(Number(this.over.dataset.parentkey) === -1) {
+                    //stage类
                     this.over.style.backgroundColor = '#FFA800';
                     if(this.placeholder.parentElement) {
                         this.placeholder.parentElement.removeChild(this.placeholder);
                     }
-                } else if (deltaTop>=mid2&&deltaTop<=maxHeight) {
-                    this.overPosition=overPosition.bot;
-                    this.over.style.backgroundColor = '';
-                    this.placeholder.style.marginLeft =layer==='1' ? '' :layer *20 + 22 +'px';
-                    this.over.parentNode.appendChild(this.placeholder);
+                } else {
+                    let deltaTop = e.clientY-this.getDeltaY(this.over)+document.body.scrollTop;
+                    let maxHeight = this.over.offsetHeight;
+                    let layer = this.over.dataset.layer;
+                    let mid1 = maxHeight/3;
+                    let mid2 = maxHeight*2/3;
+                    if(deltaTop>=0&&deltaTop<=mid1) {
+                        this.overPosition = overPosition.top;
+                        this.over.style.backgroundColor = '';
+                        this.placeholder.style.marginLeft = layer === '1' ? '' : layer * 20 + 22 + 'px';
+                        this.over.parentNode.insertBefore(this.placeholder, this.over);
+                    } else if(deltaTop>mid1&&deltaTop<mid2){
+                        this.overPosition=overPosition.mid;
+                        this.over.style.backgroundColor = '#FFA800';
+                        if(this.placeholder.parentElement) {
+                            this.placeholder.parentElement.removeChild(this.placeholder);
+                        }
+                    } else if (deltaTop>=mid2&&deltaTop<=maxHeight) {
+                        this.overPosition=overPosition.bot;
+                        this.over.style.backgroundColor = '';
+                        this.placeholder.style.marginLeft =layer==='1' ? '' :layer *20 + 22 +'px';
+                        this.over.parentNode.appendChild(this.placeholder);
+                    }
                 }
             }
         }
@@ -994,8 +1002,11 @@ class ObjectTree extends React.Component {
                      !allTreeData
                         ? null
                         : allTreeData.map((v,i)=>{
-                             return  <div className='stage-item' key={i}>
-                                 <div className='stage-title-wrap clearfix'>
+                             return  <div className='stage-item' key={i}
+                                          onDragOver={this.itemDragOver}>
+                                 <div className='stage-title-wrap clearfix'
+                                      data-wKey={v.tree.key}
+                                      data-parentKey={i==0?'-1':'custom'}>
                                      <div className={$class('stage-title f--h f--hlc',{'active': v.tree.key === this.state.nid})}
                                           style={{ width : this.props.width - 36 - 24 }}
                                           onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}
@@ -1054,8 +1065,7 @@ class ObjectTree extends React.Component {
                                          : fadeWidgetList(v.tree.funcList, 1, nodeType.func)
                                      }
                                  </div>
-                                 <div className={$class('stage-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}
-                                      onDragOver={this.itemDragOver}>
+                                 <div className={$class('stage-content clearfix', {'hidden':  this.state.openData.indexOf(v.tree.key) < 0 })}>
                                      {
                                          v.tree.children.length === 0
                                              ? null
