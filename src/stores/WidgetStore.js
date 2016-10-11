@@ -1283,8 +1283,9 @@ export default Reflux.createStore({
         }
 
         if(obj && obj.alpha){
-            if( isNaN(obj.alpha)){
-            obj.alpha = null;
+            if(isNaN(obj.alpha)) {
+                obj.alpha = null;
+            }
         }
         let p = {updateProperties: obj};
         if (skipRender) {
