@@ -542,7 +542,7 @@ class Event extends React.Component {
 
                     let arrHidden = eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
                     arrHidden[5] = true;
-                    eventList[this.curEventIndex].children[this.curChildrenIndex][type] = this.oldVal;
+                   // eventList[this.curEventIndex].children[this.curChildrenIndex][type] = this.oldVal;
                     this.setEventBoxWidth(eventList);
                     this.setState({eventList: eventList});
                 } else {
