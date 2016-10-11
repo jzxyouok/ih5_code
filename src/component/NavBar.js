@@ -478,8 +478,8 @@ class NavBar extends React.Component {
             positionY : undefined,
             shapeWidth : undefined,
             shapeHeight : undefined,
-            width : 100,
-            height : 100,
+            viewBoxWidth : 100,
+            viewBoxHeight : 100,
             fillColor : "#8F8F8F",
             path : svgPath
         };
@@ -492,7 +492,7 @@ class NavBar extends React.Component {
             //svgData.width = data.width;
             //svgData.height = data.height;
 
-            //console.log(svgData);
+            console.log(svgData);
             WidgetActions['addWidget']("path", svgData);
             this.drawRect.end();
             this.drawRect.cleanUp();
