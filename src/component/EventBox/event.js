@@ -376,6 +376,7 @@ class Event extends React.Component {
 
     //点击下拉框
     onMenuClick(flag,e) {
+        this.oldVal =null;
         let eventList = this.state.eventList;
         let value =e.item?e.item.props.object:e;
         let key = this.curChildrenIndex;
@@ -516,21 +517,22 @@ class Event extends React.Component {
                 tag=false;
             }
         });
+        if(this.oldVal ===null){
+            if(tag){
+                if(type=='compareObjFlag'){
 
-        if(tag){
-            if(type=='compareObjFlag'){
-
-                 let  arrHidden = eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
-                arrHidden[5] = true;
-                this.setEventBoxWidth(eventList);
-                this.setState({eventList:eventList});
+                    let  arrHidden = eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
+                    arrHidden[5] = true;
+                    this.setEventBoxWidth(eventList);
+                    this.setState({eventList:eventList});
+                }else{
+                    eventList[this.curEventIndex].children[this.curChildrenIndex][type]=this.oldVal;
+                    this.setState({eventList:eventList});
+                }
             }else{
-                eventList[this.curEventIndex].children[this.curChildrenIndex][type]=this.oldVal;
-                this.setState({eventList:eventList});
+                //触发下一个下拉框
+                this.onMenuClick(type,newVal);
             }
-        }else{
-            //触发下一个下拉框
-           this.onMenuClick(type,newVal);
         }
     }
 
