@@ -353,7 +353,8 @@ class NavBar extends React.Component {
                 //console.log(result);
                 var list = this.state.dbList;
                 list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
-                WidgetActions['addWidget']('db', {'dbid': result['id'] }, null, name);
+                //WidgetActions['addWidget']('db', {'dbid': result['id'] }, null, name);
+                this.addDb(result['id'],name);
                 this.setState({
                     dbList : list
                 },()=>{
@@ -428,6 +429,7 @@ class NavBar extends React.Component {
                 if (r['id']) {
                     list.push({'id':r['id'], 'name':value});
                     this.updateSock(list);
+                    this.addSock(r['id'],value);
                 }
 
             }.bind(this));
@@ -476,9 +478,9 @@ class NavBar extends React.Component {
             positionY : undefined,
             shapeWidth : undefined,
             shapeHeight : undefined,
-            width : undefined,
-            height : undefined,
-            fillColor : "#000000",
+            width : 100,
+            height : 100,
+            fillColor : "#8F8F8F",
             path : svgPath
         };
 
@@ -487,8 +489,8 @@ class NavBar extends React.Component {
             svgData.positionY = data.positionY;
             svgData.shapeWidth = data.shapeWidth;
             svgData.shapeHeight = data.shapeHeight;
-            svgData.width = data.width;
-            svgData.height = data.height;
+            //svgData.width = data.width;
+            //svgData.height = data.height;
 
             //console.log(svgData);
             WidgetActions['addWidget']("path", svgData);
