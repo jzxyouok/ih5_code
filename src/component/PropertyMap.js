@@ -147,6 +147,22 @@ propertyMap['counter'] = [
         property:[
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.String},
         ], isFunc: true },
+    { name: 'add1', showName:'加1', isFunc: true },
+    { name: 'minus1', showName:'减1', isFunc: true },
+    { name: 'addN', showName:'加N',
+        property:[
+            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'minusN', showName:'减N',
+        property:[
+            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'getInt', showName:'取整', isFunc: true },
+    { name: 'randomValue', showName:'生成随机数',
+        property:[
+            {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
+            {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
@@ -481,6 +497,11 @@ propertyMap['easing'] = [
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true }
 ];
+
+propertyMap['3dRotate'] = [
+    { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
+];
+
 propertyMap['effect'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box | widgetFlags.DomOnly, addProvides:widgetFlags.Leaf},
@@ -598,7 +619,8 @@ propertyMap['db'] = [
 propertyMap['sock'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'listened', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'sockName' , showName:'名称：',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
+    { name: 'listened', showName:'是否监听：', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'message', showName:'消息', isEvent: true, info:'data'},
 ];
 propertyMap['strVar'] = [
@@ -663,6 +685,24 @@ function checkLockClass(selected) {
     }
 }
 
+function checkNotInDomMode(selected, className) {
+    let selectWidget = selected;
+    if(selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        selectWidget = selected.widget;
+    } else {
+        selectWidget = selected;
+    }
+    if(propertyFlags[className]===undefined){
+        return false;
+    }
+    var requires = propertyFlags[className].requires;
+    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selectWidget.node) != 1)
+        return true;
+    return false;
+}
+
 function checkChildClass(selected, className) {
     // 对函数,变量,自定义函数等的处理
     if(className ==='dbItem'){
@@ -725,4 +765,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass};
+export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass, checkNotInDomMode};

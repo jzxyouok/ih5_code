@@ -33,7 +33,7 @@ export default Reflux.createActions([
 
   'addEventChildren'  ,          //添加新的判断逻辑
   'delEventChildren'  ,          //删除判断逻辑
-   'delEvent',                   //删除整条判断逻辑
+  'delEvent',                    //删除整条判断逻辑
 
   'selectFunction',               //选择函数
   'addFunction',                  //添加函数

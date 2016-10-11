@@ -3,8 +3,9 @@ import React from 'react';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {varType, isCustomizeWidget} from '../../stores/WidgetStore';
-import {checkChildClass, checkEventClass} from '../PropertyMap';
+import {checkChildClass, checkEventClass, checkNotInDomMode} from '../PropertyMap';
 import {modeType} from '../ToolBox/DEFAUL_TOOLBOX'
+import $class from 'classnames';
 
 const animationData = [
     {name:'数字变量', class:'var-num-btn', className:'var', disabled:false, param:{name:'', value:null, type:varType.number}},
@@ -90,6 +91,11 @@ class Animation extends React.Component {
             } else {
                 data[i].disabled = true;
             }
+            if(checkNotInDomMode(widget, data[i].className)) {
+                data[i].hidden = true;
+            } else {
+                data[i].hidden = false;
+            }
         }
         this.setState({
             data: data
@@ -118,7 +124,7 @@ class Animation extends React.Component {
                 {
                     this.state.data.map((v,i)=>{
                         return <button key={i}
-                                       className={ 'btn btn-clear btn-animation ' + v.class }
+                                       className={$class('btn btn-clear btn-animation ', v.class, {'hidden':v.hidden})}
                                        disabled={v.disabled}
                                        title={v.name}
                                        onClick={ this.addWidgetBtn.bind(this, v.className, v.param)} />

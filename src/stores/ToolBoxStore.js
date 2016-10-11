@@ -5,7 +5,7 @@
 import Reflux from 'reflux';
 import Actions from '../actions/ToolBoxAction';
 import defaultTool from '../component/ToolBox/DEFAUL_TOOLBOX';
-import {checkChildClass} from '../component/PropertyMap';
+import {checkChildClass, checkNotInDomMode} from '../component/PropertyMap';
 
 // 响应 点击二级（默认隐藏）工具菜单的事件
 var selectSecondary = function(config, gid, cid) {
@@ -72,12 +72,24 @@ export default Reflux.createStore({
     changeToolBoxItems: function(widget) {
         //change items here 用secondary的去比对；
         for (let i = 0; i < toolBoxItem.data.length; i++) {
+            let allAreHidden = 0;
             for (let j = 0; j < toolBoxItem.data[i]['secondary'].length; j++) {
                 if (checkChildClass(widget, toolBoxItem.data[i]['secondary'][j].className)) {
                     toolBoxItem.data[i]['secondary'][j]['disabled'] = false;
                 } else {
                     toolBoxItem.data[i]['secondary'][j]['disabled'] = true;
                 }
+                if(checkNotInDomMode(widget, toolBoxItem.data[i]['secondary'][j].className)) {
+                    allAreHidden++;
+                    toolBoxItem.data[i]['secondary'][j]['hidden'] = true;
+                } else {
+                    toolBoxItem.data[i]['secondary'][j]['hidden'] = false;
+                }
+            }
+            if (toolBoxItem.data[i]['secondary'].length>0 && allAreHidden === toolBoxItem.data[i]['secondary'].length) {
+                toolBoxItem.data[i].hidden = true;
+            } else {
+                toolBoxItem.data[i].hidden = false;
             }
         }
         toolBoxConfig.data = toolBoxItem;

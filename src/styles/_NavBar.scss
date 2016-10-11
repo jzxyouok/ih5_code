@@ -223,6 +223,7 @@
 
                         .title{
                             height: 28px;
+                            color: #b5b5b5;
                         }
 
                         .title:hover {
@@ -231,7 +232,7 @@
 
                         .title:active {
                             background: #232323;
-                            color: #b5b5b5;
+                            color: #454545;
                         }
 
                         &.not-active:active{
@@ -445,6 +446,76 @@
                 }
             }
 
+            .shape-dropDown {
+                &:hover {
+                    .dropDownToggle{
+                        height: 219px;
+                    }
+                }
+
+                .dropDownToggle{
+                    width: 367px;
+                    //height: 219px;
+                    //opacity: 1;
+                }
+
+                .dropDownToggle-main {
+                    width: 367px;
+                    height: 213px;
+                }
+
+                .dropDown-main {
+                    height: 176px;
+                }
+
+                .dropDown-scroll {
+                    height: 176px;
+                }
+
+                .dropDown-content{
+                    width: 351px;
+
+                    li{
+                        width: 35px;
+                        height: 35px;
+                        overflow: hidden;
+
+                        &:nth-child(3n){
+                            width: 35px;
+                            height: 35px;
+                            border-right: 1px solid #292929;
+                        }
+
+                        &:nth-child(10n){
+                            width: 34px;
+                            border-right: none;
+                        }
+
+                        &:hover {
+                            background: #232323;
+                        }
+
+                        &:active {
+                            background: #232323;
+
+                            svg{ opacity: 0.5; }
+                        }
+
+                        &.not-active{
+                            background: #232323;
+                            cursor: not-allowed;
+                            svg{ opacity: 0.5; }
+                        }
+
+                        svg {
+                            transform: scale(0.3);
+                            transform-origin: 2.5px 2px;
+                            display: block;
+                        }
+                    }
+                }
+            }
+
             .dropDown-btn2 {
                 &:hover .dropDownToggle{
                     height: 330px;
@@ -645,7 +716,7 @@
                 border: none;
                 background: none;
                 width: 100%;
-                height: 1px;
+                height: 18px;
                 //margin-left: 2px;
 
                 .ant-input-number-handler-wrap {

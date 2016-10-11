@@ -24,7 +24,11 @@ require("jscolor/jscolor");
 class PropertyView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {fields: null,propertyName:null};
+        this.state = {
+            fields: null,
+            propertyName:null,
+            sockName : null
+        };
         this.selectNode = null;
         this.currentPage = null;
         this.fontList=[];
@@ -384,12 +388,16 @@ class PropertyView extends React.Component {
  
         const getInput = (item, index) => {
 
-
             //设置默认值,用于展示
             let defaultValue;
             if (item.readOnly ) {
                 defaultValue = node.node[item.name];
-            }else if(item.type==propertyType.Float) {
+                //console.log(item);
+                if(item.name=='sockName'){
+                    defaultValue = this.state.sockName
+                }
+            }
+            else if(item.type==propertyType.Float) {
                 if(node.className=='html') {
                     let str = item.name == 'scaleX' ? 'shapeWidth' : 'shapeHeight';
                     let str2 = item.name == 'scaleX' ? 'width' : 'height';
@@ -453,8 +461,8 @@ class PropertyView extends React.Component {
                          defaultValue=1;
                      }
                 }
-            }else  if (node.props[item.name] === undefined){
-
+            }
+            else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default
                 }else if(item.type === propertyType.Percentage && item.name=='alpha'){
@@ -573,8 +581,17 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
+        //console.log(widget);
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
+        }
+
+        if(widget.selectWidget){
+            if(widget.selectWidget.className == "sock"){
+                this.setState({
+                    sockName : widget.selectWidget.node.name
+                })
+            }
         }
 
         if(widget.imageTextSizeObj){

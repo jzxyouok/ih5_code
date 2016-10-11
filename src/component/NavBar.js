@@ -14,6 +14,7 @@ import ArrangeModule from './arrange-module/index'
 import CreateDb from './create-db/index'
 import ArrangeDb from './arrange-db/index'
 import CreateSock from './create-sock/index'
+import pathData from './path-data'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -21,6 +22,10 @@ import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import DbHeaderAction from '../actions/DbHeader'
 import DbHeaderStores from '../stores/DbHeader';
+import DrawRect from './ToolBox/DrawRect';
+import {checkChildClass} from './PropertyMap';
+import getSockListAction from '../actions/getSockListAction';
+import getSockListStore from '../stores/getSockListStore';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -43,7 +48,9 @@ class NavBar extends React.Component {
             arrangeDb : false,
             zoomInputState: 0,
             sockList : [],
-            createSock : false
+            createSock : false,
+            shapeList : pathData,
+            isAddShape : true
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -71,8 +78,9 @@ class NavBar extends React.Component {
         this.focusOrBlurZoomInput = this.focusOrBlurZoomInput.bind(this);
         this.createSockShow = this.createSockShow.bind(this);
         this.createSockHide = this.createSockHide.bind(this);
-        this.updateSock = this.updateSock.bind(this);
+        //this.updateSock = this.updateSock.bind(this);
         this.addSock = this.addSock.bind(this);
+        this.onDrawRect = this.onDrawRect.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -87,12 +95,15 @@ class NavBar extends React.Component {
         }
         this.newWork();
         this.workid = null;
+
+        this.drawRect = null;
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         this.onStatusChange(WidgetStore.getStore());
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
+        getSockListStore.listen(this.getSockList.bind(this));
     }
 
     componentWillUnmount() {
@@ -108,7 +119,8 @@ class NavBar extends React.Component {
         }
         if(widget.selectWidget){
             this.setState({
-                selectWidget : widget.selectWidget
+                selectWidget : widget.selectWidget,
+                isAddShape : checkChildClass(widget.selectWidget, 'path')
             })
         }
     }
@@ -135,6 +147,7 @@ class NavBar extends React.Component {
                 });
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
+                getSockListAction['getSockList'](result['sock']);
             } else {
                 this.setState({loginVisible: true});
             }
@@ -338,7 +351,7 @@ class NavBar extends React.Component {
     }
 
     createDbShow(){
-        let name = '数据库' + this.state.dbList.length;
+        let name = '数据库' + (this.state.dbList.length + 1);
         let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
         //console.log(data);
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
@@ -347,7 +360,8 @@ class NavBar extends React.Component {
                 //console.log(result);
                 var list = this.state.dbList;
                 list.push({'id': result['id'], 'key': result['id'], 'name': name , 'header': null });
-                WidgetActions['addWidget']('db', {'dbid': result['id'] }, null, name);
+                //WidgetActions['addWidget']('db', {'dbid': result['id'] }, null, name);
+                this.addDb(result['id'],name);
                 this.setState({
                     dbList : list
                 },()=>{
@@ -411,9 +425,26 @@ class NavBar extends React.Component {
     }
 
     createSockShow(){
-        this.setState({
-            createSock : true
-        })
+        let list = this.state.sockList;
+        let value = "连接" + (this.state.sockList.length +1);
+        WidgetActions['ajaxSend'](null, 'POST', 'app/createSock',
+            'application/x-www-form-urlencoded',
+            'name=' + encodeURIComponent(value),
+            function(text) {
+
+                let r = JSON.parse(text);
+                if (r['id']) {
+                    list.push({'id':r['id'], 'name':value});
+                    //this.updateSock(list);
+                    this.addSock(r['id'],value);
+                    getSockListAction['getSockList'](list);
+                }
+
+            }.bind(this));
+
+        //this.setState({
+        //    createSock : true
+        //})
     }
 
     createSockHide(){
@@ -422,7 +453,13 @@ class NavBar extends React.Component {
         })
     }
 
-    updateSock(data){
+    //updateSock(data){
+    //    this.setState({
+    //        sockList : data
+    //    })
+    //}
+
+    getSockList(data){
         this.setState({
             sockList : data
         })
@@ -434,7 +471,7 @@ class NavBar extends React.Component {
             let data = this.state.selectWidget.children;
             for(let i =0 ; i<data.length; i++){
                 if(data[i].className == "sock"){
-                    if(data[i].node.dbid == id){
+                    if(data[i].node.sid == id){
                         bool = false;
                         return bool;
                     }
@@ -444,6 +481,43 @@ class NavBar extends React.Component {
                 WidgetActions['addWidget']('sock', {'sid': id},null,name);
             }
         }
+    }
+
+    onDrawRect(svgPath) {
+        if(!this.state.isAddShape) return;
+
+        new DrawRect().cleanUp();
+        this.drawRect = new DrawRect();
+        this.drawRect.start();
+        let svgData = {
+            positionX : undefined,
+            positionY : undefined,
+            shapeWidth : undefined,
+            shapeHeight : undefined,
+            viewBoxWidth : 100,
+            viewBoxHeight : 100,
+            fillColor : "#8F8F8F",
+            path : svgPath
+        };
+
+        this.drawRect.def.promise().then(data => {
+            svgData.positionX = data.positionX;
+            svgData.positionY = data.positionY;
+            svgData.shapeWidth = data.shapeWidth;
+            svgData.shapeHeight = data.shapeHeight;
+            //svgData.width = data.width;
+            //svgData.height = data.height;
+
+            //console.log(svgData);
+            WidgetActions['addWidget']("path", svgData);
+            this.drawRect.end();
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        },(() => {
+            this.drawRect.end();
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        }));
     }
 
     render() {
@@ -471,8 +545,6 @@ class NavBar extends React.Component {
                 return <li key={i} className="not-active"> </li>
             })
         };
-
-
 
         return (
             <div className='NavBar f--h'>
@@ -597,7 +669,7 @@ class NavBar extends React.Component {
                                 <div className="dropDownToggle-main">
                                     <div className="dropDown-title f--hlc">
                                         <span className="flex-1">全部连接：</span>
-                                        <span className="set-btn" />
+                                        <span className="set-btn hidden" />
                                     </div>
 
                                     <div className="dropDown-main">
@@ -631,16 +703,45 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <button className='btn btn-clear shape-btn' title='形状'>
-                            <span className="icon" />
-                            <span className="title">形状</span>
-                        </button>
-
-                        <div className='dropDown-btn f--hlc hidden'>
+                        <div className='dropDown-btn shape-dropDown f--hlc'>
                             <button className='btn btn-clear shape-btn' title='形状'>
                                 <span className="icon" />
                                 <span className="title">形状</span>
                             </button>
+
+                            <div className='dropDownToggle'>
+                                <div className="dropDownToggle-main">
+                                    <div className="dropDown-title f--hlc">
+                                        <span className="flex-1">全部形状：</span>
+                                    </div>
+
+                                    <div className="dropDown-main">
+                                        <div className="dropDown-scroll">
+                                            <ul className="dropDown-content">
+                                                {
+                                                    this.state.shapeList.data.length > 0
+                                                        ? this.state.shapeList.data.map((v,i)=>{
+                                                            return  <li className={ $class({"not-active": !this.state.isAddShape})}
+                                                                        key={i}
+                                                                        onClick={ this.onDrawRect.bind(this,v.path) }>
+                                                                        <svg id={v.name}
+                                                                             data-name={v.name}
+                                                                             xmlns="http://www.w3.org/2000/svg"
+                                                                             width="100"
+                                                                             height="100"
+                                                                             viewBox="0 0 100 100">
+
+                                                                             <path d={ v.path } style={{fill: "#b5b5b5", fillRule: "evenodd"}} />
+                                                                        </svg>
+                                                                    </li>
+                                                        })
+                                                        : null
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className='dropDown-btn2 f--hlc'>
@@ -790,11 +891,14 @@ class NavBar extends React.Component {
                                 dbList = { this.state.dbList } />
                 </div>
 
-                <div className={$class({"hidden": !this.state.createSock})}>
-                    <CreateSock createSockHide={ this.createSockHide }
-                                updateSock={ this.updateSock }
-                                sockList={ this.state.sockList }  />
-                </div>
+                {
+                    //<div className={$class({"hidden": !this.state.createSock})}>
+                    //    <CreateSock createSockHide={ this.createSockHide }
+                    //                updateSock={ this.updateSock }
+                    //                sockList={ this.state.sockList }  />
+                    //</div>
+                }
+
 
             </div>
         );
