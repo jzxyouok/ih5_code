@@ -344,8 +344,8 @@ class Event extends React.Component {
                     showName =v.showName;
                 }
             });
-        }else if(type=='judgeValFlag'){
-           if( this.state.eventList[this.curEventIndex] &&this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr ){
+        }else if(type=='judgeValFlag'||type=='compareValFlag'){
+           if( this.state.eventList[this.curEventIndex] && this.state.eventList[this.curEventIndex].children[this.curChildrenIndex]&&this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr ){
                this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr.map((v,i)=> {
                    if (name == v.name) {
                        showName = v.showName;
@@ -365,11 +365,17 @@ class Event extends React.Component {
                 }
             });
         }else if(type == 'judgeValFlag'){
-             this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr.map((v,i)=>{
-                 if(v.showName==value){
-                     name=v.name;
-                 }
-             });
+                this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr.map((v,i)=>{
+                    if(v.showName==value){
+                        name=v.name;
+                    }
+                });
+        }else if(type == 'compareValFlag'){
+            this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr.map((v,i)=>{
+                if(v.showName==value){
+                    name=v.name;
+                }
+            });
         }
        return name;
     }
@@ -388,6 +394,9 @@ class Event extends React.Component {
         }else if(flag == 'logicalFlag'){
             eventList[this.curEventIndex].logicalFlag =value;
         }else if(flag == 'judgeValFlag'){
+            value =this.getNameByCnName(flag,value)
+            eventList[this.curEventIndex].children[key][flag]=value;
+        }else if(flag == 'compareValFlag'){
             value =this.getNameByCnName(flag,value)
             eventList[this.curEventIndex].children[key][flag]=value;
         }else {
@@ -636,11 +645,12 @@ class Event extends React.Component {
         let isShow=false;
         let eventList = this.state.eventList;
         let needFill=[];
+
         this.state.conProps.map((v,i)=>{
-            if(v.showName==value && v.needFill){
+
+            if(v.name==value && v.needFill){
                 isShow=true;
                 needFill=v.needFill;
-
             }
         });
         if(isShow){
@@ -733,7 +743,7 @@ class Event extends React.Component {
                                                 <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[0]})} >
 
                                                     <div className="title f--hlc cursor_default">
-                                                        and
+                                                        且
                                                     </div>
                                                     {/*
                                                     <Dropdown
@@ -813,7 +823,7 @@ class Event extends React.Component {
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div   className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >
-                                                            <input value= {v1.compareValFlag}
+                                                            <input value= {this.getShowNameByName('compareValFlag',v1.compareValFlag)}
                                                                    onChange={this.inputChange.bind(this,'compareValFlag')}
                                                                    onFocus={this.saveOldVal.bind(this)}
                                                                    onBlur={this.setInputValAuto.bind(this,'compareValFlag')}
