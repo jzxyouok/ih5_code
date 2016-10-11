@@ -523,8 +523,8 @@ class ObjectTree extends React.Component {
         if(this.dragged&&this.over){
             this.over.style.backgroundColor = '';
             //位置
-            let srcKeyId = Number(this.dragged.dataset.keyid);
-            let destKeyId = Number(this.over.dataset.keyid);
+            let srcOrder = Number(this.dragged.dataset.order);
+            let destOrder = Number(this.over.dataset.order);
             //对象的key
             let srcKey = Number(this.dragged.dataset.wkey);
             let destKey = Number(this.over.dataset.wkey);
@@ -539,10 +539,10 @@ class ObjectTree extends React.Component {
                 //目标为来源的父节点
                 switch (this.overPosition){
                     case overPosition.top:
-                        WidgetActions['moveWidget'](srcKey, destParentKey, destKeyId);
+                        WidgetActions['moveWidget'](srcKey, destParentKey, destOrder);
                         break;
                     case overPosition.bot:
-                        WidgetActions['moveWidget'](srcKey, destParentKey, ++destKeyId);
+                        WidgetActions['moveWidget'](srcKey, destParentKey, ++destOrder);
                         break;
                     default:
                         break;
@@ -555,16 +555,16 @@ class ObjectTree extends React.Component {
                         WidgetActions['moveWidget'](srcKey, destKey, 0);
                         break;
                     case overPosition.bot:
-                        destKeyId++;
-                        if(srcKeyId == destKeyId) {
+                        destOrder++;
+                        if(srcOrder == destOrder) {
                             //来源在目标元素下面
                             return;
                         } else {
-                            WidgetActions['reorderWidget'](srcKeyId-destKeyId>0?-(srcKeyId-destKeyId):-(srcKeyId-(--destKeyId)));
+                            WidgetActions['reorderWidget'](srcOrder-destOrder>0?-(srcOrder-destOrder):-(srcOrder-(--destOrder)));
                         }
                         break;
                     default:
-                        WidgetActions['reorderWidget'](srcKeyId-destKeyId>0?-(srcKeyId-destKeyId):-(srcKeyId-(--destKeyId)));
+                        WidgetActions['reorderWidget'](srcOrder-destOrder>0?-(srcOrder-destOrder):-(srcOrder-(--destOrder)));
                         break;
                 }
             } else {
@@ -575,7 +575,7 @@ class ObjectTree extends React.Component {
                         WidgetActions['moveWidget'](srcKey, destKey, 0);
                         break;
                     default:
-                        WidgetActions['moveWidget'](srcKey, destParentKey, destKeyId);
+                        WidgetActions['moveWidget'](srcKey, destParentKey, destOrder);
                         break;
                 }
             }
@@ -599,11 +599,12 @@ class ObjectTree extends React.Component {
             if(target) {
                 if(target.className === cName) {
                     return target;
+                } else {
+                    return findItemDiv(target.parentNode, cName);
                 }
             } else {
                 return null;
             }
-            return findItemDiv(target.parentNode, cName);
         };
         if(this.over){
             this.over.style.backgroundColor = '';
@@ -621,12 +622,14 @@ class ObjectTree extends React.Component {
             } else {
                 let deltaTop = e.clientY-this.getDeltaY(this.over)+document.body.scrollTop;
                 let maxHeight = this.over.offsetHeight;
+                let layer = this.over.dataset.layer;
                 let mid1 = maxHeight/3;
                 let mid2 = maxHeight*2/3;
                 if(deltaTop>=0&&deltaTop<=mid1){
                     this.overPosition=overPosition.top;
                     this.over.style.backgroundColor = '';
-                    this.placeholder.style.marginLeft = parseFloat(this.over.firstChild.style.paddingLeft)-42+'px';
+                    let destlayerPadding =  layer==='1' ? '' :layer *20 + 22 +'px';
+                    this.placeholder.style.marginLeft = destlayerPadding;
                     this.over.parentNode.insertBefore(this.placeholder, this.over);
                 } else if (deltaTop>mid1&&deltaTop<mid2) {
                     this.overPosition=overPosition.mid;
@@ -637,7 +640,8 @@ class ObjectTree extends React.Component {
                 } else if (deltaTop>=mid2&&deltaTop<=maxHeight) {
                     this.overPosition=overPosition.bot;
                     this.over.style.backgroundColor = '';
-                    this.placeholder.style.marginLeft = parseFloat(this.over.firstChild.style.paddingLeft)-42+'px';
+                    let destlayerPadding = layer==='1' ? '' :layer *20 + 22 +'px';
+                    this.placeholder.style.marginLeft = destlayerPadding;
                     this.over.parentNode.appendChild(this.placeholder);
                 }
             }
@@ -808,7 +812,8 @@ class ObjectTree extends React.Component {
                 <div className='item-title-wrap clearfix'
                      id={'tree-item-'+ v.key}
                      tabIndex={v.key}
-                     data-keyId={i}
+                     data-order={i}
+                     data-layer={num}
                      data-wKey={v.key}
                      data-parentKey={v.parent.key}
                      draggable='true'

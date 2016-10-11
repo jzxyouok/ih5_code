@@ -1146,13 +1146,13 @@ export default Reflux.createStore({
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
                 //获取名字
-                this.currentWidget = dest;
-                let props = this.addWidgetDefaultName(src.className, src.props, false, true);
+                // this.currentWidget = dest;
+                // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
 
                 var destIndex = dest.children.indexOf(obj);
                 if (destIndex != index) {
-                    obj.props['name'] = props['name'];
+                    // obj.props['name'] = props['name'];
                     dest.children.splice(destIndex, 1);
                     dest.children.splice(index, 0, obj);
                     // var delta = index - destIndex;
