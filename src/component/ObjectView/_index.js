@@ -13,7 +13,7 @@ import Animation from './Animation';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
-import {checkChildClass, checkEventClass, checkLockClass} from '../PropertyMap';
+import {checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode} from '../PropertyMap';
 
 class ObjectView extends React.Component {
     constructor (props) {
@@ -33,6 +33,7 @@ class ObjectView extends React.Component {
             activeEventTreeKey: null, //激活事件的key
             enableContainer: true,
             enablePage: true,
+            hideDomType: false
         };
         this.toggleBtn = this.toggleBtn.bind(this);
         this.create = this.create.bind(this);
@@ -44,6 +45,7 @@ class ObjectView extends React.Component {
         this.onInitLock = this.onInitLock.bind(this);
         this.onInitHasEventTree = this.onInitHasEventTree.bind(this);
         this.onInitDelete = this.onInitDelete.bind(this);
+        this.onInitDomType = this.onInitDomType.bind(this);
         this.onInitButtons = this.onInitButtons.bind(this);
     }
 
@@ -106,6 +108,7 @@ class ObjectView extends React.Component {
         this.onInitLock(selectWidget);
         this.onInitHasEventTree(selectWidget);
         this.onInitDelete(selectWidget);
+        this.onInitDomType(selectWidget);
     }
 
     onInitHasEventTree(selectWidget){
@@ -147,6 +150,12 @@ class ObjectView extends React.Component {
         this.setState({
             canDelete: canDelete
         });
+    }
+
+    onInitDomType(selectWidget) {
+        this.setState({
+            hiddenDomType: checkNotInDomMode(selectWidget, 'page')
+        })
     }
 
     toggleBtn(i){
@@ -261,6 +270,7 @@ class ObjectView extends React.Component {
                             disabled={!this.state.canHaveEventTree||this.state.hasEventTree}
                             onClick={ this.initEvent.bind(this, 'event', null)}/>
                     <button className={$class('btn btn-clear page-btn',
+                            {'hidden': this.state.hiddenDomType},
                             {'not-allowed':!this.state.enablePage})}
                             title='页面'
                             disabled={!this.state.enablePage}
