@@ -449,7 +449,7 @@ class NavBar extends React.Component {
             let data = this.state.selectWidget.children;
             for(let i =0 ; i<data.length; i++){
                 if(data[i].className == "sock"){
-                    if(data[i].node.dbid == id){
+                    if(data[i].node.sid == id){
                         bool = false;
                         return bool;
                     }
