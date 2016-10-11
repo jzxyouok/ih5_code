@@ -437,10 +437,11 @@
                             color: #454545;
                         }
 
-                        &.not-active .title{
-                            background: #232323;
-                            color: #454545;
+                        &.not-active .title {
+                            background: #232323 !important;
+                            color: #454545  !important;
                             cursor: not-allowed;
+                            .li-icon{ background-position: -760px -280px !important; }
                         }
 
                         &.not-active:active{
@@ -521,9 +522,10 @@
                 .dropDown-content{
                     li {
                         &.not-active .title{
-                            background: #232323;
-                            color: #454545;
+                            background: #232323 !important;
+                            color: #454545 !important;
                             cursor: not-allowed;
+                            .li-icon{ background-position: -1280px -280px !important; }
                         }
                         .li-icon {
                             width: 14px;
@@ -534,7 +536,7 @@
                         }
 
                         .title:hover .li-icon{ background-position: -1280px -240px; }
-                        .title:active .li-icon{ background-position: -1280px -200px; }
+                        .title:active .li-icon{ background-position: -1280px -280px; }
                     }
                 }
             }
