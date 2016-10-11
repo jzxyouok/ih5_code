@@ -65,12 +65,14 @@ class ObjectTree extends React.Component {
         this.itemDragEnd = this.itemDragEnd.bind(this);
         this.itemDragOver = this.itemDragOver.bind(this);
         this.getDeltaY = this.getDeltaY.bind(this);
+        this.getChildrenKeys = this.getChildrenKeys.bind(this);
         //拖动时显示的tip
         this.dragWithTip = this.dragWithTip.bind(this);
         this.initialDragTip = this.initialDragTip.bind(this);
         this.destroyDragTip = this.destroyDragTip.bind(this);
 
         this.dragged = null;
+        this.selectDragData = null;
         this.over = null;
         this.overPosition = null;
         //有关拖动的相关参数
@@ -502,6 +504,7 @@ class ObjectTree extends React.Component {
         this.initialDragTip('拖拽对象到此', false);
         //拖动同时把item设为被选中
         this.chooseBtn(nid, data);
+        this.selectDragData = data;
         this.dragged = e.currentTarget;
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/html', this.dragged);
@@ -531,6 +534,10 @@ class ObjectTree extends React.Component {
             //对象的父key
             let srcParentKey = Number(this.dragged.dataset.parentkey);
             let destParentKey = Number(this.over.dataset.parentkey);
+
+            if (!this.selectDragData) {
+                return;
+            }
             //还需判断是否是目标对象是否是来源对象的子对象，如果是就不允许
             if((srcKey == destKey && srcParentKey === destParentKey)) {
                 //相同位置
@@ -539,10 +546,10 @@ class ObjectTree extends React.Component {
                 //目标为来源的父节点
                 switch (this.overPosition){
                     case overPosition.top:
-                        WidgetActions['moveWidget'](srcKey, destParentKey, destOrder);
+                        WidgetActions['moveWidget'](this.selectDragData, destParentKey, destOrder);
                         break;
                     case overPosition.bot:
-                        WidgetActions['moveWidget'](srcKey, destParentKey, ++destOrder);
+                        WidgetActions['moveWidget'](this.selectDragData, destParentKey, ++destOrder);
                         break;
                     default:
                         break;
@@ -552,33 +559,43 @@ class ObjectTree extends React.Component {
                 switch (this.overPosition){
                     case overPosition.mid:
                         //放入同层元素即跨层
-                        WidgetActions['moveWidget'](srcKey, destKey, 0);
+                        WidgetActions['moveWidget'](this.selectDragData, destKey, 0);
                         break;
                     case overPosition.bot:
                         destOrder++;
                         if(srcOrder == destOrder) {
                             //来源在目标元素下面
-                            return;
+                            break;
                         } else {
                             WidgetActions['reorderWidget'](srcOrder-destOrder>0?-(srcOrder-destOrder):-(srcOrder-(--destOrder)));
+                            break;
                         }
-                        break;
                     default:
                         WidgetActions['reorderWidget'](srcOrder-destOrder>0?-(srcOrder-destOrder):-(srcOrder-(--destOrder)));
                         break;
                 }
             } else {
                 //跨层
-                switch (this.overPosition){
-                    case overPosition.mid:
-                        //放入跨层元素内部
-                        WidgetActions['moveWidget'](srcKey, destKey, 0);
-                        break;
-                    default:
-                        WidgetActions['moveWidget'](srcKey, destParentKey, destOrder);
-                        break;
+                //看目标对象是否是src的子层元素之一
+                let keyList = this.getChildrenKeys(this.selectDragData);
+                if(!(keyList.indexOf(destKey)>=0)){
+                    //不是的话就实现跨层
+                    switch (this.overPosition){
+                        case overPosition.mid:
+                            //放入跨层元素内部
+                            WidgetActions['moveWidget'](this.selectDragData, destKey, 0);
+                            break;
+                        default:
+                            WidgetActions['moveWidget'](this.selectDragData, destParentKey, destOrder);
+                            break;
+                    }
                 }
             }
+            //最后清理一下
+            this.dragged = null;
+            this.selectDragData = null;
+            this.over = null;
+            this.overPosition = null;
         }
     }
 
@@ -646,6 +663,20 @@ class ObjectTree extends React.Component {
                 }
             }
         }
+    }
+
+    getChildrenKeys(obj) {
+        let keyList =[];
+        let loopGetChildren = (w)=> {
+            w.children.map(v=>{
+                keyList.push(v.key);
+                if(v.children&&v.children.length>0){
+                    loopGetChildren(v);
+                }
+            });
+        };
+        loopGetChildren(obj);
+        return keyList;
     }
 
     getDeltaY(obj){

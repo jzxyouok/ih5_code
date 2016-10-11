@@ -1131,13 +1131,10 @@ export default Reflux.createStore({
         }
         return target;
     },
-    moveWidget: function(srcKey, destKey, index) {
-        let src = null;
-        let dest = null;
+    moveWidget: function(src, destKey, index) {
         if(this.currentWidget&&this.currentWidget.rootWidget){
-            let cWidget = this.currentWidget;
-            src = this.findWidget(srcKey);
-            dest = this.findWidget(destKey);
+            // src = this.findWidget(srcKey);
+            let dest = this.findWidget(destKey);
 
             if (src&&dest) {
                 var saved = {};
