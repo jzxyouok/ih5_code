@@ -124,7 +124,7 @@ var DEFAULT_TOOLBOX = {
         secondary: [
             {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', drawRect:true, param: shapeParam},
             {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', drawRect:true, param: shapeParam},
-            {cid:TOOL_ID.PATH,name:'路径',icon:curveIcon, className:'path', drawRect:true, param: shapeParam}]
+            {cid:TOOL_ID.PATH,name:'形状',icon:curveIcon, className:'path', drawRect:true, param: shapeParam}]
     },{
         name:'按钮',
         key:5,
@@ -237,12 +237,12 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.TWODARR, name:'二维数组', icon: twodarrIcon, className:'data', param:{'type': dataType.twoDArr}},
             {cid:TOOL_ID.ONEDARR, name:'一维数组', icon: onedarrIcon, className:'data', param:{'type': dataType.oneDArr}}]
     },{
-        name:'通信接口',
+        name:'连接',
         key:19,
         gid:19,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.COMINTERFACE, name:'通信接口', icon: cominterfaceIcon, className:'cominterface'}]
+            {cid:TOOL_ID.COMINTERFACE, name:'连接', icon: cominterfaceIcon, className:'sock'}]
     },{
         name:'设备',
         key:22,
