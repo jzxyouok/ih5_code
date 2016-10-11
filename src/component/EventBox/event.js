@@ -308,12 +308,15 @@ class Event extends React.Component {
            propertyMap[chooseEventClassName].map((v,i)=>{
              if(v.isProperty && v.name !='id'){
                  if(v.showName=='W'){
-                     v.showName='宽度';
+                     propArr.push({name:v.name,showName:'宽度',type:v.type});
+                     nameArr.push('宽度');
                  }else if(v.showName=='H'){
-                     v.showName='高度';
+                     propArr.push({name:v.name,showName:'高度',type:v.type});
+                     nameArr.push('高度');
+                 }else{
+                     propArr.push({name:v.name,showName:v.showName,type:v.type});
+                     nameArr.push(v.showName);
                  }
-                 nameArr.push(v.showName);
-                 propArr.push({name:v.name,showName:v.showName,type:v.type});
              }
            });
 
@@ -322,8 +325,6 @@ class Event extends React.Component {
            propArr:propArr
        };
     }
-
-
 
     getCompareValOption(propArr){
         let judgeValType =this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].judgeValType;
