@@ -84,7 +84,7 @@ class ToolBoxButton extends Component {
             else if(this.props.className === "db"){
                 //共享数据库
                 if(this.props.DbType == 0){
-                    let name = '数据库' + this.state.dbList.length;
+                    let name = '数据库' + (this.state.dbList.length + 1);
                     let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
                     //console.log(data);
                     WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {

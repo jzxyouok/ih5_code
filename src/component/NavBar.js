@@ -338,7 +338,7 @@ class NavBar extends React.Component {
     }
 
     createDbShow(){
-        let name = '数据库' + this.state.dbList.length;
+        let name = '数据库' + (this.state.dbList.length + 1);
         let data = "name=" + encodeURIComponent(name) + "&header=" +  null;
         //console.log(data);
         WidgetActions['ajaxSend'](null, 'POST', PREFIX + 'dbSetParm?' + data, null, null, function(text) {
@@ -411,9 +411,24 @@ class NavBar extends React.Component {
     }
 
     createSockShow(){
-        this.setState({
-            createSock : true
-        })
+        let list = this.state.sockList;
+        let value = "连接" + (this.state.sockList.length +1);
+        WidgetActions['ajaxSend'](null, 'POST', 'app/createSock',
+            'application/x-www-form-urlencoded',
+            'name=' + encodeURIComponent(value),
+            function(text) {
+
+                let r = JSON.parse(text);
+                if (r['id']) {
+                    list.push({'id':r['id'], 'name':value});
+                    this.updateSock(list);
+                }
+
+            }.bind(this));
+
+        //this.setState({
+        //    createSock : true
+        //})
     }
 
     createSockHide(){
@@ -434,7 +449,7 @@ class NavBar extends React.Component {
             let data = this.state.selectWidget.children;
             for(let i =0 ; i<data.length; i++){
                 if(data[i].className == "sock"){
-                    if(data[i].node.dbid == id){
+                    if(data[i].node.sid == id){
                         bool = false;
                         return bool;
                     }
@@ -597,7 +612,7 @@ class NavBar extends React.Component {
                                 <div className="dropDownToggle-main">
                                     <div className="dropDown-title f--hlc">
                                         <span className="flex-1">全部连接：</span>
-                                        <span className="set-btn" />
+                                        <span className="set-btn hidden" />
                                     </div>
 
                                     <div className="dropDown-main">
@@ -790,11 +805,14 @@ class NavBar extends React.Component {
                                 dbList = { this.state.dbList } />
                 </div>
 
-                <div className={$class({"hidden": !this.state.createSock})}>
-                    <CreateSock createSockHide={ this.createSockHide }
-                                updateSock={ this.updateSock }
-                                sockList={ this.state.sockList }  />
-                </div>
+                {
+                    //<div className={$class({"hidden": !this.state.createSock})}>
+                    //    <CreateSock createSockHide={ this.createSockHide }
+                    //                updateSock={ this.updateSock }
+                    //                sockList={ this.state.sockList }  />
+                    //</div>
+                }
+
 
             </div>
         );
