@@ -588,6 +588,7 @@ function saveTree(data, node) {
              obj.operationManager={};
              obj.operationManager.arrHidden=v.operationManager.arrHidden;
              judges.children.push(obj);
+                console.log(v);
          });
 
         item.specificList.forEach(cmd => {
