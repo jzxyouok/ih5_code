@@ -594,7 +594,7 @@ propertyMap['db'] = [
 propertyMap['sock'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'sockName' , showName:'名称：',  type: propertyType.String, default: false, readOnly:true , isProperty: true},
+    { name: 'sockName' , showName:'名称：',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
     { name: 'listened', showName:'是否监听：', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'message', showName:'消息', isEvent: true, info:'data'},
 ];
