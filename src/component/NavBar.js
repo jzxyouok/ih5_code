@@ -14,6 +14,7 @@ import ArrangeModule from './arrange-module/index'
 import CreateDb from './create-db/index'
 import ArrangeDb from './arrange-db/index'
 import CreateSock from './create-sock/index'
+import pathData from './path-data'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -43,7 +44,8 @@ class NavBar extends React.Component {
             arrangeDb : false,
             zoomInputState: 0,
             sockList : [],
-            createSock : false
+            createSock : false,
+            shapeList : pathData
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -646,16 +648,43 @@ class NavBar extends React.Component {
                             </div>
                         </div>
 
-                        <button className='btn btn-clear shape-btn' title='形状'>
-                            <span className="icon" />
-                            <span className="title">形状</span>
-                        </button>
-
-                        <div className='dropDown-btn f--hlc hidden'>
+                        <div className='dropDown-btn shape-dropDown f--hlc'>
                             <button className='btn btn-clear shape-btn' title='形状'>
                                 <span className="icon" />
                                 <span className="title">形状</span>
                             </button>
+
+                            <div className='dropDownToggle'>
+                                <div className="dropDownToggle-main">
+                                    <div className="dropDown-title f--hlc">
+                                        <span className="flex-1">全部形状：</span>
+                                    </div>
+
+                                    <div className="dropDown-main">
+                                        <div className="dropDown-scroll">
+                                            <ul className="dropDown-content">
+                                                {
+                                                    this.state.shapeList.data.length > 0
+                                                        ? this.state.shapeList.data.map((v,i)=>{
+                                                            return  <li className="" key={i}>
+                                                                        <svg id={v.name}
+                                                                             data-name={v.name}
+                                                                             xmlns="http://www.w3.org/2000/svg"
+                                                                             width="100"
+                                                                             height="100"
+                                                                             viewBox="0 0 100 100">
+
+                                                                             <path d={ v.path } style={{fill: "#b5b5b5", fillRule: "evenodd"}} />
+                                                                        </svg>
+                                                                    </li>
+                                                        })
+                                                        : null
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className='dropDown-btn2 f--hlc'>
