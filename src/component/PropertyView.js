@@ -361,7 +361,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-
+        console.log(node);
 
         if (!node)  return null;
 
