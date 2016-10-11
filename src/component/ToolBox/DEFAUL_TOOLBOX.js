@@ -122,8 +122,8 @@ var DEFAULT_TOOLBOX = {
         gid:4,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', drawRect:true, param: shapeParam},
-            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', drawRect:true, param: shapeParam},
+            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', drawRect:true, param: {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#EDEDED', 'lineColor': '#8F9191'}},
+            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', drawRect:true, param: {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#EDEDED', 'lineColor': '#8F9191'}},
             {cid:TOOL_ID.PATH,name:'形状',icon:curveIcon, className:'path', drawRect:true, param: shapeParam}]
     },{
         name:'按钮',
