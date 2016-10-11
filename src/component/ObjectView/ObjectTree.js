@@ -6,6 +6,7 @@ import $ from 'jquery';
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget} from '../../stores/WidgetStore';
+import {checkChildClass} from '../PropertyMap';
 
 const drapTipId = 'treeDragTip';
 const placeholderId = 'treeDragPlaceholder';
@@ -538,6 +539,7 @@ class ObjectTree extends React.Component {
             if (!this.selectDragData) {
                 return;
             }
+            let destWidget = null;
             //还需判断是否是目标对象是否是来源对象的子对象，如果是就不允许
             if((srcKey == destKey && srcParentKey === destParentKey)) {
                 //相同位置
@@ -546,10 +548,20 @@ class ObjectTree extends React.Component {
                 //目标为来源的父节点
                 switch (this.overPosition){
                     case overPosition.top:
-                        WidgetActions['moveWidget'](this.selectDragData, destParentKey, destOrder);
+                        destWidget = WidgetStore.findWidget(destParentKey);
+                        if(destWidget) {
+                            if(checkChildClass(destWidget, this.selectDragData.className)) {
+                                WidgetActions['moveWidget'](this.selectDragData, destWidget, destOrder);
+                            }
+                        }
                         break;
                     case overPosition.bot:
-                        WidgetActions['moveWidget'](this.selectDragData, destParentKey, ++destOrder);
+                        destWidget = WidgetStore.findWidget(destParentKey);
+                        if(destWidget) {
+                            if(checkChildClass(destWidget, this.selectDragData.className)) {
+                                WidgetActions['moveWidget'](this.selectDragData, destWidget, ++destOrder);
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -559,7 +571,12 @@ class ObjectTree extends React.Component {
                 switch (this.overPosition){
                     case overPosition.mid:
                         //放入同层元素即跨层
-                        WidgetActions['moveWidget'](this.selectDragData, destKey, 0);
+                        destWidget = WidgetStore.findWidget(destKey);
+                        if(destWidget) {
+                            if(checkChildClass(destWidget, this.selectDragData.className)) {
+                                WidgetActions['moveWidget'](this.selectDragData, destWidget, 0);
+                            }
+                        }
                         break;
                     case overPosition.bot:
                         destOrder++;
@@ -582,11 +599,31 @@ class ObjectTree extends React.Component {
                     //不是的话就实现跨层
                     switch (this.overPosition){
                         case overPosition.mid:
-                            //放入跨层元素内部
-                            WidgetActions['moveWidget'](this.selectDragData, destKey, 0);
+                            destWidget = WidgetStore.findWidget(destKey);
+                            if(destWidget) {
+                                if(checkChildClass(destWidget, this.selectDragData.className)) {
+                                    //放入跨层元素内部
+                                    WidgetActions['moveWidget'](this.selectDragData, destWidget, 0);
+                                }
+                            }
+                            break;
+                        case overPosition.bot:
+                            destWidget = WidgetStore.findWidget(destParentKey);
+                            if(destWidget) {
+                                if(checkChildClass(destWidget, this.selectDragData.className)) {
+                                    //放入跨层元素内部
+                                    WidgetActions['moveWidget'](this.selectDragData, destWidget, ++destOrder);
+                                }
+                            }
                             break;
                         default:
-                            WidgetActions['moveWidget'](this.selectDragData, destParentKey, destOrder);
+                            destWidget = WidgetStore.findWidget(destParentKey);
+                            if(destWidget) {
+                                if(checkChildClass(destWidget, this.selectDragData.className)) {
+                                    //放入跨层元素内部
+                                    WidgetActions['moveWidget'](this.selectDragData, destWidget, destOrder);
+                                }
+                            }
                             break;
                     }
                 }
@@ -642,23 +679,21 @@ class ObjectTree extends React.Component {
                 let layer = this.over.dataset.layer;
                 let mid1 = maxHeight/3;
                 let mid2 = maxHeight*2/3;
-                if(deltaTop>=0&&deltaTop<=mid1){
-                    this.overPosition=overPosition.top;
+                if(deltaTop>=0&&deltaTop<=mid1) {
+                    this.overPosition = overPosition.top;
                     this.over.style.backgroundColor = '';
-                    let destlayerPadding =  layer==='1' ? '' :layer *20 + 22 +'px';
-                    this.placeholder.style.marginLeft = destlayerPadding;
+                    this.placeholder.style.marginLeft = layer === '1' ? '' : layer * 20 + 22 + 'px';
                     this.over.parentNode.insertBefore(this.placeholder, this.over);
-                } else if (deltaTop>mid1&&deltaTop<mid2) {
+                } else if(deltaTop>mid1&&deltaTop<mid2){
                     this.overPosition=overPosition.mid;
                     this.over.style.backgroundColor = '#FFA800';
-                    if(this.placeholder&&this.placeholder.parentElement) {
+                    if(this.placeholder.parentElement) {
                         this.placeholder.parentElement.removeChild(this.placeholder);
                     }
                 } else if (deltaTop>=mid2&&deltaTop<=maxHeight) {
                     this.overPosition=overPosition.bot;
                     this.over.style.backgroundColor = '';
-                    let destlayerPadding = layer==='1' ? '' :layer *20 + 22 +'px';
-                    this.placeholder.style.marginLeft = destlayerPadding;
+                    this.placeholder.style.marginLeft =layer==='1' ? '' :layer *20 + 22 +'px';
                     this.over.parentNode.appendChild(this.placeholder);
                 }
             }
