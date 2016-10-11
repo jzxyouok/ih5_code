@@ -503,8 +503,18 @@ class ObjectTree extends React.Component {
         }
         e.stopPropagation();
         this.initialDragTip('拖拽对象到此', false);
-        //拖动同时把item设为被选中
-        this.chooseBtn(nid, data);
+        if(this.state.nid !== nid){
+            //拖动同时把item设为被选中
+            this.setState({
+                nid : nid,
+                editMode: false
+            },()=>{
+                WidgetActions['selectWidget'](data, true);
+            });
+        }
+        //初始化一下
+        this.over = null;
+        this.overPosition = null;
         this.selectDragData = data;
         this.dragged = e.currentTarget;
         e.dataTransfer.effectAllowed = 'move';
@@ -545,33 +555,36 @@ class ObjectTree extends React.Component {
                 //自定义模块
             } else if(destParentKey === -1) {
                 //stage类
-                if (srcParentKey !== destKey) {
-                    destWidget = WidgetStore.findWidget(destKey);
-                    if(destWidget) {
-                        if(checkChildClass(destWidget, this.selectDragData.className)) {
-                            WidgetActions['moveWidget'](this.selectDragData, destWidget, 0);
-                        }
+                destWidget = WidgetStore.findWidget(destKey);
+                if(destWidget) {
+                    if(checkChildClass(destWidget, this.selectDragData.className)) {
+                        WidgetActions['moveWidget'](this.selectDragData, destWidget, 0);
                     }
                 }
             } else if((srcKey == destKey && srcParentKey === destParentKey)) {
                 //相同位置
             } else if (srcParentKey === destKey) {
                 //目标为来源的父节点
-                if(this.overPosition !== overPosition.mid) {
-                    let pOrder = null;
-                    switch (this.overPosition){
-                        case overPosition.top:
-                            pOrder = destOrder;
-                            break;
-                        case overPosition.bot:
-                            pOrder = ++destOrder;
-                            break;
-                    }
-                    destWidget = WidgetStore.findWidget(destParentKey);
-                    if(destWidget) {
-                        if(checkChildClass(destWidget, this.selectDragData.className)) {
-                            WidgetActions['moveWidget'](this.selectDragData, destWidget, pOrder);
-                        }
+                let pOrder = null;
+                let pKey = null;
+                switch (this.overPosition){
+                    case overPosition.top:
+                        pOrder = destOrder;
+                        pKey = destParentKey;
+                        break;
+                    case overPosition.bot:
+                        pOrder = ++destOrder;
+                        pKey = destParentKey;
+                        break;
+                    case overPosition.mid:
+                        pOrder = 0;
+                        pKey = destKey;
+                        break;
+                }
+                destWidget = WidgetStore.findWidget(pKey);
+                if(destWidget) {
+                    if(checkChildClass(destWidget, this.selectDragData.className)) {
+                        WidgetActions['moveWidget'](this.selectDragData, destWidget, pOrder);
                     }
                 }
             } else if (srcKey !== destKey && srcParentKey === destParentKey){
