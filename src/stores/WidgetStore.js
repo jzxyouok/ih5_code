@@ -550,7 +550,8 @@ function saveTree(data, node) {
         var cmds = [];
         var judges={};
         judges.conFlag = item.conFlag;
-            judges.needFill=item.needFill;   //触发条件的值
+
+        judges.needFill=item.needFill;   //触发条件的值
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
         judges.children=[];
@@ -653,9 +654,11 @@ function saveTree(data, node) {
 
       });
       data['etree'] = etree;
-      var js = generateJsFunc(etree);
-      if (js)
-        data['events'] = js;
+        if(node.props['enableEventTree']){
+            var js = generateJsFunc(etree);
+            if (js)
+                data['events'] = js;
+        }
     } else {
         props[name] = node.props[name];
     }
@@ -1153,8 +1156,8 @@ export default Reflux.createStore({
                     dest.children.splice(index, 0, obj);
                     // var delta = index - destIndex;
                     bridge.reorderWidget(obj.node, -(index - destIndex));
-                    this.render();
                 }
+                this.render();
                 this.selectWidget(obj);
                 this.reorderEventTreeList();
             }

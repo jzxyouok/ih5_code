@@ -318,7 +318,7 @@ class DBItemView extends React.Component {
                         <div className='ant-col-r'>
                             <div className="container-scroll" id="db-item-container-scroll">
                                 <div className={$class('item-container')}
-                                style={{width: this.state.fields.length*130+10+'px'}}>
+                                 style={{width: this.state.fields.length*130+10+'px'}}>
                                     {
                                         this.state.fields.map(content)
                                     }
