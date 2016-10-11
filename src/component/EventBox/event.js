@@ -521,6 +521,7 @@ class Event extends React.Component {
         let option = type.replace('Flag', 'Option');
         let eventList =this.state.eventList;
         let arr=[];
+        console.log(type);
         if(type=='judgeObjFlag'){
             arr =this.state[option];
         }else if(type=='judgeValFlag'){
@@ -529,6 +530,8 @@ class Event extends React.Component {
             arr =  eventList[this.curEventIndex].children[this.curChildrenIndex][option];
         }else if(type=='compareObjFlag'){
             arr =this.state[option]
+            console.log('hehehehe');
+            eventList[this.curEventIndex].children[this.curChildrenIndex].showDropdown=false;
         }
         arr.map((v,i)=>{
             if(v ==newVal){
@@ -542,6 +545,7 @@ class Event extends React.Component {
 
                     let arrHidden = eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
                     arrHidden[5] = true;
+
                    // eventList[this.curEventIndex].children[this.curChildrenIndex][type] = this.oldVal;
                     this.setEventBoxWidth(eventList);
                     this.setState({eventList: eventList});
