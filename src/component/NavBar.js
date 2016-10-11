@@ -777,7 +777,7 @@ class NavBar extends React.Component {
                                                     this.state.dbList.length > 0
                                                         ? this.state.dbList.map((v,i)=>{
                                                             return  <li className={$class({"not-active" : !this.state.isAddDb
-                                                                                            && this.state.reAddDbId.indexOf(v.id)< 0
+                                                                          || (this.state.isAddDb && this.state.reAddDbId.indexOf(v.id)> 0)
                                                                                         })}
                                                                         key={i} >
 
@@ -829,7 +829,7 @@ class NavBar extends React.Component {
                                                     this.state.sockList.length > 0
                                                         ? this.state.sockList.map((v,i)=>{
                                                             return  <li className={$class({"not-active" : !this.state.isAddSock
-                                                                                            && this.state.reAddSockId.indexOf(v.id)< 0
+                                                                        || (this.state.isAddSock && this.state.reAddSockId.indexOf(v.id)> 0)
                                                                                         })}
                                                                         key={i}
                                                                         onClick={this.addSock.bind(this,v.id,v.name)}>
