@@ -129,9 +129,9 @@ class ToolBoxButton extends Component {
                         if (r['id']) {
                             list.push({'id':r['id'], 'name':value});
                             //this.updateSock(list);
-                            WidgetActions['addWidget']('sock', {'sid': id},null,name);
-                            ToolBoxAction['deselect']();
                             getSockListAction['getSockList'](list);
+                            WidgetActions['addWidget']('sock', {'sid': r['id']},null,value);
+                            ToolBoxAction['deselect']();
                         }
 
                     }.bind(this));
