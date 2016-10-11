@@ -646,6 +646,12 @@ class ObjectTree extends React.Component {
             this.placeholder.style.display = 'hidden';
             return;
         }
+
+        let tipAllow = '拖拽对象到此';
+        let tipAllowColor = '#4F4F4F';
+        let tipForbidden = '无法拖拽至此';
+        let tipForBiddenColor = '#b5b5b5';
+
         //递归找到并获取名字叫item的div
         let findItemDiv = (target,cNameList) => {
             if(target) {
@@ -671,36 +677,109 @@ class ObjectTree extends React.Component {
                 if(this.placeholder&&this.placeholder.parentElement) {
                     this.placeholder.parentElement.removeChild(this.placeholder);
                 }
+                this.dragTip.innerHTML = tipForbidden;
+                this.dragTip.style.background = tipForBiddenColor;
             } else {
+                let destKey = Number(this.over.dataset.wkey);
+                let destParentKey = Number(this.over.dataset.parentkey);
                 if(isNaN(Number(this.over.dataset.parentkey))) {
                     //自定义模块
                 } else if(Number(this.over.dataset.parentkey) === -1) {
                     //stage类
-                    this.over.style.backgroundColor = '#FFA800';
                     if(this.placeholder.parentElement) {
                         this.placeholder.parentElement.removeChild(this.placeholder);
                     }
-                } else {
-                    let deltaTop = e.clientY-this.getDeltaY(this.over)+document.body.scrollTop;
+                    let destWidget = WidgetStore.findWidget(destKey);
+                    if (destWidget&&!checkChildClass(destWidget, this.selectDragData.className)) {
+                        //不可添加的对象
+                        this.dragTip.innerHTML = tipForbidden;
+                        this.dragTip.style.background = tipForBiddenColor;
+                        this.over.style.backgroundColor = '#8F8F8F';
+                    } else {
+                        this.dragTip.innerHTML = tipAllow;
+                        this.dragTip.style.background = tipAllowColor;
+                        this.over.style.backgroundColor = '#FFA800';
+                    }
+                } else  {
+                    let deltaTop = e.clientY - this.getDeltaY(this.over) + document.body.scrollTop;
                     let maxHeight = this.over.offsetHeight;
                     let layer = this.over.dataset.layer;
-                    let mid1 = maxHeight/3;
-                    let mid2 = maxHeight*2/3;
-                    if(deltaTop>=0&&deltaTop<=mid1) {
+                    let mid1 = maxHeight / 3;
+                    let mid2 = maxHeight * 2 / 3;
+                    if (deltaTop >= 0 && deltaTop <= mid1) {
                         this.overPosition = overPosition.top;
                         this.over.style.backgroundColor = '';
+                        let keyList = this.getChildrenKeys(this.selectDragData);
+                        if(keyList.indexOf(destKey)>=0){
+                            //dest为src的内部元素
+                            this.dragTip.innerHTML = tipForbidden;
+                            this.dragTip.style.background = tipForBiddenColor;
+                            this.placeholder.style.backgroundColor = '#8F8F8F';
+                        } else {
+                            //父对象是否可添加
+                            let destWidget = WidgetStore.findWidget(destParentKey);
+                            if (destWidget&&!checkChildClass(destWidget, this.selectDragData.className)) {
+                                //不可添加的对象
+                                this.dragTip.innerHTML = tipForbidden;
+                                this.dragTip.style.background = tipForBiddenColor;
+                                this.placeholder.style.backgroundColor = '#8F8F8F';
+                            } else {
+                                this.dragTip.innerHTML = tipAllow;
+                                this.dragTip.style.background = tipAllowColor;
+                                this.placeholder.style.backgroundColor = '#FFA800';
+                            }
+                        }
                         this.placeholder.style.marginLeft = layer === '1' ? '' : layer * 20 + 22 + 'px';
                         this.over.parentNode.insertBefore(this.placeholder, this.over);
-                    } else if(deltaTop>mid1&&deltaTop<mid2){
-                        this.overPosition=overPosition.mid;
-                        this.over.style.backgroundColor = '#FFA800';
+                    } else if (deltaTop > mid1 && deltaTop < mid2) {
+                        this.overPosition = overPosition.mid;
                         if(this.placeholder.parentElement) {
                             this.placeholder.parentElement.removeChild(this.placeholder);
                         }
-                    } else if (deltaTop>=mid2&&deltaTop<=maxHeight) {
-                        this.overPosition=overPosition.bot;
+                        let keyList = this.getChildrenKeys(this.selectDragData);
+                        if(keyList.indexOf(destKey)>=0){
+                            //dest为src的内部元素
+                            this.dragTip.innerHTML = tipForbidden;
+                            this.dragTip.style.background = tipForBiddenColor;
+                            this.over.style.backgroundColor = '#8F8F8F';
+                        } else {
+                            let destWidget = WidgetStore.findWidget(destKey);
+                            if (destWidget&&!checkChildClass(destWidget, this.selectDragData.className)) {
+                                //不可添加的对象
+                                this.dragTip.innerHTML = tipForbidden;
+                                this.dragTip.style.background = tipForBiddenColor;
+                                this.over.style.backgroundColor = '#8F8F8F';
+                            } else {
+                                this.dragTip.innerHTML = tipAllow;
+                                this.dragTip.style.background = tipAllowColor;
+                                this.over.style.backgroundColor = '#FFA800';
+                            }
+                        }
+                    } else if (deltaTop >= mid2 && deltaTop <= maxHeight) {
+                        this.overPosition = overPosition.bot;
                         this.over.style.backgroundColor = '';
-                        this.placeholder.style.marginLeft =layer==='1' ? '' :layer *20 + 22 +'px';
+
+                        let keyList = this.getChildrenKeys(this.selectDragData);
+                        if(keyList.indexOf(destKey)>=0){
+                            //dest为src的内部元素
+                            this.dragTip.innerHTML = tipForbidden;
+                            this.dragTip.style.background = tipForBiddenColor;
+                            this.placeholder.style.backgroundColor = '#8F8F8F';
+                        } else {
+                            //父对象是否可添加
+                            let destWidget = WidgetStore.findWidget(destParentKey);
+                            if (destWidget&&!checkChildClass(destWidget, this.selectDragData.className)) {
+                                //不可添加的对象
+                                this.dragTip.innerHTML = tipForbidden;
+                                this.dragTip.style.background = tipForBiddenColor;
+                                this.placeholder.style.backgroundColor = '#8F8F8F';
+                            } else {
+                                this.dragTip.innerHTML = tipAllow;
+                                this.dragTip.style.background = tipAllowColor;
+                                this.placeholder.style.backgroundColor = '#FFA800';
+                            }
+                        }
+                        this.placeholder.style.marginLeft = layer === '1' ? '' : layer * 20 + 22 + 'px';
                         this.over.parentNode.appendChild(this.placeholder);
                     }
                 }
