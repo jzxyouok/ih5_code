@@ -35,7 +35,7 @@ class ToolBoxButtonGroup extends Component {
         let hasSecondaryMenu = this.props.secondary instanceof Array && this.props.secondary.length > 1;
 
         return (
-            <div className={ cls('ToolBoxButtonGroup', {'hasSecondaryMenu': hasSecondaryMenu}) }>
+            <div className={ cls('ToolBoxButtonGroup', {'hasSecondaryMenu': hasSecondaryMenu}, {'hidden':this.props.hidden}) }>
                 <ToolBoxButton
                     level={1}
                     isPrimary={true}
