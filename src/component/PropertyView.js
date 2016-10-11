@@ -568,6 +568,7 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
+        console.log(widget);
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
         }
