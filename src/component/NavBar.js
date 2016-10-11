@@ -22,6 +22,7 @@ import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import DbHeaderAction from '../actions/DbHeader'
 import DbHeaderStores from '../stores/DbHeader';
+import DrawRect from './ToolBox/DrawRect';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -75,6 +76,7 @@ class NavBar extends React.Component {
         this.createSockHide = this.createSockHide.bind(this);
         this.updateSock = this.updateSock.bind(this);
         this.addSock = this.addSock.bind(this);
+        this.onDrawRect = this.onDrawRect.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -89,6 +91,8 @@ class NavBar extends React.Component {
         }
         this.newWork();
         this.workid = null;
+
+        this.drawRect = null;
     }
 
     componentDidMount() {
@@ -463,6 +467,41 @@ class NavBar extends React.Component {
         }
     }
 
+    onDrawRect(svgPath) {
+        new DrawRect().cleanUp();
+        this.drawRect = new DrawRect();
+        this.drawRect.start();
+        let svgData = {
+            positionX : undefined,
+            positionY : undefined,
+            shapeWidth : undefined,
+            shapeHeight : undefined,
+            width : undefined,
+            height : undefined,
+            fillColor : "#000000",
+            path : svgPath
+        };
+
+        this.drawRect.def.promise().then(data => {
+            svgData.positionX = data.positionX;
+            svgData.positionY = data.positionY;
+            svgData.shapeWidth = data.shapeWidth;
+            svgData.shapeHeight = data.shapeHeight;
+            svgData.width = data.width;
+            svgData.height = data.height;
+
+            //console.log(svgData);
+            WidgetActions['addWidget']("path", svgData);
+            this.drawRect.end();
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        },(() => {
+            this.drawRect.end();
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        }));
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -666,7 +705,7 @@ class NavBar extends React.Component {
                                                 {
                                                     this.state.shapeList.data.length > 0
                                                         ? this.state.shapeList.data.map((v,i)=>{
-                                                            return  <li className="" key={i}>
+                                                            return  <li className="" key={i} onClick={ this.onDrawRect.bind(this,v.path) }>
                                                                         <svg id={v.name}
                                                                              data-name={v.name}
                                                                              xmlns="http://www.w3.org/2000/svg"
