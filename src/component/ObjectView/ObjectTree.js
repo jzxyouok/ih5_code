@@ -10,6 +10,11 @@ import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget} f
 const drapTipId = 'treeDragTip';
 const placeholderId = 'treeDragPlaceholder';
 const appId = 'iH5-App';
+const overPosition = {
+    top: 1,
+    mid: 2,
+    bot: 3,
+};
 
 class ObjectTree extends React.Component {
     constructor (props) {
@@ -59,10 +64,15 @@ class ObjectTree extends React.Component {
         this.itemDragStart = this.itemDragStart.bind(this);
         this.itemDragEnd = this.itemDragEnd.bind(this);
         this.itemDragOver = this.itemDragOver.bind(this);
+        this.getDeltaY = this.getDeltaY.bind(this);
         //拖动时显示的tip
         this.dragWithTip = this.dragWithTip.bind(this);
         this.initialDragTip = this.initialDragTip.bind(this);
         this.destroyDragTip = this.destroyDragTip.bind(this);
+
+        this.dragged = null;
+        this.over = null;
+        this.overPosition = null;
         //有关拖动的相关参数
         this.placeholder = document.createElement('div');
         this.placeholder.id = 'treeDragPlaceholder';
@@ -511,18 +521,63 @@ class ObjectTree extends React.Component {
             elem.parentElement.removeChild(elem);
         }
         if(this.dragged&&this.over){
+            this.over.style.backgroundColor = '';
+            //位置
             let srcKeyId = Number(this.dragged.dataset.keyid);
-            let srcKey = Number(this.dragged.dataset.wkey);
-            let srcParentKey = Number(this.dragged.dataset.parentkey);
             let destKeyId = Number(this.over.dataset.keyid);
+            //对象的key
+            let srcKey = Number(this.dragged.dataset.wkey);
             let destKey = Number(this.over.dataset.wkey);
+            //对象的父key
+            let srcParentKey = Number(this.dragged.dataset.parentkey);
             let destParentKey = Number(this.over.dataset.parentkey);
-            if (srcKeyId !== destKeyId && srcParentKey === destParentKey){
-                //同层
-                WidgetActions['reorderWidget'](srcKeyId-destKeyId>0?-(srcKeyId-destKeyId):-(srcKeyId-(--destKeyId)));
+            //还需判断是否是目标对象是否是来源对象的子对象，如果是就不允许
+            if((srcKey == destKey && srcParentKey === destParentKey)) {
+                //相同位置
+                return;
+            } else if (srcParentKey === destKey) {
+                //目标为来源的父节点
+                switch (this.overPosition){
+                    case overPosition.top:
+                        WidgetActions['moveWidget'](srcKey, destParentKey, destKeyId);
+                        break;
+                    case overPosition.bot:
+                        WidgetActions['moveWidget'](srcKey, destParentKey, ++destKeyId);
+                        break;
+                    default:
+                        break;
+                }
+            } else if (srcKey !== destKey && srcParentKey === destParentKey){
+                //同层同源
+                switch (this.overPosition){
+                    case overPosition.mid:
+                        //放入同层元素即跨层
+                        WidgetActions['moveWidget'](srcKey, destKey, 0);
+                        break;
+                    case overPosition.bot:
+                        destKeyId++;
+                        if(srcKeyId == destKeyId) {
+                            //来源在目标元素下面
+                            return;
+                        } else {
+                            WidgetActions['reorderWidget'](srcKeyId-destKeyId>0?-(srcKeyId-destKeyId):-(srcKeyId-(--destKeyId)));
+                        }
+                        break;
+                    default:
+                        WidgetActions['reorderWidget'](srcKeyId-destKeyId>0?-(srcKeyId-destKeyId):-(srcKeyId-(--destKeyId)));
+                        break;
+                }
             } else {
                 //跨层
-                WidgetActions['moveWidget'](srcKey, destParentKey, destKeyId);
+                switch (this.overPosition){
+                    case overPosition.mid:
+                        //放入跨层元素内部
+                        WidgetActions['moveWidget'](srcKey, destKey, 0);
+                        break;
+                    default:
+                        WidgetActions['moveWidget'](srcKey, destParentKey, destKeyId);
+                        break;
+                }
             }
         }
     }
@@ -535,7 +590,10 @@ class ObjectTree extends React.Component {
         }
         e.stopPropagation();
         this.dragWithTip(e.clientX, e.clientY, true);
-        if(e.target.id === placeholderId) return;
+        if(e.target.id === placeholderId) {
+            this.placeholder.style.display = 'hidden';
+            return;
+        }
         //递归找到并获取名字叫item的div
         let findItemDiv = (target,cName) => {
             if(target) {
@@ -547,10 +605,52 @@ class ObjectTree extends React.Component {
             }
             return findItemDiv(target.parentNode, cName);
         };
+        if(this.over){
+            this.over.style.backgroundColor = '';
+        }
+        if(this.placeholder){
+            this.placeholder.style.display = 'block';
+            this.placeholder.style.marginLeft = '';
+        }
         this.over = findItemDiv(e.target, 'item-title-wrap clearfix');
         if(this.over) {
-            this.over.parentNode.insertBefore(this.placeholder, this.over);
+            if (this.over.dataset.wkey == this.dragged.dataset.wkey) {
+                if(this.placeholder&&this.placeholder.parentElement) {
+                    this.placeholder.parentElement.removeChild(this.placeholder);
+                }
+            } else {
+                let deltaTop = e.clientY-this.getDeltaY(this.over)+document.body.scrollTop;
+                let maxHeight = this.over.offsetHeight;
+                let mid1 = maxHeight/3;
+                let mid2 = maxHeight*2/3;
+                if(deltaTop>=0&&deltaTop<=mid1){
+                    this.overPosition=overPosition.top;
+                    this.over.style.backgroundColor = '';
+                    this.placeholder.style.marginLeft = parseFloat(this.over.firstChild.style.paddingLeft)-42+'px';
+                    this.over.parentNode.insertBefore(this.placeholder, this.over);
+                } else if (deltaTop>mid1&&deltaTop<mid2) {
+                    this.overPosition=overPosition.mid;
+                    this.over.style.backgroundColor = '#FFA800';
+                    if(this.placeholder&&this.placeholder.parentElement) {
+                        this.placeholder.parentElement.removeChild(this.placeholder);
+                    }
+                } else if (deltaTop>=mid2&&deltaTop<=maxHeight) {
+                    this.overPosition=overPosition.bot;
+                    this.over.style.backgroundColor = '';
+                    this.placeholder.style.marginLeft = parseFloat(this.over.firstChild.style.paddingLeft)-42+'px';
+                    this.over.parentNode.appendChild(this.placeholder);
+                }
+            }
         }
+    }
+
+    getDeltaY(obj){
+        var ParentObj=obj;
+        var top=obj.offsetTop;
+        while(ParentObj=ParentObj.offsetParent){
+            top+=ParentObj.offsetTop;
+        }
+        return top;
     }
 
     onKeyDown(e){

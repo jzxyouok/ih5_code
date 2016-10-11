@@ -477,6 +477,11 @@ propertyMap['easing'] = [
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true }
 ];
+
+propertyMap['3dRotate'] = [
+    { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
+];
+
 propertyMap['effect'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box | widgetFlags.DomOnly, addProvides:widgetFlags.Leaf},
@@ -660,11 +665,19 @@ function checkLockClass(selected) {
 }
 
 function checkNotInDomMode(selected, className) {
+    let selectWidget = selected;
+    if(selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        selectWidget = selected.widget;
+    } else {
+        selectWidget = selected;
+    }
     if(propertyFlags[className]===undefined){
         return false;
     }
     var requires = propertyFlags[className].requires;
-    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selected.node) != 1)
+    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selectWidget.node) != 1)
         return true;
     return false;
 }
