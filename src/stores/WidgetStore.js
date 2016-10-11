@@ -654,9 +654,11 @@ function saveTree(data, node) {
 
       });
       data['etree'] = etree;
-      var js = generateJsFunc(etree);
-      if (js)
-        data['events'] = js;
+        if(node.props['enableEventTree']){
+            var js = generateJsFunc(etree);
+            if (js)
+                data['events'] = js;
+        }
     } else {
         props[name] = node.props[name];
     }
@@ -1154,8 +1156,8 @@ export default Reflux.createStore({
                     dest.children.splice(index, 0, obj);
                     // var delta = index - destIndex;
                     bridge.reorderWidget(obj.node, -(index - destIndex));
-                    this.render();
                 }
+                this.render();
                 this.selectWidget(obj);
                 this.reorderEventTreeList();
             }
