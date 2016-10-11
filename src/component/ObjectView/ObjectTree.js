@@ -682,12 +682,17 @@ class ObjectTree extends React.Component {
                         pic = 'personalDb-icon';
                     }
                     picIsImage = false;
-                } else if(v.className === 'data'){
+                }
+                else if(v.className === 'data'){
                     if(v.props.type === dataType.twoDArr) {
                         pic = 'twoDArr-icon';
                     } else if (v.props.type === dataType.oneDArr) {
                         pic = 'oneDArr-icon';
                     }
+                    picIsImage = false;
+                }
+                else if(v.className === 'sock'){
+                    pic = 'sock-icon';
                     picIsImage = false;
                 }
                 else if (v1.className === v.className){
@@ -744,7 +749,7 @@ class ObjectTree extends React.Component {
                                 : <span className={$class('item-icon', pic)} />
                         }
                         {
-                            isCustomizeWidget(v.className)||v.className == 'db'
+                            isCustomizeWidget(v.className) || v.className == 'db'|| v.className == "sock"
                                 ? <div className='item-name-wrap'>
                                     <p>{v.props.name}</p>
                                   </div>

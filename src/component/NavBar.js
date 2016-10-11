@@ -411,9 +411,24 @@ class NavBar extends React.Component {
     }
 
     createSockShow(){
-        this.setState({
-            createSock : true
-        })
+        let list = this.state.sockList;
+        let value = "连接" + this.state.sockList.length;
+        WidgetActions['ajaxSend'](null, 'POST', 'app/createSock',
+            'application/x-www-form-urlencoded',
+            'name=' + encodeURIComponent(value),
+            function(text) {
+
+                let r = JSON.parse(text);
+                if (r['id']) {
+                    list.push({'id':r['id'], 'name':value});
+                    this.updateSock(list);
+                }
+
+            }.bind(this));
+
+        //this.setState({
+        //    createSock : true
+        //})
     }
 
     createSockHide(){
@@ -790,11 +805,14 @@ class NavBar extends React.Component {
                                 dbList = { this.state.dbList } />
                 </div>
 
-                <div className={$class({"hidden": !this.state.createSock})}>
-                    <CreateSock createSockHide={ this.createSockHide }
-                                updateSock={ this.updateSock }
-                                sockList={ this.state.sockList }  />
-                </div>
+                {
+                    //<div className={$class({"hidden": !this.state.createSock})}>
+                    //    <CreateSock createSockHide={ this.createSockHide }
+                    //                updateSock={ this.updateSock }
+                    //                sockList={ this.state.sockList }  />
+                    //</div>
+                }
+
 
             </div>
         );

@@ -223,6 +223,7 @@
 
                         .title{
                             height: 28px;
+                            color: #b5b5b5;
                         }
 
                         .title:hover {
@@ -231,7 +232,7 @@
 
                         .title:active {
                             background: #232323;
-                            color: #b5b5b5;
+                            color: #454545;
                         }
 
                         &.not-active:active{
