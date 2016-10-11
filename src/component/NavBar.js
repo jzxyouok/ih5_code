@@ -23,6 +23,7 @@ import WidgetStore from '../stores/WidgetStore';
 import DbHeaderAction from '../actions/DbHeader'
 import DbHeaderStores from '../stores/DbHeader';
 import DrawRect from './ToolBox/DrawRect';
+import {checkChildClass} from './PropertyMap';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -46,7 +47,8 @@ class NavBar extends React.Component {
             zoomInputState: 0,
             sockList : [],
             createSock : false,
-            shapeList : pathData
+            shapeList : pathData,
+            isAddShape : true
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -114,7 +116,8 @@ class NavBar extends React.Component {
         }
         if(widget.selectWidget){
             this.setState({
-                selectWidget : widget.selectWidget
+                selectWidget : widget.selectWidget,
+                isAddShape : checkChildClass(widget.selectWidget, 'path')
             })
         }
     }
@@ -470,6 +473,8 @@ class NavBar extends React.Component {
     }
 
     onDrawRect(svgPath) {
+        if(!this.state.isAddShape) return;
+
         new DrawRect().cleanUp();
         this.drawRect = new DrawRect();
         this.drawRect.start();
@@ -492,7 +497,7 @@ class NavBar extends React.Component {
             //svgData.width = data.width;
             //svgData.height = data.height;
 
-            console.log(svgData);
+            //console.log(svgData);
             WidgetActions['addWidget']("path", svgData);
             this.drawRect.end();
             this.drawRect.cleanUp();
@@ -529,8 +534,6 @@ class NavBar extends React.Component {
                 return <li key={i} className="not-active"> </li>
             })
         };
-
-
 
         return (
             <div className='NavBar f--h'>
@@ -707,7 +710,9 @@ class NavBar extends React.Component {
                                                 {
                                                     this.state.shapeList.data.length > 0
                                                         ? this.state.shapeList.data.map((v,i)=>{
-                                                            return  <li className="" key={i} onClick={ this.onDrawRect.bind(this,v.path) }>
+                                                            return  <li className={ $class({"not-active": !this.state.isAddShape})}
+                                                                        key={i}
+                                                                        onClick={ this.onDrawRect.bind(this,v.path) }>
                                                                         <svg id={v.name}
                                                                              data-name={v.name}
                                                                              xmlns="http://www.w3.org/2000/svg"

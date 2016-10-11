@@ -501,6 +501,12 @@
                             svg{ opacity: 0.5; }
                         }
 
+                        &.not-active{
+                            background: #232323;
+                            cursor: not-allowed;
+                            svg{ opacity: 0.5; }
+                        }
+
                         svg {
                             transform: scale(0.3);
                             transform-origin: 2.5px 2px;
