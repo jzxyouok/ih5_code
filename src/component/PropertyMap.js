@@ -162,7 +162,7 @@ propertyMap['counter'] = [
     { name: 'negative', showName:'为负数', isEvent: true },
     { name: 'odd', showName:'为奇数', isEvent: true },
     { name: 'even', showName:'为偶数', isEvent: true },
-    { name: 'remainder', showName:'余数为', isEvent: true ,needFill:[{showName:'除数',default:''},{showName:'余数',default:''}]},
+    { name: 'remainder', showName:'余数为', isEvent: true ,needFill:[{showName:'除数',type:'number',default:''},{showName:'余数',type:'number',default:''}]},
 ];
 propertyMap['video'] = [
     ...propertyMap['sprite'],
@@ -244,14 +244,34 @@ propertyMap['input'] = [
     { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: false },
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: false},
     { name: 'color', type: propertyType.Color, default:'#FFFFFF', isProperty: true },
+
+
+
+    { name: 'isEmpty', showName:'为空', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'}]},
+    { name: 'isNotEmpty', showName:'不为空', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'}]},
+    { name: 'isMatch', showName:'匹配', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'文本',type:'string',default:''}]},
+    { name: 'isUnMatch', showName:'不匹配', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'文本',type:'string',default:''}]},
+    { name: 'isContain', showName:'包含文本', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'文本',type:'string',default:''}]},
+
+    { name: 'lenEqual', showName:'长度等于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'长度值',type:'number',default:''}]},
+    { name: 'lenUnEqual', showName:'长度不等于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'长度值',type:'number',default:''}]},
+    { name: 'lenBigThan', showName:'长度大于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'长度值',type:'number',default:''}]},
+    { name: 'lenLessThan', showName:'长度小于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'长度值',type:'number',default:''}]},
+
+    { name: 'isNum', showName:'是数字', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'}]},
+    { name: 'isNotNum', showName:'不是数字', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'}]},
+    { name: 'isLetter', showName:'是字母', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'}]},
+    { name: 'isNotLetter', showName:'不是字母', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'}]},
+
     ...propertyMap['textBox']
+
 ];
 propertyMap['ellipse'] = [
     ...propertyMap['graphics']
 ];
 propertyMap['path'] = [
     ...propertyMap['graphics'],
-    { name: 'path',showName:'路径', type: propertyType.String, default: '', isProperty: true }
+    { name: 'path',showName:'路径', type: propertyType.String, default: '', isProperty: false }
 ];
 propertyMap['container'] = [
     ...propertyMap['box'],

@@ -158,23 +158,27 @@ class PropertyView extends React.Component {
                 case propertyType.Float:
                     let h;
                     let w;
-                    let width= this.selectNode.props.width;
-                    let height= this.selectNode.props.height;
+                    let width= this.selectNode.node.width;
+                    let height= this.selectNode.node.height;
                     let defaultWidth =this.selectNode.node.defaultData.width;
                     let defaultHeight =this.selectNode.node.defaultData.height;
                     const obj = {};
+
                     if(this.selectNode.props.isLock){
                         if('scaleX'== prop.name) {
+
                               h  =parseFloat(value)*(height/width)/defaultHeight;
                               w =parseFloat(value) /defaultWidth;
-                              this.selectNode.props.height =parseFloat(value)*(height/width);
-                              this.selectNode.props.width =parseFloat(value);
+
+                            this.selectNode.props.height =parseFloat(value)*(height/width);
+                            this.selectNode.props.width =parseFloat(value);
+
 
                         }else if('scaleY'== prop.name) {
                             w = parseFloat(value) * (width / height) / defaultWidth;
                             h = parseFloat(value) /defaultHeight;
-                            this.selectNode.props.width =parseFloat(value)*(width/height);
-                            this.selectNode.props.height =parseFloat(value);
+                           this.selectNode.props.width =parseFloat(value)*(width/height);
+                           this.selectNode.props.height =parseFloat(value);
                         }
 
                         obj['scaleY'] =h;
@@ -353,6 +357,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
+
 
         if (!node)  return null;
 

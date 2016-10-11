@@ -550,7 +550,8 @@ function saveTree(data, node) {
         var cmds = [];
         var judges={};
         judges.conFlag = item.conFlag;
-            judges.needFill=item.needFill;   //触发条件的值
+
+        judges.needFill=item.needFill;   //触发条件的值
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
         judges.children=[];
