@@ -11,6 +11,7 @@ var rootElm;
 var stageTree;
 var classList;
 let _keyCount = 1;
+var keyMap = [];
 
 let _eventCount = 0;    //事件id
 let _specificCount = 0; //事件内目标对象id
@@ -83,6 +84,7 @@ function loadTree(parent, node, idList) {
   let current = {};
   current.parent = parent;
   current.key = _keyCount++;
+  keyMap[current.key] = current;
   current.className = node['cls'];
   current.props = node['props'] || {};
   current.events = node['events'] || {};
@@ -179,7 +181,8 @@ function loadTree(parent, node, idList) {
   }
 
   if (node['id']) {
-    current.props['id'] = node['id'];
+    if (node['id'].substr(0, 3) != 'id_')
+      current.props['id'] = node['id'];
     if (idList !== undefined)
       idList[node['id']] = current;
   }
@@ -330,28 +333,10 @@ function trimTree(node) {
   bridge.setLinks(node.node, links);
 }
 
-var maxSeq;
-
-function getMaxSeq(node) {
-  if (node.props['id']) {
-    var id = node.props['id'];
-    if (id.substr(0, 3) == 'id_') {
-      var n = parseInt(id.substr(3));
-      if (n >= maxSeq)
-        maxSeq = n + 1;
-    }
-  }
-  if (node.children.length > 0) {
-    node.children.map(item => {
-      getMaxSeq(item);
-    });
-  }
-}
-
 function generateObjectId(object) {
   if (object&&(object.className == 'var'||object.className == 'func')) {
     if (object.widget.props['id'] === undefined)
-      object.widget.props['id'] = 'id_' + (maxSeq++);
+      object.widget.props['id'] = 'id_' + object.widget.key;
     if (object.name == '') {
       var list;
       var type;
@@ -373,7 +358,7 @@ function generateObjectId(object) {
       object.name = type + id;
     }
   } else if (object&&object.props['id'] === undefined) {
-    object.props['id'] = 'id_' + (maxSeq++);
+    object.props['id'] = 'id_' + object.key;
   }
 }
 
@@ -1889,6 +1874,8 @@ export default Reflux.createStore({
         var idList;
         var tree;
 
+        _keyCount = 1;
+        keyMap = [];
         if (data['defs']) {
             for (let n in data['defs']) {
                 bridge.addClass(n);
@@ -2049,8 +2036,6 @@ export default Reflux.createStore({
       let images = [];
       data['stage'] = {};
       trimTree(stageTree[0].tree);
-      maxSeq = 0;
-      getMaxSeq(stageTree[0].tree);
       generateId(stageTree[0].tree);
       saveTree(data['stage'], stageTree[0].tree);
       data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
@@ -2064,8 +2049,6 @@ export default Reflux.createStore({
           let name = stageTree[i].name;
           data['defs'][name] = {};
           trimTree(stageTree[i].tree);
-          maxSeq = 0;
-          getMaxSeq(stageTree[i].tree);
           generateId(stageTree[i].tree);
           saveTree(data['defs'][name], stageTree[i].tree);
           data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
