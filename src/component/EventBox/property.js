@@ -26,6 +26,7 @@ class Property extends React.Component {
             actionDropdownVisible: false, //是否显示动作的下拉框
             currentObject: this.props.specific.object,
             currentAction: this.props.specific.action,  //name&property
+            isActiveEventSelectTarget: false  //是否激活了选择目标对象
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -39,6 +40,8 @@ class Property extends React.Component {
         this.onGetActionList = this.onGetActionList.bind(this);
         this.onChangePropDom = this.onChangePropDom.bind(this);
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
+
+        this.onActiveSelectTarget = this.onActiveSelectTarget.bind(this);
 
         this.arrList = []; //数组类型变量列表
     }
@@ -98,6 +101,25 @@ class Property extends React.Component {
                     this.forceUpdate();
                 }
             }
+        } else if (widget.didSelectEventTarget) {
+            if(widget.didSelectEventTarget.target) {
+                let target = widget.didSelectEventTarget.target;
+                let getTarget = false;
+                this.state.objectList.forEach((v)=>{
+                    if(target.key === v.key){
+                        getTarget = true;
+                    }
+                });
+                if (getTarget) {
+                    this.setState({
+                        currentObject: target,
+                        isActiveEventSelectTarget: false
+                    }, ()=> {
+                        WidgetActions['eventSelectTargetMode'](this.state.isActiveEventSelectTarget);
+                        WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
+                    });
+                }
+            }
         }
     }
 
@@ -152,6 +174,14 @@ class Property extends React.Component {
         this.setState({
             actionList: actionList
         })
+    }
+
+    onActiveSelectTarget (){
+        this.setState({
+            isActiveEventSelectTarget: !this.state.isActiveEventSelectTarget
+        }, ()=> {
+           WidgetActions['eventSelectTargetMode'](this.state.isActiveEventSelectTarget);
+        });
     }
 
     onSpecificAdd() {
@@ -436,7 +466,8 @@ class Property extends React.Component {
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
-                                <button className="p--icon"></button>
+                                <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
+                                        onClick={this.onActiveSelectTarget} />
                                 <Dropdown overlay={objectMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
                                           onVisibleChange={this.onObjectVisibleChange}

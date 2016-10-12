@@ -928,6 +928,9 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
         this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
+        this.listenTo(WidgetActions['eventSelectTargetMode'], this.eventSelectTargetMode);
+        this.listenTo(WidgetActions['didSelectEventTarget'], this.didSelectEventTarget);
+
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
         this.eventTreeList = [];
@@ -1872,6 +1875,12 @@ export default Reflux.createStore({
                 this.getAllWidgets();
                 break;
         }
+    },
+    eventSelectTargetMode: function (isActive) {
+        this.trigger({eventSelectTargetMode:{isActive:isActive}});
+    },
+    didSelectEventTarget: function (data) {
+        this.trigger({didSelectEventTarget:{target:data}});
     },
     resetTrack: function() {
       this.trigger({resetTrack: true});

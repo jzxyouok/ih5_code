@@ -852,14 +852,17 @@
                         cursor: pointer;
                         width: 26px;
                         height: 100%;
-                        border: none;
+                        border: 1px solid #294140;
                         outline: 0;
-                        background: url("img/button-icon.svg") no-repeat -558px -198px;
+                        background: url("img/button-icon.svg") no-repeat -559px -199px;
                         &:hover {
-                            background: url("img/button-icon.svg") no-repeat -558px -238px;
+                            background: url("img/button-icon.svg") no-repeat -559px -239px;
                         }
                         &:active {
-                            background: url("img/button-icon.svg") no-repeat -558px -278px;
+                            background: url("img/button-icon.svg") no-repeat -559px -279px;
+                        }
+                        &.active {
+                            border: 1px solid #7b5815;
                         }
                     }
                 }

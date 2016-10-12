@@ -65,5 +65,7 @@ export default Reflux.createActions([
   'saveFontList',
   'activeHandle',
 
-  'renameWidget'
+  'renameWidget',
+  'eventSelectTargetMode',        //触发事件的目标对象选择模式
+  'didSelectEventTarget',         //选择了目标对象
 ]);
