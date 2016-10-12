@@ -880,6 +880,7 @@ class Event extends React.Component {
                                 return <Property key={i2}
                                                  specific={v2}
                                                  event={v}
+                                                 eventSelectTargetKey={this.props.eventSelectTargetKey}
                                                  wKey={this.props.wKey}
                                                  activeKey={this.props.activeKey}/>
                             })

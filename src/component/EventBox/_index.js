@@ -13,7 +13,8 @@ class EventBox extends React.Component {
             keepIt : false,
             activeKey: -1,
             selectWidget: null,
-            eventTreeList: []
+            eventTreeList: [],
+            eventSelectTargetKey: null
         };
         this.eventData = eventTempData;
 
@@ -48,6 +49,11 @@ class EventBox extends React.Component {
             this.setState({
                 activeKey: widget.activeEventTreeKey.key
             });
+        } else if(widget.eventSelectTargetMode){
+            let key = widget.eventSelectTargetMode.isActive?widget.eventSelectTargetMode.sid:null;
+            this.setState({
+                eventSelectTargetKey: key
+            });
         }
     }
 
@@ -55,10 +61,12 @@ class EventBox extends React.Component {
         if(this.state.activeKey !== nid) {
             this.setState({
                 activeKey: nid
+            }, ()=>{
+                WidgetActions['eventSelectTargetMode'](false, this.state.eventSelectTargetKey);
+                //触发选择widget并选择当前event
+                WidgetActions['selectWidget'](data, true, keepType.event);
+                WidgetActions['activeEventTree'](nid);
             });
-            //触发选择widget并选择当前event
-            WidgetActions['selectWidget'](data, true, keepType.event);
-            WidgetActions['activeEventTree'](nid);
         }
     }
 
@@ -83,7 +91,14 @@ class EventBox extends React.Component {
                             !this.state.eventTreeList || this.state.eventTreeList.length === 0
                                 ? null
                                 : this.state.eventTreeList.map((v,i)=>{
-                                    return <Event key={i}  widget={v} eventList={v.props.eventTree} name={v.props.name} wKey={v.key} activeKey={this.state.activeKey} chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
+                                    return <Event key={i}
+                                                  widget={v}
+                                                  eventList={v.props.eventTree}
+                                                  name={v.props.name}
+                                                  wKey={v.key}
+                                                  activeKey={this.state.activeKey}
+                                                  eventSelectTargetKey={this.state.eventSelectTargetKey}
+                                                  chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
                                   })
                         }
                     </div>

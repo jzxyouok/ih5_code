@@ -48,11 +48,16 @@ class Property extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.activeKey){
+            let isActiveEventSelectTarget = false;
+            if(nextProps.eventSelectTargetKey === nextProps.specific.sid){
+                isActiveEventSelectTarget = true;
+            }
             this.setState({
                 activeKey: nextProps.activeKey,
                 event: nextProps.event,
                 wKey: nextProps.wKey,
                 specific: nextProps.specific,
+                isActiveEventSelectTarget: isActiveEventSelectTarget,
 
                 currentObject: nextProps.specific.object,
                 currentAction: nextProps.specific.action
@@ -102,7 +107,7 @@ class Property extends React.Component {
                 }
             }
         } else if (widget.didSelectEventTarget) {
-            if(widget.didSelectEventTarget.target) {
+            if(widget.didSelectEventTarget.target&&this.state.isActiveEventSelectTarget) {
                 let target = widget.didSelectEventTarget.target;
                 let getTarget = false;
                 this.state.objectList.forEach((v)=>{
@@ -112,10 +117,9 @@ class Property extends React.Component {
                 });
                 if (getTarget) {
                     this.setState({
-                        currentObject: target,
-                        isActiveEventSelectTarget: false
+                        currentObject: target
                     }, ()=> {
-                        WidgetActions['eventSelectTargetMode'](this.state.isActiveEventSelectTarget);
+                        WidgetActions['eventSelectTargetMode'](false, this.state.specific.id);
                         WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
                     });
                 }
@@ -177,11 +181,10 @@ class Property extends React.Component {
     }
 
     onActiveSelectTarget (){
-        this.setState({
-            isActiveEventSelectTarget: !this.state.isActiveEventSelectTarget
-        }, ()=> {
-           WidgetActions['eventSelectTargetMode'](this.state.isActiveEventSelectTarget);
-        });
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        WidgetActions['eventSelectTargetMode'](!this.state.isActiveEventSelectTarget, this.state.specific.sid);
     }
 
     onSpecificAdd() {
@@ -194,6 +197,9 @@ class Property extends React.Component {
     onSpecificDelete() {
         if(this.state.activeKey !== this.state.wKey) {
             return;
+        }
+        if(this.state.isActiveEventSelectTarget) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
         }
         WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
 

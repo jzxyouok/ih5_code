@@ -1876,8 +1876,8 @@ export default Reflux.createStore({
                 break;
         }
     },
-    eventSelectTargetMode: function (isActive) {
-        this.trigger({eventSelectTargetMode:{isActive:isActive}});
+    eventSelectTargetMode: function (isActive, sid) {
+        this.trigger({eventSelectTargetMode:{isActive:isActive, sid:sid}});
     },
     didSelectEventTarget: function (data) {
         this.trigger({didSelectEventTarget:{target:data}});
