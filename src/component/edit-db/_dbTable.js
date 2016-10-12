@@ -644,7 +644,7 @@ class DbTable extends React.Component {
                         selectArray : idArray
                     })
                 }
-                console.log(header,list);
+                //console.log(header,list);
                 header[which] = text;
                 //console.log(header,this.state.originalHeader);
                 //if(which == header.length-1){
@@ -813,20 +813,21 @@ class DbTable extends React.Component {
                                     {
                                         this.state.dbList.length > 0
                                             ? this.state.dbList.map((v,i)=>{
-                                                    let index = String(i);
-                                                    let data = [];
-                                                    for(let i=0;i< index.length;i++){
-                                                        data.push(index.charAt(i))
-                                                    }
+                                                    //let index = String(i + 10);
+                                                    //let data = [];
+                                                    //for(let i=0;i< index.length;i++){
+                                                    //    data.push(index.charAt(i))
+                                                    //}
                                                     let id = "content" + i;
                                                     return  <tr key={i}>
                                                                 <td>
                                                                     {
-                                                                        data.length > 1
-                                                                        ? data.map((v3,i3)=>{
-                                                                            return <span className="shift" key={i3}>{ v3 }</span>
-                                                                          })
-                                                                        : data
+                                                                        i + 1
+                                                                        //data.length > 1
+                                                                        //? data.map((v3,i3)=>{
+                                                                        //    return <span className="shift" key={i3}>{ v3 }</span>
+                                                                        //  })
+                                                                        //: <span className="shift">{data}</span>
                                                                     }
                                                                 </td>
                                                                 {

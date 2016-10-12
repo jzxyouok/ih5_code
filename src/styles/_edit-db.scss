@@ -291,19 +291,21 @@
 
                 thead,tbody{
                     td:nth-child(1){
-                        width: 17px;
+                        //width: 17px;
                         min-width: 17px;
                         background: #39311f;
                         color: #ffa800;
-                        padding: 18px 0;
+                        padding: 18px 2px;
 
-                        .shift {
-                            display: block;
-                            margin-top: -8px;
-                            &:first-child{
-                                margin-top: 0;
-                            }
-                        }
+                        //.shift {
+                        //    display: block;
+                        //    margin-top: -8px;
+                        //    transform: rotate(90deg);
+                        //
+                        //    &:first-child{
+                        //        margin-top: 0;
+                        //    }
+                        //}
                     }
                     td{
                         position: relative;
