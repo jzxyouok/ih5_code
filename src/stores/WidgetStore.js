@@ -76,7 +76,7 @@ function onSelect() {
 }
 
 const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer',
-    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'html', 'canvas'];
+    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas'];
 var currentLoading;
 
 function loadTree(parent, node, idList) {
