@@ -124,7 +124,7 @@ class NavBar extends React.Component {
     }
 
     onStatusChange(widget) {
-        console.log(widget);
+        //console.log(widget);
         if (widget.classList !== undefined) {
             this.setState({
                 classList: widget.classList
@@ -418,7 +418,7 @@ class NavBar extends React.Component {
     }
 
     addDb(id,name){
-        if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
+        if(this.state.selectWidget.className == "root" && this.state.selectWidget.props.name == "stage"){
             let bool = true;
             let data = this.state.selectWidget.children;
             for(let i =0 ; i<data.length; i++){
@@ -504,7 +504,7 @@ class NavBar extends React.Component {
     }
 
     addSock(id,name){
-        if(this.state.selectWidget.className == "root" && this.state.selectWidget.key == 1){
+        if(this.state.selectWidget.className == "root" && this.state.selectWidget.props.name == "stage"){
             let bool = true;
             let data = this.state.selectWidget.children;
             for(let i =0 ; i<data.length; i++){
