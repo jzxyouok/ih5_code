@@ -170,19 +170,15 @@ class PropertyView extends React.Component {
 
                     if(this.selectNode.props.isLock){
                         if('scaleX'== prop.name) {
-
-                              h  =parseFloat(value)*(height/width)/defaultHeight;
-                              w =parseFloat(value) /defaultWidth;
-
-                            this.selectNode.props.height =parseFloat(value)*(height/width);
-                            this.selectNode.props.width =parseFloat(value);
-
-
+                              h  =parseInt(value)*(height/width)/defaultHeight;
+                              w =parseInt(value) /defaultWidth;
+                              this.selectNode.props.height =parseInt(value)*(height/width);
+                              this.selectNode.props.width =parseInt(value);
                         }else if('scaleY'== prop.name) {
-                            w = parseFloat(value) * (width / height) / defaultWidth;
-                            h = parseFloat(value) /defaultHeight;
-                           this.selectNode.props.width =parseFloat(value)*(width/height);
-                           this.selectNode.props.height =parseFloat(value);
+                            w = parseInt(value) * (width / height) / defaultWidth;
+                            h = parseInt(value) /defaultHeight;
+                            this.selectNode.props.width =parseInt(value)*(width/height);
+                            this.selectNode.props.height =parseInt(value);
                         }
 
                         obj['scaleY'] =h;
@@ -192,10 +188,10 @@ class PropertyView extends React.Component {
                         bTag=false;
                     }else{
                         if('scaleX'== prop.name) {
-                            v =parseFloat(value) /defaultWidth;
+                            v =parseInt(value) /defaultWidth;
                             this.selectNode.props.width =value;
                         }else if('scaleY'== prop.name){
-                            v = parseFloat(value)/defaultHeight;
+                            v = parseInt(value)/defaultHeight;
                             this.selectNode.props.height =value;
                         }
                     }
@@ -360,7 +356,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-        //console.log(node);
+        console.log(node);
 
         if (!node)  return null;
 
@@ -526,7 +522,7 @@ class PropertyView extends React.Component {
             if (groups[groupName] === undefined)   groups[groupName] = [];
 
             //设置布局结构和图标
-            let hasTwin = ['X','Y','W','H','rotationImgTag','originPosImgTag','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','宽度','高度'].indexOf(item.showName) >= 0;//左右结构显示
+            let hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;//左右结构显示
             let hasPx=['X','Y','W','H'].indexOf(item.showName)>=0; //判断input中是否添加px单位
             let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
             let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
