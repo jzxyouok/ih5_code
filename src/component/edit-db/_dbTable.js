@@ -59,6 +59,7 @@ class DbTable extends React.Component {
         this.cancelBtn = this.cancelBtn.bind(this);
         this.rowChoose = this.rowChoose.bind(this);
         this.columnChoose = this.columnChoose.bind(this);
+        this.clearRowColumn = this.clearRowColumn.bind(this);
     }
 
     componentDidMount() {
@@ -576,6 +577,7 @@ class DbTable extends React.Component {
 
     inputClick(key,value){
         if(key === this.state.inputNow) return;
+        this.clearRowColumn();
 
         let width = parseFloat($(".t" + key).css('width'));
         let height = parseFloat($(".t" + key).css('height'));
@@ -752,14 +754,26 @@ class DbTable extends React.Component {
     rowChoose(id){
         //console.log(id);
         this.setState({
-            rowChooseID : id
+            rowChooseID : id,
+            columnChooseID : null
         })
     }
 
-    columnChoose(id){
+    columnChoose(event){
+        event.stopPropagation();
+        event.preventDefault();
+        let id = event.currentTarget.getAttribute("data-id");
         this.setState({
+            rowChooseID : null,
             columnChooseID : id
         })
+    }
+
+    clearRowColumn(){
+        this.setState({
+            rowChooseID : null,
+            columnChooseID : null
+        });
     }
 
     render() {
@@ -780,8 +794,11 @@ class DbTable extends React.Component {
                         <div className="DT-content" style={{ width : width }}>
                             <table style={{ marginLeft : -(this.state.marginLeft) * this.state.multiple}}>
                                 <thead>
-                                    <tr className={$class({"onactive" : this.state.rowChooseID == 0})}>
-                                        <td className={ $class({"hidden": this.state.dbHeader.length == 0})}> </td>
+                                    <tr className={$class({"onTrActive" : this.state.rowChooseID == 0})}>
+                                        <td className={ $class({"hidden": this.state.dbHeader.length == 0},
+                                                                {"TDZActive" : this.state.columnChooseID == 0})}
+                                            onClick={ this.clearRowColumn }>
+                                        </td>
 
                                         {
                                             this.state.dbHeader.length > 0
@@ -804,11 +821,17 @@ class DbTable extends React.Component {
                                                     whichType = true;
                                                 }
                                                 return  <td key={i}
-                                                            className={$class(classname,{"active": this.state.selectArray.indexOf(classname)>=0})}
+                                                            className={$class(classname,
+                                                                    {"active": this.state.selectArray.indexOf(classname)>=0},
+                                                                    {"TDActive": this.state.columnChooseID == i},
+                                                                    {"onTDActive": this.state.columnChooseID == (i+1)}
+                                                            )}
                                                             onClick={ this.inputClick.bind(this, id, name)}>
-                                                            {name}
 
                                                             <span className={ whichType ? "icon sType-icon" : "icon iType-icon" } />
+                                                            <span className="mouseDown" data-id={i} onClick={ this.columnChoose.bind(this) } />
+
+                                                            {name}
 
                                                             {
                                                                 id === this.state.inputNow
@@ -838,11 +861,12 @@ class DbTable extends React.Component {
                                                     let id = "content" + i;
                                                     return  <tr key={i}
                                                                 className={
-                                                                    $class({"active" : this.state.rowChooseID == i} ,
-                                                                            {"onactive" : this.state.rowChooseID == (i+1)})
+                                                                    $class({"trActive" : this.state.rowChooseID == i} ,
+                                                                            {"onTrActive" : this.state.rowChooseID == (i+1)})
                                                                 }>
 
-                                                                <td onClick={ this.rowChoose.bind(this, i)}>
+                                                                <td onClick={ this.rowChoose.bind(this, i)}
+                                                                    className={ $class({"TDZActive" : this.state.columnChooseID == 0})} >
                                                                     {
                                                                         i + 1
                                                                         //data.length > 1
@@ -868,9 +892,14 @@ class DbTable extends React.Component {
                                                                             name = v2;
                                                                         }
                                                                         return  <td key={ i2 }
-                                                                                    className={
-                                                                                        $class(classname,{"active": array.indexOf(classname) >=0 })
-                                                                                    }
+                                                                                    className={$class(classname,
+                                                                                        {"active": array.indexOf(classname) >=0 },
+                                                                                        {"TDZActive": this.state.columnChooseID == i2},
+                                                                                        {"onTDActive": this.state.columnChooseID == (i2+1)},
+                                                                                        {"TDEActive": this.state.columnChooseID == i2
+                                                                                            && this.state.dbList.length-1 == i
+                                                                                        }
+                                                                                    )}
                                                                                     onClick={ this.inputClick.bind(this, id+"-"+i2, v[name])}>
 
                                                                                     { v[name] }

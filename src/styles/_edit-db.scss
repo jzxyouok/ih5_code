@@ -290,16 +290,20 @@
                 border-collapse:collapse;
 
                 thead,tbody{
-                    .active td{
+                    .trActive td{
                         border-bottom: 1px solid #ff8000;
                         &:nth-child(1){
                             border-left: 1px solid #ff8000;
                         }
                     }
-
-                    .onactive td{
-                        border-bottom: 1px solid #ff8000;
+                    .onTrActive td{ border-bottom: 1px solid #ff8000; }
+                    .TDActive {
+                        border-right: 1px solid #ff8000;
+                        border-top: 1px solid #ff8000;
                     }
+                    .TDZActive { border-right: 1px solid #ff8000; }
+                    .onTDActive {border-right: 1px solid #ff8000; }
+                    .TDEActive{ border-bottom: 1px solid #ff8000; }
 
                     td:nth-child(1){
                         //width: 17px;
@@ -351,11 +355,21 @@
                             }
                         }
 
+                        .mouseDown {
+                            position: absolute;
+                            right: 0;
+                            top: 0;
+                            left: 0;
+                            height: 14px;
+                            //background: #000;
+                            cursor: url("img/mouseDown.svg"),auto;
+                        }
+
                         input{
                             position: absolute;
                             left: 0;
                             top:0;
-                            z-index: 1;
+                            z-index: 2;
                             text-align: center;
                             font-size: 12px;
                             line-height: 20px;
