@@ -33,7 +33,9 @@ class DbTable extends React.Component {
             marginLeft : 0,
             selectArray : [],
             originalData : [],
-            originalHeader : []
+            originalHeader : [],
+            rowChooseID : null,
+            columnChooseID : null
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -55,6 +57,8 @@ class DbTable extends React.Component {
         this.updatePDbHeader = this.updatePDbHeader.bind(this);
         this.getPDbList = this.getPDbList.bind(this);
         this.cancelBtn = this.cancelBtn.bind(this);
+        this.rowChoose = this.rowChoose.bind(this);
+        this.columnChoose = this.columnChoose.bind(this);
     }
 
     componentDidMount() {
@@ -73,7 +77,7 @@ class DbTable extends React.Component {
         //        this.getOriginalData();
         //    }
         //}.bind(this));
-        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvYXBwXC91c2VyXC9sb2dpbiIsImlhdCI6MTQ3NDE2NjcxOSwiZXhwIjozNjAwMDAwMTQ3NDE2NjcxOSwibmJmIjoxNDc0MTY2NzE5LCJqdGkiOiI3ZDMxNDU3NzEwZTU1ZDIzNDBiMzQ3NTZkNzIwNTBlZSJ9.Y8FtW80CmGwKHXrn9jjOVGDrGRlT-eGeACMsnVvGcjI";
+        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvZWRpdG9yM2JcL2FwcFwvbG9naW4iLCJpYXQiOjE0NzU4OTY0MjEsImV4cCI6MzYwMDAwMDE0NzU4OTY0MjEsIm5iZiI6MTQ3NTg5NjQyMSwianRpIjoiOGU1YjcxM2E0NTVkM2I2NjgyOTZhYTg4YmMyYjlhZDEifQ.Z1431qqu3wcJLDZA-j840lSbwFAGo7IqzsnNue4TxlQ";
         //WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
         //    let result = JSON.parse(text);
         //    if (result['name']) {
@@ -82,7 +86,8 @@ class DbTable extends React.Component {
         //            if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
         //                let headerData = allDbHeader[i].header.split(",");
         //                this.setState({
-        //                    dbHeader: headerData
+        //                    dbHeader: headerData,
+        //                    isHaveContent : false
         //                },()=>{
         //                    this.updateNewScrollData();
         //                });
@@ -275,7 +280,7 @@ class DbTable extends React.Component {
     }
 
     getOriginalHeader(){
-        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvYXBwXC91c2VyXC9sb2dpbiIsImlhdCI6MTQ3NDE2NjcxOSwiZXhwIjozNjAwMDAwMTQ3NDE2NjcxOSwibmJmIjoxNDc0MTY2NzE5LCJqdGkiOiI3ZDMxNDU3NzEwZTU1ZDIzNDBiMzQ3NTZkNzIwNTBlZSJ9.Y8FtW80CmGwKHXrn9jjOVGDrGRlT-eGeACMsnVvGcjI";
+        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvZWRpdG9yM2JcL2FwcFwvbG9naW4iLCJpYXQiOjE0NzU4OTY0MjEsImV4cCI6MzYwMDAwMDE0NzU4OTY0MjEsIm5iZiI6MTQ3NTg5NjQyMSwianRpIjoiOGU1YjcxM2E0NTVkM2I2NjgyOTZhYTg4YmMyYjlhZDEifQ.Z1431qqu3wcJLDZA-j840lSbwFAGo7IqzsnNue4TxlQ";
         //WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
         //    let result = JSON.parse(text);
         //    if (result['name']) {
@@ -744,6 +749,19 @@ class DbTable extends React.Component {
         })
     }
 
+    rowChoose(id){
+        //console.log(id);
+        this.setState({
+            rowChooseID : id
+        })
+    }
+
+    columnChoose(id){
+        this.setState({
+            columnChooseID : id
+        })
+    }
+
     render() {
         let width = this.props.isBig ? 535 : 689;
 
@@ -762,7 +780,7 @@ class DbTable extends React.Component {
                         <div className="DT-content" style={{ width : width }}>
                             <table style={{ marginLeft : -(this.state.marginLeft) * this.state.multiple}}>
                                 <thead>
-                                    <tr>
+                                    <tr className={$class({"onactive" : this.state.rowChooseID == 0})}>
                                         <td className={ $class({"hidden": this.state.dbHeader.length == 0})}> </td>
 
                                         {
@@ -788,7 +806,6 @@ class DbTable extends React.Component {
                                                 return  <td key={i}
                                                             className={$class(classname,{"active": this.state.selectArray.indexOf(classname)>=0})}
                                                             onClick={ this.inputClick.bind(this, id, name)}>
-
                                                             {name}
 
                                                             <span className={ whichType ? "icon sType-icon" : "icon iType-icon" } />
@@ -811,7 +828,7 @@ class DbTable extends React.Component {
 
                                 <tbody>
                                     {
-                                        this.state.dbList.length > 0
+                                        this.state.dbList.length > 0 && this.state.dbHeader.length > 0
                                             ? this.state.dbList.map((v,i)=>{
                                                     //let index = String(i + 10);
                                                     //let data = [];
@@ -819,8 +836,13 @@ class DbTable extends React.Component {
                                                     //    data.push(index.charAt(i))
                                                     //}
                                                     let id = "content" + i;
-                                                    return  <tr key={i}>
-                                                                <td>
+                                                    return  <tr key={i}
+                                                                className={
+                                                                    $class({"active" : this.state.rowChooseID == i} ,
+                                                                            {"onactive" : this.state.rowChooseID == (i+1)})
+                                                                }>
+
+                                                                <td onClick={ this.rowChoose.bind(this, i)}>
                                                                     {
                                                                         i + 1
                                                                         //data.length > 1
@@ -850,6 +872,7 @@ class DbTable extends React.Component {
                                                                                         $class(classname,{"active": array.indexOf(classname) >=0 })
                                                                                     }
                                                                                     onClick={ this.inputClick.bind(this, id+"-"+i2, v[name])}>
+
                                                                                     { v[name] }
 
                                                                                     {

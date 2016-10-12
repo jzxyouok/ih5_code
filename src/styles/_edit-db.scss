@@ -290,6 +290,17 @@
                 border-collapse:collapse;
 
                 thead,tbody{
+                    .active td{
+                        border-bottom: 1px solid #ff8000;
+                        &:nth-child(1){
+                            border-left: 1px solid #ff8000;
+                        }
+                    }
+
+                    .onactive td{
+                        border-bottom: 1px solid #ff8000;
+                    }
+
                     td:nth-child(1){
                         //width: 17px;
                         min-width: 17px;
@@ -364,9 +375,9 @@
                     }
                 }
 
-                tbody,tr{
-                    td{
-
+                tbody{
+                    td:nth-child(1){
+                        cursor: url("img/mouseRight.svg"),auto;
                     }
                 }
             }
