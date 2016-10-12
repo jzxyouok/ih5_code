@@ -254,12 +254,12 @@ propertyMap['html'] = [
 propertyMap['input'] = [
     ...propertyMap['box'],
     { addRequires: widgetFlags.DomOnly},
-    { name: 'value', type: propertyType.String, default: '', isProperty: true },
+    { name: 'value', showName:'内容',type: propertyType.String, default: '', isProperty: true },
     { name: 'width', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: false },
     { name: 'height', type: propertyType.Integer, default: 0, group:'position', readOnly: true, isProperty: false},
     { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: false },
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: false},
-    { name: 'color', type: propertyType.Color, default:'#FFFFFF', isProperty: true },
+    { name: 'color',showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF', isProperty: true },
 
 
 
@@ -270,7 +270,7 @@ propertyMap['input'] = [
     { name: 'isContain', showName:'包含文本', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'文本',type:'string',default:''}]},
 
     { name: 'lenEqual', showName:'长度等于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'长度值',type:'number',default:''}]},
-    { name: 'lenUnEqual', showName:'长度不等于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'长度值',type:'number',default:''}]},
+    { name: 'lenUnEqual', showName:'长度不等于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{zshowName:'长度值',type:'number',default:''}]},
     { name: 'lenBigThan', showName:'长度大于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'长度值',type:'number',default:''}]},
     { name: 'lenLessThan', showName:'长度小于', isEvent: true,needFill:[{type:'select', option:['on change','on blur','on demand'],default:'on change'},{showName:'长度值',type:'number',default:''}]},
 

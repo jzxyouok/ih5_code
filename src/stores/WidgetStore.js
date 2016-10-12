@@ -567,10 +567,42 @@ function saveTree(data, node) {
         var judges={};
         judges.conFlag = item.conFlag;
 
-        judges.needFill=item.needFill;   //触发条件的值
+           judges.needFill=item.needFill;   //触发条件的值
+
+            judges.children=[];
+            // item.needFill.map((v,i)=>{
+            //     let obj={};
+            //
+            //     obj.compareFlag=item.conFlag; //比较符号
+            //     obj.compareObjFlag=v.default; //值
+            //
+            //
+            //     // if (v.judgeObj) {
+            //     //     let o = objectToId(v.judgeObj);
+            //     //     obj.judgeObjId = o[0];
+            //     //     if (o[1]) {
+            //     //         obj.judgeVarId = o[1];
+            //     //         obj.judgeVarName = o[2];
+            //     //     }
+            //     // }
+            //
+            //   //  obj.judgeObjFlag=;  //对象名  ,当前对象
+            //    // obj.judgeObjId= ;   //对象名id
+            //
+            //     obj.compareValFlag=undefined;
+            //     obj.compareValOption=undefined;
+            //     obj.judgeValFlag=undefined;
+            //     obj.judgeValOption=undefined;
+            //     obj.judgeValType=undefined;
+            //     obj.operationManager=undefined;
+            //
+            //     judges.children.push(obj);
+            // });
+
+
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
-        judges.children=[];
+
             item.children.map((v,i)=>{
                    let obj={};
                    if (v.judgeObj) {
@@ -581,7 +613,7 @@ function saveTree(data, node) {
                         obj.judgeVarName = o[2];
                       }
                    }
-                console.log(v);
+
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
@@ -604,7 +636,7 @@ function saveTree(data, node) {
              obj.operationManager={};
              obj.operationManager.arrHidden=v.operationManager.arrHidden;
              judges.children.push(obj);
-                console.log(v);
+
          });
 
         item.specificList.forEach(cmd => {
@@ -2017,6 +2049,7 @@ export default Reflux.createStore({
       //       a1.push(a2[i]);
       //     }
       // };
+
       let getImageList = function(array, list) {
         var result = [];
         var count = 0;

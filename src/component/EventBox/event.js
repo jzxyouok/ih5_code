@@ -16,6 +16,9 @@ const Option = Select.Option;
 class Event extends React.Component {
     constructor (props) {
         super(props);
+
+
+
         this.state = {
             expanded: true,
             objName: [],
@@ -120,6 +123,7 @@ class Event extends React.Component {
         if(widget.allWidgets){
             let arr=[];
             let arr2=[];
+
 
             widget.allWidgets.map((v,i)=>{
                 arr.push([v.className,v.props.name,v.type]);
@@ -357,7 +361,7 @@ class Event extends React.Component {
                 })
             }
         }else if(type=='compareValFlag'){
-            let curChild =  this.state.eventList[this.curEventIndex].children[this.curChildrenIndex]; 
+            let curChild =  this.state.eventList[this.curEventIndex].children[this.curChildrenIndex];
             if( curChild && curChild.propCompareArr ){
                 curChild.propCompareArr.map((v,i)=> {
                    if (name == v.name) {
@@ -368,7 +372,7 @@ class Event extends React.Component {
         }
         return showName;
     }
-   //根据中文名找到英文名,并保存2
+   //根据中文名找到英文名,并保存
    getNameByCnName(type,value){
        let name='';
         if(type=='conFlag'){
