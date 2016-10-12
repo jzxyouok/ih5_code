@@ -471,7 +471,7 @@ class Event extends React.Component {
 
                 } else {
                     arrHidden[5] = false;
-                    //非五类
+                    //非五类123
                     let propObj = this.setObjProperty(chooseEventClassName);
                     initFlag.propArr = propObj.propArr;
                     initFlag.compareValOption =this.getCompareValOption(propObj.propArr);
