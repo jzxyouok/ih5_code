@@ -1,0 +1,14 @@
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="12" height="15" viewBox="0 0 12 15">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <title>光标</title>
+  <g>
+    <polygon points="0.9 8.79 4.71 8.79 4.71 0.4 7.29 0.4 7.29 8.79 11.1 8.8 5.99 14.4 0.9 8.79"/>
+    <path class="cls-1" d="M5.11,0.8H6.9V9.19h3.3L6,13.81,1.81,9.19h3.3V0.8M4.31,0V8.39H0L6,15l6-6.6H7.69V0H4.31Z"/>
+  </g>
+</svg>
