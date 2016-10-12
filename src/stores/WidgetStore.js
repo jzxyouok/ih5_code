@@ -1449,7 +1449,7 @@ export default Reflux.createStore({
                 judgeObjFlag:'判断对象',
                 judgeValFlag:'计算值',
                 compareFlag:'=',
-                compareObjFlag:'比较对象',
+                compareObjFlag:'比较值/对象',
                 compareValFlag:'比较值',
                 operationManager: {  //下拉框显现管理
                     arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
