@@ -113,6 +113,7 @@ function loadTree(parent, node, idList) {
           temp['className'] = 'var';
           temp['key'] = _keyCount++;
           temp['widget'] = current;
+          keyMap[temp.key] = temp;
           switch (temp['type']){
               case varType.number:
                   current.intVarList.push(temp);
@@ -136,6 +137,7 @@ function loadTree(parent, node, idList) {
           temp['className'] = 'func';
           temp['key'] = _keyCount++;
           temp['widget'] = current;
+          keyMap[temp.key] = temp;
           current.funcList.push(temp);
       });
   }
@@ -150,7 +152,8 @@ function loadTree(parent, node, idList) {
               temp['className'] = 'dbItem';
               temp['key'] = _keyCount++;
               temp['widget'] = current;
-              temp['fields'] = item.fields; //需要解析
+              temp['fields'] = item.fields;
+              keyMap[temp.key] = temp;
               current.dbItemList.push(temp);
           })
       }
@@ -423,16 +426,24 @@ function generateId(node, idList) {
         if (idList != undefined && cmd.object) {
           var o = objectToId(cmd.object);
           idList[o[0]] = cmd.object.key;
-          cmd.action.id = o[0];
-          if (o[1]) {
-              cmd.action.var = o[1];
-              cmd.action.varName = o[2];
+            if(!cmd.action) {
+                cmd.action = {};
+            }
+            cmd.action.id = o[0];
+            if (o[1]) {
+                cmd.action.var = o[1];
+                cmd.action.varName = o[2];
+            }
           }
-        }
           if(cmd.action){
               switch (cmd.action.type){
                   case funcType.customize:
                       generateObjectId(cmd.action.func);
+                      if (idList != undefined && cmd.action.func) {
+                          var o = objectToId(cmd.action.func);
+                          idList[o[0]] = cmd.action.func.key;
+                          cmd.action.funcId = o;
+                      }
                       break;
                   default:
                       if(cmd.action.property){
@@ -440,6 +451,11 @@ function generateId(node, idList) {
                               //看是否需要generateid
                               if(v.value&&v.value.className){
                                   generateObjectId(v.value);
+                                  if (idList != undefined && v.value) {
+                                      var o = objectToId(v.value);
+                                      idList[o[0]] = v.value.key;
+                                      v.valueId = o;
+                                  }
                               }
                           })
                       }
@@ -453,6 +469,11 @@ function generateId(node, idList) {
       node.dbItemList.forEach(item => {
           item.fields.forEach(judge => {
               generateObjectId(judge.value);
+              if (idList != undefined && judge.value) {
+                  var o = objectToId(judge.value);
+                  idList[o[0]] = judge.value.key;
+                  judge.wid = o;
+              }
           });
       });
   }
