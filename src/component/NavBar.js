@@ -124,7 +124,7 @@ class NavBar extends React.Component {
     }
 
     onStatusChange(widget) {
-        //console.log(widget);
+        console.log(widget);
         if (widget.classList !== undefined) {
             this.setState({
                 classList: widget.classList
@@ -275,7 +275,9 @@ class NavBar extends React.Component {
     onOpen(id) {
         this.onImportUrl(PREFIX + 'work/' + id, id);
         this.setState({
-            specialLayer : false
+            specialLayer : false,
+            reAddDbId : [],
+            reAddSockId : []
         })
     }
 
