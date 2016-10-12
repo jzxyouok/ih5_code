@@ -16,6 +16,10 @@ const overPosition = {
     mid: 2,
     bot: 3,
 };
+const tipAllow = '拖拽对象到此';
+const tipAllowColor = '#4F4F4F';
+const tipForbidden = '无法拖拽至此';
+const tipForBiddenColor = '#b5b5b5';
 
 import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
 
@@ -664,17 +668,6 @@ class ObjectTree extends React.Component {
             e.preventDefault();
             return;
         }
-        e.stopPropagation();
-        this.dragWithTip(e.clientX, e.clientY, true);
-        if(e.target.id === placeholderId) {
-            this.placeholder.style.display = 'hidden';
-            return;
-        }
-
-        let tipAllow = '拖拽对象到此';
-        let tipAllowColor = '#4F4F4F';
-        let tipForbidden = '无法拖拽至此';
-        let tipForBiddenColor = '#b5b5b5';
 
         //递归找到并获取名字叫item的div
         let findItemDiv = (target,cNameList) => {
@@ -688,13 +681,23 @@ class ObjectTree extends React.Component {
                 return null;
             }
         };
-        if(this.over){
-            this.over.style.backgroundColor = '';
+        //还原
+        let restoreComponent = ()=> {
+            if(this.over){
+                this.over.style.backgroundColor = '';
+            }
+            if(this.placeholder){
+                this.placeholder.style.display = 'block';this.placeholder.style.marginLeft = '';
+            }
+        };
+
+        e.stopPropagation();
+        this.dragWithTip(e.clientX, e.clientY, true);
+        if(e.target.id === placeholderId) {
+            this.placeholder.style.display = 'hidden';
+            return;
         }
-        if(this.placeholder){
-            this.placeholder.style.display = 'block';
-            this.placeholder.style.marginLeft = '';
-        }
+        restoreComponent();
         this.over = findItemDiv(e.target, ['item-title-wrap clearfix', 'stage-title-wrap clearfix']);
         if(this.over) {
             if (this.over.dataset.wkey == this.dragged.dataset.wkey) {
