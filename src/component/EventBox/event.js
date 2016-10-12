@@ -368,7 +368,7 @@ class Event extends React.Component {
         }
         return showName;
     }
-   //根据中文名找到英文名,并保存
+   //根据中文名找到英文名,并保存2
    getNameByCnName(type,value){
        let name='';
         if(type=='conFlag'){
