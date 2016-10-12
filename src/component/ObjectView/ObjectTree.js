@@ -16,10 +16,12 @@ const overPosition = {
     mid: 2,
     bot: 3,
 };
-const tipAllow = '拖拽对象到此';
-const tipAllowColor = '#4F4F4F';
-const tipForbidden = '无法拖拽至此';
-const tipForbiddenColor = '#b5b5b5';
+const tipAllow = '<span style="background-position: -39px -199px;"></span>拖至此处';
+const tipAllowColor = '#008700';
+const tipForbidden = '<span style="background-position: -39px -239px;"></span>不可拖入';
+const tipForbiddenColor = '#b50000';
+const allowColor = '#FFA800';
+const forbiddenColor = '#8F8F8F';
 
 import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
 
@@ -517,7 +519,7 @@ class ObjectTree extends React.Component {
             return;
         }
         e.stopPropagation();
-        this.initialDragTip('拖拽对象到此', false);
+        this.initialDragTip('', false);
         if(this.state.nid !== nid){
             //拖动同时把item设为被选中
             this.setState({
@@ -693,7 +695,8 @@ class ObjectTree extends React.Component {
                 this.over.style.backgroundColor = '';
             }
             if(this.placeholder){
-                this.placeholder.style.display = 'block';this.placeholder.style.marginLeft = '';
+                this.placeholder.style.display = 'block';
+                this.placeholder.style.marginLeft = '';
             }
         };
 
@@ -704,10 +707,10 @@ class ObjectTree extends React.Component {
                 switch (this.overPosition) {
                     case overPosition.top:
                     case overPosition.bot:
-                        this.placeholder.style.backgroundColor = '#FFA800';
+                        this.placeholder.style.backgroundColor = allowColor;
                         break;
                     case overPosition.mid:
-                        this.over.style.backgroundColor = '#FFA800';
+                        this.over.style.backgroundColor = allowColor;
                         break;
                 }
             }
@@ -720,10 +723,10 @@ class ObjectTree extends React.Component {
                 switch (this.overPosition) {
                     case overPosition.top:
                     case overPosition.bot:
-                        this.placeholder.style.backgroundColor = '#8F8F8F';
+                        this.placeholder.style.backgroundColor = forbiddenColor;
                         break;
                     case overPosition.mid:
-                        this.over.style.backgroundColor = '#8F8F8F';
+                        this.over.style.backgroundColor = forbiddenColor;
                         break;
                 }
             }

@@ -265,7 +265,19 @@
     z-index: 9999;
     display: none;
     position: absolute;
-    border: 1px solid white;
-    background: #4F4F4F;
-    padding: 2px 5px;
+    border-radius: 2px;
+    padding-right: 2px;
+
+    filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity: 0.5;
+    opacity: 0.5;
+    span{
+      width: 18px;
+      margin-right: 2px;
+      height: 18px;
+      display: block;
+      float: left;
+      background: url("img/button-icon.svg") no-repeat;
+    }
 }
