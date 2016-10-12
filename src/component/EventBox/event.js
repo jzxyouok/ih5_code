@@ -530,8 +530,9 @@ class Event extends React.Component {
         }else if(type=='compareValFlag'){
             arr =  eventList[this.curEventIndex].children[this.curChildrenIndex][option];
         }else if(type=='compareObjFlag'){
-            arr =this.state[option]
+            arr =this.state[option];
             eventList[this.curEventIndex].children[this.curChildrenIndex].showDropdown=false;
+            this.setState({eventList: eventList});
         }
         arr.map((v,i)=>{
             if(v ==newVal){
@@ -547,11 +548,10 @@ class Event extends React.Component {
                         eventList[this.curEventIndex].children[this.curChildrenIndex].compareObjFlag='比较值/对象';
                     }
                     this.setEventBoxWidth(eventList);
-                    this.setState({eventList: eventList});
                 } else {
                     eventList[this.curEventIndex].children[this.curChildrenIndex][type] = this.oldVal;
-                    this.setState({eventList: eventList});
                 }
+                this.setState({eventList: eventList});
             } else {
                 //触发下一个下拉框
                 if(newVal !=this.oldVal){
