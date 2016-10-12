@@ -113,7 +113,6 @@ function loadTree(parent, node, idList) {
           temp['className'] = 'var';
           temp['key'] = _keyCount++;
           temp['widget'] = current;
-          keyMap[temp.key] = temp;
           switch (temp['type']){
               case varType.number:
                   current.intVarList.push(temp);
@@ -137,7 +136,6 @@ function loadTree(parent, node, idList) {
           temp['className'] = 'func';
           temp['key'] = _keyCount++;
           temp['widget'] = current;
-          keyMap[temp.key] = temp;
           current.funcList.push(temp);
       });
   }
@@ -153,7 +151,6 @@ function loadTree(parent, node, idList) {
               temp['key'] = _keyCount++;
               temp['widget'] = current;
               temp['fields'] = item.fields;
-              keyMap[temp.key] = temp;
               current.dbItemList.push(temp);
           })
       }
@@ -446,6 +443,9 @@ function generateId(node, idList) {
                           var o = objectToId(cmd.action.func);
                           idList[o[0]] = cmd.action.func.key;
                           cmd.action.funcId = o;
+                          if (cmd.action.funcId[1]) {
+                              idList[cmd.action.funcId[0]] = cmd.action.func.widget.key;
+                          }
                       }
                       break;
                   default:
@@ -458,6 +458,9 @@ function generateId(node, idList) {
                                       var o = objectToId(v.value);
                                       idList[o[0]] = v.value.key;
                                       v.valueId = o;
+                                      if (v.valueId[1]) {
+                                          idList[v.valueId[0]] = v.value.widget.key;
+                                      }
                                   }
                               }
                           })
@@ -476,6 +479,9 @@ function generateId(node, idList) {
                   var o = objectToId(judge.value);
                   idList[o[0]] = judge.value.key;
                   judge.wid = o;
+                  if (judge.wid[1]) {
+                      idList[judge.wid[0]] = judge.value.widget.key;
+                  }
               }
           });
       });
@@ -588,7 +594,7 @@ function generateJsFunc(etree) {
         if (lines.length == 1)
           out += lines[0];
         else
-          out += '{' + lines.join(';'); + '}'
+          out += '{' + lines.join(';') + '}';
         output[item.judges.conFlag] = output[item.judges.conFlag] || '';
         output[item.judges.conFlag] += out;
       }
@@ -1222,7 +1228,7 @@ export default Reflux.createStore({
                   map[id] = keyMap[idList[id]];
                 }
                 resolveEventTree(rootWidget, map);
-
+                resolveDBItemList(rootWidget, map);
 
                 var destIndex = dest.children.indexOf(obj);
                 if (destIndex != index) {
