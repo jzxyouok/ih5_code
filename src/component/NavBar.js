@@ -136,9 +136,26 @@ class NavBar extends React.Component {
                 isAddShape : checkChildClass(widget.selectWidget, 'path')
             });
             if(widget.selectWidget.className == "root"){
+                let data = widget.selectWidget.children;
+                let reAddDbId = [];
+                let reAddSockId = [];
+                if(data.length > 0){
+                    data.map((v,i)=>{
+                        if(v.className == "db"){
+                            if(v.node.dbType = "shareDb"){
+                                reAddDbId.push(v.node.dbid)
+                            }
+                        }
+                        if(v.className == "sock"){
+                            reAddSockId.push(v.node.sid)
+                        }
+                    })
+                }
                 this.setState({
                     isAddDb : true,
-                    isAddSock : true
+                    isAddSock : true,
+                    reAddDbId : reAddDbId,
+                    reAddSockId : reAddSockId
                 })
             }
             else {
