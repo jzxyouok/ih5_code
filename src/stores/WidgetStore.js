@@ -405,6 +405,7 @@ function generateId(node, idList) {
             idList[o[0]] = judge.judgeObj.key;
             judge.judgeObjId = o[0];
             if (o[1]) {
+              idList[o[0]] = judge.judgeObj.widget.key;
               judge.judgeVarId = o[1];
               judge.judgeVarName = o[2];
             }
@@ -414,6 +415,7 @@ function generateId(node, idList) {
             idList[o[0]] = judge.compareObj.key;
             judge.compareObjId = o[0];
             if (o[1]) {
+              idList[o[0]] = judge.compareObj.widget.key;
               judge.compareVarId = o[1];
               judge.compareVarName = o[2];
             }
@@ -431,6 +433,7 @@ function generateId(node, idList) {
             }
             cmd.action.id = o[0];
             if (o[1]) {
+                idList[o[0]] = cmd.object.widget.key;
                 cmd.action.var = o[1];
                 cmd.action.varName = o[2];
             }
