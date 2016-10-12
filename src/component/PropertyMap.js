@@ -489,13 +489,34 @@ propertyMap['body'] = [
 propertyMap['easing'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box, addProvides:widgetFlags.Leaf},
-    { name: 'type', type: propertyType.String, default: '', isProperty: true },
-    { name: 'radius', type: propertyType.Number, default: 0, isProperty: true },
-    { name: 'angle', type: propertyType.Number, default: 0, isProperty: true },
-    { name: 'duration', type: propertyType.Number, default: 2, isProperty: true },
-    { name: 'complete', showName:'播放完成', isEvent: true },
+    { name: 'type', showName:'移动方式',type: propertyType.Select, default: '无',options:{
+        '线性':'linear',
+        '曲线':'swing',
+        '二次进':'easeInQuad',
+        '二次出':'easeOutQuad',
+        '二次进出':'easeInOutQuad',
+        '五次进':'easeInQuint',
+        '五次出':'easeOutQuint',
+        '五次进出':'easeInOutQuint',
+        '圆周进':'easeInCirc',
+        '圆周出':'easeOutCirc',
+        '圆周进出':'easeInOutCirc',
+        '弹性进':'easeInElastic',
+        '弹性出':'easeOutElastic',
+        '弹性进出':'easeInOutElastic',
+        '后退进':'easeInBack',
+        '后退出':'easeOutBack',
+        '后退进出':'easeInOutBack',
+        '反弹进':'easeInBounce',
+        '反弹出':'easeOutBounce',
+        '反弹进出':'easeInOutBounce'
+    }, isProperty: true },
+    { name: 'radius',showName:'移动距离', type: propertyType.Number, default: 0, isProperty: true },
+    { name: 'angle',showName:'移动方向', type: propertyType.Number, default: 0, isProperty: true },
+    { name: 'duration',showName:'时长',type: propertyType.Number, default: 2, isProperty: true },
+    { name: 'complete',showName:'播放完成', isEvent: true },
     { name: 'play', showName:'播放', isFunc: true },
-    { name: 'pause', showName:'暂停', isFunc: true }
+    { name: 'pause',showName:'暂停', isFunc: true }
 ];
 
 propertyMap['3dRotate'] = [
