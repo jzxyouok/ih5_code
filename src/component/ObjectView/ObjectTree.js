@@ -16,10 +16,8 @@ const overPosition = {
     mid: 2,
     bot: 3,
 };
-const tipAllow = '<span style="background-position: -39px -199px;"></span>拖至此处';
-const tipAllowColor = '#008700';
-const tipForbidden = '<span style="background-position: -39px -239px;"></span>不可拖入';
-const tipForbiddenColor = '#b50000';
+const tipAllow = '<span style="background-position:-40px -200px;"></span><div style="background-color:#008700;">拖至此处</div>';
+const tipForbidden = '<span style="background-position:-40px -240px;"></span><div style="background-color:#b50000;">不可拖入</div>';
 const allowColor = '#FFA800';
 const forbiddenColor = '#8F8F8F';
 
@@ -702,7 +700,6 @@ class ObjectTree extends React.Component {
 
         let setAllowMode = (changeByPosition) => {
             this.dragTip.innerHTML = tipAllow;
-            this.dragTip.style.background = tipAllowColor;
             if (changeByPosition) {
                 switch (this.overPosition) {
                     case overPosition.top:
@@ -718,7 +715,6 @@ class ObjectTree extends React.Component {
 
         let setForbiddenMode = (changeByPosition) => {
             this.dragTip.innerHTML = tipForbidden;
-            this.dragTip.style.background = tipForbiddenColor;
             if(changeByPosition) {
                 switch (this.overPosition) {
                     case overPosition.top:
