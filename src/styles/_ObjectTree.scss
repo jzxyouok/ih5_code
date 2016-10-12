@@ -4,6 +4,51 @@
     height: 100%;
     overflow: hidden;
 
+  &.eventSelectTargetMode {
+    border: 2px solid #7b5815;
+
+    .stage {
+      .stage-title-wrap,
+      .item-title-wrap,
+      .fade-widget-title-wrap {
+        &.allow-event-target{
+          &:hover {
+            cursor: pointer;
+            background-color: #FFA800;
+            .stage-title ,
+            .item-title,
+            .fade-widget-title,
+            .item-event {
+              background-color: #FFA800;
+            }
+            .item-event {
+              .active {
+                background-color: #FFA800;
+              }
+            }
+          }
+        }
+        &.forbidden-event-target{
+          &:hover {
+            cursor: pointer;
+            background-color: #8F8F8F;
+            .stage-title ,
+            .item-title,
+            .fade-widget-title,
+            .item-event {
+              background-color: #8F8F8F;
+            }
+            .item-event {
+              .active {
+                background-color: #8F8F8F;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
     .stage {
         position: absolute;
         left: 0;
@@ -164,7 +209,7 @@
                 height: 23px;
             }
         }
-
+        .stage-title-wrap,
         .fade-widget-title-wrap {
             outline: 0;
         }

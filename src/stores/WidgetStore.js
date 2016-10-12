@@ -11,6 +11,7 @@ var rootElm;
 var stageTree;
 var classList;
 let _keyCount = 1;
+var keyMap = [];
 
 let _eventCount = 0;    //事件id
 let _specificCount = 0; //事件内目标对象id
@@ -82,10 +83,17 @@ var currentLoading;
 function loadTree(parent, node, idList) {
   let current = {};
   current.parent = parent;
-  current.key = _keyCount++;
   current.className = node['cls'];
   current.props = node['props'] || {};
   current.events = node['events'] || {};
+
+  if (current.props['key'] !== undefined) {
+    current.key = current.props['key'];
+    delete(current.props['key']);
+  } else {
+    current.key = _keyCount++;
+  }
+  keyMap[current.key] = current;
 
   // current.varList = [];
   current.strVarList = [];
@@ -142,7 +150,7 @@ function loadTree(parent, node, idList) {
               temp['className'] = 'dbItem';
               temp['key'] = _keyCount++;
               temp['widget'] = current;
-              temp['fields'] = item.fields; //需要解析
+              temp['fields'] = item.fields;
               current.dbItemList.push(temp);
           })
       }
@@ -179,7 +187,8 @@ function loadTree(parent, node, idList) {
   }
 
   if (node['id']) {
-    current.props['id'] = node['id'];
+    if (node['id'].substr(0, 3) != 'id_')
+      current.props['id'] = node['id'];
     if (idList !== undefined)
       idList[node['id']] = current;
   }
@@ -330,28 +339,10 @@ function trimTree(node) {
   bridge.setLinks(node.node, links);
 }
 
-var maxSeq;
-
-function getMaxSeq(node) {
-  if (node.props['id']) {
-    var id = node.props['id'];
-    if (id.substr(0, 3) == 'id_') {
-      var n = parseInt(id.substr(3));
-      if (n >= maxSeq)
-        maxSeq = n + 1;
-    }
-  }
-  if (node.children.length > 0) {
-    node.children.map(item => {
-      getMaxSeq(item);
-    });
-  }
-}
-
 function generateObjectId(object) {
   if (object&&(object.className == 'var'||object.className == 'func')) {
     if (object.widget.props['id'] === undefined)
-      object.widget.props['id'] = 'id_' + (maxSeq++);
+      object.widget.props['id'] = 'id_' + object.widget.key;
     if (object.name == '') {
       var list;
       var type;
@@ -373,51 +364,7 @@ function generateObjectId(object) {
       object.name = type + id;
     }
   } else if (object&&object.props['id'] === undefined) {
-    object.props['id'] = 'id_' + (maxSeq++);
-  }
-}
-
-function generateId(node) {
-  if (node.props['eventTree']) {
-    node.props['eventTree'].forEach(item => {
-      item.children.forEach(judge => {
-        generateObjectId(judge.judgeObj);
-        generateObjectId(judge.compareObj);
-      });
-
-      item.specificList.forEach(cmd => {
-        generateObjectId(cmd.object);
-          if(cmd.action){
-              switch (cmd.action.type){
-                  case funcType.customize:
-                      generateObjectId(cmd.action.func);
-                      break;
-                  default:
-                      if(cmd.action.property){
-                          cmd.action.property.forEach(v=>{
-                              //看是否需要generateid
-                              if(v.value&&v.value.className){
-                                  generateObjectId(v.value);
-                              }
-                          })
-                      }
-                      break;
-              }
-          }
-      });
-    });
-  }
-  if(node.dbItemList){
-      node.dbItemList.forEach(item => {
-          item.fields.forEach(judge => {
-              generateObjectId(judge.value);
-          });
-      });
-  }
-  if (node.children.length > 0) {
-    node.children.map(item => {
-      generateId(item);
-    });
+    object.props['id'] = 'id_' + object.key;
   }
 }
 
@@ -441,6 +388,109 @@ function objectToId(object) {
     idName = object.props['id'];
   }
   return [idName, varKey, varName];
+}
+
+function generateId(node, idList) {
+  if (node.props['eventTree']) {
+    node.props['eventTree'].forEach(item => {
+      item.children.forEach(judge => {
+        generateObjectId(judge.judgeObj);
+        generateObjectId(judge.compareObj);
+        if (idList != undefined) {
+          if (judge.judgeObj) {
+            var o = objectToId(judge.judgeObj);
+            idList[o[0]] = judge.judgeObj.key;
+            judge.judgeObjId = o[0];
+            if (o[1]) {
+              idList[o[0]] = judge.judgeObj.widget.key;
+              judge.judgeVarId = o[1];
+              judge.judgeVarName = o[2];
+            }
+          }
+          if (judge.compareObj) {
+            var o = objectToId(judge.compareObj);
+            idList[o[0]] = judge.compareObj.key;
+            judge.compareObjId = o[0];
+            if (o[1]) {
+              idList[o[0]] = judge.compareObj.widget.key;
+              judge.compareVarId = o[1];
+              judge.compareVarName = o[2];
+            }
+          }
+        }
+      });
+
+      item.specificList.forEach(cmd => {
+        generateObjectId(cmd.object);
+        if (idList != undefined && cmd.object) {
+          var o = objectToId(cmd.object);
+          idList[o[0]] = cmd.object.key;
+            if(!cmd.action) {
+                cmd.action = {};
+            }
+            cmd.action.id = o[0];
+            if (o[1]) {
+                idList[o[0]] = cmd.object.widget.key;
+                cmd.action.var = o[1];
+                cmd.action.varName = o[2];
+            }
+          }
+          if(cmd.action){
+              switch (cmd.action.type){
+                  case funcType.customize:
+                      generateObjectId(cmd.action.func);
+                      if (idList != undefined && cmd.action.func) {
+                          var o = objectToId(cmd.action.func);
+                          idList[o[0]] = cmd.action.func.key;
+                          cmd.action.funcId = o;
+                          if (cmd.action.funcId[1]) {
+                              idList[cmd.action.funcId[0]] = cmd.action.func.widget.key;
+                          }
+                      }
+                      break;
+                  default:
+                      if(cmd.action.property){
+                          cmd.action.property.forEach(v=>{
+                              //看是否需要generateid
+                              if(v.value&&v.value.className){
+                                  generateObjectId(v.value);
+                                  if (idList != undefined && v.value) {
+                                      var o = objectToId(v.value);
+                                      idList[o[0]] = v.value.key;
+                                      v.valueId = o;
+                                      if (v.valueId[1]) {
+                                          idList[v.valueId[0]] = v.value.widget.key;
+                                      }
+                                  }
+                              }
+                          })
+                      }
+                      break;
+              }
+          }
+      });
+    });
+  }
+  if(node.dbItemList){
+      node.dbItemList.forEach(item => {
+          item.fields.forEach(judge => {
+              generateObjectId(judge.value);
+              if (idList != undefined && judge.value) {
+                  var o = objectToId(judge.value);
+                  idList[o[0]] = judge.value.key;
+                  judge.wid = o;
+                  if (judge.wid[1]) {
+                      idList[judge.wid[0]] = judge.value.widget.key;
+                  }
+              }
+          });
+      });
+  }
+  if (node.children.length > 0) {
+    node.children.map(item => {
+      generateId(item, idList);
+    });
+  }
 }
 
 function getIdsName(idName, varName, propName) {
@@ -544,7 +594,7 @@ function generateJsFunc(etree) {
         if (lines.length == 1)
           out += lines[0];
         else
-          out += '{' + lines.join(';'); + '}'
+          out += '{' + lines.join(';') + '}';
         output[item.judges.conFlag] = output[item.judges.conFlag] || '';
         output[item.judges.conFlag] += out;
       }
@@ -553,7 +603,7 @@ function generateJsFunc(etree) {
   return output;
 }
 
-function saveTree(data, node) {
+function saveTree(data, node, saveKey) {
   data['cls'] = node.className;
   let props = {};
   for (let name in node.props) {
@@ -712,6 +762,8 @@ function saveTree(data, node) {
         props[name] = node.props[name];
     }
   }
+  if (saveKey)
+    props['key'] = node.key;
   if (props)
     data['props'] = props;
   // if (node.events)
@@ -784,7 +836,7 @@ function saveTree(data, node) {
       }
       let child = {};
       data['children'].unshift(child);
-      saveTree(child, item);
+      saveTree(child, item, saveKey);
     });
   }
 }
@@ -959,6 +1011,9 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addDBItem'], this.addDBItem);
         this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
         this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
+
+        this.listenTo(WidgetActions['eventSelectTargetMode'], this.eventSelectTargetMode);
+        this.listenTo(WidgetActions['didSelectEventTarget'], this.didSelectEventTarget);
 
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
@@ -1189,7 +1244,10 @@ export default Reflux.createStore({
             // let dest = this.findWidget(destKey);
             if (src&&dest) {
                 var saved = {};
-                saveTree(saved, src);
+                var rootWidget = this.currentWidget.rootWidget;
+                var idList = [];
+                generateId(rootWidget, idList);
+                saveTree(saved, src, true);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
@@ -1197,6 +1255,12 @@ export default Reflux.createStore({
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
+                var map = [];
+                for (var id in idList) {
+                  map[id] = keyMap[idList[id]];
+                }
+                resolveEventTree(rootWidget, map);
+                resolveDBItemList(rootWidget, map);
 
                 var destIndex = dest.children.indexOf(obj);
                 if (destIndex != index) {
@@ -1905,6 +1969,12 @@ export default Reflux.createStore({
                 break;
         }
     },
+    eventSelectTargetMode: function (isActive, sid) {
+        this.trigger({eventSelectTargetMode:{isActive:isActive, sid:sid}});
+    },
+    didSelectEventTarget: function (data) {
+        this.trigger({didSelectEventTarget:{target:data}});
+    },
     resetTrack: function() {
       this.trigger({resetTrack: true});
     },
@@ -1921,6 +1991,8 @@ export default Reflux.createStore({
         var idList;
         var tree;
 
+        _keyCount = 1;
+        keyMap = [];
         if (data['defs']) {
             for (let n in data['defs']) {
                 bridge.addClass(n);
@@ -2082,8 +2154,6 @@ export default Reflux.createStore({
       let images = [];
       data['stage'] = {};
       trimTree(stageTree[0].tree);
-      maxSeq = 0;
-      getMaxSeq(stageTree[0].tree);
       generateId(stageTree[0].tree);
       saveTree(data['stage'], stageTree[0].tree);
       data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
@@ -2097,8 +2167,6 @@ export default Reflux.createStore({
           let name = stageTree[i].name;
           data['defs'][name] = {};
           trimTree(stageTree[i].tree);
-          maxSeq = 0;
-          getMaxSeq(stageTree[i].tree);
           generateId(stageTree[i].tree);
           saveTree(data['defs'][name], stageTree[i].tree);
           data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
