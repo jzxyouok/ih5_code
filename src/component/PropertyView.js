@@ -254,7 +254,7 @@ class PropertyView extends React.Component {
                                   oProgress.childNodes[1].innerHTML='上传 '+percentComplete+'%';
                                   oProgress.childNodes[0].style.width=percentComplete+'%';
                               }else {
-                                  console.log('failed');
+                                  //console.log('failed');
                               }
                           });
                           bTag=false;
@@ -361,7 +361,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-        console.log(node);
+        //console.log(node);
 
         if (!node)  return null;
 

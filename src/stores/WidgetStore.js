@@ -1281,10 +1281,11 @@ export default Reflux.createStore({
           obj =newObj;
           prevNewObj =cpJson(newObj);
         }
-
-        if(obj && obj.alpha){
-            if(isNaN(obj.alpha)) {
-                obj.alpha = null;
+        //console.log(obj);
+        if(obj && obj.alpha !== 0){
+            let value = parseFloat(obj.alpha);
+            if(!value) {
+                obj.alpha = 1;
             }
         }
         let p = {updateProperties: obj};
