@@ -83,11 +83,17 @@ var currentLoading;
 function loadTree(parent, node, idList) {
   let current = {};
   current.parent = parent;
-  current.key = _keyCount++;
-  keyMap[current.key] = current;
   current.className = node['cls'];
   current.props = node['props'] || {};
   current.events = node['events'] || {};
+
+  if (current.props['key'] !== undefined) {
+    current.key = current.props['key'];
+    delete(current.props['key']);
+  } else {
+    current.key = _keyCount++;
+  }
+  keyMap[current.key] = current;
 
   // current.varList = [];
   current.strVarList = [];
@@ -362,16 +368,67 @@ function generateObjectId(object) {
   }
 }
 
-function generateId(node) {
+function objectToId(object) {
+  var idName, varKey, varName;
+  if (object.className == 'var') {
+    idName = object.widget.props['id'];
+    varName = object.name;
+    if (object.type == 'string') {
+      varKey = 's' + object.widget.strVarList.indexOf(object);
+    } else {
+      varKey = 'i' + object.widget.intVarList.indexOf(object);
+    }
+  } else if (object.className == 'func'){
+      idName = object.widget.props['id'];
+      varKey = 'f' + object.widget.funcList.indexOf(object);
+  } else if (object.className == 'dbItem'){
+      idName = object.widget.props['id'];
+      varKey = 'd' + object.widget.dbItemList.indexOf(object);
+  } else {
+    idName = object.props['id'];
+  }
+  return [idName, varKey, varName];
+}
+
+function generateId(node, idList) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
         generateObjectId(judge.judgeObj);
         generateObjectId(judge.compareObj);
+        if (idList != undefined) {
+          if (judge.judgeObj) {
+            var o = objectToId(judge.judgeObj);
+            idList[o[0]] = judge.judgeObj.key;
+            judge.judgeObjId = o[0];
+            if (o[1]) {
+              judge.judgeVarId = o[1];
+              judge.judgeVarName = o[2];
+            }
+          }
+          if (judge.compareObj) {
+            var o = objectToId(judge.compareObj);
+            idList[o[0]] = judge.compareObj.key;
+            judge.compareObjId = o[0];
+            if (o[1]) {
+              judge.compareVarId = o[1];
+              judge.compareVarName = o[2];
+            }
+          }
+        }
       });
 
       item.specificList.forEach(cmd => {
         generateObjectId(cmd.object);
+        if (idList != undefined && cmd.object) {
+          var o = objectToId(cmd.object);
+          idList[o[0]] = cmd.object.key;
+          cmd.action.id = o[0];
+          if (o[1]) {
+              cmd.action.var = o[1];
+              cmd.action.varName = o[2];
+          }
+        }
           if(cmd.action){
               switch (cmd.action.type){
                   case funcType.customize:
@@ -401,31 +458,9 @@ function generateId(node) {
   }
   if (node.children.length > 0) {
     node.children.map(item => {
-      generateId(item);
+      generateId(item, idList);
     });
   }
-}
-
-function objectToId(object) {
-  var idName, varKey, varName;
-  if (object.className == 'var') {
-    idName = object.widget.props['id'];
-    varName = object.name;
-    if (object.type == 'string') {
-      varKey = 's' + object.widget.strVarList.indexOf(object);
-    } else {
-      varKey = 'i' + object.widget.intVarList.indexOf(object);
-    }
-  } else if (object.className == 'func'){
-      idName = object.widget.props['id'];
-      varKey = 'f' + object.widget.funcList.indexOf(object);
-  } else if (object.className == 'dbItem'){
-      idName = object.widget.props['id'];
-      varKey = 'd' + object.widget.dbItemList.indexOf(object);
-  } else {
-    idName = object.props['id'];
-  }
-  return [idName, varKey, varName];
 }
 
 function getIdsName(idName, varName, propName) {
@@ -538,7 +573,7 @@ function generateJsFunc(etree) {
   return output;
 }
 
-function saveTree(data, node) {
+function saveTree(data, node, saveKey) {
   data['cls'] = node.className;
   let props = {};
   for (let name in node.props) {
@@ -665,6 +700,8 @@ function saveTree(data, node) {
         props[name] = node.props[name];
     }
   }
+  if (saveKey)
+    props['key'] = node.key;
   if (props)
     data['props'] = props;
   // if (node.events)
@@ -737,7 +774,7 @@ function saveTree(data, node) {
       }
       let child = {};
       data['children'].unshift(child);
-      saveTree(child, item);
+      saveTree(child, item, saveKey);
     });
   }
 }
@@ -1145,7 +1182,10 @@ export default Reflux.createStore({
             // let dest = this.findWidget(destKey);
             if (src&&dest) {
                 var saved = {};
-                saveTree(saved, src);
+                var rootWidget = this.currentWidget.rootWidget;
+                var idList = [];
+                generateId(rootWidget, idList);
+                saveTree(saved, src, true);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
@@ -1153,6 +1193,12 @@ export default Reflux.createStore({
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
+                var map = [];
+                for (var id in idList) {
+                  map[id] = keyMap[idList[id]];
+                }
+                resolveEventTree(rootWidget, map);
+
 
                 var destIndex = dest.children.indexOf(obj);
                 if (destIndex != index) {
