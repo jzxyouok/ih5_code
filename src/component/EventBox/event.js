@@ -109,8 +109,6 @@ class Event extends React.Component {
     }
 
     onStatusChange(widget) {
-
-
         //触发更新目标对象列表
         if (widget.redrawEventTree) {
             if (this.props.wKey === this.props.activeKey) {
@@ -240,7 +238,6 @@ class Event extends React.Component {
         return val;
     }
 
-
     delEvent(index){
         if(index !=0){
             WidgetActions['delEvent'](this.state.eventList,index);
@@ -310,11 +307,13 @@ class Event extends React.Component {
            propertyMap[chooseEventClassName].map((v,i)=>{
              if(v.isProperty && v.name !='id'){
                  if(v.showName=='W'){
-                     propArr.push({name:v.name,showName:'宽度',type:v.type});
+                     propArr.push({name:'width',showName:'宽度',type:1});
                      nameArr.push('宽度');
                  }else if(v.showName=='H'){
-                     propArr.push({name:v.name,showName:'高度',type:v.type});
+                     propArr.push({name:'height',showName:'高度',type:1});
                      nameArr.push('高度');
+                 }else if(v.showName=='中心点'){
+                     ;
                  }else{
                      propArr.push({name:v.name,showName:v.showName,type:v.type});
                      nameArr.push(v.showName);
@@ -331,8 +330,9 @@ class Event extends React.Component {
     getCompareValOption(propArr){
         let judgeValType =this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].judgeValType;
         let arr=[];
+
         propArr.map((v,i)=>{
-            if(v.type == judgeValType){
+            if(this.getTypeArr(v.type).indexOf(judgeValType)>=0){
                 arr.push(v.showName);
             }
         });
@@ -374,6 +374,7 @@ class Event extends React.Component {
                     }
                 });
         }else if(type == 'compareValFlag'){
+            console.log( this.state.eventList,this.curEventIndex,this.curChildrenIndex,value)   //没有propArr
             this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr.map((v,i)=>{
                 if(v.showName==value){
                     name=v.name;
@@ -463,24 +464,23 @@ class Event extends React.Component {
                 arrHidden = this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
                     arrHidden[5] = true;
+                    initFlag.compareValFlag = '比较值';
                     initFlag.operationManager = {
                         arrHidden: arrHidden
                     }
+
                 } else {
                     arrHidden[5] = false;
                     //非五类
-
                     let propObj = this.setObjProperty(chooseEventClassName);
+                    initFlag.propArr = propObj.propArr;
                     initFlag.compareValOption =this.getCompareValOption(propObj.propArr);
-
                     initFlag.compareValFlag = '比较值';
                     initFlag.operationManager = {
                         arrHidden: arrHidden
                     }
                 }
-
                 initFlag.compareObj =this.getChooseObjByIndex(value);
-
                 break;
             default :
                 isRun = false;
@@ -614,7 +614,7 @@ class Event extends React.Component {
             return [4,10];
         }else if(type==6||type ==9){
             //Color ,Color2
-            return [4,9];
+            return [6,9];
         }else{
             return [type];
         }
