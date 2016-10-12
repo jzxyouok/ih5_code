@@ -667,10 +667,9 @@ class NavBar extends React.Component {
                             <li className="f--hlc open-li"
                                 onMouseOver={ this.openWorkShow }
                                 onMouseOut={ this.openWorkHide }>
-                                <div className="title">
-                                    最近打开
-                                    <span className="icon" />
-                                </div>
+
+                                最近打开
+                                <span className="icon" />
                             </li>
                             <li className="line" />
                             <li className="save-li" onClick={this.onSave} >保存</li>

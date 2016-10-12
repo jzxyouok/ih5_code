@@ -71,6 +71,22 @@
                             color: #fff;
                         }
                     }
+
+                    &.open-li {
+                        .icon {
+                            position: absolute;
+                            right: 0;
+                            top: 0;
+                            width: 24px;
+                            height: 24px;
+                            display: block;
+                            background: url("img/button-icon.svg") no-repeat -1360px -200px;
+                        }
+
+                        &:hover .icon {
+                            background-position: -1360px -240px;
+                        }
+                    }
                 }
             }
 
