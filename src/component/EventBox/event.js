@@ -530,7 +530,6 @@ class Event extends React.Component {
             arr =  eventList[this.curEventIndex].children[this.curChildrenIndex][option];
         }else if(type=='compareObjFlag'){
             arr =this.state[option]
-            console.log('hehehehe');
             eventList[this.curEventIndex].children[this.curChildrenIndex].showDropdown=false;
         }
         arr.map((v,i)=>{
@@ -703,7 +702,7 @@ class Event extends React.Component {
             return   <Select  className='dropDown-input-content'  defaultValue={item.default}  onChange={this.onChangeProp.bind(this,index,item.type)}  >{optionArr}</Select>
         }
     }
-    showCompareDropDown(){
+    showCompareDropDown(str){
         let eventList=this.state.eventList;
         eventList[this.curEventIndex].children[this.curChildrenIndex].showDropdown =true;
         this.setState({eventList:eventList})
