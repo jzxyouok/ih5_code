@@ -227,7 +227,6 @@ class PropertyView extends React.Component {
                   }else if(prop.name == 'type'){
                       this.selectNode.props.type=this.getScaleTypeDefault(value,prop.options);
                       v = value;
-
                   }else if(prop.name == 'forwardTransition' ||prop.name == 'backwardTransition'){
                       this.selectNode.props[prop.name+'_val']=this.getScaleTypeDefault(value,prop.options);
                        v = parseInt(value);
@@ -658,14 +657,12 @@ class PropertyView extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
-
         document.addEventListener('mousemove', this.mouseMove.bind(this));
         document.addEventListener('mouseup', this.mouseUp.bind(this));
     }
 
     componentWillUnmount() {
         this.unsubscribe();
-
     }
 
     mouseDown(e){
@@ -717,8 +714,6 @@ class PropertyView extends React.Component {
         return (
             <div id='PropertyView'
                  ref='PropertyView'
-
-
                  style={{ left : this.props.expanded? '65px':'37px'}}
                  className={cls({'hidden':this.props.isHidden})}>
                 <h1 id='PropertyViewHeader'
