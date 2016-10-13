@@ -384,12 +384,22 @@
                             text-decoration: none;
                         }
 
-                        .rowRightMenu{
-                            @include shadow(5px,5px,20px,0.3);
-                            position: absolute;
+                        .rowRightMenu {
                             top: 0;
                             right: -107px;
                             z-index: 1;
+                        }
+
+                        .columnRightMenu {
+                            top: 35px;
+                            left: 0;
+                            z-index: 3;
+                        }
+
+                        .rowRightMenu ,
+                        .columnRightMenu{
+                            @include shadow(5px,5px,20px,0.3);
+                            position: absolute;
                             width: 106px;
                             height: 118px;
                             background: #3e3e3e;
