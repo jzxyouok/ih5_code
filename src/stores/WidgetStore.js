@@ -113,6 +113,7 @@ function loadTree(parent, node, idList) {
           temp['className'] = 'var';
           temp['key'] = _keyCount++;
           temp['widget'] = current;
+          keyMap[temp['key']] = temp;
           switch (temp['type']){
               case varType.number:
                   current.intVarList.push(temp);
@@ -136,6 +137,7 @@ function loadTree(parent, node, idList) {
           temp['className'] = 'func';
           temp['key'] = _keyCount++;
           temp['widget'] = current;
+          keyMap[temp['key']] = temp;
           current.funcList.push(temp);
       });
   }
@@ -149,8 +151,9 @@ function loadTree(parent, node, idList) {
               temp['props'] = item.props;
               temp['className'] = 'dbItem';
               temp['key'] = _keyCount++;
-              temp['widget'] = current;
               temp['fields'] = item.fields;
+              temp['widget'] = current;
+              keyMap[temp['key']] = temp;
               current.dbItemList.push(temp);
           })
       }
@@ -324,7 +327,7 @@ function resolveDBItemList(node, list) {
         node.dbItemList.forEach(v => {
             v.fields.forEach(item => {
                 if(item.wid){
-                    item.value = idToObject(list, item.wid[0], item.wid[1]);
+                    item.value = idToObject(list, item.wid[0], item.wid[1]).key;
                     delete(item.wid);
                 } else {
                     item.value = null;
@@ -492,13 +495,14 @@ function generateId(node, idList) {
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
           item.fields.forEach(judge => {
-              generateObjectId(judge.value);
-              if (idList != undefined && judge.value) {
-                  var o = objectToId(judge.value);
-                  idList[o[0]] = judge.value.key;
+              let w =  keyMap[judge.value];
+              generateObjectId(w);
+              if (idList != undefined && w) {
+                  var o = objectToId(w);
+                  idList[o[0]] = w.key;
                   judge.wid = o;
                   if (judge.wid[1]) {
-                      idList[judge.wid[0]] = judge.value.widget.key;
+                      idList[judge.wid[0]] = w.widget.key;
                   }
               }
           });
@@ -831,7 +835,7 @@ function saveTree(data, node, saveKey) {
               let name = field.name;
               let wid = null;
               if(field.value){
-                  wid = objectToId(field.value);
+                  wid = objectToId(keyMap[field.value]);
               }
               o['fields'].push({name: name, wid: wid});
           });
@@ -1152,6 +1156,7 @@ export default Reflux.createStore({
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
+            keyMap[this.currentWidget.key] = undefined;
             this.currentWidget = null;
             if(shouldChooseParent) {
                 this.selectWidget(parentWidget);
@@ -1226,6 +1231,9 @@ export default Reflux.createStore({
             this.trigger({redrawTree: true});
             // this.render();
         }
+    },
+    getWidgetByKey: function (key) {
+        return keyMap[key];
     },
     findWidget: function(key){
         let root = this.currentWidget.rootWidget;
@@ -1641,6 +1649,7 @@ export default Reflux.createStore({
             } else {
                 func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
             }
+            keyMap[func['key']] = func;
             this.currentWidget['funcList'].unshift(func);
         }
         this.trigger({updateFunction: {widget:this.currentWidget}});
@@ -1669,6 +1678,7 @@ export default Reflux.createStore({
             });
             if(index>-1){
                 this.currentWidget.funcList.splice(index,1);
+                keyMap[this.currentFunction.key]= undefined;
                 this.trigger({updateFunction: {widget:this.currentWidget}});
                 this.selectWidget(this.currentWidget);
             }
@@ -1730,6 +1740,7 @@ export default Reflux.createStore({
                     } else {
                         vars['props']['name'] = 'intVar' + (this.currentWidget['intVarList'].length + 1);
                     }
+                    keyMap[vars['key']] = vars;
                     this.currentWidget['intVarList'].unshift(vars);
                     break;
                 case varType.string:
@@ -1738,6 +1749,7 @@ export default Reflux.createStore({
                     } else {
                         vars['props']['name'] = 'strVar' + (this.currentWidget['strVarList'].length + 1);
                     }
+                    keyMap[vars['key']] = vars;
                     this.currentWidget['strVarList'].unshift(vars);
                     break;
                 default:
@@ -1767,6 +1779,7 @@ export default Reflux.createStore({
                 });
                 if(index>-1){
                     list.splice(index,1);
+                    keyMap[this.currentVariable.key]= undefined;
                     this.selectWidget(this.currentWidget);
                 }
             };
@@ -1876,8 +1889,9 @@ export default Reflux.createStore({
             } else {
                 dbItem['props']['name'] = 'dbItem' + (this.currentWidget['dbItemList'].length + 1);
             }
-            this.trigger({updateDBItem: {widget:this.currentWidget}});
+            keyMap[dbItem['key']] = dbItem;
             this.currentWidget['dbItemList'].unshift(dbItem);
+            this.trigger({updateDBItem: {widget:this.currentWidget}});
         }
         this.trigger({redrawTree: true});
     },
@@ -1902,6 +1916,7 @@ export default Reflux.createStore({
             });
             if(index>-1){
                 this.currentWidget.dbItemList.splice(index,1);
+                keyMap[this.currentDBItem.key]= undefined;
                 this.trigger({updateDBItem: {widget:this.currentWidget}});
                 this.selectWidget(this.currentWidget);
             }
