@@ -58,7 +58,8 @@ class NavBar extends React.Component {
             isAddDb : true,
             isAddSock : true,
             reAddDbId : [],
-            reAddSockId : []
+            reAddSockId : [],
+            addPanel : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -93,6 +94,8 @@ class NavBar extends React.Component {
         this.openWorkHide = this.openWorkHide.bind(this);
         this.specialLayerToogle = this.specialLayerToogle.bind(this);
         this.clickOthersHide = this.clickOthersHide.bind(this);
+        this.addPanelShow = this.addPanelShow.bind(this);
+        this.addPanelHide = this.addPanelHide.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -422,6 +425,7 @@ class NavBar extends React.Component {
         //this.setState({
         //    createDb : true
         //})
+        this.addPanelHide();
     }
 
     createDbHide(){
@@ -500,6 +504,7 @@ class NavBar extends React.Component {
         //this.setState({
         //    createSock : true
         //})
+        this.addPanelHide();
     }
 
     createSockHide(){
@@ -647,6 +652,19 @@ class NavBar extends React.Component {
         }
     }
 
+    addPanelShow(){
+        this.setState({
+            addPanel: true
+        })
+    }
+
+    addPanelHide(){
+        //console.log(1);
+        this.setState({
+            addPanel: false
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -776,12 +794,12 @@ class NavBar extends React.Component {
                         </div>
 
                         <div className='dropDown-btn db-dropDown f--hlc'>
-                            <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }}>
+                            <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }} onMouseOver={ this.addPanelShow }>
                                 <span className="icon" />
                                 <span className="title">数据库</span>
                             </button>
 
-                            <div className='dropDownToggle'>
+                            <div className={$class('dropDownToggle',{"hidden": !this.state.addPanel})}>
                                 <div className="dropDownToggle-main">
                                     <div className="dropDown-title f--hlc">
                                         <span className="flex-1">全部数据库：</span>
@@ -828,12 +846,12 @@ class NavBar extends React.Component {
                         </div>
 
                         <div className='dropDown-btn link-dropDown f--hlc'>
-                            <button className='btn btn-clear link-btn' title='连接'>
+                            <button className='btn btn-clear link-btn' title='连接' onMouseOver={ this.addPanelShow }>
                                 <span className="icon" />
                                 <span className="title">连接</span>
                             </button>
 
-                            <div className='dropDownToggle'>
+                            <div className={$class('dropDownToggle',{"hidden": !this.state.addPanel})}>
                                 <div className="dropDownToggle-main">
                                     <div className="dropDown-title f--hlc">
                                         <span className="flex-1">全部连接：</span>
