@@ -702,8 +702,8 @@ class DbTable extends React.Component {
                     });
 
                     fkList.map((v,i)=>{
-                        list[i][text] = list[i][value];
-                        delete list[i][value];
+                        fkList[i][text] = fkList[i][value];
+                        delete fkList[i][value];
                     });
 
                     let fc = this.state.originalHeader;
