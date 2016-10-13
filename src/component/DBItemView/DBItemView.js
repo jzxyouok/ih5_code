@@ -248,9 +248,7 @@ class DBItemView extends React.Component {
                 <div className="inner-item f--hcc">
                     <div className="title">
                         {
-                            this.state.dbItem.widget.node.dbType === 'personalDb'
-                                ? v1.name.substr(1)
-                                : v1.name
+                            v1.name.substr(1)
                         }
                     </div>
                 </div>
