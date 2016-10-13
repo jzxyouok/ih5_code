@@ -837,8 +837,9 @@ function saveTree(data, node, saveKey) {
           item.fields.forEach(field =>{
               let name = field.name;
               let wid = null;
-              if(field.value){
-                  wid = objectToId(keyMap[field.value]);
+              let w = keyMap[field.value];
+              if(w){
+                  wid = w;
               }
               o['fields'].push({name: name, wid: wid});
           });
