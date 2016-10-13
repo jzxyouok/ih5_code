@@ -35,7 +35,11 @@ class DbTable extends React.Component {
             originalData : [],
             originalHeader : [],
             rowChooseID : null,
-            columnChooseID : null
+            columnChooseID : null,
+            rowRightMenu : false,
+            columnRightMenu : false,
+            rowRightID : null,
+            columnRightID : null
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -60,6 +64,12 @@ class DbTable extends React.Component {
         this.rowChoose = this.rowChoose.bind(this);
         this.columnChoose = this.columnChoose.bind(this);
         this.clearRowColumn = this.clearRowColumn.bind(this);
+        this.rowRightClick = this.rowRightClick.bind(this);
+        this.columnRightClick = this.columnRightClick.bind(this);
+        this.clickOthersHide = this.clickOthersHide.bind(this);
+        this.rowChangeIndex = this.rowChangeIndex.bind(this);
+        this.rowAddIndex = this.rowAddIndex.bind(this);
+        this.rowRightMenuClick = this.rowRightMenuClick.bind(this);
     }
 
     componentDidMount() {
@@ -762,7 +772,7 @@ class DbTable extends React.Component {
     columnChoose(event){
         event.stopPropagation();
         event.preventDefault();
-        let id = event.currentTarget.getAttribute("data-id");
+        let id = parseInt(event.currentTarget.getAttribute("data-id"));
         this.setState({
             rowChooseID : null,
             columnChooseID : id
@@ -775,6 +785,176 @@ class DbTable extends React.Component {
             columnChooseID : null
         });
     }
+
+    rowRightClick(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        let id = parseInt(event.currentTarget.getAttribute("data-id"));
+        this.setState({
+            rowRightMenu : true,
+            columnRightMenu : false,
+            rowRightID : id,
+            columnRightID : null
+        });
+        this.clickOthersHide();
+    }
+
+    columnRightClick(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.setState({
+            rowRightMenu : false,
+            columnRightMenu : true
+        });
+        this.clickOthersHide();
+    }
+
+    clickOthersHide(){
+        let self = this;
+        let fuc = function(e){
+            let _con1 = $('.rowRightMenu');   // 设置目标区域
+            let _con2 = $('.columnRightMenu');
+            if(
+                (!_con1.is(e.target) && _con1.has(e.target).length === 0)
+                &&(!_con2.is(e.target) && _con2.has(e.target).length === 0)
+            ){
+                self.setState({
+                    rowRightMenu : false,
+                    columnRightMenu : false
+                },()=>{
+                    $(document).off('mouseup', fuc);
+                })
+            }
+        };
+        if(this.state.dropDownState !== 0){
+            $(document).on('mouseup', fuc);
+        }
+        else {
+            $(document).off('mouseup', fuc);
+        }
+    }
+
+    rowRightMenuClick(event){
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    rowAddIndex(event){
+        event.preventDefault();
+        event.stopPropagation();
+        let type = parseInt(event.currentTarget.getAttribute("data-type"));
+        let index = parseInt(event.currentTarget.getAttribute("data-id"));
+        let self = this;
+        let list = this.state.dbList;
+        let fkList = this.state.originalData;
+        let idArray = this.state.selectArray;
+
+        this.clearRowColumn();
+        this.state.node.insert({}, function (err, data) {
+            //if(data == undefined) return;
+            //console.log(data);
+            let newList = {};
+            newList['_id'] = data[0];
+            if(type == -1){
+                list.splice(index-1, 0, newList);
+                fkList.splice(index-1, 0, newList);
+            }
+            else {
+                list.splice(index+1, 0, newList);
+                fkList.splice(index+1, 0, newList);
+            }
+
+            idArray.map((v,i)=>{
+                let a = v.indexOf('-');
+                let b = parseInt(v.substring(8,a));
+                let header = v.substring(0,8);
+                let end = v.substring(a,v.length);
+                if(type == -1){
+                    if(b >= index){
+                        idArray[i] = header + (b+1) + end;
+                    }
+                }
+                else {
+                    if(b > index){
+                        idArray[i] = header + (b+1) + end;
+                    }
+                }
+            });
+            //console.log(list,fkList);
+            self.setState({
+                dbList : list,
+                originalData : fkList,
+                selectArray : idArray,
+                rowRightMenu : false,
+                columnRightMenu : false
+            })
+        });
+    }
+
+    rowChangeIndex(event){
+        event.preventDefault();
+        event.stopPropagation();
+        let type = parseInt(event.currentTarget.getAttribute("data-type"));
+        let index = parseInt(event.currentTarget.getAttribute("data-id"));
+        let list = this.state.dbList;
+        let fkList = this.state.originalData;
+        let data = list[index];
+        let fKdata = fkList[index];
+        let idArray = this.state.selectArray;
+
+        this.clearRowColumn();
+        if(type == -1){
+            if(index == 0) return;
+        }
+        else {
+            if(index == list.length-1) return;
+        }
+
+        list.splice(index,1);
+        fkList.splice(index,1);
+        if(type == -1){
+            list.splice(index-1, 0, data);
+            fkList.splice(index-1, 0, fKdata);
+        }
+        else {
+            list.splice(index+1, 0, data);
+            fkList.splice(index+1, 0, fKdata);
+        }
+        //console.log(idArray);
+        idArray.map((v,i)=>{
+            let a = v.indexOf('-');
+            let b = parseInt(v.substring(8,a));
+            let header = v.substring(0,8);
+            let end = v.substring(a,v.length);
+            if(type == -1){
+                if(b == index -1 ){
+                    idArray[i] = header + index + end;
+                }
+                if(b == index){
+                    idArray[i] = header + (index - 1) + end;
+                }
+            }
+            else {
+                if(b == index){
+                    idArray[i] = header + (index + 1) + end;
+                }
+                if(b == index + 1){
+                    idArray[i] = header + index + end;
+                }
+            }
+        });
+        //console.log(idArray);
+
+        this.setState({
+            dbList : list,
+            originalData : fkList,
+            selectArray : idArray,
+            rowRightMenu : false,
+            columnRightMenu : false
+        })
+    };
 
     render() {
         let width = this.props.isBig ? 535 : 689;
@@ -866,6 +1046,8 @@ class DbTable extends React.Component {
                                                                 }>
 
                                                                 <td onClick={ this.rowChoose.bind(this, i)}
+                                                                    onContextMenu={ this.rowRightClick.bind(this) }
+                                                                    data-id={i}
                                                                     className={ $class({"TDZActive" : this.state.columnChooseID == 0})} >
                                                                     {
                                                                         i + 1
@@ -874,6 +1056,38 @@ class DbTable extends React.Component {
                                                                         //    return <span className="shift" key={i3}>{ v3 }</span>
                                                                         //  })
                                                                         //: <span className="shift">{data}</span>
+                                                                    }
+
+                                                                    {
+                                                                        this.state.rowRightMenu && this.state.rowRightID == i
+                                                                        ?   <ul className="rowRightMenu" onClick={ this.rowRightMenuClick }>
+                                                                                <li onClick={ this.rowAddIndex.bind(this) }
+                                                                                    data-id={i}
+                                                                                    data-type={-1} >
+                                                                                    在上面添加行
+                                                                                </li>
+                                                                                <li onClick={ this.rowAddIndex.bind(this) }
+                                                                                    data-id={i}
+                                                                                    data-type={1} >
+                                                                                    在下面添加行
+                                                                                </li>
+                                                                                <li className="line" />
+                                                                                <li onClick={ this.rowChangeIndex.bind(this) }
+                                                                                    className={$class({"not-click": i == 0})}
+                                                                                    data-id={i}
+                                                                                    data-type={-1}>
+                                                                                    移至上一行
+                                                                                </li>
+                                                                                <li onClick={ this.rowChangeIndex.bind(this) }
+                                                                                    className={$class({"not-click": i == this.state.dbList.length-1})}
+                                                                                    data-id={i}
+                                                                                    data-type={1} >
+                                                                                    移至下一行
+                                                                                </li>
+                                                                                <li className="line" />
+                                                                                <li className="not-click">删除此行</li>
+                                                                            </ul>
+                                                                        :   null
                                                                     }
                                                                 </td>
                                                                 {
