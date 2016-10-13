@@ -42,7 +42,8 @@ class DbTable extends React.Component {
             columnRightID : null,
             addColumnFuc : null,
             addColumnValue : null,
-            addColumnBool : false
+            addColumnBool : false,
+            isMoveList : false
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -419,7 +420,8 @@ class DbTable extends React.Component {
                 originalHeader : [],
                 inputNow : null,
                 inputText : null,
-                inputStyle : null
+                inputStyle : null,
+                isMoveList : false
             },()=>{
                 console.log(self.state.node.dbType);
                 if(self.state.node.dbType == "shareDb"){
@@ -546,9 +548,8 @@ class DbTable extends React.Component {
         }
         else {
             if(addColumnBool){
-                header.splice(addColumnValue,1);
                 if(addColumnFuc == -1){
-                    header.splice(addColumnValue-1, 0, value);
+                    header.splice(addColumnValue, 0, value);
                 }
                 else {
                     header.splice(addColumnValue+1, 0, value);
@@ -905,8 +906,8 @@ class DbTable extends React.Component {
             let newList = {};
             newList['_id'] = data[0];
             if(type == -1){
-                list.splice(index-1, 0, newList);
-                fkList.splice(index-1, 0, newList);
+                list.splice(index, 0, newList);
+                fkList.splice(index, 0, newList);
             }
             else {
                 list.splice(index+1, 0, newList);
@@ -935,7 +936,8 @@ class DbTable extends React.Component {
                 originalData : fkList,
                 selectArray : idArray,
                 rowRightMenu : false,
-                columnRightMenu : false
+                columnRightMenu : false,
+                isMoveList : true
             })
         });
     }
@@ -999,7 +1001,8 @@ class DbTable extends React.Component {
             originalData : fkList,
             selectArray : idArray,
             rowRightMenu : false,
-            columnRightMenu : false
+            columnRightMenu : false,
+            isMoveList : true
         })
     };
 
@@ -1071,7 +1074,8 @@ class DbTable extends React.Component {
             originalHeader : fkHeader,
             selectArray : idArray,
             rowRightMenu : false,
-            columnRightMenu : false
+            columnRightMenu : false,
+            isMoveList : true
         })
     };
 
@@ -1083,7 +1087,8 @@ class DbTable extends React.Component {
 
         this.setState({
             addColumnFuc : type,
-            addColumnValue : index
+            addColumnValue : index,
+            isMoveList : true
         },()=>{
             this.popShow(true);
         });
@@ -1334,7 +1339,7 @@ class DbTable extends React.Component {
                         <button className="btn btn-clear next-bnt">下一页</button>
                     </div>
 
-                    <div className={ $class("right",{"hidden": this.state.selectArray.length == 0}) }>
+                    <div className={ $class("right",{"hidden": this.state.selectArray.length == 0 && !this.state.isMoveList }) }>
                         <button className="btn btn-clear cancel-btn" onClick={ this.cancelBtn } >取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn.bind(this,false) }>保存</button>
                     </div>
