@@ -184,7 +184,7 @@ class DBItemView extends React.Component {
         e.domEvent.stopPropagation();
         let source = e.item.props.source;
         let fields = this.state.fields;
-        fields[index].value = source;
+        fields[index].value = source.key;
         this.setState({
             fieldDropdownVisibleIndex: null,
             fieldDropdownVisible: false,
@@ -202,7 +202,8 @@ class DBItemView extends React.Component {
             let fields = this.state.fields;
             let fieldInput = 'dbItemFiledInput'+index;
             let inputDomNode = findDOMNode(this.refs[fieldInput]).firstChild;
-            inputDomNode.value = fields[index].value?fields[index].value.props.name:'';
+            let w = WidgetStore.getWidgetByKey(fields[index].value);
+            inputDomNode.value = w?w.props.name:'';
             inputDomNode.focus();
         });
     }
@@ -213,13 +214,14 @@ class DBItemView extends React.Component {
             let sourceList = this.state.sourceList;
             sourceList.forEach((v,i)=>{
                 if(v.props.name === e.target.value){
-                    source = v;
+                    source = v.key;
                 }
             })
         }
         let fields = this.state.fields;
         fields[index].value = source;
-        e.target.value = fields[index].value?fields[index].value.props.name:'';
+        let w = WidgetStore.getWidgetByKey(source);
+        e.target.value = w?w.props.name:'';
         this.setState({
             fieldFocusIndex: null,
             fields: fields
@@ -243,6 +245,7 @@ class DBItemView extends React.Component {
             );
 
             let propertyId = 'db-item-'+ i1;
+            let w = WidgetStore.getWidgetByKey(v1.value);
 
             return <div className="item" key={i1} id={propertyId}>
                 <div className="inner-item f--hcc">
@@ -265,8 +268,8 @@ class DBItemView extends React.Component {
                                     <div onClick={this.onStartEditField.bind(this, i1)} className={$class('ant-input ant-input-sm ant-fade-input',
                                         {'hidden':this.state.fieldFocusIndex!=null&&this.state.fieldFocusIndex==i1})}>
                                         {
-                                            v1.value
-                                                ? v1.value.props.name
+                                            w
+                                                ?  w.props.name
                                                 : '数据来源'
                                         }
                                     </div>
