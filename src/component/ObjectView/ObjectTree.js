@@ -549,13 +549,15 @@ class ObjectTree extends React.Component {
             WidgetActions['deleteTreeNode'](this.state.nodeType);
             window.macKeys.reset();
 
-            if(this.state.selectWidget.className == "db"){
-                if(this.state.selectWidget.node.dbType = "shareDb"){
-                    ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
+            if(this.state.selectWidget) {
+                if(this.state.selectWidget.className == "db"){
+                    if(this.state.selectWidget.node.dbType = "shareDb"){
+                        ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
+                    }
                 }
-            }
-            if(this.state.selectWidget.className == "sock"){
-                ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+                if(this.state.selectWidget.className == "sock"){
+                    ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+                }
             }
         }
     }
