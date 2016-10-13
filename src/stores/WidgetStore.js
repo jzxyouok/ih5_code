@@ -162,11 +162,31 @@ function loadTree(parent, node, idList) {
       var r = {};
       var judgesObj = item.judges;
 
+
+
+
       r.conFlag = judgesObj.conFlag;
-      r.needFill = judgesObj.needFill;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
-      r.children = judgesObj.children;
+      r.children = [];
+        let needFill =[];
+        judgesObj.children.map((v,i)=>{
+            if(v.showName !==undefined) {
+                let obj = {};
+                r.conFlag = v.compareFlag;
+                obj.showName = v.showName;
+                obj.type = v.type;
+                obj.default = v.compareValFlag;
+                needFill.push(obj);
+            }else{
+                r.children.push(v);
+            }
+        });
+        if(needFill.length>0){
+            r.needFill=needFill;
+        }
+
+
 
       r.eid = (_eventCount++);
       r.specificList = [];
@@ -392,7 +412,8 @@ function objectToId(object) {
 
 function generateId(node, idList) {
   if (node.props['eventTree']) {
-    node.props['eventTree'].forEach(item => {
+      generateObjectId(node);
+      node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
         generateObjectId(judge.judgeObj);
         generateObjectId(judge.compareObj);
@@ -612,47 +633,42 @@ function saveTree(data, node, saveKey) {
     else if (name == 'eventTree') {
       var etree = [];
 
+        console.log('node',node,node.props['eventTree']);
+
         node.props['eventTree'].forEach(item => {
         var cmds = [];
         var judges={};
-        judges.conFlag = item.conFlag;
 
-           judges.needFill=item.needFill;   //触发条件的值
+           judges.conFlag = item.conFlag;
+
+           // judges.needFill=item.needFill;   //触发条件的值
 
             judges.children=[];
-            // item.needFill.map((v,i)=>{
-            //     let obj={};
-            //
-            //     obj.compareFlag=item.conFlag; //比较符号
-            //     obj.compareObjFlag=v.default; //值
-            //
-            //
-            //     // if (v.judgeObj) {
-            //     //     let o = objectToId(v.judgeObj);
-            //     //     obj.judgeObjId = o[0];
-            //     //     if (o[1]) {
-            //     //         obj.judgeVarId = o[1];
-            //     //         obj.judgeVarName = o[2];
-            //     //     }
-            //     // }
-            //
-            //   //  obj.judgeObjFlag=;  //对象名  ,当前对象
-            //    // obj.judgeObjId= ;   //对象名id
-            //
-            //     obj.compareValFlag=undefined;
-            //     obj.compareValOption=undefined;
-            //     obj.judgeValFlag=undefined;
-            //     obj.judgeValOption=undefined;
-            //     obj.judgeValType=undefined;
-            //     obj.operationManager=undefined;
-            //
-            //     judges.children.push(obj);
-            // });
+            if(item.needFill) {
+                judges.conFlag = 'onChange';//触发条件
+                item.needFill.map((v, i)=> {
+                    let obj = {};
 
+
+
+                    let o = objectToId(node);
+                    obj.judgeObjId = o[0];
+
+                    obj.judgeObjFlag = node.props.name; //判断对象的名字
+
+                    obj.compareFlag = item.conFlag;
+
+                    obj.showName=v.showName;
+                    obj.type=v.type;
+                    obj.compareValFlag = v.default;//判断对象的属性
+
+                    judges.children.push(obj);
+
+                });
+            }
 
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
-
             item.children.map((v,i)=>{
                    let obj={};
                    if (v.judgeObj) {
@@ -663,7 +679,6 @@ function saveTree(data, node, saveKey) {
                         obj.judgeVarName = o[2];
                       }
                    }
-
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
@@ -685,6 +700,8 @@ function saveTree(data, node, saveKey) {
              obj.compareValOption=v.compareValOption;
              obj.operationManager={};
              obj.operationManager.arrHidden=v.operationManager.arrHidden;
+
+
              judges.children.push(obj);
 
          });

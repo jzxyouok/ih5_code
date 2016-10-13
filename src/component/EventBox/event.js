@@ -7,7 +7,8 @@ import Property from './Property'
 import WidgetStore, {funcType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import  {propertyMap} from '../PropertyMap'
-import {eventTempData} from './tempData'
+import {eventTempData} from './tempData';
+
 import { Menu, Dropdown, Icon ,InputNumber,Input,Select} from 'antd';
 const MenuItem = Menu.Item;
 const Option = Select.Option;
@@ -72,6 +73,7 @@ class Event extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+
         nextProps.eventList.map((v,i)=>{
             if(!v.children){
               //改造,有空后改造下tree
@@ -310,6 +312,7 @@ class Event extends React.Component {
         }
            propertyMap[chooseEventClassName].map((v,i)=>{
              if(v.isProperty && v.name !='id'){
+
                  if(v.showName=='W'){
                      propArr.push({name:'width',showName:'宽度',type:1});
                      nameArr.push('宽度');
@@ -505,7 +508,9 @@ class Event extends React.Component {
             eventList[this.curEventIndex].children[this.curChildrenIndex] = initFlag;
             //判断事件面板所需宽度
             this.setEventBoxWidth(eventList);
-            this.setState({eventList: eventList});
+            this.setState({eventList: eventList},()=>{
+                console.log('eventList',this.state.eventList);
+            });
         }
     }
 
@@ -696,10 +701,10 @@ class Event extends React.Component {
         }else if(type=='string'){
             eventList[this.curEventIndex].needFill[index].default =value.target.value;
         }else if(type=='select'){
-
             eventList[this.curEventIndex].needFill[index].default =value;
         }
         this.setState({eventList:eventList});
+
     }
     getAntdComponent(item,index){
         if(item.type=='number'){
