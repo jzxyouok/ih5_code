@@ -84,34 +84,34 @@ class DbTable extends React.Component {
         //57ee37ce7f8472077f7384f7
         //57ee37e67f84726aa75f0036
         //TODO:为了本地测试虚拟获取数据
-        WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
-            let result = JSON.parse(text);
-            if(result.d.length > 0){
-                this.setState({
-                    dbList : result.d
-                });
-                this.getOriginalData();
-            }
-        }.bind(this));
-        let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvZWRpdG9yM2JcL2FwcFwvbG9naW4iLCJpYXQiOjE0NzU4OTY0MjEsImV4cCI6MzYwMDAwMDE0NzU4OTY0MjEsIm5iZiI6MTQ3NTg5NjQyMSwianRpIjoiOGU1YjcxM2E0NTVkM2I2NjgyOTZhYTg4YmMyYjlhZDEifQ.Z1431qqu3wcJLDZA-j840lSbwFAGo7IqzsnNue4TxlQ";
-        WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
-            let result = JSON.parse(text);
-            if (result['name']) {
-                let allDbHeader = result['db'];
-                allDbHeader.map((v,i)=>{
-                    if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
-                        let headerData = allDbHeader[i].header.split(",");
-                        this.setState({
-                            dbHeader: headerData,
-                            isHaveContent : false
-                        },()=>{
-                            this.updateNewScrollData();
-                        });
-                        this.getOriginalHeader();
-                    }
-                });
-            }
-        }.bind(this));
+        //WidgetActions['ajaxSend'](null, 'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if(result.d.length > 0){
+        //        this.setState({
+        //            dbList : result.d
+        //        });
+        //        this.getOriginalData();
+        //    }
+        //}.bind(this));
+        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvZWRpdG9yM2JcL2FwcFwvbG9naW4iLCJpYXQiOjE0NzU4OTY0MjEsImV4cCI6MzYwMDAwMDE0NzU4OTY0MjEsIm5iZiI6MTQ3NTg5NjQyMSwianRpIjoiOGU1YjcxM2E0NTVkM2I2NjgyOTZhYTg4YmMyYjlhZDEifQ.Z1431qqu3wcJLDZA-j840lSbwFAGo7IqzsnNue4TxlQ";
+        //WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if (result['name']) {
+        //        let allDbHeader = result['db'];
+        //        allDbHeader.map((v,i)=>{
+        //            if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
+        //                let headerData = allDbHeader[i].header.split(",");
+        //                this.setState({
+        //                    dbHeader: headerData,
+        //                    isHaveContent : false
+        //                },()=>{
+        //                    this.updateNewScrollData();
+        //                });
+        //                this.getOriginalHeader();
+        //            }
+        //        });
+        //    }
+        //}.bind(this));
         this.scrollBtn();
     }
 
@@ -278,57 +278,57 @@ class DbTable extends React.Component {
 
     getOriginalData(){
         let self = this;
-        WidgetActions['ajaxSend'](null,'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
-            let result = JSON.parse(text);
-            if(result.d.length > 0){
-                self.setState({
-                    originalData : result.d
-                })
-            }
-        }.bind(this));
-        //this.state.node.find({}, function (err, data) {
-        //    let list = [];
-        //    list = data;
-        //    self.setState({
-        //        originalData : list
-        //    });
-        //});
+        //WidgetActions['ajaxSend'](null,'POST', "http://play.vt.vxplo.cn/editor3/dbFind/57ee37ce7f8472077f7384f7", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if(result.d.length > 0){
+        //        self.setState({
+        //            originalData : result.d
+        //        })
+        //    }
+        //}.bind(this));
+        this.state.node.find({}, function (err, data) {
+            let list = [];
+            list = data;
+            self.setState({
+                originalData : list
+            });
+        });
     }
 
     getOriginalHeader(){
-        let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvZWRpdG9yM2JcL2FwcFwvbG9naW4iLCJpYXQiOjE0NzU4OTY0MjEsImV4cCI6MzYwMDAwMDE0NzU4OTY0MjEsIm5iZiI6MTQ3NTg5NjQyMSwianRpIjoiOGU1YjcxM2E0NTVkM2I2NjgyOTZhYTg4YmMyYjlhZDEifQ.Z1431qqu3wcJLDZA-j840lSbwFAGo7IqzsnNue4TxlQ";
-        WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
-            let result = JSON.parse(text);
-            if (result['name']) {
-                let allDbHeader = result['db'];
-                allDbHeader.map((v,i)=>{
-                    if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
-                        let headerData = allDbHeader[i].header.split(",");
-                        this.setState({
-                            originalHeader : headerData
-                        });
-                    }
-                });
-            }
-        }.bind(this));
-        //let data = this.state.originalHeader;
-        //data.map((v,i)=>{
-        //    if(data[i].id === this.state.node.dbid){
-        //        let headerData = [];
-        //        if(data[i].header != null){
-        //            headerData = data[i].header.split(",");
-        //        }
-        //        let index = headerData.indexOf("null");
-        //        if(index >= 0){
-        //            headerData.splice(index,1)
-        //        }
-        //        if(headerData.length > 0 ){
-        //           this.setState({
-        //               originalHeader : headerData
-        //           })
-        //        }
+        //let name = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIwNTQxMCwiaXNzIjoiaHR0cDpcL1wvdGVzdC1iZXRhLmloNS5jblwvZWRpdG9yM2JcL2FwcFwvbG9naW4iLCJpYXQiOjE0NzU4OTY0MjEsImV4cCI6MzYwMDAwMDE0NzU4OTY0MjEsIm5iZiI6MTQ3NTg5NjQyMSwianRpIjoiOGU1YjcxM2E0NTVkM2I2NjgyOTZhYTg4YmMyYjlhZDEifQ.Z1431qqu3wcJLDZA-j840lSbwFAGo7IqzsnNue4TxlQ";
+        //WidgetActions['ajaxSend'](name, 'GET', "http://test-beta.ih5.cn/editor3b/app/userInfo", null, null, function(text) {
+        //    let result = JSON.parse(text);
+        //    if (result['name']) {
+        //        let allDbHeader = result['db'];
+        //        allDbHeader.map((v,i)=>{
+        //            if(allDbHeader[i].id === "57ee37ce7f8472077f7384f7"){
+        //                let headerData = allDbHeader[i].header.split(",");
+        //                this.setState({
+        //                    originalHeader : headerData
+        //                });
+        //            }
+        //        });
         //    }
-        //});
+        //}.bind(this));
+        let data = this.state.originalHeader;
+        data.map((v,i)=>{
+            if(data[i].id === this.state.node.dbid){
+                let headerData = [];
+                if(data[i].header != null){
+                    headerData = data[i].header.split(",");
+                }
+                let index = headerData.indexOf("null");
+                if(index >= 0){
+                    headerData.splice(index,1)
+                }
+                if(headerData.length > 0 ){
+                   this.setState({
+                       originalHeader : headerData
+                   })
+                }
+            }
+        });
     }
 
     getPDbHeader(){
