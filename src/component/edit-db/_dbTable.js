@@ -408,7 +408,7 @@ class DbTable extends React.Component {
     }
 
     saveBtn(bool,DdName){
-        //console.log(1,this.state.dbHeader,this.state.dbList);
+        console.log(1,this.state.dbHeader,this.state.dbList);
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
             //console.log("1-2",data);
@@ -747,7 +747,7 @@ class DbTable extends React.Component {
             else if( type == "i" ){
                 value = value.substr(1);
                 //fuc(parseFloat(text));
-                list[which][value] = parseFloat(text);
+                list[which][value] = text.length == 0 ? "" : parseFloat(text);
             }
             else {
                 //fuc(text);
