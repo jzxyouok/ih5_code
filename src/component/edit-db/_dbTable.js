@@ -408,7 +408,7 @@ class DbTable extends React.Component {
     }
 
     saveBtn(bool,DdName){
-        console.log(1,this.state.dbHeader,this.state.dbList);
+        //console.log(1,this.state.dbHeader,this.state.dbList);
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
             //console.log("1-2",data);
@@ -423,7 +423,7 @@ class DbTable extends React.Component {
                 inputStyle : null,
                 isMoveList : false
             },()=>{
-                console.log(self.state.node.dbType);
+                //console.log(self.state.node.dbType);
                 if(self.state.node.dbType == "shareDb"){
                     self.updateHeader(bool,DdName);
                 }

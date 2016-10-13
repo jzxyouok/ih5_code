@@ -116,7 +116,7 @@ class ObjectTree extends React.Component {
     }
 
     onStatusChange(widget) {
-        //console.log(widget);
+        //console.log("tree",widget);
         //initTree : 初始化对象树
         if (widget.initTree !== undefined){
             this.setState({
@@ -341,6 +341,7 @@ class ObjectTree extends React.Component {
     }
 
     chooseBtn(nid, data, event){
+        //console.log(data);
         if(this.onSelectEventTargetMode(data)) {
             return false;
         }
@@ -524,6 +525,11 @@ class ObjectTree extends React.Component {
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
         //复制 67
         if (didPressCtrl && event.keyCode == 67) {
+            if(this.state.selectWidget.className == "db"
+                || this.state.selectWidget.className == "sock"){
+                window.macKeys.reset();
+                return ;
+            }
             WidgetActions['copyTreeNode'](this.state.nodeType);
             window.macKeys.reset();
         }
@@ -536,11 +542,21 @@ class ObjectTree extends React.Component {
                 window.macKeys.reset();
                 return;
             }
+            if(this.state.selectWidget.className == "db"
+                || this.state.selectWidget.className == "sock"){
+                window.macKeys.reset();
+                return ;
+            }
             WidgetActions['pasteTreeNode']();
             window.macKeys.reset();
         }
         //剪切 88
         if (didPressCtrl && event.keyCode == 88) {
+            if(this.state.selectWidget.className == "db"
+                || this.state.selectWidget.className == "sock"){
+                window.macKeys.reset();
+                return ;
+            }
             WidgetActions['cutTreeNode'](this.state.nodeType);
             window.macKeys.reset();
         }
@@ -550,7 +566,7 @@ class ObjectTree extends React.Component {
             window.macKeys.reset();
 
             if(this.state.selectWidget.className == "db"){
-                if(this.state.selectWidget.node.dbType = "shareDb"){
+                if(this.state.selectWidget.node.dbType == "shareDb"){
                     ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
                 }
             }
@@ -1081,7 +1097,6 @@ class ObjectTree extends React.Component {
             });
 
             let isEventTarget = this.checkAllEventTarget(v.key);
-
             return  <div className='item'
                          key={i}
                          onClick={this.chooseMore}>
@@ -1202,6 +1217,7 @@ class ObjectTree extends React.Component {
                      !allTreeData
                         ? null
                         : allTreeData.map((v,i)=>{
+                            //console.log(v.tree);
                              return  <div className='stage-item' key={i}
                                           onDragOver={this.itemDragOver}>
                                  <div className={$class('stage-title-wrap clearfix',

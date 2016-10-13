@@ -1022,35 +1022,35 @@ export default Reflux.createStore({
     selectWidget: function(widget, shouldTrigger, keepValueType) {
         var render = false;
         if (widget) {
-          if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
-            render = true;
-            var el = bridge.getDomElement(widget.rootWidget.node);
-            if (el != rootElm) {
-              if (rootElm)
-                rootDiv.removeChild(rootElm);
-              rootElm = el;
-              rootDiv.appendChild(rootElm);
+            if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
+                render = true;
+                var el = bridge.getDomElement(widget.rootWidget.node);
+                if (el != rootElm) {
+                    if (rootElm)
+                        rootDiv.removeChild(rootElm);
+                        rootElm = el;
+                        rootDiv.appendChild(rootElm);
+                }
             }
-          }
-          if(widget.props['locked'] === undefined) {
-            widget.props['locked'] = false;
-          }
-          //取选激活的事件树
-          if(!(keepValueType&&keepValueType==keepType.event)&&this.currentActiveEventTreeKey) {
-            this.activeEventTree(null);
-          }
-          //取选func状态
-          if(!(keepValueType&&keepValueType==keepType.func)&&this.currentFunction) {
-            this.selectFunction(null);
-          }
-          //取选var状态
-          if(!(keepValueType&&keepValueType==keepType.var)&&this.currentVariable) {
-            this.selectVariable(null);
-          }
-          //取选dbItem
-          if(!(keepValueType&&keepValueType==keepType.dbItem)&&this.currentDBItem) {
-            this.selectDBItem(null);
-          }
+            if(widget.props['locked'] === undefined) {
+                widget.props['locked'] = false;
+            }
+            //取选激活的事件树
+            if(!(keepValueType&&keepValueType==keepType.event)&&this.currentActiveEventTreeKey) {
+                this.activeEventTree(null);
+            }
+            //取选func状态
+            if(!(keepValueType&&keepValueType==keepType.func)&&this.currentFunction) {
+                this.selectFunction(null);
+            }
+            //取选var状态
+            if(!(keepValueType&&keepValueType==keepType.var)&&this.currentVariable) {
+                this.selectVariable(null);
+            }
+            //取选dbItem
+            if(!(keepValueType&&keepValueType==keepType.dbItem)&&this.currentDBItem) {
+                this.selectDBItem(null);
+            }
         }
         this.currentWidget = widget;
         //是否触发（不为false就触发）
@@ -1158,6 +1158,7 @@ export default Reflux.createStore({
           if (!copyObj.className&&!copyObj.cls) {
               return;
           }
+
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
           //清event

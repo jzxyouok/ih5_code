@@ -191,7 +191,7 @@ class ObjectView extends React.Component {
         } else {
             WidgetActions['deleteTreeNode'](this.state.currentNode.className);
             if(this.state.currentNode.className == "db"){
-                if(this.state.currentNode.node.dbType = "shareDb"){
+                if(this.state.currentNode.node.dbType == "shareDb"){
                     ReDbOrSockIdAction['reDbOrSockId']("db",this.state.currentNode.node.dbid);
                 }
             }

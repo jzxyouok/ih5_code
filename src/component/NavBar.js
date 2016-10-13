@@ -145,7 +145,7 @@ class NavBar extends React.Component {
                 if(data.length > 0){
                     data.map((v,i)=>{
                         if(v.className == "db"){
-                            if(v.node.dbType = "shareDb"){
+                            if(v.node.dbType == "shareDb"){
                                 reAddDbId.push(v.node.dbid)
                             }
                         }
