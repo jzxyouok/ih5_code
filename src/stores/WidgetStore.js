@@ -1073,11 +1073,9 @@ export default Reflux.createStore({
 
       if(className == "db"){
           props = this.addWidgetDefaultName(className, props, true, false, name,dbType);
-      }
-      else if(className == "sock"){
+      } else if(className == "sock"){
           props = this.addWidgetDefaultName(className, props, true, false, name);
-      }
-      else{
+      } else if (!(className === 'image')) {
           props = this.addWidgetDefaultName(className, props, true, false);
       }
 
@@ -1297,7 +1295,10 @@ export default Reflux.createStore({
         let props = properties;
 
         if(copyProperties) {
-            props = cpJson(properties);
+            props = [];
+            for (let n in properties) {
+                props[n] = properties[n];
+            }
         }
 
         //自定义组件就不重命名
