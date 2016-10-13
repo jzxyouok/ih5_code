@@ -385,21 +385,38 @@
                         }
 
                         .rowRightMenu {
+                            position: absolute;
                             top: 0;
-                            right: -107px;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
                             z-index: 1;
+
+                            ul{
+                                position: absolute;
+                                top: 0;
+                                right: -107px;
+                            }
                         }
 
                         .columnRightMenu {
-                            top: 35px;
+                            position: absolute;
+                            top: 0;
                             left: 0;
+                            right: 0;
+                            bottom: 0;
                             z-index: 3;
+
+                            ul{
+                                position: absolute;
+                                top: 35px;
+                                left: 0;
+                            }
                         }
 
-                        .rowRightMenu ,
-                        .columnRightMenu{
+                        .rowRightMenu ul,
+                        .columnRightMenu ul{
                             @include shadow(5px,5px,20px,0.3);
-                            position: absolute;
                             width: 106px;
                             height: 118px;
                             background: #3e3e3e;
