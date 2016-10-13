@@ -425,7 +425,7 @@ class NavBar extends React.Component {
         //this.setState({
         //    createDb : true
         //})
-        this.addPanelHide();
+        //this.addPanelHide();
     }
 
     createDbHide(){
@@ -456,7 +456,8 @@ class NavBar extends React.Component {
                 reAddDbId.push(id);
                 this.setState({
                     reAddDbId : reAddDbId
-                })
+                });
+                this.addPanelHide();
             }
         }
     }
@@ -504,7 +505,7 @@ class NavBar extends React.Component {
         //this.setState({
         //    createSock : true
         //})
-        this.addPanelHide();
+        //this.addPanelHide();
     }
 
     createSockHide(){
@@ -543,7 +544,8 @@ class NavBar extends React.Component {
                 reAddSockId.push(id);
                 this.setState({
                     reAddSockId : reAddSockId
-                })
+                });
+                this.addPanelHide();
             }
         }
     }

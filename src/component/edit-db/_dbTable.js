@@ -457,7 +457,7 @@ class DbTable extends React.Component {
     updateNewScrollData(){
         let widthShow = this.props.isBig ? 535 : 689;
         let getWidth = parseFloat($(".DT-content table").css('width'));
-        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll span").css('width'));
+        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll").css('width')) - 4;
         let width = getWidth > widthShow ? getWidth : widthShow;
         let moveLength = width - widthShow;
         let multiple = width / widthShow;
@@ -568,7 +568,7 @@ class DbTable extends React.Component {
                     isHaveContent : false,
                     isError: false
                 },()=>{
-                    this.updateNewScrollData();
+                    //this.updateNewScrollData();
                     this.popHide();
                     this.saveBtn(false);
                 })
@@ -594,7 +594,7 @@ class DbTable extends React.Component {
                             isHaveContent : false,
                             isError: false
                         },()=>{
-                            self.updateNewScrollData();
+                            //self.updateNewScrollData();
                             self.popHide();
                             self.saveBtn(false);
                         })
@@ -615,7 +615,7 @@ class DbTable extends React.Component {
                         isHaveContent : false,
                         isError: false
                     },()=>{
-                        this.updateNewScrollData();
+                        //this.updateNewScrollData();
                         this.popHide();
                         this.saveBtn(false);
                     })
