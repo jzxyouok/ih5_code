@@ -69,17 +69,6 @@ function isCustomizeWidget(className) {
     return false;
 }
 
-function getMaxKeyCount(){
-    let maxKey = 1;
-    keyMap.map((v)=>{
-        if(v.key>maxKey) {
-            maxKey = v.key;
-        }
-    })
-    maxKey++;
-    _keyCount = maxKey;
-}
-
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
 
@@ -2045,7 +2034,6 @@ export default Reflux.createStore({
         resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
         // bridge.createSelector(null);
-        getMaxKeyCount(); //获取最高的keycount
 
         if (!rootDiv) {
             rootDiv = document.getElementById('canvas-dom');
