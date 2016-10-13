@@ -457,7 +457,7 @@ class DbTable extends React.Component {
     updateNewScrollData(){
         let widthShow = this.props.isBig ? 535 : 689;
         let getWidth = parseFloat($(".DT-content table").css('width'));
-        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll").css('width')) - 4;
+        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll").css('width'));
         let width = getWidth > widthShow ? getWidth : widthShow;
         let moveLength = width - widthShow;
         let multiple = width / widthShow;
