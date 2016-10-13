@@ -98,11 +98,9 @@ class Animation extends React.Component {
                 data[i].disabled = false;
             } else {
                 data[i].disabled = true;
-                // if(data[i].className === 'track' || data[i].className === 'body') {
-                //     data[i].hidden = false;
-                // } else {
-                //     data[i].hidden = true;
-                // }
+                if(widget.className === 'root') {
+                    data[i].hidden = true;
+                }
                 if(data[i].className === 'dbItem' ||
                     data[i].className === 'effect'||
                     data[i].className === '3dRotate'||
