@@ -89,15 +89,27 @@ class Animation extends React.Component {
         //过滤可选的功能组件
         let data = animationData;
         for(let i = 0; i<data.length; i++) {
-            if (checkChildClass(widget, data[i].className)) {
-                data[i].disabled = false;
-            } else {
-                data[i].disabled = true;
-            }
             if(checkNotInDomMode(widget, data[i].className)) {
                 data[i].hidden = true;
             } else {
                 data[i].hidden = false;
+            }
+            if (checkChildClass(widget, data[i].className)) {
+                data[i].disabled = false;
+            } else {
+                data[i].disabled = true;
+                // if(data[i].className === 'track' || data[i].className === 'body') {
+                //     data[i].hidden = false;
+                // } else {
+                //     data[i].hidden = true;
+                // }
+                if(data[i].className === 'dbItem' ||
+                    data[i].className === 'effect'||
+                    data[i].className === '3dRotate'||
+                    data[i].className === 'easing'
+                ) {
+                    data[i].hidden = true;
+                }
             }
         }
         this.setState({

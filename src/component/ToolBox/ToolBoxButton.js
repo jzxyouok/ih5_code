@@ -209,8 +209,17 @@ class ToolBoxButton extends Component {
             if (w.files.length) {
                 var self = this;
                 if (self.props.className == 'image' || self.props.className == 'video') {
+                    let fileName = w.files[0].name;
+                    let dot = fileName.lastIndexOf('.');
+                    if (dot>0) {
+                        var ext = fileName.substr(dot + 1).toLowerCase();
+                        if (ext == 'png' || ext == 'jpeg' || ext=='jpg') {
+                            fileName = fileName.substr(0, dot);
+                        }
+                    }
                     var reader = new FileReader();
                     reader.onload = function(e) {
+                        self.props.param.name = fileName;
                         WidgetActions['addWidget'](self.props.className, self.props.param, e.target.result);
                     };
                     reader.readAsDataURL(w.files[0]);
@@ -236,8 +245,9 @@ class ToolBoxButton extends Component {
                                             zipEntry.async('base64').then(function(data) {
                                                 list.push('data:image/' + ext + ';base64,' + data);
                                                 count--;
-                                                if (count == 0)
+                                                if (count == 0) {
                                                     WidgetActions['addWidget'](self.props.className, self.props.param, list);
+                                                }
                                             });
                                         }
                                     }

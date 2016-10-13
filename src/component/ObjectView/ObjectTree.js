@@ -20,6 +20,7 @@ const tipAllow = '<span style="background-position:-40px -200px;"></span><div st
 const tipForbidden = '<span style="background-position:-40px -240px;"></span><div style="background-color:#b50000;">不可拖入</div>';
 const allowColor = '#FFA800';
 const forbiddenColor = '#8F8F8F';
+const imgServerPrefix = 'http://play.vt.vxplo.cn/v3data/files/';
 
 import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
 
@@ -548,13 +549,15 @@ class ObjectTree extends React.Component {
             WidgetActions['deleteTreeNode'](this.state.nodeType);
             window.macKeys.reset();
 
-            if(this.state.selectWidget.className == "db"){
-                if(this.state.selectWidget.node.dbType = "shareDb"){
-                    ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
+            if(this.state.selectWidget) {
+                if(this.state.selectWidget.className == "db"){
+                    if(this.state.selectWidget.node.dbType = "shareDb"){
+                        ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
+                    }
                 }
-            }
-            if(this.state.selectWidget.className == "sock"){
-                ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+                if(this.state.selectWidget.className == "sock"){
+                    ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+                }
             }
         }
     }
@@ -1059,8 +1062,17 @@ class ObjectTree extends React.Component {
                 }
                 else if (v1.className === v.className){
                     if(v.className === 'image' || v.className === 'imagelist') {
-                        if(v.props.link !== undefined &&v.rootWidget.imageList&&v.rootWidget.imageList.length>v.props.link){
-                            pic = v.rootWidget.imageList[v.props.link];
+                        if(v.props.link !== undefined &&
+                            v.rootWidget.imageList&&
+                            v.rootWidget.imageList.length>v.props.link){
+                            if(v.className === 'imagelist') {
+                                pic = v.rootWidget.imageList[v.props.link][0];
+                            } else {
+                                pic = v.rootWidget.imageList[v.props.link];
+                            }
+                            if(pic.substring(0,5) !== 'data:') {
+                                pic = imgServerPrefix+pic;
+                            }
                         } else {
                             pic = v1.icon;
                         }

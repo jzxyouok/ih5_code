@@ -44,6 +44,7 @@ class Property extends React.Component {
         this.onActiveSelectTarget = this.onActiveSelectTarget.bind(this);
 
         this.arrList = []; //数组类型变量列表
+        this.funcListLength = [];
     }
 
     componentWillReceiveProps(nextProps) {
@@ -150,6 +151,7 @@ class Property extends React.Component {
                 }
                 actionList.push(act);
             }
+            this.funcListLength = obj.funcList.length;
         }
 
         if(className === 'var'){
@@ -448,7 +450,9 @@ class Property extends React.Component {
         let actionMenuItem = (v2, i)=>{
             switch (v2.type) {
                 case funcType.customize:
-                    return <MenuItem key={i} action={v2}>{v2.func.props.name}</MenuItem>;
+                    return <MenuItem key={i} action={v2} className={$class({'customize-last':i===this.funcListLength-1})}>
+                        {v2.func.props.name}
+                    </MenuItem>;
                 case funcType.default:
                     return <MenuItem key={i} action={v2}>{v2.showName}</MenuItem>;
             }
