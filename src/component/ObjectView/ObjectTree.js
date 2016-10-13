@@ -40,7 +40,10 @@ class ObjectTree extends React.Component {
             editMode:false   //处于更改名字状态
             //widgetTreeChildren :null
             , allTreeData : [],
-            nodeType: nodeType.widget
+            nodeType: nodeType.widget,
+
+            eventTargetList: null, //事件目标选择
+            eventSelectTargetMode: false //事件目标选择
         };
         this.chooseMoreStatus=false;
 
@@ -52,6 +55,9 @@ class ObjectTree extends React.Component {
         this.showHideBtn = this.showHideBtn.bind(this);
         this.lockBtn = this.lockBtn.bind(this);
         this.eventBtn = this.eventBtn.bind(this);
+
+        this.onSelectEventTargetMode = this.onSelectEventTargetMode.bind(this);
+        this.checkAllEventTarget = this.checkAllEventTarget.bind(this);
 
         //对象的复制/剪切/黏贴
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
@@ -171,6 +177,14 @@ class ObjectTree extends React.Component {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
+        } else if(widget.eventSelectTargetMode) {
+            this.setState({
+                eventSelectTargetMode: widget.eventSelectTargetMode.isActive
+            });
+        } else if(widget.allWidgets) {
+            this.setState({
+                eventTargetList:widget.allWidgets
+            });
         }
 
         //selectWidget : 选择工具创建相应图层
@@ -265,20 +279,36 @@ class ObjectTree extends React.Component {
         }
     }
 
-    chooseBtn(nid, data, event){
-        if(event){
-            event.stopPropagation();
+    onSelectEventTargetMode(data){
+        if(this.state.eventSelectTargetMode) {
+            if(this.state.eventTargetList) {
+                let hasTarget = false;
+                this.state.eventTargetList.forEach(v=> {
+                    if (data.key === v.key) {
+                        hasTarget = true;
+                    }
+                });
+                WidgetActions['didSelectEventTarget'](data);
+            };
+            return true;
         }
-        if(this.chooseMoreStatus){
-            //ctrl键按下
-        }else{
-            this.setState({
-                nid : nid,
-                editMode: false
-            },()=>{
-                WidgetActions['selectWidget'](data, true);
+        return false;
+    }
+
+    checkAllEventTarget(key) {
+        if(this.state.eventTargetList) {
+            let getTarget = false;
+            this.state.eventTargetList.forEach((v)=>{
+                if(key === v.key){
+                    getTarget = true;
+                }
             });
+            if (getTarget) {
+                return true;
+            }
+            return false;
         }
+        return false;
     }
 
     openBtn(event){
@@ -309,21 +339,50 @@ class ObjectTree extends React.Component {
         //console.log(data);
     }
 
+    chooseBtn(nid, data, event){
+        if(this.onSelectEventTargetMode(data)) {
+            return false;
+        }
+        if(event){
+            event.stopPropagation();
+        }
+        if(this.chooseMoreStatus){
+            //ctrl键按下
+        }else{
+            this.setState({
+                nid : nid,
+                editMode: false
+            },()=>{
+                WidgetActions['selectWidget'](data, true);
+            });
+        }
+    }
+
     showHideBtn(data,bool){
+        if(this.onSelectEventTargetMode(data)) {
+            return false;
+        }
+        if(on)
         //console.log(data);
         data.props['visible'] = bool;
         data.node['visible'] = bool;
         WidgetActions['render']();
     }
 
-    lockBtn(key, data) {
-        if(key === this.state.nid){
+    lockBtn(nid, data) {
+        if(this.onSelectEventTargetMode(data)) {
+            return false;
+        }
+        if(nid === this.state.nid){
             WidgetActions['lockWidget']();
             WidgetActions['render']();
         }
     }
 
     eventBtn(nid, data) {
+        if(this.onSelectEventTargetMode(data)) {
+            return false;
+        }
         //分情况处理
         if(this.state.nid != nid) {
             this.setState({
@@ -343,6 +402,9 @@ class ObjectTree extends React.Component {
     }
 
     fadeWidgetBtn(nid, data, type) {
+        if(this.onSelectEventTargetMode(data)) {
+            return false;
+        }
         switch (type){
             case nodeType.func:
                 this.setState({
@@ -375,6 +437,10 @@ class ObjectTree extends React.Component {
     }
 
     startEditObjName(id, data, event) {
+        if(this.state.eventSelectTargetMode){
+            return;
+        }
+
         event.stopPropagation();
         var editItem = document.getElementById('item-name-input-'+ id);
         editItem.value = data.props.name;
@@ -441,6 +507,10 @@ class ObjectTree extends React.Component {
     itemKeyAction(event){
         event.preventDefault();
         event.stopPropagation();
+        if(this.state.eventSelectTargetMode) {
+            return;
+        }
+
         //如果是edit模式，不做任何事情
         if(this.state.editMode){
             if(event.keyCode == 13) {
@@ -512,7 +582,7 @@ class ObjectTree extends React.Component {
 
     itemDragStart(nid, data, e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode){
+        if(this.state.editMode|| this.state.eventSelectTargetMode){
             e.preventDefault();
             return;
         }
@@ -540,7 +610,7 @@ class ObjectTree extends React.Component {
 
     itemDragEnd(e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode){
+        if(this.state.editMode|| this.state.eventSelectTargetMode){
             e.preventDefault();
             return;
         }
@@ -670,7 +740,7 @@ class ObjectTree extends React.Component {
 
     itemDragOver(e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode){
+        if(this.state.editMode||this.state.eventSelectTargetMode){
             e.preventDefault();
             return;
         }
@@ -901,7 +971,11 @@ class ObjectTree extends React.Component {
 
         let fadeWidgetList = (data, num, type)=> {
             let content = data.map((item, i)=> {
-                return <div className={"fade-widget-title-wrap clearfix"} key={i}
+                let isEventTarget = this.checkAllEventTarget(item.key);
+                return <div className={$class('fade-widget-title-wrap clearfix',
+                            {'allow-event-target': isEventTarget&&this.state.eventSelectTargetMode},
+                            {'forbidden-event-target': !isEventTarget&&this.state.eventSelectTargetMode})}
+                            key={i}
                             id={'tree-item-'+ item.key}
                             tabIndex={item.key}
                             onFocus={this.itemAddKeyListener.bind(this)}
@@ -995,10 +1069,15 @@ class ObjectTree extends React.Component {
                     }
                 }
             });
+
+            let isEventTarget = this.checkAllEventTarget(v.key);
+
             return  <div className='item'
                          key={i}
                          onClick={this.chooseMore}>
-                <div className='item-title-wrap clearfix'
+                <div className={$class('item-title-wrap clearfix',
+                    {'allow-event-target': isEventTarget&&this.state.eventSelectTargetMode},
+                    {'forbidden-event-target': !isEventTarget&&this.state.eventSelectTargetMode})}
                      id={'tree-item-'+ v.key}
                      tabIndex={v.key}
                      data-order={i}
@@ -1106,24 +1185,27 @@ class ObjectTree extends React.Component {
         };
 
         return (
-            <div className='ObjectTree'>
-                <div className="stage">
+            <div className={$class('ObjectTree',
+                {'eventSelectTargetMode': this.state.eventSelectTargetMode})}>
+                <div className={$class("stage")} >
                 {
                      !allTreeData
                         ? null
                         : allTreeData.map((v,i)=>{
                              return  <div className='stage-item' key={i}
                                           onDragOver={this.itemDragOver}>
-                                 <div className='stage-title-wrap clearfix'
+                                 <div className={$class('stage-title-wrap clearfix',
+                                     {'allow-event-target': i==0&&this.state.eventSelectTargetMode},
+                                     {'forbidden-event-target': i!=0&&this.state.eventSelectTargetMode})}
+                                      id={'tree-item-'+ v.tree.key}
+                                      tabIndex={v.tree.key}
                                       data-wKey={v.tree.key}
-                                      data-parentKey={i==0?'-1':'custom'}>
+                                      data-parentKey={i==0?'-1':'custom'}
+                                      onFocus={this.itemAddKeyListener.bind(this)}
+                                      onBlur={this.itemRemoveKeyListener.bind(this)}>
                                      <div className={$class('stage-title f--h f--hlc',{'active': v.tree.key === this.state.nid})}
                                           style={{ width : this.props.width - 36 - 24 }}
-                                          onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}
-                                          onFocus={this.itemAddKeyListener.bind(this)}
-                                          onBlur={this.itemRemoveKeyListener.bind(this)}
-                                          tabIndex={v.tree.key}
-                                          id={'tree-item-'+ v.tree.key}>
+                                          onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}>
                                          { btn(-1, v.tree) }
                                          {
                                              v.tree.children.length > 0

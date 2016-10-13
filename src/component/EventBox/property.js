@@ -26,6 +26,7 @@ class Property extends React.Component {
             actionDropdownVisible: false, //是否显示动作的下拉框
             currentObject: this.props.specific.object,
             currentAction: this.props.specific.action,  //name&property
+            isActiveEventSelectTarget: false  //是否激活了选择目标对象
         };
         this.expandBtn = this.expandBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -40,16 +41,23 @@ class Property extends React.Component {
         this.onChangePropDom = this.onChangePropDom.bind(this);
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
 
+        this.onActiveSelectTarget = this.onActiveSelectTarget.bind(this);
+
         this.arrList = []; //数组类型变量列表
     }
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.activeKey){
+            let isActiveEventSelectTarget = false;
+            if(nextProps.eventSelectTargetKey === nextProps.specific.sid){
+                isActiveEventSelectTarget = true;
+            }
             this.setState({
                 activeKey: nextProps.activeKey,
                 event: nextProps.event,
                 wKey: nextProps.wKey,
                 specific: nextProps.specific,
+                isActiveEventSelectTarget: isActiveEventSelectTarget,
 
                 currentObject: nextProps.specific.object,
                 currentAction: nextProps.specific.action
@@ -96,6 +104,24 @@ class Property extends React.Component {
             if(widget.updateDBItem.widget&&this.state.currentObject&&this.state.currentAction){
                 if(this.state.currentObject.className === 'db' && this.state.currentAction.name){
                     this.forceUpdate();
+                }
+            }
+        } else if (widget.didSelectEventTarget) {
+            if(widget.didSelectEventTarget.target&&this.state.isActiveEventSelectTarget) {
+                let target = widget.didSelectEventTarget.target;
+                let getTarget = false;
+                this.state.objectList.forEach((v)=>{
+                    if(target.key === v.key){
+                        getTarget = true;
+                    }
+                });
+                if (getTarget) {
+                    this.setState({
+                        currentObject: target
+                    }, ()=> {
+                        WidgetActions['eventSelectTargetMode'](false, this.state.specific.id);
+                        WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
+                    });
                 }
             }
         }
@@ -154,6 +180,13 @@ class Property extends React.Component {
         })
     }
 
+    onActiveSelectTarget (){
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        WidgetActions['eventSelectTargetMode'](!this.state.isActiveEventSelectTarget, this.state.specific.sid);
+    }
+
     onSpecificAdd() {
         if(this.state.activeKey !== this.state.wKey) {
             return;
@@ -164,6 +197,9 @@ class Property extends React.Component {
     onSpecificDelete() {
         if(this.state.activeKey !== this.state.wKey) {
             return;
+        }
+        if(this.state.isActiveEventSelectTarget) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
         }
         WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
 
@@ -436,7 +472,8 @@ class Property extends React.Component {
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
-                                <button className="p--icon"></button>
+                                <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
+                                        onClick={this.onActiveSelectTarget} />
                                 <Dropdown overlay={objectMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
                                           onVisibleChange={this.onObjectVisibleChange}
