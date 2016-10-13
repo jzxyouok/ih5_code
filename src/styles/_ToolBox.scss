@@ -202,20 +202,30 @@
 			position: absolute;
 			left: 36px;
 			top: 0;
-			padding: 4px;
-			background: #353535;
+			padding: 2px;
+			background-color: #353535;
 			border: 1px solid #000;
 			&.visible {
 				display: block;
+				background-color: #3e3e3e;
+				border: 1px solid #151515;
+				border-radius: 0 2px 2px 0;
+				box-shadow: 3px 3px 5px rgba(21,21,21,0.5);
+				img {
+					margin: 4px;
+				}
 			}
 			.ToolBoxButton {
-				width: 160px;
-				padding-left: 10px;
+				width: 118px;
+				padding-left: 8px;
 				&:hover {
 					background-color: #282828 !important;
+					.ToolBoxButtonName {
+						color: white;
+					}
 				}
 				&.active {
-					background: none;
+					background-color: transparent !important;
 					&:after {
 						content: "";
 						width: 4px;
@@ -237,8 +247,8 @@
 				.ToolBoxButtonName {
 					float: left;
 					display: block;
-					height: 28px;
-					line-height: 28px;
+					height: 26px;
+					line-height: 26px;
 					color: #aeaeae;
 				}
 			}
