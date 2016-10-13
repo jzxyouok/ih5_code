@@ -630,7 +630,7 @@ function saveTree(data, node, saveKey) {
     else if (name == 'eventTree') {
       var etree = [];
 
-        console.log('node',node,node.props['eventTree']);
+
 
         node.props['eventTree'].forEach(item => {
         var cmds = [];
@@ -638,7 +638,6 @@ function saveTree(data, node, saveKey) {
 
            judges.conFlag = item.conFlag;
 
-           // judges.needFill=item.needFill;   //触发条件的值
 
             judges.children=[];
             if(item.needFill) {
@@ -666,14 +665,15 @@ function saveTree(data, node, saveKey) {
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
                    let obj={};
-                   if (v.judgeObj) {
-                      let o = objectToId(v.judgeObj);
-                      obj.judgeObjId = o[0];
-                      if (o[1]) {
-                        obj.judgeVarId = o[1];
-                        obj.judgeVarName = o[2];
-                      }
-                   }
+                   // if (v.judgeObj) {
+                   //    let o = objectToId(v.judgeObj);
+                   //    obj.judgeObjId = o[0];
+                   //    if (o[1]) {
+                   //      obj.judgeVarId = o[1];
+                   //      obj.judgeVarName = o[2];
+                   //    }
+                   // }
+             obj.judgeObjkey =v.judgeObjkey;
              obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
@@ -681,14 +681,16 @@ function saveTree(data, node, saveKey) {
              obj.judgeValType=v.judgeValType; //判断对象的属性的类型
 
              obj.compareFlag=v.compareFlag;//比较运算符
-                   if (v.compareObj) {
-                      var o = objectToId(v.compareObj);
-                      obj.compareObjId = o[0];
-                      if (o[1]) {
-                        obj.compareVarId = o[1];
-                        obj.compareVarName = o[2];
-                      }
-                   }
+                   // if (v.compareObj) {
+                   //    var o = objectToId(v.compareObj);
+                   //    obj.compareObjId = o[0];
+                   //    if (o[1]) {
+                   //      obj.compareVarId = o[1];
+                   //      obj.compareVarName = o[2];
+                   //    }
+                   // }
+             obj.compareObjkey=v.compareObjkey;
+
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
              obj.compareValFlag =v.compareValFlag;//比较对象的属性
