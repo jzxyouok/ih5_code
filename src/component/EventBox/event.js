@@ -69,6 +69,7 @@ class Event extends React.Component {
         this.getAntdComponent=this.getAntdComponent.bind(this);
         this.getShowNameByName=this.getShowNameByName.bind(this);
         this.getNameByCnName =this.getNameByCnName.bind(this);
+        this.getObjNameByKey=this.getObjNameByKey.bind(this);
 
     }
 
@@ -91,6 +92,7 @@ class Event extends React.Component {
              v.conFlag='触发条件';
           }
         });
+
         this.setState({
             activeKey:nextProps.activeKey,
             eventList:nextProps.eventList
@@ -123,7 +125,6 @@ class Event extends React.Component {
             let arr=[];
             let arr2=[];
 
-
             widget.allWidgets.map((v,i)=>{
                 arr.push([v.className,v.props.name,v.type]);
                 arr2.push({
@@ -139,6 +140,8 @@ class Event extends React.Component {
                 judgeObjOption:arr2,  //命名
                 compareObjOption:arr2 //命名
             });
+
+
         }
 
         if (widget.selectWidget) {
@@ -400,6 +403,13 @@ class Event extends React.Component {
        return name;
     }
 
+    getObjNameByKey(key,str){
+
+        console.log(key,str,'key');
+
+        return key===undefined?str:key;
+
+    }
     //点击下拉框
     onMenuClick(flag,e) {
 
@@ -823,7 +833,8 @@ class Event extends React.Component {
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div   className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
-                                                            <input value= {v1.judgeObjFlag}  onChange={this.inputChange.bind(this,'judgeObjFlag')} onFocus={this.saveOldVal.bind(this,'judgeObjFlag')}   onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')} className='judgeObjFlag-input'/>
+                                                            <input  value= {this.getObjNameByKey(v1.judgeObjkey)}
+                                                                   onChange={this.inputChange.bind(this,'judgeObjFlag')} onFocus={this.saveOldVal.bind(this,'judgeObjFlag')}   onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')} className='judgeObjFlag-input'/>
                                                             <span className='icon' /></div>
                                                     </Dropdown>
 
@@ -865,7 +876,7 @@ class Event extends React.Component {
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div  className={$class('title f--hlc',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
-                                                            <input value= {v1.compareObjFlag}
+                                                            <input value= {this.getObjNameByKey(v1.compareObjkey,'比较值/对象')}
                                                                    onChange={this.inputChange.bind(this,'compareObjFlag')}
                                                                    onFocus={this.saveOldVal.bind(this,'compareObjFlag')}
                                                                    onBlur={this.setInputValAuto.bind(this,'compareObjFlag')}
