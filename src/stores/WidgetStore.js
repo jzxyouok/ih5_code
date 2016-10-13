@@ -2046,7 +2046,6 @@ export default Reflux.createStore({
         stageTree.unshift({name: 'stage', tree: tree});
         // bridge.createSelector(null);
         getMaxKeyCount(); //获取最高的keycount
-        console.log(_keyCount);
 
         if (!rootDiv) {
             rootDiv = document.getElementById('canvas-dom');
