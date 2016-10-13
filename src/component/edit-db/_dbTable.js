@@ -457,7 +457,7 @@ class DbTable extends React.Component {
     updateNewScrollData(){
         let widthShow = this.props.isBig ? 535 : 689;
         let getWidth = parseFloat($(".DT-content table").css('width'));
-        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll span").css('width'));
+        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll").css('width'));
         let width = getWidth > widthShow ? getWidth : widthShow;
         let moveLength = width - widthShow;
         let multiple = width / widthShow;
@@ -568,7 +568,7 @@ class DbTable extends React.Component {
                     isHaveContent : false,
                     isError: false
                 },()=>{
-                    this.updateNewScrollData();
+                    //this.updateNewScrollData();
                     this.popHide();
                     this.saveBtn(false);
                 })
@@ -594,7 +594,7 @@ class DbTable extends React.Component {
                             isHaveContent : false,
                             isError: false
                         },()=>{
-                            self.updateNewScrollData();
+                            //self.updateNewScrollData();
                             self.popHide();
                             self.saveBtn(false);
                         })
@@ -615,7 +615,7 @@ class DbTable extends React.Component {
                         isHaveContent : false,
                         isError: false
                     },()=>{
-                        this.updateNewScrollData();
+                        //this.updateNewScrollData();
                         this.popHide();
                         this.saveBtn(false);
                     })
@@ -634,7 +634,9 @@ class DbTable extends React.Component {
         this.setState({
             inputStyle : style,
             inputText : value,
-            inputNow : key
+            inputNow : key,
+            rowRightMenu : false,
+            columnRightMenu : false
         },()=>{
             $(".i" + key).focus();
             $(".i" + key).select();
@@ -1194,33 +1196,35 @@ class DbTable extends React.Component {
 
                                                             {
                                                                 this.state.columnRightMenu && this.state.columnRightID == i
-                                                                ?   <ul className="columnRightMenu" onClick={ this.rowRightMenuClick.bind(this) }>
-                                                                        <li onClick={ this.columnAddIndex.bind(this) }
-                                                                            data-id={i}
-                                                                            data-type={-1} >
-                                                                            在前面添加列
-                                                                        </li>
-                                                                        <li onClick={ this.columnAddIndex.bind(this) }
-                                                                            data-id={i}
-                                                                            data-type={1} >
-                                                                            在后面添加列
-                                                                        </li>
-                                                                        <li className="line" />
-                                                                        <li onClick={ this.columnChangeIndex.bind(this) }
-                                                                            className={$class({"not-click": i == 0})}
-                                                                            data-id={i}
-                                                                            data-type={-1}>
-                                                                            移至前一列
-                                                                        </li>
-                                                                        <li onClick={ this.columnChangeIndex.bind(this) }
-                                                                            className={$class({"not-click": i == this.state.dbHeader.length-1})}
-                                                                            data-id={i}
-                                                                            data-type={1} >
-                                                                            移至后一列
-                                                                        </li>
-                                                                        <li className="line" />
-                                                                        <li className="not-click">删除此列</li>
-                                                                    </ul>
+                                                                ?   <div  className="columnRightMenu" >
+                                                                        <ul onClick={ this.rowRightMenuClick.bind(this) }>
+                                                                            <li onClick={ this.columnAddIndex.bind(this) }
+                                                                                data-id={i}
+                                                                                data-type={-1} >
+                                                                                在前面添加列
+                                                                            </li>
+                                                                            <li onClick={ this.columnAddIndex.bind(this) }
+                                                                                data-id={i}
+                                                                                data-type={1} >
+                                                                                在后面添加列
+                                                                            </li>
+                                                                            <li className="line" />
+                                                                            <li onClick={ this.columnChangeIndex.bind(this) }
+                                                                                className={$class({"not-click": i == 0})}
+                                                                                data-id={i}
+                                                                                data-type={-1}>
+                                                                                移至前一列
+                                                                            </li>
+                                                                            <li onClick={ this.columnChangeIndex.bind(this) }
+                                                                                className={$class({"not-click": i == this.state.dbHeader.length-1})}
+                                                                                data-id={i}
+                                                                                data-type={1} >
+                                                                                移至后一列
+                                                                            </li>
+                                                                            <li className="line" />
+                                                                            <li className="not-click">删除此列</li>
+                                                                        </ul>
+                                                                    </div>
                                                                 :   null
                                                             }
                                                         </td>;
@@ -1261,7 +1265,8 @@ class DbTable extends React.Component {
 
                                                                     {
                                                                         this.state.rowRightMenu && this.state.rowRightID == i
-                                                                        ?   <ul className="rowRightMenu" onClick={ this.rowRightMenuClick.bind(this) }>
+                                                                        ? <div className="rowRightMenu">
+                                                                            <ul onClick={ this.rowRightMenuClick.bind(this) }>
                                                                                 <li onClick={ this.rowAddIndex.bind(this) }
                                                                                     data-id={i}
                                                                                     data-type={-1} >
@@ -1288,6 +1293,7 @@ class DbTable extends React.Component {
                                                                                 <li className="line" />
                                                                                 <li className="not-click">删除此行</li>
                                                                             </ul>
+                                                                            </div>
                                                                         :   null
                                                                     }
                                                                 </td>
