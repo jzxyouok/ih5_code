@@ -839,7 +839,7 @@ function saveTree(data, node, saveKey) {
               let wid = null;
               let w = keyMap[field.value];
               if(w){
-                  wid = w;
+                  wid = objectToId(w);
               }
               o['fields'].push({name: name, wid: wid});
           });
