@@ -694,9 +694,16 @@ class DbTable extends React.Component {
                         text = text.substr(1);
                     }
 
+                    let fkList = this.state.originalData;
+
                     list.map((v,i)=>{
                         list[i][text] = list[i][value];
                         delete list[i][value];
+                    });
+
+                    fkList.map((v,i)=>{
+                        fkList[i][text] = fkList[i][value];
+                        delete fkList[i][value];
                     });
 
                     let fc = this.state.originalHeader;
@@ -717,7 +724,8 @@ class DbTable extends React.Component {
                     this.setState({
                         selectArray : idArray,
                         dbHeader : header,
-                        dbList : list
+                        dbList : list,
+                        originalData : fkList
                     })
                 }
                 //console.log(header,list);
