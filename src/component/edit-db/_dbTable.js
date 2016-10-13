@@ -1339,7 +1339,7 @@ class DbTable extends React.Component {
                         <button className="btn btn-clear next-bnt">下一页</button>
                     </div>
 
-                    <div className={ $class("right",{"hidden": this.state.selectArray.length == 0 || !this.state.isMoveList }) }>
+                    <div className={ $class("right",{"hidden": this.state.selectArray.length == 0 && !this.state.isMoveList }) }>
                         <button className="btn btn-clear cancel-btn" onClick={ this.cancelBtn } >取消</button>
                         <button className="btn btn-clear save-btn" onClick={ this.saveBtn.bind(this,false) }>保存</button>
                     </div>
