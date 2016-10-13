@@ -694,7 +694,7 @@ class DbTable extends React.Component {
                         text = text.substr(1);
                     }
 
-                    let fkList = self.state.originalData;
+                    let fkList = this.state.originalData;
 
                     list.map((v,i)=>{
                         list[i][text] = list[i][value];
