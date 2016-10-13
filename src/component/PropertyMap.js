@@ -167,7 +167,7 @@ propertyMap['counter'] = [
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
     ...propertyMap['textBox'],
-    //事件面板所需触发条件123
+    //事件面板所需触发条件
     { name: 'equal', showName:'等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
     { name: 'unequal', showName:'不等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
     { name: 'bigThan', showName:'大于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},

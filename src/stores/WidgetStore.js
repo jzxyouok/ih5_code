@@ -162,9 +162,6 @@ function loadTree(parent, node, idList) {
       var r = {};
       var judgesObj = item.judges;
 
-
-
-
       r.conFlag = judgesObj.conFlag;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
@@ -406,7 +403,7 @@ function objectToId(object) {
       varKey = 'd' + object.widget.dbItemList.indexOf(object);
   } else {
     idName = object.props['id'];
-  }
+  }　
   return [idName, varKey, varName];
 }
 
@@ -648,8 +645,6 @@ function saveTree(data, node, saveKey) {
                 judges.conFlag = 'onChange';//触发条件
                 item.needFill.map((v, i)=> {
                     let obj = {};
-
-
 
                     let o = objectToId(node);
                     obj.judgeObjId = o[0];
