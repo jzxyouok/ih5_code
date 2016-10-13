@@ -548,7 +548,6 @@ class DbTable extends React.Component {
         }
         else {
             if(addColumnBool){
-                header.splice(addColumnValue,1);
                 if(addColumnFuc == -1){
                     header.splice(addColumnValue, 0, value);
                 }
