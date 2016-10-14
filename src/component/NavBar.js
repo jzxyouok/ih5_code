@@ -65,7 +65,8 @@ class NavBar extends React.Component {
             saveLoading : false,
             saveFinish : false,
             saveFinishPlay : false,
-            qrCodeType : true
+            qrCodeType : false,
+            qrCodeShow : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -262,7 +263,11 @@ class NavBar extends React.Component {
             //window.open(this.playUrl + 'work/' + id, '_blank');
         }
         else if(this.state.qrCodeType){
-            //bridge.generateQrcode(this.playUrl, 184, 184)
+            //let qrCode = bridge.generateQrcode(this.playUrl, 174, 174);
+            //console.log(qrCode);
+            //this.setState({
+            //    saveLoading : false
+            //});
         }
         else {
             this.setState({
@@ -312,7 +317,8 @@ class NavBar extends React.Component {
     onSave() {
         this.onPlaySave(false);
         this.setState({
-            specialLayer : false
+            specialLayer : false,
+            qrCodeType : false
         })
     }
 
@@ -327,7 +333,8 @@ class NavBar extends React.Component {
     onPlay() {
         this.onPlaySave(true);
         this.setState({
-            specialLayer : false
+            specialLayer : false,
+            qrCodeType : false
         })
     }
 
@@ -1044,7 +1051,7 @@ class NavBar extends React.Component {
                                 预览
                             </button>
 
-                            <button className='btn btn-clear qrCode-btn' title='二维码' >
+                            <button className='btn btn-clear qrCode-btn' title='二维码' onClick={ this.qrCode }>
                                 <span className='icon' />
                                 二维码
                             </button>
@@ -1198,6 +1205,26 @@ class NavBar extends React.Component {
                             </div>
 
                             <button className="btn-clear sure-btn" onClick={ this.saveFinishFuc }>确定</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={$class("qrCode-layer f--hcc",{"hidden":true})}>
+                    <div className="qrCode">
+                        <div className="qrCode-header f--hlc">
+                            <span className="title-icon" />
+                            <span className="flex-1">预览二维码</span>
+                            <span className="close-icon"/>
+                        </div>
+
+                        <div className="qrCode-content">
+                            <div className="qrCode-div">
+                                <div className="qrCode-bg">
+                                    <div></div>
+                                </div>
+                            </div>
+
+                            <p>此二维码仅用于预览，分享请使用“我的作品”页面中二维码</p>
                         </div>
                     </div>
                 </div>
