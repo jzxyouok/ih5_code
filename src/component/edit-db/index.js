@@ -31,7 +31,7 @@ class EditDb extends React.Component {
         this.setState({
             isBig : false
         },()=>{
-            this.refs.DbTable.updateNewScrollData();
+            this.refs.DbTable.updateNewScrollData(true);
         })
     }
 
@@ -39,7 +39,7 @@ class EditDb extends React.Component {
         this.setState({
             isBig : true
         },()=>{
-            this.refs.DbTable.updateNewScrollData();
+            this.refs.DbTable.updateNewScrollData(true);
         })
     }
 
