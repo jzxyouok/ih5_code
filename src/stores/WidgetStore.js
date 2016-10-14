@@ -1591,7 +1591,7 @@ export default Reflux.createStore({
             event['children'].push({
                 'cid': _childrenCount++,
                 judgeObjFlag:'判断对象',
-                judgeValFlag:'计算值',
+                judgeValFlag:'判断值',
                 compareFlag:'=',
                 compareObjFlag:'比较值/对象',
                 compareValFlag:'比较值',
