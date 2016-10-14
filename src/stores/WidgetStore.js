@@ -117,7 +117,11 @@ function loadTree(parent, node, idList) {
           temp['props'] = item.props;
           temp['type'] = item.type;
           temp['className'] = 'var';
-          temp['key'] = _keyCount++;
+          if (item['key'] !== undefined) {
+              temp['key'] = item['key'];
+          } else {
+              temp['key'] = _keyCount++;
+          }
           temp['widget'] = current;
           keyMap[temp['key']] = temp;
           switch (temp['type']){
@@ -141,7 +145,11 @@ function loadTree(parent, node, idList) {
           temp['params']  = item.params;
           temp['props'] = item.props;
           temp['className'] = 'func';
-          temp['key'] = _keyCount++;
+          if (item['key'] !== undefined) {
+              temp['key'] = item['key'];
+          } else {
+              temp['key'] = _keyCount++;
+          }
           temp['widget'] = current;
           keyMap[temp['key']] = temp;
           current.funcList.push(temp);
@@ -156,7 +164,11 @@ function loadTree(parent, node, idList) {
               temp['name'] = item.name;
               temp['props'] = item.props;
               temp['className'] = 'dbItem';
-              temp['key'] = _keyCount++;
+              if (item['key'] !== undefined) {
+                  temp['key'] = item['key'];
+              } else {
+                  temp['key'] = _keyCount++;
+              }
               temp['fields'] = item.fields;
               temp['widget'] = current;
               keyMap[temp['key']] = temp;
@@ -200,7 +212,9 @@ function loadTree(parent, node, idList) {
       r.eid = (_eventCount++);
       r.specificList = [];
       item.cmds.forEach(cmd => {
-        r.specificList.push({action:cmd, sid:_specificCount++});
+          let temp = cmd;
+          temp.sid = _specificCount++;
+          r.specificList.push(temp);
       });
       //没有的时候添加一个空的
       if(r.specificList.length === 0){
@@ -273,6 +287,15 @@ function idToObject(list, idName, varName) {
   }
 }
 
+function idToObjectKey(list, idName, varName) {
+    let obj = idToObject(list, idName, varName);
+    if (obj) {
+        return obj.key;
+    } else {
+        return null;
+    }
+}
+
 function resolveEventTree(node, list) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
@@ -287,32 +310,36 @@ function resolveEventTree(node, list) {
       });
 
       item.specificList.forEach(cmd => {
-        cmd.object = idToObject(list, cmd.action.id, cmd.action.var);
-        delete(cmd.action.id);
-        delete(cmd.action.var);
-
-        //不存在目标对象
-        if(!cmd.object){
-            cmd.object = null;
-        }
+          if(cmd.sObjId){
+              cmd.object = idToObjectKey(list, cmd.sObjId[0], cmd.sObjId[1]);
+          } else {
+              cmd.object = null;
+          }
+          (delete cmd.sObjId);
 
           //不存在目标动作
-          if(!cmd.action.type) {
+          if(!cmd.object||!cmd.action) {
               cmd.action = null;
           } else {
               switch (cmd.action.type) {
                   case funcType.customize:
-                      cmd.action.func = idToObject(list, cmd.action.funcId[0], cmd.action.funcId[1]);
-                      delete(cmd.action.funcId);
-                      if(!cmd.action.func){
+                      if(cmd.action.funcId){
+                          cmd.action.func = idToObjectKey(list, cmd.action.funcId[0], cmd.action.funcId[1]);
+                      } else {
                           cmd.action = null;
                       }
+                      (delete cmd.action.funcId);
                       break;
                   default:
-                      if(cmd.object&&cmd.object.className === 'db') {
+                      let o = keyMap[cmd.object];
+                      if(o&&o.className === 'db') {
                           cmd.action.property.forEach(v=> {
-                              if((v.name === 'data'||v.name=='option') && v.valueId) {
-                                  v.value = idToObject(list, v.valueId[0], v.valueId[1]);
+                              if((v.name === 'data'||v.name=='option')) {
+                                  if(v.valueId){
+                                      v.value = idToObjectKey(list, v.valueId[0], v.valueId[1]);
+                                  } else {
+                                      v.value = null;
+                                  }
                                   (delete v.valueId);
                               }
                           });
@@ -335,12 +362,12 @@ function resolveDBItemList(node, list) {
     if (node.dbItemList) {
         node.dbItemList.forEach(v => {
             v.fields.forEach(item => {
-                if(item.wid){
-                    item.value = idToObject(list, item.wid[0], item.wid[1]).key;
-                    delete(item.wid);
+                if(item.valueId){
+                    item.value = idToObjectKey(list, item.valueId[0], item.valueId[1]);
                 } else {
                     item.value = null;
                 }
+                delete(item.valueId);
             });
         });
     }
@@ -398,7 +425,7 @@ function generateObjectId(object) {
 }
 
 function objectToId(object) {
-  var idName, varKey, varName;
+  let idName, varKey, varName;
   if (object.className == 'var') {
     idName = object.widget.props['id'];
     varName = object.name;
@@ -419,7 +446,35 @@ function objectToId(object) {
   return [idName, varKey, varName];
 }
 
+function objectKeyToId(key) {
+    if(key) {
+        let obj = keyMap[key];
+        if(obj){
+            return objectToId(obj);
+        } else {
+            return null;
+        }
+    } else return null;
+}
+
 function generateId(node, idList) {
+    //生成需要的data
+    let specGenIdsData = (source, key) => {
+        let data = keyMap[key];
+        generateObjectId(data);
+        if (idList != undefined && data) {
+            var o = objectToId(data);
+            //ids的key只需保存外层的
+            if (o[1]) {
+                idList[o[0]] = data.widget.key;
+            } else {
+                idList[o[0]] = data.key;
+            }
+            return o;
+        }
+        return null;
+    };
+
   if (node.props['eventTree']) {
       generateObjectId(node);
       node.props['eventTree'].forEach(item => {
@@ -451,47 +506,19 @@ function generateId(node, idList) {
       });
 
       item.specificList.forEach(cmd => {
-        generateObjectId(cmd.object);
-        if (idList != undefined && cmd.object) {
-          var o = objectToId(cmd.object);
-          idList[o[0]] = cmd.object.key;
-            if(!cmd.action) {
-                cmd.action = {};
-            }
-            cmd.action.id = o[0];
-            if (o[1]) {
-                idList[o[0]] = cmd.object.widget.key;
-                cmd.action.var = o[1];
-                cmd.action.varName = o[2];
-            }
-          }
+          let sObjId = specGenIdsData(cmd, cmd.object);
+          cmd.sObjId = sObjId;
           if(cmd.action){
               switch (cmd.action.type){
                   case funcType.customize:
-                      generateObjectId(cmd.action.func);
-                      if (idList != undefined && cmd.action.func) {
-                          var o = objectToId(cmd.action.func);
-                          idList[o[0]] = cmd.action.func.key;
-                          cmd.action.funcId = o;
-                          if (cmd.action.funcId[1]) {
-                              idList[cmd.action.funcId[0]] = cmd.action.func.widget.key;
-                          }
-                      }
+                      cmd.action.funcId = specGenIdsData(cmd.action, cmd.action.func);
                       break;
                   default:
                       if(cmd.action.property){
                           cmd.action.property.forEach(v=>{
                               //看是否需要generateid
-                              if(v.value&&v.value.className){
-                                  generateObjectId(v.value);
-                                  if (idList != undefined && v.value) {
-                                      var o = objectToId(v.value);
-                                      idList[o[0]] = v.value.key;
-                                      v.valueId = o;
-                                      if (v.valueId[1]) {
-                                          idList[v.valueId[0]] = v.value.widget.key;
-                                      }
-                                  }
+                              if (v.name ==='data'|| v.name ==='option') {
+                                  v.valueId = specGenIdsData(v, v.value);
                               }
                           })
                       }
@@ -504,16 +531,7 @@ function generateId(node, idList) {
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
           item.fields.forEach(judge => {
-              let w =  keyMap[judge.value];
-              generateObjectId(w);
-              if (idList != undefined && w) {
-                  var o = objectToId(w);
-                  idList[o[0]] = w.key;
-                  judge.wid = o;
-                  if (judge.wid[1]) {
-                      idList[judge.wid[0]] = w.widget.key;
-                  }
-              }
+              judge.valueId = specGenIdsData(judge, judge.value);
           });
       });
   }
@@ -561,50 +579,59 @@ function generateJsFunc(etree) {
         });
       }
       item.cmds.forEach(cmd => {
-        if (cmd.id && cmd.type == 'default' && cmd.name) {
-          if (cmd.name === 'changeValue') {
-            if (cmd.property.length >= 1)
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + JSON.stringify(cmd.property[0]['value']));
-          } else if (cmd.name === 'add1') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '++');
-          } else if (cmd.name === 'minus1') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '--');
-          } else if (cmd.name === 'addN') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '+=' + JSON.stringify(cmd.property[0]['value']));
-          } else if (cmd.name === 'minusN') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '-=' + JSON.stringify(cmd.property[0]['value']));
-          } else if (cmd.name === 'getInt') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + 'Math.round(' + getIdsName(cmd.id, cmd.varName, 'value') + ')');
-          } else if (cmd.name === 'randomValue') {
-              let max = JSON.stringify(cmd.property[1]['value']);
-              let min = JSON.stringify(cmd.property[0]['value']);
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + 'Math.round(Math.random()*('
+        if (cmd.sObjId && cmd.action && cmd.action.type == 'default') {
+          if (cmd.action.name === 'changeValue') {
+            if (cmd.action.property.length >= 1)
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(cmd.action.property[0]['value']));
+          } else if (cmd.action.name === 'add1') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '++');
+          } else if (cmd.action.name === 'minus1') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '--');
+          } else if (cmd.action.name === 'addN') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '+=' + JSON.stringify(cmd.action.property[0]['value']));
+          } else if (cmd.action.name === 'minusN') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '-=' + JSON.stringify(cmd.action.property[0]['value']));
+          } else if (cmd.action.name === 'getInt') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + 'Math.round(' + getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + ')');
+          } else if (cmd.action.name === 'randomValue') {
+              let max = JSON.stringify(cmd.action.property[1]['value']);
+              let min = JSON.stringify(cmd.action.property[0]['value']);
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + 'Math.round(Math.random()*('
                   + max + '-'
                   + min + '+1)+' + min + ')');
           } else {
-            var line = getIdsName(cmd.id, cmd.varName, cmd.name) + '(';
-            if (cmd.property) {
-              line += cmd.property.map(function(p) {
-                if (p['binding'] !== undefined) {
-                  var list = [];
-                  p['binding'].fields.forEach(function(v) {
-                    if (v.name && v.value) {
-                      if (v.name.substr(0, 1) == 'i') {
-                        list.push('\'' + v.name.substr(1) + '\':parseFloat(ids.' + v.value.props['id'] + '.value)');
-                      } else if (v.name.substr(0, 1) == 's') {
-                        list.push('\'' + v.name.substr(1) + '\':ids.' + v.value.props['id'] + '.value');
-                      } else {
-                        list.push('\'' + v.name + '\':ids.' + v.value.props['id'] + '.value');
+              //数据库
+              var line = getIdsName(cmd.sObjId[0], cmd.sObjId[1], cmd.action.name) + '(';
+              if (cmd.action.property) {
+                  line += cmd.action.property.map(function(p) {
+                      let va = null;
+                      if(p['vKey'] !== undefined) {
+                          va = keyMap[p['vKey']];
+                          if (va) {
+                              var list = [];
+                              va.fields.forEach(function(v) {
+                                  let obj = keyMap[v.value];
+                                  if (v.name && obj) {
+                                      if (v.name.substr(0, 1) == 'i') {
+                                          list.push('\'' + v.name.substr(1) + '\':parseFloat(ids.' + obj.props['id'] + '.value)');
+                                      } else if (v.name.substr(0, 1) == 's') {
+                                          list.push('\'' + v.name.substr(1) + '\':ids.' + obj.props['id'] + '.value');
+                                      } else {
+                                          list.push('\'' + v.name + '\':ids.' + obj.props['id'] + '.value');
+                                      }
+                                  }
+                              });
+                              delete(p['vKey']);
+                              return '{' + list.join(',') + '}';
+                          } else {
+                              delete(p['vKey']);
+                              return '';
+                          }
                       }
-                    }
-                  });
-                  delete(p['binding']);
-                  return '{' + list.join(',') + '}';
-                }
-                return JSON.stringify(p['value']);
-              }).join(',');
-            }
-            lines.push(line + ')');
+                      return JSON.stringify(p['value']);
+                  }).join(',');
+              }
+              lines.push(line + ')');
           }
         }
       });
@@ -717,61 +744,69 @@ function saveTree(data, node, saveKey) {
          });
 
         item.specificList.forEach(cmd => {
-            var c = {};
-            if (cmd.action) {
+            let c = {};
+            c.sObjId = objectKeyToId(cmd.object);
+            if(saveKey) {
+                c.object = cmd.object;
+            }
+            //有对象才会有动作，不然动作清除
+            if (c.sObjId&&cmd.action) {
+                c.action = {};
                 switch (cmd.action.type) {
                     case funcType.customize:
-                        c = {
-                            funcId: objectToId(cmd.action.func),
-                            type: cmd.action.type
-                        };
+                        c.action.funcId = objectKeyToId(cmd.action.func);
+                        c.action.type = cmd.action.type;
+                        if(saveKey) {
+                            c.action.func = cmd.action.func;
+                        }
                         break;
                     default:
-                        c = {
-                            name: cmd.action.name,
-                            showName: cmd.action.showName,
-                            type: cmd.action.type
-                        };
+                        c.action.name = cmd.action.name;
+                        c.action.showName = cmd.action.showName;
+                        c.action.type = cmd.action.type;
                         break;
                 }
-            }
-            if(cmd.object){
-                let o = objectToId(cmd.object);
-                c.id = o[0];
-                if (o[1]) {
-                    c.var = o[1];
-                    c.varName = o[2];
-                }
-            }
-            if (cmd.action&&cmd.action.property) {
-                let property = [];
-                if(cmd.object&&cmd.object.className === 'db') {
-                    cmd.action.property.forEach(v=> {
-                        if(v.name === 'data' && v.value) {
-                            property.push({
-                                name:v.name,
-                                showName: v.showName,
-                                type: v.type,
-                                valueId: objectToId(v.value),
-                                binding: v.value
-                            })
-                        } else if (v.name === 'option'&& v.value) {
-                            property.push({
-                                name:v.name,
-                                showName: v.showName,
-                                type: v.type,
-                                valueId: objectToId(v.value)
-                            })
-                        } else {
-                            property.push(v);
-                        }
-                    });
-                    c.property = property;
-                } else {
-                    c.property = cmd.action.property;
-                }
-            }
+                if (cmd.action.property) {
+                    let property = [];
+                    let o = keyMap[cmd.object];
+                    if(o&&o.className === 'db') {
+                        cmd.action.property.forEach(v=> {
+                            if(v.name === 'data' && v.value) {
+                                let temp = {
+                                    name:v.name,
+                                    showName: v.showName,
+                                    type: v.type,
+                                    valueId: objectKeyToId(v.value),
+                                    vKey: v.value
+                                };
+                                if(saveKey) {
+                                    temp.value = v.value;
+                                }
+                                property.push(temp);
 
+                            } else if (v.name === 'option'&& v.value) {
+                                let temp = {
+                                    name:v.name,
+                                    showName: v.showName,
+                                    type: v.type,
+                                    valueId: objectKeyToId(v.value)
+                                };
+                                if(saveKey) {
+                                    temp.value = v.value;
+                                }
+                                property.push(temp);
+                            } else {
+                                property.push(v);
+                            }
+                        });
+                        c.action.property = property;
+                    } else {
+                        c.action.property = cmd.action.property;
+                    }
+                }
+            } else {
+                c.action = null;
+            }
             cmds.push(c);
         });
 
@@ -804,6 +839,9 @@ function saveTree(data, node, saveKey) {
           o['value'] = item.value==null?item.value:parseInt(item.value);
           o['props'] = item.props;
           o['type'] = item.type;
+          if (saveKey) {
+              o['key'] = item.key;
+          }
           list.push(o);
       });
   }
@@ -815,6 +853,9 @@ function saveTree(data, node, saveKey) {
           o['value'] = item.value;
           o['props'] = item.props;
           o['type'] = item.type;
+          if (saveKey) {
+              o['key'] = item.key;
+          }
           list.push(o);
       });
   }
@@ -828,6 +869,9 @@ function saveTree(data, node, saveKey) {
           o['value'] = item.value;
           o['params'] = item.params;
           o['props'] = item.props;
+          if (saveKey) {
+              o['key'] = item.key;
+          }
           list.push(o);
       });
   }
@@ -842,14 +886,16 @@ function saveTree(data, node, saveKey) {
           o['fields'] = [];
           item.fields.forEach(field =>{
               let name = field.name;
-              let wid = null;
-              let w = keyMap[field.value];
-              if(w){
-                  wid = objectToId(w);
+              let temp = {name: name, valueId: objectKeyToId(field.value)};
+              if (saveKey) {
+                  temp.value = field.value;
               }
-              o['fields'].push({name: name, wid: wid});
+              o['fields'].push(temp);
           });
           o['props'] = item.props;
+          if (saveKey) {
+              o['key'] = item.key;
+          }
           data['dbItems'].push(o);
       });
   }
@@ -1045,6 +1091,7 @@ export default Reflux.createStore({
         this.eventTreeList = [];
     },
     selectWidget: function(widget, shouldTrigger, keepValueType) {
+        console.log(keyMap);
         var render = false;
         if (widget) {
             if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -1297,9 +1344,6 @@ export default Reflux.createStore({
             // let dest = this.findWidget(destKey);
             if (src&&dest) {
                 var saved = {};
-                var rootWidget = this.currentWidget.rootWidget;
-                var idList = [];
-                generateId(rootWidget, idList);
                 saveTree(saved, src, true);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
@@ -1308,12 +1352,6 @@ export default Reflux.createStore({
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
-                var map = [];
-                for (var id in idList) {
-                  map[id] = keyMap[idList[id]];
-                }
-                resolveEventTree(rootWidget, map);
-                resolveDBItemList(rootWidget, map);
 
                 var destIndex = dest.children.indexOf(obj);
                 if (destIndex != index) {
