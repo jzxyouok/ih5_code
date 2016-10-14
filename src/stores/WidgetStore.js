@@ -2247,7 +2247,7 @@ export default Reflux.createStore({
     setRulerLine:function(bIsShow){
         this.trigger({setRulerLine:{isShow:bIsShow}});
     },
-    saveNode: function(wid, wname, callback) {
+    saveNode: function(wid, wname, wdescribe, callback) {
       // let appendArray = function(a1, a2) {
       //     for (let i = 0; i < a2.length; i++) {
       //       a1.push(a2[i]);
@@ -2314,13 +2314,14 @@ export default Reflux.createStore({
 
       var cb = function(text) {
           var result = JSON.parse(text);
-          callback(result['id'], wname);
+          callback(result['id'], wname, wdescribe);
       };
 
       if (wid) {
         this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb);
       } else {
-        this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname), 'application/octet-stream', data, cb);
+        this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname) + encodeURIComponent(wdescribe),
+                        'application/octet-stream', data, cb);
       }
     },
     setFont: function(font) {
@@ -2377,6 +2378,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
+        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        //http://test-beta.ih5.cn/
         xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";

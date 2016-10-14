@@ -177,7 +177,6 @@
     }
 }
 
-// 360旋转
 @include keyframes(editDb-big){
     0% {
         left: -194px;
@@ -194,4 +193,19 @@
     100% {
         right: 0;
     }
+}
+
+//交替显示
+@include keyframes(toggle-show){
+    0% {opacity: 1;}
+    49%{opacity: 1;}
+    50%{ opacity: 0;}
+    99%{ opacity: 0;}
+    100% {opacity: 1;}
+}
+
+//进度条
+@include keyframes(save-loading){
+    0% { width: 0; }
+    100% { width: 100%; }
 }
