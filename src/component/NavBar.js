@@ -64,7 +64,8 @@ class NavBar extends React.Component {
             saveWDError : null,
             saveLoading : false,
             saveFinish : false,
-            saveFinishPlay : false
+            saveFinishPlay : false,
+            qrCodeType : true
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -104,6 +105,7 @@ class NavBar extends React.Component {
         this.cancelSave = this.cancelSave.bind(this);
         this.onSaveDone = this.onSaveDone.bind(this);
         this.saveFinishFuc = this.saveFinishFuc.bind(this);
+        this.qrCode = this.qrCode.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -259,6 +261,9 @@ class NavBar extends React.Component {
             });
             //window.open(this.playUrl + 'work/' + id, '_blank');
         }
+        else if(this.state.qrCodeType){
+            //bridge.generateQrcode(this.playUrl, 184, 184)
+        }
         else {
             this.setState({
                 saveLoading : false,
@@ -311,6 +316,21 @@ class NavBar extends React.Component {
         })
     }
 
+    qrCode() {
+        this.onPlaySave(false);
+        this.setState({
+            specialLayer : false,
+            qrCodeType : true
+        })
+    }
+
+    onPlay() {
+        this.onPlaySave(true);
+        this.setState({
+            specialLayer : false
+        })
+    }
+
     onHideRulerLine(value){
         //console.log();
         if(value.target.title == '隐藏参考线'){
@@ -320,13 +340,6 @@ class NavBar extends React.Component {
             value.target.title='隐藏参考线';
             WidgetActions['setRulerLine'](true) ;
         }
-    }
-
-    onPlay() {
-        this.onPlaySave(true);
-        this.setState({
-            specialLayer : false
-        })
     }
 
     onImport() {
