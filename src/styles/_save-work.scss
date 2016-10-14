@@ -1,0 +1,194 @@
+.save-work-layer ,
+.save-loading-layer ,
+.save-finish-layer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    background: rgba(#000,0.6);
+
+    .save-work ,
+    .save-loading ,
+    .save-finish {
+        @include border-radius(2px);
+        @include shadow(0,5px,20px,0.3);
+        width: 400px;
+        background: #353535;
+
+        .save-header {
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            background: #545454;
+            font-size: 14px;
+            color: #fff;
+
+            .icon {
+                width: 30px;
+                height: 40px;
+                background: url("img/button-icon.svg") no-repeat -1400px -240px;
+                display: block;
+            }
+        }
+
+        .save-content {
+            width: 100%;
+            padding: 5px 30px;
+
+            label {
+                width: 100%;
+                height: 30px;
+                line-height: 30px;
+                display: block;
+                margin-top: 2px;
+                font-size: 12px;
+                color: #b5b5b5;
+            }
+
+            input{
+                height: 32px;
+                padding-left: 10px;
+            }
+
+            textarea{
+                height: 121px;
+                resize: none;
+                padding: 0 10px;
+            }
+
+            input,
+            textarea {
+                @include border-radius(2px);
+                width: 100%;
+                line-height: 32px;
+                font-size: 14px;
+                border: none;
+                outline: none;
+                background: #232323;
+                color: #fff;
+
+                &::-webkit-input-placeholder{
+                    color: #b5b5b5;
+                }
+            }
+
+            .btn-group{
+                width: 100%;
+                height: 66px;
+
+                .btn {
+                    @include border-radius(2px);
+                    width: 100px;
+                    height: 30px;
+                    line-height: 30px;
+                    font-size: 14px;
+                    text-align: center;
+                    color: #151515;
+                    cursor: pointer;
+                    display: block;
+                }
+
+                .cancel-btn {
+                    background: #7b7b7b;
+                    margin-right: 40px;
+
+                    &:hover { background: #b5b5b5; }
+                    &:active { background: #545454; }
+                }
+
+                .sure-btn {
+                    background: #b5b5b5;
+
+                    &:hover { background: #fff; }
+                    &:active { background: #545454; }
+                }
+            }
+        }
+    }
+}
+
+
+.save-loading {
+    .save-content { padding: 0 30px !important; }
+
+    .title {
+        height: 42px;
+        line-height: 42px;
+        font-size: 12px;
+        color: #b5b5b5;
+
+        span {
+            animation : toggle-show 1s infinite linear;
+        }
+    }
+    .loading {
+        @include border-radius(12px);
+        width: 100%;
+        height: 24px;
+        margin-bottom: 42px;
+        background: #232323;
+        //border: 1px solid #212121;
+        padding: 1px;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1) inset;
+        -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1) inset;
+
+        span {
+            @include border-radius(10px);
+            height: 20px;
+            width: 0;
+            background: #ffa800;
+            display: block;
+            animation : save-loading 5s infinite linear;
+        }
+    }
+}
+
+.save-finish {
+    .save-header {
+        .play-icon {
+            background-position: -1440px -240px !important;
+        }
+    }
+    .save-content { padding: 0 30px !important; }
+    .success{
+        @include border-radius(2px);
+        width: 100%;
+        height: 44px;
+        line-height: 44px;
+        margin-top: 16px;
+        background: #232323;
+        //border: 1px solid #212121;
+        padding: 1px;
+        font-size: 14px;
+        color: #b5b5b5;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1) inset;
+        -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1) inset;
+
+        .icon{
+            width: 28px;
+            height: 28px;
+            display: block;
+            margin: 0 15px;
+            background: url("img/button-icon.svg") no-repeat -1480px -200px;
+        }
+    }
+
+    .sure-btn {
+        @include border-radius(2px);
+        width: 100px;
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+        text-align: center;
+        color: #151515;
+        cursor: pointer;
+        display: block;
+        background: #b5b5b5;
+        margin: 12px auto;
+
+        &:hover { background: #fff; }
+        &:active { background: #545454; }
+    }
+}
