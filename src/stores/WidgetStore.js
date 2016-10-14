@@ -932,9 +932,18 @@ function drop(e) {
     for (i = 0; i < files.length; i++) {
       file = files[i];
       if (file.type.match(/image.*/)) {
+          let fileName = file.name;
+          let dot = fileName.lastIndexOf('.');
+          if (dot>0) {
+              var ext = fileName.substr(dot + 1).toLowerCase();
+              if (ext == 'png' || ext == 'jpeg' || ext=='jpg') {
+                  fileName = fileName.substr(0, dot);
+              }
+          }
         let reader = new FileReader();
         reader.onload = e => {
-          this.addWidget('image', null, e.target.result);
+            let props = {name: fileName};
+          this.addWidget('image', props, e.target.result);
         };
         reader.readAsDataURL(file);
       }
