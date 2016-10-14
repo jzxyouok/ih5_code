@@ -624,7 +624,6 @@ function generateJsFunc(etree) {
       }
     }
   });
-  console.log(output);
   return output;
 }
 
