@@ -1,7 +1,7 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
-import WidgetStore, {varType, funcType} from '../../stores/WidgetStore'
+import WidgetStore, {varType, funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
 import { Input, InputNumber, Select} from 'antd';
@@ -95,17 +95,42 @@ class Property extends React.Component {
                     }
                 });
             });
-        } else if (widget.updateFunction){
-            if(widget.updateFunction.widget&&this.state.currentObject){
-                if(widget.updateFunction.widget.key == this.state.currentObject.key){
-                    this.onGetActionList(this.state.currentObject);
-                }
-            }
-        } else if (widget.updateDBItem) {
-            if(widget.updateDBItem.widget&&this.state.currentObject&&this.state.currentAction){
-                if(this.state.currentObject.className === 'db' && this.state.currentAction.name){
-                    this.forceUpdate();
-                }
+        } else if (widget.updateWidget) {
+            switch (widget.updateWidget.type) {
+                case nodeType.widget:
+                case nodeType.var:
+                    if (widget.updateWidget.action === nodeAction.remove&&
+                        widget.updateWidget.widget.key === this.state.currentObject) {
+                        let obj = WidgetStore.getWidgetByKey(this.state.currentObject);
+                        if (!obj) {
+                            let specific = this.state.specific;
+                            specific.object = null;
+                            specific.action = null;
+                            this.setState({
+                                specific: specific,
+                                currentObject: null,
+                                currentAction: null
+                            }, ()=>{
+                                WidgetActions['changeSpecific'](this.state.specific, {object: this.state.currentObject, action:this.state.currentAction});
+                            })
+                        }
+                    }
+                    break;
+                case  nodeType.func:
+                    if(widget.updateWidget.action === nodeAction.change&&
+                        widget.updateWidget.widget.key === this.state.currentObject){
+                        //func有变化就让其重新获取action list
+                        this.onGetActionList(this.state.currentObject);
+                    }
+                    break;
+                case nodeType.dbItem:
+                    if(this.state.currentAction){
+                        let obj = WidgetStore.getWidgetByKey(this.state.currentObject);
+                        if(obj && obj.className === 'db'){
+                            this.forceUpdate();
+                        }
+                    }
+                    break;
             }
         } else if (widget.didSelectEventTarget) {
             if(widget.didSelectEventTarget.target&&this.state.isActiveEventSelectTarget) {
@@ -118,7 +143,7 @@ class Property extends React.Component {
                 });
                 if (getTarget) {
                     this.setState({
-                        currentObject: target
+                        currentObject: target.key
                     }, ()=> {
                         WidgetActions['eventSelectTargetMode'](false, this.state.specific.id);
                         WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
@@ -128,7 +153,16 @@ class Property extends React.Component {
         }
     }
 
-    onGetActionList(obj){
+    onGetActionList(key){
+        let obj = WidgetStore.getWidgetByKey(key);
+
+        if(!obj) {
+            this.setState({
+                actionList: []
+            });
+            return;
+        }
+
         let actionList = [];
         let className = obj.className;
 
@@ -136,7 +170,7 @@ class Property extends React.Component {
         if(className !== 'var') {
             for(let i=0; i<obj.funcList.length; i++){
                 let func = obj.funcList[i];
-                let act = { func:func, type: funcType.customize};
+                let act = { func:func.key, type: funcType.customize};
                 //params
                 if(func.params){
                     let property = [];
@@ -219,14 +253,14 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
-        if(this.state.currentObject && this.state.currentObject.key === object.key) {
+        if(this.state.currentObject === object.key) {
             this.setState({
                 objectDropdownVisible: false
             });
             return;
         }
         this.setState({
-            currentObject: object,
+            currentObject: object.key,
             objectDropdownVisible: false
         }, ()=> {
            WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
@@ -248,7 +282,8 @@ class Property extends React.Component {
         if(this.state.currentAction&&action.type===this.state.currentAction.type) {
             switch (action.type){
                 case funcType.customize:
-                    if(action.func.key == this.state.currentAction.func.key){
+                    let func = WidgetStore.getWidgetByKey(this.state.currentAction.func);
+                    if(action.func == func.key){
                         this.setState({
                             actionDropdownVisible: false
                         });
@@ -314,7 +349,7 @@ class Property extends React.Component {
     onPropertyContentSelect(prop, index, e) {
         e.domEvent.stopPropagation();
         let data = e.item.props.data;
-        prop.value = data;
+        prop.value = data.key;
         let property = this.state.currentAction.property;
         property[index] = prop;
         let action = this.state.currentAction;
@@ -358,6 +393,13 @@ class Property extends React.Component {
 
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
+
+        let w = WidgetStore.getWidgetByKey(this.state.currentObject);
+        let f = null;
+        if (this.state.currentAction) {
+            f = WidgetStore.getWidgetByKey(this.state.currentAction.func);
+        }
+
         let propertyContent = (v1,i1)=>{
             //设置通用默认参数和事件
             return  <div className="pp--list f--hlc" key={i1}>
@@ -388,16 +430,16 @@ class Property extends React.Component {
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Select:
-                    if(this.state.currentObject.className === 'db'){
+                    if(w&&w.className === 'db'){
                         let menu = (<Menu></Menu>);
                         let titleTemp = '类别';
                         if(item.name ==='data') {
                             titleTemp = '来源';
                             menu = (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
                                 {
-                                    !this.state.currentObject.dbItemList||this.state.currentObject.dbItemList.length==0
+                                    !w.dbItemList||w.dbItemList.length==0
                                         ? null
-                                        : this.state.currentObject.dbItemList.map(dbList)
+                                        : w.dbItemList.map(dbList)
                                 }
                             </Menu>);
                         } else if (item.name ==='option'){
@@ -410,13 +452,14 @@ class Property extends React.Component {
                                 }
                             </Menu>);
                         }
+                        let func = WidgetStore.getWidgetByKey(item.value);
                         return <Dropdown overlay={menu} trigger={['click']}
                                          getPopupContainer={() => document.getElementById(propertyId)}>
                             <div className={$class("p--dropDown short")}>
                                 <div className="title f--hlc">
-                                    { !item.value || !item.value.props.name
+                                    { !func || !func.props || !func.props.name
                                         ?titleTemp
-                                        :item.value.props.name
+                                        :func.props.name
                                     }
                                     <span className="icon" />
                                 </div>
@@ -448,11 +491,16 @@ class Property extends React.Component {
         );
 
         let actionMenuItem = (v2, i)=>{
+            let func = WidgetStore.getWidgetByKey(v2.func);
             switch (v2.type) {
                 case funcType.customize:
-                    return <MenuItem key={i} action={v2} className={$class({'customize-last':i===this.funcListLength-1})}>
-                        {v2.func.props.name}
-                    </MenuItem>;
+                    if(func){
+                        return <MenuItem key={i} action={v2} className={$class({'customize-last':i===this.funcListLength-1})}>
+                            {func.props.name}
+                        </MenuItem>;
+                    } else {
+                        return null;
+                    }
                 case funcType.default:
                     return <MenuItem key={i} action={v2}>{v2.showName}</MenuItem>;
             }
@@ -484,10 +532,9 @@ class Property extends React.Component {
                                           visible={this.state.objectDropdownVisible}>
                                     <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
                                         <div className="title f--hlc">
-                                            { !this.state.currentObject ||
-                                              !this.state.currentObject.props.name
+                                            { !w || !w.props || !w.props.name
                                                 ?'目标对象'
-                                                :this.state.currentObject.props.name
+                                                :w.props.name
                                             }
                                             <span className="icon" />
                                         </div>
@@ -516,7 +563,9 @@ class Property extends React.Component {
                                                 !this.state.currentAction
                                                     ? '目标动作'
                                                     : this.state.currentAction.type === funcType.customize
-                                                        ? this.state.currentAction.func.props.name
+                                                        ? f&&f.props
+                                                            ? f.props.name
+                                                            : '目标动作'
                                                         : this.state.currentAction.showName
                                             }
                                             <span className="icon" />
@@ -546,7 +595,7 @@ class Property extends React.Component {
                                     <div className="btn-layer">
                                     </div>
                                 </button>
-                                <button className={$class("down-btn", {'expanded-props': (this.state.expanded)})}
+                                <button className={$class("down-btn", {'expanded-props': this.state.expanded})}
                                         onClick={this.expandBtn.bind(this, true)}
                                         disabled={!this.state.currentAction||
                                         !this.state.currentAction.property ||

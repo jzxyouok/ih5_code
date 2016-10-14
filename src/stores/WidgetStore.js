@@ -31,6 +31,12 @@ var nodeType = {
     dbItem: 'dbItem',
 };
 
+var nodeAction = {
+    add: 'add',
+    remove: 'remove',
+    change: 'change',
+};
+
 var keepType = {
     event: 'event',
     func: 'func',
@@ -991,6 +997,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['saveFontList'], this.saveFontList);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
 
+        this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
 
@@ -1032,7 +1039,6 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['selectDBItem'], this.selectDBItem);
         this.listenTo(WidgetActions['addDBItem'], this.addDBItem);
         this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
-        this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
         this.listenTo(WidgetActions['eventSelectTargetMode'], this.eventSelectTargetMode);
         this.listenTo(WidgetActions['didSelectEventTarget'], this.didSelectEventTarget);
@@ -1160,7 +1166,10 @@ export default Reflux.createStore({
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
+
             keyMap[this.currentWidget.key] = undefined;
+            this.trigger({updateWidget: {widget:this.currentWidget, type:nodeType.widget, action:nodeAction.remove}});
+
             this.currentWidget = null;
             if(shouldChooseParent) {
                 this.selectWidget(parentWidget);
@@ -1640,25 +1649,24 @@ export default Reflux.createStore({
     addFunction: function (param, defaultName) {
         if(this.currentWidget) {
             let func = {};
-            func['name'] = param.name||'';
-            func['value'] = param.value||'';
-            func['className']  = 'func';
+            func['name'] = param.name || '';
+            func['value'] = param.value || '';
+            func['className'] = 'func';
             func['key'] = _keyCount++;
-            func['params'] = param.params?cpJson(param.params):[{type:null, name:null}];    //函数类型
+            func['params'] = param.params ? cpJson(param.params) : [{type: null, name: null}];    //函数类型
             func['widget'] = this.currentWidget;
             func['props'] = {};
             func['props']['unlockPropsName'] = true;
-            if(defaultName!=undefined) {
+            if (defaultName != undefined) {
                 func['props']['name'] = defaultName;
             } else {
                 func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
             }
             keyMap[func['key']] = func;
             this.currentWidget['funcList'].unshift(func);
+            this.trigger({updateWidget: {widget:func, type:nodeType.func, action:nodeAction.add}});
         }
-        this.trigger({updateFunction: {widget:this.currentWidget}});
         this.trigger({redrawTree: true});
-        // this.render();
     },
     changeFunction: function (props) {
         if(props) {
@@ -1669,7 +1677,7 @@ export default Reflux.createStore({
             } else if(props['params']) {
                 this.currentFunction['params'] = props['params'];
             }
-            this.trigger({updateFunction: {widget:this.currentWidget}});
+            this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.change}});
         }
     },
     removeFunction: function () {
@@ -1683,7 +1691,7 @@ export default Reflux.createStore({
             if(index>-1){
                 this.currentWidget.funcList.splice(index,1);
                 keyMap[this.currentFunction.key]= undefined;
-                this.trigger({updateFunction: {widget:this.currentWidget}});
+                this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.remove}});
                 this.selectWidget(this.currentWidget);
             }
         }
@@ -1784,6 +1792,7 @@ export default Reflux.createStore({
                 if(index>-1){
                     list.splice(index,1);
                     keyMap[this.currentVariable.key]= undefined;
+                    this.trigger({updateWidget: {widget:this.currentVariable, type:nodeType.var, action:nodeAction.remove}});
                     this.selectWidget(this.currentWidget);
                 }
             };
@@ -1895,7 +1904,7 @@ export default Reflux.createStore({
             }
             keyMap[dbItem['key']] = dbItem;
             this.currentWidget['dbItemList'].unshift(dbItem);
-            this.trigger({updateDBItem: {widget:this.currentWidget}});
+            this.trigger({updateWidget: {widget:dbItem, type:nodeType.dbItem, action:nodeAction.add}});
         }
         this.trigger({redrawTree: true});
     },
@@ -1921,7 +1930,8 @@ export default Reflux.createStore({
             if(index>-1){
                 this.currentWidget.dbItemList.splice(index,1);
                 keyMap[this.currentDBItem.key]= undefined;
-                this.trigger({updateDBItem: {widget:this.currentWidget}});
+
+                this.trigger({updateWidget: {widget:this.currentDBItem, type:nodeType.dbItem, action:nodeAction.remove}});
                 this.selectWidget(this.currentWidget);
             }
         }
@@ -2299,4 +2309,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType, funcType, keepType, isCustomizeWidget, dataType}
+export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType}
