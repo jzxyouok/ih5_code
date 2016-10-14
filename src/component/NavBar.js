@@ -66,7 +66,8 @@ class NavBar extends React.Component {
             saveFinish : false,
             saveFinishPlay : false,
             qrCodeType : false,
-            qrCodeShow : false
+            qrCodeShow : false,
+            qrCode : null
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -107,6 +108,7 @@ class NavBar extends React.Component {
         this.onSaveDone = this.onSaveDone.bind(this);
         this.saveFinishFuc = this.saveFinishFuc.bind(this);
         this.qrCode = this.qrCode.bind(this);
+        this.qrCodeClose = this.qrCodeClose.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -263,11 +265,13 @@ class NavBar extends React.Component {
             //window.open(this.playUrl + 'work/' + id, '_blank');
         }
         else if(this.state.qrCodeType){
-            //let qrCode = bridge.generateQrcode(this.playUrl, 174, 174);
+            let qrCode = bridge.generateQrcode(this.playUrl+ 'work/' + id, 174, 174);
             //console.log(qrCode);
-            //this.setState({
-            //    saveLoading : false
-            //});
+            this.setState({
+                saveLoading : false,
+                qrCodeShow : true,
+                qrCode : qrCode
+            });
         }
         else {
             this.setState({
@@ -326,7 +330,16 @@ class NavBar extends React.Component {
         this.onPlaySave(false);
         this.setState({
             specialLayer : false,
-            qrCodeType : true
+            qrCodeType : true,
+            qrCode : null
+        })
+    }
+
+    qrCodeClose(){
+        this.setState({
+            qrCodeType : false,
+            qrCodeShow : false,
+            qrCode : null
         })
     }
 
@@ -1209,18 +1222,18 @@ class NavBar extends React.Component {
                     </div>
                 </div>
 
-                <div className={$class("qrCode-layer f--hcc",{"hidden":true})}>
+                <div className={$class("qrCode-layer f--hcc",{"hidden": !this.state.qrCodeShow})}>
                     <div className="qrCode">
                         <div className="qrCode-header f--hlc">
                             <span className="title-icon" />
                             <span className="flex-1">预览二维码</span>
-                            <span className="close-icon"/>
+                            <span className="close-icon" onClick={ this.qrCodeClose} />
                         </div>
 
                         <div className="qrCode-content">
                             <div className="qrCode-div">
                                 <div className="qrCode-bg">
-                                    <div></div>
+                                    <img src={ this.state.qrCode }/>
                                 </div>
                             </div>
 
