@@ -84,7 +84,9 @@ class Property extends React.Component {
         if(!widget) {
             return;
         }
-        if(widget.allWidgets){
+        if (widget.redrawEventTree) {
+            this.forceUpdate();
+        } if(widget.allWidgets){
             this.setState({
                 objectList: widget.allWidgets
             }, ()=>{
@@ -95,43 +97,6 @@ class Property extends React.Component {
                     }
                 });
             });
-        } else if (widget.updateWidget) {
-            switch (widget.updateWidget.type) {
-                case nodeType.widget:
-                case nodeType.var:
-                    if (widget.updateWidget.action === nodeAction.remove&&
-                        widget.updateWidget.widget.key === this.state.currentObject) {
-                        let obj = WidgetStore.getWidgetByKey(this.state.currentObject);
-                        if (!obj) {
-                            let specific = this.state.specific;
-                            specific.object = null;
-                            specific.action = null;
-                            this.setState({
-                                specific: specific,
-                                currentObject: null,
-                                currentAction: null
-                            }, ()=>{
-                                WidgetActions['changeSpecific'](this.state.specific, {object: this.state.currentObject, action:this.state.currentAction});
-                            })
-                        }
-                    }
-                    break;
-                case  nodeType.func:
-                    if(widget.updateWidget.action === nodeAction.change&&
-                        widget.updateWidget.widget.key === this.state.currentObject){
-                        //func有变化就让其重新获取action list
-                        this.onGetActionList(this.state.currentObject);
-                    }
-                    break;
-                case nodeType.dbItem:
-                    if(this.state.currentAction){
-                        let obj = WidgetStore.getWidgetByKey(this.state.currentObject);
-                        if(obj && obj.className === 'db'){
-                            this.forceUpdate();
-                        }
-                    }
-                    break;
-            }
         } else if (widget.didSelectEventTarget) {
             if(widget.didSelectEventTarget.target&&this.state.isActiveEventSelectTarget) {
                 let target = widget.didSelectEventTarget.target;
@@ -560,7 +525,7 @@ class Property extends React.Component {
                                         <div className="title f--hlc">
                                             <span className="pp--icon" />
                                             {
-                                                !this.state.currentAction
+                                                !w||!this.state.currentAction
                                                     ? '目标动作'
                                                     : this.state.currentAction.type === funcType.customize
                                                         ? f&&f.props
@@ -575,7 +540,7 @@ class Property extends React.Component {
                                 {/*是否展开属性内容*/}
                                 <div className={$class("pp-content f--h", {'hidden': !this.state.expanded} )}>
                                     {
-                                        !this.state.currentAction ||
+                                        !w||!this.state.currentAction ||
                                         !this.state.currentAction.property ||
                                          this.state.currentAction.property.length === 0
                                             ? null
@@ -589,7 +554,7 @@ class Property extends React.Component {
 
                                 <button className={$class("up-btn", {'expanded-props': this.state.expanded})}
                                         onClick={this.expandBtn.bind(this, false)}
-                                        disabled={!this.state.currentAction||
+                                        disabled={!w||!this.state.currentAction||
                                         !this.state.currentAction.property ||
                                          this.state.currentAction.property.length==0}>
                                     <div className="btn-layer">
@@ -597,7 +562,7 @@ class Property extends React.Component {
                                 </button>
                                 <button className={$class("down-btn", {'expanded-props': this.state.expanded})}
                                         onClick={this.expandBtn.bind(this, true)}
-                                        disabled={!this.state.currentAction||
+                                        disabled={!w||!this.state.currentAction||
                                         !this.state.currentAction.property ||
                                         this.state.currentAction.property.length==0}>
                                     <div className="btn-layer">

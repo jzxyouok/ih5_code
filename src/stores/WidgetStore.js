@@ -1168,6 +1168,7 @@ export default Reflux.createStore({
             }
 
             keyMap[this.currentWidget.key] = undefined;
+            this.removeAllFadeWidgetsMapping(this.currentWidget);
             this.trigger({updateWidget: {widget:this.currentWidget, type:nodeType.widget, action:nodeAction.remove}});
 
             this.currentWidget = null;
@@ -1178,6 +1179,27 @@ export default Reflux.createStore({
             }
             process.nextTick(() =>bridge.render(rootNode));
         }
+    },
+    removeAllFadeWidgetsMapping(w){
+        let loopDelete = (widget)=>{
+            widget.strVarList.forEach((v)=>{
+                keyMap[v.key] = undefined;
+            });
+            widget.strVarList.forEach((v)=>{
+                keyMap[v.key] = undefined;
+            });
+            if(widget.dbItemList) {
+                widget.dbItemList.forEach((v)=>{
+                    keyMap[v.key] = undefined;
+                });
+            }
+            if (widget.children&&widget.children.length>0) {
+                widget.children.forEach((v)=>{
+                    loopDelete(v);
+                });
+            }
+        };
+        loopDelete(w);
     },
     copyWidget: function() {
       if (this.currentWidget && this.currentWidget.parent) {

@@ -4,7 +4,7 @@ import React from 'react';
 import $class from 'classnames'
 
 import Property from './Property'
-import WidgetStore, {funcType, nodeType} from '../../stores/WidgetStore'
+import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import  {propertyMap} from '../PropertyMap'
 import {eventTempData} from './tempData';
@@ -156,7 +156,9 @@ class Event extends React.Component {
                         v.specificList.forEach(s=>{
                             if(s.action&&s.action.type === funcType.customize){
                                 let func = WidgetStore.getWidgetByKey(s.action.func);
-                                if (func&&func.widget.key === widget.updateWidget.widget.widget.key) {
+                                if (widget.updateWidget.action===nodeAction.change
+                                    &&func
+                                    &&func.widget.key === widget.updateWidget.widget.widget.key) {
                                     let property = this.onSetFuncSpecificListProperty(s.action, func.params);
                                     s.action.property = property;
                                 }
