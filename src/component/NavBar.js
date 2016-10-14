@@ -67,7 +67,8 @@ class NavBar extends React.Component {
             saveFinishPlay : false,
             qrCodeType : false,
             qrCodeShow : false,
-            qrCode : null
+            qrCode : null,
+            createWork : false,
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -109,6 +110,9 @@ class NavBar extends React.Component {
         this.saveFinishFuc = this.saveFinishFuc.bind(this);
         this.qrCode = this.qrCode.bind(this);
         this.qrCodeClose = this.qrCodeClose.bind(this);
+        this.createWorkShow = this.createWorkShow.bind(this);
+        this.createWorkHide = this.createWorkHide.bind(this);
+        this.createWork = this.createWork.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -295,6 +299,18 @@ class NavBar extends React.Component {
             saveFinish : false,
             saveFinishPlay : false
         });
+    }
+
+    createWork(bool){
+        this.setState({
+            specialLayer : false
+        });
+        if(bool){
+            window.open(window.location.href + "?dom=1", "_self");
+        }
+        else{
+            window.open(window.location.href, "_self");
+        }
     }
 
     onPlaySave(isPlay) {
@@ -717,6 +733,18 @@ class NavBar extends React.Component {
         })
     }
 
+    createWorkShow(){
+        this.setState({
+            createWork : true
+        })
+    }
+
+    createWorkHide(){
+        this.setState({
+            createWork : false
+        })
+    }
+
     specialLayerToogle(){
         this.setState({
             specialLayer : !this.state.specialLayer
@@ -821,7 +849,12 @@ class NavBar extends React.Component {
 
                         <div className={$class("special-layer",{"hidden": !this.state.specialLayer})}>
                             <ul className="special-list">
-                                <li>新建作品</li>
+                                <li className="f--hlc create-li"
+                                    onMouseOver={ this.createWorkShow }
+                                    onMouseOut={ this.createWorkHide }>
+                                    新建作品
+                                    <span className="icon" />
+                                </li>
                                 <li className="f--hlc open-li"
                                     onMouseOver={ this.openWorkShow }
                                     onMouseOut={ this.openWorkHide }>
@@ -852,6 +885,15 @@ class NavBar extends React.Component {
                                             </li>
                                         })
                                     }
+                                </ul>
+                            </div>
+
+                            <div className={ $class("create-li-content",{"hidden": !this.state.createWork})}
+                                 onMouseOver={ this.createWorkShow }
+                                 onMouseOut={ this.createWorkHide }>
+                                <ul>
+                                    <li onClick={ this.createWork.bind(this,true) }>网页</li>
+                                    <li onClick={ this.createWork.bind(this,false) }>画布</li>
                                 </ul>
                             </div>
                         </div>
