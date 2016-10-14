@@ -616,11 +616,15 @@ function generateJsFunc(etree) {
           out += lines[0];
         else
           out += '{' + lines.join(';') + '}';
-        output[item.judges.conFlag] = output[item.judges.conFlag] || '';
-        output[item.judges.conFlag] += out;
+        if (output[item.judges.conFlag]) {
+          output[item.judges.conFlag] += ';' + out;
+        } else {
+          output[item.judges.conFlag] = out;
+        }
       }
     }
   });
+  console.log(output);
   return output;
 }
 
