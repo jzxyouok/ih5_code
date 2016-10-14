@@ -524,10 +524,12 @@ class ObjectTree extends React.Component {
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
         //复制 67
         if (didPressCtrl && event.keyCode == 67) {
-            if(this.state.selectWidget.className == "db"
-                || this.state.selectWidget.className == "sock"){
-                window.macKeys.reset();
-                return ;
+            if(this.state.selectWidget){
+                if(this.state.selectWidget.className == "db"
+                    || this.state.selectWidget.className == "sock"){
+                    window.macKeys.reset();
+                    return ;
+                }
             }
             WidgetActions['copyTreeNode'](this.state.nodeType);
             window.macKeys.reset();
@@ -541,20 +543,24 @@ class ObjectTree extends React.Component {
                 window.macKeys.reset();
                 return;
             }
-            if(this.state.selectWidget.className == "db"
-                || this.state.selectWidget.className == "sock"){
-                window.macKeys.reset();
-                return ;
+            if(this.state.selectWidget){
+                if(this.state.selectWidget.className == "db"
+                    || this.state.selectWidget.className == "sock"){
+                    window.macKeys.reset();
+                    return ;
+                }
             }
             WidgetActions['pasteTreeNode']();
             window.macKeys.reset();
         }
         //剪切 88
         if (didPressCtrl && event.keyCode == 88) {
-            if(this.state.selectWidget.className == "db"
-                || this.state.selectWidget.className == "sock"){
-                window.macKeys.reset();
-                return ;
+            if(this.state.selectWidget){
+                if(this.state.selectWidget.className == "db"
+                    || this.state.selectWidget.className == "sock"){
+                    window.macKeys.reset();
+                    return ;
+                }
             }
             WidgetActions['cutTreeNode'](this.state.nodeType);
             window.macKeys.reset();
