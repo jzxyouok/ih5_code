@@ -743,7 +743,9 @@ class DbTable extends React.Component {
                 this.setState({
                     dbHeader : header,
                     dbList : list
-                })
+                },()=>{
+                    this.updateNewScrollData(false);
+                });
             }
         }
         else {
@@ -772,7 +774,7 @@ class DbTable extends React.Component {
                         idArray.splice(index,1);
                     }
                 }
-                console.log(idArray);
+                //console.log(idArray);
                 this.setState({
                     selectArray : idArray
                 })
@@ -806,14 +808,19 @@ class DbTable extends React.Component {
                     self.setState({
                         dbList : list,
                         originalData : fkList
-                    })
+                    },()=>{
+                        self.updateNewScrollData(false);
+                    });
                 });
                 //this.getDbList();
+
             }
             else {
                 this.setState({
                     dbList : list
-                })
+                },()=>{
+                    this.updateNewScrollData(false);
+                });
             }
         }
     }
@@ -1331,7 +1338,7 @@ class DbTable extends React.Component {
                                                                                     )}
                                                                                     onClick={ this.inputClick.bind(this, id+"-"+i2, v[name])}>
 
-                                                                                    { v[name] }
+                                                                                    <span className="td-name">{ v[name] }</span>
 
                                                                                     {
                                                                                         id+"-"+i2 === this.state.inputNow
