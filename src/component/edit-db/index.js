@@ -30,12 +30,16 @@ class EditDb extends React.Component {
     smallBtn(){
         this.setState({
             isBig : false
+        },()=>{
+            this.refs.DbTable.updateNewScrollData();
         })
     }
 
     bigBtn(){
         this.setState({
             isBig : true
+        },()=>{
+            this.refs.DbTable.updateNewScrollData();
         })
     }
 
