@@ -1182,7 +1182,7 @@ export default Reflux.createStore({
             widget.strVarList.forEach((v)=>{
                 keyMap[v.key] = undefined;
             });
-            widget.strVarList.forEach((v)=>{
+            widget.intVarList.forEach((v)=>{
                 keyMap[v.key] = undefined;
             });
             if(widget.dbItemList) {
