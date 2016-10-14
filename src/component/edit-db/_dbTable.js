@@ -408,7 +408,7 @@ class DbTable extends React.Component {
     }
 
     saveBtn(bool,DdName){
-        //console.log(1,this.state.dbHeader,this.state.dbList);
+        console.log(1,this.state.dbHeader,this.state.dbList);
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
             //console.log("1-2",data);
@@ -457,7 +457,7 @@ class DbTable extends React.Component {
     updateNewScrollData(){
         let widthShow = this.props.isBig ? 535 : 689;
         let getWidth = parseFloat($(".DT-content table").css('width'));
-        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll span").css('width'));
+        let getScrollWidth = parseFloat($(".DT-main .scroll-div .scroll").css('width'));
         let width = getWidth > widthShow ? getWidth : widthShow;
         let moveLength = width - widthShow;
         let multiple = width / widthShow;
@@ -568,7 +568,7 @@ class DbTable extends React.Component {
                     isHaveContent : false,
                     isError: false
                 },()=>{
-                    this.updateNewScrollData();
+                    //this.updateNewScrollData();
                     this.popHide();
                     this.saveBtn(false);
                 })
@@ -594,7 +594,7 @@ class DbTable extends React.Component {
                             isHaveContent : false,
                             isError: false
                         },()=>{
-                            self.updateNewScrollData();
+                            //self.updateNewScrollData();
                             self.popHide();
                             self.saveBtn(false);
                         })
@@ -615,7 +615,7 @@ class DbTable extends React.Component {
                         isHaveContent : false,
                         isError: false
                     },()=>{
-                        this.updateNewScrollData();
+                        //this.updateNewScrollData();
                         this.popHide();
                         this.saveBtn(false);
                     })
@@ -634,7 +634,9 @@ class DbTable extends React.Component {
         this.setState({
             inputStyle : style,
             inputText : value,
-            inputNow : key
+            inputNow : key,
+            rowRightMenu : false,
+            columnRightMenu : false
         },()=>{
             $(".i" + key).focus();
             $(".i" + key).select();
@@ -657,17 +659,28 @@ class DbTable extends React.Component {
             let value = header[which];
             let type = value.charAt(0);
             let text;
+            let SValue =  null;
             if(type == "s" ){
                 text = "s" + this.state.inputText;
+                SValue = "i" + this.state.inputText;
             }
             else if( type == "i" ){
                 text = "i" + this.state.inputText;
+                SValue = "s" + this.state.inputText;
             }
             else {
                 text = this.state.inputText;
+                SValue = this.state.inputText;
             }
+
             let index = header.indexOf(text);
-            if(index >=0 && value !== text ){
+            let index2 = header.indexOf(SValue);
+
+            //console.log('a',value);
+            //console.log('b',text);
+            //console.log('c',index,index2);
+            //console.log('d',(index >=0 && value !== text) || (index2>=0 && value !== text));
+            if((index >=0 && value !== text) || (index2>=0 && value !== text)){
                 if(index !== which){
                     this.setState({
                         inputText : "重命名！！！"
@@ -675,10 +688,24 @@ class DbTable extends React.Component {
                 }
             }
             else {
+                header[which] = text;
+
                 if(value !== text ){
+                    if(type == "s" || type == "i" ){
+                        value = value.substr(1);
+                        text = text.substr(1);
+                    }
+
+                    let fkList = this.state.originalData;
+
                     list.map((v,i)=>{
                         list[i][text] = list[i][value];
                         delete list[i][value];
+                    });
+
+                    fkList.map((v,i)=>{
+                        fkList[i][text] = fkList[i][value];
+                        delete fkList[i][value];
                     });
 
                     let fc = this.state.originalHeader;
@@ -697,15 +724,14 @@ class DbTable extends React.Component {
                     }
                     //console.log(idArray);
                     this.setState({
-                        selectArray : idArray
+                        selectArray : idArray,
+                        dbHeader : header,
+                        dbList : list,
+                        originalData : fkList
                     })
                 }
                 //console.log(header,list);
-                header[which] = text;
                 //console.log(header,this.state.originalHeader);
-                //if(which == header.length-1){
-                //    this.addColumn();
-                //}
                 this.setState({
                     dbHeader : header,
                     dbList : list
@@ -722,6 +748,11 @@ class DbTable extends React.Component {
             text = this.state.inputText ? this.state.inputText : "";
             let fuc = (test)=>{
                 let fc = this.state.originalData;
+                //console.log('a',fc);
+                //console.log('b',fc[which][value]);
+                //console.log('b1',which);
+                //console.log('b2',value);
+                //console.log('c',test);
                 if((fc[which][value] != test && fc[which][value] != undefined && test)
                     || (fc[which][value] == undefined && test)){
                     if(index < 0) {
@@ -733,24 +764,24 @@ class DbTable extends React.Component {
                         idArray.splice(index,1);
                     }
                 }
-                //console.log(idArray);
+                console.log(idArray);
                 this.setState({
                     selectArray : idArray
                 })
             };
-            fuc(text);
+            //fuc(text);
             if(type == "s" ){
                 value = value.substr(1);
-                //fuc(text);
+                fuc(text);
                 list[which][value] = text;
             }
             else if( type == "i" ){
                 value = value.substr(1);
-                //fuc(parseFloat(text));
-                list[which][value] = parseFloat(text);
+                fuc(text.length == 0 ? "" : parseFloat(text));
+                list[which][value] = text.length == 0 ? "" : parseFloat(text);
             }
             else {
-                //fuc(text);
+                fuc(text);
                 list[which][value] = text;
             }
             //console.log(list);
@@ -1165,33 +1196,35 @@ class DbTable extends React.Component {
 
                                                             {
                                                                 this.state.columnRightMenu && this.state.columnRightID == i
-                                                                ?   <ul className="columnRightMenu" onClick={ this.rowRightMenuClick.bind(this) }>
-                                                                        <li onClick={ this.columnAddIndex.bind(this) }
-                                                                            data-id={i}
-                                                                            data-type={-1} >
-                                                                            在前面添加列
-                                                                        </li>
-                                                                        <li onClick={ this.columnAddIndex.bind(this) }
-                                                                            data-id={i}
-                                                                            data-type={1} >
-                                                                            在后面添加列
-                                                                        </li>
-                                                                        <li className="line" />
-                                                                        <li onClick={ this.columnChangeIndex.bind(this) }
-                                                                            className={$class({"not-click": i == 0})}
-                                                                            data-id={i}
-                                                                            data-type={-1}>
-                                                                            移至前一列
-                                                                        </li>
-                                                                        <li onClick={ this.columnChangeIndex.bind(this) }
-                                                                            className={$class({"not-click": i == this.state.dbHeader.length-1})}
-                                                                            data-id={i}
-                                                                            data-type={1} >
-                                                                            移至后一列
-                                                                        </li>
-                                                                        <li className="line" />
-                                                                        <li className="not-click">删除此列</li>
-                                                                    </ul>
+                                                                ?   <div  className="columnRightMenu" >
+                                                                        <ul onClick={ this.rowRightMenuClick.bind(this) }>
+                                                                            <li onClick={ this.columnAddIndex.bind(this) }
+                                                                                data-id={i}
+                                                                                data-type={-1} >
+                                                                                在前面添加列
+                                                                            </li>
+                                                                            <li onClick={ this.columnAddIndex.bind(this) }
+                                                                                data-id={i}
+                                                                                data-type={1} >
+                                                                                在后面添加列
+                                                                            </li>
+                                                                            <li className="line" />
+                                                                            <li onClick={ this.columnChangeIndex.bind(this) }
+                                                                                className={$class({"not-click": i == 0})}
+                                                                                data-id={i}
+                                                                                data-type={-1}>
+                                                                                移至前一列
+                                                                            </li>
+                                                                            <li onClick={ this.columnChangeIndex.bind(this) }
+                                                                                className={$class({"not-click": i == this.state.dbHeader.length-1})}
+                                                                                data-id={i}
+                                                                                data-type={1} >
+                                                                                移至后一列
+                                                                            </li>
+                                                                            <li className="line" />
+                                                                            <li className="not-click">删除此列</li>
+                                                                        </ul>
+                                                                    </div>
                                                                 :   null
                                                             }
                                                         </td>;
@@ -1232,7 +1265,8 @@ class DbTable extends React.Component {
 
                                                                     {
                                                                         this.state.rowRightMenu && this.state.rowRightID == i
-                                                                        ?   <ul className="rowRightMenu" onClick={ this.rowRightMenuClick.bind(this) }>
+                                                                        ? <div className="rowRightMenu">
+                                                                            <ul onClick={ this.rowRightMenuClick.bind(this) }>
                                                                                 <li onClick={ this.rowAddIndex.bind(this) }
                                                                                     data-id={i}
                                                                                     data-type={-1} >
@@ -1259,6 +1293,7 @@ class DbTable extends React.Component {
                                                                                 <li className="line" />
                                                                                 <li className="not-click">删除此行</li>
                                                                             </ul>
+                                                                            </div>
                                                                         :   null
                                                                     }
                                                                 </td>

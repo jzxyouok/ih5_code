@@ -3,7 +3,7 @@ import $class from 'classnames';
 import {Form, Input, InputNumber} from 'antd';
 import { Menu, Dropdown } from 'antd';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore, {nodeType, varType} from '../../stores/WidgetStore';
+import WidgetStore, {nodeType, varType, nodeAction} from '../../stores/WidgetStore';
 import DbHeaderStores from '../../stores/DbHeader';
 
 const FormItem = Form.Item;
@@ -64,7 +64,9 @@ class DBItemView extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.selectDBItem) {
+        if (widget.updateWidget&&widget.updateWidget.action === nodeAction.remove) {
+            this.forceUpdate();
+        } else if(widget.selectDBItem) {
             let dbItem = widget.selectDBItem;
             let dbId = widget.selectDBItem.widget.node.dbid;
             let dbType = widget.selectDBItem.widget.node.dbType;

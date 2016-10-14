@@ -55,7 +55,13 @@ class App extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.selectFunction !== undefined) {
+        if(widget.activeEventTreeKey) {
+            this.setState({
+                activeEventTreeKey: widget.activeEventTreeKey.key,
+                editDb : false,
+                lastSelectID: null
+            })
+        } else if(widget.selectFunction !== undefined) {
             this.setState({
                 activeFunc: widget.selectFunction,
                 editDb : false,
@@ -67,20 +73,13 @@ class App extends React.Component {
                 editDb : false,
                 lastSelectID: null
             })
-        } else if(widget.activeEventTreeKey) {
-            this.setState({
-                activeEventTreeKey: widget.activeEventTreeKey.key,
-                editDb : false,
-                lastSelectID: null
-            })
-        }   else if(widget.selectDBItem !== undefined) {
+        } else if(widget.selectDBItem !== undefined) {
             this.setState({
                 activeDBItem: widget.selectDBItem,
                 editDb : false,
                 lastSelectID: null
             })
-        }
-        else if(widget.selectWidget){
+        } else if(widget.selectWidget){
             if(widget.selectWidget.className == "db"){
                 if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
                     this.editDbShow();

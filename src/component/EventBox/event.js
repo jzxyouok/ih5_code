@@ -4,7 +4,7 @@ import React from 'react';
 import $class from 'classnames'
 
 import Property from './Property'
-import WidgetStore, {funcType} from '../../stores/WidgetStore'
+import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import  {propertyMap} from '../PropertyMap'
 import {eventTempData} from './tempData';
@@ -60,7 +60,7 @@ class Event extends React.Component {
         this.setEventBoxWidth=this.setEventBoxWidth.bind(this);
 
 
-        this.onSetSpecificListProperty = this.onSetSpecificListProperty.bind(this);
+        this.onSetFuncSpecificListProperty = this.onSetFuncSpecificListProperty.bind(this);
         this.getAntdComponent=this.getAntdComponent.bind(this);
         this.getShowNameByName=this.getShowNameByName.bind(this);
         this.getNameByCnName =this.getNameByCnName.bind(this);
@@ -166,26 +166,34 @@ class Event extends React.Component {
                 this.getConditionOption();
             });
         }
-        else if (widget.updateFunction&&widget.updateFunction.widget){
-            let eventList = this.state.eventList;
-            eventList.forEach(v=>{
-                v.specificList.forEach(s=>{
-                    if(s.action&&s.action.type === funcType.customize){
-                        if (s.action.func.widget.key === widget.updateFunction.widget.key) {
-                            let property = this.onSetSpecificListProperty(s.action, s.action.func.params);
-                            s.action.property = property;
-                        }
-                    }
-                });
-            });
-            this.setState({
-                eventList:eventList
-            })
+        else if (widget.updateWidget){
+            switch (widget.updateWidget.type) {
+                case nodeType.func:
+                    let eventList = this.state.eventList;
+                    eventList.forEach(v=>{
+                        v.specificList.forEach(s=>{
+                            if(s.action&&s.action.type === funcType.customize){
+                                let func = WidgetStore.getWidgetByKey(s.action.func);
+                                if (widget.updateWidget.action===nodeAction.change
+                                    &&func
+                                    &&func.widget.key === widget.updateWidget.widget.widget.key) {
+                                    let property = this.onSetFuncSpecificListProperty(s.action, func.params);
+                                    s.action.property = property;
+                                }
+                            }
+                        });
+                    });
+                    this.setState({
+                        eventList:eventList
+                    });
+                    break;
+                default:
+                    break;
+            }
         }
-
     }
 
-    onSetSpecificListProperty(action, params) {
+    onSetFuncSpecificListProperty(action, params) {
         //params
         let newProperty = null;
         if(params&&params.length>0){

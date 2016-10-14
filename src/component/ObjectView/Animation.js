@@ -2,7 +2,7 @@
 import React from 'react';
 
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore, {varType, isCustomizeWidget} from '../../stores/WidgetStore';
+import WidgetStore, {varType, isCustomizeWidget, nodeType} from '../../stores/WidgetStore';
 import {checkChildClass, checkEventClass, checkNotInDomMode} from '../PropertyMap';
 import {modeType} from '../ToolBox/DEFAUL_TOOLBOX'
 import $class from 'classnames';
@@ -98,11 +98,9 @@ class Animation extends React.Component {
                 data[i].disabled = false;
             } else {
                 data[i].disabled = true;
-                // if(data[i].className === 'track' || data[i].className === 'body') {
-                //     data[i].hidden = false;
-                // } else {
-                //     data[i].hidden = true;
-                // }
+                if(widget.className === 'root') {
+                    data[i].hidden = true;
+                }
                 if(data[i].className === 'dbItem' ||
                     data[i].className === 'effect'||
                     data[i].className === '3dRotate'||
@@ -119,11 +117,11 @@ class Animation extends React.Component {
 
     addWidgetBtn(className, param){
         if(className === 'func') {
-            WidgetActions['addFunction'](param);
+            WidgetActions['addFadeWidget'](param, undefined, nodeType.func);
         } else if(className === 'var') {
-            WidgetActions['addVariable'](param);
+            WidgetActions['addFadeWidget'](param, undefined, nodeType.var);
         } else if(className === 'dbItem'){
-            WidgetActions['addDBItem'](param);
+            WidgetActions['addFadeWidget'](param, undefined, nodeType.dbItem);
         } else {
             WidgetActions['addWidget'](className, param);
         }
