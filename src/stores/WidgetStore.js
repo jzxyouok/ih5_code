@@ -648,18 +648,14 @@ function saveTree(data, node, saveKey) {
                 judges.conFlag = 'onChange';//触发条件
                 item.needFill.map((v, i)=> {
                     let obj = {};
-
-                    let o = objectToId(node);
-                    obj.judgeObjId = o[0];
-
+                    //let o = objectToId(node);
+                  //  obj.judgeObjId = o[0];
+                    obj.judgeObjKey =node.key;
                     obj.judgeObjFlag = node.props.name; //判断对象的名字
-
                     obj.compareFlag = item.conFlag;
-
                     obj.showName=v.showName;
                     obj.type=v.type;
                     obj.compareValFlag = v.default;//判断对象的属性
-
                     judges.children.push(obj);
 
                 });
@@ -678,7 +674,7 @@ function saveTree(data, node, saveKey) {
                    //    }
                    // }
              obj.judgeObjkey =v.judgeObjkey;
-             obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
+
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
              obj.judgeValOption=v.judgeValOption;
@@ -697,10 +693,9 @@ function saveTree(data, node, saveKey) {
 
              obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
-             obj.compareValFlag =v.compareValFlag;//比较对象的属性
+                obj.compareValFlag=v.compareValFlag;//判断对象的属性
              obj.compareValOption=v.compareValOption;
-             obj.operationManager={};
-             obj.operationManager.arrHidden=v.operationManager.arrHidden;
+             obj.arrHidden=v.arrHidden;
 
 
              judges.children.push(obj);
@@ -1571,9 +1566,7 @@ export default Reflux.createStore({
                 compareFlag:'=',
                 compareObjFlag:'比较值/对象',
                 compareValFlag:'比较值',
-                operationManager: {  //下拉框显现管理
-                    arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
-                }
+                arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             });
 
             this.trigger({redrawEventTree: true});

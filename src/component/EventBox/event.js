@@ -13,37 +13,35 @@ import { Menu, Dropdown, Icon ,InputNumber,Input,Select} from 'antd';
 const MenuItem = Menu.Item;
 const Option = Select.Option;
 
-
 class Event extends React.Component {
     constructor (props) {
         super(props);
 
-
-
         this.state = {
             expanded: true,
-            objName: [],
+            objName: [],//存储allWidget的className name type(intVal,strVal)
             toLong:false,
             eventList: this.props.eventList,
             selectWidget: this.props.widget,
             allWidgetsList: null,
+            curChild:null,
             activeKey: this.props.activeKey,  //当前激活事件的key
             specialObject: ['counter', 'text', 'var'],
 
             //用于下拉框显示
-            conProps:[], //条件属性
+            conProps:[], //触发条件属性
             conOption: [],//每次点击后赋值
             logicalOption: ['and', 'or', 'not'],  //下拉选项
-            judgeObjOption: [],//出现新的widget则更新
-            judgeValOption: ['判断值1', '判断值2'],
+            judgeObjOption: [],//todo:点击后,根据allWight生成下拉列表内容
+            judgeValOption: ['判断值1', '判断值2'], //todo:点击后,根据判断对象生成下拉列表内容
             compareOption: ['=', '>', '<', '!=', '≥', '≤'],
-            compareObjOption: [],//出现新的widget则更新
-            compareValOption: ['比较值1', '比较值2']
+            compareObjOption: [],//todo:点击后,根据比较值生成下拉列表内容
+            compareValOption: ['比较值1', '比较值2'] //todo:点击后,根据比较对象生成下拉列表内容
         };
 
-
-        this.curChildrenIndex = 0;
         this.curEventIndex = 0;
+        this.curChildrenIndex = 0;
+
         this.oldVal=null;
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
@@ -51,48 +49,41 @@ class Event extends React.Component {
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
-        this.getConditionOption = this.getConditionOption.bind(this);   //获取触发条件
-        this.getChooseObjByIndex=this.getChooseObjByIndex.bind(this);
-
+        this.getConditionOption = this.getConditionOption.bind(this);
         this.getJudgeValType =this.getJudgeValType.bind(this);
         this.getSpacJudgeValType=this.getSpacJudgeValType.bind(this);
+        this.setCompareObjOption=this.setCompareObjOption.bind(this);
         this.getCompareValOption =this.getCompareValOption.bind(this);
-
-
 
         this.menuList_pub =this.menuList_pub.bind(this);
         this.menuList =this.menuList.bind(this);
         this.setEventBoxWidth=this.setEventBoxWidth.bind(this);
-        this.setCompareObjOption=this.setCompareObjOption.bind(this);
+
 
         this.onSetSpecificListProperty = this.onSetSpecificListProperty.bind(this);
         this.getAntdComponent=this.getAntdComponent.bind(this);
         this.getShowNameByName=this.getShowNameByName.bind(this);
         this.getNameByCnName =this.getNameByCnName.bind(this);
         this.getObjNameByKey=this.getObjNameByKey.bind(this);
-
+        this.content =this.content.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         nextProps.eventList.map((v,i)=>{
             if(!v.children){
-              //改造,有空后改造下tree
-              v.children=[{
+               v.children=[{
                   judgeObjFlag:'判断对象',
                   judgeValFlag:'判断值',
                   compareFlag:'=',
                   compareObjFlag:'比较值/对象',
                   compareValFlag:'比较值',
-                  operationManager: {
                       arrHidden: [true,true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
-                  }
               }];
              v.zhongHidden=true;
              v.logicalFlag='and';
              v.conFlag='触发条件';
           }
         });
-
         this.setState({
             activeKey:nextProps.activeKey,
             eventList:nextProps.eventList
@@ -124,7 +115,7 @@ class Event extends React.Component {
         if(widget.allWidgets){
             let arr=[];
             let arr2=[];
-
+            let eventList =this.state.eventList;
             widget.allWidgets.map((v,i)=>{
                 arr.push([v.className,v.props.name,v.type]);
                 arr2.push({
@@ -133,15 +124,39 @@ class Event extends React.Component {
                 });
             });
 
+            eventList.map((v,i)=>{
+                v.children.map((item,index)=>{
+                    let judgeObj = WidgetStore.getWidgetByKey(item.judgeObjkey);
+                    let compareObj = WidgetStore.getWidgetByKey(item.compareObjkey);
+
+                    if(!judgeObj && item.judgeObjkey){
+                        item.judgeValFlag = '判断值';
+                        item.judgeObjFlag ='判断对象';
+                        item.compareFlag = '=';
+                        item.compareObjFlag = '比较值/对象';
+                        item.compareObjkey=null;
+                        item.compareValFlag = '比较值';
+                        item.arrHidden= [false,false,true,true,true,true]
+                        }
+                   if(judgeObj && !compareObj && item.compareObjkey){
+                        let  arrHidden = item.arrHidden;
+                        arrHidden[5]=true;
+                        item.compareValFlag = '比较值';
+                        item.compareObjFlag='比较值/对象';
+                        item.arrHidden= arrHidden
+                    }
+                });
+            });
+
+            this.setEventBoxWidth(eventList);
+
             //此处可设置对象关系,将对象的引用注入进来.
             this.setState({
                 objName:arr,   //类名与命名
                 allWidgetsList: widget.allWidgets,
                 judgeObjOption:arr2,  //命名
-                compareObjOption:arr2 //命名
+                eventList:eventList
             });
-
-
         }
 
         if (widget.selectWidget) {
@@ -199,7 +214,7 @@ class Event extends React.Component {
     }
 
     getJudgeValType(val){
-        let propArr =this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr;
+        let propArr =this.state.curChild.propArr;
         let saveVal=null;
         propArr.map((v,i)=>{
              if(v.name== val){
@@ -211,7 +226,6 @@ class Event extends React.Component {
 
     getSpacJudgeValType(val){
         let saveVal=null;
-
         this.state.objName.map((v,i)=>{
             if(v[1]== val){
                 saveVal =  v[2] ?v[2]:v[0];
@@ -228,6 +242,7 @@ class Event extends React.Component {
         }
         return saveVal;
     }
+
     chooseEventBtn(nid){
         this.props.chooseEventBtn(nid);
     }
@@ -274,27 +289,14 @@ class Event extends React.Component {
         this.setState({conOption:aOption,conProps:aProps});
     }
 
-    getChooseObjByIndex(name){
-        let widget={};
-        this.state.allWidgetsList.map((v,i)=>{
-            if(v.props.name==name){
-                widget =v;
-            }
-        });
-        return widget;
-    }
-
     plusOperation(eventIndex){
-
         this.curEventIndex =eventIndex;
-
         let eventList =this.state.eventList;
         if(eventList[this.curEventIndex].zhongHidden){
             let  arrHidden=[false,false,true,true,true,true];
             eventList[this.curEventIndex].zhongHidden=false;
-            eventList[this.curEventIndex].children[0].operationManager={
-                arrHidden: arrHidden
-            }
+            eventList[this.curEventIndex].children[0].arrHidden= arrHidden;
+
             this.setState({eventList:eventList});
         }else{
            WidgetActions['addEventChildren'](this.state.eventList[this.curEventIndex]);
@@ -338,9 +340,8 @@ class Event extends React.Component {
     }
 
     getCompareValOption(propArr){
-        let judgeValType =this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].judgeValType;
+        let judgeValType =this.state.curChild.judgeValType;
         let arr=[];
-
         propArr.map((v,i)=>{
             if(this.getTypeArr(v.type).indexOf(judgeValType)>=0){
                 arr.push(v.showName);
@@ -348,9 +349,11 @@ class Event extends React.Component {
         });
         return arr;
     }
+
     //将英文名转换成中文名
     getShowNameByName(type,name){
         let showName=name;
+        let curChild = this.state.curChild;
         if(type=='conFlag'){
             this.state.conProps.map((v,i)=>{
                 if(name==v.name){
@@ -358,8 +361,7 @@ class Event extends React.Component {
                 }
             });
         }else if(type=='judgeValFlag'){
-            let curChild =  this.state.eventList[this.curEventIndex].children[this.curChildrenIndex];
-            if( curChild && curChild.propArr ){
+            if(curChild && curChild.propArr ){
                 curChild.propArr.map((v,i)=> {
                     if (name == v.name) {
                         showName = v.showName;
@@ -367,8 +369,7 @@ class Event extends React.Component {
                 })
             }
         }else if(type=='compareValFlag'){
-            let curChild =  this.state.eventList[this.curEventIndex].children[this.curChildrenIndex];
-            if( curChild && curChild.propCompareArr ){
+            if(curChild && curChild.propCompareArr ){
                 curChild.propCompareArr.map((v,i)=> {
                    if (name == v.name) {
                        showName = v.showName;
@@ -378,9 +379,11 @@ class Event extends React.Component {
         }
         return showName;
     }
+
    //根据中文名找到英文名,并保存
    getNameByCnName(type,value){
        let name='';
+       let curChild =this.state.curChild;
         if(type=='conFlag'){
             this.state.conProps.map((v,i)=>{
                 if(v.showName == value){
@@ -388,35 +391,35 @@ class Event extends React.Component {
                 }
             });
         }else if(type == 'judgeValFlag'){
-                this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propArr.map((v,i)=>{
+            if(curChild.propArr){
+                curChild.propArr.map((v,i)=>{
                     if(v.showName==value){
                         name=v.name;
                     }
                 });
+            }
         }else if(type == 'compareValFlag'){
-            this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].propCompareArr.map((v,i)=>{
-                if(v.showName==value){
-                    name=v.name;
-                }
-            });
+            if(curChild.propCompareArr){
+                curChild.propCompareArr.map((v,i)=>{
+                    if(v.showName==value){
+                        name=v.name;
+                    }
+                });
+            }
         }
        return name;
     }
 
     getObjNameByKey(key,str){
-
-        console.log(key,str,'key');
-
-        return key===undefined?str:key;
-
+       let obj = WidgetStore.getWidgetByKey(key);
+        return obj===undefined?str:obj.props.name;
     }
+
     //点击下拉框
     onMenuClick(flag,e) {
 
         let eventList = this.state.eventList;
-        //let value =e.item?e.item.object:e;
-        let value = e.item.props.object;
-
+        let value =e.item? e.item.props.object:e;
 
         let key = this.curChildrenIndex;
         if (flag == 'conFlag') {
@@ -435,7 +438,6 @@ class Event extends React.Component {
         }else {
             eventList[this.curEventIndex].children[key][flag] = value;
         }
-
         if(flag == 'compareObjFlag'){
             eventList[this.curEventIndex].children[key].showDropdown=false;
         }
@@ -445,16 +447,14 @@ class Event extends React.Component {
         let arrHidden;
         let isRun = true;
 
-        let initFlag = this.state.eventList[this.curEventIndex].children[this.curChildrenIndex]; //初始化
+        let initFlag = this.state.curChild; //初始化
 
         let chooseEventClassName = this.getClassNameByobjName(value);
 
-
-
         switch (flag) {
             case 'judgeObjFlag':
-
                 initFlag.judgeObjkey= e.item.props.keyVal;
+                debugger;
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
                     arrHidden = [false, false, true, false, false, true];
                     initFlag.judgeValType=this.getSpacJudgeValType(value);
@@ -466,29 +466,23 @@ class Event extends React.Component {
                     let propObj = this.setObjProperty(chooseEventClassName);
                     initFlag.propArr =propObj.propArr;
                     initFlag.judgeValOption = propObj.nameArr;
-
                 }
                 //初始化后四个
-
-                initFlag.judgeObj =this.getChooseObjByIndex(value);
-
                 initFlag.judgeValFlag = '判断值';
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较值/对象';
+                initFlag.compareObjkey=null;
                 initFlag.compareValFlag = '比较值';
-                initFlag.operationManager = {
-                    arrHidden: arrHidden
-                }
+                initFlag.arrHidden=arrHidden;
                 break;
             case 'judgeValFlag':
                 arrHidden = [false, false, false, false, false, true];
                 //初始化后三个
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较值/对象';
+                initFlag.compareObjkey=null;
                 initFlag.compareValFlag = '比较值';
-                initFlag.operationManager = {
-                    arrHidden: arrHidden
-                }
+                initFlag.arrHidden=arrHidden;
                 //设定选中比较值的类型
                 initFlag.judgeValType=this.getJudgeValType(value);
                 //选中后,需要判断哪些判断对象可以选择,也就是更改compareObjOption
@@ -499,13 +493,11 @@ class Event extends React.Component {
 
                 initFlag.compareObjkey= e.item.props.keyVal;
 
-                arrHidden = this.state.eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
+                arrHidden = this.state.curChild.arrHidden;
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
                     arrHidden[5] = true;
                     initFlag.compareValFlag = '比较值';
-                    initFlag.operationManager = {
-                        arrHidden: arrHidden
-                    }
+                    initFlag.arrHidden= arrHidden;
                 } else {
                     arrHidden[5] = false;
                     //非五类
@@ -513,11 +505,9 @@ class Event extends React.Component {
                     initFlag.propCompareArr = propObj.propArr;
                     initFlag.compareValOption =this.getCompareValOption(propObj.propArr);
                     initFlag.compareValFlag = '比较值';
-                    initFlag.operationManager = {
-                        arrHidden: arrHidden
-                    }
+                    initFlag.arrHidden=arrHidden;
                 }
-                initFlag.compareObj =this.getChooseObjByIndex(value);
+
                 break;
             default :
                 isRun = false;
@@ -532,9 +522,12 @@ class Event extends React.Component {
         }
     }
 
-    setCurChildrenIndex(index,eventIndex,isUpdate,e){
-        this.curChildrenIndex =index;
-        this.curEventIndex=eventIndex;
+    setCurChildrenIndex(curChildrenIndex,curEventIndex,isUpdate,e){
+        this.curChildrenIndex =curChildrenIndex;
+        this.curEventIndex=curEventIndex;
+        this.setState({
+            curChild:this.state.eventList[curChildrenIndex].children[curEventIndex]
+        })
         if(isUpdate){
             this.forceUpdate();
         }
@@ -547,12 +540,15 @@ class Event extends React.Component {
             eventList: eventList
         });
     }
+
+    //focus
     saveOldVal(type,event){
         this.oldVal =event.target.value;
         if(type=='compareObjFlag'){
             event.target.select()
         }
     }
+
     setInputValAuto(type,event){
         let  newVal =event.target.value;
         let tag=true;
@@ -579,7 +575,7 @@ class Event extends React.Component {
 
             if (tag) {
                 if (type == 'compareObjFlag') {
-                    let arrHidden = eventList[this.curEventIndex].children[this.curChildrenIndex].operationManager.arrHidden;
+                    let arrHidden = eventList[this.curEventIndex].children[this.curChildrenIndex].arrHidden;
                     arrHidden[5] = true;
                     if(!newVal || /^\s+$/.test(newVal) ){
                         eventList[this.curEventIndex].children[this.curChildrenIndex].compareObjFlag='比较值/对象';
@@ -607,6 +603,7 @@ class Event extends React.Component {
             }
         </Menu>)
     }
+
     menuList_obj(flag){
         let option = flag.replace('Flag', 'Option');
         return (<Menu className='dropDownMenu'  onClick ={this.onMenuClick.bind(this,flag)}>
@@ -617,6 +614,7 @@ class Event extends React.Component {
             }
         </Menu>)
     }
+
     menuList(flag) {
         let option = flag.replace('Flag', 'Option');
         let children = this.state.eventList[this.curEventIndex].children[this.curChildrenIndex];
@@ -631,6 +629,7 @@ class Event extends React.Component {
         }
         return (<Menu></Menu>)
     }
+
     setEventBoxWidth(eventList){
         let tag=false;
         let oEventBox=document.getElementsByClassName('EventBox')[0];
@@ -639,7 +638,7 @@ class Event extends React.Component {
             elist.map((v,i)=>{
                 if(v.children){
                     v.children.map((item,index)=>{
-                        if( !item.operationManager.arrHidden[2] && !item.operationManager.arrHidden[5]){
+                        if( !item.arrHidden[2] && !item.arrHidden[5]){
                             tag=true;
                         }
                     });
@@ -649,6 +648,7 @@ class Event extends React.Component {
 
         this.setState({toLong:tag});
     }
+
     getTypeArr(type){
         if(type==0||type==1||type==5){
             //Integer,Number
@@ -666,6 +666,7 @@ class Event extends React.Component {
             return [type];
         }
     }
+
     setCompareObjOption(type){
         let arr=[];
        this.state.allWidgetsList.map((v,i)=>{
@@ -699,18 +700,16 @@ class Event extends React.Component {
                });
            }
        });
-
        this.setState({compareObjOption:arr});
     }
+
     //设置触发条件的填入值
     setNeedFill(value){
         //判定是否需要显示填入值的样式
         let isShow=false;
         let eventList = this.state.eventList;
         let needFill=[];
-
         this.state.conProps.map((v,i)=>{
-
             if(v.name==value && v.needFill){
                 isShow=true;
                 needFill=v.needFill;
@@ -723,6 +722,7 @@ class Event extends React.Component {
         }
         this.setState({eventList:eventList});
     }
+
     onChangeProp(index,type,value){
         let eventList =this.state.eventList;
         if(type=='number'){
@@ -735,6 +735,7 @@ class Event extends React.Component {
         this.setState({eventList:eventList});
 
     }
+
     getAntdComponent(item,index){
         if(item.type=='number'){
             return    <InputNumber step={1}  min={0} className='dropDown-input-content'   defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
@@ -750,14 +751,15 @@ class Event extends React.Component {
             return   <Select  className='dropDown-input-content'  defaultValue={item.default}  onChange={this.onChangeProp.bind(this,index,item.type)}  >{optionArr}</Select>
         }
     }
+
     showCompareDropDown(name){
         let eventList=this.state.eventList;
         eventList[this.curEventIndex].children[this.curChildrenIndex].showDropdown =true;
         this.setState({eventList:eventList});
         this.refs[name].focus();
     }
-    render() {
-        let content = ((v,i)=>{
+
+    content(v,i){
             return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
                 <span className='left-line' />
                 <div className='item-main flex-1'>
@@ -808,7 +810,7 @@ class Event extends React.Component {
                                         v.children.map((v1,i1)=>{
                                             return  <div className="list f--hlc" key={i1}>
                                                 <span className="supplement-line" />
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[0]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[0]})} >
 
                                                     <div className="title f--hlc cursor_default">
                                                         且
@@ -826,21 +828,21 @@ class Event extends React.Component {
                                                      */}
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[1]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[1]})} >
                                                     <Dropdown
                                                         overlay={this.menuList_obj('judgeObjFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i,false)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                         trigger={['click']}>
                                                         <div   className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
-                                                            <input  value= {this.getObjNameByKey(v1.judgeObjkey)}
+                                                            <input  value= {this.getObjNameByKey(v1.judgeObjkey,'判断对象')}
                                                                    onChange={this.inputChange.bind(this,'judgeObjFlag')} onFocus={this.saveOldVal.bind(this,'judgeObjFlag')}   onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')} className='judgeObjFlag-input'/>
                                                             <span className='icon' /></div>
                                                     </Dropdown>
 
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[2]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[2]})} >
                                                     <Dropdown
                                                         overlay={this.menuList('judgeValFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i,true)}
@@ -855,7 +857,7 @@ class Event extends React.Component {
                                                             <span className='icon' /></div>
                                                     </Dropdown>
                                                 </div>
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.operationManager.arrHidden[3]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})} >
                                                     <Dropdown
                                                         overlay={this.menuList_pub('compareFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i,false)}
@@ -868,7 +870,7 @@ class Event extends React.Component {
 
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.operationManager.arrHidden[4]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4]})} >
                                                     <Dropdown
                                                         overlay={this.menuList_obj('compareObjFlag')}
                                                         visible={v1.showDropdown}
@@ -886,7 +888,7 @@ class Event extends React.Component {
                                                     </Dropdown>
 
                                                 </div>
-                                                <div className={$class('dropDown-layer mr20 middle',{'hidden':v1.operationManager.arrHidden[5]})} >
+                                                <div className={$class('dropDown-layer mr20 middle',{'hidden':v1.arrHidden[5]})} >
                                                     <Dropdown
                                                         overlay={this.menuList('compareValFlag')}
                                                         onClick={this.setCurChildrenIndex.bind(this,i1,i,true)}
@@ -937,7 +939,9 @@ class Event extends React.Component {
                     </div>
                 </div>
             </div>
-        });
+    }
+
+    render() {
         return (
             <div className={$class('Event',{'active' :this.props.activeKey === this.props.wKey })}
                  onClick={this.chooseEventBtn.bind(this, this.props.wKey)}
@@ -965,7 +969,7 @@ class Event extends React.Component {
                     {
                         !this.state.eventList || this.state.eventList.length===0
                             ? null
-                            : this.state.eventList.map(content)
+                            : this.state.eventList.map(this.content)
                     }
                 </div>
             </div>
