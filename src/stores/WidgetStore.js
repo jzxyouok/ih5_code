@@ -1001,13 +1001,6 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
 
-        //widget，变量，函数的统一复制，黏贴，删除，重命名，剪切入口
-        this.listenTo(WidgetActions['pasteTreeNode'], this.pasteTreeNode);
-        this.listenTo(WidgetActions['cutTreeNode'], this.cutTreeNode);
-        this.listenTo(WidgetActions['copyTreeNode'], this.copyTreeNode);
-        this.listenTo(WidgetActions['deleteTreeNode'], this.deleteTreeNode);
-        this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
-
         //事件
         this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
         this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
@@ -1027,17 +1020,21 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['delEventChildren'], this.delEventChildren);
         this.listenTo(WidgetActions['delEvent'], this.delEvent);
 
+        //widget，变量，函数的统一复制，黏贴，删除，重命名，剪切入口
+        this.listenTo(WidgetActions['pasteTreeNode'], this.pasteTreeNode);
+        this.listenTo(WidgetActions['cutTreeNode'], this.cutTreeNode);
+        this.listenTo(WidgetActions['copyTreeNode'], this.copyTreeNode);
+        this.listenTo(WidgetActions['deleteTreeNode'], this.deleteTreeNode);
+        this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
+
+        //函数，变量，db item等伪对象选择添加的入口
+        this.listenTo(WidgetActions['selectFadeWidget'], this.selectFadeWidget);
+        this.listenTo(WidgetActions['addFadeWidget'], this.addFadeWidget);
         //函数
-        this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
-        this.listenTo(WidgetActions['addFunction'], this.addFunction);
         this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
         //变量
-        this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
-        this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
         //db item
-        this.listenTo(WidgetActions['selectDBItem'], this.selectDBItem);
-        this.listenTo(WidgetActions['addDBItem'], this.addDBItem);
         this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
 
         this.listenTo(WidgetActions['eventSelectTargetMode'], this.eventSelectTargetMode);
@@ -1068,16 +1065,16 @@ export default Reflux.createStore({
                 this.activeEventTree(null);
             }
             //取选func状态
-            if(!(keepValueType&&keepValueType==keepType.func)&&this.currentFunction) {
-                this.selectFunction(null);
+            if(!(keepValueType&&keepValueType==keepType.func)&&this.currentFunction){
+                this.selectFadeWidget(null, nodeType.func);
             }
             //取选var状态
             if(!(keepValueType&&keepValueType==keepType.var)&&this.currentVariable) {
-                this.selectVariable(null);
+                this.selectFadeWidget(null, nodeType.var);
             }
             //取选dbItem
             if(!(keepValueType&&keepValueType==keepType.dbItem)&&this.currentDBItem) {
-                this.selectDBItem(null);
+                this.selectFadeWidget(null, nodeType.dbItem);
             }
         }
         this.currentWidget = widget;
@@ -1657,6 +1654,36 @@ export default Reflux.createStore({
             this.trigger({redrawEventTree: true});
         }
     },
+    selectFadeWidget: function(data, type) {
+        switch (type) {
+            case nodeType.func:
+                this.selectFunction(data);
+                break;
+            case nodeType.var:
+                this.selectVariable(data);
+                break;
+            case nodeType.dbItem:
+                this.selectDBItem(data);
+                break;
+            default:
+                break;
+        }
+    },
+    addFadeWidget: function(param, defaultName, type) {
+        switch (type) {
+            case nodeType.func:
+                this.addFunction(param, defaultName);
+                break;
+            case nodeType.var:
+                this.addVariable(param, defaultName);
+                break;
+            case nodeType.dbItem:
+                this.addDBItem(param, defaultName);
+                break;
+            default:
+                break;
+        }
+    },
     selectFunction: function (data) {
         if (data!=null) {
             //取消在canvas上的widget选择
@@ -1858,48 +1885,6 @@ export default Reflux.createStore({
         this.copyVariable();
         this.removeVariable();
     },
-    renameFadeWidget: function (type, name, fromTree) {
-        switch (type){
-            case nodeType.func:
-                if(this.currentFunction&&!isEmptyString(name)){
-                    if(fromTree){
-                        if(this.currentFunction.props.unlockPropsName) {
-                            this.currentFunction.props.unlockPropsName = !this.currentFunction.props.unlockPropsName;
-                        }
-                        this.currentFunction.props.name = name;
-                    } else {
-                        if(this.currentFunction.props.unlockPropsName) {
-                            this.currentFunction.props.name = name;
-                        }
-                    }
-                    this.trigger({redrawTree: true});
-                }
-                break;
-            case nodeType.var:
-                if(this.currentVariable&&!isEmptyString(name)) {
-                    if(fromTree){
-                        if(this.currentVariable.props.unlockPropsName) {
-                            this.currentVariable.props.unlockPropsName = !this.currentVariable.props.unlockPropsName;
-                        }
-                        this.currentVariable.props.name = name;
-                    } else {
-                        if(this.currentVariable.props.unlockPropsName) {
-                            this.currentVariable.props.name = name;
-                        }
-                    }
-                    this.trigger({redrawTree: true});
-                }
-                break;
-            case nodeType.dbItem:
-                if(this.currentDBItem&&!isEmptyString(name)) {
-                    this.currentDBItem.props.name = name;
-                    this.trigger({redrawTree: true});
-                }
-                break;
-            default:
-                break;
-        }
-    },
     selectDBItem: function(data){
         if (data!=null) {
             //取消在canvas上的widget选择
@@ -1956,6 +1941,48 @@ export default Reflux.createStore({
                 this.trigger({updateWidget: {widget:this.currentDBItem, type:nodeType.dbItem, action:nodeAction.remove}});
                 this.selectWidget(this.currentWidget);
             }
+        }
+    },
+    renameFadeWidget: function (type, name, fromTree) {
+        switch (type){
+            case nodeType.func:
+                if(this.currentFunction&&!isEmptyString(name)){
+                    if(fromTree){
+                        if(this.currentFunction.props.unlockPropsName) {
+                            this.currentFunction.props.unlockPropsName = !this.currentFunction.props.unlockPropsName;
+                        }
+                        this.currentFunction.props.name = name;
+                    } else {
+                        if(this.currentFunction.props.unlockPropsName) {
+                            this.currentFunction.props.name = name;
+                        }
+                    }
+                    this.trigger({redrawTree: true});
+                }
+                break;
+            case nodeType.var:
+                if(this.currentVariable&&!isEmptyString(name)) {
+                    if(fromTree){
+                        if(this.currentVariable.props.unlockPropsName) {
+                            this.currentVariable.props.unlockPropsName = !this.currentVariable.props.unlockPropsName;
+                        }
+                        this.currentVariable.props.name = name;
+                    } else {
+                        if(this.currentVariable.props.unlockPropsName) {
+                            this.currentVariable.props.name = name;
+                        }
+                    }
+                    this.trigger({redrawTree: true});
+                }
+                break;
+            case nodeType.dbItem:
+                if(this.currentDBItem&&!isEmptyString(name)) {
+                    this.currentDBItem.props.name = name;
+                    this.trigger({redrawTree: true});
+                }
+                break;
+            default:
+                break;
         }
     },
     pasteTreeNode: function () {

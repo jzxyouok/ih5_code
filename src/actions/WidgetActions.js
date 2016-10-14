@@ -35,16 +35,10 @@ export default Reflux.createActions([
   'delEventChildren'  ,          //删除判断逻辑
   'delEvent',                    //删除整条判断逻辑
 
-  'selectFunction',               //选择函数
-  'addFunction',                  //添加函数
+  'selectFadeWidget',             //选择伪对象
+  'addFadeWidget',                //添加伪对象
   'changeFunction',               //修改函数
-
-  'selectVariable',               //选择变量
-  'addVariable',                  //添加变量
   'changeVariable',               //添加变量
-
-  'selectDBItem',                 //选择数据库Item
-  'addDBItem',                    //添加数据库Item
   'changeDBItem',                 //修改数据库Item
 
   'pasteTreeNode',                  //黏贴功能入口
