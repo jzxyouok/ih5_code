@@ -306,7 +306,12 @@ class NavBar extends React.Component {
             specialLayer : false
         });
         if(bool){
-            window.open(window.location.href + "?dom=1", "_self");
+            let href = window.location.href;
+            let index = href.indexOf('?');
+            if(index>=0){
+                href = href.substring(0,index);
+            }
+            window.open(href + "?dom=1", "_self");
         }
         else{
             let href = window.location.href;
