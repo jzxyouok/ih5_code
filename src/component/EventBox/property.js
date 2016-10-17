@@ -185,17 +185,19 @@ class Property extends React.Component {
                     break;
             }
         }
-        propertyMap[className].map((item, index) => { 
-            if (item.isFunc) {
-                let temp = JSON.parse(JSON.stringify(item));
-                if (temp.info) {
-                    delete temp.info;
+        if(propertyMap&&propertyMap[className]) {
+            propertyMap[className].map((item, index) => {
+                if (item.isFunc) {
+                    let temp = JSON.parse(JSON.stringify(item));
+                    if (temp.info) {
+                        delete temp.info;
+                    }
+                    delete temp.isFunc;
+                    temp.type = funcType.default;
+                    actionList.push(temp);
                 }
-                delete temp.isFunc;
-                temp.type = funcType.default;
-                actionList.push(temp);
-            }
-         });
+            });
+        }
         this.setState({
             actionList: actionList
         })
