@@ -1,15 +1,21 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
-import WidgetStore, {varType, funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
+import WidgetStore, {varType, funcType, nodeType, nodeAction, classList} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
 import { Input, InputNumber, Select} from 'antd';
 import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
-import { propertyMap, propertyType } from '../PropertyMap'
+import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
 const Option = Select.Option;
+
+const optionType = {
+    widget: 1, //是树节点（有key）
+    normal: 2,  //普通参数（比如int，string）
+    class: 3, //类别
+};
 
 class Property extends React.Component {
     constructor (props) {
@@ -43,8 +49,12 @@ class Property extends React.Component {
 
         this.onActiveSelectTarget = this.onActiveSelectTarget.bind(this);
 
+        this.onGetClassListByKey = this.onGetClassListByKey.bind(this);
+
         this.arrList = []; //数组类型变量列表
-        this.funcListLength = [];
+        this.classNameList = []; //类别列表
+        this.customClassList = [];
+        this.funcListLength = 0;
     }
 
     componentWillReceiveProps(nextProps) {
@@ -86,7 +96,13 @@ class Property extends React.Component {
         }
         if (widget.redrawEventTree) {
             this.forceUpdate();
-        } if(widget.allWidgets){
+        } else if (widget.classList) {
+            this.customClassList = widget.classList;
+            if(this.state.currentObject) {
+                this.onGetClassListByKey(this.state.currentObject);
+                this.forceUpdate();
+            }
+        } else if(widget.allWidgets){
             this.setState({
                 objectList: widget.allWidgets
             }, ()=>{
@@ -181,7 +197,8 @@ class Property extends React.Component {
         })
     }
 
-    onActiveSelectTarget (){
+    onActiveSelectTarget (e){
+        e.stopPropagation();
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -218,6 +235,9 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
+        if(this.state.isActiveEventSelectTarget) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+        }
         if(this.state.currentObject === object.key) {
             this.setState({
                 objectDropdownVisible: false
@@ -247,8 +267,7 @@ class Property extends React.Component {
         if(this.state.currentAction&&action.type===this.state.currentAction.type) {
             switch (action.type){
                 case funcType.customize:
-                    let func = WidgetStore.getWidgetByKey(this.state.currentAction.func);
-                    if(action.func == func.key){
+                    if(action.func == this.state.currentAction.func){
                         this.setState({
                             actionDropdownVisible: false
                         });
@@ -263,6 +282,11 @@ class Property extends React.Component {
                         return;
                     }
                     break;
+            }
+        }
+        if(action.name === 'create' && action.type!==funcType.customize){
+            if(!(this.state.currentAction&&action.name === this.state.currentAction.name)) {
+                this.onGetClassListByKey(this.state.currentObject);
             }
         }
         this.setState({
@@ -311,10 +335,16 @@ class Property extends React.Component {
         });
     }
 
-    onPropertyContentSelect(prop, index, e) {
+    onPropertyContentSelect(prop, index, type, e) {
         e.domEvent.stopPropagation();
         let data = e.item.props.data;
-        prop.value = data.key;
+        switch (type) {
+            case optionType.widget:
+                prop.value = data.key;
+                break;
+            default:
+                prop.value = data;
+        }
         let property = this.state.currentAction.property;
         property[index] = prop;
         let action = this.state.currentAction;
@@ -356,12 +386,30 @@ class Property extends React.Component {
         return defaultProp;
     }
 
+    onGetClassListByKey(key) {
+        this.classNameList = [];
+        let widget = WidgetStore.getWidgetByKey(key);
+        if(widget) {
+            if(widget.className === 'root' || widget.className === 'container') {
+                this.customClassList = classList;
+                this.customClassList.forEach(v=>{
+                    this.classNameList.push(v)
+                });
+            }
+            for (let cls in propertyMap) {
+                if(checkChildClass(widget, cls)&&checkIsClassType(cls)){
+                    this.classNameList.push(cls);
+                }
+            }
+        }
+    }
+
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
 
         let w = WidgetStore.getWidgetByKey(this.state.currentObject);
         let f = null;
-        if (this.state.currentAction) {
+        if (this.state.currentAction&&this.state.currentAction.type === funcType.customize) {
             f = WidgetStore.getWidgetByKey(this.state.currentAction.func);
         }
 
@@ -373,12 +421,57 @@ class Property extends React.Component {
                     </div>
         };
 
-        // let funcList = (v2, i2)=>{
-        //     return <MenuItem data={v2} key={i2}>{v2.props.name}</MenuItem>;
-        // };
-
-        let dbList = (v3, i3)=>{
+        let menuWidgetList = (v3, i3)=>{
             return <MenuItem data={v3} key={i3}>{v3.props.name}</MenuItem>;
+        };
+        let menuNormalList = (v3, i3)=> {
+            return <MenuItem data={v3} key={i3}>{v3}</MenuItem>;
+        };
+        let menuClassList = (v3, i3)=> {
+            return <MenuItem data={v3} key={i3}
+                             className={$class({'customize-last':i3===this.customClassList.length-1})}>{v3}
+                             </MenuItem>;
+        };
+
+        let propertySelectMenu = (list, item, index, type)=> {
+            return (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index, type)}>
+                {
+                    !list||list.length==0
+                        ? null
+                        : type === optionType.widget
+                            ? list.map(menuWidgetList)
+                            : type === optionType.class
+                                ? list.map(menuClassList)
+                                : list.map(menuNormalList)
+                }
+            </Menu>);
+        };
+
+        let propertyDropDownMenu = (list, item, index, title, pid, type)=>{
+            let selectedValue = null;
+            let showValue = null;
+            let menu = propertySelectMenu(list, item, index, type);
+            switch (type){
+                case optionType.widget:
+                    selectedValue = WidgetStore.getWidgetByKey(item.value);
+                    showValue = (!selectedValue || !selectedValue.props || !selectedValue.props.name)?title:selectedValue.props.name;
+                    break;
+                default:
+                    selectedValue = item.value;
+                    showValue = !selectedValue?title:selectedValue;
+                    break;
+            }
+            return (<Dropdown overlay={menu} trigger={['click']}
+                             getPopupContainer={() => document.getElementById(pid)}>
+                <div className={$class("p--dropDown short")}>
+                    <div className="title f--hlc">
+                        {
+                            showValue
+                        }
+                        <span title="icon" />
+                    </div>
+                </div>
+            </Dropdown>);
         };
 
         let type = (type, defaultProp, item, index)=>{
@@ -395,44 +488,29 @@ class Property extends React.Component {
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Select:
+                    let titleTemp = '';
+                    let oType = optionType.normal;
+                    let list = [];
                     if(w&&w.className === 'db'){
-                        let menu = (<Menu></Menu>);
-                        let titleTemp = '类别';
                         if(item.name ==='data') {
                             titleTemp = '来源';
-                            menu = (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
-                                {
-                                    !w.dbItemList||w.dbItemList.length==0
-                                        ? null
-                                        : w.dbItemList.map(dbList)
-                                }
-                            </Menu>);
+                            oType = optionType.widget;
+                            list = w.dbItemList;
                         } else if (item.name ==='option'){
                             titleTemp = '选项';
-                            menu = (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
-                                {
-                                    !this.arrList||this.arrList.length==0
-                                        ? null
-                                        : this.arrList.map(dbList)
-                                }
-                            </Menu>);
+                            oType = optionType.widget;
+                            list = this.arrList;
                         }
-                        let func = WidgetStore.getWidgetByKey(item.value);
-                        return <Dropdown overlay={menu} trigger={['click']}
-                                         getPopupContainer={() => document.getElementById(propertyId)}>
-                            <div className={$class("p--dropDown short")}>
-                                <div className="title f--hlc">
-                                    { !func || !func.props || !func.props.name
-                                        ?titleTemp
-                                        :func.props.name
-                                    }
-                                    <span className="icon" />
-                                </div>
-                            </div>
-                        </Dropdown>;
+                    } else if(item.name === 'class'){
+                         {
+                            titleTemp = '类别';
+                            oType = optionType.class;
+                            list = this.classNameList;
+                        }
                     } else {
                         return <div>未定义类型</div>;
                     }
+                    return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 default:
@@ -489,14 +567,19 @@ class Property extends React.Component {
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
-                                <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
-                                        onClick={this.onActiveSelectTarget} />
+                                <div className="enable-button-div">
+                                    <button className="p--icon">
+
+                                    </button>
+                                </div>
                                 <Dropdown overlay={objectMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
                                           onVisibleChange={this.onObjectVisibleChange}
                                           visible={this.state.objectDropdownVisible}>
                                     <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
-                                        <div className="title f--hlc">
+                                        <div className="title p--title f--hlc">
+                                            <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
+                                                    onClick={this.onActiveSelectTarget} />
                                             { !w || !w.props || !w.props.name
                                                 ?'目标对象'
                                                 :w.props.name
@@ -522,8 +605,8 @@ class Property extends React.Component {
                                           onVisibleChange={this.onActionVisibleChange}
                                           visible={this.state.actionDropdownVisible}>
                                     <div className={$class("p--dropDown long", {'active':this.state.actionDropdownVisible})}>
-                                        <div className="title f--hlc">
-                                            <span className="pp--icon" />
+                                        <div className="title p--title f--hlc">
+                                            <span className="p--icon" />
                                             {
                                                 !w||!this.state.currentAction
                                                     ? '目标动作'

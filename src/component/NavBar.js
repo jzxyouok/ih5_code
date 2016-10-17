@@ -65,7 +65,12 @@ class NavBar extends React.Component {
             saveLoading : false,
             saveFinish : false,
             saveFinishPlay : false,
-            qrCodeType : true
+            qrCodeType : false,
+            qrCodeShow : false,
+            qrCode : null,
+            createWork : false,
+            loading : 0,
+            saveError : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -106,6 +111,11 @@ class NavBar extends React.Component {
         this.onSaveDone = this.onSaveDone.bind(this);
         this.saveFinishFuc = this.saveFinishFuc.bind(this);
         this.qrCode = this.qrCode.bind(this);
+        this.qrCodeClose = this.qrCodeClose.bind(this);
+        this.createWorkShow = this.createWorkShow.bind(this);
+        this.createWorkHide = this.createWorkHide.bind(this);
+        this.createWork = this.createWork.bind(this);
+        this.updateProgress = this.updateProgress.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -257,17 +267,26 @@ class NavBar extends React.Component {
         if (this.isPlay) {
             this.setState({
                 saveLoading : false,
-                saveFinishPlay : true
+                saveFinishPlay : true,
+                saveError :　false
             });
             //window.open(this.playUrl + 'work/' + id, '_blank');
         }
         else if(this.state.qrCodeType){
-            //bridge.generateQrcode(this.playUrl, 184, 184)
+            let qrCode = bridge.generateQrcode(this.playUrl+ 'work/' + id, 174, 174);
+            //console.log(qrCode);
+            this.setState({
+                saveLoading : false,
+                qrCodeShow : true,
+                qrCode : qrCode,
+                saveError :　false
+            });
         }
         else {
             this.setState({
                 saveLoading : false,
-                saveFinish : true
+                saveFinish : true,
+                saveError :　false
             },()=>{
                 this.closeTimeFuc();
             });
@@ -276,24 +295,52 @@ class NavBar extends React.Component {
 
     saveFinishFuc(){
         let isPlay = this.isPlay;
-        if(isPlay){
-            window.open(this.playUrl + 'work/' + this.workid,  '_blank');
-        }
-        else {
-            clearTimeout(this.closeTimeFuc());
+        if(!this.state.saveError){
+            if(isPlay){
+                window.open(this.playUrl + 'work/' + this.workid,  '_blank');
+            }
+            else {
+                clearTimeout(this.closeTimeFuc());
+            }
         }
         this.setState({
             saveFinish : false,
-            saveFinishPlay : false
+            saveFinishPlay : false,
+            saveError :　false
         });
+    }
+
+    createWork(bool){
+        this.setState({
+            specialLayer : false
+        });
+        if(bool){
+            let href = window.location.href;
+            let index = href.indexOf('?');
+            if(index>=0){
+                href = href.substring(0,index);
+            }
+            window.open(href + "?dom=1", "_self");
+        }
+        else{
+            let href = window.location.href;
+            let index = href.indexOf('?');
+            if(index>=0){
+                href = href.substring(0,index);
+            }
+            window.open(href, "_self");
+        }
     }
 
     onPlaySave(isPlay) {
         this.isPlay = isPlay;
         if (this.workid) {
             this.cancelSave();
-            this.setState({ saveLoading : true });
-            WidgetActions['saveNode'](this.workid, null, null, this.saveCallback);
+            this.setState({
+                loading : 0,
+                saveLoading : true
+            });
+            WidgetActions['saveNode'](this.workid, null, null, this.saveCallback,this.updateProgress);
         } else {
             this.setState({saveVisible: true});
         }
@@ -312,7 +359,8 @@ class NavBar extends React.Component {
     onSave() {
         this.onPlaySave(false);
         this.setState({
-            specialLayer : false
+            specialLayer : false,
+            qrCodeType : false
         })
     }
 
@@ -320,14 +368,24 @@ class NavBar extends React.Component {
         this.onPlaySave(false);
         this.setState({
             specialLayer : false,
-            qrCodeType : true
+            qrCodeType : true,
+            qrCode : null
+        })
+    }
+
+    qrCodeClose(){
+        this.setState({
+            qrCodeType : false,
+            qrCodeShow : false,
+            qrCode : null
         })
     }
 
     onPlay() {
         this.onPlaySave(true);
         this.setState({
-            specialLayer : false
+            specialLayer : false,
+            qrCodeType : false
         })
     }
 
@@ -396,7 +454,7 @@ class NavBar extends React.Component {
     onSaveDone() {
         let name = this.refs.saveWorkName.value;
         let describe = this.refs.saveWorkDescribe.value;
-        console.log(name,describe);
+        //console.log(name,describe);
         if(name.length == 0){
             this.setState({
                 saveWNError : "作品名字不能为空"
@@ -415,12 +473,41 @@ class NavBar extends React.Component {
         }
         else {
             this.cancelSave();
-            this.setState({ saveLoading : true });
-            WidgetActions['saveNode'](null, name, describe, this.saveCallback);
+            this.setState({
+                loading : 0,
+                saveLoading : true
+            });
+            WidgetActions['saveNode'](null, name, describe, this.saveCallback,this.updateProgress);
         }
         //this.setState({saveVisible: false});
         //if (s)
         //    WidgetActions['saveNode'](null, s, this.saveCallback);
+    }
+
+    updateProgress(e){
+        //console.log(e);
+        if(e.lengthComputable) {
+            let percentComplete = e.loaded / e.total * 100;
+            this.setState({
+                loading : percentComplete + '%'
+            })
+        }
+        else {
+            if (this.isPlay) {
+                this.setState({
+                    saveLoading : false,
+                    saveFinishPlay : true,
+                    saveError : true
+                });
+            }
+            else {
+                this.setState({
+                    saveLoading : false,
+                    saveFinish : true,
+                    saveError : true
+                });
+            }
+        }
     }
 
     onImportDone(s) {
@@ -697,6 +784,18 @@ class NavBar extends React.Component {
         })
     }
 
+    createWorkShow(){
+        this.setState({
+            createWork : true
+        })
+    }
+
+    createWorkHide(){
+        this.setState({
+            createWork : false
+        })
+    }
+
     specialLayerToogle(){
         this.setState({
             specialLayer : !this.state.specialLayer
@@ -801,7 +900,12 @@ class NavBar extends React.Component {
 
                         <div className={$class("special-layer",{"hidden": !this.state.specialLayer})}>
                             <ul className="special-list">
-                                <li>新建作品</li>
+                                <li className="f--hlc create-li"
+                                    onMouseOver={ this.createWorkShow }
+                                    onMouseOut={ this.createWorkHide }>
+                                    新建作品
+                                    <span className="icon" />
+                                </li>
                                 <li className="f--hlc open-li"
                                     onMouseOver={ this.openWorkShow }
                                     onMouseOut={ this.openWorkHide }>
@@ -832,6 +936,15 @@ class NavBar extends React.Component {
                                             </li>
                                         })
                                     }
+                                </ul>
+                            </div>
+
+                            <div className={ $class("create-li-content",{"hidden": !this.state.createWork})}
+                                 onMouseOver={ this.createWorkShow }
+                                 onMouseOut={ this.createWorkHide }>
+                                <ul>
+                                    <li onClick={ this.createWork.bind(this,true) }>网页</li>
+                                    <li onClick={ this.createWork.bind(this,false) }>画布</li>
                                 </ul>
                             </div>
                         </div>
@@ -1044,7 +1157,7 @@ class NavBar extends React.Component {
                                 预览
                             </button>
 
-                            <button className='btn btn-clear qrCode-btn' title='二维码' >
+                            <button className='btn btn-clear qrCode-btn' title='二维码' onClick={ this.qrCode }>
                                 <span className='icon' />
                                 二维码
                             </button>
@@ -1170,7 +1283,7 @@ class NavBar extends React.Component {
                         <div className="save-content">
                             <div className="title">保存中…<span >…</span></div>
                             <div className="loading">
-                                <span />
+                                <span style={{ width : this.state.loading }} />
                             </div>
                         </div>
                     </div>
@@ -1189,15 +1302,39 @@ class NavBar extends React.Component {
 
                         <div className="save-content">
                             <div className="success f--hlc">
-                                <span className="icon" />
+                                <span className={$class("icon", {"error-icon" : this.state.saveError})} />
                                 {
                                     this.state.saveFinish
-                                        ? "保存完成！"
-                                        : "编译完成！"
+                                        ? this.state.saveError
+                                            ? "保存失败！"
+                                            : "保存完成！"
+                                        : this.state.saveError
+                                            ? "编译失败！"
+                                            : "编译完成！"
                                 }
                             </div>
 
                             <button className="btn-clear sure-btn" onClick={ this.saveFinishFuc }>确定</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={$class("qrCode-layer f--hcc",{"hidden": !this.state.qrCodeShow})}>
+                    <div className="qrCode">
+                        <div className="qrCode-header f--hlc">
+                            <span className="title-icon" />
+                            <span className="flex-1">预览二维码</span>
+                            <span className="close-icon" onClick={ this.qrCodeClose} />
+                        </div>
+
+                        <div className="qrCode-content">
+                            <div className="qrCode-div">
+                                <div className="qrCode-bg">
+                                    <img src={ this.state.qrCode }/>
+                                </div>
+                            </div>
+
+                            <p>此二维码仅用于预览，分享请使用“我的作品”页面中二维码</p>
                         </div>
                     </div>
                 </div>
