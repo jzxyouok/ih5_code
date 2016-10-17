@@ -37,8 +37,8 @@ const widgetFlags = {
 
 widgetFlags.FLAG_MASK = widgetFlags.Root | widgetFlags.Box | widgetFlags.Container;
 
-const propertyMap = {};
-const propertyFlags = {};
+var propertyMap = {};
+var propertyFlags = {};
 
 propertyMap['widget'] = [
     { name: 'id',showName:'ID', type: propertyType.String, default: '', isProperty: true },
@@ -439,6 +439,7 @@ propertyMap['timer'] = [
     { addProvides: widgetFlags.Timer},
     { name: 'totalTime',showName:'总时长', type: propertyType.Number,group:'tools', default: 10, isProperty: true},
     { name: 'loop',showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
+    { name: 'autoPlay', type: propertyType.Boolean, default: false, isProperty: true},
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true },
     { name: 'seek', showName:'跳至', info: '(time)',
@@ -512,6 +513,7 @@ propertyMap['easing'] = [
     { name: 'radius',showName:'移动距离', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'angle',showName:'移动方向', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'duration',showName:'时长',type: propertyType.Number, default: 2, isProperty: true },
+    { name: 'autoPlay',showName:'自动播放', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'complete',showName:'播放完成', isEvent: true },
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause',showName:'暂停', isFunc: true }
@@ -524,7 +526,40 @@ propertyMap['3dRotate'] = [
 propertyMap['effect'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box | widgetFlags.DomOnly, addProvides:widgetFlags.Leaf},
-    { name: 'type',showName:'动效类型', type: propertyType.Select,  default:'无',options:{
+    { name: 'type',showName:'动效类型', type: propertyType.Select,  default:'无',optionsToJudge:{
+        '弹性进入':'bounceIn',
+        '弹性进入（从上）':'bounceInDown',
+        '弹性进入（从左）':'bounceInLeft',
+        '弹性进入（从右）':'bounceInRight',
+        '弹性进入（从下）':'bounceInUp',
+        '淡入':'fadeIn',
+        '自上淡入':'fadeInDown',
+        ' 自上淡入（长距离）':'fadeInDownBig',
+        '自左淡入':'fadeInLeft',
+        '自左淡入（长距离）':'fadeInLeftBig',
+        '自右淡入':'fadeInRight',
+        '自右淡入（长距离）':'fadeInRightBig',
+        '自下淡入':'fadeInUp',
+        '自下淡入（长距离）':'fadeInUpBig',
+        '翻转进入（上下）':'flipInX',
+        '翻转进入（左右）':'flipInY',
+        '光速进入':'lightSpeedIn',
+        '滚动进入':'rollIn',
+        '旋转进入':'rotateIn',
+        '旋转进入（自左上）':'rotateInDownLeft',
+        '旋转进入（自右上）':'rotateInDownRight',
+        '旋转进入（自左下）':'rotateInUpLeft',
+        '旋转进入（自右下）':'rotateInUpRight',
+        '放大出现':'zoomIn',
+        ' 放大出现（自上）':'zoomInDown',
+        '放大出现（自左）':'zoomInLeft',
+        '放大出现（自右）':'zoomInRight',
+        '放大出现（自下）':'zoomInUp',
+        '飞入（自上）':'slideInDown',
+        '飞入（自左）':'slideInLeft',
+        '飞入（自右）':'slideInRight',
+        '飞入（自下）':'slideInUp'
+    }, options:{
      '弹性进入':'bounceIn',
      '弹性进入（从上）':'bounceInDown',
      '弹性进入（从左）':'bounceInLeft',
@@ -606,6 +641,8 @@ propertyMap['effect'] = [
 
     { name: 'duration',showName:'时长', type: propertyType.Number, default: 1, isProperty: true },
     { name: 'count',showName:'播放次数', type: propertyType.Integer, default: 1, isProperty: true },
+    { name: 'initHide',showName:'初始隐藏', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'autoPlay',showName:'自动播放', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true }
 ];

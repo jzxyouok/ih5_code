@@ -64,6 +64,15 @@ $size: 25px;
 		}
 	}
 
+    .distinguish-line {
+        position: absolute;
+        left: 169px;
+        top: 52px;
+        bottom: 14px;
+        width: 1px;
+        background: #151515;
+    }
+
 	// 头部
 	#TimelineHeader {
 		$height: 26px;
@@ -137,7 +146,7 @@ $size: 25px;
 				@include bg(1, 1);
 
                 &.active{
-                    @include bg(1, 2);
+                    @include bg(1, 0);
                 }
 			}
 			#TimelineNodeActionModify {
@@ -157,7 +166,7 @@ $size: 25px;
 				@include bg(3, 1);
 
                 &.active{
-                    @include bg(3, 2);
+                    @include bg(3, 0);
                 }
 			}
 		}
@@ -249,12 +258,15 @@ $size: 25px;
                     position: absolute;
                     left: 0;
                     top: 0;
+                    height: 100%;
                     padding-right: 20px;
                 }
 
                 li{
-                    @include flex(1);
                     position: relative;
+                    width: 61px;
+                    height: 100%;
+                    float: left;
 
                     span{
                         position: absolute;

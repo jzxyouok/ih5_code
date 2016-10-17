@@ -662,10 +662,17 @@
             .pop-header {
                 width: 320px;
                 height: 40px;
+                line-height: 40px;
                 font-size: 14px;
                 color: #fff;
                 background: #545454;
-                padding-left: 30px;
+
+                .icon {
+                    width: 30px;
+                    height: 40px;
+                    background: url("img/button-icon.svg") no-repeat -1560px -240px;
+                    display: block;
+                }
             }
 
             .pop-content{

@@ -493,6 +493,13 @@ class NavBar extends React.Component {
             })
         }
         else {
+            this.closeTimeFuc =()=>{
+                setTimeout(()=>{
+                    this.setState({
+                        saveFinish : false
+                    });
+                },1000);
+            };
             if (this.isPlay) {
                 this.setState({
                     saveLoading : false,
@@ -505,6 +512,8 @@ class NavBar extends React.Component {
                     saveLoading : false,
                     saveFinish : true,
                     saveError : true
+                },()=>{
+                    this.closeTimeFuc();
                 });
             }
         }

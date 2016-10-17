@@ -169,7 +169,7 @@ class TimelineView extends React.Component {
 				changed.timerNode = node;
 			}
 			this.setState(changed);
-            this.changeAllWidth(true, changed);
+            this.changeAllWidth(true, changed,true);
 
             if(widget.selectWidget){
                 let nowID = widget.selectWidget.key;
@@ -183,7 +183,7 @@ class TimelineView extends React.Component {
 		}
         if(widget.skipProperty){
             if(widget.updateProperties.totalTime){
-                this.changeAllWidth(false);
+                this.changeAllWidth(false,null,true);
             }
         }
 		if (widget.updateTrack !== undefined) {
@@ -436,7 +436,7 @@ class TimelineView extends React.Component {
             let move = false;
             let _x;
             let self = this;
-            let initialmarginLeft = 0;
+            let initialmarginLeft = self.state.marginLeft;
             let movableDistance = self.state.movableDistance;
             $(".overall-zoom .overall span").mousedown(function(e){
                 move=true;
@@ -474,41 +474,51 @@ class TimelineView extends React.Component {
         let index = this.state.zoomOrLessNUm;
         if(num == -1 && index !== -1){
             let multiple;
+            let dragZoomLeft;
             if(index - 1 == 0){
                 multiple = 1;
+                dragZoomLeft = 45.5;
             }
             else {
                 multiple = -10;
+                dragZoomLeft = 0;
             }
             this.setState({
                 zoomOrLessNUm : index-1,
                 multiple : multiple,
-                marginLeft : 0
+                marginLeft : 0,
+                dragZoomLeft : dragZoomLeft
             },()=>{
                 //console.log('xxx',this.state.zoomOrLessNUm,this.state.multiple);
-                this.changeAllWidth(false);
+                this.changeAllWidth(false,null,true);
+                this.dragZoom();
             })
         }
         else if(num == 1 && index !== 1){
             let multiple;
+            let dragZoomLeft;
             if(index + 1 == 1){
                 multiple = 10;
+                dragZoomLeft = 91;
             }
             else {
                 multiple = 1;
+                dragZoomLeft = 45.5;
             }
             this.setState({
                 zoomOrLessNUm : index + 1,
                 multiple : multiple,
-                marginLeft : 0
+                marginLeft : 0,
+                dragZoomLeft : dragZoomLeft
             },()=>{
-                this.changeAllWidth(false);
+                this.changeAllWidth(false,null,true);
+                this.dragZoom();
                 //console.log('+++',this.state.zoomOrLessNUm,this.state.multiple);
             })
         }
     }
 
-    changeAllWidth(bool,changed){
+    changeAllWidth(bool,changed,isScroll){
         let totalTime = 10;
         let data;
         if(bool){
@@ -524,7 +534,7 @@ class TimelineView extends React.Component {
                 let maxWidth  =  window.innerWidth-this.state.leftAddRight-170;
                 let multiple = this.state.multiple;
                 let allWidth;
-                if(multiple == -10){
+                if(multiple < 0){
                     allWidth = 61 * totalTime / (- this.state.multiple)
                 }
                 else {
@@ -540,7 +550,12 @@ class TimelineView extends React.Component {
                             percentage : null,
                             movableDistance : 0,
                             overallWidth : 100 + "%",
-                            allWidth : allWidth
+                            allWidth : allWidth,
+                            marginLeft : 0
+                        },()=>{
+                            if(isScroll){
+                                this.scrollBtn();
+                            }
                         });
                     }
                     else {
@@ -552,8 +567,9 @@ class TimelineView extends React.Component {
                             movableDistance : maxWidth - width,
                             allWidth : allWidth
                         },()=>{
-                            //console.log(width,this.state.movableDistance);
-                            this.scrollBtn();
+                            if(isScroll){
+                                this.scrollBtn();
+                            }
                         });
                     }
                 }
@@ -562,7 +578,12 @@ class TimelineView extends React.Component {
                         percentage : null,
                         movableDistance : 0,
                         overallWidth : 100 + "%",
-                        allWidth : allWidth
+                        allWidth : allWidth,
+                        marginLeft : 0
+                    },()=>{
+                        if(isScroll){
+                            this.scrollBtn();
+                        }
                     });
                 }
             }
@@ -573,8 +594,9 @@ class TimelineView extends React.Component {
         let move = false;
         let _x;
         let self = this;
-        let left = 45.5;
+        let left = this.state.dragZoomLeft;
         let p = 0;
+        let a = this.state.multiple;
         $(".overall-zoom .zoom-slider .btn").mousedown(function(e){
             move=true;
             _x=e.pageX;
@@ -582,39 +604,31 @@ class TimelineView extends React.Component {
         $(document).mousemove(function(e){
             if(move){
                 let x =  e.pageX - _x;
-                //let multiple;
                 p = left + x;
-                //let a = p /10;
-                //a.toFixed(2);
                 //console.log(left,  x , p);
                 if(p>=91){
                     p = 91;
-                    //multiple = 10;
                 }
                 else if( p <= 0){
                     p = 0;
-                    //multiple = -10;
                 }
-                //else if( p == 45.5){
-                //    multiple = 1;
-                //}
-                //else if(p>0 && p<45.5){
-                //    multiple = -a;
-                //}
-                //else{
-                //    multiple = a;
-                //}
-                //console.log(multiple,p);
+                a = (p - 45.5) / 45.5 * 10;
+                a.toFixed(2);
+                if(a <= 1 && a >= -1){
+                    a = 1;
+                }
+                //console.log(a);
                 self.setState({
-                    dragZoomLeft : p
-                    //multiple : multiple
+                    dragZoomLeft : p,
+                    multiple : a
                 },()=>{
-                    //self.changeAllWidth(false);
+                    self.changeAllWidth(false,null,false);
                 })
             }
         }).mouseup(function(){
             move=false;
             left = self.state.dragZoomLeft;
+            self.changeAllWidth(false,null,true);
         });
     }
 
@@ -652,7 +666,7 @@ class TimelineView extends React.Component {
                 self.setState({
                     leftAddRight : left + right
                 },()=>{
-                    self.changeAllWidth(false);
+                    self.changeAllWidth(false,null,true);
                 })
             }
         });
@@ -711,24 +725,32 @@ class TimelineView extends React.Component {
             let arry = [];
             let multiple = this.state.multiple;
             let totalTime;
-            if(multiple == -10){
-                totalTime = data / (- this.state.multiple)
+            let sUnit;
+            if(multiple < 0){
+                totalTime = data / (- this.state.multiple);
+                sUnit = 1 * ( -multiple );
             }
             else {
-                totalTime = data * this.state.multiple
+                totalTime = data * this.state.multiple;
+                sUnit = 1 / multiple;
             }
+
             for(let i=1; i<=totalTime; i++){
                 arry.push(i);
             }
             return arry.map((v,i)=>{
+                let value = (v * sUnit).toString();
+                let index = value.indexOf('.');
+                if(index >= 0){
+                    value = (v * sUnit).toFixed(2).toString();
+                    if(value.charAt(value.length-1) == 0){
+                        value = value.substr(0,value.length-1);
+                    }
+                }
                 return <li key={i}>
                             <span>
                                 {
-                                    multiple == 10
-                                        ? v/10 + 's'
-                                        : multiple == -10
-                                            ? v*10 + 's'
-                                            : v >= 10 || v == 0 ? v + 's' : '0'+ v + 's'
+                                    value + 's'
                                 }
                             </span>
                         </li>;
@@ -747,6 +769,8 @@ class TimelineView extends React.Component {
                 <div className="hidden">
                     <ComponentPanel ref="ComponentPanel" />
                 </div>
+
+                <span className="distinguish-line" />
 
                 <div id='TimelineHeader' className='timeline-row f--h'>
                     <div className='timline-column-left f--hlc'>
@@ -814,18 +838,24 @@ class TimelineView extends React.Component {
                         <span className={ cls("icon",{ "hidden" : this.state.percentage !== null })} />
 
                         <div className="unit">
-                            <ul className="f--h"
-                                style={{ width : this.state.allWidth + 20 +"px",
-                                            left : - (this.state.marginLeft * this.state.percentage) }}>
+                            <ul className=""
+                                style={{ left : - (this.state.marginLeft * this.state.percentage) }}>
                                 { unit(totalTime) }
                             </ul>
                         </div>
 
                         <div className={ cls("time-ruler-layer",{ "time-ruler-hidden" :
                                             (this.state.marginLeft !==0 && this.state.isScroll)
-                                            || (this.state.currentTime * 61 * this.state.multiple
-                                                < this.state.marginLeft* this.state.percentage
-                                                && !this.state.isScroll)
+                                            || (
+                                                this.state.multiple > 0
+                                                ? (this.state.currentTime * 61 * this.state.multiple
+                                                    < this.state.marginLeft* this.state.percentage
+                                                    && !this.state.isScroll)
+                                                :(this.state.currentTime * 61 / (-this.state.multiple)
+                                                    < this.state.marginLeft* this.state.percentage
+                                                    && !this.state.isScroll)
+                                            )
+
                                         })}>
 
                             <div style={{ width : this.state.allWidth + 20 +"px",

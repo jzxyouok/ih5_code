@@ -217,7 +217,8 @@ function loadTree(parent, node, idList) {
           r.specificList.push({
               'sid': _specificCount++,
               'object': null,
-              'action': null
+              'action': null,
+              'enable': true
           })
       }
       eventTree.push(r);
@@ -575,7 +576,7 @@ function generateJsFunc(etree) {
         });
       }
       item.cmds.forEach(cmd => {
-        if (cmd.sObjId && cmd.action && cmd.action.type == 'default') {
+        if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
             if (cmd.action.property.length >= 1)
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(cmd.action.property[0]['value']));
@@ -710,6 +711,7 @@ function saveTree(data, node, saveKey) {
 
         item.specificList.forEach(cmd => {
             let c = {};
+            c.enable = cmd.enable;
             c.sObjId = objectKeyToId(cmd.object);
             if(saveKey) {
                 c.object = cmd.object;
@@ -1500,7 +1502,8 @@ export default Reflux.createStore({
         let eventSpecific = {
             'sid': _specificCount++,
             'object': null,
-            'action': null
+            'action': null,
+            'enable': true,
         };
         return eventSpecific;
     },
@@ -1659,6 +1662,8 @@ export default Reflux.createStore({
                 specific.action = params.action;
             } else if(params.property){
                 specific.action.property = params.property;
+            } else if(params.enable){
+                specific.enable = params.enable.value;
             }
             this.trigger({redrawEventTree: true});
         }
@@ -2352,9 +2357,9 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         //http://test-beta.ih5.cn/
-        xhr.open(method, url);
+        //xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)

@@ -775,12 +775,20 @@
                     }
                 }
 
+                .add-btn,
                 .down-btn,
                 .up-btn {
                     background-color: inherit;
                     border: none;
                     outline: 0;
                 }
+
+                //.add-btn:disabled {
+                //    filter: alpha(opacity=60);
+                //    opacity: 0.6;
+                //    &:hover .btn-layer span { background: #325351;}
+                //    &:active .btn-layer span { background: #325351;}
+                //}
 
                 .down-btn {
                     display: block;
@@ -824,8 +832,11 @@
                 .up-btn,
                 .down-btn {
                     &:disabled {
-                        cursor: not-allowed;
+                        filter: alpha(opacity=60);
+                        opacity: 0.6;
+                        cursor: default;
                         .btn-layer {
+                            cursor: not-allowed;
                             background: url("img/button-icon.svg") no-repeat -1960px 0;
                         }
                         &:hover {
@@ -891,8 +902,7 @@
                                 background: url("img/button-icon.svg") no-repeat -1640px -240px;
                             }
 
-                            &:active,
-                            &.active {
+                            &:active {
                                 background: url("img/button-icon.svg") no-repeat -1640px -280px;
                             }
                         }
@@ -992,6 +1002,39 @@
                             input {
                                 margin-top: 0;
                             }
+                            .ant-input-number-handler-wrap {
+                                background: #151515;
+                                width: 16px;
+                                border-left: 1px solid #313131;
+                                &:hover {
+                                    color: #ffa800;
+                                }
+                                .ant-input-number-handler {
+                                    color: #adadad;
+                                    &:hover {
+                                        background: #151515;
+                                        .ant-input-number-handler-up-inner,
+                                        .ant-input-number-handler-down-inner {
+                                            color: #ffa800;
+                                        }
+                                    }
+                                }
+                                .ant-input-number-handler-down {
+                                    border-top: 1px solid #313131;
+                                }
+                                .ant-input-number-handler-up-inner {
+                                    right: 2px;
+                                    &:before {
+                                        content: '\E610';
+                                    }
+                                }
+                                .ant-input-number-handler-down-inner {
+                                    right: 2px;
+                                    &:before {
+                                        content: '\E611';
+                                    }
+                                }
+                            }
                         }
 
                         .on-off-btn {
@@ -1057,6 +1100,27 @@
                 border-radius: 0 0 2px 2px;
             }
 
+            &.Property-not-active {
+                .p--title,
+                .pp--list-layer,
+                .pp--list{
+                    filter: alpha(opacity=60);
+                    opacity: 0.6;
+                    cursor: not-allowed !important;
+                }
+                .up-btn,
+                .down-btn {
+                    cursor: default;
+                    .btn-layer {
+                        cursor: not-allowed !important;
+                    }
+                }
+                .enable-button-div {
+                    .p--icon {
+                        background: url("img/button-icon.svg") no-repeat -1640px -280px !important;
+                    }
+                }
+            }
         }
     }
 }
