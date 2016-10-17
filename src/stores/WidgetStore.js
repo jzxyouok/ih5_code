@@ -1103,7 +1103,6 @@ export default Reflux.createStore({
         this.eventTreeList = [];
     },
     selectWidget: function(widget, shouldTrigger, keepValueType) {
-        console.log(keyMap);
         var render = false;
         if (widget) {
             if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
