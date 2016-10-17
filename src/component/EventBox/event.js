@@ -77,6 +77,7 @@ class Event extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+
         nextProps.eventList.map((v,i)=>{
             if(!v.children){
                v.children=[{
@@ -89,22 +90,33 @@ class Event extends React.Component {
               }];
              v.zhongHidden=true;
              v.logicalFlag='and';
+             v.className = nextProps.className;
              v.conFlag='触发条件';
           }else{
+
               v.children.map((item,index)=>{
                     if(item.judgeObjkey){
-                        item.judgeObjFlag = WidgetStore.getWidgetByKey(item.judgeObjkey).props.name;
+                        let obj1 =WidgetStore.getWidgetByKey(item.judgeObjkey);
+                        if(obj1){
+                            item.judgeObjFlag = obj1.props.name;
+                        }
                     }
                     if(item.compareObjkey){
-                        item.compareObjFlag = WidgetStore.getWidgetByKey(item.compareObjkey).props.name;
+                        let obj2 =WidgetStore.getWidgetByKey(item.compareObjkey);
+                        if(obj2){
+                            item.compareObjFlag = obj2.props.name;
+                        }
                     }
               });
             }
         });
 
+         console.log('nextProps.eventList',nextProps );
         this.setState({
             activeKey:nextProps.activeKey,
             eventList:nextProps.eventList
+        },()=>{
+            this.setEventBoxWidth();
         })
     }
 
@@ -181,8 +193,6 @@ class Event extends React.Component {
         if (widget.selectWidget) {
             this.setState({
                 selectWidget: widget.selectWidget
-            }, ()=> {
-               // this.getConditionOption();
             });
         }
         else if (widget.updateWidget){
@@ -527,8 +537,20 @@ class Event extends React.Component {
         }
 
         if(type=='conFlag'){
-
-            this.state.conOption.map((v,i)=>{
+            //获取当前事件的类名
+            let conArr=[];
+            let className = this.state.eventList[curEventIndex].className;
+            if(className){
+                propertyMap[className].map((item,index)=>{
+                    if(item.isEvent === true){
+                        conArr.push(item);
+                    }
+                });
+            }
+            if(this.state.conOption.length>0) {
+                conArr = this.state.conOption;
+            }
+            conArr.map((v,i)=>{
                 if(name==v.name){
                     showName =v.showName;
                 }

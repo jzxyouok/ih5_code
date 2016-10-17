@@ -186,6 +186,7 @@ function loadTree(parent, node, idList) {
       r.conFlag = judgesObj.conFlag;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
+      r.className = judgesObj.className;
       r.children = [];
         let needFill =[];
         judgesObj.children.map((v,i)=>{
@@ -672,7 +673,9 @@ function saveTree(data, node, saveKey) {
         var cmds = [];
         var judges={};
 
-           judges.conFlag = item.conFlag;
+            judges.conFlag = item.conFlag;
+            console.log(node);
+             judges.className=node.className;
 
             judges.children=[];
             if(item.needFill) {
@@ -772,7 +775,7 @@ function saveTree(data, node, saveKey) {
             cmds.push(c);
         });
 
-        //console.log('judges',judges);
+        console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges});
 
       });
