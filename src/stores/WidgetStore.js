@@ -183,9 +183,6 @@ function loadTree(parent, node, idList) {
       var r = {};
       var judgesObj = item.judges;
 
-
-
-
       r.conFlag = judgesObj.conFlag;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
@@ -206,8 +203,6 @@ function loadTree(parent, node, idList) {
         if(needFill.length>0){
             r.needFill=needFill;
         }
-
-
 
       r.eid = (_eventCount++);
       r.specificList = [];
@@ -443,7 +438,7 @@ function objectToId(object) {
       varKey = 'd' + object.widget.dbItemList.indexOf(object);
   } else {
     idName = object.props['id'];
-  }
+  }　
   return [idName, varKey, varName];
 }
 
@@ -674,77 +669,41 @@ function saveTree(data, node, saveKey) {
     else if (name == 'eventTree') {
       var etree = [];
 
-        //console.log('node',node,node.props['eventTree']);
-
         node.props['eventTree'].forEach(item => {
         var cmds = [];
         var judges={};
 
            judges.conFlag = item.conFlag;
 
-           // judges.needFill=item.needFill;   //触发条件的值
-
             judges.children=[];
             if(item.needFill) {
                 judges.conFlag = 'onChange';//触发条件
                 item.needFill.map((v, i)=> {
                     let obj = {};
-
-
-
-                    let o = objectToId(node);
-                    obj.judgeObjId = o[0];
-
+                    obj.judgeObjKey =node.key;
                     obj.judgeObjFlag = node.props.name; //判断对象的名字
-
                     obj.compareFlag = item.conFlag;
-
                     obj.showName=v.showName;
                     obj.type=v.type;
                     obj.compareValFlag = v.default;//判断对象的属性
-
                     judges.children.push(obj);
 
                 });
             }
-
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
-                   let obj={};
-                   if (v.judgeObj) {
-                      let o = objectToId(v.judgeObj);
-                      obj.judgeObjId = o[0];
-                      if (o[1]) {
-                        obj.judgeVarId = o[1];
-                        obj.judgeVarName = o[2];
-                      }
-                   }
-             obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
-
+             let obj={};
+             obj.judgeObjkey =v.judgeObjkey;
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
-             obj.judgeValOption=v.judgeValOption;
-             obj.judgeValType=v.judgeValType; //判断对象的属性的类型
 
              obj.compareFlag=v.compareFlag;//比较运算符
-                   if (v.compareObj) {
-                      var o = objectToId(v.compareObj);
-                      obj.compareObjId = o[0];
-                      if (o[1]) {
-                        obj.compareVarId = o[1];
-                        obj.compareVarName = o[2];
-                      }
-                   }
-             obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
 
-             obj.compareValFlag =v.compareValFlag;//比较对象的属性
-             obj.compareValOption=v.compareValOption;
-             obj.operationManager={};
-             obj.operationManager.arrHidden=v.operationManager.arrHidden;
+             obj.compareObjkey=v.compareObjkey;
+             obj.compareValFlag=v.compareValFlag;//判断对象的属性
 
-
+             obj.arrHidden=v.arrHidden;
              judges.children.push(obj);
-
          });
 
         item.specificList.forEach(cmd => {
@@ -1651,13 +1610,11 @@ export default Reflux.createStore({
             event['children'].push({
                 'cid': _childrenCount++,
                 judgeObjFlag:'判断对象',
-                judgeValFlag:'计算值',
+                judgeValFlag:'判断值',
                 compareFlag:'=',
                 compareObjFlag:'比较值/对象',
                 compareValFlag:'比较值',
-                operationManager: {  //下拉框显现管理
-                    arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
-                }
+                arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             });
 
             this.trigger({redrawEventTree: true});
