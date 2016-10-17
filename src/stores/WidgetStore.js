@@ -204,8 +204,6 @@ function loadTree(parent, node, idList) {
             r.needFill=needFill;
         }
 
-
-
       r.eid = (_eventCount++);
       r.specificList = [];
       item.cmds.forEach(cmd => {
@@ -667,22 +665,17 @@ function saveTree(data, node, saveKey) {
     else if (name == 'eventTree') {
       var etree = [];
 
-
-
         node.props['eventTree'].forEach(item => {
         var cmds = [];
         var judges={};
 
            judges.conFlag = item.conFlag;
 
-
             judges.children=[];
             if(item.needFill) {
                 judges.conFlag = 'onChange';//触发条件
                 item.needFill.map((v, i)=> {
                     let obj = {};
-                    //let o = objectToId(node);
-                  //  obj.judgeObjId = o[0];
                     obj.judgeObjKey =node.key;
                     obj.judgeObjFlag = node.props.name; //判断对象的名字
                     obj.compareFlag = item.conFlag;
@@ -693,46 +686,20 @@ function saveTree(data, node, saveKey) {
 
                 });
             }
-
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
-                   let obj={};
-                   // if (v.judgeObj) {
-                   //    let o = objectToId(v.judgeObj);
-                   //    obj.judgeObjId = o[0];
-                   //    if (o[1]) {
-                   //      obj.judgeVarId = o[1];
-                   //      obj.judgeVarName = o[2];
-                   //    }
-                   // }
+             let obj={};
              obj.judgeObjkey =v.judgeObjkey;
-
-
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
-             obj.judgeValOption=v.judgeValOption;
-             obj.judgeValType=v.judgeValType; //判断对象的属性的类型
 
              obj.compareFlag=v.compareFlag;//比较运算符
-                   // if (v.compareObj) {
-                   //    var o = objectToId(v.compareObj);
-                   //    obj.compareObjId = o[0];
-                   //    if (o[1]) {
-                   //      obj.compareVarId = o[1];
-                   //      obj.compareVarName = o[2];
-                   //    }
-                   // }
+
              obj.compareObjkey=v.compareObjkey;
+             obj.compareValFlag=v.compareValFlag;//判断对象的属性
 
-             obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
-
-                obj.compareValFlag=v.compareValFlag;//判断对象的属性
-             obj.compareValOption=v.compareValOption;
              obj.arrHidden=v.arrHidden;
-
-
              judges.children.push(obj);
-
          });
 
         item.specificList.forEach(cmd => {
