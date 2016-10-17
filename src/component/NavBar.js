@@ -69,6 +69,8 @@ class NavBar extends React.Component {
             qrCodeShow : false,
             qrCode : null,
             createWork : false,
+            loading : 0,
+            saveError : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -113,6 +115,7 @@ class NavBar extends React.Component {
         this.createWorkShow = this.createWorkShow.bind(this);
         this.createWorkHide = this.createWorkHide.bind(this);
         this.createWork = this.createWork.bind(this);
+        this.updateProgress = this.updateProgress.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -264,7 +267,8 @@ class NavBar extends React.Component {
         if (this.isPlay) {
             this.setState({
                 saveLoading : false,
-                saveFinishPlay : true
+                saveFinishPlay : true,
+                saveError :　false
             });
             //window.open(this.playUrl + 'work/' + id, '_blank');
         }
@@ -274,13 +278,15 @@ class NavBar extends React.Component {
             this.setState({
                 saveLoading : false,
                 qrCodeShow : true,
-                qrCode : qrCode
+                qrCode : qrCode,
+                saveError :　false
             });
         }
         else {
             this.setState({
                 saveLoading : false,
-                saveFinish : true
+                saveFinish : true,
+                saveError :　false
             },()=>{
                 this.closeTimeFuc();
             });
@@ -289,15 +295,18 @@ class NavBar extends React.Component {
 
     saveFinishFuc(){
         let isPlay = this.isPlay;
-        if(isPlay){
-            window.open(this.playUrl + 'work/' + this.workid,  '_blank');
-        }
-        else {
-            clearTimeout(this.closeTimeFuc());
+        if(!this.state.saveError){
+            if(isPlay){
+                window.open(this.playUrl + 'work/' + this.workid,  '_blank');
+            }
+            else {
+                clearTimeout(this.closeTimeFuc());
+            }
         }
         this.setState({
             saveFinish : false,
-            saveFinishPlay : false
+            saveFinishPlay : false,
+            saveError :　false
         });
     }
 
@@ -327,8 +336,11 @@ class NavBar extends React.Component {
         this.isPlay = isPlay;
         if (this.workid) {
             this.cancelSave();
-            this.setState({ saveLoading : true });
-            WidgetActions['saveNode'](this.workid, null, null, this.saveCallback);
+            this.setState({
+                loading : 0,
+                saveLoading : true
+            });
+            WidgetActions['saveNode'](this.workid, null, null, this.saveCallback,this.updateProgress);
         } else {
             this.setState({saveVisible: true});
         }
@@ -442,7 +454,7 @@ class NavBar extends React.Component {
     onSaveDone() {
         let name = this.refs.saveWorkName.value;
         let describe = this.refs.saveWorkDescribe.value;
-        console.log(name,describe);
+        //console.log(name,describe);
         if(name.length == 0){
             this.setState({
                 saveWNError : "作品名字不能为空"
@@ -461,12 +473,41 @@ class NavBar extends React.Component {
         }
         else {
             this.cancelSave();
-            this.setState({ saveLoading : true });
-            WidgetActions['saveNode'](null, name, describe, this.saveCallback);
+            this.setState({
+                loading : 0,
+                saveLoading : true
+            });
+            WidgetActions['saveNode'](null, name, describe, this.saveCallback,this.updateProgress);
         }
         //this.setState({saveVisible: false});
         //if (s)
         //    WidgetActions['saveNode'](null, s, this.saveCallback);
+    }
+
+    updateProgress(e){
+        //console.log(e);
+        if(e.lengthComputable) {
+            let percentComplete = e.loaded / e.total * 100;
+            this.setState({
+                loading : percentComplete + '%'
+            })
+        }
+        else {
+            if (this.isPlay) {
+                this.setState({
+                    saveLoading : false,
+                    saveFinishPlay : true,
+                    saveError : true
+                });
+            }
+            else {
+                this.setState({
+                    saveLoading : false,
+                    saveFinish : true,
+                    saveError : true
+                });
+            }
+        }
     }
 
     onImportDone(s) {
@@ -1242,7 +1283,7 @@ class NavBar extends React.Component {
                         <div className="save-content">
                             <div className="title">保存中…<span >…</span></div>
                             <div className="loading">
-                                <span />
+                                <span style={{ width : this.state.loading }} />
                             </div>
                         </div>
                     </div>
@@ -1261,11 +1302,15 @@ class NavBar extends React.Component {
 
                         <div className="save-content">
                             <div className="success f--hlc">
-                                <span className="icon" />
+                                <span className={$class("icon", {"error-icon" : this.state.saveError})} />
                                 {
                                     this.state.saveFinish
-                                        ? "保存完成！"
-                                        : "编译完成！"
+                                        ? this.state.saveError
+                                            ? "保存失败！"
+                                            : "保存完成！"
+                                        : this.state.saveError
+                                            ? "编译失败！"
+                                            : "编译完成！"
                                 }
                             </div>
 
