@@ -1214,6 +1214,7 @@ export default Reflux.createStore({
             }
             if (widget.children&&widget.children.length>0) {
                 widget.children.forEach((v)=>{
+                    keyMap[v.key] = undefined;
                     loopDelete(v);
                 });
             }
