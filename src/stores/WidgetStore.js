@@ -221,7 +221,8 @@ function loadTree(parent, node, idList) {
           r.specificList.push({
               'sid': _specificCount++,
               'object': null,
-              'action': null
+              'action': null,
+              'enable': true
           })
       }
       eventTree.push(r);
@@ -748,6 +749,7 @@ function saveTree(data, node, saveKey) {
 
         item.specificList.forEach(cmd => {
             let c = {};
+            c.enable = cmd.enable;
             c.sObjId = objectKeyToId(cmd.object);
             if(saveKey) {
                 c.object = cmd.object;
@@ -1538,7 +1540,8 @@ export default Reflux.createStore({
         let eventSpecific = {
             'sid': _specificCount++,
             'object': null,
-            'action': null
+            'action': null,
+            'enable': true,
         };
         return eventSpecific;
     },
@@ -1699,6 +1702,8 @@ export default Reflux.createStore({
                 specific.action = params.action;
             } else if(params.property){
                 specific.action.property = params.property;
+            } else if(params.enable){
+                specific.enable = params.enable.value;
             }
             this.trigger({redrawEventTree: true});
         }

@@ -891,8 +891,7 @@
                                 background: url("img/button-icon.svg") no-repeat -1640px -240px;
                             }
 
-                            &:active,
-                            &.active {
+                            &:active {
                                 background: url("img/button-icon.svg") no-repeat -1640px -280px;
                             }
                         }
@@ -1057,6 +1056,23 @@
                 border-radius: 0 0 2px 2px;
             }
 
+            &.Property-not-active {
+                .p--title,
+                .add-btn,
+                .up-btn,
+                .down-btn,
+                .pp--list-layer,
+                .pp--list{
+                    filter: alpha(opacity=60);
+                    opacity: 0.6;
+                    cursor: not-allowed !important;
+                }
+                .enable-button-div {
+                    .p--icon {
+                        background: url("img/button-icon.svg") no-repeat -1640px -280px !important;
+                    }
+                }
+            }
         }
     }
 }

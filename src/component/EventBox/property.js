@@ -32,6 +32,7 @@ class Property extends React.Component {
             actionDropdownVisible: false, //是否显示动作的下拉框
             currentObject: this.props.specific.object,
             currentAction: this.props.specific.action,  //name&property
+            currentEnable: this.props.specific.enable,  //是否enable
             isActiveEventSelectTarget: false  //是否激活了选择目标对象
         };
         this.expandBtn = this.expandBtn.bind(this);
@@ -50,6 +51,8 @@ class Property extends React.Component {
         this.onActiveSelectTarget = this.onActiveSelectTarget.bind(this);
 
         this.onGetClassListByKey = this.onGetClassListByKey.bind(this);
+
+        this.onSpecificEnable = this.onSpecificEnable.bind(this);
 
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
@@ -71,7 +74,8 @@ class Property extends React.Component {
                 isActiveEventSelectTarget: isActiveEventSelectTarget,
 
                 currentObject: nextProps.specific.object,
-                currentAction: nextProps.specific.action
+                currentAction: nextProps.specific.action,
+                currentEnable: nextProps.specific.enable
             }, ()=>{
                 //获取动作
                 if(this.state.currentObject){
@@ -199,6 +203,9 @@ class Property extends React.Component {
 
     onActiveSelectTarget (e){
         e.stopPropagation();
+        if(!this.state.currentEnable) {
+            return;
+        }
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -206,6 +213,9 @@ class Property extends React.Component {
     }
 
     onSpecificAdd() {
+        if(!this.state.currentEnable) {
+            return;
+        }
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -220,10 +230,21 @@ class Property extends React.Component {
             WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
         }
         WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
+    }
 
+    onSpecificEnable() {
+        this.setState({
+            currentEnable: !this.state.currentEnable,
+            expanded: !this.state.currentEnable
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {'enable': {'value':this.state.currentEnable}});
+        })
     }
 
     expandBtn(expanded) {
+        if(!this.state.currentEnable) {
+            return;
+        }
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -253,6 +274,9 @@ class Property extends React.Component {
     }
 
     onObjectVisibleChange(flag) {
+        if(!this.state.currentEnable) {
+            return;
+        }
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -298,6 +322,9 @@ class Property extends React.Component {
     }
 
     onActionVisibleChange(flag) {
+        if(!this.state.currentEnable) {
+            return;
+        }
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -560,7 +587,7 @@ class Property extends React.Component {
         );
 
         return (
-            <div className="Property f--h" id={propertyId}>
+            <div className={$class("Property f--h", {'Property-not-active':!this.state.currentEnable})} id={propertyId}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
                     <span className="p--close-line" onClick={this.onSpecificDelete}/>
@@ -568,9 +595,8 @@ class Property extends React.Component {
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
                                 <div className="enable-button-div">
-                                    <button className="p--icon">
-
-                                    </button>
+                                    <button className={$class("p--icon")}
+                                            onClick={this.onSpecificEnable}/>
                                 </div>
                                 <Dropdown overlay={objectMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
