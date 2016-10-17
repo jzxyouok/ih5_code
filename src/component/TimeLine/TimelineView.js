@@ -770,6 +770,8 @@ class TimelineView extends React.Component {
                     <ComponentPanel ref="ComponentPanel" />
                 </div>
 
+                <span className="distinguish-line" />
+
                 <div id='TimelineHeader' className='timeline-row f--h'>
                     <div className='timline-column-left f--hlc'>
                         <div id='TimelineTitle'>时间轴</div>
