@@ -638,6 +638,7 @@ class Event extends React.Component {
             return [type];
         }
     }
+
     setCompareObjOption(type){
         let arr=[];
        this.state.allWidgetsList.map((v,i)=>{
