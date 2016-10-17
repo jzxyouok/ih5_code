@@ -1212,7 +1212,7 @@ class DbTable extends React.Component {
                                                                 }>
 
                                                                 <td onClick={ this.rowChoose.bind(this, i)}
-                                                                    onContextMenu={ this.rowRightClick.bind(this) }
+                                                                    //onContextMenu={ this.rowRightClick.bind(this) }
                                                                     data-id={i}
                                                                     className={ $class({"TDZActive" : this.state.columnChooseID == 0})} >
                                                                     {
@@ -1225,37 +1225,37 @@ class DbTable extends React.Component {
                                                                     }
 
                                                                     {
-                                                                        this.state.rowRightMenu && this.state.rowRightID == i
-                                                                        ? <div className="rowRightMenu">
-                                                                            <ul onClick={ this.rowRightMenuClick.bind(this) }>
-                                                                                <li onClick={ this.rowAddIndex.bind(this) }
-                                                                                    data-id={i}
-                                                                                    data-type={-1} >
-                                                                                    在上面添加行
-                                                                                </li>
-                                                                                <li onClick={ this.rowAddIndex.bind(this) }
-                                                                                    data-id={i}
-                                                                                    data-type={1} >
-                                                                                    在下面添加行
-                                                                                </li>
-                                                                                <li className="line" />
-                                                                                <li onClick={ this.rowChangeIndex.bind(this) }
-                                                                                    className={$class({"not-click": i == 0})}
-                                                                                    data-id={i}
-                                                                                    data-type={-1}>
-                                                                                    移至上一行
-                                                                                </li>
-                                                                                <li onClick={ this.rowChangeIndex.bind(this) }
-                                                                                    className={$class({"not-click": i == this.state.dbList.length-1})}
-                                                                                    data-id={i}
-                                                                                    data-type={1} >
-                                                                                    移至下一行
-                                                                                </li>
-                                                                                <li className="line" />
-                                                                                <li className="not-click">删除此行</li>
-                                                                            </ul>
-                                                                            </div>
-                                                                        :   null
+                                                                        //this.state.rowRightMenu && this.state.rowRightID == i
+                                                                        //? <div className="rowRightMenu">
+                                                                        //    <ul onClick={ this.rowRightMenuClick.bind(this) }>
+                                                                        //        <li onClick={ this.rowAddIndex.bind(this) }
+                                                                        //            data-id={i}
+                                                                        //            data-type={-1} >
+                                                                        //            在上面添加行
+                                                                        //        </li>
+                                                                        //        <li onClick={ this.rowAddIndex.bind(this) }
+                                                                        //            data-id={i}
+                                                                        //            data-type={1} >
+                                                                        //            在下面添加行
+                                                                        //        </li>
+                                                                        //        <li className="line" />
+                                                                        //        <li onClick={ this.rowChangeIndex.bind(this) }
+                                                                        //            className={$class({"not-click": i == 0})}
+                                                                        //            data-id={i}
+                                                                        //            data-type={-1}>
+                                                                        //            移至上一行
+                                                                        //        </li>
+                                                                        //        <li onClick={ this.rowChangeIndex.bind(this) }
+                                                                        //            className={$class({"not-click": i == this.state.dbList.length-1})}
+                                                                        //            data-id={i}
+                                                                        //            data-type={1} >
+                                                                        //            移至下一行
+                                                                        //        </li>
+                                                                        //        <li className="line" />
+                                                                        //        <li className="not-click">删除此行</li>
+                                                                        //    </ul>
+                                                                        //    </div>
+                                                                        //:   null
                                                                     }
                                                                 </td>
                                                                 {
@@ -1345,7 +1345,10 @@ class DbTable extends React.Component {
                     <div className="pop-layer"></div>
 
                     <div className="pop-main">
-                        <div className="pop-header f--hlc">添加字段</div>
+                        <div className="pop-header f--hlc">
+                            <span className="icon" />
+                            添加字段
+                        </div>
                         <div className="pop-content">
                             <div className="title">字段类型：</div>
                             <div className="btn-group f--h">
