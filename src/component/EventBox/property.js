@@ -197,7 +197,8 @@ class Property extends React.Component {
         })
     }
 
-    onActiveSelectTarget (){
+    onActiveSelectTarget (e){
+        e.stopPropagation();
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -234,6 +235,9 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
+        if(this.state.isActiveEventSelectTarget) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+        }
         if(this.state.currentObject === object.key) {
             this.setState({
                 objectDropdownVisible: false
@@ -563,14 +567,19 @@ class Property extends React.Component {
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
-                                <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
-                                        onClick={this.onActiveSelectTarget} />
+                                <div className="enable-button-div">
+                                    <button className="p--icon">
+
+                                    </button>
+                                </div>
                                 <Dropdown overlay={objectMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
                                           onVisibleChange={this.onObjectVisibleChange}
                                           visible={this.state.objectDropdownVisible}>
                                     <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
-                                        <div className="title f--hlc">
+                                        <div className="title p--title f--hlc">
+                                            <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
+                                                    onClick={this.onActiveSelectTarget} />
                                             { !w || !w.props || !w.props.name
                                                 ?'目标对象'
                                                 :w.props.name
@@ -596,8 +605,8 @@ class Property extends React.Component {
                                           onVisibleChange={this.onActionVisibleChange}
                                           visible={this.state.actionDropdownVisible}>
                                     <div className={$class("p--dropDown long", {'active':this.state.actionDropdownVisible})}>
-                                        <div className="title f--hlc">
-                                            <span className="pp--icon" />
+                                        <div className="title p--title f--hlc">
+                                            <span className="p--icon" />
                                             {
                                                 !w||!this.state.currentAction
                                                     ? '目标动作'

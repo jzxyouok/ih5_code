@@ -12,6 +12,9 @@
       .item-title-wrap,
       .fade-widget-title-wrap {
         &.allow-event-target{
+          .item-event {
+            width: 22px;
+          }
           &:hover {
             cursor: pointer;
             background-color: #FFA800;
