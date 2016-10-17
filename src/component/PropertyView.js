@@ -222,6 +222,14 @@ class PropertyView extends React.Component {
                       v = value;
                   }else if(prop.name == 'type'){
                       this.selectNode.props.type=this.getScaleTypeDefault(value,prop.options);
+                      //属于第一组则设置初始隐藏,否则设置隐藏
+                      this.selectNode.props.initHide=false;
+                      for(let i in   prop.optionsToJudge){
+                          if(prop.optionsToJudge[i] == value){
+                              this.selectNode.props.initHide=true;
+                              break;
+                          }
+                      }
                       v = value;
                   }else if(prop.name == 'forwardTransition' ||prop.name == 'backwardTransition'){
                       this.selectNode.props[prop.name+'_val']=this.getScaleTypeDefault(value,prop.options);
@@ -257,7 +265,7 @@ class PropertyView extends React.Component {
                           this.selectNode.props.fontKey=this.getFontDefault(value);
                           v = value;
                       }
-                  } else{
+                  }else{
                       v = parseInt(value);
                   }
                     break;
@@ -459,7 +467,7 @@ class PropertyView extends React.Component {
             }
             else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
-                    defaultValue = item.default
+                    defaultValue = item.default;
                 }else if(item.type === propertyType.Percentage && item.name=='alpha'){
                     defaultValue = item.default*100;
                 }else{
@@ -576,7 +584,7 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
-        //console.log(widget);
+         //console.log(widget);
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
         }
