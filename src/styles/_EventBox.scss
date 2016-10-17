@@ -775,11 +775,19 @@
                     }
                 }
 
+                .add-btn,
                 .down-btn,
                 .up-btn {
                     background-color: inherit;
                     border: none;
                     outline: 0;
+                }
+
+                .add-btn:disabled {
+                    filter: alpha(opacity=60);
+                    opacity: 0.6;
+                    &:hover .btn-layer span { background: #325351;}
+                    &:active .btn-layer span { background: #325351;}
                 }
 
                 .down-btn {
@@ -824,8 +832,11 @@
                 .up-btn,
                 .down-btn {
                     &:disabled {
-                        cursor: not-allowed;
+                        filter: alpha(opacity=60);
+                        opacity: 0.6;
+                        cursor: default;
                         .btn-layer {
+                            cursor: not-allowed;
                             background: url("img/button-icon.svg") no-repeat -1960px 0;
                         }
                         &:hover {
@@ -1091,13 +1102,18 @@
 
             &.Property-not-active {
                 .p--title,
-                .add-btn,
-                .up-btn,
-                .down-btn,
                 .pp--list-layer,
                 .pp--list{
                     filter: alpha(opacity=60);
                     opacity: 0.6;
+                    cursor: not-allowed !important;
+                }
+                .add-btn,
+                .up-btn,
+                .down-btn {
+                    cursor: default;
+                }
+                .btn-layer {
                     cursor: not-allowed !important;
                 }
                 .enable-button-div {

@@ -616,12 +616,14 @@ class Property extends React.Component {
                                 </Dropdown>
                             </div>
 
-                            <div className="add-btn" onClick={this.onSpecificAdd}>
+                            <button className="add-btn"
+                                 onClick={this.onSpecificAdd}
+                                 disabled={!this.state.currentEnable}>
                                 <div className="btn-layer">
                                     <span className="heng"/>
                                     <span className="shu"/>
                                 </div>
-                            </div>
+                            </button>
                         </div>
 
                         <div className="p--right flex-1">
@@ -665,7 +667,8 @@ class Property extends React.Component {
                                         onClick={this.expandBtn.bind(this, false)}
                                         disabled={!w||!this.state.currentAction||
                                         !this.state.currentAction.property ||
-                                         this.state.currentAction.property.length==0}>
+                                         this.state.currentAction.property.length==0||
+                                        !this.state.currentEnable}>
                                     <div className="btn-layer">
                                     </div>
                                 </button>
@@ -673,7 +676,8 @@ class Property extends React.Component {
                                         onClick={this.expandBtn.bind(this, true)}
                                         disabled={!w||!this.state.currentAction||
                                         !this.state.currentAction.property ||
-                                        this.state.currentAction.property.length==0}>
+                                        this.state.currentAction.property.length==0||
+                                        !this.state.currentEnable}>
                                     <div className="btn-layer">
                                     </div>
                                 </button>
