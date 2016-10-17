@@ -673,7 +673,7 @@ function saveTree(data, node, saveKey) {
     else if (name == 'eventTree') {
       var etree = [];
 
-        console.log('node',node,node.props['eventTree']);
+        //console.log('node',node,node.props['eventTree']);
 
         node.props['eventTree'].forEach(item => {
         var cmds = [];
@@ -813,7 +813,7 @@ function saveTree(data, node, saveKey) {
             cmds.push(c);
         });
 
-        console.log('judges',judges);
+        //console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges});
 
       });
@@ -2258,82 +2258,85 @@ export default Reflux.createStore({
     setRulerLine:function(bIsShow){
         this.trigger({setRulerLine:{isShow:bIsShow}});
     },
-    saveNode: function(wid, wname, wdescribe, callback) {
+    saveNode: function(wid, wname, wdescribe, callback,updateProgress) {
       // let appendArray = function(a1, a2) {
       //     for (let i = 0; i < a2.length; i++) {
       //       a1.push(a2[i]);
       //     }
       // };
 
-      let getImageList = function(array, list) {
-        var result = [];
-        var count = 0;
-        for (let i = 0; i < list.length; i++) {
-          var item = list[i];
-          if (typeof item == 'string') {
-            count++;
-            array.push(item);
-          } else {
-            var n = item.length;
-            if (count) {
-              result.push(count);
-              count = 0;
+        let getImageList = function(array, list) {
+            var result = [];
+            var count = 0;
+            for (let i = 0; i < list.length; i++) {
+                var item = list[i];
+                if (typeof item == 'string') {
+                    count++;
+                    array.push(item);
+                } else {
+                    var n = item.length;
+                    if (count) {
+                        result.push(count);
+                        count = 0;
+                    }
+                    result.push(-n);
+                    for (var j = 0; j < n; j++) {
+                        array.push(item[j]);
+                    }
+                }
             }
-            result.push(-n);
-            for (var j = 0; j < n; j++) {
-              array.push(item[j]);
+            if (result.length) {
+                if (count)
+                    result.push(count);
+                    return result.join(',');
+                } else {
+                    return count;
             }
-          }
+        };
+        let data = {};
+        let images = [];
+        data['stage'] = {};
+        trimTree(stageTree[0].tree);
+        generateId(stageTree[0].tree);
+        saveTree(data['stage'], stageTree[0].tree);
+        data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
+        // data['stage']['links'] = stageTree[0].tree.imageList.length;
+        // appendArray(images, stageTree[0].tree.imageList);
+        data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
+
+        if (stageTree.length > 1) {
+            data['defs'] = {};
+            for (let i = 1; i < stageTree.length; i++) {
+                let name = stageTree[i].name;
+                data['defs'][name] = {};
+                trimTree(stageTree[i].tree);
+                generateId(stageTree[i].tree);
+                saveTree(data['defs'][name], stageTree[i].tree);
+                data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
+                // data['defs'][name]['links'] = stageTree[i].tree.imageList.length;
+                // appendArray(images, stageTree[i].tree.imageList);
+                data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
+            }
         }
-        if (result.length) {
-          if (count)
-            result.push(count);
-          return result.join(',');
+
+        data = bridge.encryptData(data, images);
+        if (!data)
+            return;
+
+        var cb = function(text) {
+            var result = JSON.parse(text);
+            //console.log('cb',result);
+            if(result['id']){
+                callback(result['id'], wname, wdescribe);
+            }
+        };
+
+        if (wid) {
+            this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb,null,updateProgress);
         } else {
-          return count;
+            this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname) + encodeURIComponent(wdescribe),
+                        'application/octet-stream', data, cb,null,updateProgress);
         }
-      };
-      let data = {};
-      let images = [];
-      data['stage'] = {};
-      trimTree(stageTree[0].tree);
-      generateId(stageTree[0].tree);
-      saveTree(data['stage'], stageTree[0].tree);
-      data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
-      // data['stage']['links'] = stageTree[0].tree.imageList.length;
-      // appendArray(images, stageTree[0].tree.imageList);
-      data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
-
-      if (stageTree.length > 1) {
-        data['defs'] = {};
-        for (let i = 1; i < stageTree.length; i++) {
-          let name = stageTree[i].name;
-          data['defs'][name] = {};
-          trimTree(stageTree[i].tree);
-          generateId(stageTree[i].tree);
-          saveTree(data['defs'][name], stageTree[i].tree);
-          data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
-          // data['defs'][name]['links'] = stageTree[i].tree.imageList.length;
-          // appendArray(images, stageTree[i].tree.imageList);
-          data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
-        }
-      }
-
-      data = bridge.encryptData(data, images);
-      if (!data)
-        return;
-
-      var cb = function(text) {
-          var result = JSON.parse(text);
-          callback(result['id'], wname, wdescribe);
-      };
-
-      if (wid) {
-        this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb);
-      } else {
-        this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname) + encodeURIComponent(wdescribe),
-                        'application/octet-stream', data, cb);
-      }
     },
     setFont: function(font) {
       if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
@@ -2379,7 +2382,7 @@ export default Reflux.createStore({
     saveFontList:function(fontList){
         this.trigger({fontListObj:{'fontList':fontList}});
     },
-    ajaxSend(token, method, url, type, data, callback, binary) {
+    ajaxSend(token, method, url, type, data, callback, binary,updateProgress) {
         if (token)
           globalToken = token;
         var xhr = new XMLHttpRequest();
@@ -2398,6 +2401,9 @@ export default Reflux.createStore({
             xhr.setRequestHeader('Content-Type', type);
         if (globalToken) {
             xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
+        }
+        if(updateProgress){
+            xhr.upload.onprogress = updateProgress;
         }
         xhr.send(data);
     },

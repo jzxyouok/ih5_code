@@ -141,7 +141,7 @@
             width: 0;
             background: #ffa800;
             display: block;
-            animation : save-loading 5s infinite linear;
+            //animation : save-loading 5s infinite linear;
         }
     }
 }
@@ -173,6 +173,10 @@
             display: block;
             margin: 0 15px;
             background: url("img/button-icon.svg") no-repeat -1480px -200px;
+
+            &.error-icon{
+                background-position: -1600px -200px !important;
+            }
         }
     }
 
