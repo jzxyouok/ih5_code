@@ -491,6 +491,7 @@ class TimelineView extends React.Component {
             },()=>{
                 //console.log('xxx',this.state.zoomOrLessNUm,this.state.multiple);
                 this.changeAllWidth(false,null,true);
+                this.dragZoom();
             })
         }
         else if(num == 1 && index !== 1){
@@ -511,6 +512,7 @@ class TimelineView extends React.Component {
                 dragZoomLeft : dragZoomLeft
             },()=>{
                 this.changeAllWidth(false,null,true);
+                this.dragZoom();
                 //console.log('+++',this.state.zoomOrLessNUm,this.state.multiple);
             })
         }
@@ -598,7 +600,6 @@ class TimelineView extends React.Component {
         $(".overall-zoom .zoom-slider .btn").mousedown(function(e){
             move=true;
             _x=e.pageX;
-            left = self.state.dragZoomLeft;
         });
         $(document).mousemove(function(e){
             if(move){
@@ -852,6 +853,7 @@ class TimelineView extends React.Component {
                                                     < this.state.marginLeft* this.state.percentage
                                                     && !this.state.isScroll)
                                             )
+
                                         })}>
 
                             <div style={{ width : this.state.allWidth + 20 +"px",
