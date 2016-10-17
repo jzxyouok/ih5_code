@@ -386,7 +386,7 @@ class Property extends React.Component {
         this.classNameList = [];
         let widget = WidgetStore.getWidgetByKey(key);
         if(widget) {
-            if(widget.className === 'root') {
+            if(widget.className === 'root' || widget.className === 'container') {
                 this.customClassList = classList;
                 this.customClassList.forEach(v=>{
                     this.classNameList.push(v)
@@ -429,7 +429,7 @@ class Property extends React.Component {
                              </MenuItem>;
         };
 
-        let selectMenu = (list, item, index, type)=> {
+        let propertySelectMenu = (list, item, index, type)=> {
             return (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index, type)}>
                 {
                     !list||list.length==0
@@ -437,16 +437,16 @@ class Property extends React.Component {
                         : type === optionType.widget
                             ? list.map(menuWidgetList)
                             : type === optionType.class
-                            ? list.map(menuClassList)
-                            : list.map(menuNormalList)
+                                ? list.map(menuClassList)
+                                : list.map(menuNormalList)
                 }
             </Menu>);
         };
 
-        let dropDownMenu = (list, item, index, title, id, type)=>{
+        let propertyDropDownMenu = (list, item, index, title, pid, type)=>{
             let selectedValue = null;
             let showValue = null;
-            let menu = selectMenu(list, item, index, type);
+            let menu = propertySelectMenu(list, item, index, type);
             switch (type){
                 case optionType.widget:
                     selectedValue = WidgetStore.getWidgetByKey(item.value);
@@ -458,7 +458,7 @@ class Property extends React.Component {
                     break;
             }
             return (<Dropdown overlay={menu} trigger={['click']}
-                             getPopupContainer={() => document.getElementById(id)}>
+                             getPopupContainer={() => document.getElementById(pid)}>
                 <div className={$class("p--dropDown short")}>
                     <div className="title f--hlc">
                         {
@@ -506,7 +506,7 @@ class Property extends React.Component {
                     } else {
                         return <div>未定义类型</div>;
                     }
-                    return dropDownMenu(list, item, index, titleTemp, propertyId, oType);
+                    return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 default:

@@ -290,7 +290,7 @@ propertyMap['path'] = [
 propertyMap['container'] = [
     ...propertyMap['box'],
     { addProvides: widgetFlags.Container},
-    { name: 'create', info:'(class,id,props,bottom)',
+    { name: 'create', showName:'创建对象', info:'(class,id,props,bottom)',
         property:[
             {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
