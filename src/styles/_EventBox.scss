@@ -783,12 +783,12 @@
                     outline: 0;
                 }
 
-                .add-btn:disabled {
-                    filter: alpha(opacity=60);
-                    opacity: 0.6;
-                    &:hover .btn-layer span { background: #325351;}
-                    &:active .btn-layer span { background: #325351;}
-                }
+                //.add-btn:disabled {
+                //    filter: alpha(opacity=60);
+                //    opacity: 0.6;
+                //    &:hover .btn-layer span { background: #325351;}
+                //    &:active .btn-layer span { background: #325351;}
+                //}
 
                 .down-btn {
                     display: block;
@@ -1108,13 +1108,12 @@
                     opacity: 0.6;
                     cursor: not-allowed !important;
                 }
-                .add-btn,
                 .up-btn,
                 .down-btn {
                     cursor: default;
-                }
-                .btn-layer {
-                    cursor: not-allowed !important;
+                    .btn-layer {
+                        cursor: not-allowed !important;
+                    }
                 }
                 .enable-button-div {
                     .p--icon {

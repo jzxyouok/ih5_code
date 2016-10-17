@@ -215,9 +215,6 @@ class Property extends React.Component {
     }
 
     onSpecificAdd() {
-        if(!this.state.currentEnable) {
-            return;
-        }
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -619,8 +616,7 @@ class Property extends React.Component {
                             </div>
 
                             <button className="add-btn"
-                                 onClick={this.onSpecificAdd}
-                                 disabled={!this.state.currentEnable}>
+                                 onClick={this.onSpecificAdd}>
                                 <div className="btn-layer">
                                     <span className="heng"/>
                                     <span className="shu"/>
