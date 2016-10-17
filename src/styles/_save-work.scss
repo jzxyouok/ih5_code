@@ -175,7 +175,7 @@
             background: url("img/button-icon.svg") no-repeat -1480px -200px;
 
             &.error-icon{
-                background-position: -1600px -200px;
+                background-position: -1600px -200px !important;
             }
         }
     }
