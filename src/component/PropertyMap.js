@@ -37,8 +37,8 @@ const widgetFlags = {
 
 widgetFlags.FLAG_MASK = widgetFlags.Root | widgetFlags.Box | widgetFlags.Container;
 
-const propertyMap = {};
-const propertyFlags = {};
+var propertyMap = {};
+var propertyFlags = {};
 
 propertyMap['widget'] = [
     { name: 'id',showName:'ID', type: propertyType.String, default: '', isProperty: true },
