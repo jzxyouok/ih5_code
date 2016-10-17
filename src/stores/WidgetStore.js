@@ -575,7 +575,7 @@ function generateJsFunc(etree) {
         });
       }
       item.cmds.forEach(cmd => {
-        if (cmd.sObjId && cmd.action && cmd.action.type == 'default') {
+        if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
             if (cmd.action.property.length >= 1)
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(cmd.action.property[0]['value']));
