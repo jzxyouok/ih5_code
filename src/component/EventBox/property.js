@@ -100,8 +100,8 @@ class Property extends React.Component {
             this.customClassList = widget.classList;
             if(this.state.currentObject) {
                 this.onGetClassListByKey(this.state.currentObject);
+                this.forceUpdate();
             }
-            this.forceUpdate();
         } else if(widget.allWidgets){
             this.setState({
                 objectList: widget.allWidgets
