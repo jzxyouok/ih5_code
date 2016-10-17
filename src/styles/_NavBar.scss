@@ -63,7 +63,8 @@
                     }
 
                     &.open-li ,
-                    &.save-li {
+                    &.save-li ,
+                    &.create-li{
                         cursor: pointer;
 
                         &:hover{
@@ -72,7 +73,8 @@
                         }
                     }
 
-                    &.open-li {
+                    &.open-li ,
+                    &.create-li{
                         .icon {
                             position: absolute;
                             right: 0;
@@ -90,7 +92,8 @@
                 }
             }
 
-            .open-li-content {
+            .open-li-content ,
+            .create-li-content{
                 @include shadow(5px,5px,20px,0.3);
                 position: absolute;
                 top: 24px;
@@ -116,6 +119,10 @@
                         color: #fff;
                     }
                 }
+            }
+
+            .create-li-content{
+                top: 0;
             }
         }
 

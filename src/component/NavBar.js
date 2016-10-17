@@ -65,7 +65,10 @@ class NavBar extends React.Component {
             saveLoading : false,
             saveFinish : false,
             saveFinishPlay : false,
-            qrCodeType : true
+            qrCodeType : false,
+            qrCodeShow : false,
+            qrCode : null,
+            createWork : false,
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -106,6 +109,10 @@ class NavBar extends React.Component {
         this.onSaveDone = this.onSaveDone.bind(this);
         this.saveFinishFuc = this.saveFinishFuc.bind(this);
         this.qrCode = this.qrCode.bind(this);
+        this.qrCodeClose = this.qrCodeClose.bind(this);
+        this.createWorkShow = this.createWorkShow.bind(this);
+        this.createWorkHide = this.createWorkHide.bind(this);
+        this.createWork = this.createWork.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -262,7 +269,13 @@ class NavBar extends React.Component {
             //window.open(this.playUrl + 'work/' + id, '_blank');
         }
         else if(this.state.qrCodeType){
-            //bridge.generateQrcode(this.playUrl, 184, 184)
+            let qrCode = bridge.generateQrcode(this.playUrl+ 'work/' + id, 174, 174);
+            //console.log(qrCode);
+            this.setState({
+                saveLoading : false,
+                qrCodeShow : true,
+                qrCode : qrCode
+            });
         }
         else {
             this.setState({
@@ -286,6 +299,28 @@ class NavBar extends React.Component {
             saveFinish : false,
             saveFinishPlay : false
         });
+    }
+
+    createWork(bool){
+        this.setState({
+            specialLayer : false
+        });
+        if(bool){
+            let href = window.location.href;
+            let index = href.indexOf('?');
+            if(index>=0){
+                href = href.substring(0,index);
+            }
+            window.open(href + "?dom=1", "_self");
+        }
+        else{
+            let href = window.location.href;
+            let index = href.indexOf('?');
+            if(index>=0){
+                href = href.substring(0,index);
+            }
+            window.open(href, "_self");
+        }
     }
 
     onPlaySave(isPlay) {
@@ -312,7 +347,8 @@ class NavBar extends React.Component {
     onSave() {
         this.onPlaySave(false);
         this.setState({
-            specialLayer : false
+            specialLayer : false,
+            qrCodeType : false
         })
     }
 
@@ -320,14 +356,24 @@ class NavBar extends React.Component {
         this.onPlaySave(false);
         this.setState({
             specialLayer : false,
-            qrCodeType : true
+            qrCodeType : true,
+            qrCode : null
+        })
+    }
+
+    qrCodeClose(){
+        this.setState({
+            qrCodeType : false,
+            qrCodeShow : false,
+            qrCode : null
         })
     }
 
     onPlay() {
         this.onPlaySave(true);
         this.setState({
-            specialLayer : false
+            specialLayer : false,
+            qrCodeType : false
         })
     }
 
@@ -697,6 +743,18 @@ class NavBar extends React.Component {
         })
     }
 
+    createWorkShow(){
+        this.setState({
+            createWork : true
+        })
+    }
+
+    createWorkHide(){
+        this.setState({
+            createWork : false
+        })
+    }
+
     specialLayerToogle(){
         this.setState({
             specialLayer : !this.state.specialLayer
@@ -801,7 +859,12 @@ class NavBar extends React.Component {
 
                         <div className={$class("special-layer",{"hidden": !this.state.specialLayer})}>
                             <ul className="special-list">
-                                <li>新建作品</li>
+                                <li className="f--hlc create-li"
+                                    onMouseOver={ this.createWorkShow }
+                                    onMouseOut={ this.createWorkHide }>
+                                    新建作品
+                                    <span className="icon" />
+                                </li>
                                 <li className="f--hlc open-li"
                                     onMouseOver={ this.openWorkShow }
                                     onMouseOut={ this.openWorkHide }>
@@ -832,6 +895,15 @@ class NavBar extends React.Component {
                                             </li>
                                         })
                                     }
+                                </ul>
+                            </div>
+
+                            <div className={ $class("create-li-content",{"hidden": !this.state.createWork})}
+                                 onMouseOver={ this.createWorkShow }
+                                 onMouseOut={ this.createWorkHide }>
+                                <ul>
+                                    <li onClick={ this.createWork.bind(this,true) }>网页</li>
+                                    <li onClick={ this.createWork.bind(this,false) }>画布</li>
                                 </ul>
                             </div>
                         </div>
@@ -1044,7 +1116,7 @@ class NavBar extends React.Component {
                                 预览
                             </button>
 
-                            <button className='btn btn-clear qrCode-btn' title='二维码' >
+                            <button className='btn btn-clear qrCode-btn' title='二维码' onClick={ this.qrCode }>
                                 <span className='icon' />
                                 二维码
                             </button>
@@ -1198,6 +1270,26 @@ class NavBar extends React.Component {
                             </div>
 
                             <button className="btn-clear sure-btn" onClick={ this.saveFinishFuc }>确定</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={$class("qrCode-layer f--hcc",{"hidden": !this.state.qrCodeShow})}>
+                    <div className="qrCode">
+                        <div className="qrCode-header f--hlc">
+                            <span className="title-icon" />
+                            <span className="flex-1">预览二维码</span>
+                            <span className="close-icon" onClick={ this.qrCodeClose} />
+                        </div>
+
+                        <div className="qrCode-content">
+                            <div className="qrCode-div">
+                                <div className="qrCode-bg">
+                                    <img src={ this.state.qrCode }/>
+                                </div>
+                            </div>
+
+                            <p>此二维码仅用于预览，分享请使用“我的作品”页面中二维码</p>
                         </div>
                     </div>
                 </div>

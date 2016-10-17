@@ -364,7 +364,6 @@ class ObjectTree extends React.Component {
         if(this.onSelectEventTargetMode(data)) {
             return false;
         }
-        if(on)
         //console.log(data);
         data.props['visible'] = bool;
         data.node['visible'] = bool;
