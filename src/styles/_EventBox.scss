@@ -905,8 +905,19 @@
 
                         .p--dropDown {
                             background-color: #294140;
+                            width: 142px;
+                            border-radius: 2px;
                             .title {
                                 background-color: #294140;
+                                span {
+                                    position: absolute;
+                                    right: 8px;
+                                    top: 0;
+                                    width: 10px;
+                                    height: 22px;
+                                    background: url("img/button-icon.svg") no-repeat -1680px -40px;
+                                    display: block;
+                                }
                             }
                         }
 

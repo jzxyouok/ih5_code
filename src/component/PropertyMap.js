@@ -68,7 +68,7 @@ propertyMap['root'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'create', showName:'创建对象', info:'(class,id,props,bottom)',
         property:[
-            {'name':'class', showName:'类别', 'value':null, 'type':propertyType.String},
+            {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
             {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
@@ -292,7 +292,7 @@ propertyMap['container'] = [
     { addProvides: widgetFlags.Container},
     { name: 'create', info:'(class,id,props,bottom)',
         property:[
-            {'name':'class', showName:'类别', 'value':null, 'type':propertyType.String},
+            {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
             {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
@@ -708,6 +708,19 @@ function checkLockClass(selected) {
     }
 }
 
+function checkIsClassType(className) {
+    if(className === 'widget'|| className === 'data' ||
+        className === 'root' || className === 'sprite' ||
+        className === 'box' || className === 'textBox' ||
+        className === 'graphics' || className === 'class' ||
+        className === 'strVar' || className === 'intVar' ||
+        className === dataType.oneDArr || className === dataType.twoDArr) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 function checkNotInDomMode(selected, className) {
     let selectWidget = selected;
     if(selected.className === 'func'||
@@ -788,4 +801,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass, checkNotInDomMode};
+export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass, checkNotInDomMode, checkIsClassType};

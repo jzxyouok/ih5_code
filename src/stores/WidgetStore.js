@@ -2410,4 +2410,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType}
+export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType, classList}
