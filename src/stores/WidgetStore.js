@@ -439,6 +439,7 @@ function objectToId(object) {
   } else {
     idName = object.props['id'];
   }　
+ // console.log('object',object);
   return [idName, varKey, varName];
 }
 
@@ -473,10 +474,13 @@ function generateId(node, idList) {
 
   if (node.props['eventTree']) {
       generateObjectId(node);
+//      console.log(" node.props['eventTree']", node.props['eventTree']);
       node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
+          judge.judgeObj = keyMap[judge.judgeObjKey];
+          judge.compareObj = keyMap[judge.compareObjKey];
         generateObjectId(judge.judgeObj);
-        generateObjectId(judge.compareObj); 
+        generateObjectId(judge.compareObj);
         if (idList != undefined) {
           if (judge.judgeObj) {
             var o = objectToId(judge.judgeObj);
@@ -552,7 +556,7 @@ function generateJsFunc(etree) {
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
-          if (c.judgeObj && c.judgeValFlag) {
+          if (c.judgeObjId && c.judgeValFlag) {
             var op = c.compareFlag;
             var jsop;
             if (op == '=')
@@ -565,7 +569,7 @@ function generateJsFunc(etree) {
               jsop = op;
 
             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
-            if (c.compareObjId) {
+            if (c.compareObjId && c.compareValFlag) {
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
               o += JSON.stringify(c.compareObjFlag);
@@ -575,7 +579,7 @@ function generateJsFunc(etree) {
         });
       }
 
-      console.log('conditions',conditions);
+    //  console.log('conditions',conditions);
 
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
@@ -679,7 +683,6 @@ function saveTree(data, node, saveKey) {
 
             judges.conFlag = item.conFlag;
             if(judges.conFlag=='触发条件'){judges.conFlag=null;}
-
             judges.className=node.className;
 
             judges.children=[];
@@ -689,6 +692,7 @@ function saveTree(data, node, saveKey) {
                     let obj = {};
                     obj.judgeObjKey =node.key;
                     obj.judgeObjFlag = node.props.name; //判断对象的名字
+
                     obj.compareFlag = item.conFlag;
                     obj.showName=v.showName;
                     obj.type=v.type;
@@ -702,9 +706,8 @@ function saveTree(data, node, saveKey) {
             item.children.map((v,i)=>{
              let obj={};
              obj.judgeObjKey =v.judgeObjKey;
-             obj.judgeObj =  this.getWidgetByKey(obj.judgeObjKey);
-             if (obj.judgeObj) {
-                   let o = objectToId(obj.judgeObj);
+             if (v.judgeObj) {
+                   let o = objectToId(v.judgeObj);
                    obj.judgeObjId = o[0];
                    if (o[1]) {
                      obj.judgeVarId = o[1];
@@ -712,14 +715,17 @@ function saveTree(data, node, saveKey) {
                    }
                 }
              obj.judgeObjFlag=v.judgeObjFlag;
+             if(obj.judgeObjFlag=='判断值') {
+                 obj.judgeObjFlag = null;
+             }
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
 
              obj.compareFlag=v.compareFlag;//比较运算符
 
              obj.compareObjKey=v.compareObjKey;
-              obj.compareObj =  this.getWidgetByKey(obj.compareObjKey);
-                if (obj.compareObj) {
-                   var o = objectToId(obj.compareObj);
+
+                if (v.compareObj) {
+                   var o = objectToId(v.compareObj);
                    obj.compareObjId = o[0];
                    if (o[1]) {
                      obj.compareVarId = o[1];
@@ -728,6 +734,9 @@ function saveTree(data, node, saveKey) {
                 }
              obj.compareObjFlag=v.compareObjFlag;
              obj.compareValFlag=v.compareValFlag;//判断对象的属性
+             if( obj.compareValFlag=='比较值') {
+                 obj.compareValFlag = null;
+             }
 
              obj.arrHidden=v.arrHidden;
              judges.children.push(obj);
@@ -801,7 +810,7 @@ function saveTree(data, node, saveKey) {
             cmds.push(c);
         });
 
-        console.log('judges',judges);
+//        console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges});
 
       });
