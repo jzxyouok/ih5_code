@@ -183,7 +183,6 @@ function loadTree(parent, node, idList) {
       var r = {};
       r.enable = item.enable;
       var judgesObj = item.judges;
-
       r.conFlag = judgesObj.conFlag;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
@@ -442,6 +441,7 @@ function objectToId(object) {
   } else {
     idName = object.props['id'];
   }　
+ // console.log('object',object);
   return [idName, varKey, varName];
 }
 
@@ -476,8 +476,11 @@ function generateId(node, idList) {
 
   if (node.props['eventTree']) {
       generateObjectId(node);
+//      console.log(" node.props['eventTree']", node.props['eventTree']);
       node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
+          judge.judgeObj = keyMap[judge.judgeObjKey];
+          judge.compareObj = keyMap[judge.compareObjKey];
         generateObjectId(judge.judgeObj);
         generateObjectId(judge.compareObj);
         if (idList != undefined) {
@@ -568,7 +571,7 @@ function generateJsFunc(etree) {
               jsop = op;
 
             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
-            if (c.compareObjId) {
+            if (c.compareObjId && c.compareValFlag) {
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
               o += JSON.stringify(c.compareObjFlag);
@@ -577,6 +580,9 @@ function generateJsFunc(etree) {
           }
         });
       }
+
+    //  console.log('conditions',conditions);
+
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
@@ -660,6 +666,7 @@ function generateJsFunc(etree) {
       }
     }
   });
+
   return output;
 }
 
@@ -677,8 +684,8 @@ function saveTree(data, node, saveKey) {
         var judges={};
             var eventEnable = item.enable; //是否可执行
             judges.conFlag = item.conFlag;
-            console.log(node);
-             judges.className=node.className;
+            if(judges.conFlag=='触发条件'){judges.conFlag=null;}
+            judges.className=node.className;
 
             judges.children=[];
             if(item.needFill) {
@@ -687,6 +694,7 @@ function saveTree(data, node, saveKey) {
                     let obj = {};
                     obj.judgeObjKey =node.key;
                     obj.judgeObjFlag = node.props.name; //判断对象的名字
+
                     obj.compareFlag = item.conFlag;
                     obj.showName=v.showName;
                     obj.type=v.type;
@@ -699,14 +707,42 @@ function saveTree(data, node, saveKey) {
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
              let obj={};
+
              obj.enable = v.enable; //是否可执行
-             obj.judgeObjkey =v.judgeObjkey;
+             obj.judgeObjKey =v.judgeObjKey;
+             if (v.judgeObj) {
+                   let o = objectToId(v.judgeObj);
+                   obj.judgeObjId = o[0];
+                   if (o[1]) {
+                     obj.judgeVarId = o[1];
+                     obj.judgeVarName = o[2];
+                   }
+                }
+             obj.judgeObjFlag=v.judgeObjFlag;
+             if(obj.judgeObjFlag=='判断值') {
+                 obj.judgeObjFlag = null;
+             }
+
+
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
 
              obj.compareFlag=v.compareFlag;//比较运算符
 
-             obj.compareObjkey=v.compareObjkey;
+             obj.compareObjKey=v.compareObjKey;
+
+                if (v.compareObj) {
+                   var o = objectToId(v.compareObj);
+                   obj.compareObjId = o[0];
+                   if (o[1]) {
+                     obj.compareVarId = o[1];
+                     obj.compareVarName = o[2];
+                   }
+                }
+             obj.compareObjFlag=v.compareObjFlag;
              obj.compareValFlag=v.compareValFlag;//判断对象的属性
+             if( obj.compareValFlag=='比较值') {
+                 obj.compareValFlag = null;
+             }
 
              obj.arrHidden=v.arrHidden;
              judges.children.push(obj);
@@ -780,8 +816,10 @@ function saveTree(data, node, saveKey) {
             cmds.push(c);
         });
 
+
         console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges, enable:eventEnable});
+
 
       });
       data['etree'] = etree;
@@ -1498,10 +1536,28 @@ export default Reflux.createStore({
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
+        // let eventTree = {
+        //     'eid': eid,
+        //     'condition': null,
+        //     'children': null,
+        //     'enable': true,
+        //     'specificList': [eventSpec]
+        // };
+
         let eventTree = {
             'eid': eid,
-            'condition': null,
-            'children': null,
+            'children': [{
+                judgeObjFlag:'判断对象',
+                judgeValFlag:'判断值',
+                compareFlag:'=',
+                compareObjFlag:'比较值/对象',
+                compareValFlag:'比较值',
+                arrHidden: [true,true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+            }],
+            zhongHidden:true,
+            logicalFlag:'and',
+            conFlag:'触发条件',
+            className:null,
             'enable': true,
             'specificList': [eventSpec]
         };
@@ -1666,7 +1722,6 @@ export default Reflux.createStore({
         this.trigger({redrawEventTree: true});
     },
     addEventChildren:function(event){
-
         if(event && event['children']){
             event['children'].push({
                 'cid': _childrenCount++,
@@ -1678,7 +1733,6 @@ export default Reflux.createStore({
                 enable: true,
                 arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             });
-
             this.trigger({redrawEventTree: true});
         }
     },
