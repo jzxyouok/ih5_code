@@ -606,15 +606,17 @@ class Property extends React.Component {
         );
 
         return (
-            <div className={$class("Property f--h", {'Property-not-active':!this.state.currentEnable})} id={propertyId}>
+            <div className={$class("Property f--h", {'Property-not-enable':!this.state.currentEnable})} id={propertyId}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
-                    <span className="p--close-line" onClick={this.onSpecificDelete}/>
+                    <span className={$class("p--close-line", {'p--close-not-enable': this.state.event&&!this.state.event.enable})}
+                          onClick={this.onSpecificDelete}/>
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
                                 <div className="enable-button-div">
                                     <button className={$class("p--icon")}
+                                            disabled={this.state.event&&!this.state.event.enable}
                                             onClick={this.onSpecificEnable}/>
                                 </div>
                                 <Dropdown overlay={objectMenu} trigger={['click']}
@@ -624,6 +626,7 @@ class Property extends React.Component {
                                     <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
                                         <div className="title p--title f--hlc">
                                             <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
+                                                    disabled={!this.state.currentEnable}
                                                     onClick={this.onActiveSelectTarget} />
                                             { !w || !w.props || !w.props.name
                                                 ?'目标对象'
@@ -636,6 +639,7 @@ class Property extends React.Component {
                             </div>
 
                             <button className="add-btn"
+                                    disabled={this.state.event&&!this.state.event.enable}
                                  onClick={this.onSpecificAdd}>
                                 <div className="btn-layer">
                                     <span className="heng"/>

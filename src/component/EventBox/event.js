@@ -480,6 +480,10 @@ class Event extends React.Component {
 
 
     plusOperation(eventIndex){
+        if(this.state.eventList[eventIndex]&&
+            !this.state.eventList[eventIndex].enable){
+            return;
+        }
         this.curEventIndex =eventIndex;
         let eventList =this.state.eventList;
         if(eventList[this.curEventIndex].zhongHidden){
@@ -493,6 +497,10 @@ class Event extends React.Component {
     }
 
     deleteOperation(curChildrenIndex,curEventIndex){
+        if(this.state.eventList[curEventIndex]&&
+            !this.state.eventList[curEventIndex].enable){
+            return;
+        }
         WidgetActions['delEventChildren'](this.state.eventList[curEventIndex],curChildrenIndex);
     }
 
@@ -729,7 +737,7 @@ class Event extends React.Component {
         this.curEventIndex=curEventIndex;
         let option = type.replace('Flag', 'Option');
         let obj={};
-         let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
+        let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
 
         //每次点击,从新获取下拉框的内容
         switch (type){
@@ -1081,7 +1089,9 @@ class Event extends React.Component {
                                                             <span className='icon'  /></div>
                                                     </Dropdown>
                                                 </div>
-                                                <span className={$class('close-btn')} onClick={this.deleteOperation.bind(this,i1,i)} />
+                                                <button className={$class('close-btn')}
+                                                        disabled={!v.enable}
+                                                        onClick={this.deleteOperation.bind(this,i1,i)} />
                                             </div>
                                         })
                                     }
@@ -1089,12 +1099,14 @@ class Event extends React.Component {
                             }
                             <div className='right flex-1'>
                                 <div className='right-layer'>
-                                    <div className={$class('plus-btn')}   onClick={this.plusOperation.bind(this,i)}>
+                                    <button className={$class('plus-btn')}
+                                            disabled={!v.enable}
+                                            onClick={this.plusOperation.bind(this,i)}>
                                         <div className='btn'>
                                             <span className='heng' />
                                             <span className='shu' />
                                         </div>
-                                    </div>
+                                    </button>
                                 </div>
                             </div>
                         </div>
