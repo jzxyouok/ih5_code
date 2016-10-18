@@ -21,30 +21,27 @@ export default Reflux.createActions([
   'removeEventTree',              //删除事件树
   'enableEventTree',              //事件树内全部事件的可执行与否
   'activeEventTree',              //激活事件树
+
   'addEvent',                     //添加事件
-  'removeEvent',                  //删除事件
   'enableEvent',                  //单个事件的可执行与否
+  'delEvent',                     //删除整条事件
+
   'getAllWidgets',                //获取所有的对象
   'reorderEventTreeList',         //重排事件列表
 
   'addSpecific',                  //添加事件目标
   'deleteSpecific',               //删除事件目标
   'changeSpecific',               //修改事件目标
+  'enableSpecific',               //enable／disable事件目标
 
   'addEventChildren'  ,          //添加新的判断逻辑
   'delEventChildren'  ,          //删除判断逻辑
-  'delEvent',                    //删除整条判断逻辑
+  'enableEventChildren',         //单个条件的可执行与否
 
-  'selectFunction',               //选择函数
-  'addFunction',                  //添加函数
+  'selectFadeWidget',             //选择伪对象
+  'addFadeWidget',                //添加伪对象
   'changeFunction',               //修改函数
-
-  'selectVariable',               //选择变量
-  'addVariable',                  //添加变量
   'changeVariable',               //添加变量
-
-  'selectDBItem',                 //选择数据库Item
-  'addDBItem',                    //添加数据库Item
   'changeDBItem',                 //修改数据库Item
 
   'pasteTreeNode',                  //黏贴功能入口

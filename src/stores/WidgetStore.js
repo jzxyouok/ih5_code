@@ -31,6 +31,12 @@ var nodeType = {
     dbItem: 'dbItem',
 };
 
+var nodeAction = {
+    add: 'add',
+    remove: 'remove',
+    change: 'change',
+};
+
 var keepType = {
     event: 'event',
     func: 'func',
@@ -111,8 +117,13 @@ function loadTree(parent, node, idList) {
           temp['props'] = item.props;
           temp['type'] = item.type;
           temp['className'] = 'var';
-          temp['key'] = _keyCount++;
+          if (item['key'] !== undefined) {
+              temp['key'] = item['key'];
+          } else {
+              temp['key'] = _keyCount++;
+          }
           temp['widget'] = current;
+          keyMap[temp['key']] = temp;
           switch (temp['type']){
               case varType.number:
                   current.intVarList.push(temp);
@@ -134,8 +145,13 @@ function loadTree(parent, node, idList) {
           temp['params']  = item.params;
           temp['props'] = item.props;
           temp['className'] = 'func';
-          temp['key'] = _keyCount++;
+          if (item['key'] !== undefined) {
+              temp['key'] = item['key'];
+          } else {
+              temp['key'] = _keyCount++;
+          }
           temp['widget'] = current;
+          keyMap[temp['key']] = temp;
           current.funcList.push(temp);
       });
   }
@@ -148,9 +164,14 @@ function loadTree(parent, node, idList) {
               temp['name'] = item.name;
               temp['props'] = item.props;
               temp['className'] = 'dbItem';
-              temp['key'] = _keyCount++;
-              temp['widget'] = current;
+              if (item['key'] !== undefined) {
+                  temp['key'] = item['key'];
+              } else {
+                  temp['key'] = _keyCount++;
+              }
               temp['fields'] = item.fields;
+              temp['widget'] = current;
+              keyMap[temp['key']] = temp;
               current.dbItemList.push(temp);
           })
       }
@@ -160,14 +181,12 @@ function loadTree(parent, node, idList) {
     var eventTree = [];
     node['etree'].forEach(item =>{
       var r = {};
+      r.enable = item.enable;
       var judgesObj = item.judges;
-
-
-
-
       r.conFlag = judgesObj.conFlag;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
+      r.className = judgesObj.className;
       r.children = [];
         let needFill =[];
         judgesObj.children.map((v,i)=>{
@@ -177,6 +196,7 @@ function loadTree(parent, node, idList) {
                 obj.showName = v.showName;
                 obj.type = v.type;
                 obj.default = v.compareValFlag;
+                obj.enable = v.enable;
                 needFill.push(obj);
             }else{
                 r.children.push(v);
@@ -186,19 +206,20 @@ function loadTree(parent, node, idList) {
             r.needFill=needFill;
         }
 
-
-
       r.eid = (_eventCount++);
       r.specificList = [];
       item.cmds.forEach(cmd => {
-        r.specificList.push({action:cmd, sid:_specificCount++});
+          let temp = cmd;
+          temp.sid = _specificCount++;
+          r.specificList.push(temp);
       });
       //没有的时候添加一个空的
       if(r.specificList.length === 0){
           r.specificList.push({
               'sid': _specificCount++,
               'object': null,
-              'action': null
+              'action': null,
+              'enable': true
           })
       }
       eventTree.push(r);
@@ -264,6 +285,15 @@ function idToObject(list, idName, varName) {
   }
 }
 
+function idToObjectKey(list, idName, varName) {
+    let obj = idToObject(list, idName, varName);
+    if (obj) {
+        return obj.key;
+    } else {
+        return null;
+    }
+}
+
 function resolveEventTree(node, list) {
   if (node.props['eventTree']) {
     node.props['eventTree'].forEach(item => {
@@ -278,32 +308,36 @@ function resolveEventTree(node, list) {
       });
 
       item.specificList.forEach(cmd => {
-        cmd.object = idToObject(list, cmd.action.id, cmd.action.var);
-        delete(cmd.action.id);
-        delete(cmd.action.var);
-
-        //不存在目标对象
-        if(!cmd.object){
-            cmd.object = null;
-        }
+          if(cmd.sObjId){
+              cmd.object = idToObjectKey(list, cmd.sObjId[0], cmd.sObjId[1]);
+          } else {
+              cmd.object = null;
+          }
+          (delete cmd.sObjId);
 
           //不存在目标动作
-          if(!cmd.action.type) {
+          if(!cmd.object||!cmd.action) {
               cmd.action = null;
           } else {
               switch (cmd.action.type) {
                   case funcType.customize:
-                      cmd.action.func = idToObject(list, cmd.action.funcId[0], cmd.action.funcId[1]);
-                      delete(cmd.action.funcId);
-                      if(!cmd.action.func){
+                      if(cmd.action.funcId){
+                          cmd.action.func = idToObjectKey(list, cmd.action.funcId[0], cmd.action.funcId[1]);
+                      } else {
                           cmd.action = null;
                       }
+                      (delete cmd.action.funcId);
                       break;
                   default:
-                      if(cmd.object&&cmd.object.className === 'db') {
+                      let o = keyMap[cmd.object];
+                      if(o&&o.className === 'db') {
                           cmd.action.property.forEach(v=> {
-                              if((v.name === 'data'||v.name=='option') && v.valueId) {
-                                  v.value = idToObject(list, v.valueId[0], v.valueId[1]);
+                              if((v.name === 'data'||v.name=='option')) {
+                                  if(v.valueId){
+                                      v.value = idToObjectKey(list, v.valueId[0], v.valueId[1]);
+                                  } else {
+                                      v.value = null;
+                                  }
                                   (delete v.valueId);
                               }
                           });
@@ -326,12 +360,12 @@ function resolveDBItemList(node, list) {
     if (node.dbItemList) {
         node.dbItemList.forEach(v => {
             v.fields.forEach(item => {
-                if(item.wid){
-                    item.value = idToObject(list, item.wid[0], item.wid[1]);
-                    delete(item.wid);
+                if(item.valueId){
+                    item.value = idToObjectKey(list, item.valueId[0], item.valueId[1]);
                 } else {
                     item.value = null;
                 }
+                delete(item.valueId);
             });
         });
     }
@@ -389,7 +423,7 @@ function generateObjectId(object) {
 }
 
 function objectToId(object) {
-  var idName, varKey, varName;
+  let idName, varKey, varName;
   if (object.className == 'var') {
     idName = object.widget.props['id'];
     varName = object.name;
@@ -406,15 +440,47 @@ function objectToId(object) {
       varKey = 'd' + object.widget.dbItemList.indexOf(object);
   } else {
     idName = object.props['id'];
-  }
+  }　
+ // console.log('object',object);
   return [idName, varKey, varName];
 }
 
+function objectKeyToId(key) {
+    if(key) {
+        let obj = keyMap[key];
+        if(obj){
+            return objectToId(obj);
+        } else {
+            return null;
+        }
+    } else return null;
+}
+
 function generateId(node, idList) {
+    //生成需要的data
+    let specGenIdsData = (key) => {
+        let data = keyMap[key];
+        generateObjectId(data);
+        if (idList != undefined && data) {
+            var o = objectToId(data);
+            //ids的key只需保存外层的
+            if (o[1]) {
+                idList[o[0]] = data.widget.key;
+            } else {
+                idList[o[0]] = data.key;
+            }
+            return o;
+        }
+        return null;
+    };
+
   if (node.props['eventTree']) {
       generateObjectId(node);
+//      console.log(" node.props['eventTree']", node.props['eventTree']);
       node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
+          judge.judgeObj = keyMap[judge.judgeObjKey];
+          judge.compareObj = keyMap[judge.compareObjKey];
         generateObjectId(judge.judgeObj);
         generateObjectId(judge.compareObj);
         if (idList != undefined) {
@@ -442,47 +508,19 @@ function generateId(node, idList) {
       });
 
       item.specificList.forEach(cmd => {
-        generateObjectId(cmd.object);
-        if (idList != undefined && cmd.object) {
-          var o = objectToId(cmd.object);
-          idList[o[0]] = cmd.object.key;
-            if(!cmd.action) {
-                cmd.action = {};
-            }
-            cmd.action.id = o[0];
-            if (o[1]) {
-                idList[o[0]] = cmd.object.widget.key;
-                cmd.action.var = o[1];
-                cmd.action.varName = o[2];
-            }
-          }
+          let sObjId = specGenIdsData(cmd.object);
+          cmd.sObjId = sObjId;
           if(cmd.action){
               switch (cmd.action.type){
                   case funcType.customize:
-                      generateObjectId(cmd.action.func);
-                      if (idList != undefined && cmd.action.func) {
-                          var o = objectToId(cmd.action.func);
-                          idList[o[0]] = cmd.action.func.key;
-                          cmd.action.funcId = o;
-                          if (cmd.action.funcId[1]) {
-                              idList[cmd.action.funcId[0]] = cmd.action.func.widget.key;
-                          }
-                      }
+                      cmd.action.funcId = specGenIdsData(cmd.action.func);
                       break;
                   default:
                       if(cmd.action.property){
                           cmd.action.property.forEach(v=>{
                               //看是否需要generateid
-                              if(v.value&&v.value.className){
-                                  generateObjectId(v.value);
-                                  if (idList != undefined && v.value) {
-                                      var o = objectToId(v.value);
-                                      idList[o[0]] = v.value.key;
-                                      v.valueId = o;
-                                      if (v.valueId[1]) {
-                                          idList[v.valueId[0]] = v.value.widget.key;
-                                      }
-                                  }
+                              if (v.name ==='data'|| v.name ==='option') {
+                                  v.valueId = specGenIdsData(v.value);
                               }
                           })
                       }
@@ -495,15 +533,7 @@ function generateId(node, idList) {
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
           item.fields.forEach(judge => {
-              generateObjectId(judge.value);
-              if (idList != undefined && judge.value) {
-                  var o = objectToId(judge.value);
-                  idList[o[0]] = judge.value.key;
-                  judge.wid = o;
-                  if (judge.wid[1]) {
-                      idList[judge.wid[0]] = judge.value.widget.key;
-                  }
-              }
+              judge.valueId = specGenIdsData(judge.value);
           });
       });
   }
@@ -522,13 +552,13 @@ function generateJsFunc(etree) {
   var output = {};
 
   etree.forEach(function(item) {
-    if (item.judges.conFlag) {
+    if (item.judges.conFlag && item.enable) {
       var out = '';
       var lines = [];
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
-          if (c.judgeObjId && c.judgeValFlag) {
+          if (c.judgeObjId && c.judgeValFlag && c.enable) {
             var op = c.compareFlag;
             var jsop;
             if (op == '=')
@@ -541,7 +571,7 @@ function generateJsFunc(etree) {
               jsop = op;
 
             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
-            if (c.compareObjId) {
+            if (c.compareObjId && c.compareValFlag) {
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
               o += JSON.stringify(c.compareObjFlag);
@@ -550,51 +580,63 @@ function generateJsFunc(etree) {
           }
         });
       }
+
+     //console.log('conditions',conditions);
+
       item.cmds.forEach(cmd => {
-        if (cmd.id && cmd.type == 'default' && cmd.name) {
-          if (cmd.name === 'changeValue') {
-            if (cmd.property.length >= 1)
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + JSON.stringify(cmd.property[0]['value']));
-          } else if (cmd.name === 'add1') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '++');
-          } else if (cmd.name === 'minus1') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '--');
-          } else if (cmd.name === 'addN') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '+=' + JSON.stringify(cmd.property[0]['value']));
-          } else if (cmd.name === 'minusN') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '-=' + JSON.stringify(cmd.property[0]['value']));
-          } else if (cmd.name === 'getInt') {
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + 'Math.round(' + getIdsName(cmd.id, cmd.varName, 'value') + ')');
-          } else if (cmd.name === 'randomValue') {
-              let max = JSON.stringify(cmd.property[1]['value']);
-              let min = JSON.stringify(cmd.property[0]['value']);
-              lines.push(getIdsName(cmd.id, cmd.varName, 'value') + '=' + 'Math.round(Math.random()*('
+        if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
+          if (cmd.action.name === 'changeValue') {
+            if (cmd.action.property.length >= 1)
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(cmd.action.property[0]['value']));
+          } else if (cmd.action.name === 'add1') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '++');
+          } else if (cmd.action.name === 'minus1') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '--');
+          } else if (cmd.action.name === 'addN') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '+=' + JSON.stringify(cmd.action.property[0]['value']));
+          } else if (cmd.action.name === 'minusN') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '-=' + JSON.stringify(cmd.action.property[0]['value']));
+          } else if (cmd.action.name === 'getInt') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + 'Math.round(' + getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + ')');
+          } else if (cmd.action.name === 'randomValue') {
+              let max = JSON.stringify(cmd.action.property[1]['value']);
+              let min = JSON.stringify(cmd.action.property[0]['value']);
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + 'Math.round(Math.random()*('
                   + max + '-'
                   + min + '+1)+' + min + ')');
           } else {
-            var line = getIdsName(cmd.id, cmd.varName, cmd.name) + '(';
-            if (cmd.property) {
-              line += cmd.property.map(function(p) {
-                if (p['binding'] !== undefined) {
-                  var list = [];
-                  p['binding'].fields.forEach(function(v) {
-                    if (v.name && v.value) {
-                      if (v.name.substr(0, 1) == 'i') {
-                        list.push('\'' + v.name.substr(1) + '\':parseFloat(ids.' + v.value.props['id'] + '.value)');
-                      } else if (v.name.substr(0, 1) == 's') {
-                        list.push('\'' + v.name.substr(1) + '\':ids.' + v.value.props['id'] + '.value');
-                      } else {
-                        list.push('\'' + v.name + '\':ids.' + v.value.props['id'] + '.value');
+              //数据库
+              var line = getIdsName(cmd.sObjId[0], cmd.sObjId[1], cmd.action.name) + '(';
+              if (cmd.action.property) {
+                  line += cmd.action.property.map(function(p) {
+                      let va = null;
+                      if(p['vKey'] !== undefined) {
+                          va = keyMap[p['vKey']];
+                          if (va) {
+                              var list = [];
+                              va.fields.forEach(function(v) {
+                                  let obj = keyMap[v.value];
+                                  if (v.name && obj) {
+                                      if (v.name.substr(0, 1) == 'i') {
+                                          list.push('\'' + v.name.substr(1) + '\':parseFloat(ids.' + obj.props['id'] + '.value)');
+                                      } else if (v.name.substr(0, 1) == 's') {
+                                          list.push('\'' + v.name.substr(1) + '\':ids.' + obj.props['id'] + '.value');
+                                      } else {
+                                          list.push('\'' + v.name + '\':ids.' + obj.props['id'] + '.value');
+                                      }
+                                  }
+                              });
+                              delete(p['vKey']);
+                              return '{' + list.join(',') + '}';
+                          } else {
+                              delete(p['vKey']);
+                              return '';
+                          }
                       }
-                    }
-                  });
-                  delete(p['binding']);
-                  return '{' + list.join(',') + '}';
-                }
-                return JSON.stringify(p['value']);
-              }).join(',');
-            }
-            lines.push(line + ')');
+                      return JSON.stringify(p['value']);
+                  }).join(',');
+              }
+              lines.push(line + ')');
           }
         }
       });
@@ -624,6 +666,7 @@ function generateJsFunc(etree) {
       }
     }
   });
+
   return output;
 }
 
@@ -636,140 +679,146 @@ function saveTree(data, node, saveKey) {
     else if (name == 'eventTree') {
       var etree = [];
 
-        //console.log('node',node,node.props['eventTree']);
-
         node.props['eventTree'].forEach(item => {
         var cmds = [];
         var judges={};
-
-           judges.conFlag = item.conFlag;
-
-           // judges.needFill=item.needFill;   //触发条件的值
+            var eventEnable = item.enable; //是否可执行
+            judges.conFlag = item.conFlag;
+            if(judges.conFlag=='触发条件'){judges.conFlag=null;}
+            judges.className=node.className;
 
             judges.children=[];
             if(item.needFill) {
                 judges.conFlag = 'onChange';//触发条件
                 item.needFill.map((v, i)=> {
                     let obj = {};
-
-
-
-                    let o = objectToId(node);
-                    obj.judgeObjId = o[0];
-
+                    obj.judgeObjKey =node.key;
                     obj.judgeObjFlag = node.props.name; //判断对象的名字
 
                     obj.compareFlag = item.conFlag;
-
                     obj.showName=v.showName;
                     obj.type=v.type;
                     obj.compareValFlag = v.default;//判断对象的属性
-
                     judges.children.push(obj);
 
                 });
             }
-
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
-                   let obj={};
-                   if (v.judgeObj) {
-                      let o = objectToId(v.judgeObj);
-                      obj.judgeObjId = o[0];
-                      if (o[1]) {
-                        obj.judgeVarId = o[1];
-                        obj.judgeVarName = o[2];
-                      }
+             let obj={};
+
+             obj.enable = v.enable; //是否可执行
+             obj.judgeObjKey =v.judgeObjKey;
+             if (v.judgeObj) {
+                   let o = objectToId(v.judgeObj);
+                   obj.judgeObjId = o[0];
+                   if (o[1]) {
+                     obj.judgeVarId = o[1];
+                     obj.judgeVarName = o[2];
                    }
-             obj.judgeObjFlag=v.judgeObjFlag; //判断对象的名字
+                }
+             obj.judgeObjFlag=v.judgeObjFlag;
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
-             obj.judgeValOption=v.judgeValOption;
-             obj.judgeValType=v.judgeValType; //判断对象的属性的类型
+              if(obj.judgeValFlag=='判断值') {
+                    obj.judgeValFlag = null;
+               }
 
              obj.compareFlag=v.compareFlag;//比较运算符
-                   if (v.compareObj) {
-                      var o = objectToId(v.compareObj);
-                      obj.compareObjId = o[0];
-                      if (o[1]) {
-                        obj.compareVarId = o[1];
-                        obj.compareVarName = o[2];
-                      }
+
+             obj.compareObjKey=v.compareObjKey;
+
+                if (v.compareObj) {
+                   var o = objectToId(v.compareObj);
+                   obj.compareObjId = o[0];
+                   if (o[1]) {
+                     obj.compareVarId = o[1];
+                     obj.compareVarName = o[2];
                    }
-             obj.compareObjFlag=v.compareObjFlag; //比较对象的名字
+                }
+             obj.compareObjFlag=v.compareObjFlag;
+             obj.compareValFlag=v.compareValFlag;//判断对象的属性
+             if( obj.compareValFlag=='比较值') {
+                 obj.compareValFlag = null;
+             }
 
-             obj.compareValFlag =v.compareValFlag;//比较对象的属性
-             obj.compareValOption=v.compareValOption;
-             obj.operationManager={};
-             obj.operationManager.arrHidden=v.operationManager.arrHidden;
-
-
+             obj.arrHidden=v.arrHidden;
              judges.children.push(obj);
-
          });
 
         item.specificList.forEach(cmd => {
-            var c = {};
-            if (cmd.action) {
+            let c = {};
+            c.enable = cmd.enable;
+            c.sObjId = objectKeyToId(cmd.object);
+            if(saveKey) {
+                c.object = cmd.object;
+            }
+            //有对象才会有动作，不然动作清除
+            if (c.sObjId&&cmd.action) {
+                c.action = {};
                 switch (cmd.action.type) {
                     case funcType.customize:
-                        c = {
-                            funcId: objectToId(cmd.action.func),
-                            type: cmd.action.type
-                        };
+                        c.action.funcId = objectKeyToId(cmd.action.func);
+                        c.action.type = cmd.action.type;
+                        if(saveKey) {
+                            c.action.func = cmd.action.func;
+                        }
                         break;
                     default:
-                        c = {
-                            name: cmd.action.name,
-                            showName: cmd.action.showName,
-                            type: cmd.action.type
-                        };
+                        c.action.name = cmd.action.name;
+                        c.action.showName = cmd.action.showName;
+                        c.action.type = cmd.action.type;
                         break;
                 }
-            }
-            if(cmd.object){
-                let o = objectToId(cmd.object);
-                c.id = o[0];
-                if (o[1]) {
-                    c.var = o[1];
-                    c.varName = o[2];
-                }
-            }
-            if (cmd.action&&cmd.action.property) {
-                let property = [];
-                if(cmd.object&&cmd.object.className === 'db') {
-                    cmd.action.property.forEach(v=> {
-                        if(v.name === 'data' && v.value) {
-                            property.push({
-                                name:v.name,
-                                showName: v.showName,
-                                type: v.type,
-                                valueId: objectToId(v.value),
-                                binding: v.value
-                            })
-                        } else if (v.name === 'option'&& v.value) {
-                            property.push({
-                                name:v.name,
-                                showName: v.showName,
-                                type: v.type,
-                                valueId: objectToId(v.value)
-                            })
-                        } else {
-                            property.push(v);
-                        }
-                    });
-                    c.property = property;
-                } else {
-                    c.property = cmd.action.property;
-                }
-            }
+                if (cmd.action.property) {
+                    let property = [];
+                    let o = keyMap[cmd.object];
+                    if(o&&o.className === 'db') {
+                        cmd.action.property.forEach(v=> {
+                            if(v.name === 'data' && v.value) {
+                                let temp = {
+                                    name:v.name,
+                                    showName: v.showName,
+                                    type: v.type,
+                                    valueId: objectKeyToId(v.value),
+                                    vKey: v.value
+                                };
+                                if(saveKey) {
+                                    temp.value = v.value;
+                                }
+                                property.push(temp);
 
+                            } else if (v.name === 'option'&& v.value) {
+                                let temp = {
+                                    name:v.name,
+                                    showName: v.showName,
+                                    type: v.type,
+                                    valueId: objectKeyToId(v.value)
+                                };
+                                if(saveKey) {
+                                    temp.value = v.value;
+                                }
+                                property.push(temp);
+                            } else {
+                                property.push(v);
+                            }
+                        });
+                        c.action.property = property;
+                    } else {
+                        c.action.property = cmd.action.property;
+                    }
+                }
+            } else {
+                c.action = null;
+            }
             cmds.push(c);
         });
 
-        //console.log('judges',judges);
-        etree.push({cmds:cmds,judges:judges});
+
+        console.log('judges',judges);
+        etree.push({cmds:cmds,judges:judges, enable:eventEnable});
+
 
       });
       data['etree'] = etree;
@@ -797,6 +846,9 @@ function saveTree(data, node, saveKey) {
           o['value'] = item.value==null?item.value:parseInt(item.value);
           o['props'] = item.props;
           o['type'] = item.type;
+          if (saveKey) {
+              o['key'] = item.key;
+          }
           list.push(o);
       });
   }
@@ -808,6 +860,9 @@ function saveTree(data, node, saveKey) {
           o['value'] = item.value;
           o['props'] = item.props;
           o['type'] = item.type;
+          if (saveKey) {
+              o['key'] = item.key;
+          }
           list.push(o);
       });
   }
@@ -821,6 +876,9 @@ function saveTree(data, node, saveKey) {
           o['value'] = item.value;
           o['params'] = item.params;
           o['props'] = item.props;
+          if (saveKey) {
+              o['key'] = item.key;
+          }
           list.push(o);
       });
   }
@@ -835,13 +893,16 @@ function saveTree(data, node, saveKey) {
           o['fields'] = [];
           item.fields.forEach(field =>{
               let name = field.name;
-              let wid = null;
-              if(field.value){
-                  wid = objectToId(field.value);
+              let temp = {name: name, valueId: objectKeyToId(field.value)};
+              if (saveKey) {
+                  temp.value = field.value;
               }
-              o['fields'].push({name: name, wid: wid});
+              o['fields'].push(temp);
           });
           o['props'] = item.props;
+          if (saveKey) {
+              o['key'] = item.key;
+          }
           data['dbItems'].push(o);
       });
   }
@@ -998,8 +1059,32 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['saveFontList'], this.saveFontList);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
 
+        this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
         this.listenTo(WidgetActions['cutWidget'], this.cutWidget);
         this.listenTo(WidgetActions['lockWidget'], this.lockWidget);
+
+        //事件
+        this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
+        this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
+        this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
+        this.listenTo(WidgetActions['activeEventTree'], this.activeEventTree);
+
+        this.listenTo(WidgetActions['addEvent'], this.addEvent);
+        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
+        this.listenTo(WidgetActions['delEvent'], this.delEvent);
+
+        this.listenTo(WidgetActions['getAllWidgets'], this.getAllWidgets);
+        this.listenTo(WidgetActions['reorderEventTreeList'], this.reorderEventTreeList);
+
+        //事件属性
+        this.listenTo(WidgetActions['addSpecific'], this.addSpecific);
+        this.listenTo(WidgetActions['deleteSpecific'], this.deleteSpecific);
+        this.listenTo(WidgetActions['changeSpecific'], this.changeSpecific);
+        this.listenTo(WidgetActions['enableSpecific'], this.enableSpecific);
+        //判断逻辑事件
+        this.listenTo(WidgetActions['addEventChildren'], this.addEventChildren);
+        this.listenTo(WidgetActions['delEventChildren'], this.delEventChildren);
+        this.listenTo(WidgetActions['enableEventChildren'], this.enableEventChildren);
 
         //widget，变量，函数的统一复制，黏贴，删除，重命名，剪切入口
         this.listenTo(WidgetActions['pasteTreeNode'], this.pasteTreeNode);
@@ -1008,38 +1093,15 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['deleteTreeNode'], this.deleteTreeNode);
         this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
 
-        //事件
-        this.listenTo(WidgetActions['initEventTree'], this.initEventTree);
-        this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
-        this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
-        this.listenTo(WidgetActions['activeEventTree'], this.activeEventTree);
-        this.listenTo(WidgetActions['addEvent'], this.addEvent);
-        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
-        this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
-        this.listenTo(WidgetActions['getAllWidgets'], this.getAllWidgets);
-        this.listenTo(WidgetActions['reorderEventTreeList'], this.reorderEventTreeList);
-        //事件属性
-        this.listenTo(WidgetActions['addSpecific'], this.addSpecific);
-        this.listenTo(WidgetActions['deleteSpecific'], this.deleteSpecific);
-        this.listenTo(WidgetActions['changeSpecific'], this.changeSpecific);
-        //判断逻辑事件
-        this.listenTo(WidgetActions['addEventChildren'], this.addEventChildren);
-        this.listenTo(WidgetActions['delEventChildren'], this.delEventChildren);
-        this.listenTo(WidgetActions['delEvent'], this.delEvent);
-
+        //函数，变量，db item等伪对象选择添加的入口
+        this.listenTo(WidgetActions['selectFadeWidget'], this.selectFadeWidget);
+        this.listenTo(WidgetActions['addFadeWidget'], this.addFadeWidget);
         //函数
-        this.listenTo(WidgetActions['selectFunction'], this.selectFunction);
-        this.listenTo(WidgetActions['addFunction'], this.addFunction);
         this.listenTo(WidgetActions['changeFunction'], this.changeFunction);
         //变量
-        this.listenTo(WidgetActions['selectVariable'], this.selectVariable);
-        this.listenTo(WidgetActions['addVariable'], this.addVariable);
         this.listenTo(WidgetActions['changeVariable'], this.changeVariable);
         //db item
-        this.listenTo(WidgetActions['selectDBItem'], this.selectDBItem);
-        this.listenTo(WidgetActions['addDBItem'], this.addDBItem);
         this.listenTo(WidgetActions['changeDBItem'], this.changeDBItem);
-        this.listenTo(WidgetActions['renameWidget'], this.renameWidget);
 
         this.listenTo(WidgetActions['eventSelectTargetMode'], this.eventSelectTargetMode);
         this.listenTo(WidgetActions['didSelectEventTarget'], this.didSelectEventTarget);
@@ -1069,16 +1131,16 @@ export default Reflux.createStore({
                 this.activeEventTree(null);
             }
             //取选func状态
-            if(!(keepValueType&&keepValueType==keepType.func)&&this.currentFunction) {
-                this.selectFunction(null);
+            if(!(keepValueType&&keepValueType==keepType.func)&&this.currentFunction){
+                this.selectFadeWidget(null, nodeType.func);
             }
             //取选var状态
             if(!(keepValueType&&keepValueType==keepType.var)&&this.currentVariable) {
-                this.selectVariable(null);
+                this.selectFadeWidget(null, nodeType.var);
             }
             //取选dbItem
             if(!(keepValueType&&keepValueType==keepType.dbItem)&&this.currentDBItem) {
-                this.selectDBItem(null);
+                this.selectFadeWidget(null, nodeType.dbItem);
             }
         }
         this.currentWidget = widget;
@@ -1167,6 +1229,11 @@ export default Reflux.createStore({
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
+
+            keyMap[this.currentWidget.key] = undefined;
+            this.removeAllFadeWidgetsMapping(this.currentWidget);
+            this.trigger({updateWidget: {widget:this.currentWidget, type:nodeType.widget, action:nodeAction.remove}});
+
             this.currentWidget = null;
             if(shouldChooseParent) {
                 this.selectWidget(parentWidget);
@@ -1175,6 +1242,28 @@ export default Reflux.createStore({
             }
             process.nextTick(() =>bridge.render(rootNode));
         }
+    },
+    removeAllFadeWidgetsMapping(w){
+        let loopDelete = (widget)=>{
+            widget.strVarList.forEach((v)=>{
+                keyMap[v.key] = undefined;
+            });
+            widget.intVarList.forEach((v)=>{
+                keyMap[v.key] = undefined;
+            });
+            if(widget.dbItemList) {
+                widget.dbItemList.forEach((v)=>{
+                    keyMap[v.key] = undefined;
+                });
+            }
+            if (widget.children&&widget.children.length>0) {
+                widget.children.forEach((v)=>{
+                    keyMap[v.key] = undefined;
+                    loopDelete(v);
+                });
+            }
+        };
+        loopDelete(w);
     },
     copyWidget: function() {
       if (this.currentWidget && this.currentWidget.parent) {
@@ -1242,6 +1331,9 @@ export default Reflux.createStore({
             // this.render();
         }
     },
+    getWidgetByKey: function (key) {
+        return keyMap[key];
+    },
     findWidget: function(key){
         let root = this.currentWidget.rootWidget;
         let target = null;
@@ -1272,9 +1364,6 @@ export default Reflux.createStore({
             // let dest = this.findWidget(destKey);
             if (src&&dest) {
                 var saved = {};
-                var rootWidget = this.currentWidget.rootWidget;
-                var idList = [];
-                generateId(rootWidget, idList);
                 saveTree(saved, src, true);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
@@ -1283,12 +1372,6 @@ export default Reflux.createStore({
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
-                var map = [];
-                for (var id in idList) {
-                  map[id] = keyMap[idList[id]];
-                }
-                resolveEventTree(rootWidget, map);
-                resolveDBItemList(rootWidget, map);
 
                 var destIndex = dest.children.indexOf(obj);
                 if (destIndex != index) {
@@ -1448,23 +1531,44 @@ export default Reflux.createStore({
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
-    emptyEventTree: function (className) {
+    emptyEvent: function () {
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
-        let eventTree = {
+        // let eventTree = {
+        //     'eid': eid,
+        //     'condition': null,
+        //     'children': null,
+        //     'enable': true,
+        //     'specificList': [eventSpec]
+        // };
+
+        let event = {
             'eid': eid,
-            'condition': null,
-            'children': null,
+            'children': [{
+                'judgeObjFlag':'判断对象',
+                'judgeValFlag':'判断值',
+                'compareFlag':'=',
+                'compareObjFlag':'比较值/对象',
+                'compareValFlag':'比较值',
+                'arrHidden': [true,true,true,true,true,true],  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                'enable': true,
+            }],
+            'zhongHidden':true,
+            'logicalFlag':'and',
+            'conFlag':'触发条件',
+            'className':null,
+            'enable': true,
             'specificList': [eventSpec]
         };
-        return eventTree;
+        return event;
     },
     emptyEventSpecific: function() {
         let eventSpecific = {
             'sid': _specificCount++,
             'object': null,
-            'action': null
+            'action': null,
+            'enable': true,
         };
         return eventSpecific;
     },
@@ -1514,7 +1618,7 @@ export default Reflux.createStore({
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
-            this.currentWidget.props['eventTree'].push(this.emptyEventTree(className));
+            this.currentWidget.props['eventTree'].push(this.emptyEvent());
         }
         this.trigger({redrawTree: true, redrawWidget: this.currentWidget});
         this.reorderEventTreeList();
@@ -1529,9 +1633,30 @@ export default Reflux.createStore({
         this.reorderEventTreeList();
         // this.render();
     },
-    enableEventTree: function () {
+    enableEventTree: function (skipSetEventList, enableValue) {
         if (this.currentWidget) {
-            this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+            if(enableValue!==undefined) {
+                this.currentWidget.props['enableEventTree'] = enableValue;
+            } else {
+                this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+            }
+            let isEnable = this.currentWidget.props['enableEventTree'];
+            if(!skipSetEventList&&this.currentWidget.props.eventTree&&this.currentWidget.props.eventTree.length>0){
+                this.currentWidget.props.eventTree.forEach(event=>{
+                    event.enable = isEnable;
+                    if(event.children&&event.children.length>0) {
+                        event.children.forEach(eventChildren => {
+                            eventChildren.enable = isEnable;
+                        });
+                    }
+                    if(event.specificList&&event.specificList.length>0) {
+                        event.specificList.forEach(specific => {
+                            specific.enable = isEnable;
+                        });
+                    }
+                });
+                this.trigger({redrawEventTree: true});
+            }
         }
         this.trigger({redrawTree: true});
         // this.render();
@@ -1552,37 +1677,73 @@ export default Reflux.createStore({
     },
     addEvent: function () {
         if (this.currentWidget) {
-            this.currentWidget.props['eventTree'].push(this.emptyEventTree());
+            this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            if(!this.currentWidget.props['enableEventTree']) {
+                this.currentWidget.props['enableEventTree'] = true;
+                this.trigger({redrawTree: true});
+            }
         }
         this.trigger({eventTreeList: this.eventTreeList});
     },
-    removeEvent: function () {
-        //TODO: 单个事件的删除
-    },
-    enableEvent: function () {
-        //TODO: 单个事件的可执行开关
-    },
-    addSpecific: function(event){
-        if(event&&event['specificList']){
-            event['specificList'].push(this.emptyEventSpecific());
+    enableEvent: function (event) {
+        if(event) {
+            event.enable = !event.enable;
+            if(event.children&&event.children.length>0) {
+                event.children.forEach(eventChildren => {
+                    eventChildren.enable = event.enable;
+                });
+            }
+            if(event.specificList&&event.specificList.length>0) {
+                event.specificList.forEach(specific => {
+                    specific.enable = event.enable;
+                });
+            }
+            this.changeEventTreeEnableByEvents();
             this.trigger({redrawEventTree: true});
         }
     },
+    changeEventTreeEnableByEvents: function () {
+        if(this.currentWidget.props['eventTree']) {
+            let enableLength = 0;
+            let disableLength = 0;
+            this.currentWidget.props.eventTree.forEach(event=>{
+                if(event.enable) {
+                    enableLength++;
+                } else {
+                    disableLength++;
+                }
+            });
+            if(enableLength=== 0||
+                disableLength=== 0){
+                this.enableEventTree(true, disableLength===0);
+            } else if (!this.currentWidget.props['enableEventTree']) {
+                this.enableEventTree(true, true);
+            }
+        }
+    },
+    delEvent:function(eventList,index){
+        let len =eventList.length;
+        if(len>1){
+            eventList.splice(index,1);
+        }else if (this.currentWidget) {
+            eventList.splice(0,1);
+            this.currentWidget.props['eventTree'].push(this.emptyEvent());
+        }
+        this.changeEventTreeEnableByEvents();
+        this.trigger({redrawEventTree: true});
+    },
     addEventChildren:function(event){
-
         if(event && event['children']){
             event['children'].push({
                 'cid': _childrenCount++,
                 judgeObjFlag:'判断对象',
-                judgeValFlag:'计算值',
+                judgeValFlag:'判断值',
                 compareFlag:'=',
                 compareObjFlag:'比较值/对象',
                 compareValFlag:'比较值',
-                operationManager: {  //下拉框显现管理
-                    arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
-                }
+                enable: true,
+                arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             });
-
             this.trigger({redrawEventTree: true});
         }
     },
@@ -1593,11 +1754,18 @@ export default Reflux.createStore({
         }
         this.trigger({redrawEventTree: true});
     },
-    delEvent:function(eventList,index){
-       eventList.splice(index,1);
-        this.trigger({redrawEventTree: true});
+    enableEventChildren:function(eventChild) {
+        if(eventChild){
+            eventChild.enable = !eventChild.enable;
+            this.trigger({redrawEventTree: true});
+        }
     },
-
+    addSpecific: function(event){
+        if(event&&event['specificList']){
+            event['specificList'].push(this.emptyEventSpecific());
+            this.trigger({redrawEventTree: true});
+        }
+    },
     deleteSpecific: function(sid, event){
         if(event&&event.specificList) {
             if(event.specificList.length==1) {
@@ -1629,6 +1797,42 @@ export default Reflux.createStore({
             this.trigger({redrawEventTree: true});
         }
     },
+    enableSpecific: function(specific, enable) {
+        if (enable != null|| enable != undefined) {
+            specific.enable = enable;
+            this.trigger({redrawEventTree: true});
+        }
+    },
+    selectFadeWidget: function(data, type) {
+        switch (type) {
+            case nodeType.func:
+                this.selectFunction(data);
+                break;
+            case nodeType.var:
+                this.selectVariable(data);
+                break;
+            case nodeType.dbItem:
+                this.selectDBItem(data);
+                break;
+            default:
+                break;
+        }
+    },
+    addFadeWidget: function(param, defaultName, type) {
+        switch (type) {
+            case nodeType.func:
+                this.addFunction(param, defaultName);
+                break;
+            case nodeType.var:
+                this.addVariable(param, defaultName);
+                break;
+            case nodeType.dbItem:
+                this.addDBItem(param, defaultName);
+                break;
+            default:
+                break;
+        }
+    },
     selectFunction: function (data) {
         if (data!=null) {
             //取消在canvas上的widget选择
@@ -1643,24 +1847,24 @@ export default Reflux.createStore({
     addFunction: function (param, defaultName) {
         if(this.currentWidget) {
             let func = {};
-            func['name'] = param.name||'';
-            func['value'] = param.value||'';
-            func['className']  = 'func';
+            func['name'] = param.name || '';
+            func['value'] = param.value || '';
+            func['className'] = 'func';
             func['key'] = _keyCount++;
-            func['params'] = param.params?cpJson(param.params):[{type:null, name:null}];    //函数类型
+            func['params'] = param.params ? cpJson(param.params) : [{type: null, name: null}];    //函数类型
             func['widget'] = this.currentWidget;
             func['props'] = {};
             func['props']['unlockPropsName'] = true;
-            if(defaultName!=undefined) {
+            if (defaultName != undefined) {
                 func['props']['name'] = defaultName;
             } else {
                 func['props']['name'] = 'func' + (this.currentWidget['funcList'].length + 1);
             }
+            keyMap[func['key']] = func;
             this.currentWidget['funcList'].unshift(func);
+            this.trigger({updateWidget: {widget:func, type:nodeType.func, action:nodeAction.add}});
         }
-        this.trigger({updateFunction: {widget:this.currentWidget}});
         this.trigger({redrawTree: true});
-        // this.render();
     },
     changeFunction: function (props) {
         if(props) {
@@ -1671,7 +1875,7 @@ export default Reflux.createStore({
             } else if(props['params']) {
                 this.currentFunction['params'] = props['params'];
             }
-            this.trigger({updateFunction: {widget:this.currentWidget}});
+            this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.change}});
         }
     },
     removeFunction: function () {
@@ -1684,7 +1888,8 @@ export default Reflux.createStore({
             });
             if(index>-1){
                 this.currentWidget.funcList.splice(index,1);
-                this.trigger({updateFunction: {widget:this.currentWidget}});
+                keyMap[this.currentFunction.key]= undefined;
+                this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.remove}});
                 this.selectWidget(this.currentWidget);
             }
         }
@@ -1745,6 +1950,7 @@ export default Reflux.createStore({
                     } else {
                         vars['props']['name'] = 'intVar' + (this.currentWidget['intVarList'].length + 1);
                     }
+                    keyMap[vars['key']] = vars;
                     this.currentWidget['intVarList'].unshift(vars);
                     break;
                 case varType.string:
@@ -1753,6 +1959,7 @@ export default Reflux.createStore({
                     } else {
                         vars['props']['name'] = 'strVar' + (this.currentWidget['strVarList'].length + 1);
                     }
+                    keyMap[vars['key']] = vars;
                     this.currentWidget['strVarList'].unshift(vars);
                     break;
                 default:
@@ -1782,6 +1989,8 @@ export default Reflux.createStore({
                 });
                 if(index>-1){
                     list.splice(index,1);
+                    keyMap[this.currentVariable.key]= undefined;
+                    this.trigger({updateWidget: {widget:this.currentVariable, type:nodeType.var, action:nodeAction.remove}});
                     this.selectWidget(this.currentWidget);
                 }
             };
@@ -1825,6 +2034,64 @@ export default Reflux.createStore({
         this.copyVariable();
         this.removeVariable();
     },
+    selectDBItem: function(data){
+        if (data!=null) {
+            //取消在canvas上的widget选择
+            bridge.selectWidget(this.currentWidget.node);
+            this.currentDBItem = data;
+        } else {
+            this.currentDBItem = null;
+        }
+        this.trigger({selectDBItem: this.currentDBItem});
+    },
+    addDBItem: function(param, defaultName){
+        if(this.currentWidget) {
+            let dbItem = {};
+            dbItem['name'] = param.name||'';
+            dbItem['fields'] = param.fields||[]; //字段s
+            dbItem['className']  = 'dbItem';
+            dbItem['key'] = _keyCount++;
+            dbItem['widget'] = this.currentWidget;
+            dbItem['props'] = {};
+            if(defaultName!=undefined) {
+                dbItem['props']['name'] = defaultName;
+            } else {
+                dbItem['props']['name'] = 'dbItem' + (this.currentWidget['dbItemList'].length + 1);
+            }
+            keyMap[dbItem['key']] = dbItem;
+            this.currentWidget['dbItemList'].unshift(dbItem);
+            this.trigger({updateWidget: {widget:dbItem, type:nodeType.dbItem, action:nodeAction.add}});
+        }
+        this.trigger({redrawTree: true});
+    },
+    changeDBItem: function (props) {
+        if(this.currentDBItem){
+            if(props) {
+                if(props['name']) {
+                    this.currentDBItem['name'] = props['name'];
+                } else if (props['fields']){
+                    this.currentDBItem['fields'] = props['fields'];
+                }
+            }
+        }
+    },
+    removeDBItem: function() {
+        if(this.currentDBItem) {
+            let index = -1;
+            this.currentWidget.dbItemList.forEach((v,i)=>{
+                if(v.key === this.currentDBItem.key){
+                    index = i;
+                }
+            });
+            if(index>-1){
+                this.currentWidget.dbItemList.splice(index,1);
+                keyMap[this.currentDBItem.key]= undefined;
+
+                this.trigger({updateWidget: {widget:this.currentDBItem, type:nodeType.dbItem, action:nodeAction.remove}});
+                this.selectWidget(this.currentWidget);
+            }
+        }
+    },
     renameFadeWidget: function (type, name, fromTree) {
         switch (type){
             case nodeType.func:
@@ -1865,61 +2132,6 @@ export default Reflux.createStore({
                 break;
             default:
                 break;
-        }
-    },
-    selectDBItem: function(data){
-        if (data!=null) {
-            //取消在canvas上的widget选择
-            bridge.selectWidget(this.currentWidget.node);
-            this.currentDBItem = data;
-        } else {
-            this.currentDBItem = null;
-        }
-        this.trigger({selectDBItem: this.currentDBItem});
-    },
-    addDBItem: function(param, defaultName){
-        if(this.currentWidget) {
-            let dbItem = {};
-            dbItem['name'] = param.name||'';
-            dbItem['fields'] = param.fields||[]; //字段s
-            dbItem['className']  = 'dbItem';
-            dbItem['key'] = _keyCount++;
-            dbItem['widget'] = this.currentWidget;
-            dbItem['props'] = {};
-            if(defaultName!=undefined) {
-                dbItem['props']['name'] = defaultName;
-            } else {
-                dbItem['props']['name'] = 'dbItem' + (this.currentWidget['dbItemList'].length + 1);
-            }
-            this.trigger({updateDBItem: {widget:this.currentWidget}});
-            this.currentWidget['dbItemList'].unshift(dbItem);
-        }
-        this.trigger({redrawTree: true});
-    },
-    changeDBItem: function (props) {
-        if(this.currentDBItem){
-            if(props) {
-                if(props['name']) {
-                    this.currentDBItem['name'] = props['name'];
-                } else if (props['fields']){
-                    this.currentDBItem['fields'] = props['fields'];
-                }
-            }
-        }
-    },
-    removeDBItem: function() {
-        if(this.currentDBItem) {
-            let index = -1;
-            this.currentWidget.dbItemList.forEach((v,i)=>{
-                if(v.key === this.currentDBItem.key){
-                    index = i;
-                }
-            });
-            if(index>-1){
-                this.currentWidget.dbItemList.splice(index,1);
-                this.trigger({updateDBItem: {widget:this.currentWidget}});
-                this.selectWidget(this.currentWidget);
-            }
         }
     },
     pasteTreeNode: function () {
@@ -2304,4 +2516,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, varType, funcType, keepType, isCustomizeWidget, dataType}
+export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType, classList}

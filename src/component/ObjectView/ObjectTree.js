@@ -413,7 +413,7 @@ class ObjectTree extends React.Component {
                     editMode: false
                 },()=>{
                     WidgetActions['selectWidget'](data.widget, false, keepType.func);
-                    WidgetActions['selectFunction'](data);
+                    WidgetActions['selectFadeWidget'](data, nodeType.func);
                 });
                 break;
             case nodeType.var:
@@ -422,7 +422,7 @@ class ObjectTree extends React.Component {
                     editMode: false
                 },()=>{
                     WidgetActions['selectWidget'](data.widget, false, keepType.var);
-                    WidgetActions['selectVariable'](data);
+                    WidgetActions['selectFadeWidget'](data, nodeType.var)
                 });
                 break;
             case nodeType.dbItem:
@@ -431,7 +431,7 @@ class ObjectTree extends React.Component {
                     editMode: false
                 },()=>{
                     WidgetActions['selectWidget'](data.widget, false, keepType.dbItem);
-                    WidgetActions['selectDBItem'](data);
+                    WidgetActions['selectFadeWidget'](data, nodeType.dbItem)
                 });
                 break;
         }

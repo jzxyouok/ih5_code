@@ -1,15 +1,21 @@
 //事件的属性
 import React from 'react';
 import $class from 'classnames'
-import WidgetStore, {varType, funcType} from '../../stores/WidgetStore'
+import WidgetStore, {varType, funcType, nodeType, nodeAction, classList} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
 import { Input, InputNumber, Select} from 'antd';
 import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
-import { propertyMap, propertyType } from '../PropertyMap'
+import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
 const Option = Select.Option;
+
+const optionType = {
+    widget: 1, //是树节点（有key）
+    normal: 2,  //普通参数（比如int，string）
+    class: 3, //类别
+};
 
 class Property extends React.Component {
     constructor (props) {
@@ -26,6 +32,7 @@ class Property extends React.Component {
             actionDropdownVisible: false, //是否显示动作的下拉框
             currentObject: this.props.specific.object,
             currentAction: this.props.specific.action,  //name&property
+            currentEnable: this.props.specific.enable,  //是否enable
             isActiveEventSelectTarget: false  //是否激活了选择目标对象
         };
         this.expandBtn = this.expandBtn.bind(this);
@@ -43,8 +50,14 @@ class Property extends React.Component {
 
         this.onActiveSelectTarget = this.onActiveSelectTarget.bind(this);
 
+        this.onGetClassListByKey = this.onGetClassListByKey.bind(this);
+
+        this.onSpecificEnable = this.onSpecificEnable.bind(this);
+
         this.arrList = []; //数组类型变量列表
-        this.funcListLength = [];
+        this.classNameList = []; //类别列表
+        this.customClassList = [];
+        this.funcListLength = 0;
     }
 
     componentWillReceiveProps(nextProps) {
@@ -61,7 +74,8 @@ class Property extends React.Component {
                 isActiveEventSelectTarget: isActiveEventSelectTarget,
 
                 currentObject: nextProps.specific.object,
-                currentAction: nextProps.specific.action
+                currentAction: nextProps.specific.action,
+                currentEnable: nextProps.specific.enable
             }, ()=>{
                 //获取动作
                 if(this.state.currentObject){
@@ -84,7 +98,15 @@ class Property extends React.Component {
         if(!widget) {
             return;
         }
-        if(widget.allWidgets){
+        if (widget.redrawEventTree) {
+            this.forceUpdate();
+        } else if (widget.classList) {
+            this.customClassList = widget.classList;
+            if(this.state.currentObject) {
+                this.onGetClassListByKey(this.state.currentObject);
+                this.forceUpdate();
+            }
+        } else if(widget.allWidgets){
             this.setState({
                 objectList: widget.allWidgets
             }, ()=>{
@@ -95,18 +117,6 @@ class Property extends React.Component {
                     }
                 });
             });
-        } else if (widget.updateFunction){
-            if(widget.updateFunction.widget&&this.state.currentObject){
-                if(widget.updateFunction.widget.key == this.state.currentObject.key){
-                    this.onGetActionList(this.state.currentObject);
-                }
-            }
-        } else if (widget.updateDBItem) {
-            if(widget.updateDBItem.widget&&this.state.currentObject&&this.state.currentAction){
-                if(this.state.currentObject.className === 'db' && this.state.currentAction.name){
-                    this.forceUpdate();
-                }
-            }
         } else if (widget.didSelectEventTarget) {
             if(widget.didSelectEventTarget.target&&this.state.isActiveEventSelectTarget) {
                 let target = widget.didSelectEventTarget.target;
@@ -118,7 +128,7 @@ class Property extends React.Component {
                 });
                 if (getTarget) {
                     this.setState({
-                        currentObject: target
+                        currentObject: target.key
                     }, ()=> {
                         WidgetActions['eventSelectTargetMode'](false, this.state.specific.id);
                         WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
@@ -128,7 +138,16 @@ class Property extends React.Component {
         }
     }
 
-    onGetActionList(obj){
+    onGetActionList(key){
+        let obj = WidgetStore.getWidgetByKey(key);
+
+        if(!obj||!obj.className) {
+            this.setState({
+                actionList: []
+            });
+            return;
+        }
+
         let actionList = [];
         let className = obj.className;
 
@@ -136,7 +155,7 @@ class Property extends React.Component {
         if(className !== 'var') {
             for(let i=0; i<obj.funcList.length; i++){
                 let func = obj.funcList[i];
-                let act = { func:func, type: funcType.customize};
+                let act = { func:func.key, type: funcType.customize};
                 //params
                 if(func.params){
                     let property = [];
@@ -166,31 +185,44 @@ class Property extends React.Component {
                     break;
             }
         }
-        propertyMap[className].map((item, index) => { 
-            if (item.isFunc) {
-                let temp = JSON.parse(JSON.stringify(item));
-                if (temp.info) {
-                    delete temp.info;
+        if(propertyMap&&propertyMap[className]) {
+            propertyMap[className].map((item, index) => {
+                if (item.isFunc) {
+                    let temp = JSON.parse(JSON.stringify(item));
+                    if (temp.info) {
+                        delete temp.info;
+                    }
+                    delete temp.isFunc;
+                    temp.type = funcType.default;
+                    actionList.push(temp);
                 }
-                delete temp.isFunc;
-                temp.type = funcType.default;
-                actionList.push(temp);
-            }
-         });
+            });
+        }
         this.setState({
             actionList: actionList
         })
     }
 
-    onActiveSelectTarget (){
+    onActiveSelectTarget (e){
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
-        WidgetActions['eventSelectTargetMode'](!this.state.isActiveEventSelectTarget, this.state.specific.sid);
+        e.stopPropagation();
+        if(!this.state.currentEnable) {
+            return;
+        }
+        this.setState({
+            objectDropdownVisible: false
+        }, ()=>{
+            WidgetActions['eventSelectTargetMode'](!this.state.isActiveEventSelectTarget, this.state.specific.sid);
+        });
     }
 
     onSpecificAdd() {
         if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        if(this.state.event&&!this.state.event.enable) {
             return;
         }
         WidgetActions['addSpecific'](this.state.event);
@@ -200,15 +232,35 @@ class Property extends React.Component {
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
+        if(this.state.event&&!this.state.event.enable) {
+            return;
+        }
         if(this.state.isActiveEventSelectTarget) {
             WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
         }
         WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
+    }
 
+    onSpecificEnable() {
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        if(this.state.event&&!this.state.event.enable) {
+            return;
+        }
+        this.setState({
+            currentEnable: !this.state.currentEnable,
+            expanded: !this.state.currentEnable
+        }, ()=>{
+            WidgetActions['enableSpecific'](this.state.specific, this.state.currentEnable);
+        })
     }
 
     expandBtn(expanded) {
         if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        if(!this.state.currentEnable) {
             return;
         }
         this.setState({
@@ -219,14 +271,17 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
-        if(this.state.currentObject && this.state.currentObject.key === object.key) {
+        if(this.state.isActiveEventSelectTarget) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+        }
+        if(this.state.currentObject === object.key) {
             this.setState({
                 objectDropdownVisible: false
             });
             return;
         }
         this.setState({
-            currentObject: object,
+            currentObject: object.key,
             objectDropdownVisible: false
         }, ()=> {
            WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
@@ -237,8 +292,15 @@ class Property extends React.Component {
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
+        if(!this.state.currentEnable) {
+            return;
+        }
+        if(this.state.isActiveEventSelectTarget) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+        }
         this.setState({
-            objectDropdownVisible: flag
+            objectDropdownVisible: flag,
+
         });
     }
 
@@ -248,7 +310,7 @@ class Property extends React.Component {
         if(this.state.currentAction&&action.type===this.state.currentAction.type) {
             switch (action.type){
                 case funcType.customize:
-                    if(action.func.key == this.state.currentAction.func.key){
+                    if(action.func == this.state.currentAction.func){
                         this.setState({
                             actionDropdownVisible: false
                         });
@@ -265,6 +327,11 @@ class Property extends React.Component {
                     break;
             }
         }
+        if(action.name === 'create' && action.type!==funcType.customize){
+            if(!(this.state.currentAction&&action.name === this.state.currentAction.name)) {
+                this.onGetClassListByKey(this.state.currentObject);
+            }
+        }
         this.setState({
             currentAction: action,
             actionDropdownVisible: false
@@ -275,6 +342,9 @@ class Property extends React.Component {
 
     onActionVisibleChange(flag) {
         if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        if(!this.state.currentEnable) {
             return;
         }
         this.setState({
@@ -311,10 +381,16 @@ class Property extends React.Component {
         });
     }
 
-    onPropertyContentSelect(prop, index, e) {
+    onPropertyContentSelect(prop, index, type, e) {
         e.domEvent.stopPropagation();
         let data = e.item.props.data;
-        prop.value = data;
+        switch (type) {
+            case optionType.widget:
+                prop.value = data.key;
+                break;
+            default:
+                prop.value = data;
+        }
         let property = this.state.currentAction.property;
         property[index] = prop;
         let action = this.state.currentAction;
@@ -356,8 +432,33 @@ class Property extends React.Component {
         return defaultProp;
     }
 
+    onGetClassListByKey(key) {
+        this.classNameList = [];
+        let widget = WidgetStore.getWidgetByKey(key);
+        if(widget) {
+            if(widget.className === 'root' || widget.className === 'container') {
+                this.customClassList = classList;
+                this.customClassList.forEach(v=>{
+                    this.classNameList.push(v)
+                });
+            }
+            for (let cls in propertyMap) {
+                if(checkChildClass(widget, cls)&&checkIsClassType(cls)){
+                    this.classNameList.push(cls);
+                }
+            }
+        }
+    }
+
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
+
+        let w = WidgetStore.getWidgetByKey(this.state.currentObject);
+        let f = null;
+        if (this.state.currentAction&&this.state.currentAction.type === funcType.customize) {
+            f = WidgetStore.getWidgetByKey(this.state.currentAction.func);
+        }
+
         let propertyContent = (v1,i1)=>{
             //设置通用默认参数和事件
             return  <div className="pp--list f--hlc" key={i1}>
@@ -366,12 +467,57 @@ class Property extends React.Component {
                     </div>
         };
 
-        // let funcList = (v2, i2)=>{
-        //     return <MenuItem data={v2} key={i2}>{v2.props.name}</MenuItem>;
-        // };
-
-        let dbList = (v3, i3)=>{
+        let menuWidgetList = (v3, i3)=>{
             return <MenuItem data={v3} key={i3}>{v3.props.name}</MenuItem>;
+        };
+        let menuNormalList = (v3, i3)=> {
+            return <MenuItem data={v3} key={i3}>{v3}</MenuItem>;
+        };
+        let menuClassList = (v3, i3)=> {
+            return <MenuItem data={v3} key={i3}
+                             className={$class({'customize-last':i3===this.customClassList.length-1})}>{v3}
+                             </MenuItem>;
+        };
+
+        let propertySelectMenu = (list, item, index, type)=> {
+            return (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index, type)}>
+                {
+                    !list||list.length==0
+                        ? null
+                        : type === optionType.widget
+                            ? list.map(menuWidgetList)
+                            : type === optionType.class
+                                ? list.map(menuClassList)
+                                : list.map(menuNormalList)
+                }
+            </Menu>);
+        };
+
+        let propertyDropDownMenu = (list, item, index, title, pid, type)=>{
+            let selectedValue = null;
+            let showValue = null;
+            let menu = propertySelectMenu(list, item, index, type);
+            switch (type){
+                case optionType.widget:
+                    selectedValue = WidgetStore.getWidgetByKey(item.value);
+                    showValue = (!selectedValue || !selectedValue.props || !selectedValue.props.name)?title:selectedValue.props.name;
+                    break;
+                default:
+                    selectedValue = item.value;
+                    showValue = !selectedValue?title:selectedValue;
+                    break;
+            }
+            return (<Dropdown overlay={menu} trigger={['click']}
+                             getPopupContainer={() => document.getElementById(pid)}>
+                <div className={$class("p--dropDown short")}>
+                    <div className="title f--hlc">
+                        {
+                            showValue
+                        }
+                        <span title="icon" />
+                    </div>
+                </div>
+            </Dropdown>);
         };
 
         let type = (type, defaultProp, item, index)=>{
@@ -388,43 +534,29 @@ class Property extends React.Component {
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Select:
-                    if(this.state.currentObject.className === 'db'){
-                        let menu = (<Menu></Menu>);
-                        let titleTemp = '类别';
+                    let titleTemp = '';
+                    let oType = optionType.normal;
+                    let list = [];
+                    if(w&&w.className === 'db'){
                         if(item.name ==='data') {
                             titleTemp = '来源';
-                            menu = (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
-                                {
-                                    !this.state.currentObject.dbItemList||this.state.currentObject.dbItemList.length==0
-                                        ? null
-                                        : this.state.currentObject.dbItemList.map(dbList)
-                                }
-                            </Menu>);
+                            oType = optionType.widget;
+                            list = w.dbItemList;
                         } else if (item.name ==='option'){
                             titleTemp = '选项';
-                            menu = (<Menu onClick={this.onPropertyContentSelect.bind(this, item, index)}>
-                                {
-                                    !this.arrList||this.arrList.length==0
-                                        ? null
-                                        : this.arrList.map(dbList)
-                                }
-                            </Menu>);
+                            oType = optionType.widget;
+                            list = this.arrList;
                         }
-                        return <Dropdown overlay={menu} trigger={['click']}
-                                         getPopupContainer={() => document.getElementById(propertyId)}>
-                            <div className={$class("p--dropDown short")}>
-                                <div className="title f--hlc">
-                                    { !item.value || !item.value.props.name
-                                        ?titleTemp
-                                        :item.value.props.name
-                                    }
-                                    <span className="icon" />
-                                </div>
-                            </div>
-                        </Dropdown>;
+                    } else if(item.name === 'class'){
+                         {
+                            titleTemp = '类别';
+                            oType = optionType.class;
+                            list = this.classNameList;
+                        }
                     } else {
                         return <div>未定义类型</div>;
                     }
+                    return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 default:
@@ -448,11 +580,16 @@ class Property extends React.Component {
         );
 
         let actionMenuItem = (v2, i)=>{
+            let func = WidgetStore.getWidgetByKey(v2.func);
             switch (v2.type) {
                 case funcType.customize:
-                    return <MenuItem key={i} action={v2} className={$class({'customize-last':i===this.funcListLength-1})}>
-                        {v2.func.props.name}
-                    </MenuItem>;
+                    if(func){
+                        return <MenuItem key={i} action={v2} className={$class({'customize-last':i===this.funcListLength-1})}>
+                            {func.props.name}
+                        </MenuItem>;
+                    } else {
+                        return null;
+                    }
                 case funcType.default:
                     return <MenuItem key={i} action={v2}>{v2.showName}</MenuItem>;
             }
@@ -469,25 +606,31 @@ class Property extends React.Component {
         );
 
         return (
-            <div className="Property f--h" id={propertyId}>
+            <div className={$class("Property f--h", {'Property-not-enable':!this.state.currentEnable})} id={propertyId}>
                 <div className="P--left-line"></div>
                 <div className="P--content flex-1 f--h">
-                    <span className="p--close-line" onClick={this.onSpecificDelete}/>
+                    <span className={$class("p--close-line", {'p--close-not-enable': this.state.event&&!this.state.event.enable})}
+                          onClick={this.onSpecificDelete}/>
                     <div className="p--main flex-1 f--h">
                         <div className="p--left">
                             <div className="p--left-div f--hlc">
-                                <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
-                                        onClick={this.onActiveSelectTarget} />
+                                <div className="enable-button-div">
+                                    <button className={$class("p--icon")}
+                                            disabled={this.state.event&&!this.state.event.enable}
+                                            onClick={this.onSpecificEnable}/>
+                                </div>
                                 <Dropdown overlay={objectMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
                                           onVisibleChange={this.onObjectVisibleChange}
                                           visible={this.state.objectDropdownVisible}>
                                     <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
-                                        <div className="title f--hlc">
-                                            { !this.state.currentObject ||
-                                              !this.state.currentObject.props.name
+                                        <div className="title p--title f--hlc">
+                                            <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
+                                                    disabled={!this.state.currentEnable}
+                                                    onClick={this.onActiveSelectTarget} />
+                                            { !w || !w.props || !w.props.name
                                                 ?'目标对象'
-                                                :this.state.currentObject.props.name
+                                                :w.props.name
                                             }
                                             <span className="icon" />
                                         </div>
@@ -495,12 +638,14 @@ class Property extends React.Component {
                                 </Dropdown>
                             </div>
 
-                            <div className="add-btn" onClick={this.onSpecificAdd}>
+                            <button className="add-btn"
+                                    disabled={this.state.event&&!this.state.event.enable}
+                                 onClick={this.onSpecificAdd}>
                                 <div className="btn-layer">
                                     <span className="heng"/>
                                     <span className="shu"/>
                                 </div>
-                            </div>
+                            </button>
                         </div>
 
                         <div className="p--right flex-1">
@@ -510,13 +655,15 @@ class Property extends React.Component {
                                           onVisibleChange={this.onActionVisibleChange}
                                           visible={this.state.actionDropdownVisible}>
                                     <div className={$class("p--dropDown long", {'active':this.state.actionDropdownVisible})}>
-                                        <div className="title f--hlc">
-                                            <span className="pp--icon" />
+                                        <div className="title p--title f--hlc">
+                                            <span className="p--icon" />
                                             {
-                                                !this.state.currentAction
+                                                !w||!this.state.currentAction
                                                     ? '目标动作'
                                                     : this.state.currentAction.type === funcType.customize
-                                                        ? this.state.currentAction.func.props.name
+                                                        ? f&&f.props
+                                                            ? f.props.name
+                                                            : '目标动作'
                                                         : this.state.currentAction.showName
                                             }
                                             <span className="icon" />
@@ -526,7 +673,7 @@ class Property extends React.Component {
                                 {/*是否展开属性内容*/}
                                 <div className={$class("pp-content f--h", {'hidden': !this.state.expanded} )}>
                                     {
-                                        !this.state.currentAction ||
+                                        !w||!this.state.currentAction ||
                                         !this.state.currentAction.property ||
                                          this.state.currentAction.property.length === 0
                                             ? null
@@ -540,17 +687,19 @@ class Property extends React.Component {
 
                                 <button className={$class("up-btn", {'expanded-props': this.state.expanded})}
                                         onClick={this.expandBtn.bind(this, false)}
-                                        disabled={!this.state.currentAction||
+                                        disabled={!w||!this.state.currentAction||
                                         !this.state.currentAction.property ||
-                                         this.state.currentAction.property.length==0}>
+                                         this.state.currentAction.property.length==0||
+                                        !this.state.currentEnable}>
                                     <div className="btn-layer">
                                     </div>
                                 </button>
-                                <button className={$class("down-btn", {'expanded-props': (this.state.expanded)})}
+                                <button className={$class("down-btn", {'expanded-props': this.state.expanded})}
                                         onClick={this.expandBtn.bind(this, true)}
-                                        disabled={!this.state.currentAction||
+                                        disabled={!w||!this.state.currentAction||
                                         !this.state.currentAction.property ||
-                                        this.state.currentAction.property.length==0}>
+                                        this.state.currentAction.property.length==0||
+                                        !this.state.currentEnable}>
                                     <div className="btn-layer">
                                     </div>
                                 </button>

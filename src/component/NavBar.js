@@ -142,11 +142,31 @@ class NavBar extends React.Component {
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         getSockListStore.listen(this.getSockList.bind(this));
         ReDbOrSockIdStore.listen(this.reDbOrSockId.bind(this));
+
+        window.onbeforeunload = ()=>{
+            var n = window.event.screenX - window.screenLeft;
+            //鼠标在当前窗口内时，n<m，b为false；鼠标在当前窗口外时，n>m，b为true。20这个值是指关闭按钮的宽度
+            var b = n > document.documentElement.scrollWidth-20;
+            //鼠标在客户区内时，window.event.clientY>0；鼠标在客户区外时，window.event.clientY<0
+            if(b && window.event.clientY < 0 || window.event.altKey){
+                //这是一个关闭操作而非刷新
+                return false;
+            }else{
+                //这是一个刷新操作而非关闭
+                return false;
+            }
+        };
+
+        let id = localStorage.getItem("workID");
+        if(id !== null){
+            this.onImportUrl(PREFIX + 'work/' + id, id);
+        }
     }
 
     componentWillUnmount() {
         this.unsubscribe();
         clearTimeout(this.closeTimeFuc());
+        localStorage.setItem("workID", null);
     }
 
     onStatusChange(widget) {
@@ -255,6 +275,7 @@ class NavBar extends React.Component {
             });
         }
         this.workid = id;
+        localStorage.setItem("workID", id);
 
         this.closeTimeFuc =()=>{
             setTimeout(()=>{
@@ -320,6 +341,8 @@ class NavBar extends React.Component {
             if(index>=0){
                 href = href.substring(0,index);
             }
+            this.workid = null;
+            localStorage.setItem("workID", null);
             window.open(href + "?dom=1", "_self");
         }
         else{
@@ -328,6 +351,7 @@ class NavBar extends React.Component {
             if(index>=0){
                 href = href.substring(0,index);
             }
+            localStorage.setItem("workID", null);
             window.open(href, "_self");
         }
     }
@@ -439,6 +463,7 @@ class NavBar extends React.Component {
                 if (result && result['stage']) {
                     this.workid = id;
                     WidgetActions['initTree'](result);
+                    localStorage.setItem("workID", id);
                 }
             }.bind(this));
         }.bind(this), true);
@@ -493,6 +518,13 @@ class NavBar extends React.Component {
             })
         }
         else {
+            this.closeTimeFuc =()=>{
+                setTimeout(()=>{
+                    this.setState({
+                        saveFinish : false
+                    });
+                },1000);
+            };
             if (this.isPlay) {
                 this.setState({
                     saveLoading : false,
@@ -505,6 +537,8 @@ class NavBar extends React.Component {
                     saveLoading : false,
                     saveFinish : true,
                     saveError : true
+                },()=>{
+                    this.closeTimeFuc();
                 });
             }
         }
