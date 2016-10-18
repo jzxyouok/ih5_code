@@ -1577,11 +1577,15 @@ export default Reflux.createStore({
         this.reorderEventTreeList();
         // this.render();
     },
-    enableEventTree: function () {
+    enableEventTree: function (skipSetEventList, enableValue) {
         if (this.currentWidget) {
-            this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+            if(enableValue!==undefined) {
+                this.currentWidget.props['enableEventTree'] = enableValue;
+            } else {
+                this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+            }
             let isEnable = this.currentWidget.props['enableEventTree'];
-            if(this.currentWidget.props.eventTree&&this.currentWidget.props.eventTree.length>0){
+            if(!skipSetEventList&&this.currentWidget.props.eventTree&&this.currentWidget.props.eventTree.length>0){
                 this.currentWidget.props.eventTree.forEach(event=>{
                     event.enable = isEnable;
                     if(event.children&&event.children.length>0) {
@@ -1589,8 +1593,8 @@ export default Reflux.createStore({
                             eventChildren.enable = isEnable;
                         });
                     }
-                    if(event.specific&&event.specific.length>0) {
-                        event.specific.forEach(specific => {
+                    if(event.specificList&&event.specificList.length>0) {
+                        event.specificList.forEach(specific => {
                             specific.enable = isEnable;
                         });
                     }
@@ -1621,20 +1625,40 @@ export default Reflux.createStore({
         }
         this.trigger({eventTreeList: this.eventTreeList});
     },
-    enableEvent: function (event, isEnable) {
+    enableEvent: function (event) {
         if(event) {
-            event.enable = isEnable;
+            event.enable = !event.enable;
             if(event.children&&event.children.length>0) {
                 event.children.forEach(eventChildren => {
-                    eventChildren.enable = isEnable;
+                    eventChildren.enable = event.enable;
                 });
             }
-            if(event.specific&&event.specific.length>0) {
-                event.specific.forEach(specific => {
-                    specific.enable = isEnable;
+            if(event.specificList&&event.specificList.length>0) {
+                event.specificList.forEach(specific => {
+                    specific.enable = event.enable;
                 });
             }
+            this.changeEventTreeEnableByEvents();
             this.trigger({redrawEventTree: true});
+        }
+    },
+    changeEventTreeEnableByEvents: function () {
+        if(this.currentWidget.props['eventTree']) {
+            let enableLength = 0;
+            let disableLength = 0;
+            this.currentWidget.props.eventTree.forEach(event=>{
+                if(event.enable) {
+                    enableLength++;
+                } else {
+                    disableLength++;
+                }
+            });
+            if(enableLength=== 0||
+                disableLength=== 0){
+                this.enableEventTree(true, disableLength===0);
+            } else if (!this.currentWidget.props['enableEventTree']) {
+                this.enableEventTree(true, true);
+            }
         }
     },
     delEvent:function(eventList,index){
@@ -1665,10 +1689,9 @@ export default Reflux.createStore({
         }
         this.trigger({redrawEventTree: true});
     },
-    enableEventChildren:function(event,index) {
-        if(event&& event['children']&& event['children'].length>index){
-            let eventChildren = event[index];
-            eventChildren.enable = true;
+    enableEventChildren:function(eventChild) {
+        if(eventChild){
+            eventChild.enable = !eventChild.enable;
             this.trigger({redrawEventTree: true});
         }
     },
