@@ -1532,7 +1532,7 @@ export default Reflux.createStore({
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
-    emptyEvent: function (className) {
+    emptyEvent: function () {
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
@@ -1547,17 +1547,18 @@ export default Reflux.createStore({
         let event = {
             'eid': eid,
             'children': [{
-                judgeObjFlag:'判断对象',
-                judgeValFlag:'判断值',
-                compareFlag:'=',
-                compareObjFlag:'比较值/对象',
-                compareValFlag:'比较值',
-                arrHidden: [true,true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                'judgeObjFlag':'判断对象',
+                'judgeValFlag':'判断值',
+                'compareFlag':'=',
+                'compareObjFlag':'比较值/对象',
+                'compareValFlag':'比较值',
+                'arrHidden': [true,true,true,true,true,true],  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                'enable': true,
             }],
-            zhongHidden:true,
-            logicalFlag:'and',
-            conFlag:'触发条件',
-            className:null,
+            'zhongHidden':true,
+            'logicalFlag':'and',
+            'conFlag':'触发条件',
+            'className':null,
             'enable': true,
             'specificList': [eventSpec]
         };
@@ -1618,7 +1619,7 @@ export default Reflux.createStore({
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
-            this.currentWidget.props['eventTree'].push(this.emptyEvent(className));
+            this.currentWidget.props['eventTree'].push(this.emptyEvent());
         }
         this.trigger({redrawTree: true, redrawWidget: this.currentWidget});
         this.reorderEventTreeList();
@@ -1678,6 +1679,10 @@ export default Reflux.createStore({
     addEvent: function () {
         if (this.currentWidget) {
             this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            if(!this.currentWidget.props['enableEventTree']) {
+                this.currentWidget.props['enableEventTree'] = true;
+                this.trigger({redrawTree: true});
+            }
         }
         this.trigger({eventTreeList: this.eventTreeList});
     },
