@@ -435,6 +435,7 @@ function objectToId(object) {
   } else if (object.className == 'func'){
       idName = object.widget.props['id'];
       varKey = 'f' + object.widget.funcList.indexOf(object);
+      varName = object.name;
   } else if (object.className == 'dbItem'){
       idName = object.widget.props['id'];
       varKey = 'd' + object.widget.dbItemList.indexOf(object);
@@ -545,7 +546,7 @@ function generateId(node, idList) {
 }
 
 function getIdsName(idName, varName, propName) {
-  return 'ids.' + idName + '.' + ((varName) ? '_' + varName : propName);
+  return 'ids.' + idName + '.' + ((varName) ? '__' + varName : propName);
 }
 
 function generateJsFunc(etree) {
@@ -638,6 +639,14 @@ function generateJsFunc(etree) {
               }
               lines.push(line + ')');
           }
+        } else if (cmd.type == 'customize') {
+          var ps = ['ids'];
+          if (cmd.property) {
+            cmd.property.forEach(function(p) {
+              ps.push(JSON.stringify(p.value));
+            });
+          }
+          lines.push(getIdsName(cmd.funcId[0], cmd.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
       if (lines.length) {
