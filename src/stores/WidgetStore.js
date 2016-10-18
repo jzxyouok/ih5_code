@@ -719,12 +719,11 @@ function saveTree(data, node, saveKey) {
                    }
                 }
              obj.judgeObjFlag=v.judgeObjFlag;
-             if(obj.judgeObjFlag=='判断值') {
-                 obj.judgeObjFlag = null;
-             }
-
 
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
+              if(obj.judgeValFlag=='判断值') {
+                    obj.judgeValFlag = null;
+               }
 
              obj.compareFlag=v.compareFlag;//比较运算符
 
@@ -1730,6 +1729,7 @@ export default Reflux.createStore({
             eventList.splice(0,1);
             this.currentWidget.props['eventTree'].push(this.emptyEvent());
         }
+        this.changeEventTreeEnableByEvents();
         this.trigger({redrawEventTree: true});
     },
     addEventChildren:function(event){
