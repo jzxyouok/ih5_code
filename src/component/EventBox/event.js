@@ -915,19 +915,19 @@ class Event extends React.Component {
 
     }
 
-    getAntdComponent(item,index){
+    getAntdComponent(item,index,obj){
         if(item.type=='number'){
-            return    <InputNumber step={1}  min={0} className='dropDown-input-content'   defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
+            return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
         if(item.type=='string'){
-            return    <Input  className='dropDown-input-content'   defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
+            return <Input disabled={!obj.enable} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
         if(item.type=='select'){
            let optionArr=[];
             item.option.map((v,i)=>{
                 optionArr.push(<Option  key={v}  className='dropDown-input-option'>{v}</Option>);
             });
-            return   <Select  className='dropDown-input-content'  defaultValue={item.default}  onChange={this.onChangeProp.bind(this,index,item.type)}  >{optionArr}</Select>
+            return <Select disabled={!obj.enable} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
         }
     }
 
@@ -973,12 +973,12 @@ class Event extends React.Component {
                                                     :v.needFill.map((n,m)=>{
                                                     let content;
                                                     if(n.type=='select'){
-                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '> {this.getAntdComponent(n,m)}</div>)
+                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '> {this.getAntdComponent(n,m,v)}</div>)
                                                     }else{
                                                         content= (<div key={m} className='dropDown-input2 dropDown-input-full '>
                                                             <div className='dropDown-input-txt-half'>{n.showName}</div>
                                                             <div className='dropDown-input-half'>
-                                                                {this.getAntdComponent(n,m)}
+                                                                {this.getAntdComponent(n,m,v)}
                                                             </div>
                                                         </div>)
                                                     }
