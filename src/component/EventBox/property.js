@@ -141,7 +141,7 @@ class Property extends React.Component {
     onGetActionList(key){
         let obj = WidgetStore.getWidgetByKey(key);
 
-        if(!obj) {
+        if(!obj||!obj.className) {
             this.setState({
                 actionList: []
             });
@@ -211,7 +211,11 @@ class Property extends React.Component {
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
-        WidgetActions['eventSelectTargetMode'](!this.state.isActiveEventSelectTarget, this.state.specific.sid);
+        this.setState({
+            objectDropdownVisible: false
+        }, ()=>{
+            WidgetActions['eventSelectTargetMode'](!this.state.isActiveEventSelectTarget, this.state.specific.sid);
+        });
     }
 
     onSpecificAdd() {
@@ -279,8 +283,12 @@ class Property extends React.Component {
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
+        if(this.state.isActiveEventSelectTarget) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+        }
         this.setState({
-            objectDropdownVisible: flag
+            objectDropdownVisible: flag,
+
         });
     }
 
