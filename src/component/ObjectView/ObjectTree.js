@@ -99,6 +99,7 @@ class ObjectTree extends React.Component {
         this.onKeyDown =this.onKeyDown.bind(this);
         this.onKeyUp =this.onKeyUp.bind(this);
         this.chooseMore=this.chooseMore.bind(this);
+        this.addModuleBtn = this.addModuleBtn.bind(this);
 
     }
 
@@ -959,6 +960,13 @@ class ObjectTree extends React.Component {
         }
     }
 
+    addModuleBtn(event){
+        event.stopPropagation();
+        event.preventDefault();
+        let name = "_" + event.currentTarget.getAttribute("data-name");
+        WidgetActions['addWidget'](name);
+    }
+
     render() {
         //console.log(this.state.widgetTree);
         //let objectData = this.state.widgetTree;
@@ -1224,7 +1232,6 @@ class ObjectTree extends React.Component {
                      !allTreeData
                         ? null
                         : allTreeData.map((v,i)=>{
-                            //console.log(v.tree);
                              return  <div className='stage-item' key={i}
                                           onDragOver={this.itemDragOver}>
                                  <div className={$class('stage-title-wrap clearfix',
@@ -1260,7 +1267,12 @@ class ObjectTree extends React.Component {
                                                         onClick={this.editStopPropagation}
                                                         className={$class('item-name-input',{'hidden':!((v.tree.key === this.state.nid)&&this.state.editMode)})}/>
                                                    </div>
-                                                 : <div className='stage-name-wrap'><p>{ v.name }</p></div>
+                                                 :  <div className='stage-name-wrap stage-module f--hlc'>
+                                                        <p className="flex-1">{ v.name }</p>
+                                                        <span className="add-module-btn"
+                                                              data-name={v.name}
+                                                              onClick={ this.addModuleBtn.bind(this)} />
+                                                    </div>
                                          }
                                      </div>
                                      <div className={$class('item-event')}>
