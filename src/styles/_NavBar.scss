@@ -284,7 +284,7 @@
                         cursor: pointer;
                         background: url("img/button-icon.svg") no-repeat -160px -200px;
 
-                        &:hover { background-position: -160px -280px;}
+                        &:hover { background-position: -160px -240px;}
                         &:active { background-position: -160px -320px;}
                     }
                 }
@@ -381,13 +381,13 @@
                         .li-icon {
                             width: 24px;
                             height: 24px;
-                            background: url("img/button-icon.svg") no-repeat -400px -280px;
+                            background: url("img/button-icon.svg") no-repeat -400px -200px;
                             display: block;
                             margin: 0 2px 0 1px;
                         }
 
                         .title:hover .li-icon{ background-position: -400px -240px; }
-                        .title:active .li-icon{ background-position: -400px -200px; }
+                        .title:active .li-icon{ background-position: -400px -280px; }
 
                         .TitleName {
                             max-width: 60px;

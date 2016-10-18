@@ -85,6 +85,11 @@ export default Reflux.createStore({
                 } else {
                     toolBoxItem.data[i]['secondary'][j]['hidden'] = false;
                 }
+
+                if( toolBoxItem.data[i]['secondary'][j].className == 'module'){
+                    toolBoxItem.data[i]['secondary'][j]['disabled'] = false;
+                    toolBoxItem.data[i]['secondary'][j]['hidden'] = false;
+                }
             }
             if (toolBoxItem.data[i]['secondary'].length>0 && allAreHidden === toolBoxItem.data[i]['secondary'].length) {
                 toolBoxItem.data[i].hidden = true;

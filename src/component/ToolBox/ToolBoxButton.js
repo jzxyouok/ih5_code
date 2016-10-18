@@ -12,6 +12,8 @@ import DbHeaderAction from '../../actions/DbHeader'
 import DbHeaderStores from '../../stores/DbHeader';
 import getSockListAction from '../../actions/getSockListAction';
 import getSockListStore from '../../stores/getSockListStore';
+import CreateModuleAction from '../../actions/CreateModuleAction'
+
 var PREFIX = 'app/';
 
 // 工具栏按钮（最小单位）
@@ -135,6 +137,10 @@ class ToolBoxButton extends Component {
                         }
 
                     }.bind(this));
+            }
+            else if(this.props.className === "module"){
+                CreateModuleAction['createModule'](true);
+                ToolBoxAction['deselect']();
             }
             else {
                 WidgetActions['addWidget'](this.props.className, this.props.param);

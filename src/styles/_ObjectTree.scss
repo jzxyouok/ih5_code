@@ -143,6 +143,27 @@
                     padding: 0 5px;
                     background-color: #151515;
                 }
+
+                &.stage-module{
+                    padding-right: 0;
+                    .add-module-btn {
+                        width: 37px;
+                        min-width: 37px;
+                        height: 16px;
+                        display: block;
+                        margin: 0 2px 0 5px;
+                        cursor: pointer;
+                        background: url("img/button-icon.svg") no-repeat -1680px -200px;
+
+                        &:hover {
+                            background-position: -1680px -240px;
+                        }
+
+                        &:active {
+                            background-position: -1680px -280px;
+                        }
+                    }
+                }
             }
 
             p {
