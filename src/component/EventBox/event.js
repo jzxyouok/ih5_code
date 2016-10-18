@@ -37,8 +37,7 @@ class Event extends React.Component {
             compareValOption: []
         };
 
-        this.saveJudgeObjFlag=null;
-        this.saveCompareObjFlag=null;
+
 
         this.curEventIndex = 0;
         this.curChildrenIndex = 0;
@@ -537,7 +536,8 @@ class Event extends React.Component {
                     }
                 });
             } else if (type == 'judgeValFlag' && curChild) {
-                let judgeObjFlag = this.saveJudgeObjFlag ? this.saveJudgeObjFlag : curChild.judgeObjFlag;
+                let judgeObjFlag = curChild.saveJudgeObjFlag ? curChild.saveJudgeObjFlag : curChild.judgeObjFlag;
+
 
                 let judgeObjClassName = null;
                 allWidgetsList.map((v, i)=> {
@@ -560,7 +560,9 @@ class Event extends React.Component {
                 }
 
             } else if (type == 'compareValFlag' && curChild) {
-                let compareObjFlag = this.saveCompareObjFlag ? this.saveCompareObjFlag : curChild.compareObjFlag;
+                let compareObjFlag = curChild.saveCompareObjFlag ? curChild.saveCompareObjFlag : curChild.compareObjFlag;
+
+
                 if (compareObjFlag) {
                     let compareObjClassName = null;
                     allWidgetsList.map((v, i)=> {
@@ -568,6 +570,7 @@ class Event extends React.Component {
                             compareObjClassName = v.className;
                         }
                     });
+
                     if (compareObjClassName && propertyMap[compareObjClassName]) {
                         propertyMap[compareObjClassName].map((v, i)=> {
                             if (name == 'width') {
@@ -575,13 +578,13 @@ class Event extends React.Component {
                             } else if (name == 'height') {
                                 showName = '高度';
                             }
-                            if (v.name == name) {
+                            if (v.name == name) { 
                                 showName = v.showName;
                             }
                         });
+
                     }
                 }
-
             }
         }
           return showName?showName:'';
@@ -783,14 +786,16 @@ class Event extends React.Component {
     }
 
     //focus
-    saveOldVal(type,event){
+    saveOldVal(type,curChildIndex,curEventIndex,event){
         this.oldVal =event.target.value;
+        let eventList =this.state.eventList;
         if(type == 'judgeObjFlag'){
-            this.saveJudgeObjFlag =event.target.value;
+          eventList[curEventIndex].children[curChildIndex].saveJudgeObjFlag =event.target.value;
         }else if(type=='compareObjFlag'){
-            this.saveCompareObjFlag =event.target.value;
+          eventList[curEventIndex].children[curChildIndex].saveCompareObjFlag =event.target.value;
             event.target.select()
         }
+        this.setState({eventList:eventList});
     }
 
     setInputValAuto(type,event){
@@ -830,12 +835,14 @@ class Event extends React.Component {
             } else {
                 //触发下一个下拉框
                 if(newVal !=this.oldVal){
-                    this.onMenuClick(type, newVal,key);  //key怎么办
+                    this.onMenuClick(type, newVal,key);
                 } 
             }
         this.oldVal=null;
-        this.saveJudgeObjFlag=null;
-        this.saveCompareObjFlag=null;
+
+        eventList[this.curEventIndex].children[this.curChildrenIndex].saveJudgeObjFlag=null;
+        eventList[this.curEventIndex].children[this.curChildrenIndex].saveCompareObjFlag=null;
+        this.setState({eventList: eventList});
     }
 
 
@@ -938,9 +945,14 @@ class Event extends React.Component {
         }
     }
 
-    showCompareDropDown(name){
+    showCompareDropDown(name,curEventIndex,curChildrenIndex){
         let eventList=this.state.eventList;
-        eventList[this.curEventIndex].children[this.curChildrenIndex].showDropdown =true;
+        eventList.map((v,i)=>{
+           v.children.map((item,index)=>{
+                if(item.showDropdown){item.showDropdown=false;}
+           });
+        });
+        eventList[curEventIndex].children[curChildrenIndex].showDropdown =true;
         this.setState({eventList:eventList});
         this.refs[name].focus();
     }
@@ -1043,7 +1055,7 @@ class Event extends React.Component {
                                                                 trigger={['click']}>
                                                                 <div className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
                                                                     <input  value= {judgeObjName}
-                                                                        onChange={this.inputChange.bind(this,'judgeObjFlag')} onFocus={this.saveOldVal.bind(this,'judgeObjFlag')}   onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')} className='judgeObjFlag-input'/>
+                                                                        onChange={this.inputChange.bind(this,'judgeObjFlag')} onFocus={this.saveOldVal.bind(this,'judgeObjFlag',i1,i)}   onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')} className='judgeObjFlag-input'/>
                                                                     <span className='icon' /></div>
                                                             </Dropdown>
                                                     }
@@ -1063,7 +1075,7 @@ class Event extends React.Component {
                                                                 <div className={$class('title f--hlc',{'title-gray':v1.judgeValFlag=='判断值'})} >
                                                                     <input value= {judgeValName}
                                                                         onChange={this.inputChange.bind(this,'judgeValFlag')}
-                                                                        onFocus={this.saveOldVal.bind(this,'judgeValFlag')}
+                                                                        onFocus={this.saveOldVal.bind(this,'judgeValFlag',i1,i)}
                                                                         onBlur={this.setInputValAuto.bind(this,'judgeValFlag')}
                                                                         className='judgeValFlag-input'/>
                                                                     <span className='icon' /></div>
@@ -1103,11 +1115,11 @@ class Event extends React.Component {
                                                                 <div className={$class('title f--hlc',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
                                                                     <input value= {compareObjName}
                                                                         onChange={this.inputChange.bind(this,'compareObjFlag')}
-                                                                        onFocus={this.saveOldVal.bind(this,'compareObjFlag')}
+                                                                        onFocus={this.saveOldVal.bind(this,'compareObjFlag',i1,i)}
                                                                         onBlur={this.setInputValAuto.bind(this,'compareObjFlag')}
                                                                         ref={'compareObjFlag'+i+i1}
                                                                         className='compareObjFlag-input'/>
-                                                                    <span className='icon' onClick={this.showCompareDropDown.bind(this,'compareObjFlag'+i+i1)} /></div>
+                                                                    <span className='icon' onClick={this.showCompareDropDown.bind(this,'compareObjFlag'+i+i1,i,i1)} /></div>
                                                             </Dropdown>
                                                     }
                                                 </div>
@@ -1125,7 +1137,7 @@ class Event extends React.Component {
                                                                 <div className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >
                                                                     <input value= {compareValName}
                                                                         onChange={this.inputChange.bind(this,'compareValFlag')}
-                                                                        onFocus={this.saveOldVal.bind(this,'compareValFlag')}
+                                                                        onFocus={this.saveOldVal.bind(this,'compareValFlag',i1,i)}
                                                                         onBlur={this.setInputValAuto.bind(this,'compareValFlag')}
                                                                         className='compareValFlag-input'/>
                                                                     <span className='icon'/></div>

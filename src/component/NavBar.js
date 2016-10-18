@@ -27,6 +27,7 @@ import {checkChildClass} from './PropertyMap';
 import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
+import CreateModuleStore from '../stores/CreateModuleStore';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -142,6 +143,7 @@ class NavBar extends React.Component {
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         getSockListStore.listen(this.getSockList.bind(this));
         ReDbOrSockIdStore.listen(this.reDbOrSockId.bind(this));
+        CreateModuleStore.listen(this.createModule.bind(this));
 
         window.onbeforeunload = ()=>{
             var n = window.event.screenX - window.screenLeft;
@@ -896,6 +898,12 @@ class NavBar extends React.Component {
         this.setState({
             addPanel: false
         })
+    }
+
+    createModule(bool){
+        if(bool){
+            this.createClassBtn();
+        }
     }
 
     render() {

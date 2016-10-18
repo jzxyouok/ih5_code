@@ -2503,7 +2503,7 @@ export default Reflux.createStore({
               callback(xhr.responseText);
         };
         //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        //http://test-beta.ih5.cn/
+        //http://test-beta.ih5.cn
         xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";

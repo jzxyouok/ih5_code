@@ -269,10 +269,10 @@ class TimelineView extends React.Component {
 	// 添加时间断点
 	onAdd() {
         //console.log(this.state.currentTime,this.state.startTime,this.state.endTime)
-        if(this.state.currentTime < this.state.startTime
-            || this.state.currentTime> this.state.endTime){
-            return;
-        }
+        //if(this.state.currentTime < this.state.startTime
+        //    || this.state.currentTime> this.state.endTime){
+        //    return;
+        //}
 
 		if (this.state.currentTrack) {
             //console.log(this.state.currentTrack);
