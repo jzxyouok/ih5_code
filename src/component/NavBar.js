@@ -142,6 +142,19 @@ class NavBar extends React.Component {
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         getSockListStore.listen(this.getSockList.bind(this));
         ReDbOrSockIdStore.listen(this.reDbOrSockId.bind(this));
+
+        window.onbeforeunload = function() {
+            var n = window.event.screenX - window.screenLeft;
+            var b = n > document.documentElement.scrollWidth-20;
+            if(b && window.event.clientY < 0 || window.event.altKey){
+                //这是一个关闭操作而非刷新
+
+
+            }else{
+                //这是一个刷新操作而非关闭
+
+            }
+        }
     }
 
     componentWillUnmount() {

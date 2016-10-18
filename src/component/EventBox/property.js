@@ -240,7 +240,7 @@ class Property extends React.Component {
             currentEnable: !this.state.currentEnable,
             expanded: !this.state.currentEnable
         }, ()=>{
-            WidgetActions['changeSpecific'](this.state.specific, {'enable': {'value':this.state.currentEnable}});
+            WidgetActions['enableSpecific'](this.state.specific, this.state.currentEnable);
         })
     }
 
