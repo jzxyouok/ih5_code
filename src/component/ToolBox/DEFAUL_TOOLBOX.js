@@ -37,6 +37,7 @@ let composingcontainerIcon = img('composingContainer.svg');
 let cominterfaceIcon = img('comInterface.svg');
 let htmlIcon = img('html.svg');
 let inputIcon = img('input.svg');
+let moduleIcon = img('module.svg');
 
 // let trackIcon = img('track.svg');
 // let worldIcon = img('world.svg');
@@ -87,7 +88,8 @@ var TOOL_ID = {
 
     HTML:32,
     INPUT:33,
-    PERSONSALDB:34
+    PERSONSALDB:34,
+    MODULE : 35
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -258,6 +260,12 @@ var DEFAULT_TOOLBOX = {
         gid:23,
         primary: 0,
         secondary: [{cid:TOOL_ID.WECAHT,name:'微信',icon:wechatIcon, className:'wechat'}]
+    },{
+        name:'组件',
+        key:24,
+        gid:24,
+        primary: 0,
+        secondary: [{cid:TOOL_ID.MODULE,name:'组件',icon:moduleIcon, className:'module'}]
     }]
 
     // ,{
