@@ -79,23 +79,9 @@ class Event extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
+//        console.log('nextProps',nextProps);
         nextProps.eventList.map((v,i)=>{
-            if(!v.children){
-               v.children=[{
-                  judgeObjFlag:'判断对象',
-                  judgeValFlag:'判断值',
-                  compareFlag:'=',
-                  compareObjFlag:'比较值/对象',
-                  compareValFlag:'比较值',
-                      arrHidden: [true,true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
-              }];
-             v.zhongHidden=true;
-             v.logicalFlag='and';
-             v.className = nextProps.className;
-             v.conFlag='触发条件';
-          }else{
-
+            v.className=nextProps.widget.className;
               v.children.map((item,index)=>{
                     if(item.judgeObjKey){
                         let obj1 =WidgetStore.getWidgetByKey(item.judgeObjKey);
@@ -110,10 +96,7 @@ class Event extends React.Component {
                         }
                     }
               });
-            }
         });
-
-        // console.log('nextProps.eventList',nextProps );
         this.setState({
             activeKey:nextProps.activeKey,
             eventList:nextProps.eventList
@@ -155,33 +138,6 @@ class Event extends React.Component {
                 });
             });
 
-            eventList.map((v,i)=>{
-                if( v.children){
-                    v.children.map((item,index)=>{
-                        let judgeObj = WidgetStore.getWidgetByKey(item.judgeObjKey);
-                        let compareObj = WidgetStore.getWidgetByKey(item.compareObjKey);
-
-                        if(!judgeObj && item.judgeObjKey){
-                            item.judgeValFlag = '判断值';
-                            item.judgeObjFlag ='判断对象';
-                            item.compareFlag = '=';
-                            item.compareObjFlag = '比较值/对象';
-                            item.compareObjKey=null;
-                            item.compareValFlag = '比较值';
-                            item.arrHidden= [false,false,true,true,true,true]
-                        }
-                        if(judgeObj && !compareObj && item.compareObjKey){
-                            let  arrHidden = item.arrHidden;
-                            arrHidden[5]=true;
-                            item.compareValFlag = '比较值';
-                            item.compareObjFlag='比较值/对象';
-                            item.arrHidden= arrHidden
-                        }
-                    });
-                }
-            });
-
-            this.setEventBoxWidth(eventList);
 
             //此处可设置对象关系,将对象的引用注入进来.
             this.setState({

@@ -1536,10 +1536,28 @@ export default Reflux.createStore({
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
+        // let eventTree = {
+        //     'eid': eid,
+        //     'condition': null,
+        //     'children': null,
+        //     'enable': true,
+        //     'specificList': [eventSpec]
+        // };
+
         let eventTree = {
             'eid': eid,
-            'condition': null,
-            'children': null,
+            'children': [{
+                judgeObjFlag:'判断对象',
+                judgeValFlag:'判断值',
+                compareFlag:'=',
+                compareObjFlag:'比较值/对象',
+                compareValFlag:'比较值',
+                arrHidden: [true,true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+            }],
+            zhongHidden:true,
+            logicalFlag:'and',
+            conFlag:'触发条件',
+            className:null,
             'enable': true,
             'specificList': [eventSpec]
         };
@@ -1704,7 +1722,6 @@ export default Reflux.createStore({
         this.trigger({redrawEventTree: true});
     },
     addEventChildren:function(event){
-
         if(event && event['children']){
             event['children'].push({
                 'cid': _childrenCount++,
@@ -1716,7 +1733,6 @@ export default Reflux.createStore({
                 enable: true,
                 arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             });
-
             this.trigger({redrawEventTree: true});
         }
     },
