@@ -581,7 +581,7 @@ function generateJsFunc(etree) {
         });
       }
 
-    //  console.log('conditions',conditions);
+     //console.log('conditions',conditions);
 
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
