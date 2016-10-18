@@ -702,7 +702,7 @@ function saveTree(data, node, saveKey) {
              obj.compareValFlag =v.compareValFlag;//比较对象的属性
              obj.compareValOption=v.compareValOption;
              obj.operationManager={};
-             obj.operationManager.arrHidden=v.operationManager.arrHidden;
+             //obj.operationManager.arrHidden=v.operationManager.arrHidden;
 
 
              judges.children.push(obj);
