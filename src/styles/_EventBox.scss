@@ -1192,7 +1192,8 @@
                 .pp--list-layer,
                 .pp--list,
                 .p--close-not-enable,
-                .p--icon:disabled {
+                .p--icon:disabled,
+                .add-btn:disabled {
                     filter: alpha(opacity=60);
                     opacity: 0.6;
                     cursor: not-allowed !important;

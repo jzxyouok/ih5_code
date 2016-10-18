@@ -952,16 +952,21 @@ class Event extends React.Component {
                                                 onClick={this.onEventEnable.bind(this, v)}/>
                                     </div>
                                     <div className='dropDown-layer long'>
-                                        <Dropdown
-                                            overlay={this.menuList('conFlag')}
-                                            onClick={this.setCurOption.bind(this,0,i,'conFlag',false)}
-                                            getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-                                            trigger={['click']}>
-                                            <div  className={$class('title f--hlc',{'title-gray':v.conFlag=='触发条件'})} >
-                                                {this.getShowNameByName('conFlag',v.conFlag,0,i)}
-                                                <span className='icon' /></div>
-                                        </Dropdown>
-                                        <div   className={$class('dropDown',{'hidden':v.needFill===undefined})} >
+                                        {
+                                            !v.enable
+                                                ? <div  className={$class('title f--hlc',{'title-gray':v.conFlag=='触发条件'})} >
+                                                    {this.getShowNameByName('conFlag',v.conFlag,0,i)}
+                                                    <span className='icon' /></div>
+                                                :<Dropdown overlay={this.menuList('conFlag')}
+                                                        onClick={this.setCurOption.bind(this,0,i,'conFlag',false)}
+                                                        getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
+                                                        trigger={['click']}>
+                                                    <div  className={$class('title f--hlc',{'title-gray':v.conFlag=='触发条件'})} >
+                                                        {this.getShowNameByName('conFlag',v.conFlag,0,i)}
+                                                        <span className='icon' /></div>
+                                                </Dropdown>
+                                        }
+                                        <div className={$class('dropDown',{'hidden':v.needFill===undefined})}>
                                             {
                                                 v.needFill===undefined
                                                     ?''
@@ -990,6 +995,10 @@ class Event extends React.Component {
                                     :   <div className={$class('zhong',{'hidden':v.zhongHidden,'zhongToLong':this.state.toLong})}>
                                     {
                                         v.children.map((v1,i1)=>{
+                                            let judgeObjName = this.getObjNameByKey(v1.judgeObjKey,'判断对象',v1.judgeObjFlag);
+                                            let judgeValName = this.getShowNameByName('judgeValFlag',v1.judgeValFlag,i1,i);
+                                            let compareObjName = this.getObjNameByKey(v1.compareObjKey,'比较值/对象',v1.compareObjFlag);
+                                            let compareValName = this.getShowNameByName('compareValFlag',v1.compareValFlag ,i1,i);
                                             return  <div className={$class("list f--hlc", {'list-not-enable': !v1.enable})} key={i1}>
                                                 <span className="supplement-line" />
                                                 <div className="enable-button-div">
@@ -1015,77 +1024,106 @@ class Event extends React.Component {
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[1]})} >
-                                                    <Dropdown
-                                                        overlay={this.menuList('judgeObjFlag')}
-                                                        onClick={this.setCurOption.bind(this,i1,i,'judgeObjFlag',false)}
-                                                        getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-                                                        trigger={['click']}>
-                                                        <div   className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
-                                                            <input  value= {this.getObjNameByKey(v1.judgeObjKey,'判断对象',v1.judgeObjFlag)}
-                                                                   onChange={this.inputChange.bind(this,'judgeObjFlag')} onFocus={this.saveOldVal.bind(this,'judgeObjFlag')}   onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')} className='judgeObjFlag-input'/>
-                                                            <span className='icon' /></div>
-                                                    </Dropdown>
-
+                                                    {
+                                                        !v1.enable
+                                                            ? <div className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
+                                                                {judgeObjName}
+                                                                <span className='icon' /></div>
+                                                            : <Dropdown
+                                                                overlay={this.menuList('judgeObjFlag')}
+                                                                onClick={this.setCurOption.bind(this,i1,i,'judgeObjFlag',false)}
+                                                                getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
+                                                                trigger={['click']}>
+                                                                <div className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
+                                                                    <input  value= {judgeObjName}
+                                                                        onChange={this.inputChange.bind(this,'judgeObjFlag')} onFocus={this.saveOldVal.bind(this,'judgeObjFlag')}   onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')} className='judgeObjFlag-input'/>
+                                                                    <span className='icon' /></div>
+                                                            </Dropdown>
+                                                    }
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[2]})} >
-                                                    <Dropdown
-                                                        overlay={this.menuList('judgeValFlag')}
-                                                        onClick={this.setCurOption.bind(this,i1,i,'judgeValFlag',true)}
-                                                        getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-                                                        trigger={['click']}>
-                                                        <div    className={$class('title f--hlc',{'title-gray':v1.judgeValFlag=='判断值'})} >
-                                                            <input value= {this.getShowNameByName('judgeValFlag',v1.judgeValFlag,i1,i)}
-                                                                   onChange={this.inputChange.bind(this,'judgeValFlag')}
-                                                                   onFocus={this.saveOldVal.bind(this,'judgeValFlag')}
-                                                                   onBlur={this.setInputValAuto.bind(this,'judgeValFlag')}
-                                                                   className='judgeValFlag-input'/>
-                                                            <span className='icon' /></div>
-                                                    </Dropdown>
+                                                    {
+                                                        !v1.enable
+                                                            ?  <div className={$class('title f--hlc',{'title-gray':v1.judgeValFlag=='判断值'})}>
+                                                                {judgeValName}
+                                                                <span className='icon' /></div>
+                                                            : <Dropdown
+                                                                overlay={this.menuList('judgeValFlag')}
+                                                                onClick={this.setCurOption.bind(this,i1,i,'judgeValFlag',true)}
+                                                                getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
+                                                                trigger={['click']}>
+                                                                <div className={$class('title f--hlc',{'title-gray':v1.judgeValFlag=='判断值'})} >
+                                                                    <input value= {judgeValName}
+                                                                        onChange={this.inputChange.bind(this,'judgeValFlag')}
+                                                                        onFocus={this.saveOldVal.bind(this,'judgeValFlag')}
+                                                                        onBlur={this.setInputValAuto.bind(this,'judgeValFlag')}
+                                                                        className='judgeValFlag-input'/>
+                                                                    <span className='icon' /></div>
+                                                            </Dropdown>
+                                                    }
                                                 </div>
                                                 <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})} >
-                                                    <Dropdown
-                                                        overlay={this.menuList('compareFlag')}
-                                                        onClick={this.setCurOption.bind(this,i1,i,'compareFlag',false)}
-                                                        getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-                                                        trigger={['click']}>
-                                                        <div className='title f--hlc'>
-                                                            {v1.compareFlag}
-                                                            <span className='icon' /></div>
-                                                    </Dropdown>
+                                                    {
+                                                        !v1.enable
+                                                            ? <div className='title f--hlc'>
+                                                                {v1.compareFlag}
+                                                                <span className='icon' /></div>
+                                                            : <Dropdown
+                                                                overlay={this.menuList('compareFlag')}
+                                                                onClick={this.setCurOption.bind(this,i1,i,'compareFlag',false)}
+                                                                getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
+                                                                trigger={['click']}>
+                                                                <div className='title f--hlc'>
+                                                                    {v1.compareFlag}
+                                                                    <span className='icon' /></div>
+                                                            </Dropdown>
+                                                    }
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4]})} >
-                                                    <Dropdown
-                                                        overlay={this.menuList('compareObjFlag')}
-                                                        onClick={this.setCurOption.bind(this,i1,i,'compareObjFlag',false)}
-                                                        visible={v1.showDropdown}
-                                                        getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-                                                        trigger={['click']}>
-                                                        <div  className={$class('title f--hlc',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
-                                                            <input value= {this.getObjNameByKey(v1.compareObjKey,'比较值/对象',v1.compareObjFlag)}
-                                                                   onChange={this.inputChange.bind(this,'compareObjFlag')}
-                                                                   onFocus={this.saveOldVal.bind(this,'compareObjFlag')}
-                                                                   onBlur={this.setInputValAuto.bind(this,'compareObjFlag')}
-                                                                   ref={'compareObjFlag'+i+i1}
-                                                                   className='compareObjFlag-input'/>
-                                                            <span className='icon' onClick={this.showCompareDropDown.bind(this,'compareObjFlag'+i+i1)} /></div>
-                                                    </Dropdown>
+                                                    {
+                                                        !v1.enable
+                                                            ? <div className={$class('title f--hlc',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
+                                                                {compareObjName}
+                                                                <span className='icon'/></div>
+                                                            : <Dropdown
+                                                                overlay={this.menuList('compareObjFlag')}
+                                                                onClick={this.setCurOption.bind(this,i1,i,'compareObjFlag',false)}
+                                                                visible={v1.showDropdown}
+                                                                getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
+                                                                trigger={['click']}>
+                                                                <div className={$class('title f--hlc',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
+                                                                    <input value= {compareObjName}
+                                                                        onChange={this.inputChange.bind(this,'compareObjFlag')}
+                                                                        onFocus={this.saveOldVal.bind(this,'compareObjFlag')}
+                                                                        onBlur={this.setInputValAuto.bind(this,'compareObjFlag')}
+                                                                        ref={'compareObjFlag'+i+i1}
+                                                                        className='compareObjFlag-input'/>
+                                                                    <span className='icon' onClick={this.showCompareDropDown.bind(this,'compareObjFlag'+i+i1)} /></div>
+                                                            </Dropdown>
+                                                    }
                                                 </div>
                                                 <div className={$class('dropDown-layer mr20 middle',{'hidden':v1.arrHidden[5]})} >
-                                                    <Dropdown
-                                                        overlay={this.menuList('compareValFlag')}
-                                                        onClick={this.setCurOption.bind(this,i1,i,'compareValFlag',true)}
-                                                        getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-                                                        trigger={['click']}>
-                                                        <div   className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >
-                                                            <input value= {this.getShowNameByName('compareValFlag',v1.compareValFlag ,i1,i)}
-                                                                   onChange={this.inputChange.bind(this,'compareValFlag')}
-                                                                   onFocus={this.saveOldVal.bind(this,'compareValFlag')}
-                                                                   onBlur={this.setInputValAuto.bind(this,'compareValFlag')}
-                                                                   className='compareValFlag-input'/>
-                                                            <span className='icon'  /></div>
-                                                    </Dropdown>
+                                                    {
+                                                        !v1.enable
+                                                            ? <div className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >
+                                                                {compareValName}
+                                                                <span className='icon'/></div>
+                                                            : <Dropdown
+                                                                overlay={this.menuList('compareValFlag')}
+                                                                onClick={this.setCurOption.bind(this,i1,i,'compareValFlag',true)}
+                                                                getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
+                                                                trigger={['click']}>
+                                                                <div className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >
+                                                                    <input value= {compareValName}
+                                                                        onChange={this.inputChange.bind(this,'compareValFlag')}
+                                                                        onFocus={this.saveOldVal.bind(this,'compareValFlag')}
+                                                                        onBlur={this.setInputValAuto.bind(this,'compareValFlag')}
+                                                                        className='compareValFlag-input'/>
+                                                                    <span className='icon'/></div>
+                                                            </Dropdown>
+                                                    }
                                                 </div>
                                                 <button className={$class('close-btn')}
                                                         disabled={!v.enable}
