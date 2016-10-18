@@ -639,7 +639,7 @@ function generateJsFunc(etree) {
               }
               lines.push(line + ')');
           }
-        } else if (cmd.action.type == 'customize') {
+        } else if (cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
             cmd.action.property.forEach(function(p) {
@@ -2276,7 +2276,7 @@ export default Reflux.createStore({
             rootDiv.addEventListener('drop', drop.bind(this), false);
         }
 
-        this.trigger({initTree: stageTree, classList: classList});
+        this.trigger({initTree: stageTree, classList: classList, resetSelectMode:true});
         this.selectWidget(stageTree[0].tree);
         this.getAllWidgets();
     },
