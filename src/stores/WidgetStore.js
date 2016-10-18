@@ -182,7 +182,6 @@ function loadTree(parent, node, idList) {
     node['etree'].forEach(item =>{
       var r = {};
       var judgesObj = item.judges;
-
       r.conFlag = judgesObj.conFlag;
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
@@ -477,7 +476,7 @@ function generateId(node, idList) {
       node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
         generateObjectId(judge.judgeObj);
-        generateObjectId(judge.compareObj);
+        generateObjectId(judge.compareObj); 
         if (idList != undefined) {
           if (judge.judgeObj) {
             var o = objectToId(judge.judgeObj);
@@ -553,7 +552,7 @@ function generateJsFunc(etree) {
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
-          if (c.judgeObjId && c.judgeValFlag) {
+          if (c.judgeObj && c.judgeValFlag) {
             var op = c.compareFlag;
             var jsop;
             if (op == '=')
@@ -575,6 +574,9 @@ function generateJsFunc(etree) {
           }
         });
       }
+
+      console.log('conditions',conditions);
+
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
@@ -658,6 +660,7 @@ function generateJsFunc(etree) {
       }
     }
   });
+
   return output;
 }
 
@@ -675,8 +678,9 @@ function saveTree(data, node, saveKey) {
         var judges={};
 
             judges.conFlag = item.conFlag;
-            console.log(node);
-             judges.className=node.className;
+            if(judges.conFlag=='触发条件'){judges.conFlag=null;}
+
+            judges.className=node.className;
 
             judges.children=[];
             if(item.needFill) {
@@ -697,12 +701,32 @@ function saveTree(data, node, saveKey) {
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
              let obj={};
-             obj.judgeObjkey =v.judgeObjkey;
+             obj.judgeObjKey =v.judgeObjKey;
+             obj.judgeObj =  this.getWidgetByKey(obj.judgeObjKey);
+             if (obj.judgeObj) {
+                   let o = objectToId(obj.judgeObj);
+                   obj.judgeObjId = o[0];
+                   if (o[1]) {
+                     obj.judgeVarId = o[1];
+                     obj.judgeVarName = o[2];
+                   }
+                }
+             obj.judgeObjFlag=v.judgeObjFlag;
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
 
              obj.compareFlag=v.compareFlag;//比较运算符
 
-             obj.compareObjkey=v.compareObjkey;
+             obj.compareObjKey=v.compareObjKey;
+              obj.compareObj =  this.getWidgetByKey(obj.compareObjKey);
+                if (obj.compareObj) {
+                   var o = objectToId(obj.compareObj);
+                   obj.compareObjId = o[0];
+                   if (o[1]) {
+                     obj.compareVarId = o[1];
+                     obj.compareVarName = o[2];
+                   }
+                }
+             obj.compareObjFlag=v.compareObjFlag;
              obj.compareValFlag=v.compareValFlag;//判断对象的属性
 
              obj.arrHidden=v.arrHidden;
