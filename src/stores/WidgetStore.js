@@ -1028,19 +1028,23 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['removeEventTree'], this.removeEventTree);
         this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
         this.listenTo(WidgetActions['activeEventTree'], this.activeEventTree);
+
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
-        this.listenTo(WidgetActions['removeEvent'], this.removeEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
+        this.listenTo(WidgetActions['delEvent'], this.delEvent);
+
         this.listenTo(WidgetActions['getAllWidgets'], this.getAllWidgets);
         this.listenTo(WidgetActions['reorderEventTreeList'], this.reorderEventTreeList);
+
         //事件属性
         this.listenTo(WidgetActions['addSpecific'], this.addSpecific);
         this.listenTo(WidgetActions['deleteSpecific'], this.deleteSpecific);
         this.listenTo(WidgetActions['changeSpecific'], this.changeSpecific);
+        this.listenTo(WidgetActions['enableSpecific'], this.enableSpecific);
         //判断逻辑事件
         this.listenTo(WidgetActions['addEventChildren'], this.addEventChildren);
         this.listenTo(WidgetActions['delEventChildren'], this.delEventChildren);
-        this.listenTo(WidgetActions['delEvent'], this.delEvent);
+        this.listenTo(WidgetActions['enableEventChildren'], this.enableEventChildren);
 
         //widget，变量，函数的统一复制，黏贴，删除，重命名，剪切入口
         this.listenTo(WidgetActions['pasteTreeNode'], this.pasteTreeNode);
@@ -1495,6 +1499,7 @@ export default Reflux.createStore({
             'eid': eid,
             'condition': null,
             'children': null,
+            'enable': true,
             'specificList': [eventSpec]
         };
         return eventTree;
@@ -1572,6 +1577,23 @@ export default Reflux.createStore({
     enableEventTree: function () {
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+            let isEnable = this.currentWidget.props['enableEventTree'];
+            if(this.currentWidget.props.eventTree&&this.currentWidget.props.eventTree.length>0){
+                this.currentWidget.props.eventTree.forEach(event=>{
+                    event.enable = isEnable;
+                    if(event.children&&event.children.length>0) {
+                        event.children.forEach(eventChildren => {
+                            eventChildren.enable = isEnable;
+                        });
+                    }
+                    if(event.specific&&event.specific.length>0) {
+                        event.specific.forEach(specific => {
+                            specific.enable = isEnable;
+                        });
+                    }
+                });
+                this.trigger({redrawEventTree: true});
+            }
         }
         this.trigger({redrawTree: true});
         // this.render();
@@ -1596,17 +1618,25 @@ export default Reflux.createStore({
         }
         this.trigger({eventTreeList: this.eventTreeList});
     },
-    removeEvent: function () {
-        //TODO: 单个事件的删除
-    },
-    enableEvent: function () {
-        //TODO: 单个事件的可执行开关
-    },
-    addSpecific: function(event){
-        if(event&&event['specificList']){
-            event['specificList'].push(this.emptyEventSpecific());
+    enableEvent: function (event, isEnable) {
+        if(event) {
+            event.enable = isEnable;
+            if(event.children&&event.children.length>0) {
+                event.children.forEach(eventChildren => {
+                    eventChildren.enable = isEnable;
+                });
+            }
+            if(event.specific&&event.specific.length>0) {
+                event.specific.forEach(specific => {
+                    specific.enable = isEnable;
+                });
+            }
             this.trigger({redrawEventTree: true});
         }
+    },
+    delEvent:function(eventList,index){
+        eventList.splice(index,1);
+        this.trigger({redrawEventTree: true});
     },
     addEventChildren:function(event){
 
@@ -1618,6 +1648,7 @@ export default Reflux.createStore({
                 compareFlag:'=',
                 compareObjFlag:'比较值/对象',
                 compareValFlag:'比较值',
+                enable: true,
                 arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             });
 
@@ -1631,11 +1662,19 @@ export default Reflux.createStore({
         }
         this.trigger({redrawEventTree: true});
     },
-    delEvent:function(eventList,index){
-       eventList.splice(index,1);
-        this.trigger({redrawEventTree: true});
+    enableEventChildren:function(event,index) {
+        if(event&& event['children']&& event['children'].length>index){
+            let eventChildren = event[index];
+            eventChildren.enable = true;
+            this.trigger({redrawEventTree: true});
+        }
     },
-
+    addSpecific: function(event){
+        if(event&&event['specificList']){
+            event['specificList'].push(this.emptyEventSpecific());
+            this.trigger({redrawEventTree: true});
+        }
+    },
     deleteSpecific: function(sid, event){
         if(event&&event.specificList) {
             if(event.specificList.length==1) {
@@ -1663,9 +1702,13 @@ export default Reflux.createStore({
                 specific.action = params.action;
             } else if(params.property){
                 specific.action.property = params.property;
-            } else if(params.enable){
-                specific.enable = params.enable.value;
             }
+            this.trigger({redrawEventTree: true});
+        }
+    },
+    enableSpecific: function(specific, enable) {
+        if (enable != null|| enable != undefined) {
+            specific.enable = enable;
             this.trigger({redrawEventTree: true});
         }
     },
