@@ -43,7 +43,9 @@ class DbTable extends React.Component {
             addColumnFuc : null,
             addColumnValue : null,
             addColumnBool : false,
-            isMoveList : false
+            isMoveList : false,
+            saveTip : false,
+            isSaveTip : false
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -76,6 +78,9 @@ class DbTable extends React.Component {
         this.rowRightMenuClick = this.rowRightMenuClick.bind(this);
         this.columnChangeIndex = this.columnChangeIndex.bind(this);
         this.columnAddIndex = this.columnAddIndex.bind(this);
+        this.saveTipBtn = this.saveTipBtn.bind(this);
+        this.saveTipHide  = this.saveTipHide.bind(this);
+        this.noSaveTip = this.noSaveTip.bind(this);
     }
 
     componentDidMount() {
@@ -83,6 +88,13 @@ class DbTable extends React.Component {
         this.onStatusChange(WidgetStore.getStore());
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         this.scrollBtn();
+
+        let isSaveTip = localStorage.getItem("IsHaveDBTip");
+        if(isSaveTip !== null){
+            this.setState({
+                isSaveTip : true
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -110,7 +122,7 @@ class DbTable extends React.Component {
 
     onStatusChange(widget) {
         if(widget.selectWidget){
-           if(widget.selectWidget.className == "db"){
+            if(widget.selectWidget.className == "db"){
                if(this.state.lastSelectID !== widget.selectWidget.node.dbid){
                    this.setState({
                        lastSelectID : widget.selectWidget.node.dbid,
@@ -122,10 +134,17 @@ class DbTable extends React.Component {
                        originalHeader : [],
                        inputNow : null,
                        inputText : null,
-                       inputStyle : null,
-                       isHaveContent : true
+                       inputStyle : null
                    })
                }
+            }
+            else {
+                this.setState({
+                    selectArray : [],
+                    inputNow : null,
+                    inputText : null,
+                    inputStyle : null
+                })
            }
         }
     }
@@ -354,7 +373,16 @@ class DbTable extends React.Component {
     }
 
     saveBtn(bool,DdName){
-        console.log(1,this.state.dbHeader,this.state.dbList);
+        //console.log(1,this.state.dbHeader,this.state.dbList);
+        if(!this.state.isSaveTip){
+            if(this.state.selectArray.length > 0){
+                this.setState({
+                    saveTip : true
+                });
+                return ;
+            }
+        }
+
         let self = this;
         this.state.node.update(this.state.dbList,function(err,data){
             //console.log("1-2",data);
@@ -398,6 +426,25 @@ class DbTable extends React.Component {
                 this.getPDbList();
             }
         })
+    }
+
+    saveTipHide(){
+        this.setState({
+            saveTip : false,
+            isSaveTip: false
+        })
+    }
+
+    saveTipBtn(){
+        this.setState({
+            selectArray : [],
+            saveTip : false
+        },()=>{
+            this.saveBtn(false);
+        });
+        if(this.state.isSaveTip){
+            localStorage.setItem("IsHaveDBTip", true);
+        }
     }
 
     updateNewScrollData(bool){
@@ -1086,6 +1133,12 @@ class DbTable extends React.Component {
         });
     }
 
+    noSaveTip(){
+        this.setState({
+            isSaveTip : !this.state.isSaveTip
+        })
+    }
+
     render() {
         let width = this.props.isBig ? 535 : 689;
 
@@ -1370,6 +1423,33 @@ class DbTable extends React.Component {
                             <div className="pop-footer f--hcc">
                                 <button className="btn btn-clear cancel-btn" onClick={ this.popHide }>取消</button>
                                 <button className="btn btn-clear save-btn" onClick={ this.addColumn }>确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={$class("dbSave-tip f--hcc",{"hidden": !this.state.saveTip})}>
+                    <div className="pop-layer"></div>
+
+                    <div className="dbSave">
+                        <div className="dbSave-header f--hlc">
+                            <span className="icon" />
+                            数据库保存
+                        </div>
+
+                        <div className="dbSave-content">
+                            <label className="f--hlc" onClick={ this.noSaveTip }>
+                                <span className={$class("checkbox",{"active" : this.state.isSaveTip})} />
+                                不再提示
+                            </label>
+
+                            <span className="icon" />
+
+                            <p>保存后将无法恢复修改前数据，是否继续？</p>
+
+                            <div className="btn-group f--hcc">
+                                <button className="btn btn-clear cancel-btn" onClick={ this.saveTipHide }>取消</button>
+                                <button className="btn btn-clear save-btn" onClick={ this.saveTipBtn }>确定</button>
                             </div>
                         </div>
                     </div>
