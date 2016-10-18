@@ -549,7 +549,7 @@ function generateJsFunc(etree) {
   var output = {};
 
   etree.forEach(function(item) {
-    if (item.judges.conFlag&&item.enable) {
+    if (item.judges.conFlag && item.enable) {
       var out = '';
       var lines = [];
       var conditions = [];
