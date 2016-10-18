@@ -204,11 +204,11 @@ class Property extends React.Component {
     }
 
     onActiveSelectTarget (e){
-        e.stopPropagation();
-        if(!this.state.currentEnable) {
+        if(this.state.activeKey !== this.state.wKey) {
             return;
         }
-        if(this.state.activeKey !== this.state.wKey) {
+        e.stopPropagation();
+        if(!this.state.currentEnable) {
             return;
         }
         this.setState({
@@ -222,11 +222,17 @@ class Property extends React.Component {
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
+        if(this.state.event&&!this.state.event.enable) {
+            return;
+        }
         WidgetActions['addSpecific'](this.state.event);
     }
 
     onSpecificDelete() {
         if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        if(this.state.event&&!this.state.event.enable) {
             return;
         }
         if(this.state.isActiveEventSelectTarget) {
@@ -236,6 +242,12 @@ class Property extends React.Component {
     }
 
     onSpecificEnable() {
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        if(this.state.event&&!this.state.event.enable) {
+            return;
+        }
         this.setState({
             currentEnable: !this.state.currentEnable,
             expanded: !this.state.currentEnable
@@ -245,10 +257,10 @@ class Property extends React.Component {
     }
 
     expandBtn(expanded) {
-        if(!this.state.currentEnable) {
+        if(this.state.activeKey !== this.state.wKey) {
             return;
         }
-        if(this.state.activeKey !== this.state.wKey) {
+        if(!this.state.currentEnable) {
             return;
         }
         this.setState({
@@ -277,10 +289,10 @@ class Property extends React.Component {
     }
 
     onObjectVisibleChange(flag) {
-        if(!this.state.currentEnable) {
+        if(this.state.activeKey !== this.state.wKey) {
             return;
         }
-        if(this.state.activeKey !== this.state.wKey) {
+        if(!this.state.currentEnable) {
             return;
         }
         if(this.state.isActiveEventSelectTarget) {
@@ -329,10 +341,10 @@ class Property extends React.Component {
     }
 
     onActionVisibleChange(flag) {
-        if(!this.state.currentEnable) {
+        if(this.state.activeKey !== this.state.wKey) {
             return;
         }
-        if(this.state.activeKey !== this.state.wKey) {
+        if(!this.state.currentEnable) {
             return;
         }
         this.setState({

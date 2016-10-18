@@ -181,6 +181,7 @@ function loadTree(parent, node, idList) {
     var eventTree = [];
     node['etree'].forEach(item =>{
       var r = {};
+      r.enable = item.enable;
       var judgesObj = item.judges;
       r.conFlag = judgesObj.conFlag;
       r.logicalFlag = judgesObj.logicalFlag;
@@ -195,6 +196,7 @@ function loadTree(parent, node, idList) {
                 obj.showName = v.showName;
                 obj.type = v.type;
                 obj.default = v.compareValFlag;
+                obj.enable = v.enable;
                 needFill.push(obj);
             }else{
                 r.children.push(v);
@@ -456,7 +458,7 @@ function objectKeyToId(key) {
 
 function generateId(node, idList) {
     //生成需要的data
-    let specGenIdsData = (source, key) => {
+    let specGenIdsData = (key) => {
         let data = keyMap[key];
         generateObjectId(data);
         if (idList != undefined && data) {
@@ -506,19 +508,19 @@ function generateId(node, idList) {
       });
 
       item.specificList.forEach(cmd => {
-          let sObjId = specGenIdsData(cmd, cmd.object);
+          let sObjId = specGenIdsData(cmd.object);
           cmd.sObjId = sObjId;
           if(cmd.action){
               switch (cmd.action.type){
                   case funcType.customize:
-                      cmd.action.funcId = specGenIdsData(cmd.action, cmd.action.func);
+                      cmd.action.funcId = specGenIdsData(cmd.action.func);
                       break;
                   default:
                       if(cmd.action.property){
                           cmd.action.property.forEach(v=>{
                               //看是否需要generateid
                               if (v.name ==='data'|| v.name ==='option') {
-                                  v.valueId = specGenIdsData(v, v.value);
+                                  v.valueId = specGenIdsData(v.value);
                               }
                           })
                       }
@@ -531,7 +533,7 @@ function generateId(node, idList) {
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
           item.fields.forEach(judge => {
-              judge.valueId = specGenIdsData(judge, judge.value);
+              judge.valueId = specGenIdsData(judge.value);
           });
       });
   }
@@ -550,13 +552,13 @@ function generateJsFunc(etree) {
   var output = {};
 
   etree.forEach(function(item) {
-    if (item.judges.conFlag) {
+    if (item.judges.conFlag && item.enable) {
       var out = '';
       var lines = [];
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
-          if (c.judgeObjId && c.judgeValFlag) {
+          if (c.judgeObjId && c.judgeValFlag && c.enable) {
             var op = c.compareFlag;
             var jsop;
             if (op == '=')
@@ -680,7 +682,7 @@ function saveTree(data, node, saveKey) {
         node.props['eventTree'].forEach(item => {
         var cmds = [];
         var judges={};
-
+            var eventEnable = item.enable; //是否可执行
             judges.conFlag = item.conFlag;
             if(judges.conFlag=='触发条件'){judges.conFlag=null;}
             judges.className=node.className;
@@ -705,6 +707,8 @@ function saveTree(data, node, saveKey) {
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
              let obj={};
+
+             obj.enable = v.enable; //是否可执行
              obj.judgeObjKey =v.judgeObjKey;
              if (v.judgeObj) {
                    let o = objectToId(v.judgeObj);
@@ -718,6 +722,8 @@ function saveTree(data, node, saveKey) {
              if(obj.judgeObjFlag=='判断值') {
                  obj.judgeObjFlag = null;
              }
+
+
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
 
              obj.compareFlag=v.compareFlag;//比较运算符
@@ -810,8 +816,10 @@ function saveTree(data, node, saveKey) {
             cmds.push(c);
         });
 
-//        console.log('judges',judges);
-        etree.push({cmds:cmds,judges:judges});
+
+        console.log('judges',judges);
+        etree.push({cmds:cmds,judges:judges, enable:eventEnable});
+
 
       });
       data['etree'] = etree;
@@ -1607,11 +1615,15 @@ export default Reflux.createStore({
         this.reorderEventTreeList();
         // this.render();
     },
-    enableEventTree: function () {
+    enableEventTree: function (skipSetEventList, enableValue) {
         if (this.currentWidget) {
-            this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+            if(enableValue!==undefined) {
+                this.currentWidget.props['enableEventTree'] = enableValue;
+            } else {
+                this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+            }
             let isEnable = this.currentWidget.props['enableEventTree'];
-            if(this.currentWidget.props.eventTree&&this.currentWidget.props.eventTree.length>0){
+            if(!skipSetEventList&&this.currentWidget.props.eventTree&&this.currentWidget.props.eventTree.length>0){
                 this.currentWidget.props.eventTree.forEach(event=>{
                     event.enable = isEnable;
                     if(event.children&&event.children.length>0) {
@@ -1619,8 +1631,8 @@ export default Reflux.createStore({
                             eventChildren.enable = isEnable;
                         });
                     }
-                    if(event.specific&&event.specific.length>0) {
-                        event.specific.forEach(specific => {
+                    if(event.specificList&&event.specificList.length>0) {
+                        event.specificList.forEach(specific => {
                             specific.enable = isEnable;
                         });
                     }
@@ -1651,20 +1663,40 @@ export default Reflux.createStore({
         }
         this.trigger({eventTreeList: this.eventTreeList});
     },
-    enableEvent: function (event, isEnable) {
+    enableEvent: function (event) {
         if(event) {
-            event.enable = isEnable;
+            event.enable = !event.enable;
             if(event.children&&event.children.length>0) {
                 event.children.forEach(eventChildren => {
-                    eventChildren.enable = isEnable;
+                    eventChildren.enable = event.enable;
                 });
             }
-            if(event.specific&&event.specific.length>0) {
-                event.specific.forEach(specific => {
-                    specific.enable = isEnable;
+            if(event.specificList&&event.specificList.length>0) {
+                event.specificList.forEach(specific => {
+                    specific.enable = event.enable;
                 });
             }
+            this.changeEventTreeEnableByEvents();
             this.trigger({redrawEventTree: true});
+        }
+    },
+    changeEventTreeEnableByEvents: function () {
+        if(this.currentWidget.props['eventTree']) {
+            let enableLength = 0;
+            let disableLength = 0;
+            this.currentWidget.props.eventTree.forEach(event=>{
+                if(event.enable) {
+                    enableLength++;
+                } else {
+                    disableLength++;
+                }
+            });
+            if(enableLength=== 0||
+                disableLength=== 0){
+                this.enableEventTree(true, disableLength===0);
+            } else if (!this.currentWidget.props['enableEventTree']) {
+                this.enableEventTree(true, true);
+            }
         }
     },
     delEvent:function(eventList,index){
@@ -1695,10 +1727,9 @@ export default Reflux.createStore({
         }
         this.trigger({redrawEventTree: true});
     },
-    enableEventChildren:function(event,index) {
-        if(event&& event['children']&& event['children'].length>index){
-            let eventChildren = event[index];
-            eventChildren.enable = true;
+    enableEventChildren:function(eventChild) {
+        if(eventChild){
+            eventChild.enable = !eventChild.enable;
             this.trigger({redrawEventTree: true});
         }
     },

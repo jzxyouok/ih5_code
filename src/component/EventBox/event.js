@@ -63,6 +63,8 @@ class Event extends React.Component {
         this.getJudgeValType =this.getJudgeValType.bind(this);
         this.getSpacJudgeValType=this.getSpacJudgeValType.bind(this);
 
+        this.onEventEnable = this.onEventEnable.bind(this);
+        this.onChildEnable = this.onChildEnable.bind(this);
 
         this.menuList =this.menuList.bind(this);
         this.setEventBoxWidth=this.setEventBoxWidth.bind(this);
@@ -287,6 +289,17 @@ class Event extends React.Component {
     addEventBtn(e) {
         e.stopPropagation();
         WidgetActions['addEvent']();
+    }
+
+    onEventEnable(event, e) {
+        WidgetActions['enableEvent'](event);
+    }
+
+    onChildEnable(event, eventChild, e) {
+        if(!event.enable){
+            return;
+        }
+        WidgetActions['enableEventChildren'](eventChild);
     }
 
     getClassNameByobjName(name){
@@ -964,7 +977,7 @@ class Event extends React.Component {
     }
 
     content(v,i){
-            return  <div className='item f--h' key={i} id={'event-item-'+v.eid}>
+            return  <div className={$class('item f--h', {'item-not-enable': !v.enable})} key={i} id={'event-item-'+v.eid} >
                 <span className='left-line' />
                 <div className='item-main flex-1'>
                     <div className='item-header f--h'>
@@ -972,7 +985,10 @@ class Event extends React.Component {
                         <div className='item-title flex-1 f--h'>
                             <div className='left'>
                                 <div className='left-layer  f--h'>
-                                    <span className='title-icon' />
+                                    <div className="enable-button-div">
+                                        <button className={$class("title-icon")}
+                                                onClick={this.onEventEnable.bind(this, v)}/>
+                                    </div>
                                     <div className='dropDown-layer long'>
                                         <Dropdown
                                             overlay={this.menuList('conFlag')}
@@ -1012,8 +1028,12 @@ class Event extends React.Component {
                                     :   <div className={$class('zhong',{'hidden':v.zhongHidden,'zhongToLong':this.state.toLong})}>
                                     {
                                         v.children.map((v1,i1)=>{
-                                            return  <div className="list f--hlc" key={i1}>
+                                            return  <div className={$class("list f--hlc", {'list-not-enable': !v1.enable})} key={i1}>
                                                 <span className="supplement-line" />
+                                                <div className="enable-button-div">
+                                                    <button className={$class("title-icon")}
+                                                            onClick={this.onChildEnable.bind(this, v, v1)}/>
+                                                </div>
                                                 <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[0]})} >
 
                                                     <div className="title f--hlc cursor_default">
