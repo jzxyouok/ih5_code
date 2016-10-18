@@ -99,6 +99,13 @@ class Property extends React.Component {
             return;
         }
         if (widget.redrawEventTree) {
+            if(widget.enable) {
+                if(!widget.enable.value&&this.state.isActiveEventSelectTarget) {
+                    if(widget.enable.type === 'event' && this.state.event.eid === widget.enable.id) {
+                        WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+                    }
+                }
+            }
             this.forceUpdate();
         } else if (widget.classList) {
             this.customClassList = widget.classList;
@@ -252,6 +259,9 @@ class Property extends React.Component {
             currentEnable: !this.state.currentEnable,
             expanded: !this.state.currentEnable
         }, ()=>{
+            if(this.state.isActiveEventSelectTarget) {
+                WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+            }
             WidgetActions['enableSpecific'](this.state.specific, this.state.currentEnable);
         })
     }
