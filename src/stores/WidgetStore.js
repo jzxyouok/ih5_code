@@ -1532,7 +1532,7 @@ export default Reflux.createStore({
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
-    emptyEventTree: function (className) {
+    emptyEvent: function (className) {
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
@@ -1544,7 +1544,7 @@ export default Reflux.createStore({
         //     'specificList': [eventSpec]
         // };
 
-        let eventTree = {
+        let event = {
             'eid': eid,
             'children': [{
                 judgeObjFlag:'判断对象',
@@ -1561,7 +1561,7 @@ export default Reflux.createStore({
             'enable': true,
             'specificList': [eventSpec]
         };
-        return eventTree;
+        return event;
     },
     emptyEventSpecific: function() {
         let eventSpecific = {
@@ -1618,7 +1618,7 @@ export default Reflux.createStore({
         if (this.currentWidget) {
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
-            this.currentWidget.props['eventTree'].push(this.emptyEventTree(className));
+            this.currentWidget.props['eventTree'].push(this.emptyEvent(className));
         }
         this.trigger({redrawTree: true, redrawWidget: this.currentWidget});
         this.reorderEventTreeList();
@@ -1677,7 +1677,7 @@ export default Reflux.createStore({
     },
     addEvent: function () {
         if (this.currentWidget) {
-            this.currentWidget.props['eventTree'].push(this.emptyEventTree());
+            this.currentWidget.props['eventTree'].push(this.emptyEvent());
         }
         this.trigger({eventTreeList: this.eventTreeList});
     },
@@ -1718,7 +1718,13 @@ export default Reflux.createStore({
         }
     },
     delEvent:function(eventList,index){
-        eventList.splice(index,1);
+        let len =eventList.length;
+        if(len>1){
+            eventList.splice(index,1);
+        }else if (this.currentWidget) {
+            eventList.splice(0,1);
+            this.currentWidget.props['eventTree'].push(this.emptyEvent());
+        }
         this.trigger({redrawEventTree: true});
     },
     addEventChildren:function(event){

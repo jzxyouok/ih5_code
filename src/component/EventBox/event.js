@@ -269,9 +269,7 @@ class Event extends React.Component {
     }
 
     delEvent(index){
-        if(index !=0){
             WidgetActions['delEvent'](this.state.eventList,index);
-        }
     }
 
     expandedBtn(expanded, event){
