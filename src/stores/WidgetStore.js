@@ -458,7 +458,7 @@ function objectKeyToId(key) {
 
 function generateId(node, idList) {
     //生成需要的data
-    let specGenIdsData = (source, key) => {
+    let specGenIdsData = (key) => {
         let data = keyMap[key];
         generateObjectId(data);
         if (idList != undefined && data) {
@@ -505,19 +505,19 @@ function generateId(node, idList) {
       });
 
       item.specificList.forEach(cmd => {
-          let sObjId = specGenIdsData(cmd, cmd.object);
+          let sObjId = specGenIdsData(cmd.object);
           cmd.sObjId = sObjId;
           if(cmd.action){
               switch (cmd.action.type){
                   case funcType.customize:
-                      cmd.action.funcId = specGenIdsData(cmd.action, cmd.action.func);
+                      cmd.action.funcId = specGenIdsData(cmd.action.func);
                       break;
                   default:
                       if(cmd.action.property){
                           cmd.action.property.forEach(v=>{
                               //看是否需要generateid
                               if (v.name ==='data'|| v.name ==='option') {
-                                  v.valueId = specGenIdsData(v, v.value);
+                                  v.valueId = specGenIdsData(v.value);
                               }
                           })
                       }
@@ -530,7 +530,7 @@ function generateId(node, idList) {
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
           item.fields.forEach(judge => {
-              judge.valueId = specGenIdsData(judge, judge.value);
+              judge.valueId = specGenIdsData(judge.value);
           });
       });
   }
@@ -549,13 +549,13 @@ function generateJsFunc(etree) {
   var output = {};
 
   etree.forEach(function(item) {
-    if (item.judges.conFlag) {
+    if (item.judges.conFlag&&item.enable) {
       var out = '';
       var lines = [];
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
-          if (c.judgeObjId && c.judgeValFlag) {
+          if (c.judgeObjId && c.judgeValFlag && c.enable) {
             var op = c.compareFlag;
             var jsop;
             if (op == '=')
