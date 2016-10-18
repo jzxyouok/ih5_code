@@ -639,14 +639,14 @@ function generateJsFunc(etree) {
               }
               lines.push(line + ')');
           }
-        } else if (cmd.type == 'customize') {
+        } else if (cmd.action.type == 'customize') {
           var ps = ['ids'];
-          if (cmd.property) {
-            cmd.property.forEach(function(p) {
+          if (cmd.action.property) {
+            cmd.action.property.forEach(function(p) {
               ps.push(JSON.stringify(p.value));
             });
           }
-          lines.push(getIdsName(cmd.funcId[0], cmd.funcId[2]) + '(' + ps.join(',') + ')');
+          lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
       if (lines.length) {
