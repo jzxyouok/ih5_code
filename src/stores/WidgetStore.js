@@ -2280,9 +2280,9 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         //http://test-beta.ih5.cn/
-        //xhr.open(method, url);
+        xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
