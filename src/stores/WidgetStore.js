@@ -1729,6 +1729,7 @@ export default Reflux.createStore({
             eventList.splice(0,1);
             this.currentWidget.props['eventTree'].push(this.emptyEvent());
         }
+        this.changeEventTreeEnableByEvents();
         this.trigger({redrawEventTree: true});
     },
     addEventChildren:function(event){
