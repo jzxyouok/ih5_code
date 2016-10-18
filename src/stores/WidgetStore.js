@@ -181,6 +181,7 @@ function loadTree(parent, node, idList) {
     var eventTree = [];
     node['etree'].forEach(item =>{
       var r = {};
+      r.enable = item.enable;
       var judgesObj = item.judges;
 
       r.conFlag = judgesObj.conFlag;
@@ -196,6 +197,7 @@ function loadTree(parent, node, idList) {
                 obj.showName = v.showName;
                 obj.type = v.type;
                 obj.default = v.compareValFlag;
+                obj.enable = v.enable;
                 needFill.push(obj);
             }else{
                 r.children.push(v);
@@ -673,7 +675,7 @@ function saveTree(data, node, saveKey) {
         node.props['eventTree'].forEach(item => {
         var cmds = [];
         var judges={};
-
+            var eventEnable = item.enable; //是否可执行
             judges.conFlag = item.conFlag;
             console.log(node);
              judges.className=node.className;
@@ -697,6 +699,7 @@ function saveTree(data, node, saveKey) {
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
              let obj={};
+             obj.enable = v.enable; //是否可执行
              obj.judgeObjkey =v.judgeObjkey;
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
 
@@ -778,7 +781,7 @@ function saveTree(data, node, saveKey) {
         });
 
         console.log('judges',judges);
-        etree.push({cmds:cmds,judges:judges});
+        etree.push({cmds:cmds,judges:judges, enable:eventEnable});
 
       });
       data['etree'] = etree;
