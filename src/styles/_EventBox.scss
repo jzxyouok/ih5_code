@@ -252,6 +252,9 @@
                             min-height: 26px;
                             background: #303f54;
                         }
+                        .right-layer {
+                            height: 26px;
+                        }
 
                         .enable-button-div {
                             width: 15px;
@@ -618,6 +621,8 @@
                                 position: absolute;
                                 right: 0;
                                 top:0;
+                                outline: 0;
+                                border: none;
                                 &:hover { background-position: -1722px -40px; }
                                 &:active { background-position: -1722px -80px; }
                             }
@@ -626,8 +631,13 @@
                         .plus-btn {
                             cursor: pointer;
                             padding: 2px;
-                            width: 22px;
-                            margin-right:4px ;
+                            width: 26px;
+                            //margin-right:4px ;
+
+                            outline: 0;
+                            border: none;
+                            background: #303f54;
+                            height: 26px;
 
 
                             &:hover .btn span{ background: #b5b5b5;}
@@ -664,12 +674,58 @@
                     }
                 }
 
-                .list-not-enable,
-                .item-not-enable {
+                .item-not-enable,
+                .list-not-enable {
                     .enable-button-div {
                         .title-icon {
                             background: url("img/button-icon.svg") no-repeat -1640px -280px !important;
                         }
+                    }
+                }
+                .item-not-enable {
+                    .left-layer {
+                        .title {
+                            filter: alpha(opacity=60);
+                            opacity: 0.6;
+                            cursor: not-allowed !important;
+                        }
+                    }
+                    .zhong {
+                        .list {
+                            .enable-button-div {
+                                .title-icon {
+                                    cursor: not-allowed !important;
+                                }
+                            }
+                            .title {
+                                filter: alpha(opacity=60);
+                                opacity: 0.6;
+                                cursor: not-allowed !important;
+                            }
+                            .close-btn:disabled{
+                                filter: alpha(opacity=60);
+                                opacity: 0.6;
+                                cursor: not-allowed !important;
+                                &:hover { background-position: -1722px 0 !important; }
+                                &:active { background-position: -1722px 0 !important; }
+                            }
+                        }
+                    }
+                    .right {
+                        .plus-btn:disabled{
+                            filter: alpha(opacity=60);
+                            opacity: 0.6;
+                            cursor: not-allowed !important;
+                            &:hover .btn span{ background: #3c516f !important;}
+                            &:active .btn span{ background: #3c516f !important;}
+                        }
+                    }
+                }
+                .list-not-enable {
+                    .title {
+                        filter: alpha(opacity=60);
+                        opacity: 0.6;
+                        cursor: not-allowed !important;
                     }
                 }
             }
@@ -1131,14 +1187,23 @@
                 border-radius: 0 0 2px 2px;
             }
 
-            &.Property-not-active {
+            &.Property-not-enable {
                 .p--title,
                 .pp--list-layer,
-                .pp--list{
+                .pp--list,
+                .p--close-not-enable,
+                .p--icon:disabled {
                     filter: alpha(opacity=60);
                     opacity: 0.6;
                     cursor: not-allowed !important;
                 }
+                .p--close-not-enable {
+                    background-position: -1600px 0 !important;
+                }
+                .add-btn:disabled {
+                    &:hover .btn-layer span { background: #325351; }
+                }
+                .add-btn:disabled,
                 .up-btn,
                 .down-btn {
                     cursor: default;
