@@ -65,7 +65,8 @@ class Property extends React.Component {
     componentWillReceiveProps(nextProps) {
         if(nextProps.activeKey){
             let didActiveSelectTargetMode = false;
-            if(nextProps.eventSelectTargetSpecId === nextProps.specific.sid){
+            if(nextProps.eventSelectTargetModeProps &&
+                (nextProps.eventSelectTargetModeProps.props.sid === nextProps.specific.sid)){
                 didActiveSelectTargetMode = true;
             }
             this.setState({
@@ -95,6 +96,7 @@ class Property extends React.Component {
 
     componentWillUnmount() {
         this.unsubscribe();
+        window.removeEventListener('click', this.onSelectTargetModeBlur);
     }
 
     onStatusChange(widget) {
@@ -216,13 +218,13 @@ class Property extends React.Component {
         this.setState({
             objectDropdownVisible: false
         }, ()=>{
-            WidgetActions['eventSelectTargetMode'](!this.state.didActiveSelectTargetMode, this.state.specific.sid);
+            WidgetActions['eventSelectTargetMode'](!this.state.didActiveSelectTargetMode, {sid:this.state.specific.sid});
         });
     }
 
     onSelectTargetModeBlur() {
         if(this.state.didActiveSelectTargetMode) {
-            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+            WidgetActions['eventSelectTargetMode'](false, {sid:this.state.specific.sid});
         }
     }
 
