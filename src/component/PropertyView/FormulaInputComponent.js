@@ -107,7 +107,11 @@ class FormulaInput extends React.Component {
 
     onSelectTargetModeBlur() {
         if(this.state.didActiveSelectTargetMode) {
-            WidgetActions['eventSelectTargetMode'](false, {formulaInput:true});
+            this.setState({
+                didActiveSelectTargetMode: false,
+            }, ()=>{
+                WidgetActions['eventSelectTargetMode'](false, {formulaInput:true});
+            });
         }
     }
 
