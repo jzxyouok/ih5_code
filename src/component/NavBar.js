@@ -367,6 +367,8 @@ class NavBar extends React.Component {
                 loading : 0,
                 saveLoading : true
             });
+            //console.log(this.workid);
+            localStorage.setItem("workID", this.workid);
             WidgetActions['saveNode'](this.workid, null, null, this.saveCallback,this.updateProgress);
         } else {
             this.setState({saveVisible: true});
@@ -513,7 +515,7 @@ class NavBar extends React.Component {
     }
 
     updateProgress(e){
-        //console.log(e);
+        console.log(e);
         if(e.lengthComputable) {
             let percentComplete = e.loaded / e.total * 100;
             this.setState({
