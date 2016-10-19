@@ -343,6 +343,19 @@
                             background: #202f20;
                         }
 
+                        &.Factive:before{
+                            content: "";
+                            position: absolute;
+                            left: 50%;
+                            top: 50%;
+                            right: 50%;
+                            bottom: 50%;
+                            background: #202f20;
+                            opacity: 0;
+                            z-index: 0;
+                            animation: dbSave 1s;
+                        }
+
                         .icon{
                             position: absolute;
                             right: 0;
