@@ -363,6 +363,7 @@ class Property extends React.Component {
             case propertyType.Float:
             case propertyType.Boolean2:
             case propertyType.Number:
+            case propertyType.FormulaInput:
                 value = e;
                 break;
             case propertyType.Function:
@@ -424,6 +425,10 @@ class Property extends React.Component {
                 }else{
                     defaultProp.checked = 1;
                 }
+                break;
+            case propertyType.FormulaInput:
+                defaultProp.value = item.value;
+                defaultProp.objectList=this.state.objectList;
                 break;
             case propertyType.Function:
             case propertyType.Select:
@@ -535,7 +540,7 @@ class Property extends React.Component {
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.FormulaInput:
-                    return <FormulaInput containerId={propertyId} objectList={this.state.objectList}/>;
+                    return <FormulaInput containerId={propertyId} {...defaultProp}/>;
                 case propertyType.Select:
                     let titleTemp = '';
                     let oType = optionType.normal;

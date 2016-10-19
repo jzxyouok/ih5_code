@@ -20,16 +20,23 @@ class FormulaInput extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            type: inputType.value,
+            value: null,
+            currentType: inputType.value,
+            objectDropDownVisible: false, //对象dropdown
+            propertyDropDownVisible: false, //属性dropdown
             objectList: []
         };
-
-        this.containerId = 'iH5-App';
+        this.containerId = props.containerId || 'iH5-App';
+        this.minWidth = props.minWidth||'142px';
+        this.onChange = props.onChange;
 
         this.onStatusChange = this.onStatusChange.bind(this);
+
         this.onActiveSelectTargetMode = this.onActiveSelectTargetMode.bind(this);
         this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
         this.onObjectSelect = this.onObjectSelect.bind(this);
+
+        this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
     }
 
     componentDidMount() {
@@ -41,8 +48,15 @@ class FormulaInput extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.containerId = nextProps.containerId;
+        let cType = inputType.value;
+        let value = null;
+        if(nextProps.value) {
+            cType = nextProps.value.type;
+            value = nextProps.value.value;
+        }
         this.setState({
+            value: value,
+            currentType: cType,
             objectList: nextProps.objectList||[]
         })
     }
@@ -62,11 +76,18 @@ class FormulaInput extends React.Component {
 
     }
 
-    onObjectVisibleChange(){
-
+    onObjectVisibleChange(flag){
+        this.setState({
+            objectDropDownVisible: flag
+        })
     }
+
     onObjectSelect(){
 
+    }
+
+    onInputTypeValueChange(e) {
+        this.onChange({value:e.target.value, type:inputType.value});
     }
 
     render() {
@@ -95,12 +116,14 @@ class FormulaInput extends React.Component {
             <div className="value-mode">
                 <Dropdown overlay={objectMenu} trigger={['click']}
                           getPopupContainer={() => document.getElementById(this.containerId)}
-                          onVisibleChange={this.onVisibleChange}>
-                    <div className={$class("formula--dropDown short")}>
+                          onVisibleChange={this.onObjectVisibleChange}
+                          visible={this.state.objectDropDownVisible}>
+                    <div className={$class("formula--dropDown")}
+                        style={{minWidth:this.minWidth}}>
                         <div className="formula-title f--hlc">
                             <button className={$class('formula-object-icon')}
                                     onClick={this.onActiveSelectTargetMode} />
-                            <Input placeholder="比较值／对象"/>
+                            <Input placeholder="比较值／对象" value={this.state.value} onChange={this.onInputTypeValueChange.bind(this)}/>
                             <span className="value-right-icon" />
                         </div>
                     </div>
@@ -111,7 +134,7 @@ class FormulaInput extends React.Component {
         return (
             <div className='formulaInput'>
                 {
-                    this.state.type === inputType.value
+                    this.state.currentType === inputType.value
                         ? valueWidget
                         : formulaWidget
                 }
