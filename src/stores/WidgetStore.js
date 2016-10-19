@@ -1699,13 +1699,15 @@ export default Reflux.createStore({
         // this.render();
     },
     activeEventTree: function (nid) {
-        if(!this.currentActiveEventTreeKey&&(nid!=null||nid!=undefined)){
-            this.reorderEventTreeList();
-            this.getAllWidgets();
-        }
-        //激活事件树，无则为
+        // if(!this.currentActiveEventTreeKey&&(nid!=null||nid!=undefined)){
+        //     this.reorderEventTreeList();
+        //     this.getAllWidgets();
+        // }
+        //激活事件树
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
+            this.reorderEventTreeList();
+            this.getAllWidgets();
         } else {
             this.currentActiveEventTreeKey = null;
         }
@@ -1720,7 +1722,7 @@ export default Reflux.createStore({
                 this.trigger({redrawTree: true});
             }
         }
-        this.trigger({eventTreeList: this.eventTreeList});
+        this.trigger({redrawEventTreeList:true});
     },
     enableEvent: function (event) {
         if(event) {
@@ -2315,7 +2317,7 @@ export default Reflux.createStore({
                 { name: name,
                     tree: loadTree(null, { 'cls': 'root',
                         'type': bridge.getRendererType(this.currentWidget.node),
-                        'props': {'width': 640, 'height': 1040}})
+                        'props': {'width': 640, 'height': 1040, 'name':name}})
                 }
             );
         }
@@ -2325,7 +2327,7 @@ export default Reflux.createStore({
                 { name: name,
                     tree: loadTree(null, { 'cls': 'root',
                         'type': bridge.getRendererType(this.currentWidget.node),
-                        'props': {'width': 640, 'height': 1040}})
+                        'props': {'width': 640, 'height': 1040, 'name':name}})
                 }
             );
         }
