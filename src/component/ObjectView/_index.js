@@ -62,7 +62,7 @@ class ObjectView extends React.Component {
     }
 
     onStatusChange(widget) {
-        if(widget.redrawTree&&widget.redrawWidget) {
+        if(widget.redrawWidget) {
             this.onInitButtons(widget.redrawWidget);
         }
         if(widget.selectWidget){
@@ -171,16 +171,18 @@ class ObjectView extends React.Component {
     }
 
     initEvent(className,param) {
-        WidgetActions['initEventTree'](className,param);
         this.setState({
             hasEventTree: !this.state.hasEventTree
+        }, ()=>{
+            WidgetActions['initEventTree'](className,param);
         });
     }
 
     lock() {
-        WidgetActions['lockWidget']();
         this.setState({
             locked: !this.state.locked
+        }, ()=>{
+            WidgetActions['lockWidget']();
         });
     }
 

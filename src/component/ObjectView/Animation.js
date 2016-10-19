@@ -45,7 +45,7 @@ class Animation extends React.Component {
 
     onStatusChange(widget) {
         //是否选中图层或者舞台上的组件
-        if(widget.redrawTree&&widget.redrawWidget) {
+        if(widget.redrawWidget) {
             this.onInitHasEventTree(widget.redrawWidget);
         }
         if(widget.redrawTree&&widget.updateTrack) {
@@ -78,9 +78,10 @@ class Animation extends React.Component {
     }
 
     initEvent(className,param) {
-        WidgetActions['initEventTree'](className,param);
         this.setState({
             hasEventTree: !this.state.hasEventTree
+        }, ()=>{
+            WidgetActions['initEventTree'](className,param);
         });
     }
 

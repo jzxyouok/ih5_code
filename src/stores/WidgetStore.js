@@ -1628,9 +1628,10 @@ export default Reflux.createStore({
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
             this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            this.activeEventTree(this.currentWidget.key);
         }
-        this.trigger({redrawTree: true, redrawWidget: this.currentWidget});
-        this.reorderEventTreeList();
+        this.trigger({redrawWidget: this.currentWidget});
+        // this.reorderEventTreeList();
         // this.render();
     },
     removeEventTree: function() {
