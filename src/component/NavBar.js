@@ -940,7 +940,8 @@ class NavBar extends React.Component {
                             <span className='icon' />
                         </div>
 
-                        <div className={$class("special-layer",{"hidden": !this.state.specialLayer})}>
+                        <div className={$class("special-layer",{"hidden": !this.state.specialLayer})}
+                             style={{ left : this.props.expanded? '64px':'36px'}}>
                             <ul className="special-list">
                                 <li className="f--hlc create-li"
                                     onMouseOver={ this.createWorkShow }

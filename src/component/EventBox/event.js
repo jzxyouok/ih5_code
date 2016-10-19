@@ -548,9 +548,9 @@ class Event extends React.Component {
 
                 if (judgeObjClassName && propertyMap[judgeObjClassName]) {
                     propertyMap[judgeObjClassName].map((v, i)=> {
-                        if (name == 'width') {
+                        if (name == 'width' || name=='W') {
                             showName = '宽度';
-                        } else if (name == 'height') {
+                        } else if (name == 'height'|| name=='H') {
                             showName = '高度';
                         }
                         if (v.name == name) {
@@ -573,12 +573,12 @@ class Event extends React.Component {
 
                     if (compareObjClassName && propertyMap[compareObjClassName]) {
                         propertyMap[compareObjClassName].map((v, i)=> {
-                            if (name == 'width') {
+                            if (name == 'width' || name=='W') {
                                 showName = '宽度';
-                            } else if (name == 'height') {
+                            } else if (name == 'height'|| name=='H') {
                                 showName = '高度';
                             }
-                            if (v.name == name) { 
+                            if (v.name == name) {
                                 showName = v.showName;
                             }
                         });
@@ -609,11 +609,12 @@ class Event extends React.Component {
                    judgeObjClassName = v.className;
                }
            });
+
            propertyMap[judgeObjClassName].map((v, i)=> {
                if (value == '宽度') {
-                   value = 'W';
+                   name = 'width';
                } else if (value == '高度') {
-                   value = 'H';
+                   name = 'height';
                }
                if (v.showName == value) {
                    name = v.name;
@@ -629,9 +630,9 @@ class Event extends React.Component {
            });
            propertyMap[compareObjClassName].map((v, i)=> {
                if (value == '宽度') {
-                   value = 'W';
+                   name = 'width';
                } else if (value == '高度') {
-                   value = 'H';
+                   name = 'height';
                }
                if (v.showName == value) {
                    name = v.name;

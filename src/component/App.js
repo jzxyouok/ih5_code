@@ -164,6 +164,7 @@ class App extends React.Component {
                 <DesignView stageZoom={this.state.stageZoom} />
 
                 <NavBar ref="NavBar"
+                        expanded={this.state.expandedToolbox}
                         stageZoom={this.state.stageZoom}
                         stageZoomEdit={this.stageZoomEdit}
                         stageZoomPlus={this.stageZoomPlus}
