@@ -24,6 +24,8 @@ var dragTag;
 
 var dbCumulative = 1;
 
+var specialObject = ['counter', 'text', 'var','input']; //五类特殊对象的类名
+
 var nodeType = {
     widget: 'widget',  //树对象
     func: 'func',    //函数
@@ -195,7 +197,7 @@ function loadTree(parent, node, idList) {
                 r.conFlag = v.compareFlag;
                 obj.showName = v.showName;
                 obj.type = v.type;
-                obj.default = v.compareValFlag;
+                obj.default = v.compareObjFlag;
                 obj.enable = v.enable;
                 needFill.push(obj);
             }else{
@@ -572,10 +574,14 @@ function generateJsFunc(etree) {
               jsop = op;
 
             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
-            if (c.compareObjId && c.compareValFlag) {
+
+
+            if (c.compareObjId && c.compareValFlag !='比较值') {
+                //非特殊五类
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
-              o += JSON.stringify(c.compareObjFlag);
+                //特殊五类和用户填写
+                o += JSON.stringify(c.compareObjFlag);
             }
             conditions.push('(' + o + ')');
           }
@@ -714,7 +720,8 @@ function saveTree(data, node, saveKey) {
                                 obj.judgeVarName = o[2];
                             }
                         }
-                        obj.judgeValFlag = node.props.name;
+                        obj.judgeValFlag = 'value';
+
                         obj.compareFlag = item.conFlag;
                         obj.showName=v.showName;
                         obj.type=v.type;
@@ -727,63 +734,56 @@ function saveTree(data, node, saveKey) {
 
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
-            item.children.map((v,i)=>{
-             let obj={};
-
-             obj.enable = v.enable; //是否可执行
-             obj.judgeObjKey =v.judgeObjKey;
-             if (v.judgeObj) {
-                   let o = objectToId(v.judgeObj); //1 获取id 2 判断五类情况
-                   obj.judgeObjId = o[0];
-                   if (o[1]) {
-                     obj.judgeVarId = o[1];
-                     obj.judgeVarName = o[2];
-                   }
-                }
-             obj.judgeObjFlag=v.judgeObjFlag;
-
-
-
-             obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
-              if(obj.judgeValFlag=='判断值') { //五类特殊对象
-                    obj.judgeValFlag = null;
-                    if(obj.judgeObjFlag){
-                        obj.judgeValFlag = obj.judgeObjFlag;
+            item.children.map((v,i)=> {
+                let obj = {};
+                let isSpecial1 = false;
+                let isSpecial2 = false;
+                obj.enable = v.enable; //是否可执行
+                obj.judgeObjKey = v.judgeObjKey;
+                obj.judgeObjFlag = v.judgeObjFlag;
+                if (v.judgeObj) {
+                    let o = objectToId(v.judgeObj); //1 获取id 2 判断五类情况
+                    obj.judgeObjId = o[0];
+                    if (o[1]) {
+                        obj.judgeVarId = o[1];
+                        obj.judgeVarName = o[2];
                     }
-               }
-
-
-
-
-
-
-
-
-
-             obj.compareFlag=v.compareFlag;//比较运算符
-
-             obj.compareObjKey=v.compareObjKey;
-
-                if (v.compareObj) {
-                   var o = objectToId(v.compareObj);
-                   obj.compareObjId = o[0];
-                   if (o[1]) {
-                     obj.compareVarId = o[1];
-                     obj.compareVarName = o[2];
-                   }
+                    //获取类名,判断是否属于五类特殊对象对象,改造条件值
+                    isSpecial1 = specialObject.indexOf(v.judgeObj.className) >= 0;
                 }
-             obj.compareObjFlag=v.compareObjFlag;
-             obj.compareValFlag=v.compareValFlag;//判断对象的属性
-             if( obj.compareValFlag=='比较值') {
-                 obj.compareValFlag = null;
-                 if(obj.compareObjFlag){
-                     obj.compareValFlag = obj.compareObjFlag;
-                 }
-             }
+                if (isSpecial1) {
+                    obj.judgeValFlag = 'value';
+                } else {
+                    obj.judgeValFlag = v.judgeValFlag;//判断对象的属性
+                }
+                obj.compareFlag = v.compareFlag;//比较运算符
 
-             obj.arrHidden=v.arrHidden;
-             judges.children.push(obj);
-         });
+                obj.compareObjFlag = v.compareObjFlag;
+                obj.compareObjKey = v.compareObjKey;
+                if (v.compareObj) {
+                    var o = objectToId(v.compareObj);
+                    obj.compareObjId = o[0];
+                    if (o[1]) {
+                        obj.compareVarId = o[1];
+                        obj.compareVarName = o[2];
+                    }
+                    isSpecial2 = specialObject.indexOf(v.compareObj.className) >= 0;
+                }
+                if (isSpecial2) {
+                    obj.compareObjFlag = v.compareObj.props.value;
+                    obj.compareValFlag = '比较值';
+                } else if (v.compareValFlag == '比较值') {
+                    //用户填的值
+                    obj.compareObjFlag = v.compareObjFlag;
+                    obj.compareValFlag = '比较值';
+                } else {
+                    //非五类
+                    obj.compareValFlag = v.compareValFlag;
+                }
+
+                obj.arrHidden = v.arrHidden;
+                judges.children.push(obj);
+            });
 
         item.specificList.forEach(cmd => {
             let c = {};
@@ -1767,6 +1767,7 @@ export default Reflux.createStore({
             eventList.splice(0,1);
             this.currentWidget.props['eventTree'].push(this.emptyEvent());
         }
+
         this.changeEventTreeEnableByEvents();
         this.trigger({redrawEventTree: true});
     },
