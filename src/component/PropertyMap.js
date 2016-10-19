@@ -14,7 +14,7 @@ const propertyType = {
     Color2:9,
     Boolean2:10,
     Function:11,
-    FormularInput:12,
+    FormulaInput:12,
 };
 
 var level;
@@ -54,6 +54,10 @@ propertyMap['data'] = [
 propertyMap['root'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Root | widgetFlags.Container},
+    { name: 'changeValue', showName:'赋值', info:'(value)',
+        property:[
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
+        ], isFunc: true },
     { name: 'width',showName:'W', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'H',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
@@ -130,7 +134,7 @@ propertyMap['textBox']=[
 propertyMap['text'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormularInput},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
@@ -146,7 +150,7 @@ propertyMap['text'] = [
 propertyMap['counter'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormularInput},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ], isFunc: true },
     { name: 'add1', showName:'加1', isFunc: true },
     { name: 'minus1', showName:'减1', isFunc: true },
@@ -169,10 +173,10 @@ propertyMap['counter'] = [
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
     ...propertyMap['textBox'],
     //事件面板所需触发条件
-    { name: 'equal', showName:'等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
-    { name: 'unequal', showName:'不等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
-    { name: 'bigThan', showName:'大于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
-    { name: 'lessThan', showName:'小于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
+    { name: '==', showName:'等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
+    { name: '!=', showName:'不等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
+    { name: '>', showName:'大于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
+    { name: '<', showName:'小于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
     { name: 'valRange', showName:'数值范围', isEvent: true,needFill:[{showName:'最大值',type:'number',default:''},{showName:'最小值',type:'number',default:''}]},
     { name: 'onChange', showName:'数值改变', isEvent: true },
     { name: 'positive', showName:'为正数', isEvent: true },
@@ -687,13 +691,13 @@ propertyMap['sock'] = [
 propertyMap['strVar'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormularInput},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ], isFunc: true },
 ];
 propertyMap['intVar'] = [
        { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormularInput},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ],
            isFunc: true },
 ];

@@ -1229,11 +1229,12 @@ class ObjectTree extends React.Component {
                      !allTreeData
                         ? null
                         : allTreeData.map((v,i)=>{
+                             let isRootEventTarget = this.checkAllEventTarget(v.tree.key);
                              return  <div className='stage-item' key={i}
                                           onDragOver={this.itemDragOver}>
                                  <div className={$class('stage-title-wrap clearfix',
-                                     {'allow-event-target': i==0&&this.state.eventSelectTargetMode},
-                                     {'forbidden-event-target': i!=0&&this.state.eventSelectTargetMode})}
+                                     {'allow-event-target': isRootEventTarget&&this.state.eventSelectTargetMode},
+                                     {'forbidden-event-target': !isRootEventTarget&&this.state.eventSelectTargetMode})}
                                       id={'tree-item-'+ v.tree.key}
                                       tabIndex={v.tree.key}
                                       data-wKey={v.tree.key}
@@ -1265,9 +1266,9 @@ class ObjectTree extends React.Component {
                                                         className={$class('item-name-input',{'hidden':!((v.tree.key === this.state.nid)&&this.state.editMode)})}/>
                                                    </div>
                                                  :  <div className='stage-name-wrap stage-module f--hlc'>
-                                                        <p className="flex-1">{ v.name }</p>
+                                                        <p className="flex-1">{ v.tree.props.name }</p>
                                                         <span className="add-module-btn"
-                                                              data-name={v.name}
+                                                              data-name={v.tree.props.name}
                                                               onClick={ this.addModuleBtn.bind(this)} />
                                                     </div>
                                          }

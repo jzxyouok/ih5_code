@@ -24,6 +24,8 @@ var dragTag;
 
 var dbCumulative = 1;
 
+var specialObject = ['counter', 'text', 'var','input']; //五类特殊对象的类名
+
 var nodeType = {
     widget: 'widget',  //树对象
     func: 'func',    //函数
@@ -195,7 +197,7 @@ function loadTree(parent, node, idList) {
                 r.conFlag = v.compareFlag;
                 obj.showName = v.showName;
                 obj.type = v.type;
-                obj.default = v.compareValFlag;
+                obj.default = v.compareObjFlag;
                 obj.enable = v.enable;
                 needFill.push(obj);
             }else{
@@ -432,7 +434,7 @@ function objectToId(object) {
     } else {
       varKey = 'i' + object.widget.intVarList.indexOf(object);
     }
-  } else if (object.className == 'func'){
+  }else if (object.className == 'func'){
       idName = object.widget.props['id'];
       varKey = 'f' + object.widget.funcList.indexOf(object);
       varName = object.name;
@@ -442,7 +444,7 @@ function objectToId(object) {
   } else {
     idName = object.props['id'];
   }　
- // console.log('object',object);
+
   return [idName, varKey, varName];
 }
 
@@ -477,7 +479,7 @@ function generateId(node, idList) {
 
   if (node.props['eventTree']) {
       generateObjectId(node);
-//      console.log(" node.props['eventTree']", node.props['eventTree']);
+
       node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
           judge.judgeObj = keyMap[judge.judgeObjKey];
@@ -572,17 +574,19 @@ function generateJsFunc(etree) {
               jsop = op;
 
             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
-            if (c.compareObjId && c.compareValFlag) {
+            if (c.compareObjId) {
+                //非特殊五类和特殊五类
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
-              o += JSON.stringify(c.compareObjFlag);
+                //用户填写
+                o += JSON.stringify(c.compareObjFlag);
             }
             conditions.push('(' + o + ')');
           }
         });
       }
 
-     //console.log('conditions',conditions);
+     console.log('conditions',conditions);
 
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
@@ -695,66 +699,89 @@ function saveTree(data, node, saveKey) {
             judges.conFlag = item.conFlag;
             if(judges.conFlag=='触发条件'){judges.conFlag=null;}
             judges.className=node.className;
-
             judges.children=[];
             if(item.needFill) {
                 judges.conFlag = 'onChange';//触发条件
                 item.needFill.map((v, i)=> {
-                    let obj = {};
-                    obj.judgeObjKey =node.key;
-                    obj.judgeObjFlag = node.props.name; //判断对象的名字
+                    if(judges.className == 'input' && v.type=='select'){
+                        judges.conFlag =v.default;
+                    } else{
+                        let obj = {};
+                        obj.enable=true; //todo:根据以后的需求变更
+                        obj.judgeObjKey =node.key;
+                        let judgeObj =keyMap[obj.judgeObjKey];
+                        if (judgeObj) {
+                            let o = objectToId(judgeObj);
+                            obj.judgeObjId = o[0];
+                            if (o[1]) {
+                                obj.judgeVarId = o[1];
+                                obj.judgeVarName = o[2];
+                            }
+                        }
+                        obj.judgeValFlag = 'value';
 
-                    obj.compareFlag = item.conFlag;
-                    obj.showName=v.showName;
-                    obj.type=v.type;
-                    obj.compareValFlag = v.default;//判断对象的属性
-                    judges.children.push(obj);
+                        obj.compareFlag = item.conFlag;
+                        obj.showName=v.showName;
+                        obj.type=v.type;
+                        obj.compareObjFlag =v.default;
 
+                        judges.children.push(obj);
+                    }
                 });
             }
+
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
-            item.children.map((v,i)=>{
-             let obj={};
-
-             obj.enable = v.enable; //是否可执行
-             obj.judgeObjKey =v.judgeObjKey;
-             if (v.judgeObj) {
-                   let o = objectToId(v.judgeObj);
-                   obj.judgeObjId = o[0];
-                   if (o[1]) {
-                     obj.judgeVarId = o[1];
-                     obj.judgeVarName = o[2];
-                   }
+            item.children.map((v,i)=> {
+                let obj = {};
+                let isSpecial1 = false;
+                let isSpecial2 = false;
+                obj.enable = v.enable; //是否可执行
+                obj.judgeObjKey = v.judgeObjKey;
+                obj.judgeObjFlag = v.judgeObjFlag;
+                if (v.judgeObj) {
+                    let o = objectToId(v.judgeObj); //1 获取id 2 判断五类情况
+                    obj.judgeObjId = o[0];
+                    if (o[1]) {
+                        obj.judgeVarId = o[1];
+                        obj.judgeVarName = o[2];
+                    }
+                    //获取类名,判断是否属于五类特殊对象对象,改造条件值
+                    isSpecial1 = specialObject.indexOf(v.judgeObj.className) >= 0;
                 }
-             obj.judgeObjFlag=v.judgeObjFlag;
+                if (isSpecial1) {
+                    obj.judgeValFlag = 'value';
+                } else {
+                    obj.judgeValFlag = v.judgeValFlag;//判断对象的属性
+                }
+                obj.compareFlag = v.compareFlag;//比较运算符
 
-             obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
-              if(obj.judgeValFlag=='判断值') {
-                    obj.judgeValFlag = null;
-               }
-
-             obj.compareFlag=v.compareFlag;//比较运算符
-
-             obj.compareObjKey=v.compareObjKey;
-
+                obj.compareObjFlag = v.compareObjFlag;
+                obj.compareObjKey = v.compareObjKey;
                 if (v.compareObj) {
-                   var o = objectToId(v.compareObj);
-                   obj.compareObjId = o[0];
-                   if (o[1]) {
-                     obj.compareVarId = o[1];
-                     obj.compareVarName = o[2];
-                   }
+                    var o = objectToId(v.compareObj);
+                    obj.compareObjId = o[0];
+                    if (o[1]) {
+                        obj.compareVarId = o[1];
+                        obj.compareVarName = o[2];
+                    }
+                    isSpecial2 = specialObject.indexOf(v.compareObj.className) >= 0;
                 }
-             obj.compareObjFlag=v.compareObjFlag;
-             obj.compareValFlag=v.compareValFlag;//判断对象的属性
-             if( obj.compareValFlag=='比较值') {
-                 obj.compareValFlag = null;
-             }
+                if (isSpecial2) {
+                 //   obj.compareValFlag = v.compareObj.props.value;
+                    obj.compareValFlag ='value';
+                } else if (v.compareValFlag == '比较值') {
+                    //用户填的值
+                    obj.compareObjFlag = v.compareObjFlag;
+                    obj.compareValFlag = '比较值';
+                } else {
+                    //非五类
+                    obj.compareValFlag = v.compareValFlag;
+                }
 
-             obj.arrHidden=v.arrHidden;
-             judges.children.push(obj);
-         });
+                obj.arrHidden = v.arrHidden;
+                judges.children.push(obj);
+            });
 
         item.specificList.forEach(cmd => {
             let c = {};
@@ -1628,9 +1655,10 @@ export default Reflux.createStore({
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
             this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            this.activeEventTree(this.currentWidget.key);
         }
-        this.trigger({redrawTree: true, redrawWidget: this.currentWidget});
-        this.reorderEventTreeList();
+        this.trigger({redrawWidget: this.currentWidget});
+        // this.reorderEventTreeList();
         // this.render();
     },
     removeEventTree: function() {
@@ -1671,13 +1699,15 @@ export default Reflux.createStore({
         // this.render();
     },
     activeEventTree: function (nid) {
-        if(!this.currentActiveEventTreeKey&&(nid!=null||nid!=undefined)){
-            this.reorderEventTreeList();
-            this.getAllWidgets();
-        }
-        //激活事件树，无则为
+        // if(!this.currentActiveEventTreeKey&&(nid!=null||nid!=undefined)){
+        //     this.reorderEventTreeList();
+        //     this.getAllWidgets();
+        // }
+        //激活事件树
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
+            this.reorderEventTreeList();
+            this.getAllWidgets();
         } else {
             this.currentActiveEventTreeKey = null;
         }
@@ -1692,7 +1722,7 @@ export default Reflux.createStore({
                 this.trigger({redrawTree: true});
             }
         }
-        this.trigger({eventTreeList: this.eventTreeList});
+        this.trigger({redrawEventTreeList:true});
     },
     enableEvent: function (event) {
         if(event) {
@@ -1735,11 +1765,11 @@ export default Reflux.createStore({
         if(len>1){
             eventList.splice(index,1);
         }else if (this.currentWidget) {
-            eventList.splice(0,1);
-            this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            this.currentWidget.props['eventTree'] = [this.emptyEvent()];
         }
+
         this.changeEventTreeEnableByEvents();
-        this.trigger({redrawEventTree: true});
+        this.trigger({redrawEventTreeList: true});
     },
     addEventChildren:function(event){
         if(event && event['children']){
@@ -1757,11 +1787,10 @@ export default Reflux.createStore({
         }
     },
     delEventChildren:function(event,index){
-
         if(event && event['children']){
             event.children.splice(index,1);
+            this.trigger({redrawEventTree: true});
         }
-        this.trigger({redrawEventTree: true});
     },
     enableEventChildren:function(eventChild) {
         if(eventChild){
@@ -2221,8 +2250,8 @@ export default Reflux.createStore({
                 break;
         }
     },
-    eventSelectTargetMode: function (isActive, sid) {
-        this.trigger({eventSelectTargetMode:{isActive:isActive, sid:sid}});
+    eventSelectTargetMode: function (isActive, props) {
+        this.trigger({eventSelectTargetMode:{isActive:isActive, props:props}});
     },
     didSelectEventTarget: function (data) {
         this.trigger({didSelectEventTarget:{target:data}});
@@ -2288,7 +2317,7 @@ export default Reflux.createStore({
                 { name: name,
                     tree: loadTree(null, { 'cls': 'root',
                         'type': bridge.getRendererType(this.currentWidget.node),
-                        'props': {'width': 640, 'height': 1040}})
+                        'props': {'width': 640, 'height': 1040, 'name':name}})
                 }
             );
         }
@@ -2298,7 +2327,7 @@ export default Reflux.createStore({
                 { name: name,
                     tree: loadTree(null, { 'cls': 'root',
                         'type': bridge.getRendererType(this.currentWidget.node),
-                        'props': {'width': 640, 'height': 1040}})
+                        'props': {'width': 640, 'height': 1040, 'name':name}})
                 }
             );
         }

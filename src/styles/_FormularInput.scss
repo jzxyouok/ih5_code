@@ -1,0 +1,76 @@
+.formulaInput {
+  .value-mode {
+    .formula-dropDown {
+      background-color: #294140;
+      border-radius: 2px;
+      position: relative;
+      height: 22px;
+    }
+    .formula-title {
+      border-radius: 2px;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #294140;
+      font-size: 12px;
+      color: #b5b5b5;
+      padding-left: 0;
+      cursor: pointer;
+    }
+    .formula-object-icon {
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      outline: 0;
+      margin: 0 2px 0 2px;
+      border: 1px solid #294140;
+      border-radius: 2px;
+      background: url('img/button-icon.svg') no-repeat -559px -279px;
+
+      &:hover {
+        background: url("img/button-icon.svg") no-repeat -559px -239px;
+      }
+      &:active {
+        background: url("img/button-icon.svg") no-repeat -559px -199px;
+      }
+      &.active {
+        border: 1px solid #7b5815;
+        background: url("img/button-icon.svg") no-repeat -559px -279px;
+      }
+    }
+
+    .ant-input-wrapper {
+      input {
+        border-radius: 2px;
+        height: 22px;
+        background: #294140;
+        outline: none;
+        border: 0;
+        font-size: 12px;
+        line-height: 22px;
+        color: #b5b5b5;
+        padding-left: 0 !important;
+        padding-right: 0;
+      }
+    }
+    .ant-input,
+    .ant-input-sm,
+    .ant-input-number-input{
+      &:focus {
+        border: 0 !important;
+        outline: 0;
+        box-shadow: none;
+      }
+    }
+
+    .value-right-icon {
+      position: relative;
+      padding-right: 17px;
+      width: 12px;
+      height: 22px;
+      background: url('img/button-icon.svg') no-repeat -1677px -40px;
+      display: block;
+    }
+  }
+}
+
