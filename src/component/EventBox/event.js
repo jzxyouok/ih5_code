@@ -25,7 +25,7 @@ class Event extends React.Component {
             allWidgetsList: null,
             curChild:null,
             activeKey: this.props.activeKey,  //当前激活事件的key
-            specialObject: ['counter', 'text', 'var'],
+            specialObject: ['counter', 'text', 'var','input'],
             //用于下拉框显示
             conOption: [],//每次点击后赋值
             logicalOption: ['and', 'or', 'not'],  //下拉选项
@@ -372,6 +372,8 @@ class Event extends React.Component {
                     type = 2;
                 } else if(className=='counter'){
                     type = 0;
+                }else if(className=='input'){
+                    type = 2;
                 }
             }
         });
@@ -389,12 +391,13 @@ class Event extends React.Component {
                 let classname= v.className;
                 //特殊五类
                 if(classname=='var'){
+                    let typeNew=[];
                     if(v.type=='number'){
-                        v.type=[0,1,5];
+                        typeNew=[0,1,5];
                     }else if(v.type=='string'){
-                        v.type=[2,3];
+                        typeNew=[2,3];
                     }
-                    if(v.type.indexOf(type)>=0){
+                    if(typeNew.indexOf(type)>=0){
                         aProps.push({showName:v.props.name,key:v.key});
                     }
                 }else if(classname=='text' ){
@@ -403,6 +406,10 @@ class Event extends React.Component {
                     }
                 } else if(classname=='counter'){
                     if([0,1].indexOf(type)>=0){
+                        aProps.push({showName:v.props.name,key:v.key});
+                    }
+                } else if(classname=='input'){
+                    if([2,3].indexOf(type)>=0){
                         aProps.push({showName:v.props.name,key:v.key});
                     }
                 } else{
@@ -453,11 +460,14 @@ class Event extends React.Component {
                     }
                 }
             });
-            propertyMap[judgeObjClassName].map((v, i)=> {
-                if (v.isProperty && v.name == judgeObjVal) {
-                    type =v.type;
-                }
-            });
+            if( propertyMap[judgeObjClassName]){
+                propertyMap[judgeObjClassName].map((v, i)=> {
+                    if (v.isProperty && v.name == judgeObjVal) {
+                        type =v.type;
+                    }
+                });
+            }
+
             allWidgetsList.map((v,i)=>{
                 if(v.props.name == compareObjFlag){
                     compareObjClassName =v.className;
@@ -733,7 +743,6 @@ class Event extends React.Component {
 
         if (isRun) {
             let eventList = this.state.eventList;
-            eventList[this.curEventIndex].children[this.curChildrenIndex] = initFlag;
             //判断事件面板所需宽度
             this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
@@ -801,48 +810,49 @@ class Event extends React.Component {
 
     setInputValAuto(type,event){
         let  newVal =event.target.value;
-        let tag=true;
+        let tag=true; //不包含
         let option = type.replace('Flag', 'Option');
         let eventList =this.state.eventList;
+        let curChild =eventList[this.curEventIndex].children[this.curChildrenIndex];
         let arr=this.state[option];
         let key =null;
 
         if(type=='compareObjFlag'){
-            eventList[this.curEventIndex].children[this.curChildrenIndex].showDropdown=false;
-            this.setState({eventList: eventList});
+            curChild.showDropdown=false;
          }
         arr.map((v,i)=>{
             if(v.showName && v.showName==newVal){
-                tag=false;
+                tag=false;//包含
                 key=v.key;
             }else if(v==newVal){
-                tag=false;
+                tag=false;//包含
             }
         });
 
             if (tag) {
+                //不包含时
                 if (type == 'compareObjFlag') {
-                    let arrHidden = eventList[this.curEventIndex].children[this.curChildrenIndex].arrHidden;
+                    let arrHidden = curChild.arrHidden;
                     arrHidden[5] = true;
-                    if(!newVal || /^\s+$/.test(newVal) ){
-                        eventList[this.curEventIndex].children[this.curChildrenIndex].compareObjFlag='比较值/对象';
-                        eventList[this.curEventIndex].children[this.curChildrenIndex].compareObjKey=null;
+                    if(!newVal || /^\s+$/.test(newVal) ){  //空值
+                        curChild.compareObjFlag='比较值/对象';
                     }
+                    curChild.compareObj=null;
+                    curChild.compareValFlag='比较值';
+                    curChild.compareObjKey=null;
                     this.setEventBoxWidth(eventList);
                 } else {
-                    eventList[this.curEventIndex].children[this.curChildrenIndex][type] = this.oldVal;
+                    curChild[type] = this.oldVal;
                 }
-                this.setState({eventList: eventList});
             } else {
                 //触发下一个下拉框
-                if(newVal !=this.oldVal){
-                    this.onMenuClick(type, newVal,key);
-                } 
+                if (newVal != this.oldVal) {
+                    this.onMenuClick(type, newVal, key);
+                }
             }
         this.oldVal=null;
-
-        eventList[this.curEventIndex].children[this.curChildrenIndex].saveJudgeObjFlag=null;
-        eventList[this.curEventIndex].children[this.curChildrenIndex].saveCompareObjFlag=null;
+        curChild.saveJudgeObjFlag=null;
+        curChild.saveCompareObjFlag=null;
         this.setState({eventList: eventList});
     }
 
@@ -932,17 +942,17 @@ class Event extends React.Component {
 
     getAntdComponent(item,index,obj){
         if(item.type=='number'){
-            return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
+            return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
         if(item.type=='string'){
-            return <Input disabled={!obj.enable} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
+            return <Input disabled={!obj.enable} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
         if(item.type=='select'){
            let optionArr=[];
             item.option.map((v,i)=>{
                 optionArr.push(<Option  key={v}  className='dropDown-input-option'>{v}</Option>);
             });
-            return <Select disabled={!obj.enable} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
+            return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
         }
     }
 
