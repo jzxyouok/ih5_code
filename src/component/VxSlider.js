@@ -414,44 +414,48 @@ class VxRcSlider extends RcSlider {
             }
             left = dragLocusLeft;
             self.setState({dragLeft:dragLocusLeft});
-        });
-        $(document).mousemove(function(e){
-            if(move){
-                let x =  e.pageX - _x;
-                let value = left + x;
-                if(value <= 0){
-                    value = 0
-                }
-                //if(self.props.refTrack.props.data[0]){
-                //    let max = self.props.refTrack.props.data[0][0] * 61 * self.props.percentage;
-                //    if(value >= max){
-                //        value = max
-                //    }
-                //}
-                self.setState({
-                    isDragTrackLeft : true,
-                    isDragTrackRight : false,
-                    dragLeft: value
-                });
-                //console.log(left + x);
-            }
-        }).mouseup(function(){
-            move=false;
-            left = self.state.dragLeft;
 
-            if(self.state.isDragTrackLeft){
-                //console.log(4);
-                let startTime;
-                if(self.props.multiple > 0){
-                    startTime = self.state.dragLeft / 61 / self.props.multiple;
+            $(document).bind('mousemove',(function(e){
+                if(move){
+                    let x =  e.pageX - _x;
+                    let value = left + x;
+                    if(value <= 0){
+                        value = 0
+                    }
+                    //if(self.props.refTrack.props.data[0]){
+                    //    let max = self.props.refTrack.props.data[0][0] * 61 * self.props.percentage;
+                    //    if(value >= max){
+                    //        value = max
+                    //    }
+                    //}
+                    self.setState({
+                        isDragTrackLeft : true,
+                        isDragTrackRight : false,
+                        dragLeft: value
+                    });
+                    //console.log(left + x);
                 }
-                else {
-                    startTime = self.state.dragLeft / 61 * (-self.props.multiple);
+            }));
+            $(document).bind('mouseup',(function(){
+                move=false;
+                left = self.state.dragLeft;
+
+                if(self.state.isDragTrackLeft){
+                    //console.log(4);
+                    let startTime;
+                    if(self.props.multiple > 0){
+                        startTime = self.state.dragLeft / 61 / self.props.multiple;
+                    }
+                    else {
+                        startTime = self.state.dragLeft / 61 * (-self.props.multiple);
+                    }
+                    WidgetActions['updateProperties']({startTime:startTime}, false, false);
+                    self.props.refTrack.props['startTime'] = startTime;
+                    self.props.refTrack.node['startTime'] = startTime;
+                    $(document).unbind('mousemove');
+                    $(document).unbind('mouseup');
                 }
-                WidgetActions['updateProperties']({startTime:startTime}, false, false);
-                self.props.refTrack.props['startTime'] = startTime;
-                self.props.refTrack.node['startTime'] = startTime;
-            }
+            }));
         });
     }
 
@@ -480,47 +484,51 @@ class VxRcSlider extends RcSlider {
             right = dragLocusRight;
             //console.log(self.props.totalTime, endTime,dragLocusRight);
             self.setState({dragRight:dragLocusRight});
-        });
-        $(document).mousemove(function(e){
-            if(move){
-                let x =  -(e.pageX - _x);
-                let value = right + x;
-                if(value <= 0){
-                    value = 0
-                }
-                //if(self.props.refTrack.props.data[0]){
-                //    let data = self.props.refTrack.props.data;
-                //    let totalTime = self.props.totalTime;
-                //    let max = (totalTime - data[data.length - 1][0]) * 61 * self.props.percentage;
-                //    if(value >= max){
-                //        value = max
-                //    }
-                //}
-                self.setState({
-                    isDragTrackRight : true,
-                    isDragTrackLeft : false,
-                    dragRight: value
-                });
-                //console.log(right + x);
-            }
-        }).mouseup(function(){
-            move=false;
-            right = self.state.dragRight;
 
-            if(self.state.isDragTrackRight){
-                //console.log(self.props.totalTime);
-                let endTime;
-                if(self.props.multiple > 0){
-                    endTime = self.props.totalTime - (self.state.dragRight / 61 / self.props.multiple);
+            $(document).bind('mousemove',(function(e){
+                if(move){
+                    let x =  -(e.pageX - _x);
+                    let value = right + x;
+                    if(value <= 0){
+                        value = 0
+                    }
+                    //if(self.props.refTrack.props.data[0]){
+                    //    let data = self.props.refTrack.props.data;
+                    //    let totalTime = self.props.totalTime;
+                    //    let max = (totalTime - data[data.length - 1][0]) * 61 * self.props.percentage;
+                    //    if(value >= max){
+                    //        value = max
+                    //    }
+                    //}
+                    self.setState({
+                        isDragTrackRight : true,
+                        isDragTrackLeft : false,
+                        dragRight: value
+                    });
+                    //console.log(right + x);
                 }
-                else {
-                    endTime = self.props.totalTime - (self.state.dragRight / 61 * (-self.props.multiple));
+            }));
+            $(document).bind('mouseup',(function(){
+                move=false;
+                right = self.state.dragRight;
+
+                if(self.state.isDragTrackRight){
+                    //console.log(self.props.totalTime);
+                    let endTime;
+                    if(self.props.multiple > 0){
+                        endTime = self.props.totalTime - (self.state.dragRight / 61 / self.props.multiple);
+                    }
+                    else {
+                        endTime = self.props.totalTime - (self.state.dragRight / 61 * (-self.props.multiple));
+                    }
+                    //console.log(endTime);
+                    self.props.refTrack.props['endTime'] = endTime;
+                    self.props.refTrack.node['endTime'] = endTime;
+                    WidgetActions['updateProperties']({endTime:endTime}, false, false);
+                    $(document).unbind('mousemove');
+                    $(document).unbind('mouseup');
                 }
-                //console.log(endTime);
-                self.props.refTrack.props['endTime'] = endTime;
-                self.props.refTrack.node['endTime'] = endTime;
-                WidgetActions['updateProperties']({endTime:endTime}, false, false);
-            }
+            }));
         });
     }
 
