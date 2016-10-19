@@ -14,7 +14,7 @@ const propertyType = {
     Color2:9,
     Boolean2:10,
     Function:11,
-    FormularInput:12,
+    FormulaInput:12,
 };
 
 var level;
@@ -130,7 +130,7 @@ propertyMap['textBox']=[
 propertyMap['text'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormularInput},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
@@ -146,7 +146,7 @@ propertyMap['text'] = [
 propertyMap['counter'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormularInput},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ], isFunc: true },
     { name: 'add1', showName:'加1', isFunc: true },
     { name: 'minus1', showName:'减1', isFunc: true },
@@ -687,13 +687,13 @@ propertyMap['sock'] = [
 propertyMap['strVar'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormularInput},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ], isFunc: true },
 ];
 propertyMap['intVar'] = [
        { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormularInput},
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ],
            isFunc: true },
 ];

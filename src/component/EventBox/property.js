@@ -6,7 +6,7 @@ import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
 import { Input, InputNumber, Select} from 'antd';
 import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
-import { FormularInput } from '../PropertyView/FormularInputComponent';
+import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
@@ -534,8 +534,8 @@ class Property extends React.Component {
                     return <InputNumber step={0.1} {...defaultProp}/>;
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
-                case propertyType.FormularInput:
-                    return <FormularInput />;
+                case propertyType.FormulaInput:
+                    return <FormulaInput containerId={propertyId} objectList={this.state.objectList}/>;
                 case propertyType.Select:
                     let titleTemp = '';
                     let oType = optionType.normal;
