@@ -14,7 +14,7 @@ class EventBox extends React.Component {
             activeKey: -1,
             selectWidget: null,
             eventTreeList: [],
-            eventSelectTargetSpecId: null
+            eventSelectTargetModeProps: null
         };
         this.eventData = eventTempData;
 
@@ -37,6 +37,9 @@ class EventBox extends React.Component {
         if(!widget) {
             return;
         }
+        if(widget.redrawEventTreeList) {
+            this.forceUpdate();
+        }
         if(widget.eventTreeList){
             this.setState({
                 eventTreeList: widget.eventTreeList
@@ -50,9 +53,9 @@ class EventBox extends React.Component {
                 activeKey: widget.activeEventTreeKey.key
             });
         } else if(widget.eventSelectTargetMode){
-            let key = widget.eventSelectTargetMode.isActive?widget.eventSelectTargetMode.sid:null;
+            let props = widget.eventSelectTargetMode.isActive?widget.eventSelectTargetMode:null;
             this.setState({
-                eventSelectTargetSpecId: key
+                eventSelectTargetModeProps: props
             });
         }
     }
@@ -62,7 +65,6 @@ class EventBox extends React.Component {
             this.setState({
                 activeKey: nid
             }, ()=>{
-                WidgetActions['eventSelectTargetMode'](false, this.state.eventSelectTargetSpecId);
                 //触发选择widget并选择当前event
                 WidgetActions['selectWidget'](data, true, keepType.event);
                 WidgetActions['activeEventTree'](nid);
@@ -97,7 +99,7 @@ class EventBox extends React.Component {
                                                   name={v.props.name}
                                                   wKey={v.key}
                                                   activeKey={this.state.activeKey}
-                                                  eventSelectTargetSpecId={this.state.eventSelectTargetSpecId}
+                                                  eventSelectTargetModeProps={this.state.eventSelectTargetModeProps}
                                                   chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
                                   })
                         }

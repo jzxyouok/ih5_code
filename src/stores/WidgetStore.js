@@ -1657,9 +1657,10 @@ export default Reflux.createStore({
             this.currentWidget.props['enableEventTree'] = true;
             this.currentWidget.props['eventTree'] = [];
             this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            this.activeEventTree(this.currentWidget.key);
         }
-        this.trigger({redrawTree: true, redrawWidget: this.currentWidget});
-        this.reorderEventTreeList();
+        this.trigger({redrawWidget: this.currentWidget});
+        // this.reorderEventTreeList();
         // this.render();
     },
     removeEventTree: function() {
@@ -1764,12 +1765,11 @@ export default Reflux.createStore({
         if(len>1){
             eventList.splice(index,1);
         }else if (this.currentWidget) {
-            eventList.splice(0,1);
-            this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            this.currentWidget.props['eventTree'] = [this.emptyEvent()];
         }
 
         this.changeEventTreeEnableByEvents();
-        this.trigger({redrawEventTree: true});
+        this.trigger({redrawEventTreeList: true});
     },
     addEventChildren:function(event){
         if(event && event['children']){
@@ -1787,11 +1787,10 @@ export default Reflux.createStore({
         }
     },
     delEventChildren:function(event,index){
-
         if(event && event['children']){
             event.children.splice(index,1);
+            this.trigger({redrawEventTree: true});
         }
-        this.trigger({redrawEventTree: true});
     },
     enableEventChildren:function(eventChild) {
         if(eventChild){
@@ -2251,8 +2250,8 @@ export default Reflux.createStore({
                 break;
         }
     },
-    eventSelectTargetMode: function (isActive, sid) {
-        this.trigger({eventSelectTargetMode:{isActive:isActive, sid:sid}});
+    eventSelectTargetMode: function (isActive, props) {
+        this.trigger({eventSelectTargetMode:{isActive:isActive, props:props}});
     },
     didSelectEventTarget: function (data) {
         this.trigger({didSelectEventTarget:{target:data}});
@@ -2443,6 +2442,7 @@ export default Reflux.createStore({
         // appendArray(images, stageTree[0].tree.imageList);
         data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
 
+        //debugger;
         if (stageTree.length > 1) {
             data['defs'] = {};
             for (let i = 1; i < stageTree.length; i++) {
@@ -2457,10 +2457,11 @@ export default Reflux.createStore({
                 data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
             }
         }
-
+        //console.log(data);
         data = bridge.encryptData(data, images);
-        if (!data)
+        if (!data){
             return;
+        }
 
         var cb = function(text) {
             var result = JSON.parse(text);
@@ -2469,7 +2470,6 @@ export default Reflux.createStore({
                 callback(result['id'], wname, wdescribe);
             }
         };
-
         if (wid) {
             this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb,null,updateProgress);
         } else {
