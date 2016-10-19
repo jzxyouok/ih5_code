@@ -432,7 +432,7 @@ function objectToId(object) {
     } else {
       varKey = 'i' + object.widget.intVarList.indexOf(object);
     }
-  } else if (object.className == 'func'){
+  }else if (object.className == 'func'){
       idName = object.widget.props['id'];
       varKey = 'f' + object.widget.funcList.indexOf(object);
       varName = object.name;
@@ -442,7 +442,7 @@ function objectToId(object) {
   } else {
     idName = object.props['id'];
   }　
- // console.log('object',object);
+
   return [idName, varKey, varName];
 }
 
@@ -477,7 +477,7 @@ function generateId(node, idList) {
 
   if (node.props['eventTree']) {
       generateObjectId(node);
-//      console.log(" node.props['eventTree']", node.props['eventTree']);
+
       node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
           judge.judgeObj = keyMap[judge.judgeObjKey];
@@ -582,7 +582,7 @@ function generateJsFunc(etree) {
         });
       }
 
-     //console.log('conditions',conditions);
+     console.log('conditions',conditions);
 
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
@@ -695,23 +695,36 @@ function saveTree(data, node, saveKey) {
             judges.conFlag = item.conFlag;
             if(judges.conFlag=='触发条件'){judges.conFlag=null;}
             judges.className=node.className;
-
             judges.children=[];
             if(item.needFill) {
                 judges.conFlag = 'onChange';//触发条件
                 item.needFill.map((v, i)=> {
-                    let obj = {};
-                    obj.judgeObjKey =node.key;
-                    obj.judgeObjFlag = node.props.name; //判断对象的名字
+                    if(judges.className == 'input' && v.type=='select'){
+                        judges.conFlag =v.default;
+                    } else{
+                        let obj = {};
+                        obj.enable=true; //todo:根据以后的需求变更
+                        obj.judgeObjKey =node.key;
+                        let judgeObj =keyMap[obj.judgeObjKey];
+                        if (judgeObj) {
+                            let o = objectToId(judgeObj);
+                            obj.judgeObjId = o[0];
+                            if (o[1]) {
+                                obj.judgeVarId = o[1];
+                                obj.judgeVarName = o[2];
+                            }
+                        }
+                        obj.judgeValFlag = node.props.name;
+                        obj.compareFlag = item.conFlag;
+                        obj.showName=v.showName;
+                        obj.type=v.type;
+                        obj.compareObjFlag =v.default;
 
-                    obj.compareFlag = item.conFlag;
-                    obj.showName=v.showName;
-                    obj.type=v.type;
-                    obj.compareValFlag = v.default;//判断对象的属性
-                    judges.children.push(obj);
-
+                        judges.children.push(obj);
+                    }
                 });
             }
+
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
             item.children.map((v,i)=>{
@@ -720,7 +733,7 @@ function saveTree(data, node, saveKey) {
              obj.enable = v.enable; //是否可执行
              obj.judgeObjKey =v.judgeObjKey;
              if (v.judgeObj) {
-                   let o = objectToId(v.judgeObj);
+                   let o = objectToId(v.judgeObj); //1 获取id 2 判断五类情况
                    obj.judgeObjId = o[0];
                    if (o[1]) {
                      obj.judgeVarId = o[1];
@@ -729,10 +742,23 @@ function saveTree(data, node, saveKey) {
                 }
              obj.judgeObjFlag=v.judgeObjFlag;
 
+
+
              obj.judgeValFlag=v.judgeValFlag;//判断对象的属性
-              if(obj.judgeValFlag=='判断值') {
+              if(obj.judgeValFlag=='判断值') { //五类特殊对象
                     obj.judgeValFlag = null;
+                    if(obj.judgeObjFlag){
+                        obj.judgeValFlag = obj.judgeObjFlag;
+                    }
                }
+
+
+
+
+
+
+
+
 
              obj.compareFlag=v.compareFlag;//比较运算符
 
@@ -750,6 +776,9 @@ function saveTree(data, node, saveKey) {
              obj.compareValFlag=v.compareValFlag;//判断对象的属性
              if( obj.compareValFlag=='比较值') {
                  obj.compareValFlag = null;
+                 if(obj.compareObjFlag){
+                     obj.compareValFlag = obj.compareObjFlag;
+                 }
              }
 
              obj.arrHidden=v.arrHidden;

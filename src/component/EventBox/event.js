@@ -932,17 +932,17 @@ class Event extends React.Component {
 
     getAntdComponent(item,index,obj){
         if(item.type=='number'){
-            return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
+            return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
         if(item.type=='string'){
-            return <Input disabled={!obj.enable} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
+            return <Input disabled={!obj.enable} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
         if(item.type=='select'){
            let optionArr=[];
             item.option.map((v,i)=>{
                 optionArr.push(<Option  key={v}  className='dropDown-input-option'>{v}</Option>);
             });
-            return <Select disabled={!obj.enable} className='dropDown-input-content' defaultValue={item.default} onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
+            return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
         }
     }
 
