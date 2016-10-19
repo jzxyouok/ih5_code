@@ -671,7 +671,7 @@ class VxRcSlider extends RcSlider {
                     {
                         //<label className={cls('timeline-node-type', `timeline-node-type-${track.parent.className}`)} />
                     }
-                    <img src={ this.props.pic } className="timeline-node-type" />
+                    <span className={cls("timeline-node-type", this.props.pic)}/>
 
 					<span className='timeline-node-name'>{track.parent.className}</span>
 				</div>

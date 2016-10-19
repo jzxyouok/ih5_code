@@ -1062,11 +1062,10 @@ class ObjectTree extends React.Component {
 
         let fuc = (v,i)=>{
             let pic = null;
-            let picIsImage = true;
+            let picIsImage = false;
             this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
                 if(isCustomizeWidget(v.className)) {
                     pic = 'component-icon';
-                    picIsImage = false;
                 }
                 else if(v.className == 'db'){
                     if(v.node.dbType == "shareDb"){
@@ -1075,7 +1074,6 @@ class ObjectTree extends React.Component {
                     else {
                         pic = 'personalDb-icon';
                     }
-                    picIsImage = false;
                 }
                 else if(v.className === 'data'){
                     if(v.props.type === dataType.twoDArr) {
@@ -1083,11 +1081,9 @@ class ObjectTree extends React.Component {
                     } else if (v.props.type === dataType.oneDArr) {
                         pic = 'oneDArr-icon';
                     }
-                    picIsImage = false;
                 }
                 else if(v.className === 'sock'){
                     pic = 'sock-icon';
-                    picIsImage = false;
                 }
                 else if (v1.className === v.className){
                     if(v.className === 'image' || v.className === 'imagelist') {
@@ -1102,6 +1098,7 @@ class ObjectTree extends React.Component {
                             if(pic.substring(0,5) !== 'data:') {
                                 pic = imgServerPrefix+pic;
                             }
+                            picIsImage = true;
                         } else {
                             pic = v1.icon;
                         }
@@ -1153,7 +1150,7 @@ class ObjectTree extends React.Component {
                                 : icon( 0 , v.key)
                         }
                         {
-                            picIsImage?<span className="item-icon"><img className="item-img" src={ pic } /></span>
+                            picIsImage?<span className="item-icon2"><img className="item-img" src={ pic } /></span>
                                 : <span className={$class('item-icon', pic)} />
                         }
                         {
