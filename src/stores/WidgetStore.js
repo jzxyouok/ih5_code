@@ -1736,11 +1736,10 @@ export default Reflux.createStore({
         if(len>1){
             eventList.splice(index,1);
         }else if (this.currentWidget) {
-            eventList.splice(0,1);
-            this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            this.currentWidget.props['eventTree'] = [this.emptyEvent()];
         }
         this.changeEventTreeEnableByEvents();
-        this.trigger({redrawEventTree: true});
+        this.trigger({redrawEventTreeList: true});
     },
     addEventChildren:function(event){
         if(event && event['children']){
@@ -1758,11 +1757,10 @@ export default Reflux.createStore({
         }
     },
     delEventChildren:function(event,index){
-
         if(event && event['children']){
             event.children.splice(index,1);
+            this.trigger({redrawEventTree: true});
         }
-        this.trigger({redrawEventTree: true});
     },
     enableEventChildren:function(eventChild) {
         if(eventChild){
