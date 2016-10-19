@@ -249,7 +249,7 @@ class Event extends React.Component {
     }
 
     addEventBtn(e) {
-        e.stopPropagation();
+        // e.stopPropagation();
         WidgetActions['addEvent']();
     }
 
