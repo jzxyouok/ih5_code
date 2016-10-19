@@ -2413,6 +2413,7 @@ export default Reflux.createStore({
         // appendArray(images, stageTree[0].tree.imageList);
         data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
 
+        //debugger;
         if (stageTree.length > 1) {
             data['defs'] = {};
             for (let i = 1; i < stageTree.length; i++) {
@@ -2427,10 +2428,11 @@ export default Reflux.createStore({
                 data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
             }
         }
-
+        //console.log(data);
         data = bridge.encryptData(data, images);
-        if (!data)
+        if (!data){
             return;
+        }
 
         var cb = function(text) {
             var result = JSON.parse(text);
@@ -2439,7 +2441,6 @@ export default Reflux.createStore({
                 callback(result['id'], wname, wdescribe);
             }
         };
-
         if (wid) {
             this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb,null,updateProgress);
         } else {

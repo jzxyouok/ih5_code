@@ -45,7 +45,8 @@ class DbTable extends React.Component {
             addColumnBool : false,
             isMoveList : false,
             saveTip : false,
-            isSaveTip : false
+            isSaveTip : false,
+            selectArrayCopy : []
         };
         this.scrollBtn = this.scrollBtn.bind(this);
         this.addColumn = this.addColumn.bind(this);
@@ -130,6 +131,7 @@ class DbTable extends React.Component {
                        dbList : [],
                        dbHeader: [],
                        selectArray : [],
+                       selectArrayCopy : [],
                        originalData : [],
                        originalHeader : [],
                        inputNow : null,
@@ -142,6 +144,7 @@ class DbTable extends React.Component {
             else {
                 this.setState({
                     selectArray : [],
+                    selectArrayCopy : [],
                     inputNow : null,
                     inputText : null,
                     inputStyle : null
@@ -376,6 +379,13 @@ class DbTable extends React.Component {
 
     saveBtn(bool,DdName){
         //console.log(1,this.state.dbHeader,this.state.dbList);
+        if(this.state.selectArray.length > 0){
+            let arrayCopy = this.state.selectArray;
+            this.setState({
+                selectArrayCopy : arrayCopy
+            });
+        }
+
         if(!this.state.isSaveTip){
             if(this.state.selectArray.length > 0){
                 this.setState({
@@ -644,7 +654,8 @@ class DbTable extends React.Component {
             inputText : value,
             inputNow : key,
             rowRightMenu : false,
-            columnRightMenu : false
+            columnRightMenu : false,
+            selectArrayCopy : []
         },()=>{
             $(".i" + key).focus();
             $(".i" + key).select();
@@ -1193,6 +1204,7 @@ class DbTable extends React.Component {
                                                 return  <td key={i}
                                                             className={$class(classname,
                                                                     {"active": this.state.selectArray.indexOf(classname)>=0},
+                                                                    {"Factive": this.state.selectArrayCopy.indexOf(classname)>=0},
                                                                     {"TDActive": this.state.columnChooseID == i},
                                                                     {"onTDActive": this.state.columnChooseID == (i+1)}
                                                             )}
@@ -1336,6 +1348,7 @@ class DbTable extends React.Component {
                                                                         return  <td key={ i2 }
                                                                                     className={$class(classname,
                                                                                         {"active": array.indexOf(classname) >=0 },
+                                                                                        {"Factive": this.state.selectArrayCopy.indexOf(classname)>=0},
                                                                                         {"TDZActive": this.state.columnChooseID == i2},
                                                                                         {"onTDActive": this.state.columnChooseID == (i2+1)},
                                                                                         {"TDEActive": this.state.columnChooseID == i2
