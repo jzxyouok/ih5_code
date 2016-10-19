@@ -36,9 +36,11 @@ class Property extends React.Component {
             isActiveEventSelectTarget: false  //是否激活了选择目标对象
         };
         this.expandBtn = this.expandBtn.bind(this);
+
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onSpecificDelete = this.onSpecificDelete.bind(this);
         this.onSpecificAdd = this.onSpecificAdd.bind(this);
+        this.onSpecificEnable = this.onSpecificEnable.bind(this);
 
         this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
         this.onObjectSelect = this.onObjectSelect.bind(this);
@@ -49,10 +51,9 @@ class Property extends React.Component {
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
 
         this.onActiveSelectTarget = this.onActiveSelectTarget.bind(this);
+        this.onEventSelectTargetBlur = this.onEventSelectTargetBlur.bind(this);
 
         this.onGetClassListByKey = this.onGetClassListByKey.bind(this);
-
-        this.onSpecificEnable = this.onSpecificEnable.bind(this);
 
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
@@ -88,10 +89,17 @@ class Property extends React.Component {
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getAllWidgets());
+        window.addEventListener('click', this.onEventSelectTargetBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+    }
+
+    onEventSelectTargetBlur() {
+        if(this.state.isActiveEventSelectTarget) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+        }
     }
 
     onStatusChange(widget) {
@@ -99,13 +107,6 @@ class Property extends React.Component {
             return;
         }
         if (widget.redrawEventTree) {
-            if(widget.enable) {
-                if(!widget.enable.value&&this.state.isActiveEventSelectTarget) {
-                    if(widget.enable.type === 'event' && this.state.event.eid === widget.enable.id) {
-                        WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
-                    }
-                }
-            }
             this.forceUpdate();
         } else if (widget.classList) {
             this.customClassList = widget.classList;

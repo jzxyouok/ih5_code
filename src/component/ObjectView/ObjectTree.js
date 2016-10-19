@@ -120,11 +120,6 @@ class ObjectTree extends React.Component {
         //console.log("tree",widget);
         //initTree : 初始化对象树
         if (widget.initTree !== undefined){
-            if(widget.resetSelectMode) {
-                this.setState({
-                    eventSelectTargetMode: false //被选模式取消
-                })
-            }
             this.setState({
                 widgetTree: widget.initTree[0] ,
                 allTreeData : widget.initTree

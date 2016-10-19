@@ -1708,7 +1708,7 @@ export default Reflux.createStore({
                 });
             }
             this.changeEventTreeEnableByEvents();
-            this.trigger({redrawEventTree: true, enable: {value: event.enable, id: event.eid, type:'event'}});
+            this.trigger({redrawEventTree: true});
         }
     },
     changeEventTreeEnableByEvents: function () {
@@ -1732,7 +1732,6 @@ export default Reflux.createStore({
     },
     delEvent:function(eventList,index){
         let len =eventList.length;
-        this.trigger({redrawEventTree: true, enable: {value: false, id: eventList[index].eid, type:'event'}});
         if(len>1){
             eventList.splice(index,1);
         }else if (this.currentWidget) {
@@ -2276,7 +2275,7 @@ export default Reflux.createStore({
             rootDiv.addEventListener('drop', drop.bind(this), false);
         }
 
-        this.trigger({initTree: stageTree, classList: classList, resetSelectMode:true});
+        this.trigger({initTree: stageTree, classList: classList});
         this.selectWidget(stageTree[0].tree);
         this.getAllWidgets();
     },
