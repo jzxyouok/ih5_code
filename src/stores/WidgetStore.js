@@ -574,13 +574,11 @@ function generateJsFunc(etree) {
               jsop = op;
 
             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
-
-
-            if (c.compareObjId && c.compareValFlag !='比较值') {
-                //非特殊五类
+            if (c.compareObjId) {
+                //非特殊五类和特殊五类
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
-                //特殊五类和用户填写
+                //用户填写
                 o += JSON.stringify(c.compareObjFlag);
             }
             conditions.push('(' + o + ')');
@@ -770,8 +768,8 @@ function saveTree(data, node, saveKey) {
                     isSpecial2 = specialObject.indexOf(v.compareObj.className) >= 0;
                 }
                 if (isSpecial2) {
-                    obj.compareObjFlag = v.compareObj.props.value;
-                    obj.compareValFlag = '比较值';
+                 //   obj.compareValFlag = v.compareObj.props.value;
+                    obj.compareValFlag ='value';
                 } else if (v.compareValFlag == '比较值') {
                     //用户填的值
                     obj.compareObjFlag = v.compareObjFlag;

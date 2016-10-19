@@ -391,12 +391,13 @@ class Event extends React.Component {
                 let classname= v.className;
                 //特殊五类
                 if(classname=='var'){
+                    let typeNew=[];
                     if(v.type=='number'){
-                        v.type=[0,1,5];
+                        typeNew=[0,1,5];
                     }else if(v.type=='string'){
-                        v.type=[2,3];
+                        typeNew=[2,3];
                     }
-                    if(v.type.indexOf(type)>=0){
+                    if(typeNew.indexOf(type)>=0){
                         aProps.push({showName:v.props.name,key:v.key});
                     }
                 }else if(classname=='text' ){
@@ -459,11 +460,14 @@ class Event extends React.Component {
                     }
                 }
             });
-            propertyMap[judgeObjClassName].map((v, i)=> {
-                if (v.isProperty && v.name == judgeObjVal) {
-                    type =v.type;
-                }
-            });
+            if( propertyMap[judgeObjClassName]){
+                propertyMap[judgeObjClassName].map((v, i)=> {
+                    if (v.isProperty && v.name == judgeObjVal) {
+                        type =v.type;
+                    }
+                });
+            }
+
             allWidgetsList.map((v,i)=>{
                 if(v.props.name == compareObjFlag){
                     compareObjClassName =v.className;
