@@ -6,6 +6,7 @@ import WidgetActions from '../../actions/WidgetActions'
 import { Menu, Dropdown } from 'antd';
 import { Input, InputNumber, Select} from 'antd';
 import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
+import { FormularInput } from '../PropertyView/FormularInputComponent';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 
 const MenuItem = Menu.Item;
@@ -64,7 +65,7 @@ class Property extends React.Component {
     componentWillReceiveProps(nextProps) {
         if(nextProps.activeKey){
             let didActiveSelectTargetMode = false;
-            if(nextProps.eventSelectTargetKey === nextProps.specific.sid){
+            if(nextProps.eventSpecSelectTargetKey === nextProps.specific.sid){
                 didActiveSelectTargetMode = true;
             }
             this.setState({
@@ -531,6 +532,8 @@ class Property extends React.Component {
                     return <InputNumber step={0.1} {...defaultProp}/>;
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
+                case propertyType.FormularInput:
+                    return <FormularInput />;
                 case propertyType.Select:
                     let titleTemp = '';
                     let oType = optionType.normal;

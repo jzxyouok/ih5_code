@@ -9,7 +9,7 @@ const inputType = {
     formula: 2,
 };
 
-class formularInput extends React.Component {
+class FormularInput extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -45,4 +45,4 @@ class formularInput extends React.Component {
     }
 }
 
-export {formularInput};
+export {FormularInput};
