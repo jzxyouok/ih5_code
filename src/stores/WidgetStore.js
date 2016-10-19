@@ -639,7 +639,7 @@ function generateJsFunc(etree) {
               }
               lines.push(line + ')');
           }
-        } else if (cmd.action.type == 'customize') {
+        } else if (cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
             cmd.action.property.forEach(function(p) {
@@ -1737,7 +1737,7 @@ export default Reflux.createStore({
                 });
             }
             this.changeEventTreeEnableByEvents();
-            this.trigger({redrawEventTree: true, enable: {value: event.enable, id: event.eid, type:'event'}});
+            this.trigger({redrawEventTree: true});
         }
     },
     changeEventTreeEnableByEvents: function () {
@@ -1761,7 +1761,6 @@ export default Reflux.createStore({
     },
     delEvent:function(eventList,index){
         let len =eventList.length;
-        this.trigger({redrawEventTree: true, enable: {value: false, id: eventList[index].eid, type:'event'}});
         if(len>1){
             eventList.splice(index,1);
         }else if (this.currentWidget) {

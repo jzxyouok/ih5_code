@@ -14,7 +14,7 @@ class EventBox extends React.Component {
             activeKey: -1,
             selectWidget: null,
             eventTreeList: [],
-            eventSelectTargetKey: null
+            eventSelectTargetSpecId: null
         };
         this.eventData = eventTempData;
 
@@ -52,7 +52,7 @@ class EventBox extends React.Component {
         } else if(widget.eventSelectTargetMode){
             let key = widget.eventSelectTargetMode.isActive?widget.eventSelectTargetMode.sid:null;
             this.setState({
-                eventSelectTargetKey: key
+                eventSelectTargetSpecId: key
             });
         }
     }
@@ -62,7 +62,7 @@ class EventBox extends React.Component {
             this.setState({
                 activeKey: nid
             }, ()=>{
-                WidgetActions['eventSelectTargetMode'](false, this.state.eventSelectTargetKey);
+                WidgetActions['eventSelectTargetMode'](false, this.state.eventSelectTargetSpecId);
                 //触发选择widget并选择当前event
                 WidgetActions['selectWidget'](data, true, keepType.event);
                 WidgetActions['activeEventTree'](nid);
@@ -97,7 +97,7 @@ class EventBox extends React.Component {
                                                   name={v.props.name}
                                                   wKey={v.key}
                                                   activeKey={this.state.activeKey}
-                                                  eventSelectTargetKey={this.state.eventSelectTargetKey}
+                                                  eventSelectTargetSpecId={this.state.eventSelectTargetSpecId}
                                                   chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
                                   })
                         }

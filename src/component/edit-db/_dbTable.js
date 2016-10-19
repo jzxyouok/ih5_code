@@ -87,7 +87,7 @@ class DbTable extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         this.onStatusChange(WidgetStore.getStore());
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
-        this.scrollBtn();
+        //this.scrollBtn();
 
         let isSaveTip = localStorage.getItem("IsHaveDBTip");
         if(isSaveTip !== null){
@@ -135,7 +135,8 @@ class DbTable extends React.Component {
                        inputNow : null,
                        inputText : null,
                        inputStyle : null
-                   })
+                   });
+                   this.updateNewScrollData(true);
                }
             }
             else {
@@ -144,7 +145,8 @@ class DbTable extends React.Component {
                     inputNow : null,
                     inputText : null,
                     inputStyle : null
-                })
+                });
+                this.updateNewScrollData(true);
            }
         }
     }
@@ -484,25 +486,30 @@ class DbTable extends React.Component {
             move=true;
             _x=e.pageX;
             moveLength = self.state.moveLength / self.state.multiple;
-        });
-        $(document).mousemove(function(e){
-            if(move && moveLength !== 0){
-                let x =  e.pageX - _x;
-                let value = left + x;
-                if(left + x <=0){
-                    value = 0;
+
+            $(document).bind('mousemove',(function(e){
+                if(move && moveLength !== 0){
+                    let x =  e.pageX - _x;
+                    let value = left + x;
+                    if(left + x <=0){
+                        value = 0;
+                    }
+                    if(left + x >= moveLength){
+                        value = moveLength;
+                    }
+                    //console.log(value);
+                    self.setState({
+                        marginLeft : value
+                    });
                 }
-                if(left + x >= moveLength){
-                    value = moveLength;
-                }
-                //console.log(value);
-                self.setState({
-                    marginLeft : value
-                });
-            }
-        }).mouseup(function(){
-            move=false;
-            left = self.state.marginLeft
+            }));
+
+            $(document).bind('mouseup',(function(){
+                move=false;
+                left = self.state.marginLeft;
+                $(document).unbind('mousemove');
+                $(document).unbind('mouseup');
+            }));
         });
     }
 

@@ -249,7 +249,7 @@ class Event extends React.Component {
     }
 
     addEventBtn(e) {
-        e.stopPropagation();
+        // e.stopPropagation();
         WidgetActions['addEvent']();
     }
 
@@ -1175,7 +1175,7 @@ class Event extends React.Component {
                                 return <Property key={i2}
                                                  specific={v2}
                                                  event={v}
-                                                 eventSelectTargetKey={this.props.eventSelectTargetKey}
+                                                 eventSelectTargetSpecId={this.props.eventSelectTargetSpecId}
                                                  wKey={this.props.wKey}
                                                  activeKey={this.props.activeKey}/>
                             })

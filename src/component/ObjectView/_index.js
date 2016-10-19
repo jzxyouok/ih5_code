@@ -210,17 +210,20 @@ class ObjectView extends React.Component {
         $(".drag-left").mousedown(function(e){
             move=true;
             _x=e.pageX;
-        });
-        $(document).mousemove(function(e){
-            if(move){
-                let x = -( e.pageX - _x);
-                self.setState({
-                    width : initialWidth + x
-                });
-            }
-        }).mouseup(function(){
-            move=false;
-            initialWidth = self.state.width <=280 ? 280 : self.state.width;
+            $(document).bind('mousemove',(function(e){
+                if(move){
+                    let x = -( e.pageX - _x);
+                    self.setState({
+                        width : initialWidth + x
+                    });
+                }
+            }));
+            $(document).bind('mouseup',(function(){
+                move=false;
+                initialWidth = self.state.width <=280 ? 280 : self.state.width;
+                $(document).unbind('mousemove');
+                $(document).unbind('mouseup');
+            }));
         });
     }
 

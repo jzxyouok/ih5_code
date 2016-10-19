@@ -105,7 +105,7 @@ class NavBar extends React.Component {
         this.openWorkShow = this.openWorkShow.bind(this);
         this.openWorkHide = this.openWorkHide.bind(this);
         this.specialLayerToogle = this.specialLayerToogle.bind(this);
-        this.clickOthersHide = this.clickOthersHide.bind(this);
+        this.clickOthersHide1 = this.clickOthersHide1.bind(this);
         this.addPanelShow = this.addPanelShow.bind(this);
         this.addPanelHide = this.addPanelHide.bind(this);
         this.cancelSave = this.cancelSave.bind(this);
@@ -117,6 +117,7 @@ class NavBar extends React.Component {
         this.createWorkHide = this.createWorkHide.bind(this);
         this.createWork = this.createWork.bind(this);
         this.updateProgress = this.updateProgress.bind(this);
+        this.getWorks = this.getWorks.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -366,6 +367,8 @@ class NavBar extends React.Component {
                 loading : 0,
                 saveLoading : true
             });
+            //console.log(this.workid);
+            localStorage.setItem("workID", this.workid);
             WidgetActions['saveNode'](this.workid, null, null, this.saveCallback,this.updateProgress);
         } else {
             this.setState({saveVisible: true});
@@ -512,7 +515,7 @@ class NavBar extends React.Component {
     }
 
     updateProgress(e){
-        //console.log(e);
+        console.log(e);
         if(e.lengthComputable) {
             let percentComplete = e.loaded / e.total * 100;
             this.setState({
@@ -837,12 +840,12 @@ class NavBar extends React.Component {
             specialLayer : !this.state.specialLayer
         },()=>{
             if(this.state.specialLayer){
-                this.clickOthersHide();
+                this.clickOthersHide1();
             }
         })
     }
 
-    clickOthersHide(){
+    clickOthersHide1(){
         let self = this;
         let fuc = function(e){
             let _con = $('.special-layer');   // 设置目标区域
@@ -940,7 +943,8 @@ class NavBar extends React.Component {
                             <span className='icon' />
                         </div>
 
-                        <div className={$class("special-layer",{"hidden": !this.state.specialLayer})}>
+                        <div className={$class("special-layer",{"hidden": !this.state.specialLayer})}
+                             style={{ left : this.props.expanded? '64px':'36px'}}>
                             <ul className="special-list">
                                 <li className="f--hlc create-li"
                                     onMouseOver={ this.createWorkShow }

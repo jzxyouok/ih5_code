@@ -441,31 +441,36 @@ class TimelineView extends React.Component {
             $(".overall-zoom .overall span").mousedown(function(e){
                 move=true;
                 _x=e.pageX;
-            });
-            $(document).mousemove(function(e){
-                if(move && self.state.percentage !== null){
-                    let x =  e.pageX - _x;
-                    let value = initialmarginLeft + x;
-                    let result;
-                    if(value<0){
-                        result = 0;
+
+                $(document).bind('mousemove',(function(e){
+                    if(move && self.state.percentage !== null){
+                        let x =  e.pageX - _x;
+                        let value = initialmarginLeft + x;
+                        let result;
+                        if(value<0){
+                            result = 0;
+                        }
+                        else {
+                            result = value >= movableDistance ? movableDistance : value;
+                            //console.log(result,movableDistance);
+                        }
+                        self.setState({
+                            marginLeft : result
+                            , isScroll : true
+                        });
                     }
-                    else {
-                        result = value >= movableDistance ? movableDistance : value;
-                        //console.log(result,movableDistance);
-                    }
+                }));
+                $(document).bind('mouseup',(function(){
+                    move=false;
+                    initialmarginLeft = self.state.marginLeft >= movableDistance
+                        ? movableDistance : self.state.marginLeft;
                     self.setState({
-                        marginLeft : result
-                        , isScroll : true
+                        isScroll : false
+                    },()=>{
+                        $(document).unbind('mousemove');
+                        $(document).unbind('mouseup');
                     });
-                }
-            }).mouseup(function(){
-                move=false;
-                initialmarginLeft = self.state.marginLeft >= movableDistance
-                                     ? movableDistance : self.state.marginLeft;
-                self.setState({
-                    isScroll : false
-                })
+                }));
             });
         }
     }
@@ -600,35 +605,39 @@ class TimelineView extends React.Component {
         $(".overall-zoom .zoom-slider .btn").mousedown(function(e){
             move=true;
             _x=e.pageX;
-        });
-        $(document).mousemove(function(e){
-            if(move){
-                let x =  e.pageX - _x;
-                p = left + x;
-                //console.log(left,  x , p);
-                if(p>=91){
-                    p = 91;
+
+            $(document).bind('mousemove',(function(e){
+                if(move){
+                    let x =  e.pageX - _x;
+                    p = left + x;
+                    //console.log(left,  x , p);
+                    if(p>=91){
+                        p = 91;
+                    }
+                    else if( p <= 0){
+                        p = 0;
+                    }
+                    a = (p - 45.5) / 45.5 * 10;
+                    a.toFixed(2);
+                    if(a <= 1 && a >= -1){
+                        a = 1;
+                    }
+                    //console.log(a);
+                    self.setState({
+                        dragZoomLeft : p,
+                        multiple : a
+                    },()=>{
+                        self.changeAllWidth(false,null,false);
+                    })
                 }
-                else if( p <= 0){
-                    p = 0;
-                }
-                a = (p - 45.5) / 45.5 * 10;
-                a.toFixed(2);
-                if(a <= 1 && a >= -1){
-                    a = 1;
-                }
-                //console.log(a);
-                self.setState({
-                    dragZoomLeft : p,
-                    multiple : a
-                },()=>{
-                    self.changeAllWidth(false,null,false);
-                })
-            }
-        }).mouseup(function(){
-            move=false;
-            left = self.state.dragZoomLeft;
-            self.changeAllWidth(false,null,true);
+            }));
+            $(document).bind('mouseup',(function(){
+                move=false;
+                left = self.state.dragZoomLeft;
+                self.changeAllWidth(false,null,true);
+                $(document).unbind('mousemove');
+                $(document).unbind('mouseup');
+            }));
         });
     }
 
@@ -646,29 +655,33 @@ class TimelineView extends React.Component {
             move=true;
             _x= e.pageX;
             _y= e.pageY;
-        });
-        $(document).mousemove(function(e){
-            if(move){
-                let x = e.pageX - _x;
-                let y = e.pageY - _y;
-                self.setState({
-                    dragTimelineLeft : left + x <=0 ? 0 :left + x,
-                    dragTimelineRight : right - x <=0 ? 0 :right - x,
-                    dragTimelineBottom : bottom - y <=0 ? 0 :bottom - y
-                })
-            }
-        }).mouseup(function(){
-            move=false;
-            left = self.state.dragTimelineLeft;
-            right = self.state.dragTimelineRight;
-            bottom = self.state.dragTimelineBottom;
-            if((window.innerWidth-left-right) < (window.innerWidth-self.state.leftAddRight)){
-                self.setState({
-                    leftAddRight : left + right
-                },()=>{
-                    self.changeAllWidth(false,null,true);
-                })
-            }
+
+            $(document).bind('mousemove',(function(e){
+                if(move){
+                    let x = e.pageX - _x;
+                    let y = e.pageY - _y;
+                    self.setState({
+                        dragTimelineLeft : left + x <=0 ? 0 :left + x,
+                        dragTimelineRight : right - x <=0 ? 0 :right - x,
+                        dragTimelineBottom : bottom - y <=0 ? 0 :bottom - y
+                    })
+                }
+            }));
+            $(document).bind('mouseup',(function(){
+                move=false;
+                left = self.state.dragTimelineLeft;
+                right = self.state.dragTimelineRight;
+                bottom = self.state.dragTimelineBottom;
+                if((window.innerWidth-left-right) < (window.innerWidth-self.state.leftAddRight)){
+                    self.setState({
+                        leftAddRight : left + right
+                    },()=>{
+                        self.changeAllWidth(false,null,true);
+                        $(document).unbind('mousemove');
+                        $(document).unbind('mouseup');
+                    })
+                }
+            }));
         });
     }
 
