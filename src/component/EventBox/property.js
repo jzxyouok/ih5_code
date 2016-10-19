@@ -33,7 +33,7 @@ class Property extends React.Component {
             currentObject: this.props.specific.object,
             currentAction: this.props.specific.action,  //name&property
             currentEnable: this.props.specific.enable,  //是否enable
-            isActiveEventSelectTarget: false  //是否激活了选择目标对象
+            didActiveSelectTargetMode: false  //是否激活了选择目标对象
         };
         this.expandBtn = this.expandBtn.bind(this);
 
@@ -50,8 +50,8 @@ class Property extends React.Component {
         this.onChangePropDom = this.onChangePropDom.bind(this);
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
 
-        this.onActiveSelectTarget = this.onActiveSelectTarget.bind(this);
-        this.onEventSelectTargetBlur = this.onEventSelectTargetBlur.bind(this);
+        this.onActiveSelectTargetMode = this.onActiveSelectTargetMode.bind(this);
+        this.onSelectTargetModeBlur = this.onSelectTargetModeBlur.bind(this);
 
         this.onGetClassListByKey = this.onGetClassListByKey.bind(this);
 
@@ -63,16 +63,16 @@ class Property extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.activeKey){
-            let isActiveEventSelectTarget = false;
+            let didActiveSelectTargetMode = false;
             if(nextProps.eventSelectTargetKey === nextProps.specific.sid){
-                isActiveEventSelectTarget = true;
+                didActiveSelectTargetMode = true;
             }
             this.setState({
                 activeKey: nextProps.activeKey,
                 event: nextProps.event,
                 wKey: nextProps.wKey,
                 specific: nextProps.specific,
-                isActiveEventSelectTarget: isActiveEventSelectTarget,
+                didActiveSelectTargetMode: didActiveSelectTargetMode,
 
                 currentObject: nextProps.specific.object,
                 currentAction: nextProps.specific.action,
@@ -89,17 +89,11 @@ class Property extends React.Component {
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getAllWidgets());
-        window.addEventListener('click', this.onEventSelectTargetBlur);
+        window.addEventListener('click', this.onSelectTargetModeBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
-    }
-
-    onEventSelectTargetBlur() {
-        if(this.state.isActiveEventSelectTarget) {
-            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
-        }
     }
 
     onStatusChange(widget) {
@@ -126,7 +120,7 @@ class Property extends React.Component {
                 });
             });
         } else if (widget.didSelectEventTarget) {
-            if(widget.didSelectEventTarget.target&&this.state.isActiveEventSelectTarget) {
+            if(widget.didSelectEventTarget.target&&this.state.didActiveSelectTargetMode) {
                 let target = widget.didSelectEventTarget.target;
                 let getTarget = false;
                 this.state.objectList.forEach((v)=>{
@@ -138,7 +132,6 @@ class Property extends React.Component {
                     this.setState({
                         currentObject: target.key
                     }, ()=> {
-                        WidgetActions['eventSelectTargetMode'](false, this.state.specific.id);
                         WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
                     });
                 }
@@ -211,7 +204,7 @@ class Property extends React.Component {
         })
     }
 
-    onActiveSelectTarget (e){
+    onActiveSelectTargetMode (e){
         if(this.state.activeKey !== this.state.wKey) {
             return;
         }
@@ -222,8 +215,14 @@ class Property extends React.Component {
         this.setState({
             objectDropdownVisible: false
         }, ()=>{
-            WidgetActions['eventSelectTargetMode'](!this.state.isActiveEventSelectTarget, this.state.specific.sid);
+            WidgetActions['eventSelectTargetMode'](!this.state.didActiveSelectTargetMode, this.state.specific.sid);
         });
+    }
+
+    onSelectTargetModeBlur() {
+        if(this.state.didActiveSelectTargetMode) {
+            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
+        }
     }
 
     onSpecificAdd() {
@@ -243,9 +242,6 @@ class Property extends React.Component {
         if(this.state.event&&!this.state.event.enable) {
             return;
         }
-        if(this.state.isActiveEventSelectTarget) {
-            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
-        }
         WidgetActions['deleteSpecific'](this.state.specific.sid ,this.state.event);
     }
 
@@ -260,9 +256,6 @@ class Property extends React.Component {
             currentEnable: !this.state.currentEnable,
             expanded: !this.state.currentEnable
         }, ()=>{
-            if(this.state.isActiveEventSelectTarget) {
-                WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
-            }
             WidgetActions['enableSpecific'](this.state.specific, this.state.currentEnable);
         })
     }
@@ -282,9 +275,6 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
-        if(this.state.isActiveEventSelectTarget) {
-            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
-        }
         if(this.state.currentObject === object.key) {
             this.setState({
                 objectDropdownVisible: false
@@ -305,9 +295,6 @@ class Property extends React.Component {
         }
         if(!this.state.currentEnable) {
             return;
-        }
-        if(this.state.isActiveEventSelectTarget) {
-            WidgetActions['eventSelectTargetMode'](false, this.state.specific.sid);
         }
         this.setState({
             objectDropdownVisible: flag,
@@ -636,9 +623,9 @@ class Property extends React.Component {
                                           visible={this.state.objectDropdownVisible}>
                                     <div className={$class("p--dropDown short", {'active':this.state.objectDropdownVisible})}>
                                         <div className="title p--title f--hlc">
-                                            <button className={$class('p--icon', {'active':this.state.isActiveEventSelectTarget})}
+                                            <button className={$class('p--icon', {'active':this.state.didActiveSelectTargetMode})}
                                                     disabled={!this.state.currentEnable}
-                                                    onClick={this.onActiveSelectTarget} />
+                                                    onClick={this.onActiveSelectTargetMode} />
                                             { !w || !w.props || !w.props.name
                                                 ?'目标对象'
                                                 :w.props.name
