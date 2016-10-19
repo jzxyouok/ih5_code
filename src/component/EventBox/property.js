@@ -65,7 +65,7 @@ class Property extends React.Component {
     componentWillReceiveProps(nextProps) {
         if(nextProps.activeKey){
             let didActiveSelectTargetMode = false;
-            if(nextProps.eventSpecSelectTargetKey === nextProps.specific.sid){
+            if(nextProps.eventSelectTargetSpecId === nextProps.specific.sid){
                 didActiveSelectTargetMode = true;
             }
             this.setState({
