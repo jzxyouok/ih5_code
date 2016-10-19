@@ -117,6 +117,7 @@ class NavBar extends React.Component {
         this.createWorkHide = this.createWorkHide.bind(this);
         this.createWork = this.createWork.bind(this);
         this.updateProgress = this.updateProgress.bind(this);
+        this.getWorks = this.getWorks.bind(this);
 
         this.token = null;
         this.playUrl = null;
