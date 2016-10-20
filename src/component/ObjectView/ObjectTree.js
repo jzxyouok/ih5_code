@@ -960,7 +960,7 @@ class ObjectTree extends React.Component {
         let  evt = e ? e : window.event;
         if(evt.keyCode==17){
             this.chooseMoreStatus=false;
-            console.log('haha');
+            // console.log('haha');
         }
     }
     chooseMore(e){
