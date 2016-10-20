@@ -89,6 +89,7 @@ class FormulaInput extends React.Component {
                     this.setState({
                         didActiveSelectTargetMode: false
                     }, ()=> {
+                        WidgetActions['eventSelectTargetMode'](false, {formulaInput:true});
                     });
                 }
             }
@@ -96,7 +97,7 @@ class FormulaInput extends React.Component {
     }
 
     onActiveSelectTargetMode(e) {
-        e.stopPropagation();  //how to solve？
+        e.stopPropagation();
         this.setState({
             didActiveSelectTargetMode: !this.state.didActiveSelectTargetMode,
             objectDropDownVisible: false
@@ -105,7 +106,7 @@ class FormulaInput extends React.Component {
         });
     }
 
-    onSelectTargetModeBlur() {
+    onSelectTargetModeBlur(e) {
         if(this.state.didActiveSelectTargetMode) {
             this.setState({
                 didActiveSelectTargetMode: false,
@@ -161,7 +162,9 @@ class FormulaInput extends React.Component {
                         style={{minWidth:this.minWidth}}>
                         <div className="formula-title f--hlc">
                             <button className={$class('formula-object-icon', {'active':this.state.didActiveSelectTargetMode})}
-                                    onClick={this.onActiveSelectTargetMode} />
+                                    onClick={this.onActiveSelectTargetMode}/>
+                            {/*var formularInputId = 0;*/}
+                            {/*fid: 'formularInput'+ formularInputId++   //标示＋控制*/}
                             <Input placeholder="比较值／对象" value={this.state.value} onChange={this.onInputTypeValueChange.bind(this)}/>
                             <span className="value-right-icon" />
                         </div>

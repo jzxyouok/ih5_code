@@ -344,6 +344,7 @@ class ObjectTree extends React.Component {
     chooseBtn(nid, data, event){
         //console.log(data);
         if(this.onSelectEventTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         if(event){
@@ -361,8 +362,9 @@ class ObjectTree extends React.Component {
         }
     }
 
-    showHideBtn(data,bool){
+    showHideBtn(data,bool,event){
         if(this.onSelectEventTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         //console.log(data);
@@ -371,8 +373,9 @@ class ObjectTree extends React.Component {
         WidgetActions['render']();
     }
 
-    lockBtn(nid, data) {
+    lockBtn(nid, data,event) {
         if(this.onSelectEventTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         if(nid === this.state.nid){
@@ -381,8 +384,9 @@ class ObjectTree extends React.Component {
         }
     }
 
-    eventBtn(nid, data) {
+    eventBtn(nid, data,event) {
         if(this.onSelectEventTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         //分情况处理
@@ -403,8 +407,9 @@ class ObjectTree extends React.Component {
         }
     }
 
-    fadeWidgetBtn(nid, data, type) {
+    fadeWidgetBtn(nid, data, type,event) {
         if(this.onSelectEventTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         switch (type){

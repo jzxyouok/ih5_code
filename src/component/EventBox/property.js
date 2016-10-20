@@ -135,6 +135,7 @@ class Property extends React.Component {
                     this.setState({
                         currentObject: target.key
                     }, ()=> {
+                        WidgetActions['eventSelectTargetMode'](false, {sid:this.state.specific.sid});
                         WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
                     });
                 }
