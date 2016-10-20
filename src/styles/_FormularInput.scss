@@ -1,5 +1,6 @@
 .formulaInput {
-  .value-mode {
+  .value-mode,
+  .formula-mode{
     .formula-dropDown {
       background-color: #294140;
       border-radius: 2px;
@@ -19,6 +20,7 @@
     }
     .formula-object-icon {
       cursor: pointer;
+      min-width: 22px;
       width: 22px;
       height: 22px;
       outline: 0;
@@ -37,9 +39,14 @@
         border: 1px solid #7b5815;
         background: url("img/button-icon.svg") no-repeat -559px -279px;
       }
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.4;
+      }
     }
 
     .ant-input-wrapper {
+      width: 100%;
       input {
         border-radius: 2px;
         height: 22px;
@@ -63,13 +70,120 @@
       }
     }
 
-    .value-right-icon {
+    .right-icon {
       position: relative;
       padding-right: 17px;
       width: 12px;
       height: 22px;
       background: url('img/button-icon.svg') no-repeat -1677px -40px;
-      display: block;
+    }
+  }
+  .formula-mode {
+    background: #294140;
+    border-radius: 2px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+
+    overflow-y: hidden;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background-color: #353535;
+    }
+    &::-webkit-scrollbar-thumb {
+      cursor: pointer;
+      border-radius: 0;
+      background-color: #232323;
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    .formula-obj {
+      padding: 0 4px;
+    }
+    .formular-obj-com {
+      background: #1c2f2e;
+      border-radius: 2px;
+    }
+    .formula-obj-dropDown {
+      width: 140px;
+      cursor: pointer;
+      color: #b5b5b5;
+    }
+    .formula-obj-property-dropDown{
+      padding-left: 4px;
+      width: 66px;
+      cursor: pointer;
+      color: #b5b5b5;
+      background-color: #1c2f2e;
+      border-radius: 2px;
+      height: 18px;
+      .right-icon {
+        padding-right: 14px;
+        background-position: -1678px -40px;
+      }
+    }
+    .formula-obj-name,
+    .formula-obj-property {
+      @extend %font-omitted;
+      color: #b5b5b5;
+    }
+    .formula-obj-name {
+      width: 60px;
+      padding-right: 4px;
+    }
+    .formula-obj-dot {
+      width: 6px;
+      height: 18px;
+      background: url('img/button-icon.svg') no-repeat -1720px -200px;
+    }
+    .formula-obj-property {
+      padding-left: 4px;
+      width: 66px;
+    }
+    .ant-input-wrapper {
+      margin: 0 4px;
+      input {
+        min-width: 50px;
+      }
+    }
+    .add-obj-btn {
+      border: none;
+      margin-right: 2px;
+      outline: none;
+      border-radius: 2px;
+
+      &:hover .btn-layer span { background: #b5b5b5; }
+      &:active .btn-layer span { background: #fff; }
+
+      .btn-layer {
+        position: relative;
+        width: 16px;
+        height: 16px;
+        background: #1c2f2e;
+        margin: 0 auto;
+
+        span{
+          position: absolute;
+          background: #325351;
+        }
+
+        .heng {
+          left: 3px;
+          top: 7px;
+          width: 10px;
+          height: 2px;
+        }
+
+        .shu {
+          left: 7px;
+          top: 3px;
+          width: 2px;
+          height: 10px;
+        }
+      }
     }
   }
 }

@@ -504,7 +504,7 @@ class Property extends React.Component {
                         {
                             showValue
                         }
-                        <span title="icon" />
+                        <span className="icon" />
                     </div>
                 </div>
             </Dropdown>);
