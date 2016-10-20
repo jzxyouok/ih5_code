@@ -24,7 +24,7 @@ var dragTag;
 
 var dbCumulative = 1;
 
-var specialObject = ['counter', 'text', 'var','input']; //五类特殊对象的类名
+var specialObject = ['counter', 'text', 'var','input']; //五类特殊对象的类名,用于直接取其value属性
 
 var nodeType = {
     widget: 'widget',  //树对象
@@ -773,7 +773,6 @@ function saveTree(data, node, saveKey) {
                 } else if (v.compareValFlag == '比较值') {
                     //用户填的值
                     obj.compareObjFlag = v.compareObjFlag;
-                    obj.compareValFlag = '比较值';
                 } else {
                     //非五类
                     obj.compareValFlag = v.compareValFlag;
@@ -1159,6 +1158,7 @@ export default Reflux.createStore({
                         rootDiv.appendChild(rootElm);
                 }
             }
+
             if(widget.props['locked'] === undefined) {
                 widget.props['locked'] = false;
             }
@@ -1180,14 +1180,17 @@ export default Reflux.createStore({
             }
         }
         this.currentWidget = widget;
+
+
+
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
             this.trigger({selectWidget: widget});
             //判断是否是可选择的，是否加锁
             if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
-                bridge.selectWidget(widget.node, this.updateProperties.bind(this));
+                  bridge.selectWidget(widget.node, this.updateProperties.bind(this));
             } else {
-                bridge.selectWidget(widget.node);
+                  bridge.selectWidget(widget.node);
             }
             if (render)
                 this.render();
@@ -1259,20 +1262,24 @@ export default Reflux.createStore({
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;
             bridge.removeWidget(this.currentWidget.node);
+
             let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
             var rootNode = this.currentWidget.rootWidget.node;
             this.currentWidget.parent.children.splice(index, 1);
+
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
 
             keyMap[this.currentWidget.key] = undefined;
+
             this.removeAllFadeWidgetsMapping(this.currentWidget);
+
             this.trigger({updateWidget: {widget:this.currentWidget, type:nodeType.widget, action:nodeAction.remove}});
 
             this.currentWidget = null;
             if(shouldChooseParent) {
-                this.selectWidget(parentWidget);
+               this.selectWidget(parentWidget);
             } else {
                 this.trigger({selectWidget: null, redrawTree: true});
             }
@@ -1527,7 +1534,7 @@ export default Reflux.createStore({
           obj =newObj;
           prevNewObj =cpJson(newObj);
         }
-        //console.log(obj);
+
         if(obj && obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
@@ -2548,6 +2555,7 @@ export default Reflux.createStore({
     },
     getStore: function() {
       //this.selectWidget(stageTree[0].tree);
+        console.log(stageTree,classList);
       return {initTree: stageTree, classList: classList};
     },
     activeHandle: function(status) {
