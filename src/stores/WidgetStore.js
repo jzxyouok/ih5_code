@@ -2551,7 +2551,6 @@ export default Reflux.createStore({
     },
     getStore: function() {
       //this.selectWidget(stageTree[0].tree);
-        console.log(stageTree,classList);
       return {initTree: stageTree, classList: classList};
     },
     activeHandle: function(status) {
