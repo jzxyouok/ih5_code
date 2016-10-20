@@ -112,8 +112,8 @@ class ObjectTree extends React.Component {
         this.onStatusChange(WidgetStore.getStore());
 
         //多选
-        document.body.addEventListener('keydown', this.onKeyDown);
-        document.body.addEventListener('keyup', this.onKeyUp);
+        //  document.body.addEventListener('keydown', this.onKeyDown);
+       // document.body.addEventListener('keyup', this.onKeyUp);
     }
 
     componentWillUnmount() {
