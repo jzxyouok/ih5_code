@@ -23,7 +23,7 @@ class FormulaInput extends React.Component {
         this.state = {
             value: null,
             currentType: inputType.value,
-            didActiveSelectTargetMode: false,
+            // didActiveSelectTargetMode: false,
             objectDropDownVisible: false, //对象dropdown
             propertyDropDownVisible: false, //属性dropdown
             objectList: []
@@ -34,8 +34,8 @@ class FormulaInput extends React.Component {
 
         this.onStatusChange = this.onStatusChange.bind(this);
 
-        this.onActiveSelectTargetMode = this.onActiveSelectTargetMode.bind(this);
-        this.onSelectTargetModeBlur = this.onSelectTargetModeBlur.bind(this);
+        // this.onActiveSelectTargetMode = this.onActiveSelectTargetMode.bind(this);
+        // this.onSelectTargetModeBlur = this.onSelectTargetModeBlur.bind(this);
 
         this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
         this.onObjectSelect = this.onObjectSelect.bind(this);
@@ -45,12 +45,12 @@ class FormulaInput extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
-        window.addEventListener('click', this.onSelectTargetModeBlur);
+        // window.addEventListener('click', this.onSelectTargetModeBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
-        window.removeEventListener('click', this.onSelectTargetModeBlur);
+        // window.removeEventListener('click', this.onSelectTargetModeBlur);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -75,46 +75,46 @@ class FormulaInput extends React.Component {
             this.setState({
                 objectList: widget.allWidgets
             });
-        } else if (widget.didSelectEventTarget) {
-            if(widget.didSelectEventTarget.target&&this.state.didActiveSelectTargetMode) {
-                let target = widget.didSelectEventTarget.target;
-                let getTarget = false;
-                this.state.objectList.forEach((v)=>{
-                    if(target.key === v.key){
-                        getTarget = true;
-                    }
-                });
-                if (getTarget) {
-                    console.log('getValueHere');
-                    this.setState({
-                        didActiveSelectTargetMode: false
-                    }, ()=> {
-                        WidgetActions['eventSelectTargetMode'](false, {formulaInput:true});
-                    });
-                }
-            }
+        // } else if (widget.didSelectEventTarget) {
+        //     if(widget.didSelectEventTarget.target&&this.state.didActiveSelectTargetMode) {
+        //         let target = widget.didSelectEventTarget.target;
+        //         let getTarget = false;
+        //         this.state.objectList.forEach((v)=>{
+        //             if(target.key === v.key){
+        //                 getTarget = true;
+        //             }
+        //         });
+        //         if (getTarget) {
+        //             console.log('getValueHere');
+        //             this.setState({
+        //                 didActiveSelectTargetMode: false
+        //             }, ()=> {
+        //                 WidgetActions['eventSelectTargetMode'](false, {formulaInput:true});
+        //             });
+        //         }
+        //     }
         }
     }
 
-    onActiveSelectTargetMode(e) {
-        e.stopPropagation();
-        this.setState({
-            didActiveSelectTargetMode: !this.state.didActiveSelectTargetMode,
-            objectDropDownVisible: false
-        }, ()=>{
-            WidgetActions['eventSelectTargetMode'](this.state.didActiveSelectTargetMode, {formulaInput:true});
-        });
-    }
+    // onActiveSelectTargetMode(e) {
+    //     e.stopPropagation();
+    //     this.setState({
+    //         didActiveSelectTargetMode: !this.state.didActiveSelectTargetMode,
+    //         objectDropDownVisible: false
+    //     }, ()=>{
+    //         // WidgetActions['eventSelectTargetMode'](this.state.didActiveSelectTargetMode, {formulaInput:true});
+    //     });
+    // }
 
-    onSelectTargetModeBlur(e) {
-        if(this.state.didActiveSelectTargetMode) {
-            this.setState({
-                didActiveSelectTargetMode: false,
-            }, ()=>{
-                WidgetActions['eventSelectTargetMode'](false, {formulaInput:true});
-            });
-        }
-    }
+    // onSelectTargetModeBlur(e) {
+    //     if(this.state.didActiveSelectTargetMode) {
+    //         this.setState({
+    //             didActiveSelectTargetMode: false,
+    //         }, ()=>{
+    //             // WidgetActions['eventSelectTargetMode'](false, {formulaInput:true});
+    //         });
+    //     }
+    // }
 
     onObjectVisibleChange(flag){
         this.setState({
@@ -161,8 +161,8 @@ class FormulaInput extends React.Component {
                     <div className={$class("formula--dropDown")}
                         style={{minWidth:this.minWidth}}>
                         <div className="formula-title f--hlc">
-                            <button className={$class('formula-object-icon', {'active':this.state.didActiveSelectTargetMode})}
-                                    onClick={this.onActiveSelectTargetMode}/>
+                            {/*<button className={$class('formula-object-icon', {'active':this.state.didActiveSelectTargetMode})}*/}
+                                    {/*onClick={this.onActiveSelectTargetMode}/>*/}
                             {/*var formularInputId = 0;*/}
                             {/*fid: 'formularInput'+ formularInputId++   //标示＋控制*/}
                             <Input placeholder="比较值／对象" value={this.state.value} onChange={this.onInputTypeValueChange.bind(this)}/>
