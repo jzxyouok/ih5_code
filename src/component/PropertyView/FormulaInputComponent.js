@@ -34,23 +34,21 @@ class FormulaInput extends React.Component {
 
         this.onStatusChange = this.onStatusChange.bind(this);
 
-        // this.onActiveSelectTargetMode = this.onActiveSelectTargetMode.bind(this);
-        // this.onSelectTargetModeBlur = this.onSelectTargetModeBlur.bind(this);
-
         this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
         this.onObjectSelect = this.onObjectSelect.bind(this);
+
+        this.onSelectTargetClick = this.onSelectTargetClick.bind(this);
+        this.onGetTargetResult = this.onGetTargetResult.bind(this);
 
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
-        // window.addEventListener('click', this.onSelectTargetModeBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
-        // window.removeEventListener('click', this.onSelectTargetModeBlur);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -84,7 +82,22 @@ class FormulaInput extends React.Component {
         })
     }
 
-    onObjectSelect(object){
+    onObjectSelect(target){
+        let object = target.item.props.object;
+        this.onGetTargetResult(object);
+        this.setState({
+            objectDropDownVisible: false
+        })
+    }
+
+    onSelectTargetClick() {
+        this.setState({
+            objectDropDownVisible: false
+        });
+        return true;
+    }
+
+    onGetTargetResult(object){
         console.log(object);
     }
 
@@ -125,7 +138,8 @@ class FormulaInput extends React.Component {
                         <div className="formula-title f--hlc">
                             <SelectTargetButton className={'formula-object-icon'}
                                                 disabled={false}
-                                                getResult={this.onObjectSelect} />
+                                                onClick={this.onSelectTargetClick}
+                                                getResult={this.onGetTargetResult} />
                             <Input placeholder="比较值／对象" value={this.state.value} onChange={this.onInputTypeValueChange.bind(this)}/>
                             <span className="value-right-icon" />
                         </div>

@@ -59,14 +59,14 @@ class SelectTargetButton extends React.Component {
         }
     }
 
-    onStatusChange(btn) {
-        if(btn.stUpdate){
+    onStatusChange(result) {
+        if(result.stUpdate){
             let isActive = false;
-            if(btn.stUpdate.stId === this.state.stId && btn.stUpdate.isActive) {
+            if(result.stUpdate.stId === this.state.stId && result.stUpdate.isActive) {
                 isActive = true;
             }
             this.setState({
-                activeId: btn.stUpdate.stId,
+                activeId: result.stUpdate.stId,
                 isActive: isActive
             })
         }
