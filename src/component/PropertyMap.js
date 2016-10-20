@@ -227,7 +227,7 @@ propertyMap['graphics'] = [
 ];
 propertyMap['rect'] = [
     ...propertyMap['graphics'],
-    { name: 'radius', type: propertyType.Integer, default: 0,  group:'tools', isProperty: true },
+    { name: 'radius',showName:'移动距离',  type: propertyType.Integer, default: 0,  group:'tools', isProperty: true },
 ];
 propertyMap['taparea'] = [
     ...propertyMap['box'],
