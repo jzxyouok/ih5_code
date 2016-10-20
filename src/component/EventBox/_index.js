@@ -14,7 +14,6 @@ class EventBox extends React.Component {
             activeKey: -1,
             selectWidget: null,
             eventTreeList: [],
-            eventSelectTargetModeProps: null
         };
         this.eventData = eventTempData;
 
@@ -51,11 +50,6 @@ class EventBox extends React.Component {
         } else if(widget.activeEventTreeKey) {
             this.setState({
                 activeKey: widget.activeEventTreeKey.key
-            });
-        } else if(widget.eventSelectTargetMode){
-            let props = widget.eventSelectTargetMode.isActive?widget.eventSelectTargetMode:null;
-            this.setState({
-                eventSelectTargetModeProps: props
             });
         }
     }
@@ -99,7 +93,6 @@ class EventBox extends React.Component {
                                                   name={v.props.name}
                                                   wKey={v.key}
                                                   activeKey={this.state.activeKey}
-                                                  eventSelectTargetModeProps={this.state.eventSelectTargetModeProps}
                                                   chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
                                   })
                         }

@@ -379,15 +379,15 @@
                         }
 
                         .li-icon {
-                            width: 24px;
-                            height: 24px;
-                            background: url("img/button-icon.svg") no-repeat -400px -200px;
+                            width: 14px;
+                            height: 14px;
+                            background: url("img/button-icon.svg") no-repeat -280px -200px;
                             display: block;
-                            margin: 0 2px 0 1px;
+                            margin: 0 8px;
                         }
 
-                        .title:hover .li-icon{ background-position: -400px -240px; }
-                        .title:active .li-icon{ background-position: -400px -280px; }
+                        .title:hover .li-icon{ background-position: -280px -240px; }
+                        .title:active .li-icon{ background-position: -280px -280px; }
 
                         .TitleName {
                             max-width: 60px;

@@ -4,7 +4,7 @@
     height: 100%;
     overflow: hidden;
 
-  &.eventSelectTargetMode {
+  &.selectTargetMode {
     border: 2px solid #7b5815;
 
     .stage {
@@ -303,29 +303,6 @@
     .fade-widget-icon {
         margin-left: 11px;
     }
-    .item-icon {
-        width: 16px;
-        min-width: 16px;
-        height: 16px;
-    }
-    .component-icon {
-        background: url("img/button-icon.svg") no-repeat -280px -200px;
-    }
-    .shareDb-icon{
-        background: url("img/object-tree.svg") no-repeat -1160px 0;
-    }
-    .personalDb-icon {
-        background: url("img/object-tree.svg") no-repeat  -1120px 0;
-    }
-    .twoDArr-icon {
-        background: url("img/object-tree.svg") no-repeat -1200px 0;
-    }
-    .oneDArr-icon {
-        background: url("img/object-tree.svg") no-repeat -1240px 0;
-    }
-    .sock-icon {
-        background: url("img/object-tree.svg") no-repeat -1280px 0;
-    }
 }
 
 #treeDragTip {
@@ -356,4 +333,65 @@
       line-height: 16px;
       padding: 0 5px;
     }
+}
+
+.ObjectTree ,
+#TimelineView .timeline-node-meta{
+    .item-icon {
+        width: 16px;
+        min-width: 16px;
+        height: 16px;
+        background: url("img/object-tree.svg") no-repeat;
+        display: block;
+    }
+    .item-icon2 {
+        width: 16px;
+        min-width: 16px;
+        height: 16px;
+    }
+
+    .timeline-node-type {
+        background: url("img/object-tree.svg") no-repeat;
+    }
+
+    .component-icon { background: url("img/button-icon.svg") no-repeat -280px -200px; }
+
+    .shareDb-icon{ background-position: -1160px 0; }
+    .personalDb-icon { background-position: -1120px 0; }
+    .twoDArr-icon { background-position: -1200px 0; }
+    .oneDArr-icon { background-position: -1240px 0; }
+    .sock-icon { background-position: -1280px 0;  }
+
+    .rectIcon { background-position: -1520px 0;  }
+    .ellipseIcon { background-position: -1560 0;  }
+    .curveIcon { background-position: -1640px 0;  }
+    .textIcon { background-position: -1400px 0;  }
+    .videoIcon { background-position: 0 -160px;  }
+    .audioIcon { background-position: -40px -160px;  }
+    .containerIcon { background-position: -1720px 0;  }
+    .timerIcon { background-position: -1480px 0;  }
+    .trackIcon { background-position: -320px 0;  }
+    .wechatIcon { background-position: -880px -160px;  }
+    .slidetimerIcon { background-position: -560px -160px;  }
+    .bitmaptextIcon { background-position: -1440px 0;  }
+    .imageIcon { background-position: -1360px 0;  }
+    .igroupIcon { background-position: -1840px 0;  }
+    .folderIcon { background-position: -200px -160px;  }
+    .buttonIcon { background-position: -1800px 0;  }
+    .tapAreaIcon { background-position: -1760px 0;  }
+    .qrcodeIcon { background-position: -320px -160px;  }
+    .fileIcon { background-position: -400px -160px;  }
+    .counterIcon { background-position: -1680px 0;  }
+    .remotedeviceIcon { background-position: -120px -160px;  }
+    .pcdeviceIcon { background-position: -80px -160px;  }
+    .composingcontainerIcon { background-position: -1040px 0;  }
+    .htmlIcon { background-position: -1080px -160px;  }
+    .pageIcon { background-position: -1320px 0;  }
+    .canvasIcon { background-position: -600px -160px;  }
+    .inputIcon { background-position: -800px -160px;  }
+    .worldIcon { background-position: -160px 0;  }
+    .bodyIcon { background-position: -200px 0;  }
+    .easingIcon { background-position: -120px 0;  }
+    .effectIcon { background-position: -80px 0;  }
+    .tableIcon {  background-position: -1120px -160px;  }
 }

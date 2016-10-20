@@ -38,6 +38,7 @@ let cominterfaceIcon = img('comInterface.svg');
 let htmlIcon = img('html.svg');
 let inputIcon = img('input.svg');
 let moduleIcon = img('module.svg');
+let tableIcon = img('table.svg');
 
 // let trackIcon = img('track.svg');
 // let worldIcon = img('world.svg');
@@ -89,7 +90,8 @@ var TOOL_ID = {
     HTML:32,
     INPUT:33,
     PERSONSALDB:34,
-    MODULE : 35
+    MODULE : 35,
+    TABLE : 36
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -266,7 +268,16 @@ var DEFAULT_TOOLBOX = {
         gid:24,
         primary: 0,
         secondary: [{cid:TOOL_ID.MODULE,name:'组件',icon:moduleIcon, className:'module'}]
-    }]
+    },{
+        name:'表格',
+        key:25,
+        gid:25,
+        primary: 0,
+        secondary: [{cid:TOOL_ID.TABLE,name:'表格',icon:tableIcon, className:'table', drawRect:true,
+            param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'transparent'}
+        }]
+    }
+    ]
 
     // ,{
     //     name:'容器',

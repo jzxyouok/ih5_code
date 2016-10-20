@@ -8,6 +8,8 @@ import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget} from '../../stores/WidgetStore';
 import {checkChildClass} from '../PropertyMap';
 
+import SelectTargetStore from '../../stores/SelectTargetStore'
+
 const drapTipId = 'treeDragTip';
 const placeholderId = 'treeDragPlaceholder';
 const appId = 'iH5-App';
@@ -43,8 +45,8 @@ class ObjectTree extends React.Component {
             , allTreeData : [],
             nodeType: nodeType.widget,
 
-            eventTargetList: null, //事件目标选择
-            eventSelectTargetMode: false //事件目标选择
+            targetList: null, //目标选择
+            selectTargetMode: false //目标选择
         };
         this.chooseMoreStatus=false;
 
@@ -57,8 +59,9 @@ class ObjectTree extends React.Component {
         this.lockBtn = this.lockBtn.bind(this);
         this.eventBtn = this.eventBtn.bind(this);
 
-        this.onSelectEventTargetMode = this.onSelectEventTargetMode.bind(this);
-        this.checkAllEventTarget = this.checkAllEventTarget.bind(this);
+        this.onSelectTargetMode = this.onSelectTargetMode.bind(this);
+        this.onSelectTargetStatusChange = this.onSelectTargetStatusChange.bind(this);
+        this.checkAllSelectTarget = this.checkAllSelectTarget.bind(this);
 
         //对象的复制/剪切/黏贴
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
@@ -105,6 +108,7 @@ class ObjectTree extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.stUnsubscribe = SelectTargetStore.listen(this.onSelectTargetStatusChange);
         this.onStatusChange(WidgetStore.getStore());
 
         //多选
@@ -114,6 +118,15 @@ class ObjectTree extends React.Component {
 
     componentWillUnmount() {
         this.unsubscribe();
+        this.stUnsubscribe();
+    }
+
+    onSelectTargetStatusChange(btn) {
+        if(btn.stUpdate){
+            this.setState({
+                selectTargetMode: btn.stUpdate.isActive
+            })
+        }
     }
 
     onStatusChange(widget) {
@@ -179,13 +192,9 @@ class ObjectTree extends React.Component {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
-        } else if(widget.eventSelectTargetMode) {
-            this.setState({
-                eventSelectTargetMode: widget.eventSelectTargetMode.isActive
-            });
         } else if(widget.allWidgets) {
             this.setState({
-                eventTargetList:widget.allWidgets
+                targetList:widget.allWidgets
             });
         }
 
@@ -281,26 +290,26 @@ class ObjectTree extends React.Component {
         }
     }
 
-    onSelectEventTargetMode(data){
-        if(this.state.eventSelectTargetMode) {
-            if(this.state.eventTargetList) {
+    onSelectTargetMode(data){
+        if(this.state.selectTargetMode) {
+            if(this.state.targetList) {
                 let hasTarget = false;
-                this.state.eventTargetList.forEach(v=> {
+                this.state.targetList.forEach(v=> {
                     if (data.key === v.key) {
                         hasTarget = true;
                     }
                 });
-                WidgetActions['didSelectEventTarget'](data);
+                WidgetActions['didSelectTarget'](data);
             };
             return true;
         }
         return false;
     }
 
-    checkAllEventTarget(key) {
-        if(this.state.eventTargetList) {
+    checkAllSelectTarget(key) {
+        if(this.state.targetList) {
             let getTarget = false;
-            this.state.eventTargetList.forEach((v)=>{
+            this.state.targetList.forEach((v)=>{
                 if(key === v.key){
                     getTarget = true;
                 }
@@ -343,7 +352,8 @@ class ObjectTree extends React.Component {
 
     chooseBtn(nid, data, event){
         //console.log(data);
-        if(this.onSelectEventTargetMode(data)) {
+        if(this.onSelectTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         if(event){
@@ -361,8 +371,9 @@ class ObjectTree extends React.Component {
         }
     }
 
-    showHideBtn(data,bool){
-        if(this.onSelectEventTargetMode(data)) {
+    showHideBtn(data,bool,event){
+        if(this.onSelectTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         //console.log(data);
@@ -371,8 +382,9 @@ class ObjectTree extends React.Component {
         WidgetActions['render']();
     }
 
-    lockBtn(nid, data) {
-        if(this.onSelectEventTargetMode(data)) {
+    lockBtn(nid, data,event) {
+        if(this.onSelectTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         if(nid === this.state.nid){
@@ -381,8 +393,9 @@ class ObjectTree extends React.Component {
         }
     }
 
-    eventBtn(nid, data) {
-        if(this.onSelectEventTargetMode(data)) {
+    eventBtn(nid, data,event) {
+        if(this.onSelectTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         //分情况处理
@@ -403,8 +416,9 @@ class ObjectTree extends React.Component {
         }
     }
 
-    fadeWidgetBtn(nid, data, type) {
-        if(this.onSelectEventTargetMode(data)) {
+    fadeWidgetBtn(nid, data, type,event) {
+        if(this.onSelectTargetMode(data)) {
+            event.stopPropagation();
             return false;
         }
         switch (type){
@@ -439,7 +453,7 @@ class ObjectTree extends React.Component {
     }
 
     startEditObjName(id, data, event) {
-        if(this.state.eventSelectTargetMode){
+        if(this.state.selectTargetMode){
             return;
         }
 
@@ -509,7 +523,7 @@ class ObjectTree extends React.Component {
     itemKeyAction(event){
         event.preventDefault();
         event.stopPropagation();
-        if(this.state.eventSelectTargetMode) {
+        if(this.state.selectTargetMode) {
             return;
         }
 
@@ -607,7 +621,7 @@ class ObjectTree extends React.Component {
 
     itemDragStart(nid, data, e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode|| this.state.eventSelectTargetMode){
+        if(this.state.editMode|| this.state.selectTargetMode){
             e.preventDefault();
             return;
         }
@@ -635,7 +649,7 @@ class ObjectTree extends React.Component {
 
     itemDragEnd(e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode|| this.state.eventSelectTargetMode){
+        if(this.state.editMode|| this.state.selectTargetMode){
             e.preventDefault();
             return;
         }
@@ -765,7 +779,7 @@ class ObjectTree extends React.Component {
 
     itemDragOver(e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode||this.state.eventSelectTargetMode){
+        if(this.state.editMode||this.state.selectTargetMode){
             e.preventDefault();
             return;
         }
@@ -946,7 +960,7 @@ class ObjectTree extends React.Component {
         let  evt = e ? e : window.event;
         if(evt.keyCode==17){
             this.chooseMoreStatus=false;
-            console.log('haha');
+            // console.log('haha');
         }
     }
     chooseMore(e){
@@ -1003,10 +1017,10 @@ class ObjectTree extends React.Component {
 
         let fadeWidgetList = (data, num, type)=> {
             let content = data.map((item, i)=> {
-                let isEventTarget = this.checkAllEventTarget(item.key);
+                let isEventTarget = this.checkAllSelectTarget(item.key);
                 return <div className={$class('fade-widget-title-wrap clearfix',
-                            {'allow-event-target': isEventTarget&&this.state.eventSelectTargetMode},
-                            {'forbidden-event-target': !isEventTarget&&this.state.eventSelectTargetMode})}
+                            {'allow-event-target': isEventTarget&&this.state.selectTargetMode},
+                            {'forbidden-event-target': !isEventTarget&&this.state.selectTargetMode})}
                             key={i}
                             id={'tree-item-'+ item.key}
                             tabIndex={item.key}
@@ -1062,11 +1076,10 @@ class ObjectTree extends React.Component {
 
         let fuc = (v,i)=>{
             let pic = null;
-            let picIsImage = true;
+            let picIsImage = false;
             this.refs.ComponentPanel.panels[0].cplist.forEach((v1,i2)=>{
                 if(isCustomizeWidget(v.className)) {
                     pic = 'component-icon';
-                    picIsImage = false;
                 }
                 else if(v.className == 'db'){
                     if(v.node.dbType == "shareDb"){
@@ -1075,7 +1088,6 @@ class ObjectTree extends React.Component {
                     else {
                         pic = 'personalDb-icon';
                     }
-                    picIsImage = false;
                 }
                 else if(v.className === 'data'){
                     if(v.props.type === dataType.twoDArr) {
@@ -1083,11 +1095,9 @@ class ObjectTree extends React.Component {
                     } else if (v.props.type === dataType.oneDArr) {
                         pic = 'oneDArr-icon';
                     }
-                    picIsImage = false;
                 }
                 else if(v.className === 'sock'){
                     pic = 'sock-icon';
-                    picIsImage = false;
                 }
                 else if (v1.className === v.className){
                     if(v.className === 'image' || v.className === 'imagelist') {
@@ -1102,6 +1112,7 @@ class ObjectTree extends React.Component {
                             if(pic.substring(0,5) !== 'data:') {
                                 pic = imgServerPrefix+pic;
                             }
+                            picIsImage = true;
                         } else {
                             pic = v1.icon;
                         }
@@ -1111,13 +1122,13 @@ class ObjectTree extends React.Component {
                 }
             });
 
-            let isEventTarget = this.checkAllEventTarget(v.key);
+            let isEventTarget = this.checkAllSelectTarget(v.key);
             return  <div className='item'
                          key={i}
                          onClick={this.chooseMore}>
                 <div className={$class('item-title-wrap clearfix',
-                    {'allow-event-target': isEventTarget&&this.state.eventSelectTargetMode},
-                    {'forbidden-event-target': !isEventTarget&&this.state.eventSelectTargetMode})}
+                    {'allow-event-target': isEventTarget&&this.state.selectTargetMode},
+                    {'forbidden-event-target': !isEventTarget&&this.state.selectTargetMode})}
                      id={'tree-item-'+ v.key}
                      tabIndex={v.key}
                      data-order={i}
@@ -1153,7 +1164,7 @@ class ObjectTree extends React.Component {
                                 : icon( 0 , v.key)
                         }
                         {
-                            picIsImage?<span className="item-icon"><img className="item-img" src={ pic } /></span>
+                            picIsImage?<span className="item-icon2"><img className="item-img" src={ pic } /></span>
                                 : <span className={$class('item-icon', pic)} />
                         }
                         {
@@ -1226,18 +1237,18 @@ class ObjectTree extends React.Component {
 
         return (
             <div className={$class('ObjectTree',
-                {'eventSelectTargetMode': this.state.eventSelectTargetMode})}>
+                {'selectTargetMode': this.state.selectTargetMode})}>
                 <div className={$class("stage")} >
                 {
                      !allTreeData
                         ? null
                         : allTreeData.map((v,i)=>{
-                             let isRootEventTarget = this.checkAllEventTarget(v.tree.key);
+                             let isRootEventTarget = this.checkAllSelectTarget(v.tree.key);
                              return  <div className='stage-item' key={i}
                                           onDragOver={this.itemDragOver}>
                                  <div className={$class('stage-title-wrap clearfix',
-                                     {'allow-event-target': isRootEventTarget&&this.state.eventSelectTargetMode},
-                                     {'forbidden-event-target': !isRootEventTarget&&this.state.eventSelectTargetMode})}
+                                     {'allow-event-target': isRootEventTarget&&this.state.selectTargetMode},
+                                     {'forbidden-event-target': !isRootEventTarget&&this.state.selectTargetMode})}
                                       id={'tree-item-'+ v.tree.key}
                                       tabIndex={v.tree.key}
                                       data-wKey={v.tree.key}

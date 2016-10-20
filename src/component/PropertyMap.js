@@ -54,6 +54,10 @@ propertyMap['data'] = [
 propertyMap['root'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Root | widgetFlags.Container},
+    { name: 'changeValue', showName:'赋值', info:'(value)',
+        property:[
+            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
+        ], isFunc: true },
     { name: 'width',showName:'W', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'H',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
@@ -709,6 +713,16 @@ propertyMap[dataType.twoDArr] = [
     { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
+
+propertyMap['table'] = [
+    ...propertyMap['graphics'],
+    { name: 'header', type: propertyType.String, default: '', isProperty: true },
+    { name: 'value', type: propertyType.String, default: '', isProperty: true },
+    { name: 'showHeader', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'headerColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
+    { name: 'altColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
+];
+
 
 for (var n in propertyMap) {
     propertyFlags[n] = {provides: 0, requires: 0};

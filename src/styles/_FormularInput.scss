@@ -1,8 +1,7 @@
 .formulaInput {
   .value-mode {
-    .formular-dropDown {
+    .formula-dropDown {
       background-color: #294140;
-      width: 142px;
       border-radius: 2px;
       position: relative;
       height: 22px;
@@ -26,7 +25,18 @@
       margin: 0 2px 0 2px;
       border: 1px solid #294140;
       border-radius: 2px;
-      background: url('img/button-icon.svg') no-repeat -559px -199px;
+      background: url('img/button-icon.svg') no-repeat -559px -279px;
+
+      &:hover {
+        background: url("img/button-icon.svg") no-repeat -559px -239px;
+      }
+      &:active {
+        background: url("img/button-icon.svg") no-repeat -559px -199px;
+      }
+      &.active {
+        border: 1px solid #7b5815;
+        background: url("img/button-icon.svg") no-repeat -559px -279px;
+      }
     }
 
     .ant-input-wrapper {
