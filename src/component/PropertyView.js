@@ -673,7 +673,7 @@ class PropertyView extends React.Component {
         let oPropertyView = this.refs.PropertyView;
         this.PropertyViewPosition.oPropertyView = oPropertyView;
         this.PropertyViewPosition.isDown=true;
-        oPropertyView.style.zIndex=1000;
+        //oPropertyView.style.zIndex=1000;
 
         this.PropertyViewPosition.subW =e.pageX-oPropertyView.offsetLeft;
         this.PropertyViewPosition.subH =e.pageY-oPropertyView.offsetTop;
