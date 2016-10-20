@@ -342,7 +342,7 @@ class ObjectTree extends React.Component {
     }
 
     chooseBtn(nid, data, event){
-        //console.log(data);
+        console.log(data);
         if(this.onSelectEventTargetMode(data)) {
             return false;
         }

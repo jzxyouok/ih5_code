@@ -714,6 +714,16 @@ propertyMap[dataType.twoDArr] = [
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 
+propertyMap['table'] = [
+    ...propertyMap['graphics'],
+    { name: 'header', type: propertyType.String, default: '', isProperty: true },
+    { name: 'value', type: propertyType.String, default: '', isProperty: true },
+    { name: 'showHeader', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'headerColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
+    { name: 'altColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
+];
+
+
 for (var n in propertyMap) {
     propertyFlags[n] = {provides: 0, requires: 0};
     for (var index in propertyMap[n]) {
