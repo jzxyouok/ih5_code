@@ -246,11 +246,6 @@
                             }
                             .mr20{margin-right: 20px;}
                             .pl25{padding-left: 25px !important;}
-                            .p--icon:disabled{
-                                filter: alpha(opacity=60);
-                                opacity: 0.6;
-                                cursor: not-allowed !important;
-                            }
                             .p--icon {
                                 cursor: pointer;
                                 width: 18px;
@@ -271,6 +266,11 @@
                                 &:active {
                                     background: url("img/button-icon.svg") no-repeat -1481px  -81px;
                                     border:1px solid #0f1620;
+                                }
+                                &:disabled{
+                                    filter: alpha(opacity=60);
+                                    opacity: 0.6;
+                                    cursor: not-allowed !important;
                                 }
                                 &.active {
                                     border: 1px solid #7b5815;

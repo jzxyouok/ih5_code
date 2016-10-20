@@ -489,6 +489,9 @@ class Event extends React.Component {
                             ;
                         }else{
                             aProps.push(v.showName);
+                            if(!v.showName){
+                                alert('找到一个bug,通知下程序猿吧!');
+                            }
                         }
                 }
             });
@@ -869,7 +872,9 @@ class Event extends React.Component {
         return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag,null,null)}>
             {
                 this.state[option].map((v, i)=> {
-                    return <MenuItem key={i} index={i} object={v.showName?v.showName:v} keyVal={v.showName?v.key:null}>{v.showName?v.showName:v}</MenuItem>;
+
+                        return <MenuItem key={i} index={i} object={v.showName?v.showName:v} keyVal={v.showName?v.key:null}>{v.showName?v.showName:v}</MenuItem>;
+
                 })
             }
         </Menu>)
@@ -895,15 +900,12 @@ class Event extends React.Component {
     }
 
     getTypeArr(type){
-        if(type==0||type==1||type==5){
-            //Integer,Number
-            return [0,1,5];
+        if(type==0||type==1||type==5||type == 8){
+            //Integer,Number,Percentage,Float
+            return [0,1,5,8];
         }else if(type==2||type==3){
             //String,Text
             return [2,3];
-        }else if(type==4||type==10){
-            //Boolean,Boolean2
-            return [4,10];
         }else if(type==6||type ==9){
             //Color ,Color2
             return [6,9];
