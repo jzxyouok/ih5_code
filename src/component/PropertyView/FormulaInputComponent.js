@@ -30,7 +30,7 @@ class FormulaInput extends React.Component {
             objectList: []
         };
         this.containerId = props.containerId || 'iH5-App';
-        this.minWidth = props.minWidth||'240px';
+        this.minWidth = props.minWidth||'244px';
         this.onChange = props.onChange;
 
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -60,7 +60,10 @@ class FormulaInput extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        this.containerId = nextProps.containerId || 'iH5-App';
         this.setState({
+            value: nextProps.value&&nextProps.value.value? nextProps.value.value: null,
+            currentType: nextProps.value&&nextProps.value.type? nextProps.value.type : inputType.value,
             objectList: nextProps.objectList||[]
         })
     }
@@ -108,7 +111,7 @@ class FormulaInput extends React.Component {
         if (getTarget) {
             let type = this.state.currentType;
             let value = this.state.value;
-            let item = {objKey:object.key, propertyName:null, pattern:null};
+            let item = {objKey:object.key, property:null, pattern:null};
             if(type === inputType.value) {
                 //初次进入formula mode
                 type = inputType.formula;
@@ -225,15 +228,16 @@ class FormulaInput extends React.Component {
             if(!obj){
                 return (
                     <div key={i} className="formula-mode-div f--hlc">
-                        <Dropdown overlay={objectMenu} trigger={['click']}
-                                  getPopupContainer={() => document.getElementById(this.containerId)}
-                                  onVisibleChange={this.onObjectVisibleChange()}
-                                  visible={this.state.objectDropDownVisible}>
-                            <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
-                                选择对象
-                                <span className="right-icon" />
-                            </div>
-                        </Dropdown>
+                        还没做
+                        {/*<Dropdown overlay={objectMenu} trigger={['click']}*/}
+                                  {/*getPopupContainer={() => document.getElementById(this.containerId)}*/}
+                                  {/*onVisibleChange={this.onObjectVisibleChange()}*/}
+                                  {/*visible={this.state.objectDropDownVisible}>*/}
+                            {/*<div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>*/}
+                                {/*选择对象*/}
+                                {/*<span className="right-icon" />*/}
+                            {/*</div>*/}
+                        {/*</Dropdown>*/}
                     </div>
                 )
             } else if(obj&&!v.property){

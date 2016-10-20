@@ -343,6 +343,21 @@ function resolveEventTree(node, list) {
                                   (delete v.valueId);
                               }
                           });
+                      } else {
+                          if(cmd.action.property&&cmd.action.property.length>0) {
+                              cmd.action.property.forEach(v=> {
+                                  if (cmd.action.name=='changeValue'&&v.name === 'value'&&v.value&&v.value.type === 2) {
+                                      v.value.value.forEach(v1=>{
+                                          if(v1.objId) {
+                                              v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                                          } else {
+                                              v1.objId = null;
+                                          }
+                                          (delete v1.objId);
+                                      });
+                                  }
+                              });
+                          }
                       }
                       break;
               }
@@ -524,6 +539,10 @@ function generateId(node, idList) {
                               //看是否需要generateid
                               if (v.name ==='data'|| v.name ==='option') {
                                   v.valueId = specGenIdsData(v.value);
+                              } else if (cmd.action.name=='changeValue'&&v.name === 'value'&&v.value&&v.value.type === 2) {
+                                  v.value.value.forEach(v1=>{
+                                      v1.objId = specGenIdsData(v1.objKey);
+                                  });
                               }
                           })
                       }
@@ -591,8 +610,25 @@ function generateJsFunc(etree) {
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
-            if (cmd.action.property.length >= 1)
-              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(cmd.action.property[0]['value']));
+            if (cmd.action.property&&cmd.action.property.length >= 1) {
+                cmd.action.property.forEach(prop => {
+                    if(prop.name==='value'){
+                        if(prop.value.type === 1){
+                            lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
+                        } else if (prop.value.type === 2 && prop.value.value &&prop.value.value.length>0) {
+                            let subLine = '';
+                            prop.value.value.forEach(fV =>{
+                                if(fV.objId&&fV.property){
+                                    subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name) + fV.pattern;
+                                }
+                            });
+                            if(subLine) {
+                                lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
+                            }
+                        }
+                    }
+                });
+            }
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -679,7 +715,6 @@ function generateJsFunc(etree) {
       }
     }
   });
-
   return output;
 }
 
@@ -841,7 +876,33 @@ function saveTree(data, node, saveKey) {
                         });
                         c.action.property = property;
                     } else {
-                        c.action.property = cmd.action.property;
+                        if(cmd.action.property.length>0) {
+                            cmd.action.property.forEach(v=> {
+                                if(cmd.action.name=='changeValue'&&v.name === 'value' && v.value &&v.value.type === 2) {
+                                    let temp = {
+                                        name: v.name,
+                                        showName: v.showName,
+                                        type:v.type,
+                                        value:{
+                                            type:2,
+                                        }
+                                    };
+                                    v.value.value.forEach(v1=>{
+                                        v1.objId = objectKeyToId(v1.objKey);
+                                        if(!saveKey) {
+                                            (delete v1.objKey);
+                                        }
+                                    });
+                                    temp.value.value = v.value.value;
+                                    property.push(temp);
+                                } else {
+                                    property.push(v);
+                                }
+                            });
+                            c.action.property = property;
+                        } else {
+                            c.action.property = cmd.action.property;
+                        }
                     }
                 }
             } else {
@@ -2438,7 +2499,8 @@ export default Reflux.createStore({
         let images = [];
         data['stage'] = {};
         trimTree(stageTree[0].tree);
-        generateId(stageTree[0].tree);
+        let idList = [];
+        generateId(stageTree[0].tree, idList);
         saveTree(data['stage'], stageTree[0].tree);
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
         // data['stage']['links'] = stageTree[0].tree.imageList.length;
@@ -2452,7 +2514,7 @@ export default Reflux.createStore({
                 let name = stageTree[i].name;
                 data['defs'][name] = {};
                 trimTree(stageTree[i].tree);
-                generateId(stageTree[i].tree);
+                generateId(stageTree[i].tree, idList);
                 saveTree(data['defs'][name], stageTree[i].tree);
                 data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
                 // data['defs'][name]['links'] = stageTree[i].tree.imageList.length;
