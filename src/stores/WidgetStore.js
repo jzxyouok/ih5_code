@@ -2405,34 +2405,45 @@ export default Reflux.createStore({
       //       a1.push(a2[i]);
       //     }
       // };
-
         let getImageList = function(array, list) {
-            var result = [];
-            var count = 0;
-            for (let i = 0; i < list.length; i++) {
-                var item = list[i];
-                if (typeof item == 'string') {
-                    count++;
-                    array.push(item);
-                } else {
-                    var n = item.length;
-                    if (count) {
-                        result.push(count);
-                        count = 0;
-                    }
-                    result.push(-n);
-                    for (var j = 0; j < n; j++) {
-                        array.push(item[j]);
-                    }
+          var result = [];
+          var count = 0;
+          for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            if (typeof item == 'string') {
+              if (item.substr(0, 5) == 'data:') {
+                count++;
+                array.push(item);
+              } else {
+                if (count) {
+                  result.push(count);
+                  count = 0;
                 }
+                result.push(item);
+              }
+            } else {
+              var n = item.length;
+              if (count) {
+                result.push(count);
+                count = 0;
+              }
+              if (n == 0 || item[0].substr(0, 5) == 'data:') {
+                result.push(-n);
+                for (var j = 0; j < n; j++) {
+                  array.push(item[j]);
+                }
+              } else {
+                result.push(item);
+              }
             }
-            if (result.length) {
-                if (count)
-                    result.push(count);
-                    return result.join(',');
-                } else {
-                    return count;
-            }
+          }
+          if (result.length) {
+            if (count)
+              result.push(count);
+            return result;
+          } else {
+            return count;
+          }
         };
         let data = {};
         let images = [];
@@ -2445,7 +2456,6 @@ export default Reflux.createStore({
         // appendArray(images, stageTree[0].tree.imageList);
         data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
 
-        //debugger;
         if (stageTree.length > 1) {
             data['defs'] = {};
             for (let i = 1; i < stageTree.length; i++) {
@@ -2460,7 +2470,7 @@ export default Reflux.createStore({
                 data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
             }
         }
-        //console.log(data);
+
         data = bridge.encryptData(data, images);
         if (!data){
             return;
@@ -2468,7 +2478,6 @@ export default Reflux.createStore({
 
         var cb = function(text) {
             var result = JSON.parse(text);
-            //console.log('cb',result);
             if(result['id']){
                 callback(result['id'], wname, wdescribe);
             }
