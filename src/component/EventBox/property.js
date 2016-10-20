@@ -621,9 +621,6 @@ class Property extends React.Component {
                                                 disabled={!this.state.currentEnable}
                                                 onClick={this.onSTButtonClick}
                                                 getResult={this.onSTResultGet} />
-                                            {/*<button className={$class('p--icon', {'active':this.state.didActiveSelectTargetMode})}*/}
-                                                    {/*disabled={!this.state.currentEnable}*/}
-                                                    {/*onClick={this.onActiveSelectTargetMode} />*/}
                                             { !w || !w.props || !w.props.name
                                                 ?'目标对象'
                                                 :w.props.name

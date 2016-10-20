@@ -60,7 +60,7 @@ class ObjectTree extends React.Component {
         this.eventBtn = this.eventBtn.bind(this);
 
         this.onSelectTargetMode = this.onSelectTargetMode.bind(this);
-        this.onSelectTargetStatusChange = this.onSelectTargetStatusChange.bind(this);
+        this.onSelectTargetModeChange = this.onSelectTargetModeChange.bind(this);
         this.checkAllSelectTarget = this.checkAllSelectTarget.bind(this);
 
         //对象的复制/剪切/黏贴
@@ -108,7 +108,7 @@ class ObjectTree extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
-        this.stUnsubscribe = SelectTargetStore.listen(this.onSelectTargetStatusChange);
+        this.stUnsubscribe = SelectTargetStore.listen(this.onSelectTargetModeChange);
         this.onStatusChange(WidgetStore.getStore());
 
         //多选
@@ -121,10 +121,10 @@ class ObjectTree extends React.Component {
         this.stUnsubscribe();
     }
 
-    onSelectTargetStatusChange(btn) {
-        if(btn.stUpdate){
+    onSelectTargetModeChange(result) {
+        if(result.stUpdate){
             this.setState({
-                selectTargetMode: btn.stUpdate.isActive
+                selectTargetMode: result.stUpdate.isActive
             })
         }
     }
