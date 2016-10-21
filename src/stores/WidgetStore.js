@@ -1165,6 +1165,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
         this.listenTo(WidgetActions['activeEventTree'], this.activeEventTree);
 
+
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['delEvent'], this.delEvent);
@@ -1181,6 +1182,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addEventChildren'], this.addEventChildren);
         this.listenTo(WidgetActions['delEventChildren'], this.delEventChildren);
         this.listenTo(WidgetActions['enableEventChildren'], this.enableEventChildren);
+        this.listenTo(WidgetActions['recordEventTreeList'], this.recordEventTreeList);
 
         //widget，变量，函数的统一复制，黏贴，删除，重命名，剪切入口
         this.listenTo(WidgetActions['pasteTreeNode'], this.pasteTreeNode);
@@ -1864,6 +1866,9 @@ export default Reflux.createStore({
             eventChild.enable = !eventChild.enable;
             this.trigger({redrawEventTree: true});
         }
+    },
+    recordEventTreeList:function(){
+            //todo:更改判断条件
     },
     addSpecific: function(event){
         if(event&&event['specificList']){

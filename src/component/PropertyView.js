@@ -698,13 +698,11 @@ class PropertyView extends React.Component {
 
 
             if (subW < 76) {
-                this.PropertyViewPosition.oPropertyView.style.left = '37px';
-
+                this.PropertyViewPosition.oPropertyView.style.left = this.props.expanded? '65px':'37px';
             }
             if (subH < 76) {
                 this.PropertyViewPosition.oPropertyView.style.top = '36px';
             }
-
             if (subRight < 76) {
                 this.PropertyViewPosition.oPropertyView.style.left = (clientWidth - 296) + 'px';
             }
