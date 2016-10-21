@@ -50,6 +50,7 @@ class FormulaInput extends React.Component {
         this.containerId = props.containerId || 'iH5-App';
         this.minWidth = props.minWidth||'244px';
         this.onChange = props.onChange;
+        this.disabled = props.disabled || false;
 
         this.onStatusChange = this.onStatusChange.bind(this);
 
@@ -82,6 +83,7 @@ class FormulaInput extends React.Component {
         this.containerId = nextProps.containerId || 'iH5-App';
         this.minWidth = nextProps.minWidth||'244px';
         this.onChange = nextProps.onChange;
+        this.disabled = nextProps.disabled || false;
 
         this.setState({
             value: initValue(nextProps).value,
@@ -295,30 +297,44 @@ class FormulaInput extends React.Component {
             );
         };
 
-        let formulaObjDropdown = () =>{
-            return (<Dropdown overlay={objectMenu} trigger={['click']}
-                      getPopupContainer={() => document.getElementById(this.containerId)}
-                              onVisibleChange={this.onObjectVisibleChange}
-                              visible={this.state.objectDropDownVisible}>
-                <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
+        let formulaObjDropDown = () =>{
+            if(this.disabled) {
+                return  (<div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
                     <div className="dropDown-title">选择对象</div>
                     <span className="right-icon" />
-                </div>
-            </Dropdown>);
+                </div>)
+            }  else {
+                return (<Dropdown overlay={objectMenu} trigger={['click']}
+                           getPopupContainer={() => document.getElementById(this.containerId)}
+                           onVisibleChange={this.onObjectVisibleChange}
+                           visible={this.state.objectDropDownVisible}>
+                    <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
+                        <div className="dropDown-title">选择对象</div>
+                        <span className="right-icon" />
+                    </div>
+                </Dropdown>);
+            }
         };
 
         let formulaPropertyDropdown  = (obj, v, i) => {
-            return (
-                <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
-                          getPopupContainer={() => document.getElementById(this.containerId)}
-                          onVisibleChange={this.onPropertyVisibleChange}
-                          visible={this.state.propertyDropDownVisible}>
-                    <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
-                        <div className="dropDown-title">选择属性</div>
-                        <span className="right-icon" />
-                    </div>
-                </Dropdown>
-            );
+            if(this.disabled) {
+                return ( <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
+                    <div className="dropDown-title">选择属性</div>
+                    <span className="right-icon"/>
+                </div>);
+            } else {
+                return (
+                    <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
+                              getPopupContainer={() => document.getElementById(this.containerId)}
+                              onVisibleChange={this.onPropertyVisibleChange}
+                              visible={this.state.propertyDropDownVisible}>
+                        <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
+                            <div className="dropDown-title">选择属性</div>
+                            <span className="right-icon" />
+                        </div>
+                    </Dropdown>
+                );
+            }
         };
 
         let formulaList = (v, i)=> {
@@ -331,7 +347,7 @@ class FormulaInput extends React.Component {
                             : v.objKey === null
                             ? (<div className="formula-obj f--hlc">
                                 {
-                                    formulaObjDropdown()
+                                    formulaObjDropDown()
                                 }
                                 </div>)
                             : !obj
@@ -350,12 +366,15 @@ class FormulaInput extends React.Component {
                             }
                             {
                                 v.property
-                                    ? <Input placeholder="公式" value={v.pattern} onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
+                                    ? <Input placeholder="公式"
+                                             disabled={this.disabled}
+                                             value={v.pattern}
+                                             onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
                                     : null
                             }
                             {
                                 v.property&&this.state.value.length-1===i
-                                    ? (<button className="add-obj-btn" onClick={this.onAddBtn}>
+                                    ? (<button className="add-obj-btn" onClick={this.onAddBtn} disabled={this.disabled}>
                                     <div className="btn-layer">
                                         <span className="heng"/>
                                         <span className="shu"/>
@@ -373,7 +392,7 @@ class FormulaInput extends React.Component {
             <div className="formula-mode f--hlc"
                  style={{width:this.minWidth}}>
                 <SelectTargetButton className={'formula-object-icon'}
-                                    disabled={!this.state.selectTargetEnable}
+                                    disabled={!this.state.selectTargetEnable||this.disabled}
                                     onClick={this.onSelectTargetClick}
                                     getResult={this.onGetObjectResult} />
                     {

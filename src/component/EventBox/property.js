@@ -524,7 +524,7 @@ class Property extends React.Component {
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.FormulaInput:
-                    return <FormulaInput containerId={propertyId} {...defaultProp}/>;
+                    return <FormulaInput containerId={propertyId} disabled={!this.state.currentEnable} {...defaultProp}/>;
                 case propertyType.Select:
                     let titleTemp = '';
                     let oType = optionType.normal;
