@@ -138,7 +138,7 @@ propertyMap['text'] = [
     { name: 'match', showName:'匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'unMatch', showName:'不匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'Contain', showName:'包含文本', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
-    { name: 'onChange', showName:'内容改变', isEvent: true},
+    { name: 'change', showName:'内容改变', isEvent: true},
 
 
 
@@ -174,7 +174,7 @@ propertyMap['counter'] = [
     { name: '>', showName:'大于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
     { name: '<', showName:'小于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
     { name: 'valRange', showName:'数值范围', isEvent: true,needFill:[{showName:'最大值',type:'number',default:''},{showName:'最小值',type:'number',default:''}]},
-    { name: 'onChange', showName:'数值改变', isEvent: true },
+    { name: 'change', showName:'数值改变', isEvent: true },
     { name: 'positive', showName:'为正数', isEvent: true },
     { name: 'negative', showName:'为负数', isEvent: true },
     { name: 'odd', showName:'为奇数', isEvent: true },
@@ -262,21 +262,21 @@ propertyMap['input'] = [
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: false},
     { name: 'color',showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF', isProperty: true },
 
-    { name: 'isEmpty', showName:'为空', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'}]},
-    { name: 'isNotEmpty', showName:'不为空', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'}]},
-    { name: 'isMatch', showName:'匹配', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'},{showName:'文本',type:'string',default:''}]},
-    { name: 'isUnMatch', showName:'不匹配', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'},{showName:'文本',type:'string',default:''}]},
-    { name: 'isContain', showName:'包含文本', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'},{showName:'文本',type:'string',default:''}]},
+    { name: 'isEmpty', showName:'为空', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
+    { name: 'isNotEmpty', showName:'不为空', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
+    { name: 'isMatch', showName:'匹配', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
+    { name: 'isUnMatch', showName:'不匹配', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
+    { name: 'isContain', showName:'包含文本', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
 
-    { name: 'lenEqual', showName:'长度等于', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'},{showName:'长度值',type:'number',default:''}]},
-    { name: 'lenUnEqual', showName:'长度不等于', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'},{showName:'长度值',type:'number',default:''}]},
-    { name: 'lenBigThan', showName:'长度大于', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'},{showName:'长度值',type:'number',default:''}]},
-    { name: 'lenLessThan', showName:'长度小于', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'},{showName:'长度值',type:'number',default:''}]},
+    { name: 'lenEqual', showName:'长度等于', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+    { name: 'lenUnEqual', showName:'长度不等于', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+    { name: 'lenBigThan', showName:'长度大于', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+    { name: 'lenLessThan', showName:'长度小于', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
 
-    { name: 'isNum', showName:'是数字', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'}]},
-    { name: 'isNotNum', showName:'不是数字', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'}]},
-    { name: 'isLetter', showName:'是字母', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'}]},
-    { name: 'isNotLetter', showName:'不是字母', isEvent: true,needFill:[{type:'select', option:['onChange','onBlur','onDemand'],default:'onChange'}]},
+    { name: 'isNum', showName:'是数字', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
+    { name: 'isNotNum', showName:'不是数字', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
+    { name: 'isLetter', showName:'是字母', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
+    { name: 'isNotLetter', showName:'不是字母', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
 
     ...propertyMap['textBox']
 

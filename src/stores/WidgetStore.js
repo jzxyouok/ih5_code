@@ -708,7 +708,7 @@ function saveTree(data, node, saveKey) {
             judges.className=node.className;
             judges.children=[];
             if(item.needFill) {
-                judges.conFlag = 'onChange';//触发条件
+                judges.conFlag = 'change';//触发条件
                 item.needFill.map((v, i)=> {
                     if(judges.className == 'input' && v.type=='select'){
                         judges.conFlag =v.default;
