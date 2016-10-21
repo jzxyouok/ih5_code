@@ -12,21 +12,28 @@ import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap } from '../PropertyMap'
 
+const MenuItem = Menu.Item;
+
 const inputType = {
     value: 1,
     formula: 2,
 };
 
-const MenuItem = Menu.Item;
-
 let initValue = (props) => {
     let value = null;
     let type = inputType.value;
+    let enableTarget = true;
     if(props.value) {
         value = props.value.value;
         type = props.value.type;
+
+        if (type === inputType.formula &&
+            value.length > 0 &&
+            value[value.length - 1].objKey !== null) {
+            enableTarget = false;
+        }
     }
-    return {value:value, type:type};
+    return {value:value, type:type, enableTarget: enableTarget};
 };
 
 class FormulaInput extends React.Component {
@@ -35,6 +42,7 @@ class FormulaInput extends React.Component {
         this.state = {
             value: initValue(props).value,
             currentType: initValue(props).type,
+            selectTargetEnable: initValue(props).enableTarget,
             objectList: [],
             objectDropDownVisible: false, //对象dropdown
             propertyDropDownVisible: false, //属性dropdown
@@ -42,6 +50,7 @@ class FormulaInput extends React.Component {
         this.containerId = props.containerId || 'iH5-App';
         this.minWidth = props.minWidth||'244px';
         this.onChange = props.onChange;
+        this.disabled = props.disabled || false;
 
         this.onStatusChange = this.onStatusChange.bind(this);
 
@@ -58,6 +67,8 @@ class FormulaInput extends React.Component {
         this.onAddBtn = this.onAddBtn.bind(this);
 
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
+
+        this.checkValueObjValid = this.checkValueObjValid.bind(this); //不存在的obj清掉
     }
 
     componentDidMount() {
@@ -72,10 +83,12 @@ class FormulaInput extends React.Component {
         this.containerId = nextProps.containerId || 'iH5-App';
         this.minWidth = nextProps.minWidth||'244px';
         this.onChange = nextProps.onChange;
+        this.disabled = nextProps.disabled || false;
 
         this.setState({
             value: initValue(nextProps).value,
             currentType: initValue(nextProps).type,
+            selectTargetEnable: initValue(nextProps).enableTarget,
             objectList: nextProps.objectList||[]
         });
     }
@@ -85,10 +98,41 @@ class FormulaInput extends React.Component {
             return;
         }
         if(widget.allWidgets){
-            //还需检查value列表，如果没找到，删除整个item，如果数组为空，改变模式，改变值
             this.setState({
                 objectList: widget.allWidgets
             });
+        } else if(widget.deleteWidget) {
+            this.checkValueObjValid();
+        }
+    }
+
+    checkValueObjValid(){
+        let value = this.state.value;
+        let type = this.state.currentType;
+        if(value&&(type===inputType.formula)) {
+            let changed = false;
+            value.forEach((v, i)=>{
+                if(v.objKey) {
+                    let obj = WidgetStore.getWidgetByKey(v.objKey);
+                    if(!obj) {
+                        changed = true;
+                        value.splice(i,1);
+                    }
+                }
+            });
+            if(value.length===0||(value.length===1&&value[0].objKey===null)){
+                type = inputType.value;
+                value = null;
+                changed = true;
+            }
+            if(changed){
+                this.setState({
+                    value: value,
+                    currentType: type
+                }, ()=>{
+                    this.onChange({value:this.state.value, type:this.state.currentType});
+                })
+            }
         }
     }
 
@@ -138,7 +182,8 @@ class FormulaInput extends React.Component {
             }
             this.setState({
                 value: value,
-                currentType:type
+                currentType:type,
+                selectTargetEnable: false,
             }, ()=>{
                 this.onChange({value:this.state.value, type:this.state.currentType});
             })
@@ -205,6 +250,7 @@ class FormulaInput extends React.Component {
         value.push(item);
         this.setState({
             value: value,
+            selectTargetEnable: true,
         }, ()=>{
             this.onChange({value:this.state.value, type:this.state.currentType});
         });
@@ -251,30 +297,44 @@ class FormulaInput extends React.Component {
             );
         };
 
-        let formulaObjDropdown = () =>{
-            return (<Dropdown overlay={objectMenu} trigger={['click']}
-                      getPopupContainer={() => document.getElementById(this.containerId)}
-                              onVisibleChange={this.onObjectVisibleChange}
-                              visible={this.state.objectDropDownVisible}>
-                <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
-                    选择对象
+        let formulaObjDropDown = () =>{
+            if(this.disabled) {
+                return  (<div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
+                    <div className="dropDown-title">选择对象</div>
                     <span className="right-icon" />
-                </div>
-            </Dropdown>);
+                </div>)
+            }  else {
+                return (<Dropdown overlay={objectMenu} trigger={['click']}
+                           getPopupContainer={() => document.getElementById(this.containerId)}
+                           onVisibleChange={this.onObjectVisibleChange}
+                           visible={this.state.objectDropDownVisible}>
+                    <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
+                        <div className="dropDown-title">选择对象</div>
+                        <span className="right-icon" />
+                    </div>
+                </Dropdown>);
+            }
         };
 
         let formulaPropertyDropdown  = (obj, v, i) => {
-            return (
-                <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
-                          getPopupContainer={() => document.getElementById(this.containerId)}
-                          onVisibleChange={this.onPropertyVisibleChange}
-                          visible={this.state.propertyDropDownVisible}>
-                    <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
-                        选择属性
-                        <span className="right-icon" />
-                    </div>
-                </Dropdown>
-            );
+            if(this.disabled) {
+                return ( <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
+                    <div className="dropDown-title">选择属性</div>
+                    <span className="right-icon"/>
+                </div>);
+            } else {
+                return (
+                    <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
+                              getPopupContainer={() => document.getElementById(this.containerId)}
+                              onVisibleChange={this.onPropertyVisibleChange}
+                              visible={this.state.propertyDropDownVisible}>
+                        <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
+                            <div className="dropDown-title">选择属性</div>
+                            <span className="right-icon" />
+                        </div>
+                    </Dropdown>
+                );
+            }
         };
 
         let formulaList = (v, i)=> {
@@ -284,8 +344,12 @@ class FormulaInput extends React.Component {
                     {
                         v.objKey===undefined
                             ? null
-                            : !v.objKey
-                            ? formulaObjDropdown()
+                            : v.objKey === null
+                            ? (<div className="formula-obj f--hlc">
+                                {
+                                    formulaObjDropDown()
+                                }
+                                </div>)
                             : !obj
                             ? null
                             : (<div className="formula-obj f--hlc">
@@ -302,12 +366,15 @@ class FormulaInput extends React.Component {
                             }
                             {
                                 v.property
-                                    ? <Input placeholder="公式" value={v.pattern} onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
+                                    ? <Input placeholder="公式"
+                                             disabled={this.disabled}
+                                             value={v.pattern}
+                                             onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
                                     : null
                             }
                             {
                                 v.property&&this.state.value.length-1===i
-                                    ? (<button className="add-obj-btn" onClick={this.onAddBtn}>
+                                    ? (<button className="add-obj-btn" onClick={this.onAddBtn} disabled={this.disabled}>
                                     <div className="btn-layer">
                                         <span className="heng"/>
                                         <span className="shu"/>
@@ -325,7 +392,7 @@ class FormulaInput extends React.Component {
             <div className="formula-mode f--hlc"
                  style={{width:this.minWidth}}>
                 <SelectTargetButton className={'formula-object-icon'}
-                                    disabled={false}
+                                    disabled={!this.state.selectTargetEnable||this.disabled}
                                     onClick={this.onSelectTargetClick}
                                     getResult={this.onGetObjectResult} />
                     {
