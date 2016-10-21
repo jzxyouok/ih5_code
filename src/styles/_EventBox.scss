@@ -331,7 +331,7 @@
                                 .judgeObjFlag-input{
                                     background: transparent;
                                     border: 0;
-                                    width: 100%;
+                                    width: 55px;
                                     outline: none;
                                 }
                                 .judgeValFlag-input{
@@ -343,7 +343,7 @@
                                 .compareObjFlag-input{
                                     background: transparent;
                                     border: 0;
-                                    width: 100%;
+                                    width: 55px;
                                     outline: none;
                                 }
                                 .compareValFlag-input{
@@ -1234,6 +1234,7 @@
                 box-shadow: none;
                 margin-top: -4px;
                 border-radius: 0 0 2px 2px;
+
             }
             .ant-dropdown-menu-item {
                 color: white;
