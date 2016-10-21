@@ -58,6 +58,8 @@ class FormulaInput extends React.Component {
         this.onAddBtn = this.onAddBtn.bind(this);
 
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
+
+        this.checkValueObjValid = this.checkValueObjValid.bind(this);
     }
 
     componentDidMount() {
@@ -85,10 +87,40 @@ class FormulaInput extends React.Component {
             return;
         }
         if(widget.allWidgets){
-            //还需检查value列表，如果没找到，删除整个item，如果数组为空，改变模式，改变值
+            this.checkValueObjValid();
             this.setState({
                 objectList: widget.allWidgets
             });
+        }
+    }
+
+    checkValueObjValid(){
+        let value = this.state.value;
+        let type = this.state.currentType;
+        if(value&&(type===inputType.formula)) {
+            let changed = false;
+            value.forEach((v, i)=>{
+                if(v.objKey) {
+                    let obj = WidgetStore.getWidgetByKey(v.objKey);
+                    if(!obj) {
+                        changed = true;
+                        value.splice(i,1);
+                    }
+                }
+            });
+            if(value.length===0||(value.length===1&&value[0].objKey===null)){
+                type = inputType.value;
+                value = null;
+                changed = true;
+            }
+            if(changed){
+                this.setState({
+                    value: value,
+                    currentType: type
+                }, ()=>{
+                    this.onChange({value:this.state.value, type:this.state.currentType});
+                })
+            }
         }
     }
 
