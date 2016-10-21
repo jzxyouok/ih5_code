@@ -116,9 +116,13 @@
       border-radius: 2px;
     }
     .formula-obj-dropDown {
-      width: 140px;
+      width: 132px;
       cursor: pointer;
       color: #b5b5b5;
+      padding: 2px;
+      border-radius: 2px;
+      background: #1c2f2e;
+      height: 18px;
     }
     .formula-obj-property-dropDown{
       padding-left: 4px;
@@ -131,6 +135,12 @@
       .right-icon {
         padding-right: 14px;
         background-position: -1678px -40px;
+      }
+    }
+    .formula-obj-dropDown,
+    .formula-obj-property-dropDown {
+      .dropDown-title{
+        width: 100%;
       }
     }
     .formula-obj-name,

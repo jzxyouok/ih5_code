@@ -257,7 +257,7 @@ class FormulaInput extends React.Component {
                               onVisibleChange={this.onObjectVisibleChange}
                               visible={this.state.objectDropDownVisible}>
                 <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
-                    选择对象
+                    <div className="dropDown-title">选择对象</div>
                     <span className="right-icon" />
                 </div>
             </Dropdown>);
@@ -270,7 +270,7 @@ class FormulaInput extends React.Component {
                           onVisibleChange={this.onPropertyVisibleChange}
                           visible={this.state.propertyDropDownVisible}>
                     <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
-                        选择属性
+                        <div className="dropDown-title">选择属性</div>
                         <span className="right-icon" />
                     </div>
                 </Dropdown>
@@ -284,8 +284,12 @@ class FormulaInput extends React.Component {
                     {
                         v.objKey===undefined
                             ? null
-                            : !v.objKey
-                            ? formulaObjDropdown()
+                            : v.objKey === null
+                            ? (<div className="formula-obj f--hlc">
+                                {
+                                    formulaObjDropdown()
+                                }
+                                </div>)
                             : !obj
                             ? null
                             : (<div className="formula-obj f--hlc">
