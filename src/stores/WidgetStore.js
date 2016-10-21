@@ -237,7 +237,14 @@ function loadTree(parent, node, idList) {
   }
 
   var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
-  current.node = bridge.addWidget(renderer, (parent) ? parent.node : null, node['cls'], null, node['props'], (parent && parent.timerWidget) ? parent.timerWidget.node : null);
+
+  current.node = bridge.addWidget(renderer,
+      (parent)
+      ? parent.node
+      : null, node['cls'], null, node['props'],
+        (parent && parent.timerWidget) ? parent.timerWidget.node : null
+  );
+
   current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
 
   if (parent) {
@@ -2670,9 +2677,9 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         //http://test-beta.ih5.cn
-        xhr.open(method, url);
+        //xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
@@ -2696,27 +2703,39 @@ export default Reflux.createStore({
         let getImageList = function(array, list) {
             var result = [];
             var count = 0;
-            for (let i = 0; i < list.length; i++) {
+            for (var i = 0; i < list.length; i++) {
                 var item = list[i];
                 if (typeof item == 'string') {
-                    count++;
-                    array.push(item);
+                    if (item.substr(0, 5) == 'data:') {
+                        count++;
+                        array.push(item);
+                    } else {
+                        if (count) {
+                            result.push(count);
+                            count = 0;
+                        }
+                        result.push(item);
+                    }
                 } else {
                     var n = item.length;
                     if (count) {
                         result.push(count);
                         count = 0;
                     }
-                    result.push(-n);
-                    for (var j = 0; j < n; j++) {
-                        array.push(item[j]);
+                    if (n == 0 || item[0].substr(0, 5) == 'data:') {
+                        result.push(-n);
+                        for (var j = 0; j < n; j++) {
+                            array.push(item[j]);
+                        }
+                    } else {
+                        result.push(item);
                     }
                 }
             }
             if (result.length) {
                 if (count)
                     result.push(count);
-                return result.join(',');
+                return result;
             } else {
                 return count;
             }

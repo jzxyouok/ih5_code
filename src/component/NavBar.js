@@ -74,7 +74,9 @@ class NavBar extends React.Component {
             saveError : false,
             historyRW : 1,
             historyRecord : [],
-            historyNameList : ["初始化"]
+            historyNameList : ["初始化"],
+            historyShow : false,
+            historyLayerHide : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -124,6 +126,8 @@ class NavBar extends React.Component {
         this.revokedHistory = this.revokedHistory.bind(this);
         this.replyHistory = this.replyHistory.bind(this);
         this.chooseHistory = this.chooseHistory.bind(this);
+        this.historyLayerHide = this.historyLayerHide.bind(this);
+        this.historyShow = this.historyShow.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -946,6 +950,19 @@ class NavBar extends React.Component {
         WidgetActions['chooseHistory'](num);
     }
 
+    historyShow(){
+        this.setState({
+            historyShow : !this.state.historyShow,
+            historyLayerHide : false
+        })
+    }
+
+    historyLayerHide(){
+        this.setState({
+            historyLayerHide : !this.state.historyLayerHide
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -1288,7 +1305,7 @@ class NavBar extends React.Component {
 
                         <button className='btn btn-clear hide-btn' title='隐藏参考线'  onClick={this.onHideRulerLine} />
 
-                        <button className='btn btn-clear history-btn' title='历史'  />
+                        <button className='btn btn-clear history-btn' title='历史' onClick={ this.historyShow }  />
 
                         <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
                             <span className='heng' />
@@ -1460,6 +1477,31 @@ class NavBar extends React.Component {
                                 createDbShow={ this.createDbShow }
                                 onUpdateDb={this.onUpdateDb.bind(this)}
                                 dbList = { this.state.dbList } />
+                </div>
+
+                <div className={$class("historyRecord", {"hidden" : !this.state.historyShow},
+                                                        {"active" : !this.state.historyLayerHide}
+                    )}>
+                    <div className="historyRecord-header">
+                        历史记录
+                        <span className="btn" onClick={ this.historyLayerHide } />
+                    </div>
+
+                    <div  className="historyRecord-content">
+                        <div className="scroll-layer">
+                            <ul>
+                                {
+                                    this.state.historyNameList.map((v,i)=>{
+                                        return <li key={i}
+                                                   className={ $class({"active": i == this.state.historyRW-1},
+                                                                {"last-icon": i > this.state.historyRW-1}
+                                                   )}
+                                                   onClick={ this.chooseHistory.bind(this, i+1) }>{v}</li>
+                                    })
+                                }
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
                 {
