@@ -14,19 +14,19 @@ const MenuItem = Menu.Item;
 const Option = Select.Option;
 
 class Event extends React.Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
         this.state = {
             expanded: true,
             objName: [],//存储allWidget的className name type(intVal,strVal)
-            toLong:false,
+            toLong: false,
             eventList: this.props.eventList,
             selectWidget: this.props.widget,
             allWidgetsList: null,
-            curChild:null,
+            curChild: null,
             activeKey: this.props.activeKey,  //当前激活事件的key
-            wKey:this.props.wKey,
-            specialObject: ['counter', 'text', 'var','input'],
+            wKey: this.props.wKey,
+            specialObject: ['counter', 'text', 'var', 'input'],
             //用于下拉框显示
             conOption: [],//每次点击后赋值
             logicalOption: ['and', 'or', 'not'],  //下拉选项
@@ -39,11 +39,10 @@ class Event extends React.Component {
         };
 
 
-
         this.curEventIndex = 0;
         this.curChildrenIndex = 0;
 
-        this.oldVal=null;
+        this.oldVal = null;
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
@@ -51,67 +50,66 @@ class Event extends React.Component {
         this.onStatusChange = this.onStatusChange.bind(this);
 
         this.getConditionOption = this.getConditionOption.bind(this);
-        this.getJudgeObjOption =this.getJudgeObjOption.bind(this);
-        this.getJudgeValOption=this.getJudgeValOption.bind(this);
-        this.getCompareObjOption=this.getCompareObjOption.bind(this);
-        this.getCompareValOption=this.getCompareValOption.bind(this);
+        this.getJudgeObjOption = this.getJudgeObjOption.bind(this);
+        this.getJudgeValOption = this.getJudgeValOption.bind(this);
+        this.getCompareObjOption = this.getCompareObjOption.bind(this);
+        this.getCompareValOption = this.getCompareValOption.bind(this);
 
 
-        this.getJudgeValType =this.getJudgeValType.bind(this);
-        this.getSpacJudgeValType=this.getSpacJudgeValType.bind(this);
+        this.getJudgeValType = this.getJudgeValType.bind(this);
+        this.getSpacJudgeValType = this.getSpacJudgeValType.bind(this);
 
         this.onEventEnable = this.onEventEnable.bind(this);
         this.onChildEnable = this.onChildEnable.bind(this);
 
-        this.menuList =this.menuList.bind(this);
-        this.setEventBoxWidth=this.setEventBoxWidth.bind(this);
+        this.menuList = this.menuList.bind(this);
+        this.setEventBoxWidth = this.setEventBoxWidth.bind(this);
 
 
         this.onSetFuncSpecificListProperty = this.onSetFuncSpecificListProperty.bind(this);
-        this.getAntdComponent=this.getAntdComponent.bind(this);
-        this.getShowNameByName=this.getShowNameByName.bind(this);
-        this.getNameByCnName =this.getNameByCnName.bind(this);
-        this.getObjNameByKey=this.getObjNameByKey.bind(this);
-        this.content =this.content.bind(this);
-
+        this.getAntdComponent = this.getAntdComponent.bind(this);
+        this.getShowNameByName = this.getShowNameByName.bind(this);
+        this.getNameByCnName = this.getNameByCnName.bind(this);
+        this.getObjNameByKey = this.getObjNameByKey.bind(this);
+        this.content = this.content.bind(this);
 
 
     }
 
     componentWillReceiveProps(nextProps) {
-       //解析部分
-        nextProps.eventList.map((v,i)=>{
-              v.className=nextProps.widget.className;
-              if(!v.conFlag){
-                  v.conFlag='触发条件';
-              }
-              v.children.map((item,index)=>{
-                    if(item.judgeObjKey){
-                        let obj1 =WidgetStore.getWidgetByKey(item.judgeObjKey);
-                        if(obj1){
-                            item.judgeObjFlag = obj1.props.name;
-                        }
+        //解析部分
+        nextProps.eventList.map((v, i)=> {
+            v.className = nextProps.widget.className;
+            if (!v.conFlag) {
+                v.conFlag = '触发条件';
+            }
+            v.children.map((item, index)=> {
+                if (item.judgeObjKey) {
+                    let obj1 = WidgetStore.getWidgetByKey(item.judgeObjKey);
+                    if (obj1) {
+                        item.judgeObjFlag = obj1.props.name;
                     }
-                    if(item.compareObjKey){
-                        let obj2 =WidgetStore.getWidgetByKey(item.compareObjKey);
-                        if(obj2){
-                            item.compareObjFlag = obj2.props.name;
-                        }
+                }
+                if (item.compareObjKey) {
+                    let obj2 = WidgetStore.getWidgetByKey(item.compareObjKey);
+                    if (obj2) {
+                        item.compareObjFlag = obj2.props.name;
                     }
-                    if(!item.judgeValFlag){
-                        item.judgeValFlag='判断值';
-                    }
-                   if(!item.compareValFlag) {
-                      item.compareValFlag = '比较值';
-                    }
-              });
+                }
+                if (!item.judgeValFlag) {
+                    item.judgeValFlag = '判断值';
+                }
+                if (!item.compareValFlag) {
+                    item.compareValFlag = '比较值';
+                }
+            });
         });
 
         this.setState({
-            activeKey:nextProps.activeKey,
-            wKey:nextProps.wKey,
-            eventList:nextProps.eventList
-        },()=>{
+            activeKey: nextProps.activeKey,
+            wKey: nextProps.wKey,
+            eventList: nextProps.eventList
+        }, ()=> {
             this.setEventBoxWidth();
         })
     }
@@ -134,28 +132,28 @@ class Event extends React.Component {
             if (this.props.wKey === this.props.activeKey) {
                 this.forceUpdate();
             }
-             this.setEventBoxWidth();
+            this.setEventBoxWidth();
         }
 
-        if(widget.allWidgets){
-            let arr=[];
-            let arr2=[];
-            let eventList =this.state.eventList;
-            widget.allWidgets.map((v,i)=>{
-                arr.push([v.className,v.props.name,v.type]);
+        if (widget.allWidgets) {
+            let arr = [];
+            let arr2 = [];
+            let eventList = this.state.eventList;
+            widget.allWidgets.map((v, i)=> {
+                arr.push([v.className, v.props.name, v.type]);
                 arr2.push({
-                    name:v.props.name,
-                    key:v.key
+                    name: v.props.name,
+                    key: v.key
                 });
             });
 
 
             //此处可设置对象关系,将对象的引用注入进来.
             this.setState({
-                objName:arr,   //类名与命名
+                objName: arr,   //类名与命名
                 allWidgetsList: widget.allWidgets,
-                judgeObjOption:arr2,  //命名
-                eventList:eventList
+                judgeObjOption: arr2,  //命名
+                eventList: eventList
             });
         }
 
@@ -164,17 +162,17 @@ class Event extends React.Component {
                 selectWidget: widget.selectWidget
             });
         }
-        else if (widget.updateWidget){
+        else if (widget.updateWidget) {
             switch (widget.updateWidget.type) {
                 case nodeType.func:
                     let eventList = this.state.eventList;
-                    eventList.forEach(v=>{
-                        v.specificList.forEach(s=>{
-                            if(s.action&&s.action.type === funcType.customize){
+                    eventList.forEach(v=> {
+                        v.specificList.forEach(s=> {
+                            if (s.action && s.action.type === funcType.customize) {
                                 let func = WidgetStore.getWidgetByKey(s.action.func);
-                                if (widget.updateWidget.action===nodeAction.change
-                                    &&func
-                                    &&func.widget.key === widget.updateWidget.widget.widget.key) {
+                                if (widget.updateWidget.action === nodeAction.change
+                                    && func
+                                    && func.widget.key === widget.updateWidget.widget.widget.key) {
                                     let property = this.onSetFuncSpecificListProperty(s.action, func.params);
                                     s.action.property = property;
                                 }
@@ -182,7 +180,7 @@ class Event extends React.Component {
                         });
                     });
                     this.setState({
-                        eventList:eventList
+                        eventList: eventList
                     });
                     break;
                 default:
@@ -194,62 +192,62 @@ class Event extends React.Component {
     onSetFuncSpecificListProperty(action, params) {
         //params
         let newProperty = null;
-        if(params&&params.length>0){
+        if (params && params.length > 0) {
             newProperty = [];
-            params.forEach(p =>{
-                if(p.name&&p.type){
+            params.forEach(p => {
+                if (p.name && p.type) {
                     let index = -1;
-                    if(action.property){
-                        action.property.forEach((i,ind) =>{
-                            if(i.name === p.name){
+                    if (action.property) {
+                        action.property.forEach((i, ind) => {
+                            if (i.name === p.name) {
                                 index = ind;
                                 newProperty.push(i);
                             }
                         });
                     }
-                    if(index === -1) {
-                        newProperty.push({'name':p.name, 'showName':p.name, 'value':null, 'type':p.type.type});
+                    if (index === -1) {
+                        newProperty.push({'name': p.name, 'showName': p.name, 'value': null, 'type': p.type.type});
                     }
                 }
             });
-            if(newProperty.length==0){
+            if (newProperty.length == 0) {
                 newProperty = null;
             }
         }
         return newProperty;
     }
 
-    getJudgeValType(val){
-        let propArr =this.state.curChild.propArr;
-        let saveVal=null;
-        propArr.map((v,i)=>{
-             if(v.name== val){
-                 saveVal =  v.type;
-             }
+    getJudgeValType(val) {
+        let propArr = this.state.curChild.propArr;
+        let saveVal = null;
+        propArr.map((v, i)=> {
+            if (v.name == val) {
+                saveVal = v.type;
+            }
         });
         return saveVal;
     }
 
-    getSpacJudgeValType(val){
-        let saveVal=null;
-        this.state.objName.map((v,i)=>{
-            if(v[1]== val){
-                saveVal =  v[2] ?v[2]:v[0];
+    getSpacJudgeValType(val) {
+        let saveVal = null;
+        this.state.objName.map((v, i)=> {
+            if (v[1] == val) {
+                saveVal = v[2] ? v[2] : v[0];
             }
         });
-        if(saveVal=='number'){
-            saveVal=0;
-        }else if(saveVal=='string'){
-            saveVal=2;
-        }else if(saveVal=='text'){
-            saveVal=3;
-        }else if(saveVal=='counter'){
-            saveVal=0;
+        if (saveVal == 'number') {
+            saveVal = 0;
+        } else if (saveVal == 'string') {
+            saveVal = 2;
+        } else if (saveVal == 'text') {
+            saveVal = 3;
+        } else if (saveVal == 'counter') {
+            saveVal = 0;
         }
         return saveVal;
     }
 
-    chooseEventBtn(nid){
+    chooseEventBtn(nid) {
         this.props.chooseEventBtn(nid);
     }
 
@@ -263,27 +261,27 @@ class Event extends React.Component {
     }
 
     onChildEnable(event, eventChild, e) {
-        if(!event.enable){
+        if (!event.enable) {
             return;
         }
         WidgetActions['enableEventChildren'](eventChild);
     }
 
-    getClassNameByobjName(name){
-        let val=null;
-        this.state.objName.map((v,i)=>{
-            if(v[1]==name){
+    getClassNameByobjName(name) {
+        let val = null;
+        this.state.objName.map((v, i)=> {
+            if (v[1] == name) {
                 val = v[0];
             }
         });
         return val;
     }
 
-    delEvent(index){
-            WidgetActions['delEvent'](this.state.eventList,index);
+    delEvent(index) {
+        WidgetActions['delEvent'](this.state.eventList, index);
     }
 
-    expandedBtn(expanded, event){
+    expandedBtn(expanded, event) {
         event.stopPropagation();
         this.setState({
             expanded: expanded
@@ -291,12 +289,12 @@ class Event extends React.Component {
     }
 
     //获取触发条件
-    getConditionOption(optionName,oCurChild){
-        let aProps=[];
-        let obj={}
+    getConditionOption(optionName, oCurChild) {
+        let aProps = [];
+        let obj = {}
         let className = this.state.selectWidget.className;
-        propertyMap[className].map((item,index)=>{
-            if(item.isEvent === true){
+        propertyMap[className].map((item, index)=> {
+            if (item.isEvent === true) {
                 aProps.push(item);
             }
         });
@@ -305,14 +303,14 @@ class Event extends React.Component {
     }
 
     //获取判断对象
-    getJudgeObjOption(optionName,oCurChild){
-        let allWidgetsList =this.state.allWidgetsList;
-        let aProps=[];
-        let obj={}
-        allWidgetsList.map((v,i)=>{
+    getJudgeObjOption(optionName, oCurChild) {
+        let allWidgetsList = this.state.allWidgetsList;
+        let aProps = [];
+        let obj = {}
+        allWidgetsList.map((v, i)=> {
             aProps.push({
-                showName:v.props.name,
-                key:v.key
+                showName: v.props.name,
+                key: v.key
             });
         });
         obj[optionName] = aProps;
@@ -320,220 +318,224 @@ class Event extends React.Component {
     }
 
     //获取判断对象的属性
-    getJudgeValOption(optionName,curChild) {
+    getJudgeValOption(optionName, curChild) {
         let aProps = [];
-        let className=null;
+        let className = null;
 
-        let judgeObjFlag =curChild.judgeObjFlag; //判断对象名字
+        let judgeObjFlag = curChild.judgeObjFlag; //判断对象名字
 
-        let allWidgetsList =this.state.allWidgetsList;
+        let allWidgetsList = this.state.allWidgetsList;
 
-        allWidgetsList.map((v,i)=>{
-             if(v.props.name == judgeObjFlag){
-                 className =v.className;
-             }
+        allWidgetsList.map((v, i)=> {
+            if (v.props.name == judgeObjFlag) {
+                className = v.className;
+            }
         });
 
 
-        let obj={};
+        let obj = {};
         propertyMap[className].map((v, i)=> {
             if (v.isProperty && v.name != 'id') {
-                if(v.showName=='W'){
+                if (v.showName == 'W') {
                     aProps.push('宽度');
-                }else if(v.showName=='H'){
+                } else if (v.showName == 'H') {
                     aProps.push('高度');
-                }else if(v.showName=='中心点'){
+                } else if (v.showName == '中心点') {
                     ;
-                }else{
-                      aProps.push(v.showName);
+                } else {
+                    aProps.push(v.showName);
                 }
             }
         });
-        obj[optionName] =aProps;
+        obj[optionName] = aProps;
         return obj;
     }
 
     //获取比较对象
-    getCompareObjOption(optionName,oCurChild){
-        let aProps=[];
-        let obj={};
-        let curChild=oCurChild;
-        let judgeObjFlag= curChild.judgeObjFlag;
-        let judgeObjVal=curChild.judgeValFlag;
-        let allWidgetsList =this.state.allWidgetsList;
-        let className=null;
-        let type =null;
+    getCompareObjOption(optionName, oCurChild) {
+        let aProps = [];
+        let obj = {};
+        let curChild = oCurChild;
+        let judgeObjFlag = curChild.judgeObjFlag;
+        let judgeObjVal = curChild.judgeValFlag;
+        let allWidgetsList = this.state.allWidgetsList;
+        let className = null;
+        let type = null;
 
-        allWidgetsList.map((v,i)=>{
-            if(v.props.name == judgeObjFlag){
-                className =v.className;
-                if(className=='var'){
-                    if(v.type=='number'){
+        allWidgetsList.map((v, i)=> {
+            if (v.props.name == judgeObjFlag) {
+                className = v.className;
+                if (className == 'var') {
+                    if (v.type == 'number') {
                         type = 0;
-                    }else if(v.type=='string'){
+                    } else if (v.type == 'string') {
                         type = 2;
                     }
-                }else if(className=='text' ){
+                } else if (className == 'text') {
                     type = 2;
-                } else if(className=='counter'){
+                } else if (className == 'counter') {
                     type = 0;
-                }else if(className=='input'){
+                } else if (className == 'input') {
                     type = 2;
                 }
             }
         });
 
-       if(className &&  propertyMap[className]) {
-           propertyMap[className].map((v, i)=> {
-               if (v.isProperty && v.name == judgeObjVal) {
-                   type = v.type;
-               }
-           });
-       }
-
-        allWidgetsList.map((v,i)=>{
-                let tag=true;
-                let classname= v.className;
-                //特殊五类
-                if(classname=='var'){
-                    let typeNew=[];
-                    if(v.type=='number'){
-                        typeNew=[0,1,5];
-                    }else if(v.type=='string'){
-                        typeNew=[2,3];
-                    }
-                    if(typeNew.indexOf(type)>=0){
-                        aProps.push({showName:v.props.name,key:v.key});
-                    }
-                }else if(classname=='text' ){
-                    if([2,3].indexOf(type)>=0){
-                        aProps.push({showName:v.props.name,key:v.key});
-                    }
-                } else if(classname=='counter'){
-                    if([0,1].indexOf(type)>=0){
-                        aProps.push({showName:v.props.name,key:v.key});
-                    }
-                } else if(classname=='input'){
-                    if([2,3].indexOf(type)>=0){
-                        aProps.push({showName:v.props.name,key:v.key});
-                    }
-                } else{
-                    propertyMap[classname].map((v1,i1)=>{
-                        let typeArr= this.getTypeArr(v1.type);
-                        if(tag && v1.isProperty && v1.name !='id' && typeArr.indexOf(type)>=0 ){  //需要兼容判断
-                            aProps.push({showName:v.props.name,key:v.key});
-                            tag=false;
-                        }
-                    });
+        if (className && propertyMap[className]) {
+            propertyMap[className].map((v, i)=> {
+                if (v.isProperty && v.name == judgeObjVal) {
+                    type = v.type;
                 }
             });
+            if(judgeObjVal=='width'||judgeObjVal=='height'){
+                type =0;
+            }
+        }
 
-        obj[optionName] =aProps;
+        allWidgetsList.map((v, i)=> {
+            let tag = true;
+            let classname = v.className;
+            //特殊五类
+            if (classname == 'var') {
+                let typeNew = [];
+                if (v.type == 'number') {
+                    typeNew = [0, 1, 5];
+                } else if (v.type == 'string') {
+                    typeNew = [2, 3];
+                }
+                if (typeNew.indexOf(type) >= 0) {
+                    aProps.push({showName: v.props.name, key: v.key});
+                }
+            } else if (classname == 'text') {
+                if ([2, 3].indexOf(type) >= 0) {
+                    aProps.push({showName: v.props.name, key: v.key});
+                }
+            } else if (classname == 'counter') {
+                if ([0, 1].indexOf(type) >= 0) {
+                    aProps.push({showName: v.props.name, key: v.key});
+                }
+            } else if (classname == 'input') {
+                if ([2, 3].indexOf(type) >= 0) {
+                    aProps.push({showName: v.props.name, key: v.key});
+                }
+            } else {
+                propertyMap[classname].map((v1, i1)=> {
+                    let typeArr = this.getTypeArr(v1.type);
+                    if (tag && v1.isProperty && v1.name != 'id' && typeArr.indexOf(type) >= 0) {  //需要兼容判断
+                        aProps.push({showName: v.props.name, key: v.key});
+                        tag = false;
+                    }
+                });
+            }
+        });
+
+        obj[optionName] = aProps;
         return obj;
 
     }
 
     //获取比较对象的属性
-    getCompareValOption(optionName,oCurChild){
-        let aProps=[];
-        let obj={};
-        let curChild=oCurChild;
+    getCompareValOption(optionName, oCurChild) {
+        let aProps = [];
+        let obj = {};
+        let curChild = oCurChild;
 
-        if(curChild){
+        if (curChild) {
 
-            let judgeObjFlag= curChild.judgeObjFlag;
-            let judgeObjVal=curChild.judgeValFlag;
-            let judgeObjClassName=null;
-            let allWidgetsList =this.state.allWidgetsList;
-            let type =null;
-            let compareObjFlag=curChild.compareObjFlag;
-            let compareObjClassName=null;
+            let judgeObjFlag = curChild.judgeObjFlag;
+            let judgeObjVal = curChild.judgeValFlag;
+            let judgeObjClassName = null;
+            let allWidgetsList = this.state.allWidgetsList;
+            let type = null;
+            let compareObjFlag = curChild.compareObjFlag;
+            let compareObjClassName = null;
 
-            allWidgetsList.map((v,i)=>{
-                if(v.props.name == judgeObjFlag){
-                    judgeObjClassName =v.className;
-                    if(judgeObjClassName=='var'){
-                        if(v.type=='number'){
+            allWidgetsList.map((v, i)=> {
+                if (v.props.name == judgeObjFlag) {
+                    judgeObjClassName = v.className;
+                    if (judgeObjClassName == 'var') {
+                        if (v.type == 'number') {
                             type = 0;
-                        }else if(v.type=='string'){
+                        } else if (v.type == 'string') {
                             type = 2;
                         }
-                    }else if(judgeObjClassName=='text' ){
+                    } else if (judgeObjClassName == 'text') {
                         type = 2;
-                    } else if(judgeObjClassName=='counter'){
+                    } else if (judgeObjClassName == 'counter') {
                         type = 0;
                     }
                 }
             });
-            if( propertyMap[judgeObjClassName]){
+            if (propertyMap[judgeObjClassName]) {
                 propertyMap[judgeObjClassName].map((v, i)=> {
                     if (v.isProperty && v.name == judgeObjVal) {
-                        type =v.type;
+                        type = v.type;
                     }
                 });
+                if(judgeObjVal=='width'||judgeObjVal=='height'){
+                    type =0;
+                }
             }
 
-            allWidgetsList.map((v,i)=>{
-                if(v.props.name == compareObjFlag){
-                    compareObjClassName =v.className;
+            allWidgetsList.map((v, i)=> {
+                if (v.props.name == compareObjFlag) {
+                    compareObjClassName = v.className;
                 }
             });
 
             propertyMap[compareObjClassName].map((v, i)=> {
-                if(v.isProperty && v.name != 'id' && this.getTypeArr(v.type).indexOf(type)>=0){
-                        if(v.showName=='W'){
-                            aProps.push('宽度');
-                        }else if(v.showName=='H'){
-                            aProps.push('高度');
-                        }else if(v.showName=='中心点'){
-                            ;
-                        }else{
-                            aProps.push(v.showName);
-                            if(!v.showName){
-                                alert('找到一个bug,通知下程序猿吧!');
-                            }
+                if (v.isProperty && v.name != 'id' && this.getTypeArr(v.type).indexOf(type) >= 0) {
+                    if (v.showName == 'W') {
+                        aProps.push('宽度');
+                    } else if (v.showName == 'H') {
+                        aProps.push('高度');
+                    } else if (v.showName == '中心点') {
+                        ;
+                    } else {
+                        aProps.push(v.showName);
+                        if (!v.showName) {
+                            alert('找到一个bug,通知下程序猿吧!');
                         }
+                    }
                 }
             });
         }
-        obj[optionName] =aProps;
+        obj[optionName] = aProps;
         return obj;
     }
 
 
-    plusOperation(eventIndex){
-        if(this.state.eventList[eventIndex]&&
-            !this.state.eventList[eventIndex].enable){
+    plusOperation(eventIndex) {
+        if (this.state.eventList[eventIndex] && !this.state.eventList[eventIndex].enable) {
             return;
         }
-        this.curEventIndex =eventIndex;
-        let eventList =this.state.eventList;
-        if(eventList[this.curEventIndex].zhongHidden){
-            let  arrHidden=[false,false,true,true,true,true];
-            eventList[this.curEventIndex].zhongHidden=false;
-            eventList[this.curEventIndex].children[0].arrHidden= arrHidden;
-            this.setState({eventList:eventList});
-        }else{
-           WidgetActions['addEventChildren'](this.state.eventList[this.curEventIndex]);
+        this.curEventIndex = eventIndex;
+        let eventList = this.state.eventList;
+        if (eventList[this.curEventIndex].zhongHidden) {
+            let arrHidden = [false, false, true, true, true, true];
+            eventList[this.curEventIndex].zhongHidden = false;
+            eventList[this.curEventIndex].children[0].arrHidden = arrHidden;
+            this.setState({eventList: eventList});
+        } else {
+            WidgetActions['addEventChildren'](this.state.eventList[this.curEventIndex]);
         }
     }
 
-    deleteOperation(curChildrenIndex,curEventIndex){
-        if(this.state.eventList[curEventIndex]&&
-            !this.state.eventList[curEventIndex].enable){
+    deleteOperation(curChildrenIndex, curEventIndex) {
+        if (this.state.eventList[curEventIndex] && !this.state.eventList[curEventIndex].enable) {
             return;
         }
-        WidgetActions['delEventChildren'](this.state.eventList[curEventIndex],curChildrenIndex);
+        WidgetActions['delEventChildren'](this.state.eventList[curEventIndex], curChildrenIndex);
     }
 
     //将英文名转换成中文名
-    getShowNameByName(type,name,curChildrenIndex,curEventIndex){
-        let showName=name;
+    getShowNameByName(type, name, curChildrenIndex, curEventIndex) {
+        let showName = name;
 
-        let allWidgetsList =this.state.allWidgetsList;
+        let allWidgetsList = this.state.allWidgetsList;
 
-        let curChild =this.state.eventList[curEventIndex].children[curChildrenIndex];
-        if(allWidgetsList) {
+        let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
+        if (allWidgetsList) {
             if (type == 'conFlag') {
                 //获取当前事件的类名
                 let conArr = [];
@@ -564,49 +566,49 @@ class Event extends React.Component {
                     }
                 });
 
-                if (judgeObjClassName && propertyMap[judgeObjClassName]) {
-                    propertyMap[judgeObjClassName].map((v, i)=> {
-                        if (name == 'width' || name=='W') {
+            if (judgeObjClassName && propertyMap[judgeObjClassName]) {
+                propertyMap[judgeObjClassName].map((v, i)=> {
+                    if (name == 'width' || name == 'W') {
+                        showName = '宽度';
+                    } else if (name == 'height' || name == 'H') {
+                        showName = '高度';
+                    }
+                    if (v.name == name) {
+                        showName = v.showName;
+                    }
+                });
+            }
+
+        } else if (type == 'compareValFlag' && curChild) {
+            let compareObjFlag = curChild.saveCompareObjFlag ? curChild.saveCompareObjFlag : curChild.compareObjFlag;
+
+            if (compareObjFlag) {
+                let compareObjClassName = null;
+                allWidgetsList.map((v, i)=> {
+                    if (v.props.name == compareObjFlag) {
+                        compareObjClassName = v.className;
+                    }
+                });
+
+                if (compareObjClassName && propertyMap[compareObjClassName]) {
+                    propertyMap[compareObjClassName].map((v, i)=> {
+                        if (name == 'width' || name == 'W') {
                             showName = '宽度';
-                        } else if (name == 'height'|| name=='H') {
+                        } else if (name == 'height' || name == 'H') {
                             showName = '高度';
                         }
                         if (v.name == name) {
                             showName = v.showName;
                         }
                     });
-                }
 
-            } else if (type == 'compareValFlag' && curChild) {
-                let compareObjFlag = curChild.saveCompareObjFlag ? curChild.saveCompareObjFlag : curChild.compareObjFlag;
-
-
-                if (compareObjFlag) {
-                    let compareObjClassName = null;
-                    allWidgetsList.map((v, i)=> {
-                        if (v.props.name == compareObjFlag) {
-                            compareObjClassName = v.className;
-                        }
-                    });
-
-                    if (compareObjClassName && propertyMap[compareObjClassName]) {
-                        propertyMap[compareObjClassName].map((v, i)=> {
-                            if (name == 'width' || name=='W') {
-                                showName = '宽度';
-                            } else if (name == 'height'|| name=='H') {
-                                showName = '高度';
-                            }
-                            if (v.name == name) {
-                                showName = v.showName;
-                            }
-                        });
-
-                    }
                 }
             }
         }
-          return showName?showName:'';
     }
+
+    return  showName?showName: '';
+}
 
    //根据中文名找到英文名,并保存
    getNameByCnName(type,value) {

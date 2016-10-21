@@ -357,7 +357,7 @@ function resolveEventTree(node, list) {
                                       if(v1.objId) {
                                           v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
                                       } else {
-                                          v1.objId = null;
+                                          v1.objKey = null;
                                       }
                                       (delete v1.objId);
                                   });
@@ -2375,6 +2375,7 @@ export default Reflux.createStore({
                 this.getAllWidgets();
                 break;
         }
+        this.trigger({deleteWidget:true});
     },
     didSelectTarget: function (data) {
         this.trigger({didSelectTarget:{target:data}});
