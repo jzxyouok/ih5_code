@@ -752,10 +752,10 @@ class Event extends React.Component {
 
         if (isRun) {
             let eventList = this.state.eventList;
-            //判断事件面板所需宽度
             this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
         }
+        WidgetActions['recordEventTreeList']();
     }
 
     //点击select,出现下拉框之前的事件

@@ -37,6 +37,7 @@ export default Reflux.createActions([
   'addEventChildren'  ,          //添加新的判断逻辑
   'delEventChildren'  ,          //删除判断逻辑
   'enableEventChildren',         //单个条件的可执行与否
+  'recordEventTreeList',         //记录事件树
 
   'selectFadeWidget',             //选择伪对象
   'addFadeWidget',                //添加伪对象
@@ -64,4 +65,10 @@ export default Reflux.createActions([
 
   'renameWidget',
   'didSelectTarget',         //选择了目标对象
+
+  'updateHistoryRecord',
+  'revokedHistory',
+  'replyHistory',
+  'chooseHistory',
+  'cleanHistory'
 ]);
