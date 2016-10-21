@@ -22,12 +22,18 @@ const MenuItem = Menu.Item;
 class FormulaInput extends React.Component {
     constructor(props) {
         super(props);
+        let value = null;
+        let type = inputType.value;
+        if(props.value) {
+            value = props.value.value;
+            type = props.value.type;
+        }
         this.state = {
-            value: props.value&&props.value.value? props.value.value: null,
-            currentType: props.value&&props.value.type? props.value.type : inputType.value,
+            value: value,
+            currentType: type,
+            objectList: [],
             objectDropDownVisible: false, //对象dropdown
             propertyDropDownVisible: false, //属性dropdown
-            objectList: []
         };
         this.containerId = props.containerId || 'iH5-App';
         this.minWidth = props.minWidth||'244px';
@@ -60,12 +66,20 @@ class FormulaInput extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.containerId = nextProps.containerId || 'iH5-App';
+        let value = null;
+        let type = inputType.value;
+        if(nextProps.value) {
+            value = nextProps.value.value;
+            type = nextProps.value.type;
+        }
         this.setState({
-            value: nextProps.value&&nextProps.value.value? nextProps.value.value: null,
-            currentType: nextProps.value&&nextProps.value.type? nextProps.value.type : inputType.value,
+            value: value,
+            currentType: type,
             objectList: nextProps.objectList||[]
-        })
+        });
+        this.containerId = nextProps.containerId || 'iH5-App';
+        this.minWidth = nextProps.minWidth||'244px';
+        this.onChange = nextProps.onChange;
     }
 
     onStatusChange(widget) {
@@ -327,9 +341,9 @@ class FormulaInput extends React.Component {
         return (
             <div className='formulaInput'>
                 {
-                    this.state.currentType === inputType.value
-                        ? valueWidget
-                        : formulaWidget
+                    this.state.currentType === inputType.formula
+                        ? formulaWidget
+                        : valueWidget
                 }
             </div>
         );

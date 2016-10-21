@@ -201,7 +201,6 @@ class ObjectView extends React.Component {
                 ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.currentNode.node.sid);
             }
         }
-        WidgetActions['eventSelectTargetMode'](false);
     }
 
     dragLeftBtn(){
