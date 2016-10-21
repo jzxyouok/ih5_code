@@ -1185,7 +1185,7 @@ export default Reflux.createStore({
 
         this.eventTreeList = [];
     },
-    selectWidget: function(widget, shouldTrigger, keepValueType,bool) {
+    selectWidget: function(widget, shouldTrigger, keepValueType) {
         var render = false;
         if (widget) {
             if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -1220,15 +1220,12 @@ export default Reflux.createStore({
             }
         }
 
-        if(bool == undefined ){
-            this.currentWidget = widget;
-        }
+        this.currentWidget = widget;
 
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
-            if(bool == undefined ){
-                this.trigger({selectWidget: widget});
-            }
+            this.trigger({selectWidget: widget});
+
             //判断是否是可选择的，是否加锁
             if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
                   bridge.selectWidget(widget.node, this.updateProperties.bind(this));
@@ -2432,7 +2429,27 @@ export default Reflux.createStore({
             this.selectWidget(stageTree[0].tree);
         }
         else {
-            this.selectWidget(stageTree[0].tree,null,null,true);
+            let fuc = (v1,i1)=>{
+                if(v1.key == this.currentWidget.key){
+                    this.selectWidget(v1);
+                }
+                else {
+                    if(v1.children.length > 0){
+                        v1.children.map(fuc);
+                    }
+                }
+            };
+
+            stageTree.map((v,i)=>{
+                if(v.tree.key == this.currentWidget.key){
+                   this.selectWidget(v.tree);
+                }
+                else {
+                   if(v.tree.children.length > 0){
+                       v.tree.children.map(fuc);
+                   }
+                }
+            });
         }
         this.getAllWidgets();
     },
@@ -2677,9 +2694,9 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         //http://test-beta.ih5.cn
-        xhr.open(method, url);
+        //xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
@@ -2733,7 +2750,7 @@ export default Reflux.createStore({
         data['stage'] = {};
         trimTree(stageTree[0].tree);
         generateId(stageTree[0].tree);
-        saveTree(data['stage'], stageTree[0].tree);
+        saveTree(data['stage'], stageTree[0].tree,true);
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
         data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
 
@@ -2744,7 +2761,7 @@ export default Reflux.createStore({
                 data['defs'][name] = {};
                 trimTree(stageTree[i].tree);
                 generateId(stageTree[i].tree);
-                saveTree(data['defs'][name], stageTree[i].tree);
+                saveTree(data['defs'][name], stageTree[i].tree,true);
                 data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
                 data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
             }
