@@ -387,6 +387,9 @@ class Event extends React.Component {
                     type = v.type;
                 }
             });
+            if(judgeObjVal=='width'||judgeObjVal=='height'){
+                type =0;
+            }
         }
 
         allWidgetsList.map((v, i)=> {
@@ -469,6 +472,9 @@ class Event extends React.Component {
                         type = v.type;
                     }
                 });
+                if(judgeObjVal=='width'||judgeObjVal=='height'){
+                    type =0;
+                }
             }
 
             allWidgetsList.map((v, i)=> {
