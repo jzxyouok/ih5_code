@@ -59,7 +59,7 @@ class FormulaInput extends React.Component {
 
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
 
-        this.checkValueObjValid = this.checkValueObjValid.bind(this);
+        this.checkValueObjValid = this.checkValueObjValid.bind(this); //不存在的obj清掉
     }
 
     componentDidMount() {
@@ -87,10 +87,11 @@ class FormulaInput extends React.Component {
             return;
         }
         if(widget.allWidgets){
-            this.checkValueObjValid();
             this.setState({
                 objectList: widget.allWidgets
             });
+        } else if(widget.deleteWidget) {
+            this.checkValueObjValid();
         }
     }
 

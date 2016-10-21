@@ -2368,6 +2368,7 @@ export default Reflux.createStore({
                 this.getAllWidgets();
                 break;
         }
+        this.trigger({deleteWidget:true});
     },
     didSelectTarget: function (data) {
         this.trigger({didSelectTarget:{target:data}});
