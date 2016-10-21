@@ -343,21 +343,19 @@ function resolveEventTree(node, list) {
                                   (delete v.valueId);
                               }
                           });
-                      } else {
-                          if(cmd.action.property&&cmd.action.property.length>0) {
-                              cmd.action.property.forEach(v=> {
-                                  if (cmd.action.name=='changeValue'&&v.name === 'value'&&v.value&&v.value.type === 2) {
-                                      v.value.value.forEach(v1=>{
-                                          if(v1.objId) {
-                                              v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
-                                          } else {
-                                              v1.objId = null;
-                                          }
-                                          (delete v1.objId);
-                                      });
-                                  }
-                              });
-                          }
+                      } else if(cmd.action.name==='changeValue') {
+                          cmd.action.property.forEach(v=> {
+                              if (v.value&&v.value.type === 2) {
+                                  v.value.value.forEach(v1=>{
+                                      if(v1.objId) {
+                                          v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                                      } else {
+                                          v1.objId = null;
+                                      }
+                                      (delete v1.objId);
+                                  });
+                              }
+                          });
                       }
                       break;
               }
@@ -468,28 +466,16 @@ function objectKeyToId(key) {
         let obj = keyMap[key];
         if(obj){
             return objectToId(obj);
-        } else {
-            return null;
         }
-    } else return null;
+    }
+    return null;
 }
 
-function generateId(node, idList) {
+function generateId(node) {
     //生成需要的data
     let specGenIdsData = (key) => {
         let data = keyMap[key];
         generateObjectId(data);
-        if (idList != undefined && data) {
-            var o = objectToId(data);
-            //ids的key只需保存外层的
-            if (o[1]) {
-                idList[o[0]] = data.widget.key;
-            } else {
-                idList[o[0]] = data.key;
-            }
-            return o;
-        }
-        return null;
     };
 
   if (node.props['eventTree']) {
@@ -499,52 +485,35 @@ function generateId(node, idList) {
       item.children.forEach(judge => {
           judge.judgeObj = keyMap[judge.judgeObjKey];
           judge.compareObj = keyMap[judge.compareObjKey];
-        generateObjectId(judge.judgeObj);
-        generateObjectId(judge.compareObj);
-        if (idList != undefined) {
-          if (judge.judgeObj) {
-            var o = objectToId(judge.judgeObj);
-            idList[o[0]] = judge.judgeObj.key;
-            judge.judgeObjId = o[0];
-            if (o[1]) {
-              idList[o[0]] = judge.judgeObj.widget.key;
-              judge.judgeVarId = o[1];
-              judge.judgeVarName = o[2];
-            }
-          }
-          if (judge.compareObj) {
-            var o = objectToId(judge.compareObj);
-            idList[o[0]] = judge.compareObj.key;
-            judge.compareObjId = o[0];
-            if (o[1]) {
-              idList[o[0]] = judge.compareObj.widget.key;
-              judge.compareVarId = o[1];
-              judge.compareVarName = o[2];
-            }
-          }
-        }
+          generateObjectId(judge.judgeObj);
+          generateObjectId(judge.compareObj);
       });
 
       item.specificList.forEach(cmd => {
-          let sObjId = specGenIdsData(cmd.object);
-          cmd.sObjId = sObjId;
+          specGenIdsData(cmd.object);
           if(cmd.action){
               switch (cmd.action.type){
                   case funcType.customize:
-                      cmd.action.funcId = specGenIdsData(cmd.action.func);
+                      specGenIdsData(cmd.action.func);
                       break;
                   default:
                       if(cmd.action.property){
-                          cmd.action.property.forEach(v=>{
-                              //看是否需要generateid
-                              if (v.name ==='data'|| v.name ==='option') {
-                                  v.valueId = specGenIdsData(v.value);
-                              } else if (cmd.action.name=='changeValue'&&v.name === 'value'&&v.value&&v.value.type === 2) {
-                                  v.value.value.forEach(v1=>{
-                                      v1.objId = specGenIdsData(v1.objKey);
-                                  });
-                              }
-                          })
+                          if(cmd.action.name==='changeValue') {
+                              cmd.action.property.forEach(v=>{
+                                  if (v.value&&v.value.type === 2) {
+                                      v.value.value.forEach(v1=>{
+                                          specGenIdsData(v1.objKey);
+                                      });
+                                  }
+                              });
+                          } else {
+                              cmd.action.property.forEach(v=>{
+                                  //看是否需要generateid
+                                  if (v.name ==='data'|| v.name ==='option') {
+                                      specGenIdsData(v.value);
+                                  }
+                              })
+                          }
                       }
                       break;
               }
@@ -555,13 +524,13 @@ function generateId(node, idList) {
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
           item.fields.forEach(judge => {
-              judge.valueId = specGenIdsData(judge.value);
+              specGenIdsData(judge.value);
           });
       });
   }
   if (node.children.length > 0) {
     node.children.map(item => {
-      generateId(item, idList);
+      generateId(item);
     });
   }
 }
@@ -605,30 +574,26 @@ function generateJsFunc(etree) {
         });
       }
 
-     console.log('conditions',conditions);
-
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
-            if (cmd.action.property&&cmd.action.property.length >= 1) {
-                cmd.action.property.forEach(prop => {
-                    if(prop.name==='value'){
-                        if(prop.value.type === 1){
-                            lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
-                        } else if (prop.value.type === 2 && prop.value.value &&prop.value.value.length>0) {
-                            let subLine = '';
-                            prop.value.value.forEach(fV =>{
-                                if(fV.objId&&fV.property){
-                                    subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name) + fV.pattern;
-                                }
-                            });
-                            if(subLine) {
-                                lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
-                            }
-                        }
-                    }
-                });
-            }
+              cmd.action.property.forEach(prop => {
+                  if(prop.value){
+                      if(prop.value.type === 1){
+                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
+                      } else if (prop.value.type === 2) {
+                          let subLine = '';
+                          prop.value.value.forEach(fV =>{
+                              if(fV.objId&&fV.property){
+                                  subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name) + fV.pattern;
+                              }
+                          });
+                          if(subLine!=='') {
+                              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
+                          }
+                      }
+                  }
+              });
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -875,34 +840,37 @@ function saveTree(data, node, saveKey) {
                             }
                         });
                         c.action.property = property;
-                    } else {
-                        if(cmd.action.property.length>0) {
-                            cmd.action.property.forEach(v=> {
-                                if(cmd.action.name=='changeValue'&&v.name === 'value' && v.value &&v.value.type === 2) {
+                    } else if(cmd.action.name=='changeValue') {
+                            cmd.action.property.forEach(v => {
+                                if(v.value && v.value.type === 2) {
                                     let temp = {
                                         name: v.name,
                                         showName: v.showName,
                                         type:v.type,
                                         value:{
                                             type:2,
+                                            value:[],
                                         }
                                     };
                                     v.value.value.forEach(v1=>{
-                                        v1.objId = objectKeyToId(v1.objKey);
-                                        if(!saveKey) {
-                                            (delete v1.objKey);
+                                        let tempv = {
+                                            objId: objectKeyToId(v1.objKey),
+                                            property: v1.property,
+                                            pattern: v1.pattern,
+                                        };
+                                        if(saveKey) {
+                                            tempv.objKey = v1.objKey;
                                         }
+                                        temp.value.value.push(tempv);
                                     });
-                                    temp.value.value = v.value.value;
                                     property.push(temp);
                                 } else {
                                     property.push(v);
                                 }
                             });
                             c.action.property = property;
-                        } else {
-                            c.action.property = cmd.action.property;
-                        }
+                    } else {
+                        c.action.property = cmd.action.property;
                     }
                 }
             } else {
@@ -2510,8 +2478,7 @@ export default Reflux.createStore({
         let images = [];
         data['stage'] = {};
         trimTree(stageTree[0].tree);
-        let idList = [];
-        generateId(stageTree[0].tree, idList);
+        generateId(stageTree[0].tree);
         saveTree(data['stage'], stageTree[0].tree);
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
         // data['stage']['links'] = stageTree[0].tree.imageList.length;
@@ -2524,7 +2491,7 @@ export default Reflux.createStore({
                 let name = stageTree[i].name;
                 data['defs'][name] = {};
                 trimTree(stageTree[i].tree);
-                generateId(stageTree[i].tree, idList);
+                generateId(stageTree[i].tree);
                 saveTree(data['defs'][name], stageTree[i].tree);
                 data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
                 // data['defs'][name]['links'] = stageTree[i].tree.imageList.length;
