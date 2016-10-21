@@ -852,7 +852,7 @@ function saveTree(data, node, saveKey) {
         });
 
 
-        console.log('judges',judges);
+        //console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges, enable:eventEnable});
 
 
@@ -1068,6 +1068,10 @@ function downloadFile(filename, text) {
 }
 */
 
+var historyRecord = [];
+var historyRW = historyRecord.length;
+var historyName = "添加";
+
 export default Reflux.createStore({
     init: function () {
         this.listenTo(WidgetActions['selectWidget'], this.selectWidget);
@@ -1141,11 +1145,16 @@ export default Reflux.createStore({
 
         this.listenTo(WidgetActions['didSelectTarget'], this.didSelectTarget);
 
+        this.listenTo(WidgetActions['updateHistoryRecord'], this.updateHistoryRecord);
+        this.listenTo(WidgetActions['revokedHistory'], this.revokedHistory);
+        this.listenTo(WidgetActions['replyHistory'], this.replyHistory);
+        this.listenTo(WidgetActions['chooseHistory'], this.chooseHistory);
+        this.listenTo(WidgetActions['cleanHistory'], this.cleanHistory);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
         this.eventTreeList = [];
     },
-    selectWidget: function(widget, shouldTrigger, keepValueType) {
+    selectWidget: function(widget, shouldTrigger, keepValueType,bool) {
         var render = false;
         if (widget) {
             if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -1178,10 +1187,14 @@ export default Reflux.createStore({
                 this.selectFadeWidget(null, nodeType.dbItem);
             }
         }
-        this.currentWidget = widget;
+        if(bool == undefined ){
+            this.currentWidget = widget;
+        }
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
-            this.trigger({selectWidget: widget});
+            if(bool == undefined ){
+                this.trigger({selectWidget: widget});
+            }
             //判断是否是可选择的，是否加锁
             if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
                 bridge.selectWidget(widget.node, this.updateProperties.bind(this));
@@ -1193,16 +1206,18 @@ export default Reflux.createStore({
         }
     },
     addWidget: function(className, props, link, name, dbType) {
-
       if (!this.currentWidget)
           return;
 
       if(className == "db"){
           props = this.addWidgetDefaultName(className, props, true, false, name,dbType);
+          historyName = "添加 数据库"+name;
       } else if(className == "sock"){
           props = this.addWidgetDefaultName(className, props, true, false, name);
+          historyName = "添加 连接"+name;
       } else if (!(className === 'image')) {
           props = this.addWidgetDefaultName(className, props, true, false);
+          historyName = "添加 "+className;
       }
 
       if (className === 'track') {
@@ -1249,8 +1264,10 @@ export default Reflux.createStore({
         this.getAllWidgets();
         this.render();
       }
+        this.updateHistoryRecord(historyName);
     },
     removeWidget: function(shouldChooseParent) {
+        historyName = "删除" + this.currentWidget.node.name;
         let parentWidget;
         if (this.currentWidget&&shouldChooseParent) {
             parentWidget = this.currentWidget.parent ? this.currentWidget.parent : this.currentWidget.rootWidget;
@@ -1276,6 +1293,8 @@ export default Reflux.createStore({
                 this.trigger({selectWidget: null, redrawTree: true});
             }
             process.nextTick(() =>bridge.render(rootNode));
+
+            this.updateHistoryRecord(historyName);
         }
     },
     removeAllFadeWidgetsMapping(w){
@@ -1335,6 +1354,8 @@ export default Reflux.createStore({
         }
         this.trigger({selectWidget: this.currentWidget});
         this.render();
+          historyName = "复制" + this.currentWidget.node.name;
+          this.updateHistoryRecord(historyName);
       }
     },
     cutWidget: function() {
@@ -1364,6 +1385,8 @@ export default Reflux.createStore({
 
             this.trigger({redrawTree: true});
             // this.render();
+            historyName = "加锁" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     getWidgetByKey: function (key) {
@@ -1419,6 +1442,8 @@ export default Reflux.createStore({
                 this.render();
                 this.selectWidget(obj);
                 this.reorderEventTreeList();
+                historyName = "移动" + this.currentWidget.node.name;
+                this.updateHistoryRecord(historyName);
             }
         }
     },
@@ -1432,7 +1457,8 @@ export default Reflux.createStore({
             this.render();
             this.trigger({redrawTree: true});
             this.reorderEventTreeList();
-
+              historyName = "移动" + this.currentWidget.node.name;
+              this.updateHistoryRecord(historyName);
           }
       }
     },
@@ -1493,6 +1519,8 @@ export default Reflux.createStore({
         this.updateProperties({'name':this.currentWidget.props['name']});
         // this.render();
         this.trigger({redrawTree: true});
+        historyName = "重命名" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
       if(this.currentWidget.props.isLock){
@@ -1543,6 +1571,8 @@ export default Reflux.createStore({
             bridge.updateSelector(this.currentWidget.node);
         }
         this.trigger(p);
+        historyName = "更改属性" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     reorderEventTreeList: function () {
         if(this.currentWidget&&this.currentWidget.rootWidget) {
@@ -1570,13 +1600,6 @@ export default Reflux.createStore({
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
-        // let eventTree = {
-        //     'eid': eid,
-        //     'condition': null,
-        //     'children': null,
-        //     'enable': true,
-        //     'specificList': [eventSpec]
-        // };
 
         let event = {
             'eid': eid,
@@ -1668,6 +1691,8 @@ export default Reflux.createStore({
         this.trigger({redrawTree: true});
         this.reorderEventTreeList();
         // this.render();
+        historyName = "删除事件组" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     enableEventTree: function (skipSetEventList, enableValue) {
         if (this.currentWidget) {
@@ -1695,6 +1720,8 @@ export default Reflux.createStore({
             }
         }
         this.trigger({redrawTree: true});
+        historyName = enableValue?"激活事件组":"屏蔽事件组" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
         // this.render();
     },
     activeEventTree: function (nid) {
@@ -1712,6 +1739,8 @@ export default Reflux.createStore({
         }
         this.trigger({activeEventTreeKey:{key:this.currentActiveEventTreeKey}});
         // this.render();
+        historyName = "激活事件组" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     addEvent: function () {
         if (this.currentWidget) {
@@ -1722,6 +1751,8 @@ export default Reflux.createStore({
             }
         }
         this.trigger({redrawEventTreeList:true});
+        historyName = "激活事件" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     enableEvent: function (event) {
         if(event) {
@@ -1738,6 +1769,8 @@ export default Reflux.createStore({
             }
             this.changeEventTreeEnableByEvents();
             this.trigger({redrawEventTree: true});
+            historyName = event.enable?"激活事件":"屏蔽事件" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     changeEventTreeEnableByEvents: function () {
@@ -1769,6 +1802,8 @@ export default Reflux.createStore({
 
         this.changeEventTreeEnableByEvents();
         this.trigger({redrawEventTreeList: true});
+        historyName = "删除事件" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     addEventChildren:function(event){
         if(event && event['children']){
@@ -1783,24 +1818,32 @@ export default Reflux.createStore({
                 arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             });
             this.trigger({redrawEventTree: true});
+            historyName = "添加事件条件" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     delEventChildren:function(event,index){
         if(event && event['children']){
             event.children.splice(index,1);
             this.trigger({redrawEventTree: true});
+            historyName = "删除事件条件" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     enableEventChildren:function(eventChild) {
         if(eventChild){
             eventChild.enable = !eventChild.enable;
             this.trigger({redrawEventTree: true});
+            historyName = eventChild.enable?"激活事件条件":"屏蔽事件条件" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     addSpecific: function(event){
         if(event&&event['specificList']){
             event['specificList'].push(this.emptyEventSpecific());
             this.trigger({redrawEventTree: true});
+            historyName = "添加目标对象" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     deleteSpecific: function(sid, event){
@@ -1819,6 +1862,8 @@ export default Reflux.createStore({
                 }
             }
             this.trigger({redrawEventTree: true});
+            historyName = "删除目标对象" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     changeSpecific: function(specific, params){
@@ -1832,12 +1877,16 @@ export default Reflux.createStore({
                 specific.action.property = params.property;
             }
             this.trigger({redrawEventTree: true});
+            historyName = "修改目标对象" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     enableSpecific: function(specific, enable) {
         if (enable != null|| enable != undefined) {
             specific.enable = enable;
             this.trigger({redrawEventTree: true});
+            historyName = specific.enable?"激活目标对象":"屏蔽目标对象" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     selectFadeWidget: function(data, type) {
@@ -1902,6 +1951,8 @@ export default Reflux.createStore({
             this.trigger({updateWidget: {widget:func, type:nodeType.func, action:nodeAction.add}});
         }
         this.trigger({redrawTree: true});
+        historyName = "添加函数" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     changeFunction: function (props) {
         if(props) {
@@ -1913,6 +1964,8 @@ export default Reflux.createStore({
                 this.currentFunction['params'] = props['params'];
             }
             this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.change}});
+            historyName = "修改函数" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     removeFunction: function () {
@@ -1928,6 +1981,8 @@ export default Reflux.createStore({
                 keyMap[this.currentFunction.key]= undefined;
                 this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.remove}});
                 this.selectWidget(this.currentWidget);
+                historyName = "删除函数" + this.currentWidget.node.name;
+                this.updateHistoryRecord(historyName);
             }
         }
     },
@@ -1952,6 +2007,8 @@ export default Reflux.createStore({
             } else {
                 this.addFunction(copyObj, copyObj.props.name);
             }
+            historyName = "粘贴函数" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     cutFunction: function () {
@@ -2005,6 +2062,8 @@ export default Reflux.createStore({
         }
         this.getAllWidgets();
         this.trigger({redrawTree: true});
+        historyName = "添加变量" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     changeVariable: function (props) {
         if(props) {
@@ -2013,6 +2072,8 @@ export default Reflux.createStore({
             } else if(props['value']) {
                 this.currentVariable['value'] = props['value'];
             }
+            historyName = "修改变量" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     removeVariable: function () {
@@ -2042,6 +2103,8 @@ export default Reflux.createStore({
                 default:
                     break;
             }
+            historyName = "删除变量" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     copyVariable: function () {
@@ -2065,6 +2128,8 @@ export default Reflux.createStore({
             } else {
                 this.addVariable(copyObj, copyObj.props.name);
             }
+            historyName = "粘贴变量" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     cutVariable: function () {
@@ -2100,6 +2165,8 @@ export default Reflux.createStore({
             this.trigger({updateWidget: {widget:dbItem, type:nodeType.dbItem, action:nodeAction.add}});
         }
         this.trigger({redrawTree: true});
+        historyName = "添加数据库变量" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     changeDBItem: function (props) {
         if(this.currentDBItem){
@@ -2110,6 +2177,8 @@ export default Reflux.createStore({
                     this.currentDBItem['fields'] = props['fields'];
                 }
             }
+            historyName = "更改数据库变量" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     removeDBItem: function() {
@@ -2127,6 +2196,8 @@ export default Reflux.createStore({
                 this.trigger({updateWidget: {widget:this.currentDBItem, type:nodeType.dbItem, action:nodeAction.remove}});
                 this.selectWidget(this.currentWidget);
             }
+            historyName = "删除数据库变量" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     renameFadeWidget: function (type, name, fromTree) {
@@ -2145,6 +2216,7 @@ export default Reflux.createStore({
                     }
                     this.trigger({redrawTree: true});
                 }
+                historyName = "重命名函数" + this.currentWidget.node.name;
                 break;
             case nodeType.var:
                 if(this.currentVariable&&!isEmptyString(name)) {
@@ -2160,16 +2232,19 @@ export default Reflux.createStore({
                     }
                     this.trigger({redrawTree: true});
                 }
+                historyName = "重命名变量" + this.currentWidget.node.name;
                 break;
             case nodeType.dbItem:
                 if(this.currentDBItem&&!isEmptyString(name)) {
                     this.currentDBItem.props.name = name;
                     this.trigger({redrawTree: true});
                 }
+                historyName = "重命名数据库变量" + this.currentWidget.node.name;
                 break;
             default:
                 break;
         }
+        this.updateHistoryRecord(historyName);
     },
     pasteTreeNode: function () {
        switch (copyObj.className) {
@@ -2260,8 +2335,9 @@ export default Reflux.createStore({
     },
     deletePoint: function() {
       this.trigger({deletePoint: true});
+        this.updateHistoryRecord();
     },
-    initTree: function(data) {
+    initTree: function(data,bool) {
         classList = [];
         bridge.resetClass();
         stageTree = [];
@@ -2300,8 +2376,17 @@ export default Reflux.createStore({
             rootDiv.addEventListener('drop', drop.bind(this), false);
         }
 
-        this.trigger({initTree: stageTree, classList: classList});
-        this.selectWidget(stageTree[0].tree);
+        this.trigger({
+            initTree: stageTree
+            , classList: classList
+        });
+
+        if(bool ==undefined){
+            this.selectWidget(stageTree[0].tree);
+        }
+        else {
+            this.selectWidget(stageTree[0].tree,null,null,true);
+        }
         this.getAllWidgets();
     },
     addClass: function(name, bool) {
@@ -2330,6 +2415,8 @@ export default Reflux.createStore({
 
         bridge.addClass(name,bool);
         this.trigger({initTree: stageTree, classList: classList});
+        historyName = "添加组件" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
 
     sortClass: function(data) {
@@ -2362,6 +2449,8 @@ export default Reflux.createStore({
         classList.map(fuc);
         //console.log(classList,stageTree);
         this.trigger({initTree: stageTree, classList: classList});
+        historyName = "管理组件" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
 
     deleteClass: function(data){
@@ -2383,6 +2472,8 @@ export default Reflux.createStore({
         classList.map(fuc);
         //console.log(classList,stageTree);
         this.trigger({initTree: stageTree, classList: classList});
+        historyName = "删除组件" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     render: function() {
       if (this.currentWidget) {
@@ -2465,6 +2556,8 @@ export default Reflux.createStore({
             if(result['id']){
                 callback(result['id'], wname, wdescribe);
             }
+            historyRecord = [];
+            historyRW = historyRecord.length;
         };
         if (wid) {
             this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb,null,updateProgress);
@@ -2527,9 +2620,9 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         //http://test-beta.ih5.cn
-        xhr.open(method, url);
+        //xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
@@ -2548,6 +2641,107 @@ export default Reflux.createStore({
     },
     activeHandle: function(status) {
         this.trigger({hasHandle: status});
+    },
+    updateHistoryRecord: function(historyName) {
+        let getImageList = function(array, list) {
+            var result = [];
+            var count = 0;
+            for (let i = 0; i < list.length; i++) {
+                var item = list[i];
+                if (typeof item == 'string') {
+                    count++;
+                    array.push(item);
+                } else {
+                    var n = item.length;
+                    if (count) {
+                        result.push(count);
+                        count = 0;
+                    }
+                    result.push(-n);
+                    for (var j = 0; j < n; j++) {
+                        array.push(item[j]);
+                    }
+                }
+            }
+            if (result.length) {
+                if (count)
+                    result.push(count);
+                return result.join(',');
+            } else {
+                return count;
+            }
+        };
+        let data = {};
+        let images = [];
+        data['stage'] = {};
+        trimTree(stageTree[0].tree);
+        generateId(stageTree[0].tree);
+        saveTree(data['stage'], stageTree[0].tree);
+        data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
+        data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
+
+        if (stageTree.length > 1) {
+            data['defs'] = {};
+            for (let i = 1; i < stageTree.length; i++) {
+                let name = stageTree[i].name;
+                data['defs'][name] = {};
+                trimTree(stageTree[i].tree);
+                generateId(stageTree[i].tree);
+                saveTree(data['defs'][name], stageTree[i].tree);
+                data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
+                data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
+            }
+        }
+
+        if(historyRW != historyRecord.length){
+            historyRecord = historyRecord.slice(0,historyRW);
+        }
+        else if(historyRW == 50){
+            historyRecord.splice(0,1);
+        }
+        historyRecord.push(data);
+        historyRW = historyRecord.length;
+
+        console.log("history",historyName,historyRW,historyRecord);
+        this.trigger({
+            historyRecord: historyRecord,
+            historyRW : historyRW
+        });
+    },
+    revokedHistory: function() {
+        if(historyRW == 1) return;
+        historyRW --;
+        console.log('revokedHistory',historyRecord[historyRW-1] ,historyRW );
+        this.initTree(historyRecord[historyRW-1],true);
+        this.trigger({
+            historyRecord: historyRecord,
+            historyRW : historyRW
+        });
+    },
+    replyHistory: function() {
+        if(historyRW == historyRecord.length) return;
+        historyRW ++;
+        console.log('replyHistory',historyRecord[historyRW-1] ,historyRW );
+        this.initTree(historyRecord[historyRW-1],true);
+        this.trigger({
+            historyRecord: historyRecord,
+            historyRW : historyRW
+        });
+    },
+    chooseHistory: function(num) {
+        historyRW = num;
+        console.log('replyHistory',historyRecord[historyRW-1] ,historyRW );
+        this.initTree(historyRecord[historyRW-1],true);
+        this.trigger({
+            historyRecord: historyRecord,
+            historyRW : historyRW
+        });
+    },
+    cleanHistory(){
+        historyRecord = [];
+        historyRW = 1;
+        console.log('cleanHistory',historyRecord[historyRW-1] ,historyRW );
+        this.updateHistoryRecord();
     }
 });
 

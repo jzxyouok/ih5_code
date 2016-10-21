@@ -64,4 +64,10 @@ export default Reflux.createActions([
 
   'renameWidget',
   'didSelectTarget',         //选择了目标对象
+
+  'updateHistoryRecord',
+  'revokedHistory',
+  'replyHistory',
+  'chooseHistory',
+  'cleanHistory'
 ]);

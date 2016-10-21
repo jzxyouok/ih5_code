@@ -71,7 +71,9 @@ class NavBar extends React.Component {
             qrCode : null,
             createWork : false,
             loading : 0,
-            saveError : false
+            saveError : false,
+            historyRW : 1,
+            historyRecord : []
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -118,6 +120,9 @@ class NavBar extends React.Component {
         this.createWork = this.createWork.bind(this);
         this.updateProgress = this.updateProgress.bind(this);
         this.getWorks = this.getWorks.bind(this);
+        this.revokedHistory = this.revokedHistory.bind(this);
+        this.replyHistory = this.replyHistory.bind(this);
+        this.chooseHistory = this.chooseHistory.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -164,6 +169,7 @@ class NavBar extends React.Component {
         if(id !== null){
             this.onImportUrl(PREFIX + 'work/' + id, id);
         }
+        WidgetActions['cleanHistory']();
     }
 
     componentWillUnmount() {
@@ -213,6 +219,16 @@ class NavBar extends React.Component {
                     isAddSock : false
                 })
             }
+        }
+        if(widget.historyRW){
+            this.setState({
+                historyRW : widget.historyRW
+            })
+        }
+        if(widget.historyRecord){
+            this.setState({
+                historyRecord : widget.historyRecord
+            })
         }
     }
 
@@ -468,6 +484,7 @@ class NavBar extends React.Component {
                 if (result && result['stage']) {
                     this.workid = id;
                     WidgetActions['initTree'](result);
+                    WidgetActions['cleanHistory']();
                     localStorage.setItem("workID", id);
                 }
             }.bind(this));
@@ -515,7 +532,7 @@ class NavBar extends React.Component {
     }
 
     updateProgress(e){
-        console.log(e);
+        //console.log(e);
         if(e.lengthComputable) {
             let percentComplete = e.loaded / e.total * 100;
             this.setState({
@@ -909,6 +926,20 @@ class NavBar extends React.Component {
         }
     }
 
+    revokedHistory(){
+        if(this.state.historyRW > 1){
+            WidgetActions['revokedHistory']();
+        }
+    }
+    replyHistory(){
+        if(this.state.historyRW < this.state.historyRecord.length){
+            WidgetActions['replyHistory']();
+        }
+    }
+    chooseHistory(num){
+        WidgetActions['chooseHistory'](num);
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -1216,8 +1247,12 @@ class NavBar extends React.Component {
                     </div>
 
                     <div className='nb-right f--hlc'>
-                        <button className='btn-clear che-btn'  title='撤销' />
-                        <button className='btn-clear hui-btn'  title='恢复' />
+                        <button className={$class('btn-clear che-btn',{"not-click" : this.state.historyRW == 1})}
+                                onClick={ this.revokedHistory }
+                                title='撤销' />
+                        <button className={$class('btn-clear hui-btn',{"not-click" : this.state.historyRW == this.state.historyRecord.length})}
+                                onClick={ this.replyHistory }
+                                title='恢复' />
 
                         <div className='dropDown-btn'>
                             <button className={$class('btn btn-clear align-btn dropDownBtn',{'active':1 === this.state.dropDownState})}

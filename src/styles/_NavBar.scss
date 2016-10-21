@@ -770,6 +770,10 @@
             background-position: -600px 0;
             &:hover{ background-position: -600px -40px; }
             &:active{ background-position: -600px -80px; }
+            &.not-click{
+                cursor: not-allowed;
+                background-position: -600px -120px;
+            }
         }
 
         .hui-btn{
@@ -777,6 +781,10 @@
             background-position: -640px 0;
             &:hover{ background-position: -640px -40px; }
             &:active{ background-position: -640px -80px; }
+            &.not-click{
+                cursor: not-allowed;
+                background-position: -640px -120px;
+            }
         }
 
         .less-btn ,
