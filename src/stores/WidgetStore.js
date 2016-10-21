@@ -1184,8 +1184,9 @@ export default Reflux.createStore({
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
         this.eventTreeList = [];
+        this.historyRoad;
     },
-    selectWidget: function(widget, shouldTrigger, keepValueType,bool) {
+    selectWidget: function(widget, shouldTrigger, keepValueType) {
         var render = false;
         if (widget) {
             if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -1220,15 +1221,12 @@ export default Reflux.createStore({
             }
         }
 
-        if(bool == undefined ){
-            this.currentWidget = widget;
-        }
+        this.currentWidget = widget;
 
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
-            if(bool == undefined ){
-                this.trigger({selectWidget: widget});
-            }
+            this.trigger({selectWidget: widget});
+
             //判断是否是可选择的，是否加锁
             if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
                   bridge.selectWidget(widget.node, this.updateProperties.bind(this));
@@ -2384,7 +2382,7 @@ export default Reflux.createStore({
       this.trigger({deletePoint: true});
         this.updateHistoryRecord();
     },
-    initTree: function(data,bool) {
+    initTree: function(data) {
         classList = [];
         bridge.resetClass();
         stageTree = [];
@@ -2428,12 +2426,7 @@ export default Reflux.createStore({
             , classList: classList
         });
 
-        if(bool ==undefined){
-            this.selectWidget(stageTree[0].tree);
-        }
-        else {
-            this.selectWidget(stageTree[0].tree,null,null,true);
-        }
+        this.selectWidget(stageTree[0].tree);
         this.getAllWidgets();
     },
     addClass: function(name, bool) {
@@ -2677,9 +2670,9 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         //http://test-beta.ih5.cn
-        xhr.open(method, url);
+        //xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
@@ -2732,8 +2725,7 @@ export default Reflux.createStore({
         let images = [];
         data['stage'] = {};
         trimTree(stageTree[0].tree);
-        generateId(stageTree[0].tree);
-        saveTree(data['stage'], stageTree[0].tree);
+        saveTree(data['stage'], stageTree[0].tree,true);
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
         data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
 
@@ -2743,8 +2735,7 @@ export default Reflux.createStore({
                 let name = stageTree[i].name;
                 data['defs'][name] = {};
                 trimTree(stageTree[i].tree);
-                generateId(stageTree[i].tree);
-                saveTree(data['defs'][name], stageTree[i].tree);
+                saveTree(data['defs'][name], stageTree[i].tree,true);
                 data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
                 data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
             }
@@ -2772,39 +2763,76 @@ export default Reflux.createStore({
     revokedHistory: function() {
         if(historyRW == 1) return;
         historyRW --;
-        //console.log('revokedHistory',historyRecord[historyRW-1] ,historyRW );
-        this.initTree(historyRecord[historyRW-1],true);
-        this.trigger({
-            historyRecord: historyRecord,
-            historyRW : historyRW
-        });
+        //console.log('revokedHistory',historyRecord[historyRW-1]);
+        this.historyRoad();
     },
     replyHistory: function() {
         if(historyRW == historyRecord.length) return;
         historyRW ++;
-        //console.log('replyHistory',historyRecord[historyRW-1] ,historyRW );
-        this.initTree(historyRecord[historyRW-1],true);
-        this.trigger({
-            historyRecord: historyRecord,
-            historyRW : historyRW
-        });
+        //console.log('replyHistory',historyRecord[historyRW-1]);
+        this.historyRoad();
     },
     chooseHistory: function(num) {
         historyRW = num;
-        //console.log('replyHistory',historyRecord[historyRW-1] ,historyRW );
-        this.initTree(historyRecord[historyRW-1],true);
-        this.trigger({
-            historyRecord: historyRecord,
-            historyRW : historyRW
-        });
+        //console.log('replyHistory',historyRecord[historyRW-1]);
+        this.historyRoad();
     },
-    cleanHistory(){
+    cleanHistory: function() {
         historyRecord = [];
         historyRW = 1;
         historyNameList = [];
         historyName = "初始化";
         //console.log('cleanHistory',historyRecord[historyRW-1] ,historyRW );
         this.updateHistoryRecord(historyName);
+    },
+    historyRoad: function() {
+        classList = [];
+        stageTree = [];
+        let tree;
+        let data =historyRecord[historyRW-1];
+        if (data['defs']) {
+            for (let n in data['defs']) {
+                bridge.addClass(n);
+                classList.push(n);
+                tree = loadTree(null, data['defs'][n]);
+                stageTree.push({name: n, tree: tree});
+            }
+        }
+        tree = loadTree(null, data['stage']);
+        stageTree.unshift({name: 'stage', tree: tree});
+        let bool = true;
+        let fuc = (v1,i1)=>{
+            if(v1.key == this.currentWidget.key){
+                this.selectWidget(v1);
+                bool = false;
+            }
+            else {
+                if(v1.children.length > 0){
+                    v1.children.map(fuc);
+                }
+            }
+        };
+
+        stageTree.map((v,i)=>{
+            if(v.tree.key == this.currentWidget.key){
+                this.selectWidget(v.tree);
+                bool = false;
+            }
+            else {
+                if(v.tree.children.length > 0){
+                    v.tree.children.map(fuc);
+                }
+            }
+        });
+        if(bool){
+            this.selectWidget(stageTree[0].tree);
+        }
+        this.trigger({
+            historyRecord: historyRecord,
+            historyRW : historyRW,
+            initTree: stageTree,
+            classList: classList
+        });
     }
 });
 
