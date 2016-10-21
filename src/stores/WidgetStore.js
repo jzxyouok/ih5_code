@@ -2762,7 +2762,7 @@ export default Reflux.createStore({
         historyNameList.push(historyName);
         historyRW = historyRecord.length;
 
-        console.log("history",historyNameList,historyRecord);
+        //console.log("history",historyNameList,historyRecord);
         this.trigger({
             historyRecord: historyRecord,
             historyRW : historyRW,
@@ -2772,7 +2772,7 @@ export default Reflux.createStore({
     revokedHistory: function() {
         if(historyRW == 1) return;
         historyRW --;
-        console.log('revokedHistory',historyRecord[historyRW-1] ,historyRW );
+        //console.log('revokedHistory',historyRecord[historyRW-1] ,historyRW );
         this.initTree(historyRecord[historyRW-1],true);
         this.trigger({
             historyRecord: historyRecord,
@@ -2782,7 +2782,7 @@ export default Reflux.createStore({
     replyHistory: function() {
         if(historyRW == historyRecord.length) return;
         historyRW ++;
-        console.log('replyHistory',historyRecord[historyRW-1] ,historyRW );
+        //console.log('replyHistory',historyRecord[historyRW-1] ,historyRW );
         this.initTree(historyRecord[historyRW-1],true);
         this.trigger({
             historyRecord: historyRecord,
@@ -2791,7 +2791,7 @@ export default Reflux.createStore({
     },
     chooseHistory: function(num) {
         historyRW = num;
-        console.log('replyHistory',historyRecord[historyRW-1] ,historyRW );
+        //console.log('replyHistory',historyRecord[historyRW-1] ,historyRW );
         this.initTree(historyRecord[historyRW-1],true);
         this.trigger({
             historyRecord: historyRecord,
@@ -2803,7 +2803,7 @@ export default Reflux.createStore({
         historyRW = 1;
         historyNameList = [];
         historyName = "初始化";
-        console.log('cleanHistory',historyRecord[historyRW-1] ,historyRW );
+        //console.log('cleanHistory',historyRecord[historyRW-1] ,historyRW );
         this.updateHistoryRecord(historyName);
     }
 });
