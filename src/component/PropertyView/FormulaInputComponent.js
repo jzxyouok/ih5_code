@@ -19,18 +19,22 @@ const inputType = {
 
 const MenuItem = Menu.Item;
 
+let initValue = (props) => {
+    let value = null;
+    let type = inputType.value;
+    if(props.value) {
+        value = props.value.value;
+        type = props.value.type;
+    }
+    return {value:value, type:type};
+};
+
 class FormulaInput extends React.Component {
     constructor(props) {
         super(props);
-        let value = null;
-        let type = inputType.value;
-        if(props.value) {
-            value = props.value.value;
-            type = props.value.type;
-        }
         this.state = {
-            value: value,
-            currentType: type,
+            value: initValue(props).value,
+            currentType: initValue(props).type,
             objectList: [],
             objectDropDownVisible: false, //对象dropdown
             propertyDropDownVisible: false, //属性dropdown
@@ -43,18 +47,17 @@ class FormulaInput extends React.Component {
 
         this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
         this.onObjectSelect = this.onObjectSelect.bind(this);
+        this.onSelectTargetClick = this.onSelectTargetClick.bind(this);
+        this.onGetObjectResult = this.onGetObjectResult.bind(this);
 
+        this.onGetPropertyList = this.onGetPropertyList.bind(this);
         this.onPropertyVisibleChange = this.onPropertyVisibleChange.bind(this);
         this.onPropertySelect = this.onPropertySelect.bind(this);
 
         this.onFormulaPatternChange = this.onFormulaPatternChange.bind(this);
-
-        this.onSelectTargetClick = this.onSelectTargetClick.bind(this);
-        this.onGetObjectResult = this.onGetObjectResult.bind(this);
+        this.onAddBtn = this.onAddBtn.bind(this);
 
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
-
-        this.onGetPropertyList = this.onGetPropertyList.bind(this);
     }
 
     componentDidMount() {
@@ -66,20 +69,15 @@ class FormulaInput extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        let value = null;
-        let type = inputType.value;
-        if(nextProps.value) {
-            value = nextProps.value.value;
-            type = nextProps.value.type;
-        }
-        this.setState({
-            value: value,
-            currentType: type,
-            objectList: nextProps.objectList||[]
-        });
         this.containerId = nextProps.containerId || 'iH5-App';
         this.minWidth = nextProps.minWidth||'244px';
         this.onChange = nextProps.onChange;
+
+        this.setState({
+            value: initValue(nextProps).value,
+            currentType: initValue(nextProps).type,
+            objectList: nextProps.objectList||[]
+        });
     }
 
     onStatusChange(widget) {
@@ -87,6 +85,7 @@ class FormulaInput extends React.Component {
             return;
         }
         if(widget.allWidgets){
+            //还需检查value列表，如果没找到，删除整个item，如果数组为空，改变模式，改变值
             this.setState({
                 objectList: widget.allWidgets
             });
@@ -131,7 +130,8 @@ class FormulaInput extends React.Component {
                 type = inputType.formula;
                 value = [item];
             } else {
-                value.push(item);
+                //添加或删除（以后还需支持选择后看当前纪录的current objectKey位置）
+                value.splice(value.length-1, 1, item);
             }
             this.setState({
                 value: value,
@@ -142,16 +142,10 @@ class FormulaInput extends React.Component {
         }
     }
 
-    onPropertyVisibleChange(flag) {
-        this.setState({
-            propertyDropDownVisible: flag
-        })
-    }
-
     onGetPropertyList(obj){
         let props = [];
         if(obj&&obj.className){
-            propertyMap[obj.className].map((v, i)=> {
+            propertyMap[obj.className].map((v)=> {
                 if (v.isProperty && v.name != 'id') {
                     if(v.showName=='W'){
                         props.push({name:v.name, showName:'宽度'});
@@ -165,6 +159,12 @@ class FormulaInput extends React.Component {
             });
         }
         return props;
+    }
+
+    onPropertyVisibleChange(flag) {
+        this.setState({
+            propertyDropDownVisible: flag
+        })
     }
 
     onPropertySelect(v, i, target){
@@ -193,7 +193,18 @@ class FormulaInput extends React.Component {
             value: value,
         }, ()=>{
             this.onChange({value:this.state.value, type:this.state.currentType});
-        })
+        });
+    }
+
+    onAddBtn() {
+        let item = {objKey:null, property:null, pattern:null};
+        let value = this.state.value;
+        value.push(item);
+        this.setState({
+            value: value,
+        }, ()=>{
+            this.onChange({value:this.state.value, type:this.state.currentType});
+        });
     }
 
     //value mode
@@ -237,69 +248,68 @@ class FormulaInput extends React.Component {
             );
         };
 
+        let formulaObjDropdown = () =>{
+            return (<Dropdown overlay={objectMenu} trigger={['click']}
+                      getPopupContainer={() => document.getElementById(this.containerId)}>
+                <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
+                    选择对象
+                    <span className="right-icon" />
+                </div>
+            </Dropdown>);
+        };
+
+        let formulaPropertyDropdown  = (obj, v, i) => {
+            return (
+                <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
+                          getPopupContainer={() => document.getElementById(this.containerId)}>
+                    <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
+                        选择属性
+                        <span className="right-icon" />
+                    </div>
+                </Dropdown>
+            );
+        };
+
         let formulaList = (v, i)=> {
             let obj = WidgetStore.getWidgetByKey(v.objKey);
-            if(!obj){
-                return (
-                    <div key={i} className="formula-mode-div f--hlc">
-                        还没做
-                        {/*<Dropdown overlay={objectMenu} trigger={['click']}*/}
-                                  {/*getPopupContainer={() => document.getElementById(this.containerId)}*/}
-                                  {/*onVisibleChange={this.onObjectVisibleChange()}*/}
-                                  {/*visible={this.state.objectDropDownVisible}>*/}
-                            {/*<div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>*/}
-                                {/*选择对象*/}
-                                {/*<span className="right-icon" />*/}
-                            {/*</div>*/}
-                        {/*</Dropdown>*/}
-                    </div>
-                )
-            } else if(obj&&!v.property){
-                return (
-                    <div key={i} className="formula-mode-div f--hlc">
-                        <div className="formula-obj f--hlc">
+            return (
+                <div key={i} className="formula-mode-div f--hlc">
+                    {
+                        !v.objKey
+                            ? formulaObjDropdown()
+                            : !obj
+                            ? null
+                            : (<div className="formula-obj f--hlc">
                             <div className="formula-obj-name">
                                 <span>{obj.props.name}</span>
                             </div>
                             <div className="formula-obj-dot"></div>
-                            <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
-                                      getPopupContainer={() => document.getElementById(this.containerId)}
-                                      onVisibleChange={this.onPropertyVisibleChange}
-                                      visible={this.state.propertyDropDownVisible}>
-                                <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
-                                    选择属性
-                                    <span className="right-icon" />
-                                </div>
-                            </Dropdown>
-                        </div>
-                    </div>
-                )
-            } else {
-                return (
-                    <div key={i} className="formula-mode-div f--hlc">
-                        <div className="formula-obj formular-obj-com f--hlc">
-                            <div className="formula-obj-name">
-                                <span>{obj.props.name}</span>
-                            </div>
-                            <div className="formula-obj-dot"></div>
-                            <div className="formula-obj-property">
-                                <span>{v.property.showName}</span>
-                            </div>
-                        </div>
-                        <Input placeholder="公式" value={v.pattern} onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
-                        {
-                            this.state.value&&this.state.value.length-1===i
-                                ? (<button className="add-obj-btn">
+                            {
+                                !v.property
+                                    ? formulaPropertyDropdown(obj, v, i)
+                                    : (<div className="formula-obj-property">
+                                    <span>{v.property.showName}</span>
+                                </div>)
+                            }
+                            {
+                                v.property
+                                    ? <Input placeholder="公式" value={v.pattern} onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
+                                    : null
+                            }
+                            {
+                                v.property&&this.state.value.length-1===i
+                                    ? (<button className="add-obj-btn" onClick={this.onAddBtn}>
                                     <div className="btn-layer">
                                         <span className="heng"/>
                                         <span className="shu"/>
                                     </div>
-                                    </button>)
-                                : null
-                        }
-                    </div>
-                )
-            }
+                                </button>)
+                                    : null
+                            }
+                        </div>)
+                    }
+                </div>
+            )
         };
 
         let formulaWidget = (

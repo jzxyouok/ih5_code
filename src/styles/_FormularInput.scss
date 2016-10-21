@@ -99,9 +99,17 @@
       background-color: #232323;
       -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     }
-
+    .ant-input-wrapper {
+      margin: 0 4px;
+    }
     .formula-obj {
       padding: 0 4px;
+      .ant-input-wrapper {
+        width: auto;
+        input {
+          width: 50px;
+        }
+      }
     }
     .formular-obj-com {
       background: #1c2f2e;
@@ -142,12 +150,6 @@
     .formula-obj-property {
       padding-left: 4px;
       width: 66px;
-    }
-    .ant-input-wrapper {
-      margin: 0 4px;
-      input {
-        min-width: 50px;
-      }
     }
     .add-obj-btn {
       border: none;
