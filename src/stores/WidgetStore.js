@@ -2750,7 +2750,7 @@ export default Reflux.createStore({
         data['stage'] = {};
         trimTree(stageTree[0].tree);
         generateId(stageTree[0].tree);
-        saveTree(data['stage'], stageTree[0].tree,true);
+        saveTree(data['stage'], stageTree[0].tree);
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
         data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
 
@@ -2761,7 +2761,7 @@ export default Reflux.createStore({
                 data['defs'][name] = {};
                 trimTree(stageTree[i].tree);
                 generateId(stageTree[i].tree);
-                saveTree(data['defs'][name], stageTree[i].tree,true);
+                saveTree(data['defs'][name], stageTree[i].tree);
                 data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
                 data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
             }
