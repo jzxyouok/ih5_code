@@ -665,16 +665,14 @@ class Event extends React.Component {
     getObjNameByKey(key,str,name){
 
         let obj = WidgetStore.getWidgetByKey(key);
+
         if(obj === undefined && key){
            return str;
         }
 
         if(name !== undefined){
             return name;
-        }else if(obj){
-            obj.props.name
         }
-
 
     }
     //点击下拉框
