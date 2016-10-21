@@ -94,6 +94,9 @@ class FormulaInput extends React.Component {
 
     // formula mode
     onObjectVisibleChange(flag){
+        if(this.state.objectDropDownVisible!==undefined){
+
+        }
         this.setState({
             objectDropDownVisible: flag
         })
@@ -250,7 +253,9 @@ class FormulaInput extends React.Component {
 
         let formulaObjDropdown = () =>{
             return (<Dropdown overlay={objectMenu} trigger={['click']}
-                      getPopupContainer={() => document.getElementById(this.containerId)}>
+                      getPopupContainer={() => document.getElementById(this.containerId)}
+                              onVisibleChange={this.onObjectVisibleChange}
+                              visible={this.state.objectDropDownVisible}>
                 <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
                     选择对象
                     <span className="right-icon" />
@@ -261,7 +266,9 @@ class FormulaInput extends React.Component {
         let formulaPropertyDropdown  = (obj, v, i) => {
             return (
                 <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
-                          getPopupContainer={() => document.getElementById(this.containerId)}>
+                          getPopupContainer={() => document.getElementById(this.containerId)}
+                          onVisibleChange={this.onPropertyVisibleChange}
+                          visible={this.state.propertyDropDownVisible}>
                     <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
                         选择属性
                         <span className="right-icon" />
@@ -275,7 +282,9 @@ class FormulaInput extends React.Component {
             return (
                 <div key={i} className="formula-mode-div f--hlc">
                     {
-                        !v.objKey
+                        v.objKey===undefined
+                            ? null
+                            : !v.objKey
                             ? formulaObjDropdown()
                             : !obj
                             ? null

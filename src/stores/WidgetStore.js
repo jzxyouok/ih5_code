@@ -853,15 +853,15 @@ function saveTree(data, node, saveKey) {
                                         }
                                     };
                                     v.value.value.forEach(v1=>{
-                                        let tempv = {
+                                        let tempV = {
                                             objId: objectKeyToId(v1.objKey),
                                             property: v1.property,
                                             pattern: v1.pattern,
                                         };
                                         if(saveKey) {
-                                            tempv.objKey = v1.objKey;
+                                            tempV.objKey = v1.objKey;
                                         }
-                                        temp.value.value.push(tempv);
+                                        temp.value.value.push(tempV);
                                     });
                                     property.push(temp);
                                 } else {
@@ -1364,7 +1364,7 @@ export default Reflux.createStore({
     copyWidget: function() {
       if (this.currentWidget && this.currentWidget.parent) {
         copyObj = {};
-        saveTree(copyObj, this.currentWidget);
+        saveTree(copyObj, this.currentWidget, true);
       }
     },
     pasteWidget: function() {
