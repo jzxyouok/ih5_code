@@ -73,7 +73,8 @@ class NavBar extends React.Component {
             loading : 0,
             saveError : false,
             historyRW : 1,
-            historyRecord : []
+            historyRecord : [],
+            historyNameList : ["初始化"]
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -228,6 +229,11 @@ class NavBar extends React.Component {
         if(widget.historyRecord){
             this.setState({
                 historyRecord : widget.historyRecord
+            })
+        }
+        if(widget.historyNameList){
+            this.setState({
+                historyNameList : widget.historyNameList
             })
         }
     }

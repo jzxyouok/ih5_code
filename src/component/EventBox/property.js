@@ -203,7 +203,7 @@ class Property extends React.Component {
                 getTarget = true;
             }
         });
-        if (getTarget) {
+        if (getTarget) { 
             this.setState({
                 currentObject: result.key,
             }, ()=>{
@@ -504,7 +504,7 @@ class Property extends React.Component {
                         {
                             showValue
                         }
-                        <span title="icon" />
+                        <span className="icon" />
                     </div>
                 </div>
             </Dropdown>);

@@ -245,6 +245,38 @@
                                 }
                             }
                             .mr20{margin-right: 20px;}
+                            .pl25{padding-left: 25px !important;}
+                            .p--icon {
+                                cursor: pointer;
+                                width: 18px;
+                                height: 18px;
+                                outline: 0;
+                                position: absolute;
+                                left: 2px;
+                                top: 2px;
+                                z-index: 1;
+                                border: 1px solid #283549;
+                                border-radius: 2px;
+                                background: url("img/button-icon.svg") no-repeat -1481px -1px;
+
+
+                                &:hover {
+                                    background: url("img/button-icon.svg") no-repeat -1481px  -41px;
+                                }
+                                &:active {
+                                    background: url("img/button-icon.svg") no-repeat -1481px  -81px;
+                                    border:1px solid #0f1620;
+                                }
+                                &:disabled{
+                                    filter: alpha(opacity=60);
+                                    opacity: 0.6;
+                                    cursor: not-allowed !important;
+                                }
+                                &.active {
+                                    border: 1px solid #7b5815;
+                                    background: url("img/button-icon.svg") no-repeat -1481px  -81px;
+                                }
+                            }
                         }
 
                         .left-layer ,
@@ -1070,9 +1102,9 @@
                     }
 
                     .pp--list {
-                        height: 22px;
+                        min-height: 22px;
                         margin-bottom: 2px;
-                        padding-right: 28px;
+                        padding-right: 25px;
 
                         .pp--name {
                             width: 180px;

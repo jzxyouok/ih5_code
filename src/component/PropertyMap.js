@@ -54,10 +54,6 @@ propertyMap['data'] = [
 propertyMap['root'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Root | widgetFlags.Container},
-    { name: 'changeValue', showName:'赋值', info:'(value)',
-        property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
-        ], isFunc: true },
     { name: 'width',showName:'W', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'H',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
@@ -227,7 +223,7 @@ propertyMap['graphics'] = [
 ];
 propertyMap['rect'] = [
     ...propertyMap['graphics'],
-    { name: 'radius', type: propertyType.Integer, default: 0,  group:'tools', isProperty: true },
+    { name: 'radius',showName:'移动距离',  type: propertyType.Integer, default: 0,  group:'tools', isProperty: true },
 ];
 propertyMap['taparea'] = [
     ...propertyMap['box'],

@@ -24,7 +24,7 @@ var dragTag;
 
 var dbCumulative = 1;
 
-var specialObject = ['counter', 'text', 'var','input']; //五类特殊对象的类名
+var specialObject = ['counter', 'text', 'var','input']; //五类特殊对象的类名,用于直接取其value属性
 
 var nodeType = {
     widget: 'widget',  //树对象
@@ -343,6 +343,19 @@ function resolveEventTree(node, list) {
                                   (delete v.valueId);
                               }
                           });
+                      } else if(cmd.action.name==='changeValue') {
+                          cmd.action.property.forEach(v=> {
+                              if (v.value&&v.value.type === 2) {
+                                  v.value.value.forEach(v1=>{
+                                      if(v1.objId) {
+                                          v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                                      } else {
+                                          v1.objId = null;
+                                      }
+                                      (delete v1.objId);
+                                  });
+                              }
+                          });
                       }
                       break;
               }
@@ -453,28 +466,16 @@ function objectKeyToId(key) {
         let obj = keyMap[key];
         if(obj){
             return objectToId(obj);
-        } else {
-            return null;
         }
-    } else return null;
+    }
+    return null;
 }
 
-function generateId(node, idList) {
+function generateId(node) {
     //生成需要的data
     let specGenIdsData = (key) => {
         let data = keyMap[key];
         generateObjectId(data);
-        if (idList != undefined && data) {
-            var o = objectToId(data);
-            //ids的key只需保存外层的
-            if (o[1]) {
-                idList[o[0]] = data.widget.key;
-            } else {
-                idList[o[0]] = data.key;
-            }
-            return o;
-        }
-        return null;
     };
 
   if (node.props['eventTree']) {
@@ -484,48 +485,35 @@ function generateId(node, idList) {
       item.children.forEach(judge => {
           judge.judgeObj = keyMap[judge.judgeObjKey];
           judge.compareObj = keyMap[judge.compareObjKey];
-        generateObjectId(judge.judgeObj);
-        generateObjectId(judge.compareObj);
-        if (idList != undefined) {
-          if (judge.judgeObj) {
-            var o = objectToId(judge.judgeObj);
-            idList[o[0]] = judge.judgeObj.key;
-            judge.judgeObjId = o[0];
-            if (o[1]) {
-              idList[o[0]] = judge.judgeObj.widget.key;
-              judge.judgeVarId = o[1];
-              judge.judgeVarName = o[2];
-            }
-          }
-          if (judge.compareObj) {
-            var o = objectToId(judge.compareObj);
-            idList[o[0]] = judge.compareObj.key;
-            judge.compareObjId = o[0];
-            if (o[1]) {
-              idList[o[0]] = judge.compareObj.widget.key;
-              judge.compareVarId = o[1];
-              judge.compareVarName = o[2];
-            }
-          }
-        }
+          generateObjectId(judge.judgeObj);
+          generateObjectId(judge.compareObj);
       });
 
       item.specificList.forEach(cmd => {
-          let sObjId = specGenIdsData(cmd.object);
-          cmd.sObjId = sObjId;
+          specGenIdsData(cmd.object);
           if(cmd.action){
               switch (cmd.action.type){
                   case funcType.customize:
-                      cmd.action.funcId = specGenIdsData(cmd.action.func);
+                      specGenIdsData(cmd.action.func);
                       break;
                   default:
                       if(cmd.action.property){
-                          cmd.action.property.forEach(v=>{
-                              //看是否需要generateid
-                              if (v.name ==='data'|| v.name ==='option') {
-                                  v.valueId = specGenIdsData(v.value);
-                              }
-                          })
+                          if(cmd.action.name==='changeValue') {
+                              cmd.action.property.forEach(v=>{
+                                  if (v.value&&v.value.type === 2) {
+                                      v.value.value.forEach(v1=>{
+                                          specGenIdsData(v1.objKey);
+                                      });
+                                  }
+                              });
+                          } else {
+                              cmd.action.property.forEach(v=>{
+                                  //看是否需要generateid
+                                  if (v.name ==='data'|| v.name ==='option') {
+                                      specGenIdsData(v.value);
+                                  }
+                              })
+                          }
                       }
                       break;
               }
@@ -536,13 +524,13 @@ function generateId(node, idList) {
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
           item.fields.forEach(judge => {
-              judge.valueId = specGenIdsData(judge.value);
+              specGenIdsData(judge.value);
           });
       });
   }
   if (node.children.length > 0) {
     node.children.map(item => {
-      generateId(item, idList);
+      generateId(item);
     });
   }
 }
@@ -586,13 +574,26 @@ function generateJsFunc(etree) {
         });
       }
 
-     console.log('conditions',conditions);
-
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
-            if (cmd.action.property.length >= 1)
-              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(cmd.action.property[0]['value']));
+              cmd.action.property.forEach(prop => {
+                  if(prop.value){
+                      if(prop.value.type === 1){
+                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
+                      } else if (prop.value.type === 2) {
+                          let subLine = '';
+                          prop.value.value.forEach(fV =>{
+                              if(fV.objId&&fV.property){
+                                  subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name) + fV.pattern;
+                              }
+                          });
+                          if(subLine!=='') {
+                              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
+                          }
+                      }
+                  }
+              });
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -679,7 +680,6 @@ function generateJsFunc(etree) {
       }
     }
   });
-
   return output;
 }
 
@@ -773,7 +773,6 @@ function saveTree(data, node, saveKey) {
                 } else if (v.compareValFlag == '比较值') {
                     //用户填的值
                     obj.compareObjFlag = v.compareObjFlag;
-                    obj.compareValFlag = '比较值';
                 } else {
                     //非五类
                     obj.compareValFlag = v.compareValFlag;
@@ -841,6 +840,35 @@ function saveTree(data, node, saveKey) {
                             }
                         });
                         c.action.property = property;
+                    } else if(cmd.action.name=='changeValue') {
+                            cmd.action.property.forEach(v => {
+                                if(v.value && v.value.type === 2) {
+                                    let temp = {
+                                        name: v.name,
+                                        showName: v.showName,
+                                        type:v.type,
+                                        value:{
+                                            type:2,
+                                            value:[],
+                                        }
+                                    };
+                                    v.value.value.forEach(v1=>{
+                                        let tempv = {
+                                            objId: objectKeyToId(v1.objKey),
+                                            property: v1.property,
+                                            pattern: v1.pattern,
+                                        };
+                                        if(saveKey) {
+                                            tempv.objKey = v1.objKey;
+                                        }
+                                        temp.value.value.push(tempv);
+                                    });
+                                    property.push(temp);
+                                } else {
+                                    property.push(v);
+                                }
+                            });
+                            c.action.property = property;
                     } else {
                         c.action.property = cmd.action.property;
                     }
@@ -1070,7 +1098,8 @@ function downloadFile(filename, text) {
 
 var historyRecord = [];
 var historyRW = historyRecord.length;
-var historyName = "添加";
+var historyName = "";
+var historyNameList = ["初始化"];
 
 export default Reflux.createStore({
     init: function () {
@@ -1109,6 +1138,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['enableEventTree'], this.enableEventTree);
         this.listenTo(WidgetActions['activeEventTree'], this.activeEventTree);
 
+
         this.listenTo(WidgetActions['addEvent'], this.addEvent);
         this.listenTo(WidgetActions['enableEvent'], this.enableEvent);
         this.listenTo(WidgetActions['delEvent'], this.delEvent);
@@ -1125,6 +1155,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addEventChildren'], this.addEventChildren);
         this.listenTo(WidgetActions['delEventChildren'], this.delEventChildren);
         this.listenTo(WidgetActions['enableEventChildren'], this.enableEventChildren);
+        this.listenTo(WidgetActions['recordEventTreeList'], this.recordEventTreeList);
 
         //widget，变量，函数的统一复制，黏贴，删除，重命名，剪切入口
         this.listenTo(WidgetActions['pasteTreeNode'], this.pasteTreeNode);
@@ -1167,6 +1198,7 @@ export default Reflux.createStore({
                         rootDiv.appendChild(rootElm);
                 }
             }
+
             if(widget.props['locked'] === undefined) {
                 widget.props['locked'] = false;
             }
@@ -1187,9 +1219,11 @@ export default Reflux.createStore({
                 this.selectFadeWidget(null, nodeType.dbItem);
             }
         }
+
         if(bool == undefined ){
             this.currentWidget = widget;
         }
+
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
             if(bool == undefined ){
@@ -1197,9 +1231,9 @@ export default Reflux.createStore({
             }
             //判断是否是可选择的，是否加锁
             if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
-                bridge.selectWidget(widget.node, this.updateProperties.bind(this));
+                  bridge.selectWidget(widget.node, this.updateProperties.bind(this));
             } else {
-                bridge.selectWidget(widget.node);
+                  bridge.selectWidget(widget.node);
             }
             if (render)
                 this.render();
@@ -1217,8 +1251,12 @@ export default Reflux.createStore({
           historyName = "添加 连接"+name;
       } else if (!(className === 'image')) {
           props = this.addWidgetDefaultName(className, props, true, false);
-          historyName = "添加 "+className;
+          historyName = "添加 "+ props.name;
       }
+      else {
+          historyName = "添加图片 "+ props.name;
+      }
+
 
       if (className === 'track') {
         if (!this.currentWidget.timerWidget ||
@@ -1275,20 +1313,24 @@ export default Reflux.createStore({
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;
             bridge.removeWidget(this.currentWidget.node);
+
             let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
             var rootNode = this.currentWidget.rootWidget.node;
             this.currentWidget.parent.children.splice(index, 1);
+
             if(this.currentWidget.props.eventTree){
                 this.reorderEventTreeList();
             }
 
             keyMap[this.currentWidget.key] = undefined;
+
             this.removeAllFadeWidgetsMapping(this.currentWidget);
+
             this.trigger({updateWidget: {widget:this.currentWidget, type:nodeType.widget, action:nodeAction.remove}});
 
             this.currentWidget = null;
             if(shouldChooseParent) {
-                this.selectWidget(parentWidget);
+               this.selectWidget(parentWidget);
             } else {
                 this.trigger({selectWidget: null, redrawTree: true});
             }
@@ -1554,7 +1596,7 @@ export default Reflux.createStore({
           obj =newObj;
           prevNewObj =cpJson(newObj);
         }
-        //console.log(obj);
+
         if(obj && obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
@@ -1837,6 +1879,11 @@ export default Reflux.createStore({
             historyName = eventChild.enable?"激活事件条件":"屏蔽事件条件" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);
         }
+    },
+    recordEventTreeList:function(){
+            //todo:更改判断条件
+        historyName = "更改事件条件" + this.currentWidget.node.name;
+        this.updateHistoryRecord(historyName);
     },
     addSpecific: function(event){
         if(event&&event['specificList']){
@@ -2489,34 +2536,45 @@ export default Reflux.createStore({
       //       a1.push(a2[i]);
       //     }
       // };
-
         let getImageList = function(array, list) {
-            var result = [];
-            var count = 0;
-            for (let i = 0; i < list.length; i++) {
-                var item = list[i];
-                if (typeof item == 'string') {
-                    count++;
-                    array.push(item);
-                } else {
-                    var n = item.length;
-                    if (count) {
-                        result.push(count);
-                        count = 0;
-                    }
-                    result.push(-n);
-                    for (var j = 0; j < n; j++) {
-                        array.push(item[j]);
-                    }
+          var result = [];
+          var count = 0;
+          for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            if (typeof item == 'string') {
+              if (item.substr(0, 5) == 'data:') {
+                count++;
+                array.push(item);
+              } else {
+                if (count) {
+                  result.push(count);
+                  count = 0;
                 }
+                result.push(item);
+              }
+            } else {
+              var n = item.length;
+              if (count) {
+                result.push(count);
+                count = 0;
+              }
+              if (n == 0 || item[0].substr(0, 5) == 'data:') {
+                result.push(-n);
+                for (var j = 0; j < n; j++) {
+                  array.push(item[j]);
+                }
+              } else {
+                result.push(item);
+              }
             }
-            if (result.length) {
-                if (count)
-                    result.push(count);
-                    return result.join(',');
-                } else {
-                    return count;
-            }
+          }
+          if (result.length) {
+            if (count)
+              result.push(count);
+            return result;
+          } else {
+            return count;
+          }
         };
         let data = {};
         let images = [];
@@ -2529,7 +2587,6 @@ export default Reflux.createStore({
         // appendArray(images, stageTree[0].tree.imageList);
         data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
 
-        //debugger;
         if (stageTree.length > 1) {
             data['defs'] = {};
             for (let i = 1; i < stageTree.length; i++) {
@@ -2544,7 +2601,7 @@ export default Reflux.createStore({
                 data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
             }
         }
-        //console.log(data);
+
         data = bridge.encryptData(data, images);
         if (!data){
             return;
@@ -2552,12 +2609,12 @@ export default Reflux.createStore({
 
         var cb = function(text) {
             var result = JSON.parse(text);
-            //console.log('cb',result);
             if(result['id']){
                 callback(result['id'], wname, wdescribe);
             }
             historyRecord = [];
             historyRW = historyRecord.length;
+            historyNameList = ["初始化"];
         };
         if (wid) {
             this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb,null,updateProgress);
@@ -2620,9 +2677,9 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         //http://test-beta.ih5.cn
-        //xhr.open(method, url);
+        xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
@@ -2695,17 +2752,21 @@ export default Reflux.createStore({
 
         if(historyRW != historyRecord.length){
             historyRecord = historyRecord.slice(0,historyRW);
+            historyNameList = historyNameList.slice(0,historyRW);
         }
         else if(historyRW == 50){
             historyRecord.splice(0,1);
+            historyNameList.splice(0,1);
         }
         historyRecord.push(data);
+        historyNameList.push(historyName);
         historyRW = historyRecord.length;
 
-        console.log("history",historyName,historyRW,historyRecord);
+        console.log("history",historyNameList,historyRecord);
         this.trigger({
             historyRecord: historyRecord,
-            historyRW : historyRW
+            historyRW : historyRW,
+            historyNameList : historyNameList
         });
     },
     revokedHistory: function() {
@@ -2740,8 +2801,10 @@ export default Reflux.createStore({
     cleanHistory(){
         historyRecord = [];
         historyRW = 1;
+        historyNameList = [];
+        historyName = "初始化";
         console.log('cleanHistory',historyRecord[historyRW-1] ,historyRW );
-        this.updateHistoryRecord();
+        this.updateHistoryRecord(historyName);
     }
 });
 

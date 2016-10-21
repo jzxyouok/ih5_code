@@ -112,8 +112,8 @@ class ObjectTree extends React.Component {
         this.onStatusChange(WidgetStore.getStore());
 
         //多选
-        document.body.addEventListener('keydown', this.onKeyDown);
-        document.body.addEventListener('keyup', this.onKeyUp);
+        //  document.body.addEventListener('keydown', this.onKeyDown);
+       // document.body.addEventListener('keyup', this.onKeyUp);
     }
 
     componentWillUnmount() {
@@ -951,17 +951,17 @@ class ObjectTree extends React.Component {
     }
 
     onKeyDown(e){
-        let  evt = e ? e : window.event;
-        if (!this.chooseMoreStatus && evt.ctrlKey) {
-            this.chooseMoreStatus=true;
-        }
+        // let  evt = e ? e : window.event;
+        // if (!this.chooseMoreStatus && evt.ctrlKey) {
+        //     this.chooseMoreStatus=true;
+        // }
     }
     onKeyUp(e){
-        let  evt = e ? e : window.event;
-        if(evt.keyCode==17){
-            this.chooseMoreStatus=false;
-            // console.log('haha');
-        }
+        // let  evt = e ? e : window.event;
+        // if(evt.keyCode==17){
+        //     this.chooseMoreStatus=false;
+        //     // console.log('haha');
+        // }
     }
     chooseMore(e){
         if(this.chooseMoreStatus){

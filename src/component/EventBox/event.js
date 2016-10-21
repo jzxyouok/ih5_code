@@ -8,7 +8,7 @@ import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetSt
 import WidgetActions from '../../actions/WidgetActions'
 import  {propertyMap} from '../PropertyMap'
 import {eventTempData} from './tempData';
-
+import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { Menu, Dropdown, Icon ,InputNumber,Input,Select} from 'antd';
 const MenuItem = Menu.Item;
 const Option = Select.Option;
@@ -25,6 +25,7 @@ class Event extends React.Component {
             allWidgetsList: null,
             curChild:null,
             activeKey: this.props.activeKey,  //当前激活事件的key
+            wKey:this.props.wKey,
             specialObject: ['counter', 'text', 'var','input'],
             //用于下拉框显示
             conOption: [],//每次点击后赋值
@@ -72,6 +73,9 @@ class Event extends React.Component {
         this.getNameByCnName =this.getNameByCnName.bind(this);
         this.getObjNameByKey=this.getObjNameByKey.bind(this);
         this.content =this.content.bind(this);
+
+
+
     }
 
     componentWillReceiveProps(nextProps) {
@@ -105,6 +109,7 @@ class Event extends React.Component {
 
         this.setState({
             activeKey:nextProps.activeKey,
+            wKey:nextProps.wKey,
             eventList:nextProps.eventList
         },()=>{
             this.setEventBoxWidth();
@@ -484,6 +489,9 @@ class Event extends React.Component {
                             ;
                         }else{
                             aProps.push(v.showName);
+                            if(!v.showName){
+                                alert('找到一个bug,通知下程序猿吧!');
+                            }
                         }
                 }
             });
@@ -701,6 +709,7 @@ class Event extends React.Component {
 
         switch (flag) {
             case 'judgeObjFlag':
+
                 initFlag.judgeObjKey= newKey?newKey:e.item.props.keyVal;
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
                     arrHidden = [false, false, true, false, false, true];
@@ -743,10 +752,10 @@ class Event extends React.Component {
 
         if (isRun) {
             let eventList = this.state.eventList;
-            //判断事件面板所需宽度
             this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
         }
+        WidgetActions['recordEventTreeList']();
     }
 
     //点击select,出现下拉框之前的事件
@@ -863,7 +872,9 @@ class Event extends React.Component {
         return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag,null,null)}>
             {
                 this.state[option].map((v, i)=> {
-                    return <MenuItem key={i} index={i} object={v.showName?v.showName:v} keyVal={v.showName?v.key:null}>{v.showName?v.showName:v}</MenuItem>;
+
+                        return <MenuItem key={i} index={i} object={v.showName?v.showName:v} keyVal={v.showName?v.key:null}>{v.showName?v.showName:v}</MenuItem>;
+
                 })
             }
         </Menu>)
@@ -889,15 +900,12 @@ class Event extends React.Component {
     }
 
     getTypeArr(type){
-        if(type==0||type==1||type==5){
-            //Integer,Number
-            return [0,1,5];
+        if(type==0||type==1||type==5||type == 8){
+            //Integer,Number,Percentage,Float
+            return [0,1,5,8];
         }else if(type==2||type==3){
             //String,Text
             return [2,3];
-        }else if(type==4||type==10){
-            //Boolean,Boolean2
-            return [4,10];
         }else if(type==6||type ==9){
             //Color ,Color2
             return [6,9];
@@ -967,7 +975,29 @@ class Event extends React.Component {
         this.setState({eventList:eventList});
         this.refs[name].focus();
     }
+    onSTButtonClick(curChildrenIndex,curEventIndex){
 
+        this.curChildrenIndex =curChildrenIndex;
+        this.curEventIndex=curEventIndex;
+        this.setState({curChild:this.state.eventList[curEventIndex].children[curChildrenIndex]});
+
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
+        return true;
+    }
+
+    onSTResultGet(type,result){
+        let getTarget = false;
+        this.state.allWidgetsList.forEach((v)=>{
+            if(result.key === v.key){
+                getTarget = true;
+            }
+        });
+        if (getTarget) {
+             this.onMenuClick(type,result.props.name,result.key);
+        }
+    }
     content(v,i){
             return  <div className={$class('item f--h', {'item-not-enable': !v.enable})} key={i} id={'event-item-'+v.eid} >
                 <span className='left-line' />
@@ -1054,9 +1084,15 @@ class Event extends React.Component {
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[1]})} >
+                                                    <SelectTargetButton
+                                                                        className={'p--icon'}
+                                                                        disabled={!v.enable || !v1.enable}
+                                                                        onClick={this.onSTButtonClick.bind(this,i1,i)}
+                                                                        getResult={this.onSTResultGet.bind(this,'judgeObjFlag')}
+                                                    />
                                                     {
                                                         !v1.enable
-                                                            ? <div className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
+                                                            ? <div className={$class('title f--hlc pl25',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
                                                                 {judgeObjName}
                                                                 <span className='icon' /></div>
                                                             : <Dropdown
@@ -1064,9 +1100,12 @@ class Event extends React.Component {
                                                                 onClick={this.setCurOption.bind(this,i1,i,'judgeObjFlag',false)}
                                                                 getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                                 trigger={['click']}>
-                                                                <div className={$class('title f--hlc',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
+                                                                <div className={$class('title f--hlc pl25',{'title-gray':v1.judgeObjFlag=='判断对象'})} >
                                                                     <input  value= {judgeObjName}
-                                                                        onChange={this.inputChange.bind(this,'judgeObjFlag')} onFocus={this.saveOldVal.bind(this,'judgeObjFlag',i1,i)}   onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')} className='judgeObjFlag-input'/>
+                                                                        onChange={this.inputChange.bind(this,'judgeObjFlag')}
+                                                                        onFocus={this.saveOldVal.bind(this,'judgeObjFlag',i1,i)}
+                                                                        onBlur={this.setInputValAuto.bind(this,'judgeObjFlag')}
+                                                                         className='judgeObjFlag-input'/>
                                                                     <span className='icon' /></div>
                                                             </Dropdown>
                                                     }
@@ -1112,9 +1151,15 @@ class Event extends React.Component {
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4]})} >
+                                                    <SelectTargetButton
+                                                        className={'p--icon'}
+                                                        disabled={!v.enable || !v1.enable}
+                                                        onClick={this.onSTButtonClick.bind(this,i1,i)}
+                                                        getResult={this.onSTResultGet.bind(this,'compareObjFlag')}
+                                                    />
                                                     {
                                                         !v1.enable
-                                                            ? <div className={$class('title f--hlc',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
+                                                            ? <div className={$class('title f--hlc pl25',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
                                                                 {compareObjName}
                                                                 <span className='icon'/></div>
                                                             : <Dropdown
@@ -1123,7 +1168,7 @@ class Event extends React.Component {
                                                                 visible={v1.showDropdown}
                                                                 getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
                                                                 trigger={['click']}>
-                                                                <div className={$class('title f--hlc',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
+                                                                <div className={$class('title f--hlc pl25',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
                                                                     <input value= {compareObjName}
                                                                         onChange={this.inputChange.bind(this,'compareObjFlag')}
                                                                         onFocus={this.saveOldVal.bind(this,'compareObjFlag',i1,i)}

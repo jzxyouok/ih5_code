@@ -120,21 +120,6 @@ class PropertyView extends React.Component {
             v = null;
         } else {
             switch (prop.type) {
-                case propertyType.Percentage:
-                    v = (prop.name =='alpha') ?parseFloat(value)/100:parseFloat(value);
-                    break;
-                case propertyType.Number:
-                    if(prop.name=='fontSize'){
-                        const obj = {};
-                        obj[prop.name] = parseInt(value);
-                        obj.scaleY = obj.scaleX=1;
-                        this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, true);
-                        bTag=false;
-                        break;
-                    }
-                    v = parseFloat(value);
-                    break;
                 case propertyType.Integer:
                     if(prop.name=='size'){
                         v = parseInt(value);
@@ -158,6 +143,21 @@ class PropertyView extends React.Component {
                     }
 
                     v = parseInt(value);
+                    break;
+                case propertyType.Number:
+                    if(prop.name=='fontSize'){
+                        const obj = {};
+                        obj[prop.name] = parseInt(value);
+                        obj.scaleY = obj.scaleX=1;
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties'](obj, false, true);
+                        bTag=false;
+                        break;
+                    }
+                    v = parseFloat(value);
+                    break;
+                case propertyType.Percentage:
+                    v = (prop.name =='alpha') ?parseFloat(value)/100:parseFloat(value);
                     break;
                 case propertyType.Float:
                     let h;
@@ -698,13 +698,11 @@ class PropertyView extends React.Component {
 
 
             if (subW < 76) {
-                this.PropertyViewPosition.oPropertyView.style.left = '37px';
-
+                this.PropertyViewPosition.oPropertyView.style.left = this.props.expanded? '65px':'37px';
             }
             if (subH < 76) {
                 this.PropertyViewPosition.oPropertyView.style.top = '36px';
             }
-
             if (subRight < 76) {
                 this.PropertyViewPosition.oPropertyView.style.left = (clientWidth - 296) + 'px';
             }
