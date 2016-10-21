@@ -12,21 +12,28 @@ import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap } from '../PropertyMap'
 
+const MenuItem = Menu.Item;
+
 const inputType = {
     value: 1,
     formula: 2,
 };
 
-const MenuItem = Menu.Item;
-
 let initValue = (props) => {
     let value = null;
     let type = inputType.value;
+    let enableTarget = true;
     if(props.value) {
         value = props.value.value;
         type = props.value.type;
+
+        if (type === inputType.formula &&
+            value.length > 0 &&
+            value[value.length - 1].objKey !== null) {
+            enableTarget = false;
+        }
     }
-    return {value:value, type:type};
+    return {value:value, type:type, enableTarget: enableTarget};
 };
 
 class FormulaInput extends React.Component {
@@ -35,6 +42,7 @@ class FormulaInput extends React.Component {
         this.state = {
             value: initValue(props).value,
             currentType: initValue(props).type,
+            selectTargetEnable: initValue(props).enableTarget,
             objectList: [],
             objectDropDownVisible: false, //对象dropdown
             propertyDropDownVisible: false, //属性dropdown
@@ -78,6 +86,7 @@ class FormulaInput extends React.Component {
         this.setState({
             value: initValue(nextProps).value,
             currentType: initValue(nextProps).type,
+            selectTargetEnable: initValue(nextProps).enableTarget,
             objectList: nextProps.objectList||[]
         });
     }
@@ -171,7 +180,8 @@ class FormulaInput extends React.Component {
             }
             this.setState({
                 value: value,
-                currentType:type
+                currentType:type,
+                selectTargetEnable: false,
             }, ()=>{
                 this.onChange({value:this.state.value, type:this.state.currentType});
             })
@@ -238,6 +248,7 @@ class FormulaInput extends React.Component {
         value.push(item);
         this.setState({
             value: value,
+            selectTargetEnable: true,
         }, ()=>{
             this.onChange({value:this.state.value, type:this.state.currentType});
         });
@@ -362,7 +373,7 @@ class FormulaInput extends React.Component {
             <div className="formula-mode f--hlc"
                  style={{width:this.minWidth}}>
                 <SelectTargetButton className={'formula-object-icon'}
-                                    disabled={false}
+                                    disabled={!this.state.selectTargetEnable}
                                     onClick={this.onSelectTargetClick}
                                     getResult={this.onGetObjectResult} />
                     {
