@@ -893,7 +893,7 @@ function saveTree(data, node, saveKey) {
 
       });
       data['etree'] = etree;
-        if(node.props['enableEventTree']){
+        if(node.props['enableEventTree'] && !saveKey){
             var js = generateJsFunc(etree);
             if (js)
                 data['events'] = js;
