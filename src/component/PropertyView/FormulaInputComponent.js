@@ -40,6 +40,7 @@ class FormulaInput extends React.Component {
             objectList: [],
             objectDropDownVisible: false, //对象dropdown
             propertyDropDownVisible: false, //属性dropdown
+            willDeleteObjIndex: null,
         };
         this.containerId = props.containerId || 'iH5-App';
         this.minWidth = props.minWidth||'244px';
@@ -59,12 +60,15 @@ class FormulaInput extends React.Component {
 
         this.onFormulaPrePatternChange = this.onFormulaPrePatternChange.bind(this);
         this.onFormulaPatternChange = this.onFormulaPatternChange.bind(this);
+        this.onFormulaPatternKeyDown = this.onFormulaPatternKeyDown.bind(this);
+        this.onFormulaPatternBlur = this.onFormulaPatternBlur.bind(this);
 
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
 
         this.checkValueObjValid = this.checkValueObjValid.bind(this); //不存在的obj清掉
 
-        this.getSizeOfInput = this.getSizeOfInput.bind(this);
+        this.resizeInputWidth = this.resizeInputWidth.bind(this);
+        this.doGetCaretPosition = this.doGetCaretPosition.bind(this);
     }
 
     componentDidMount() {
@@ -79,14 +83,13 @@ class FormulaInput extends React.Component {
         this.containerId = nextProps.containerId || 'iH5-App';
         this.minWidth = nextProps.minWidth||'244px';
         this.disabled = nextProps.disabled || false;
-        // this.onChange = nextProps.onChange;
-        //
-        // this.setState({
-        //     value: initValue(nextProps).value,
-        //     currentType: initValue(nextProps).type,
-        //     // selectTargetEnable: initValue(nextProps).enableTarget,
-        //     objectList: nextProps.objectList||[]
-        // });
+        this.onChange = nextProps.onChange;
+
+        this.setState({
+            value: initValue(nextProps).value,
+            currentType: initValue(nextProps).type,
+            objectList: nextProps.objectList||[]
+        });
     }
 
     onStatusChange(widget) {
@@ -124,7 +127,8 @@ class FormulaInput extends React.Component {
             if(changed){
                 this.setState({
                     value: value,
-                    currentType: type
+                    currentType: type,
+                    willDeleteObjIndex: null
                 }, ()=>{
                     this.onChange({value:this.state.value, type:this.state.currentType});
                 })
@@ -149,7 +153,8 @@ class FormulaInput extends React.Component {
 
     onSelectTargetClick() {
         this.setState({
-            objectDropDownVisible: false
+            objectDropDownVisible: false,
+            willDeleteObjIndex: null
         });
         return true;
     }
@@ -202,6 +207,7 @@ class FormulaInput extends React.Component {
 
     onPropertyVisibleChange(flag) {
         this.setState({
+            willDeleteObjIndex: null,
             propertyDropDownVisible: flag
         })
     }
@@ -230,6 +236,7 @@ class FormulaInput extends React.Component {
         }
         this.setState({
             value: value,
+            willDeleteObjIndex: null,
         }, ()=>{
             this.onChange({value:this.state.value, type:this.state.currentType});
         });
@@ -244,12 +251,104 @@ class FormulaInput extends React.Component {
         }
         this.setState({
             value: value,
+            willDeleteObjIndex: null,
         }, ()=>{
             this.onChange({value:this.state.value, type:this.state.currentType});
         });
     }
 
-    getSizeOfInput(value) {
+    onFormulaPatternKeyDown(v,i,e) {
+        if(e.keyCode === 8) {
+            let pos = this.doGetCaretPosition(e.target);
+            if(pos=='0') {
+                let willDeleteObjIndex = i;
+                if(this.state.willDeleteObjIndex!=null&&this.state.willDeleteObjIndex===i) {
+                    willDeleteObjIndex = null;
+                    //delete obj here
+                    let value = this.state.value;
+                    let type = this.state.currentType;
+                    if(value.length>0) {
+                        if(value.length===1) {
+                            let combine = '';
+                            if(value[i].prePattern) {
+                                combine += value[i].prePattern;
+                            }
+                            if(value[i].pattern) {
+                                combine += value[i].pattern;
+                            }
+                            value = combine===''?null:combine;
+                            type = inputType.value;
+                        } else if(value.length>1&&i===0){
+                            let combine = '';
+                            if(value[i].prePattern) {
+                                combine += value[i].prePattern;
+                            }
+                            if(value[i].pattern) {
+                                combine += value[i].pattern;
+                            }
+                            if(combine!=='') {
+                                if(value[i+1].prePattern) {
+                                    value[i+1].prePattern += combine;
+                                } else {
+                                    value[i+1].prePattern = combine;
+                                }
+                            }
+                            type = inputType.formula;
+                            value.splice(i,1);
+                        } else {
+                            let combine = '';
+                            if(value[i].pattern) {
+                                combine += value[i].pattern;
+                            }
+                            if(combine!=='') {
+                                if(value[i-1].pattern) {
+                                    value[i-1].pattern += combine;
+                                } else {
+                                    value[i-1].pattern = combine;
+                                }
+                            }
+                            type = inputType.formula;
+                            value.splice(i,1);
+                        }
+                    } else {
+                        value = null;
+                        type = inputType.value;
+                    }
+                    this.setState({
+                        value: value,
+                        currentType: type
+                    })
+                }
+                this.setState({
+                    willDeleteObjIndex: willDeleteObjIndex
+                })
+            }
+        }
+    }
+
+    onFormulaPatternBlur(v,i,e) {
+        if(this.state.willDeleteObjIndex!=null&&i===this.state.willDeleteObjIndex){
+            this.setState({
+                willDeleteObjIndex: null
+            })
+        }
+    }
+
+    doGetCaretPosition(oField) {
+        // Initialize
+        var iCaretPos = 0;
+        // IE Support
+        if (document.selection) {
+            oField.focus();
+            var oSel = document.selection.createRange();
+            oSel.moveStart('character', -oField.value.length);
+            iCaretPos = oSel.text.length;
+        } else if (oField.selectionStart || oField.selectionStart == '0')
+            iCaretPos = oField.selectionStart;
+        return iCaretPos;
+    }
+
+    resizeInputWidth(value) {
         if(value){
             let length = 0;
             for (let i=0; i<value.length; i++) {
@@ -259,8 +358,8 @@ class FormulaInput extends React.Component {
                     length+=1.8;
                 }
             }
-            if((length*6.8)>minInputWidth) {
-                return length * 6.8;
+            if((length*7)>minInputWidth) {
+                return length * 7;
             }
         }
         return minInputWidth;
@@ -359,12 +458,14 @@ class FormulaInput extends React.Component {
                                 i===0
                                     ? (<Input disabled={this.disabled}
                                               value={v.prePattern}
-                                              style={{width:this.getSizeOfInput(v.prePattern)}}
+                                              style={{width:this.resizeInputWidth(v.prePattern)}}
                                               className='formula-obj-prePattern'
                                               onChange={this.onFormulaPrePatternChange.bind(this, v, i)}/>)
                                     : null
                             }
-                            <div className={$class('formula-obj-div f--hlc', {'complete': v.property})}>
+                            <div className={$class('formula-obj-div f--hlc',
+                                {'complete': v.property},
+                                {'will-delete-obj':this.state.willDeleteObjIndex===i})}>
                                 <div className="formula-obj-name">
                                     <span>{obj.props.name}</span>
                                 </div>
@@ -379,8 +480,10 @@ class FormulaInput extends React.Component {
                             </div>
                             <Input disabled={this.disabled}
                                    value={v.pattern}
-                                   style={{width:this.getSizeOfInput(v.pattern)}}
+                                   style={{width:this.resizeInputWidth(v.pattern)}}
                                    className='formula-obj-pattern'
+                                   onKeyDown={this.onFormulaPatternKeyDown.bind(this, v, i)}
+                                   onBlur={this.onFormulaPatternBlur.bind(this,v,i)}
                                    onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
                             {/*{*/}
                                 {/*v.property*/}

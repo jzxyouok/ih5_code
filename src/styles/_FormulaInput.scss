@@ -116,6 +116,9 @@
       &.complete {
         background-color: #213635;
       }
+      &.will-delete-obj {
+        border: 1px solid #7b5815;
+      }
     }
     .formular-obj-com {
       background: #1c2f2e;
