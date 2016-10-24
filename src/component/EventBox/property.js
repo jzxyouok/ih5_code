@@ -452,6 +452,9 @@ class Property extends React.Component {
         if(this.state.activeKey !== this.state.wKey) {
             return false;
         }
+        if(this.state.event&&!this.state.event.enable) {
+            return false;
+        }
         this.refs.pProperty.style.overflow = 'visible';
         document.getElementById('EventBox').style.overflow = 'visible';
         document.getElementById('EBContentLayer').style.overflow = 'visible';
