@@ -49,16 +49,17 @@ class PropertyView extends React.Component {
             x:null,
             y:null
         };
+
+
     }
 
      //获取封装的form组件
      getInputBox(type, defaultProp) {
         switch (type) {
             case propertyType.Integer:
-                return <InputNumber {...defaultProp} />;
-
+                return  <InputNumber     {...defaultProp}   />;
             case propertyType.Float:
-                return <InputNumber {...defaultProp} />;
+                return <InputNumber     {...defaultProp}  />;
 
             case propertyType.Number:
                 return <InputNumber step={0.1} {...defaultProp} />;
@@ -294,6 +295,7 @@ class PropertyView extends React.Component {
     }
 
     onChangePropDom(item, value) {
+        this.tag=true;
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
             this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
         }else if(item.type === propertyType.Color){
@@ -667,7 +669,6 @@ class PropertyView extends React.Component {
         document.addEventListener('mousemove', this.mouseMove.bind(this));
         document.addEventListener('mouseup', this.mouseUp.bind(this));
     }
-
     componentWillUnmount() {
         this.unsubscribe();
     }

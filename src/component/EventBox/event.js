@@ -758,7 +758,6 @@ class Event extends React.Component {
             this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
         }
-        console.log(eventList);
         WidgetActions['recordEventTreeList']();
     }
 
@@ -1154,7 +1153,7 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4]})} >
+                                                <div className={$class('dropDown-layer middle com120',{'hidden':v1.arrHidden[4]})} >
                                                     <SelectTargetButton
                                                         className={'p--icon'}
                                                         disabled={!v.enable || !v1.enable}
