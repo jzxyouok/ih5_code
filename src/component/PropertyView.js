@@ -110,7 +110,8 @@ class PropertyView extends React.Component {
                     <div id={cls({'ant-progress':defaultProp.name=='font'})}><div className='ant-progress-bar'></div><div className='ant-progress-txt'>上传 10%</div></div>
                 </div>;
             case propertyType.Dropdown:
-                return  <DropDownInput {...defaultProp} />;
+                return  ;
+               // return  <DropDownInput {...defaultProp} />;
             default:
                 return <Input {...defaultProp} />;
         }
@@ -376,7 +377,8 @@ class PropertyView extends React.Component {
         if (!node)  return null;
 
         if( node.props.isLock ===undefined){
-            node.props.isLock =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
+           // node.props.isLock =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
+            node.props.isLock=false;
         }
 
         let className = node.className.charAt(0) == '_'?'class':node.className;

@@ -116,10 +116,10 @@ class DropDownInput extends React.Component {
         })
     }
      inputBlur(e){
-         let arr =e.target.value.split(',');
-         if(arr.length==2){
-             this.state.dropDownOnChange({key:e.target.value},this.state.item);
-         }
+         // let arr =e.target.value.split(',');
+         // if(arr.length==2){
+         //     this.state.dropDownOnChange({key:e.target.value},this.state.item);
+         // }
      }
     render() {
         return (

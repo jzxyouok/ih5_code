@@ -98,7 +98,7 @@ propertyMap['wechat'] = [
 propertyMap['box'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
-
+    { name: 'locked', showName:'等比缩放',type: propertyType.Boolean, default: true,  isProperty: true },
     { name: 'positionX',showName:'X', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
     { name: 'positionY',showName:'Y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position', isProperty: true },
