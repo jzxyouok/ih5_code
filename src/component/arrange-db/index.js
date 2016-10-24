@@ -53,6 +53,9 @@ class ArrangeDb extends React.Component {
         else if (widget.redrawTree !== undefined){
             this.forceUpdate();
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     arrangeDbHide(){

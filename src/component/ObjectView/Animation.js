@@ -60,6 +60,9 @@ class Animation extends React.Component {
         } else if (widget.selectDBItem) {
             this.checkAnimationEnable(widget.selectDBItem);
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onInitHasEventTree(selectWidget){

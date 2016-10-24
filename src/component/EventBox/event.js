@@ -187,6 +187,9 @@ class Event extends React.Component {
                     break;
             }
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onSetFuncSpecificListProperty(action, params) {

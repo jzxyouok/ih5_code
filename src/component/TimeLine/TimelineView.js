@@ -110,7 +110,7 @@ class TimelineView extends React.Component {
 				node.children.map(item => {
 					if (item.className === 'track') {
 						changed.currentTrack = item;
-                        console.log(item);
+                        //console.log(item);
                         if(item.node.startTime !== -1 || item.node.endTime !== -1){
                             if(item.node.startTime !== -1){
                                 this.setState({
@@ -206,6 +206,9 @@ class TimelineView extends React.Component {
                     endTime : parseFloat(widget.updateProperties.endTime)
                 })
             }
+        }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
         }
 	}
 

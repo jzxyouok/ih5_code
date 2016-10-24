@@ -42,6 +42,9 @@ class Condition extends React.Component {
                 })
             }
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     DbHeaderData(data){

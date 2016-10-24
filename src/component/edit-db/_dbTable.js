@@ -152,6 +152,9 @@ class DbTable extends React.Component {
                 this.updateNewScrollData(true);
            }
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     getPDbList(){
