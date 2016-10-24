@@ -86,19 +86,19 @@
     height: 100%;
     font-size: 12px;
 
-    overflow-y: hidden;
-    overflow-x: auto;
-    &::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-      background-color: #353535;
-    }
-    &::-webkit-scrollbar-thumb {
-      cursor: pointer;
-      border-radius: 0;
-      background-color: #232323;
-      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    }
+    //overflow-y: hidden;
+    //overflow-x: auto;
+    //&::-webkit-scrollbar {
+    //  width: 6px;
+    //  height: 6px;
+    //  background-color: #353535;
+    //}
+    //&::-webkit-scrollbar-thumb {
+    //  cursor: pointer;
+    //  border-radius: 0;
+    //  background-color: #232323;
+    //  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    //}
     .ant-input-wrapper {
       margin: 0 2px;
     }

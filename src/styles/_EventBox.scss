@@ -163,7 +163,8 @@
             }
 
             .E--content {
-                width: 100%;
+                //width: 100%;
+                width:718px;
 
                 .item {
                     &:last-child .left-line {
@@ -202,7 +203,9 @@
                     margin-left: 8px;
                 }
 
-                .item-main { }
+                .item-main {
+                    width: 703.5px;
+                }
 
                 .item-header {
                     //height: 28px;
@@ -810,6 +813,7 @@
 
             .P--left-line{
                 width: 1px;
+                padding-left: 1px;
                 background: #4d4d4d;
                 margin-left: 20px;
             }
@@ -1068,6 +1072,8 @@
 
                     .p--property {
                         margin-bottom: 2px;
+                        width: 475px;
+                        overflow: hidden;
                     }
 
                     .p--title {
@@ -1087,11 +1093,12 @@
 
                     .pp-content {
                         width: 100%;
+                        padding-left: 25px;
 
-                        &:before{
-                            content:"";
-                            width: 25px;
-                        }
+                        //&:before{
+                        //    content:"";
+                        //    width: 25px;
+                        //}
                     }
 
                     .pp--list-layer {
