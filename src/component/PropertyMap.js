@@ -712,13 +712,17 @@ propertyMap[dataType.twoDArr] = [
 
 propertyMap['table'] = [
     ...propertyMap['graphics'],
+    { name: 'dbid', type: propertyType.String, default: '', isProperty: true },
     { name: 'header', type: propertyType.String, default: '', isProperty: true },
+    { name: 'rowNum', type: propertyType.Integer, default: 1, isProperty: true },
     { name: 'value', type: propertyType.String, default: '', isProperty: true },
     { name: 'showHeader', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'headerColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
     { name: 'altColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
+    { name: 'getResult', isFunc: true, info:'(pageNum)' },
+    { name: 'nextResult', isFunc: true},
+    { name: 'prevResult', isFunc: true},
 ];
-
 
 for (var n in propertyMap) {
     propertyFlags[n] = {provides: 0, requires: 0};
