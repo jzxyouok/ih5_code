@@ -326,6 +326,7 @@ class FormulaInput extends React.Component {
                     //delete obj here
                     let value = this.state.value;
                     let type = this.state.currentType;
+                    let focus = '';
                     if(value.length>0) {
                         if(value.length===1) {
                             let combine = '';
@@ -352,6 +353,7 @@ class FormulaInput extends React.Component {
                                     value[i+1].prePattern = combine;
                                 }
                             }
+                            focus = 'prePattern'+i;
                             type = inputType.formula;
                             value.splice(i,1);
                         } else {
@@ -366,8 +368,12 @@ class FormulaInput extends React.Component {
                                     value[i-1].pattern = combine;
                                 }
                             }
+                            focus = 'pattern'+(i-1);
                             type = inputType.formula;
                             value.splice(i,1);
+                        }
+                        if(this.refs['pattern'+i]) {
+                            this.refs['pattern'+i].refs.input.blur();
                         }
                     } else {
                         value = null;
@@ -375,12 +381,24 @@ class FormulaInput extends React.Component {
                     }
                     this.setState({
                         value: value,
-                        currentType: type
+                        currentType: type,
+                        willDeleteObjIndex: willDeleteObjIndex,
+                    }, ()=>{
+                        if(this.state.currentType === inputType.value) {
+                            setTimeout(()=> {
+                                this.refs['valueInput'].refs.input.focus();
+                            }, 100);
+                        } else{
+                            setTimeout(()=> {
+                                this.refs[focus].refs.input.focus();
+                            }, 100);
+                        }
+                    })
+                } else {
+                    this.setState({
+                        willDeleteObjIndex: willDeleteObjIndex
                     })
                 }
-                this.setState({
-                    willDeleteObjIndex: willDeleteObjIndex
-                })
             }
         }
     }
@@ -519,6 +537,7 @@ class FormulaInput extends React.Component {
                                               value={v.prePattern}
                                               style={{width:this.resizeInputWidth(v.prePattern)}}
                                               className='formula-obj-prePattern'
+                                              ref={'prePattern'+i}
                                               onClick={this.onFocus}
                                               onChange={this.onFormulaPrePatternChange.bind(this, v, i)}/>)
                                     : null
@@ -542,6 +561,7 @@ class FormulaInput extends React.Component {
                                    value={v.pattern}
                                    style={{width:this.resizeInputWidth(v.pattern)}}
                                    className='formula-obj-pattern'
+                                   ref={'pattern'+i}
                                    onKeyDown={this.onFormulaPatternKeyDown.bind(this, v, i)}
                                    onClick={this.onFocus}
                                    onBlur={this.onFormulaPatternBlur.bind(this,v,i)}
@@ -590,22 +610,44 @@ class FormulaInput extends React.Component {
 
         let valueWidget = (
             <div className="value-mode">
-                <Dropdown overlay={objectMenu} trigger={['click']}
-                          getPopupContainer={() => document.getElementById(this.containerId)}
-                          onVisibleChange={this.onObjectVisibleChange}
-                          visible={this.state.objectDropDownVisible}>
-                    <div className={$class("formula--dropDown")}
-                        style={{width:this.minWidth}}>
+                {
+                    this.disabled
+                        ? (<div className={$class("formula--dropDown")}
+                                style={{width:this.minWidth}}>
                         <div className="formula-title f--hlc">
                             <SelectTargetButton className={'formula-object-icon'}
-                                                disabled={false}
+                                                disabled={this.disabled}
                                                 onClick={this.onSelectTargetClick}
                                                 getResult={this.onGetObjectResult} />
-                            <Input placeholder="比较值／对象" value={this.state.value} onChange={this.onInputTypeValueChange.bind(this)}/>
+                            <Input placeholder="比较值／对象" ref={'valueInput'}
+                                   value={this.state.value}
+                                   disabled={this.disabled}
+                                   onChange={this.onInputTypeValueChange.bind(this)}/>
                             <span className="right-icon" />
                         </div>
-                    </div>
-                </Dropdown>
+                    </div>)
+                        : (
+                        <Dropdown overlay={objectMenu} trigger={['click']}
+                                  getPopupContainer={() => document.getElementById(this.containerId)}
+                                  onVisibleChange={this.onObjectVisibleChange}
+                                  visible={this.state.objectDropDownVisible}>
+                            <div className={$class("formula--dropDown")}
+                                 style={{width:this.minWidth}}>
+                                <div className="formula-title f--hlc">
+                                    <SelectTargetButton className={'formula-object-icon'}
+                                                        disabled={false}
+                                                        onClick={this.onSelectTargetClick}
+                                                        getResult={this.onGetObjectResult} />
+                                    <Input placeholder="比较值／对象" ref={'valueInput'}
+                                           value={this.state.value}
+                                           disabled={this.disabled}
+                                           onChange={this.onInputTypeValueChange.bind(this)}/>
+                                    <span className="right-icon" />
+                                </div>
+                            </div>
+                        </Dropdown>
+                    )
+                }
             </div>
         );
 
