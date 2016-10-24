@@ -353,13 +353,17 @@ function resolveEventTree(node, list) {
                       } else if(cmd.action.name==='changeValue') {
                           cmd.action.property.forEach(v=> {
                               if (v.value&&v.value.type === 2) {
-                                  v.value.value.forEach(v1=>{
+                                  v.value.value.forEach((v1,i)=>{
                                       if(v1.objId) {
                                           v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
                                       } else {
                                           v1.objKey = null;
                                       }
                                       (delete v1.objId);
+                                      if(v1.objKey == null) {
+                                          //如果不存在就直接删除
+                                          v.value.value.splice(i);
+                                      }
                                   });
                               }
                           });
