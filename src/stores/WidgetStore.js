@@ -580,7 +580,7 @@ function generateJsFunc(etree) {
           }
         });
       }
-
+      console.log('conditions',conditions);
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
@@ -651,7 +651,7 @@ function generateJsFunc(etree) {
               }
               lines.push(line + ')');
           }
-        } else if (cmd.action.type == 'customize' && cmd.enable) {
+        } else if (cmd.action&&cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
             cmd.action.property.forEach(function(p) {
@@ -708,7 +708,7 @@ function saveTree(data, node, saveKey) {
             judges.className=node.className;
             judges.children=[];
             if(item.needFill) {
-                judges.conFlag = 'onChange';//触发条件
+                judges.conFlag = 'change';//触发条件
                 item.needFill.map((v, i)=> {
                     if(judges.className == 'input' && v.type=='select'){
                         judges.conFlag =v.default;
@@ -887,7 +887,7 @@ function saveTree(data, node, saveKey) {
         });
 
 
-        //console.log('judges',judges);
+        console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges, enable:eventEnable});
 
 
