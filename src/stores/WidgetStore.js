@@ -590,8 +590,11 @@ function generateJsFunc(etree) {
                           lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
                       } else if (prop.value.type === 2) {
                           let subLine = '';
-                          prop.value.value.forEach(fV =>{
+                          prop.value.value.forEach((fV,i) =>{
                               if(fV.objId&&fV.property){
+                                  if(i===0&&fV.prePattern){
+                                      subLine += fV.prePattern;
+                                  }
                                   subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name) + fV.pattern;
                               }
                           });
@@ -861,6 +864,7 @@ function saveTree(data, node, saveKey) {
                                     };
                                     v.value.value.forEach(v1=>{
                                         let tempV = {
+                                            prePattern: v1.prePattern,
                                             objId: objectKeyToId(v1.objKey),
                                             property: v1.property,
                                             pattern: v1.pattern,

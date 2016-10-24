@@ -36,7 +36,7 @@ class EventBox extends React.Component {
         if(!widget) {
             return;
         }
-        if(widget.redrawEventTreeList) {
+        if(widget.redrawEventTreeList||widget.initTree) {
             this.forceUpdate();
         }
         if(widget.eventTreeList){
