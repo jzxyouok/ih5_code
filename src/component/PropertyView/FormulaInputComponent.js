@@ -245,18 +245,22 @@ class FormulaInput extends React.Component {
     onGetPropertyList(obj){
         let props = [];
         if(obj&&obj.className){
-            propertyMap[obj.className].map((v)=> {
-                if (v.isProperty && v.name != 'id') {
-                    if(v.showName=='W'){
-                        props.push({name:v.name, showName:'宽度'});
-                    }else if(v.showName=='H'){
-                        props.push({name:v.name, showName:'高度'});
-                    }else if(v.showName=='中心点'){
-                    }else{
-                        props.push({name:v.name, showName:v.showName});
+            if(obj.className = 'var'){
+                props.push({name:'value', showName:'值'});
+            } else {
+                propertyMap[obj.className].map((v)=> {
+                    if (v.isProperty && v.name != 'id') {
+                        if(v.showName=='W'){
+                            props.push({name:v.name, showName:'宽度'});
+                        }else if(v.showName=='H'){
+                            props.push({name:v.name, showName:'高度'});
+                        }else if(v.showName=='中心点'){
+                        }else{
+                            props.push({name:v.name, showName:v.showName});
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         return props;
     }
