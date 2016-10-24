@@ -657,6 +657,9 @@ class PropertyView extends React.Component {
                 WidgetActions['render']();
                 this.setState({fields: this.getFields()});
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     componentDidMount() {

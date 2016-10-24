@@ -121,6 +121,9 @@ class Property extends React.Component {
                 });
             });
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onGetActionList(key){

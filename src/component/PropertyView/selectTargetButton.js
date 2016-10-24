@@ -72,6 +72,9 @@ class SelectTargetButton extends React.Component {
                 isActive: isActive
             })
         }
+        if(result.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onBtnClick(e) {

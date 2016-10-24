@@ -44,6 +44,9 @@ class EventView extends React.Component {
                 });
             this.setState({eventData: data});
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onRowClick(record) {

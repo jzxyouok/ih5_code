@@ -137,6 +137,9 @@ class DBItemView extends React.Component {
                 sourceList: sourceList
             })
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onSetFields(item, headers) {

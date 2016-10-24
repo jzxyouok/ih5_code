@@ -39,6 +39,9 @@ class ArrangeModule extends React.Component {
                 classList: widget.classList
             });
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     closeArrangeModuleBtn(){

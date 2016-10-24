@@ -584,7 +584,7 @@ function generateJsFunc(etree) {
           }
         });
       }
-      console.log('conditions',conditions);
+      //console.log('conditions',conditions);
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
@@ -898,7 +898,7 @@ function saveTree(data, node, saveKey) {
         });
 
 
-        console.log('judges',judges);
+        //console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges, enable:eventEnable});
 
 
@@ -2832,9 +2832,27 @@ export default Reflux.createStore({
         tree = loadTree(null, data['stage']);
         stageTree.unshift({name: 'stage', tree: tree});
         let bool = true;
+        let selectOther = (selectdata)=>{
+            if(this.currentActiveEventTreeKey) {
+                this.selectWidget(selectdata, null, keepType.event);
+            }
+            else if(this.currentFunction){
+                this.selectWidget(selectdata, null, keepType.func);
+            }
+            else if(this.currentVariable) {
+                this.selectWidget(selectdata, null, keepType.var);
+            }
+            else if(this.currentDBItem) {
+                this.selectWidget(selectdata,null, keepType.dbItem);
+            }
+            else {
+                this.selectWidget(selectdata);
+            }
+        };
+
         let fuc = (v1,i1)=>{
             if(v1.key == this.currentWidget.key){
-                this.selectWidget(v1);
+                selectOther(v1);
                 bool = false;
             }
             else {
@@ -2846,7 +2864,7 @@ export default Reflux.createStore({
 
         stageTree.map((v,i)=>{
             if(v.tree.key == this.currentWidget.key){
-                this.selectWidget(v.tree);
+                selectOther(v.tree);
                 bool = false;
             }
             else {
@@ -2856,13 +2874,14 @@ export default Reflux.createStore({
             }
         });
         if(bool){
-            this.selectWidget(stageTree[0].tree);
+            selectOther(stageTree[0].tree)
         }
         this.trigger({
             historyRecord: historyRecord,
             historyRW : historyRW,
             initTree: stageTree,
-            classList: classList
+            classList: classList,
+            historyPropertiesUpdate : true
         });
     }
 });

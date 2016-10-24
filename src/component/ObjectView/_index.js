@@ -104,6 +104,9 @@ class ObjectView extends React.Component {
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onInitButtons(selectWidget){

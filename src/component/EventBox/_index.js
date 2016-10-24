@@ -52,6 +52,9 @@ class EventBox extends React.Component {
                 activeKey: widget.activeEventTreeKey.key
             });
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     chooseEventBtn(nid, data){

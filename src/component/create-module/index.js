@@ -66,7 +66,7 @@ class CreateModule extends React.Component {
         }
         else {
             //console.log(name, this.state.isTop);
-            WidgetActions['addClass'](name, this.state.isTop);
+            WidgetActions['addClass']("_"+name, this.state.isTop);
         }
     }
 
