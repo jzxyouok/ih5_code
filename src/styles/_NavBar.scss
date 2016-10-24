@@ -903,6 +903,7 @@
                 background-position: -160px 0 ;
                 &:hover{ background-position: -160px -40px; }
                 &:active{ background-position: -160px -80px; }
+                &.active{ background-position: -160px -80px; }
             }
             &.align-btn {
                 background-position: -200px 0 ;

@@ -1158,6 +1158,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['deletePoint'], this.deletePoint);
         this.listenTo(WidgetActions['saveNode'], this.saveNode);
         this.listenTo(WidgetActions['setRulerLine'], this.setRulerLine);
+        this.listenTo(WidgetActions['setRulerLineBtn'], this.setRulerLineBtn);
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['imageTextSize'], this.imageTextSize);
@@ -2560,6 +2561,9 @@ export default Reflux.createStore({
     },
     setRulerLine:function(bIsShow){
         this.trigger({setRulerLine:{isShow:bIsShow}});
+    },
+    setRulerLineBtn:function(bIsShow){
+        this.trigger({setRulerLineBtn:{isShow:bIsShow}});
     },
     saveNode: function(wid, wname, wdescribe, callback,updateProgress) {
       // let appendArray = function(a1, a2) {

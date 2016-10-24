@@ -5,12 +5,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Form, Input, InputNumber, Slider, Switch, Collapse,Select} from 'antd';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
 const Option = Select.Option;
 const Panel = Collapse.Panel;
+const MenuItem = Menu.Item;
 import cls from 'classnames';
 
-import { SwitchMore } from  './PropertyView/PropertyViewComponet';
+import { SwitchMore,DropDownInput } from  './PropertyView/PropertyViewComponet';
 
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -108,7 +109,8 @@ class PropertyView extends React.Component {
                     </Select>
                     <div id={cls({'ant-progress':defaultProp.name=='font'})}><div className='ant-progress-bar'></div><div className='ant-progress-txt'>上传 10%</div></div>
                 </div>;
-
+            case propertyType.Dropdown:
+                return  <DropDownInput {...defaultProp} />;
             default:
                 return <Input {...defaultProp} />;
         }
@@ -197,25 +199,29 @@ class PropertyView extends React.Component {
                         }
                     }
                     break;
-                case propertyType.Select:
-                  if(prop.name == 'originPos'){
-                      //数组
-                      let arr=value.split(',');
-                      let x = parseFloat(arr[0]);
-                      let y = parseFloat(arr[1]);
-                      this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
-                      const obj = {};
-                       prop.name='originX';
-                       obj[prop.name] =x;
-                      this.onStatusChange({updateProperties: obj});
+                case propertyType.Dropdown:
+                    if(prop.name == 'originPos'){
+                        //数组
+                        console.log('haha',value)
+                        let arr=value.key.split(',');
+                        let x = parseFloat(arr[0]);
+                        let y = parseFloat(arr[1]);
+                        this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
+                        const obj = {};
+                        prop.name='originX';
+                        obj[prop.name] =x;
+                        this.onStatusChange({updateProperties: obj});
 
-                      prop.name='originY';
-                      obj[prop.name] = y;
-                      this.onStatusChange({updateProperties: obj});
-                      WidgetActions['updateProperties']({originX:x,originY:y}, false, true);
-                      prop.name='originPos';
-                       bTag=false;
-                  }else if(prop.name == 'scaleType'){
+                        prop.name='originY';
+                        obj[prop.name] = y;
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties']({originX:x,originY:y}, false, true);
+                        prop.name='originPos';
+                        bTag=false;
+                    }
+                    break;
+                case propertyType.Select:
+                 if(prop.name == 'scaleType'){
                       this.selectNode.props.scaleTypeKey=this.getScaleTypeDefault(value,prop.options);
                       v = parseInt(value);
                   }else if(prop.name == 'fontFamily'){
@@ -295,7 +301,6 @@ class PropertyView extends React.Component {
     }
 
     onChangePropDom(item, value) {
-        this.tag=true;
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
             this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
         }else if(item.type === propertyType.Color){
@@ -439,6 +444,12 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue =node.props[item.name];
                 }
+            }else if(item.type==propertyType.Dropdown ){
+                //设置中心点
+                defaultValue = item.default;
+                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) { //当originY时才会激活,而不是originPos
+                    defaultValue = node.props.originPosKey;
+                }
             } else if(item.type==propertyType.Select ){
                 defaultValue = item.default;
                 if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) { //当originY时才会激活,而不是originPos
@@ -494,13 +505,20 @@ class PropertyView extends React.Component {
             //单独设置默认参数
             if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
                 defaultProp.checked = defaultValue;
+            }else if(item.type ==propertyType.Dropdown ){
+                defaultProp.value = defaultValue;
+                defaultProp.item=item;
+                let arr=[];
+                for(var i in  item.options){
+                    arr.push(<MenuItem  key={item.options[i]}><div className='originIcon'></div>{i}</MenuItem>);
+                }
+                defaultProp.overlay =  <Menu className='dropDownMenu' onClick={defaultProp.onChange}>{arr}</Menu>;
+
             }else if(item.type ==propertyType.Select ){
               let selectClassName='';
                 defaultProp.options=[];
                 defaultProp.value = defaultValue;
-              if(item.name=='originY' ||item.name=='originPos') {
-                  selectClassName='originIcon';
-              }else if(item.name=='fontFamily'){
+              if(item.name=='fontFamily'){
                   for(let i in this.fontList){
                       defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
                   }
