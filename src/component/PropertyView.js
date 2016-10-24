@@ -372,13 +372,17 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-       // console.log(node);
+        console.log(node);
 
         if (!node)  return null;
 
-        if( node.props.isLock ===undefined){
-           // node.props.isLock =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
-            node.props.isLock=false;
+        if( node.props.keepRatio ===undefined){
+             // node.props.isLock =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
+             node.props.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
+            let obj={};
+            obj.keepRatio =  node.props.keepRatio;
+            this.onStatusChange({updateProperties: obj});
+            WidgetActions['updateProperties'](obj, false, true);
         }
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
