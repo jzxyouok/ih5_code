@@ -104,6 +104,9 @@ class FormulaInput extends React.Component {
         } else if(widget.deleteWidget) {
             this.checkValueObjValid();
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     checkValueObjValid(){

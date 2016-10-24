@@ -64,6 +64,9 @@ class FunctionView extends React.Component {
                 params: widget.selectFunction.params,
             });
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onParamsTypeVisibleChange(index, visible) {

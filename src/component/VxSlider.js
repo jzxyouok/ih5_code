@@ -384,6 +384,9 @@ class VxRcSlider extends RcSlider {
                 }
             });
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     componentWillReceiveProps() {

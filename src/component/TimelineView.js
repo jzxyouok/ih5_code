@@ -56,6 +56,9 @@ class TimelineView extends React.Component {
                 this.setState({currentTrack: null});
             }
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onTimer(p) {
@@ -108,7 +111,7 @@ class TimelineView extends React.Component {
         let index = 0;
 
         const getTracks = (node) => {
-            console.log('node', node)
+            //console.log('node', node)
             if (node.className === 'track') {
                 tracks.push(<VxSlider key={index++} max={1} step={0.001} 
                     refTrack={node} refTimer={this.state.timerNode} 

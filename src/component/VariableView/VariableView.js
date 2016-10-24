@@ -48,6 +48,9 @@ class VariableView extends React.Component {
                 type: widget.selectVariable.type
             });
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     onEditChange(type, v) {

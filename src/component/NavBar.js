@@ -240,6 +240,9 @@ class NavBar extends React.Component {
                 historyNameList : widget.historyNameList
             })
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     newWork() {

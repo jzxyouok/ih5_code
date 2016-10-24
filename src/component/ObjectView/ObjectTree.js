@@ -218,6 +218,9 @@ class ObjectTree extends React.Component {
                 changed : changed
             });
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     addOpenId(){

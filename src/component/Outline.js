@@ -94,6 +94,9 @@ class Outline extends React.Component{
             this.setState(changed);
 
         }
+        if(widget.historyPropertiesUpdate){
+            this.forceUpdate();
+        }
     }
 
     componentDidMount() {
