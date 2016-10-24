@@ -2840,6 +2840,7 @@ export default Reflux.createStore({
         stageTree = [];
         let tree;
         let data =historyRecord[historyRW-1];
+        debugger;
         if (data['defs']) {
             for (let n in data['defs']) {
                 bridge.addClass(n);

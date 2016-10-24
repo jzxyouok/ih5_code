@@ -755,6 +755,7 @@ class Event extends React.Component {
             this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
         }
+        console.log(eventList);
         WidgetActions['recordEventTreeList']();
     }
 
