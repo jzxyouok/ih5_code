@@ -76,8 +76,6 @@ class FormulaInput extends React.Component {
 
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
-        this.onClickFocus = this.onClickFocus.bind(this);
-
     }
 
     componentDidMount() {
@@ -150,18 +148,26 @@ class FormulaInput extends React.Component {
         }
     }
 
-    onFocus() {
-        if(!this.state.on) {
-            this.setState({
-                on: true
-            }, ()=>{
-                if(this.refs.formulaMode) {
-                    this.refs.formulaMode.style.cursor = 'auto';
-                    this.refs.formulaMode.style.width = 'auto';
-                    this.refs.formulaMode.style.overflow = 'visible';
-                    this.onChangeFocus();
-                }
-            })
+    onFocus(e) {
+        if((this.onChangeFocus!=undefined&&this.onChangeFocus()!==false) || this.onChangeFocus===undefined) {
+            if(e){
+                e.stopPropagation();
+            }
+            if(!this.state.on) {
+                this.setState({
+                    on: true
+                }, ()=>{
+                    if(this.refs.formulaMode) {
+                        this.refs.formulaMode.style.cursor = 'auto';
+                        this.refs.formulaMode.style.width = 'auto';
+                        this.refs.formulaMode.style.overflow = 'visible';
+                        this.onChangeFocus();
+                    }
+                })
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -180,11 +186,6 @@ class FormulaInput extends React.Component {
         }
     }
 
-    onClickFocus(e) {
-        e.stopPropagation();
-        this.onFocus();
-    }
-
     // formula mode
     onObjectVisibleChange(flag){
         this.setState({
@@ -201,7 +202,9 @@ class FormulaInput extends React.Component {
     }
 
     onSelectTargetClick() {
-        this.onFocus();
+        if(!this.onFocus()) {
+            return false;
+        }
         this.setState({
             objectDropDownVisible: false,
             willDeleteObjIndex: null
@@ -488,7 +491,7 @@ class FormulaInput extends React.Component {
                 return (
                     <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
                               getPopupContainer={() => document.getElementById(this.containerId)}
-                              onClick={this.onClickFocus}
+                              onClick={this.onFocus}
                               onVisibleChange={this.onPropertyVisibleChange}>
                         <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
                             <div className="dropDown-title">选择属性</div>
@@ -513,7 +516,7 @@ class FormulaInput extends React.Component {
                                               value={v.prePattern}
                                               style={{width:this.resizeInputWidth(v.prePattern)}}
                                               className='formula-obj-prePattern'
-                                              onClick={this.onClickFocus}
+                                              onClick={this.onFocus}
                                               onChange={this.onFormulaPrePatternChange.bind(this, v, i)}/>)
                                     : null
                             }
@@ -537,7 +540,7 @@ class FormulaInput extends React.Component {
                                    style={{width:this.resizeInputWidth(v.pattern)}}
                                    className='formula-obj-pattern'
                                    onKeyDown={this.onFormulaPatternKeyDown.bind(this, v, i)}
-                                   onClick={this.onClickFocus}
+                                   onClick={this.onFocus}
                                    onBlur={this.onFormulaPatternBlur.bind(this,v,i)}
                                    onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
                             {/*{*/}
@@ -569,7 +572,7 @@ class FormulaInput extends React.Component {
             <div className="formula-mode f--hlc"
                  style={{width:this.minWidth, overflow:'hidden', cursor:'pointer'}}
                  ref='formulaMode'
-                 onClick={this.onClickFocus}>
+                 onClick={this.onFocus}>
                 <SelectTargetButton className={'formula-object-icon'}
                                     disabled={this.disabled}
                                     onClick={this.onSelectTargetClick}

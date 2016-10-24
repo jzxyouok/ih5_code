@@ -446,9 +446,13 @@ class Property extends React.Component {
     }
 
     onFormulaInputFocus() {
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
         this.refs.pProperty.style.overflow = 'visible';
         document.getElementById('EventBox').style.overflow = 'visible';
         document.getElementById('EBContentLayer').style.overflow = 'visible';
+        return true;
     }
 
     onFormulaInputBlur() {
