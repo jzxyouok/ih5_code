@@ -20,11 +20,74 @@
         height: 30px;
         background: #313131;
 
-        span {
+        .EB--title-name {
             font-size: 14px;//12px;
             //color: #fffefe;
             color: #b5b5b5;
-            padding-left: 12px;
+            //padding-left: 12px;
+            cursor: pointer;
+            line-height: 30px;
+            padding: 0 12px;
+
+            &.active {
+                background-color: #232323;
+            }
+        }
+        .EB--title-search-wrap {
+            background-color: #272727;
+            padding: 2px 4px;
+            border-radius: 2px;
+            .ant-input-wrapper {
+                input {
+                    background-color: #272727;
+                    border: none;
+                }
+                .ant-input,
+                .ant-input-sm{
+                    &:focus {
+                        border: 0 !important;
+                        outline: 0;
+                        box-shadow: none;
+                    }
+                }
+            }
+            .btn-icon {
+                border-radius: 8px;
+                position: relative;
+                width: 16px;
+                height: 16px;
+                background-color: #333333;
+
+                &:hover {
+                    background-color: #b5b5b5;
+                    span {
+                        background-color: #4c4c4c;
+                    }
+                }
+                &:active {
+                    background-color: #fff;
+                    span {
+                        background-color: #4c4c4c;
+                    }
+                }
+
+                .heng {
+                    background-color: #4c4c4c;
+                    position: absolute;
+                    left: 3px;
+                    top: 7px;
+                    width: 10px;
+                    height: 2px;
+                }
+                .shu {
+                    background-color: #4c4c4c;
+                    position: absolute;
+                    left: 7px;
+                    top: 3px;
+                    width: 2px;
+                    height: 10px;
+                }
+            }
         }
 
         .btn {
