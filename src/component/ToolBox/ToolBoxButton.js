@@ -196,6 +196,10 @@ class ToolBoxButton extends Component {
                     //qrcode处理
                     this.props.param.shapeHeight = this.props.param.shapeWidth;
                 }
+                if(this.props.className === 'table'){
+                    this.props.param.width = data.shapeWidth;
+                    this.props.param.height = data.shapeHeight;
+                }
                 WidgetActions['addWidget'](this.props.className, this.props.param);
                 ToolBoxAction['deselect']();
                 this.drawRect.end();
