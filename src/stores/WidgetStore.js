@@ -714,7 +714,7 @@ function saveTree(data, node, saveKey) {
                         judges.conFlag =v.default;
                     } else{
                         let obj = {};
-                        obj.enable=true; //todo:根据以后的需求变更
+                        obj.enable=true;
                         obj.judgeObjKey =node.key;
                         let judgeObj =keyMap[obj.judgeObjKey];
                         if (judgeObj) {
@@ -728,6 +728,13 @@ function saveTree(data, node, saveKey) {
                         obj.judgeValFlag = 'value';
 
                         obj.compareFlag = item.conFlag;
+
+                        if((judges.className=='text' ||judges.className=='input') &&  (obj.compareFlag == 'isMatch' || obj.compareFlag == 'isUnMatch')){
+                            obj.compareFlag = obj.compareFlag == 'isMatch'?'=':'!=';
+                        }else if(judges.className=='counter' && ( obj.compareFlag=='valRange') ){
+                            obj.compareFlag = v.showName == '最大值'?'<':'>';
+                        }
+
                         obj.showName=v.showName;
                         obj.type=v.type;
                         obj.compareObjFlag =v.default;
@@ -735,7 +742,26 @@ function saveTree(data, node, saveKey) {
                         judges.children.push(obj);
                     }
                 });
+            }else if( judges.className=='counter' &&( judges.conFlag == 'positive' || judges.conFlag == 'negative')) {
+                let obj = {};
+                obj.enable=true;
+                obj.judgeObjKey =node.key;
+                let judgeObj =keyMap[obj.judgeObjKey];
+                if (judgeObj) {
+                    let o = objectToId(judgeObj);
+                    obj.judgeObjId = o[0];
+                    if (o[1]) {
+                        obj.judgeVarId = o[1];
+                        obj.judgeVarName = o[2];
+                    }
+                }
+                obj.judgeValFlag = 'value';
+                obj.compareFlag = judges.conFlag == 'positive'?'>':'<';
+                obj.compareObjFlag =0;
+                judges.children.push(obj);
             }
+
+
 
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
@@ -761,7 +787,10 @@ function saveTree(data, node, saveKey) {
                 } else {
                     obj.judgeValFlag = v.judgeValFlag;//判断对象的属性
                 }
+
+
                 obj.compareFlag = v.compareFlag;//比较运算符
+
 
                 obj.compareObjFlag = v.compareObjFlag;
                 obj.compareObjKey = v.compareObjKey;
@@ -786,6 +815,7 @@ function saveTree(data, node, saveKey) {
                 }
 
                 obj.arrHidden = v.arrHidden;
+
                 judges.children.push(obj);
             });
 
