@@ -86,46 +86,55 @@
     height: 100%;
     font-size: 12px;
 
-    overflow-y: hidden;
-    overflow-x: auto;
-    &::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-      background-color: #353535;
-    }
-    &::-webkit-scrollbar-thumb {
-      cursor: pointer;
-      border-radius: 0;
-      background-color: #232323;
-      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    }
+    //overflow-y: hidden;
+    //overflow-x: auto;
+    //&::-webkit-scrollbar {
+    //  width: 6px;
+    //  height: 6px;
+    //  background-color: #353535;
+    //}
+    //&::-webkit-scrollbar-thumb {
+    //  cursor: pointer;
+    //  border-radius: 0;
+    //  background-color: #232323;
+    //  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    //}
     .ant-input-wrapper {
-      margin: 0 4px;
+      margin: 0 2px;
     }
     .formula-obj {
-      padding: 0 4px;
+      //padding: 0 4px;
       .ant-input-wrapper {
         width: auto;
         input {
-          width: 50px;
+          width: 10px;
         }
+      }
+    }
+    .formula-obj-div {
+      border-radius: 2px;
+      &.complete {
+        background-color: #213635;
+      }
+      &.will-delete-obj {
+        border: 1px solid #7b5815;
       }
     }
     .formular-obj-com {
       background: #1c2f2e;
       border-radius: 2px;
     }
-    .formula-obj-dropDown {
-      width: 132px;
-      cursor: pointer;
-      color: #b5b5b5;
-      padding: 2px;
-      border-radius: 2px;
-      background: #1c2f2e;
-      height: 18px;
-    }
+    //.formula-obj-dropDown {
+    //  width: 132px;
+    //  cursor: pointer;
+    //  color: #b5b5b5;
+    //  padding: 2px;
+    //  border-radius: 2px;
+    //  background: #1c2f2e;
+    //  height: 18px;
+    //}
     .formula-obj-property-dropDown{
-      padding-left: 4px;
+      padding: 0 2px;
       width: 66px;
       cursor: pointer;
       color: #b5b5b5;
@@ -137,7 +146,7 @@
         background-position: -1678px -40px;
       }
     }
-    .formula-obj-dropDown,
+    //.formula-obj-dropDown,
     .formula-obj-property-dropDown {
       .dropDown-title{
         width: 100%;
@@ -149,8 +158,9 @@
       color: #b5b5b5;
     }
     .formula-obj-name {
-      width: 60px;
-      padding-right: 4px;
+      //width: 60px;
+      padding: 0 2px;
+      max-width: 60px;
     }
     .formula-obj-dot {
       width: 6px;
@@ -158,44 +168,9 @@
       background: url('img/button-icon.svg') no-repeat -1720px -200px;
     }
     .formula-obj-property {
-      padding-left: 4px;
-      width: 66px;
-    }
-    .add-obj-btn {
-      border: none;
-      margin-right: 2px;
-      outline: none;
-      border-radius: 2px;
-
-      &:hover .btn-layer span { background: #b5b5b5; }
-      &:active .btn-layer span { background: #fff; }
-
-      .btn-layer {
-        position: relative;
-        width: 16px;
-        height: 16px;
-        background: #1c2f2e;
-        margin: 0 auto;
-
-        span{
-          position: absolute;
-          background: #325351;
-        }
-
-        .heng {
-          left: 3px;
-          top: 7px;
-          width: 10px;
-          height: 2px;
-        }
-
-        .shu {
-          left: 7px;
-          top: 3px;
-          width: 2px;
-          height: 10px;
-        }
-      }
+      padding: 0 2px;
+      //width: 66px;
+      max-width: 66px;
     }
   }
 }

@@ -45,6 +45,8 @@ class Event extends React.Component {
 
         this.oldVal = null;
 
+        this.eventBoxWidthIsLarge = false; //是否大框
+
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.addEventBtn = this.addEventBtn.bind(this);
@@ -899,6 +901,7 @@ class Event extends React.Component {
                 }
         });
         oEventBox.style.width=tag?'820px':'740px';
+        this.eventBoxWidthIsLarge = tag;
 
         this.setState({toLong:tag});
     }
@@ -1005,7 +1008,7 @@ class Event extends React.Component {
     content(v,i){
             return  <div className={$class('item f--h', {'item-not-enable': !v.enable})} key={i} id={'event-item-'+v.eid} >
                 <span className='left-line' />
-                <div className='item-main flex-1'>
+                <div className='item-main flex-1' style={{width:this.eventBoxWidthIsLarge?'788px':'703.5px'}}>
                     <div className='item-header f--h'>
                         <span className='close-line' onClick={this.delEvent.bind(this,i)} />
                         <div className='item-title flex-1 f--h'>
@@ -1235,6 +1238,7 @@ class Event extends React.Component {
                                                  specific={v2}
                                                  event={v}
                                                  wKey={this.props.wKey}
+                                                 isLarge={this.eventBoxWidthIsLarge}
                                                  activeKey={this.props.activeKey}/>
                             })
                         }
