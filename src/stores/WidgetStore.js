@@ -595,7 +595,10 @@ function generateJsFunc(etree) {
                                   if(i===0&&fV.prePattern){
                                       subLine += fV.prePattern;
                                   }
-                                  subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name) + fV.pattern;
+                                  subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
+                                  if(fV.pattern) {
+                                      subLine += fV.pattern;
+                                  }
                               }
                           });
                           if(subLine!=='') {
