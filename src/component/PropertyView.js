@@ -231,6 +231,35 @@ class PropertyView extends React.Component {
                 case propertyType.Float:
                     let defaultWidth =this.selectNode.node.defaultData.width;
                     let defaultHeight =this.selectNode.node.defaultData.height;
+
+                    if(this.selectNode.node.keepRatio){
+                        //修改之前的宽度和高度
+                        let oldWidth = this.selectNode.node.width;
+                        let oldHeight = this.selectNode.node.height;
+                        //修改后的宽度 和应该显示的高度
+                        if('scaleX'== prop.name) {
+                            let obj={}
+                            obj.scaleX =parseInt(value) /defaultWidth;
+
+                            obj.scaleY= ( oldHeight*value)/(oldWidth*defaultHeight);
+
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, false);
+
+                        }else if('scaleY'== prop.name ){
+
+                            let obj={}
+                            obj.scaleY =parseInt(value) /defaultHeight;
+
+                            obj.scaleX= ( oldWidth*value)/(oldHeight*defaultWidth);
+
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, false);
+
+                        }
+                        bTag=false;
+                        break;
+                    }else{
                         if('scaleX'== prop.name) {
                             v =parseInt(value) /defaultWidth;
                             this.selectNode.props.width =value;
@@ -238,6 +267,8 @@ class PropertyView extends React.Component {
                             v = parseInt(value) / defaultHeight;
                             this.selectNode.props.height = value;
                         }
+                    }
+
                     break;
                 case propertyType.Dropdown:
                     if(prop.name == 'originPos'){
@@ -403,7 +434,7 @@ class PropertyView extends React.Component {
     }
     getOldOrigin(key,options){
         if(key == undefined){
-            key='中心';
+            key='左上';
         }
         for(let i in options){
             if(i==key){
@@ -429,7 +460,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-       //  console.log(node);
+      //   console.log(node);
 
         if (!node)  return null;
 
