@@ -102,11 +102,12 @@ propertyMap['box'] = [
     { name: 'positionY',showName:'Y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position', isProperty: true },
     { name: 'scaleY',showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
-    { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
+    { name: 'keepRatio',showName:'等比缩放', type: propertyType.Boolean, default:false, isProperty: false },
+    { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
     { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
-    { name: 'click', showName:'点击', isEvent: true, info:'{globalX, globalY}'},
+    { name: 'click', showName:'点击', isEvent: true, info:'{globalX, globalY}'},  
     { name: 'touchDown', showName:'手指按下', isEvent: true, info:['globalX','globalY']},
     { name: 'touchUp', showName:'手指松开', isEvent: true, info:['globalX','globalY']},
     { name: 'swipeLeft', showName:'向左滑动', isEvent: true },
@@ -196,7 +197,6 @@ propertyMap['audio'] = [
 propertyMap['image'] = [
     ...propertyMap['sprite'],
     { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: false },
-    { name: 'keepRatio',showName:'等比缩放', type: propertyType.Boolean, default:false, isProperty: false }
 ];
 propertyMap['imagelist'] = [
     ...propertyMap['sprite'],

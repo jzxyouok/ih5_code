@@ -201,20 +201,32 @@ class PropertyView extends React.Component {
                     break;
                 case propertyType.Dropdown:
                     if(prop.name == 'originPos'){
+
                         //数组
                         let arr=value.key.split(',');
                         let x = parseFloat(arr[0]);
                         let y = parseFloat(arr[1]);
+                        let oldOrigin =this.getOldOrigin(this.selectNode.props.originPosKey,prop.options);
+                        let posX=this.selectNode.node.positionX+this.selectNode.node.width*(x-parseFloat(oldOrigin[0]));
+                        let posY=this.selectNode.node.positionY+this.selectNode.node.height*(y-parseFloat(oldOrigin[1]));
+
+
+
                         this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
                         const obj = {};
                         prop.name='originX';
                         obj[prop.name] =x;
+
                         this.onStatusChange({updateProperties: obj});
 
                         prop.name='originY';
                         obj[prop.name] = y;
+
                         this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties']({originX:x,originY:y}, false, true);
+
+
+                        WidgetActions['updateProperties']({originX:x,originY:y,positionX:posX,positionY:posY}, false, false);
+
                         prop.name='originPos';
                         bTag=false;
                     }
@@ -294,7 +306,6 @@ class PropertyView extends React.Component {
        if(bTag){
            const obj = {};
            obj[prop.name] = v;
-           console.log(obj,prop.name);
            this.onStatusChange({updateProperties: obj});
            WidgetActions['updateProperties'](obj, false, true);
        }
@@ -351,6 +362,18 @@ class PropertyView extends React.Component {
                  return i;
              }
         }
+        return originPos.x+','+originPos.y;
+    }
+    getOldOrigin(key,options){
+        if(key == undefined){
+            key='中心';
+        }
+        for(let i in options){
+            if(i==key){
+                return options[i];
+            }
+        }
+        return key.split(',');
     }
 
     //锁定
@@ -374,7 +397,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-      //  console.log(node);
+       //  console.log(node);
 
         if (!node)  return null;
 
@@ -384,6 +407,7 @@ class PropertyView extends React.Component {
             obj.keepRatio =  node.node.keepRatio;
             WidgetActions['updateProperties'](obj, false, true);
         }
+
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
 
@@ -456,11 +480,9 @@ class PropertyView extends React.Component {
                 if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) { //当originY时才会激活,而不是originPos
                     defaultValue = node.props.originPosKey;
                 }
-            } else if(item.type==propertyType.Select ){
+              } else if(item.type==propertyType.Select ){
                 defaultValue = item.default;
-                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) { //当originY时才会激活,而不是originPos
-                    defaultValue = node.props.originPosKey;
-                }else if(item.name=='scaleType' && node.props.scaleTypeKey){
+                if(item.name=='scaleType' && node.props.scaleTypeKey){
                     defaultValue = node.props.scaleTypeKey;
                 }else if( item.name=='font' && node.props.fontKey){
                     defaultValue = node.props.fontKey;
