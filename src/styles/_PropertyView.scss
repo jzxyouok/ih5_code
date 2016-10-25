@@ -77,7 +77,6 @@ $toBottom:14px;
             }
         }
     }
-
    .ant-form-full {
 	  margin-bottom:$toBottom;
 	 &:last-child{
@@ -103,6 +102,7 @@ $toBottom:14px;
         }
     }
     .ant-input-number-handler-wrap {
+		transition:initial;
         a {
             height: 10px !important;
             height: 10px !important;
@@ -277,6 +277,9 @@ $toBottom:14px;
 
 	  .ant-lock-checked{
 		background-position: -100px -40px;
+		  &:hover{
+			  background-position: -100px -40px;
+		  }
 	  }
 	}
 
@@ -301,7 +304,7 @@ $toBottom:14px;
 	}
 
 	// input
-
+	transition:initial;
 	.ant-form-item {
 
 		&.ant-form-half {
@@ -331,6 +334,13 @@ $toBottom:14px;
 		.ant-col-r {
 			flex: 1;
 
+			.ant-input-wrapper{
+				input{
+					height: 22px;
+					line-height: 22px;
+				}
+			}
+
             &.tbFSStyle ,
             &.tbFSStyle .ant-form-item-control {
                 height: 22px;
@@ -341,7 +351,7 @@ $toBottom:14px;
 
                     input {
                         height: 22px;
-                        line-height: 22px;
+                        line-height: 22px ;
                     }
                 }
             }
@@ -372,6 +382,7 @@ $toBottom:14px;
                 }
 
                 .ant-input-number-handler-wrap {
+
                     a {
                         height: 10px;
                         &.ant-input-number-handler-up .ant-input-number-handler-up-inner {
@@ -600,7 +611,7 @@ $toBottom:14px;
 		   position: absolute;
 		   right: 2px;
 		   z-index: 100;
-           top: -4px;
+           top: 0px;
        }
 
 		   &:hover:after{
@@ -634,10 +645,10 @@ $toBottom:14px;
 
 //动态插入到body的弹框
 
-//dropdown,select
+//dropdown
 
 
-	.dropDownMenu,.ant-select-dropdown-menu{
+.dropDownMenu2{
   width: 60px;
   color: #858585 !important;
   border: 1px solid #353535 !important;
@@ -754,6 +765,68 @@ $toBottom:14px;
 	margin-right: 3px;
 	margin-left: -10px;
   }
+}
+
+//select
+
+.ant-select-dropdown{
+	color: #858585 !important;
+	border: 1px solid #353535 !important;
+	background: #353535;
+	border-bottom-left-radius: 2px !important;
+	border-bottom-right-radius: 2px !important;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	box-shadow: 2px 2px 5px #1d1d1d;
+
+	.ant-select-dropdown-menu-item:nth-child(1) .originIcon{	background-position: -4px -8px;}
+	.ant-select-dropdown-menu-item:nth-child(2) .originIcon{	background-position: -36px -8px;}
+	.ant-select-dropdown-menu-item:nth-child(3) .originIcon{	background-position: -68px -8px;}
+	.ant-select-dropdown-menu-item:nth-child(4) .originIcon{	background-position: -100px -8px;}
+	.ant-select-dropdown-menu-item:nth-child(5) .originIcon{	background-position: -132px -8px;}
+	.ant-select-dropdown-menu-item:nth-child(6) .originIcon{	background-position: -164px -8px;}
+	.ant-select-dropdown-menu-item:nth-child(7) .originIcon{	background-position: -196px -8px;}
+	.ant-select-dropdown-menu-item:nth-child(8) .originIcon{	background-position: -228px -8px;}
+	.ant-select-dropdown-menu-item:nth-child(9) .originIcon{	background-position: -260px -8px;}
+
+	.ant-select-dropdown-menu-item:nth-child(1):hover .originIcon{background-position: -4px -40px;}
+	.ant-select-dropdown-menu-item:nth-child(2):hover .originIcon{background-position: -36px -40px;}
+	.ant-select-dropdown-menu-item:nth-child(3):hover .originIcon{background-position: -68px -40px;}
+	.ant-select-dropdown-menu-item:nth-child(4):hover .originIcon{background-position: -100px -40px;}
+	.ant-select-dropdown-menu-item:nth-child(5):hover .originIcon{background-position: -132px -40px;}
+	.ant-select-dropdown-menu-item:nth-child(6):hover .originIcon{background-position: -164px -40px;}
+	.ant-select-dropdown-menu-item:nth-child(7):hover .originIcon{background-position: -196px -40px;}
+	.ant-select-dropdown-menu-item:nth-child(8):hover .originIcon{background-position: -228px -40px;}
+	.ant-select-dropdown-menu-item:nth-child(9):hover .originIcon{background-position: -260px -40px;}
+
+
+	.ant-select-dropdown-menu-item:hover{
+		background: #151515;
+		color: white;
+	}
+	.ant-select-dropdown-menu-item-active,.ant-select-dropdown-menu-item-selected{
+		background: #151515;
+		color: white;
+	}
+	>div{
+		width: 200px;
+	}
+	.ant-select-dropdown-menu{
+		overflow: visible;
+		max-height: 300px;
+		.optionline{
+			border-bottom:1px solid #666;
+		}
+	}
+	.originIcon{
+		width: 20px;
+		height: 15px;
+		float: left;
+		background: url(./img/origin-position.svg) no-repeat;
+		display: inline-block;
+		margin-right: 3px;
+		margin-left: -10px;
+	}
 }
 
 form .ant-select, form .ant-cascader-picker{width:100%;}
