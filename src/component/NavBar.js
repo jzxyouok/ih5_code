@@ -76,7 +76,8 @@ class NavBar extends React.Component {
             historyRecord : [],
             historyNameList : ["初始化"],
             historyShow : false,
-            historyLayerHide : false
+            historyLayerHide : false,
+            isShowRulerLine:true
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -242,6 +243,9 @@ class NavBar extends React.Component {
         }
         if(widget.historyPropertiesUpdate){
             this.forceUpdate();
+        }
+        if(widget.setRulerLineBtn){
+            this.onHideRulerLine();
         }
     }
 
@@ -447,15 +451,11 @@ class NavBar extends React.Component {
         })
     }
 
-    onHideRulerLine(value){
-        //console.log();
-        if(value.target.title == '隐藏参考线'){
-            value.target.title='显示参考线';
-            WidgetActions['setRulerLine'](false) ;
-        }else{
-            value.target.title='隐藏参考线';
-            WidgetActions['setRulerLine'](true) ;
-        }
+    onHideRulerLine(){
+        let bool =!this.state.isShowRulerLine;
+        this.refs.isShowRulerLine.title=!bool?'显示参考线':'隐藏参考线';
+        WidgetActions['setRulerLine'](bool) ;
+        this.setState({isShowRulerLine:bool});
     }
 
     onImport() {
@@ -1306,7 +1306,7 @@ class NavBar extends React.Component {
                             </ul>
                         </div>
 
-                        <button className='btn btn-clear hide-btn' title='隐藏参考线'  onClick={this.onHideRulerLine} />
+                        <button className={$class('btn btn-clear hide-btn',{'active':this.state.isShowRulerLine})}  ref="isShowRulerLine"    title='隐藏参考线'  onClick={this.onHideRulerLine} />
 
                         <button className='btn btn-clear history-btn' title='历史' onClick={ this.historyShow }  />
 

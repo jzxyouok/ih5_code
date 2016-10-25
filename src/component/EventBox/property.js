@@ -24,6 +24,7 @@ class Property extends React.Component {
         super(props);
         this.state = {
             expanded: true,
+            isLarge: props.isLarge,
             activeKey: this.props.activeKey,//当前激活的widgetkey
             wKey: this.props.wKey,      //specfic所在的widgetkey
             event: this.props.event,        //对应的事件
@@ -57,6 +58,9 @@ class Property extends React.Component {
 
         this.onGetClassListByKey = this.onGetClassListByKey.bind(this);
 
+        this.onFormulaInputFocus = this.onFormulaInputFocus.bind(this);
+        this.onFormulaInputBlur = this.onFormulaInputBlur.bind(this);
+
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
         this.customClassList = [];
@@ -66,6 +70,7 @@ class Property extends React.Component {
     componentWillReceiveProps(nextProps) {
         if(nextProps.activeKey){
             this.setState({
+                isLarge: nextProps.isLarge,
                 activeKey: nextProps.activeKey,
                 event: nextProps.event,
                 wKey: nextProps.wKey,
@@ -443,6 +448,25 @@ class Property extends React.Component {
         }
     }
 
+    onFormulaInputFocus() {
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
+        if(this.state.event&&!this.state.event.enable) {
+            return false;
+        }
+        this.refs.pProperty.style.overflow = 'visible';
+        document.getElementById('EventBox').style.overflow = 'visible';
+        document.getElementById('EBContentLayer').style.overflow = 'visible';
+        return true;
+    }
+
+    onFormulaInputBlur() {
+        this.refs.pProperty.style.overflow = 'hidden';
+        document.getElementById('EventBox').style.overflow = 'hidden';
+        document.getElementById('EBContentLayer').style.overflow = 'scroll';
+    }
+
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
 
@@ -527,7 +551,11 @@ class Property extends React.Component {
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.FormulaInput:
-                    return <FormulaInput containerId={propertyId} disabled={!this.state.currentEnable} {...defaultProp}/>;
+                    return <FormulaInput containerId={propertyId}
+                                         disabled={!this.state.currentEnable}
+                                         onFocus={this.onFormulaInputFocus}
+                                         onBlur={this.onFormulaInputBlur}
+                                         {...defaultProp}/>;
                 case propertyType.Select:
                     let titleTemp = '';
                     let oType = optionType.normal;
@@ -645,7 +673,7 @@ class Property extends React.Component {
                         </div>
 
                         <div className="p--right flex-1">
-                            <div className="p--property">
+                            <div className="p--property" ref='pProperty' style={{width:this.state.isLarge?'554px':'475px'}}>
                                 <Dropdown overlay={actionMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
                                           onVisibleChange={this.onActionVisibleChange}

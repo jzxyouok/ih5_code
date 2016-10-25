@@ -2,6 +2,8 @@
  * Created by vxplo on 2016/9/27.
  */
 import React from 'react';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
+const MenuItem = Menu.Item;
 
 class SwitchMore extends React.Component {
     constructor(props) {
@@ -83,4 +85,50 @@ class SwitchMore extends React.Component {
         );
     }
 }
-export {SwitchMore};
+
+class DropDownInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            value:props.value,
+            item:props.item,
+            dropDownOnChange:props.onChange
+        };
+    }
+    componentDidMount() {
+
+    }
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            value:nextProps.value,
+            item:nextProps.item,
+            dropDownOnChange:nextProps.onChange
+        });
+    }
+
+    componentWillUnmount() {
+
+    }
+    inputChange(e){
+        this.setState({
+            value:e.target.value
+        })
+    }
+     inputBlur(e){
+         let arr =e.target.value.split(',');
+         if(arr.length==2){
+             this.state.dropDownOnChange({key:e.target.value},this.state.item);
+         }
+     }
+    render() {
+        return (
+            <Dropdown   overlay={this.props.overlay}   trigger={['click']} >
+                <div >
+                    <input  className="origin_dropdown"  value={this.state.value}  onBlur={this.inputBlur.bind(this)} onChange={this.inputChange.bind(this)} />
+                    <span />
+                </div>
+            </Dropdown>
+        );
+    }
+}
+export {SwitchMore,DropDownInput};

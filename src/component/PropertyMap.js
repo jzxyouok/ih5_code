@@ -15,7 +15,7 @@ const propertyType = {
     Boolean2:10,
     Function:11,
     FormulaInput:12,
-
+    Dropdown:13,
     TbSelect : 14,
     TbColor : 15,
     TbFont : 16,
@@ -106,7 +106,7 @@ propertyMap['box'] = [
     { name: 'positionY',showName:'Y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position', isProperty: true },
     { name: 'scaleY',showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
-    { name: 'originPos', showName:'中心点',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
+    { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
     { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
@@ -140,8 +140,8 @@ propertyMap['text'] = [
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
-    { name: 'match', showName:'匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
-    { name: 'unMatch', showName:'不匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
+    { name: 'isMatch', showName:'匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
+    { name: 'isUnMatch', showName:'不匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'Contain', showName:'包含文本', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'change', showName:'内容改变', isEvent: true},
 
@@ -199,7 +199,8 @@ propertyMap['audio'] = [
 ];
 propertyMap['image'] = [
     ...propertyMap['sprite'],
-    { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: false }
+    { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: false },
+    { name: 'keepRatio',showName:'等比缩放', type: propertyType.Boolean, default:false, isProperty: false }
 ];
 propertyMap['imagelist'] = [
     ...propertyMap['sprite'],
@@ -694,6 +695,7 @@ propertyMap['strVar'] = [
         property:[
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ], isFunc: true },
+    { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
 propertyMap['intVar'] = [
        { name: 'changeValue', showName:'赋值', info:'(value)',
@@ -701,6 +703,7 @@ propertyMap['intVar'] = [
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ],
            isFunc: true },
+    { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
 propertyMap[dataType.oneDArr] = [
     { addRequires: widgetFlags.Root},

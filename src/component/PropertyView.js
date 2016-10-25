@@ -5,12 +5,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Form, Input, InputNumber, Slider, Switch, Collapse,Select} from 'antd';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
 const Option = Select.Option;
 const Panel = Collapse.Panel;
+const MenuItem = Menu.Item;
 import cls from 'classnames';
 
-import { SwitchMore } from  './PropertyView/PropertyViewComponet';
+import { SwitchMore,DropDownInput } from  './PropertyView/PropertyViewComponet';
 
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -49,6 +50,8 @@ class PropertyView extends React.Component {
             x:null,
             y:null
         };
+
+
     }
 
      //获取封装的form组件
@@ -59,7 +62,7 @@ class PropertyView extends React.Component {
                 return <InputNumber placeholder={defaultProp.placeholder} />;
 
             case propertyType.Float:
-                return <InputNumber {...defaultProp} />;
+                return <InputNumber {...defaultProp}  />;
 
             case propertyType.Number:
                 if(defaultProp.tbCome == "tbS"){
@@ -163,6 +166,8 @@ class PropertyView extends React.Component {
                             <span className={cls({"active": defaultProp.placeholder.indexOf(3) >=0 })} />
                             <span className={cls({"active": defaultProp.placeholder.indexOf(4) >=0 })} />
                         </div>;
+            case propertyType.Dropdown:
+                 return  <DropDownInput {...defaultProp} />;
             default:
                 return <Input {...defaultProp} />;
         }
@@ -249,6 +254,26 @@ class PropertyView extends React.Component {
                             v = parseInt(value)/defaultHeight;
                             this.selectNode.props.height =value;
                         }
+                    }
+                    break;
+                case propertyType.Dropdown:
+                    if(prop.name == 'originPos'){
+                        //数组
+                        let arr=value.key.split(',');
+                        let x = parseFloat(arr[0]);
+                        let y = parseFloat(arr[1]);
+                        this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
+                        const obj = {};
+                        prop.name='originX';
+                        obj[prop.name] =x;
+                        this.onStatusChange({updateProperties: obj});
+
+                        prop.name='originY';
+                        obj[prop.name] = y;
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties']({originX:x,originY:y}, false, true);
+                        prop.name='originPos';
+                        bTag=false;
                     }
                     break;
                 case propertyType.Select || propertyType.TbSelect:
@@ -343,6 +368,7 @@ class PropertyView extends React.Component {
        if(bTag){
            const obj = {};
            obj[prop.name] = v;
+           console.log(obj,prop.name);
            this.onStatusChange({updateProperties: obj});
            WidgetActions['updateProperties'](obj, false, true);
        }
@@ -404,27 +430,33 @@ class PropertyView extends React.Component {
     //锁定
     antLock(){
         if(this.selectNode.node.class != 'qrcode'){
-            this.selectNode.props.isLock=!this.selectNode.props.isLock;
-            let  oLock=  document.getElementsByClassName('ant-lock')[0];
-            if(this.selectNode.props.isLock){
-                oLock.classList.add('ant-lock-checked');
-                let k =this.selectNode.props.scaleX;
-                WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
-            }else{
-                oLock.classList.remove('ant-lock-checked');
-            }
+            this.selectNode.node.keepRatio=!this.selectNode.node.keepRatio;
+            let obj={};
+            obj.keepRatio =  this.selectNode.node.keepRatio;
+            WidgetActions['updateProperties'](obj, false, false);
+            // let  oLock=  document.getElementsByClassName('ant-lock')[0];
+            // if(this.selectNode.props.isLock){
+            //     oLock.classList.add('ant-lock-checked');
+            //     let k =this.selectNode.props.scaleX;
+            //     WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
+            // }else{
+            //     oLock.classList.remove('ant-lock-checked');
+            // }
         }
     }
 
     getFields() {
 
         let node = this.selectNode;
-       // console.log(node);
+      //  console.log(node);
 
         if (!node)  return null;
 
-        if( node.props.isLock ===undefined){
-            node.props.isLock =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
+        if( node.node.keepRatio ===undefined){
+            node.node.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
+            let obj={};
+            obj.keepRatio =  node.node.keepRatio;
+            WidgetActions['updateProperties'](obj, false, true);
         }
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
@@ -492,9 +524,19 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue =node.props[item.name];
                 }
-            } else if(item.type==propertyType.Select || item.type==propertyType.TbSelect ){
+
+            } else if(item.type==propertyType.Dropdown ){
+                //设置中心点
                 defaultValue = item.default;
-                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) { //当originY时才会激活,而不是originPos
+                //当originY时才会激活,而不是originPos
+                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
+                    defaultValue = node.props.originPosKey;
+                }
+            }
+            else if(item.type==propertyType.Select || item.type==propertyType.TbSelect ){
+                defaultValue = item.default;
+                //当originY时才会激活,而不是originPos
+                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
                     defaultValue = node.props.originPosKey;
                 }else if(item.name=='scaleType' && node.props.scaleTypeKey){
                     defaultValue = node.props.scaleTypeKey;
@@ -547,7 +589,17 @@ class PropertyView extends React.Component {
             //单独设置默认参数
             if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
                 defaultProp.checked = defaultValue;
-            }else if(item.type ==propertyType.Select || item.type ==propertyType.TbSelect ){
+            }else if(item.type ==propertyType.Dropdown ){
+                defaultProp.value = defaultValue;
+                defaultProp.item=item;
+                let arr=[];
+                for(var i in  item.options){
+                    arr.push(<MenuItem  key={item.options[i]}><div className='originIcon'></div>{i}</MenuItem>);
+                }
+                defaultProp.overlay =  <Menu className='dropDownMenu' onClick={defaultProp.onChange}>{arr}</Menu>;
+
+            }
+            else if(item.type ==propertyType.Select || item.type ==propertyType.TbSelect ){
                 let selectClassName='';
                     defaultProp.options=[];
                     defaultProp.value = defaultValue;
@@ -776,7 +828,6 @@ class PropertyView extends React.Component {
         document.addEventListener('mousemove', this.mouseMove.bind(this));
         document.addEventListener('mouseup', this.mouseUp.bind(this));
     }
-
     componentWillUnmount() {
         this.unsubscribe();
     }

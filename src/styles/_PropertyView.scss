@@ -384,6 +384,21 @@ $toBottom:14px;
                     }
                 }
             }
+			.origin_dropdown{
+				width: 60px;
+				height: 22px;
+				line-height: 22px;
+				font-size: 12px;
+				background-color: #353535;
+				border-radius: 2px;
+				color: #858585;
+				border: 1px solid #444;
+				padding: 0 7px;
+				&:focus{
+				    outline: 0;
+					box-shadow: 0 0 0 2px rgba(255,168,0,0.4);
+				}
+			}
 		}
 
 		.ant-input-wrapper {
@@ -619,9 +634,10 @@ $toBottom:14px;
 
 //动态插入到body的弹框
 
-//select
+//dropdown
 
-.ant-select-dropdown{
+	.dropDownMenu{
+  width: 60px;
   color: #858585 !important;
   border: 1px solid #353535 !important;
   background: #353535;
@@ -651,11 +667,70 @@ $toBottom:14px;
   .ant-select-dropdown-menu-item:nth-child(8):hover .originIcon{background-position: -228px -40px;}
   .ant-select-dropdown-menu-item:nth-child(9):hover .originIcon{background-position: -260px -40px;}
 
-  .ant-select-dropdown-menu-item:hover{
+  .ant-select-dropdown-menu-item:hover {
+      .ant-dropdown-menu-item:nth-child(1) .originIcon {
+          background-position: -4px -8px;
+      }
+      .ant-dropdown-menu-item:nth-child(2) .originIcon {
+          background-position: -36px -8px;
+      }
+      .ant-dropdown-menu-item:nth-child(3) .originIcon {
+          background-position: -68px -8px;
+      }
+      .ant-dropdown-menu-item:nth-child(4) .originIcon {
+          background-position: -100px -8px;
+      }
+      .ant-dropdown-menu-item:nth-child(5) .originIcon {
+          background-position: -132px -8px;
+      }
+      .ant-dropdown-menu-item:nth-child(6) .originIcon {
+          background-position: -164px -8px;
+      }
+      .ant-dropdown-menu-item:nth-child(7) .originIcon {
+          background-position: -196px -8px;
+      }
+      .ant-dropdown-menu-item:nth-child(8) .originIcon {
+          background-position: -228px -8px;
+      }
+      .ant-dropdown-menu-item:nth-child(9) .originIcon {
+          background-position: -260px -8px;
+      }
+
+      .ant-dropdown-menu-item:nth-child(1):hover .originIcon {
+          background-position: -4px -40px;
+      }
+      .ant-dropdown-menu-item:nth-child(2):hover .originIcon {
+          background-position: -36px -40px;
+      }
+      .ant-dropdown-menu-item:nth-child(3):hover .originIcon {
+          background-position: -68px -40px;
+      }
+      .ant-dropdown-menu-item:nth-child(4):hover .originIcon {
+          background-position: -100px -40px;
+      }
+      .ant-dropdown-menu-item:nth-child(5):hover .originIcon {
+          background-position: -132px -40px;
+      }
+      .ant-dropdown-menu-item:nth-child(6):hover .originIcon {
+          background-position: -164px -40px;
+      }
+      .ant-dropdown-menu-item:nth-child(7):hover .originIcon {
+          background-position: -196px -40px;
+      }
+      .ant-dropdown-menu-item:nth-child(8):hover .originIcon {
+          background-position: -228px -40px;
+      }
+      .ant-dropdown-menu-item:nth-child(9):hover .originIcon {
+          background-position: -260px -40px;
+      }
+  }
+
+  .ant-dropdown-menu-item:hover{
 	background: #151515;
 	color: white;
   }
-  .ant-select-dropdown-menu-item-active,.ant-select-dropdown-menu-item-selected{
+		
+  .ant-dropdown-menu-item-active,.ant-dropdown-menu-item-selected{
 	background: #151515;
 	color: white;
   }

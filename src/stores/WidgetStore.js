@@ -353,13 +353,17 @@ function resolveEventTree(node, list) {
                       } else if(cmd.action.name==='changeValue') {
                           cmd.action.property.forEach(v=> {
                               if (v.value&&v.value.type === 2) {
-                                  v.value.value.forEach(v1=>{
+                                  v.value.value.forEach((v1,i)=>{
                                       if(v1.objId) {
                                           v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
                                       } else {
                                           v1.objKey = null;
                                       }
                                       (delete v1.objId);
+                                      if(v1.objKey == null) {
+                                          //如果不存在就直接删除
+                                          v.value.value.splice(i);
+                                      }
                                   });
                               }
                           });
@@ -590,9 +594,15 @@ function generateJsFunc(etree) {
                           lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
                       } else if (prop.value.type === 2) {
                           let subLine = '';
-                          prop.value.value.forEach(fV =>{
+                          prop.value.value.forEach((fV,i) =>{
                               if(fV.objId&&fV.property){
-                                  subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name) + fV.pattern;
+                                  if(i===0&&fV.prePattern){
+                                      subLine += fV.prePattern;
+                                  }
+                                  subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
+                                  if(fV.pattern) {
+                                      subLine += fV.pattern;
+                                  }
                               }
                           });
                           if(subLine!=='') {
@@ -714,7 +724,7 @@ function saveTree(data, node, saveKey) {
                         judges.conFlag =v.default;
                     } else{
                         let obj = {};
-                        obj.enable=true; //todo:根据以后的需求变更
+                        obj.enable=true;
                         obj.judgeObjKey =node.key;
                         let judgeObj =keyMap[obj.judgeObjKey];
                         if (judgeObj) {
@@ -728,6 +738,13 @@ function saveTree(data, node, saveKey) {
                         obj.judgeValFlag = 'value';
 
                         obj.compareFlag = item.conFlag;
+
+                        if((judges.className=='text' ||judges.className=='input') &&  (obj.compareFlag == 'isMatch' || obj.compareFlag == 'isUnMatch')){
+                            obj.compareFlag = obj.compareFlag == 'isMatch'?'=':'!=';
+                        }else if(judges.className=='counter' && ( obj.compareFlag=='valRange') ){
+                            obj.compareFlag = v.showName == '最大值'?'<':'>';
+                        }
+
                         obj.showName=v.showName;
                         obj.type=v.type;
                         obj.compareObjFlag =v.default;
@@ -735,7 +752,26 @@ function saveTree(data, node, saveKey) {
                         judges.children.push(obj);
                     }
                 });
+            }else if( judges.className=='counter' &&( judges.conFlag == 'positive' || judges.conFlag == 'negative')) {
+                let obj = {};
+                obj.enable=true;
+                obj.judgeObjKey =node.key;
+                let judgeObj =keyMap[obj.judgeObjKey];
+                if (judgeObj) {
+                    let o = objectToId(judgeObj);
+                    obj.judgeObjId = o[0];
+                    if (o[1]) {
+                        obj.judgeVarId = o[1];
+                        obj.judgeVarName = o[2];
+                    }
+                }
+                obj.judgeValFlag = 'value';
+                obj.compareFlag = judges.conFlag == 'positive'?'>':'<';
+                obj.compareObjFlag =0;
+                judges.children.push(obj);
             }
+
+
 
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
@@ -761,7 +797,10 @@ function saveTree(data, node, saveKey) {
                 } else {
                     obj.judgeValFlag = v.judgeValFlag;//判断对象的属性
                 }
+
+
                 obj.compareFlag = v.compareFlag;//比较运算符
+
 
                 obj.compareObjFlag = v.compareObjFlag;
                 obj.compareObjKey = v.compareObjKey;
@@ -786,6 +825,7 @@ function saveTree(data, node, saveKey) {
                 }
 
                 obj.arrHidden = v.arrHidden;
+
                 judges.children.push(obj);
             });
 
@@ -861,6 +901,7 @@ function saveTree(data, node, saveKey) {
                                     };
                                     v.value.value.forEach(v1=>{
                                         let tempV = {
+                                            prePattern: v1.prePattern,
                                             objId: objectKeyToId(v1.objKey),
                                             property: v1.property,
                                             pattern: v1.pattern,
@@ -1128,6 +1169,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['deletePoint'], this.deletePoint);
         this.listenTo(WidgetActions['saveNode'], this.saveNode);
         this.listenTo(WidgetActions['setRulerLine'], this.setRulerLine);
+        this.listenTo(WidgetActions['setRulerLineBtn'], this.setRulerLineBtn);
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['imageTextSize'], this.imageTextSize);
@@ -1570,37 +1612,37 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-      if(this.currentWidget.props.isLock){
-          let newObj =cpJson(obj);
-          if(prevObj) {
-              if (prevObj.scaleX == obj.scaleX && prevObj.scaleY == obj.scaleY) {
-                  //松开鼠标
-                  newObj.scaleX = prevNewObj.scaleX;
-                  newObj.scaleY = prevNewObj.scaleY;
-                  dragTag = null;
-              } else if ( prevObj.scaleY != obj.scaleY && prevObj.scaleX != obj.scaleX) {
-                  //x y轴变动
-                  newObj.scaleY = newObj.scaleX;
-                     dragTag = 'xy';
-              } else if (prevObj.scaleY == obj.scaleY && prevObj.scaleX != obj.scaleX) {
-                  //x轴变动
-                  newObj.scaleY = newObj.scaleX;
-                  dragTag = 'x';
-              } else if(prevObj.scaleX == obj.scaleX && prevObj.scaleY != obj.scaleY){
-                  //y轴变动
-                  if(dragTag=='x' || dragTag =='xy'){
-                      //修复闪动的bug
-                      newObj.scaleY = newObj.scaleX;
-                  }else{
-                      newObj.scaleX = newObj.scaleY;
-                      dragTag = 'y';
-                  }
-              }
-          }
-          prevObj =cpJson(obj);
-          obj =newObj;
-          prevNewObj =cpJson(newObj);
-        }
+      // if(this.currentWidget.props.isLock){
+      //     let newObj =cpJson(obj);
+      //     if(prevObj) {
+      //         if (prevObj.scaleX == obj.scaleX && prevObj.scaleY == obj.scaleY) {
+      //             //松开鼠标
+      //             newObj.scaleX = prevNewObj.scaleX;
+      //             newObj.scaleY = prevNewObj.scaleY;
+      //             dragTag = null;
+      //         } else if ( prevObj.scaleY != obj.scaleY && prevObj.scaleX != obj.scaleX) {
+      //             //x y轴变动
+      //             newObj.scaleY = newObj.scaleX;
+      //                dragTag = 'xy';
+      //         } else if (prevObj.scaleY == obj.scaleY && prevObj.scaleX != obj.scaleX) {
+      //             //x轴变动
+      //             newObj.scaleY = newObj.scaleX;
+      //             dragTag = 'x';
+      //         } else if(prevObj.scaleX == obj.scaleX && prevObj.scaleY != obj.scaleY){
+      //             //y轴变动
+      //             if(dragTag=='x' || dragTag =='xy'){
+      //                 //修复闪动的bug
+      //                 newObj.scaleY = newObj.scaleX;
+      //             }else{
+      //                 newObj.scaleX = newObj.scaleY;
+      //                 dragTag = 'y';
+      //             }
+      //         }
+      //     }
+      //     prevObj =cpJson(obj);
+      //     obj =newObj;
+      //     prevNewObj =cpJson(newObj);
+      //   }
 
         if(obj && obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
@@ -1725,8 +1767,8 @@ export default Reflux.createStore({
             this.currentWidget.props['eventTree'] = [];
             this.currentWidget.props['eventTree'].push(this.emptyEvent());
             this.activeEventTree(this.currentWidget.key);
+            this.trigger({redrawWidget: this.currentWidget});
         }
-        this.trigger({redrawWidget: this.currentWidget});
         // this.reorderEventTreeList();
         // this.render();
     },
@@ -2531,6 +2573,9 @@ export default Reflux.createStore({
     setRulerLine:function(bIsShow){
         this.trigger({setRulerLine:{isShow:bIsShow}});
     },
+    setRulerLineBtn:function(bIsShow){
+        this.trigger({setRulerLineBtn:{isShow:bIsShow}});
+    },
     saveNode: function(wid, wname, wdescribe, callback,updateProgress) {
       // let appendArray = function(a1, a2) {
       //     for (let i = 0; i < a2.length; i++) {
@@ -2810,6 +2855,7 @@ export default Reflux.createStore({
         stageTree = [];
         let tree;
         let data =historyRecord[historyRW-1];
+
         if (data['defs']) {
             for (let n in data['defs']) {
                 bridge.addClass(n);

@@ -191,12 +191,18 @@ class DesignView extends React.Component {
         let oContainer =document.getElementById('DesignView-Container');
         let oRulerWLine = oContainer.getElementsByClassName('rulerWLine');
         let oRulerHLine = oContainer.getElementsByClassName('rulerHLine');
+
+        let oLine_top = document.getElementById('line_top');
+        let oLine_left =document.getElementById('line_left');
+
         for(let i=oRulerWLine.length-1; i>=0;i--){
             oRulerWLine[i].style.display= bIsShow?'block':'none';
         }
         for(let i=oRulerHLine.length-1; i>=0;i--){
             oRulerHLine[i].style.display =bIsShow?'block':'none';
         }
+        oLine_top.style.display =bIsShow?'block':'none';
+        oLine_left.style.display =bIsShow?'block':'none';
 
     }
 
@@ -339,6 +345,10 @@ class DesignView extends React.Component {
         this.isDraging=false;
         this.curODiv=null;
         this.whichDrag=null;
+        //全部显示 ,如果处于非显示状态,则触发显示
+        if( this.selectNode.props.isShow != undefined && !this.selectNode.props.isShow){
+            WidgetActions['setRulerLineBtn'](true);
+        }
     }
 
     render() {

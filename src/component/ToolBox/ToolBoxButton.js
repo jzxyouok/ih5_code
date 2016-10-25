@@ -181,6 +181,8 @@ class ToolBoxButton extends Component {
                 this.drawRect.cleanUp();
                 this.drawRect = null;
             } else if(this.props.drawRectText) {
+                this.props.param.originX = 0.5;
+                this.props.param.originY = 0.5;
                 //弹窗输入文本
                 this.drawRect.end();
                 //弹窗事件
@@ -191,6 +193,8 @@ class ToolBoxButton extends Component {
                     }
                 });
             } else if (this.props.drawRect) {
+                this.props.param.originX = 0.5;
+                this.props.param.originY = 0.5;
                 //普通画框
                 if(this.props.className === 'qrcode') {
                     //qrcode处理

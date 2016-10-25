@@ -8,6 +8,7 @@ import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetSt
 import WidgetActions from '../../actions/WidgetActions'
 import  {propertyMap} from '../PropertyMap'
 import {eventTempData} from './tempData';
+import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { Menu, Dropdown, Icon ,InputNumber,Input,Select} from 'antd';
 const MenuItem = Menu.Item;
@@ -43,6 +44,8 @@ class Event extends React.Component {
         this.curChildrenIndex = 0;
 
         this.oldVal = null;
+
+        this.eventBoxWidthIsLarge = false; //是否大框
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
@@ -898,6 +901,7 @@ class Event extends React.Component {
                 }
         });
         oEventBox.style.width=tag?'820px':'740px';
+        this.eventBoxWidthIsLarge = tag;
 
         this.setState({toLong:tag});
     }
@@ -1004,7 +1008,7 @@ class Event extends React.Component {
     content(v,i){
             return  <div className={$class('item f--h', {'item-not-enable': !v.enable})} key={i} id={'event-item-'+v.eid} >
                 <span className='left-line' />
-                <div className='item-main flex-1'>
+                <div className='item-main flex-1' style={{width:this.eventBoxWidthIsLarge?'788px':'703.5px'}}>
                     <div className='item-header f--h'>
                         <span className='close-line' onClick={this.delEvent.bind(this,i)} />
                         <div className='item-title flex-1 f--h'>
@@ -1153,7 +1157,7 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4],'com120':v1.compareObjFlag=='比较值/对象'})} >
                                                     <SelectTargetButton
                                                         className={'p--icon'}
                                                         disabled={!v.enable || !v1.enable}
@@ -1234,6 +1238,7 @@ class Event extends React.Component {
                                                  specific={v2}
                                                  event={v}
                                                  wKey={this.props.wKey}
+                                                 isLarge={this.eventBoxWidthIsLarge}
                                                  activeKey={this.props.activeKey}/>
                             })
                         }

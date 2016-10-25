@@ -20,11 +20,79 @@
         height: 30px;
         background: #313131;
 
-        span {
+        .EB--title-name {
             font-size: 14px;//12px;
             //color: #fffefe;
             color: #b5b5b5;
-            padding-left: 12px;
+            //padding-left: 12px;
+            cursor: pointer;
+            padding: 4.5px 12px;
+
+            &.active {
+                background-color: #232323;
+            }
+        }
+        .EB--title-search-wrap {
+            background-color: #272727;
+            padding: 2px 4px;
+            border-radius: 2px;
+            .search-btn {
+                background: none;
+                border: 0;
+                outline: 0;
+                cursor: pointer;
+            }
+            .ant-input-wrapper {
+                input {
+                    background-color: #272727;
+                    border: none;
+                }
+                .ant-input,
+                .ant-input-sm{
+                    &:focus {
+                        border: 0 !important;
+                        outline: 0;
+                        box-shadow: none;
+                    }
+                }
+            }
+            .btn-icon {
+                border-radius: 8px;
+                position: relative;
+                width: 16px;
+                height: 16px;
+                background-color: #333333;
+
+                &:hover {
+                    background-color: #b5b5b5;
+                    span {
+                        background-color: #4c4c4c;
+                    }
+                }
+                &:active {
+                    background-color: #fff;
+                    span {
+                        background-color: #4c4c4c;
+                    }
+                }
+
+                .heng {
+                    background-color: #4c4c4c;
+                    position: absolute;
+                    left: 3px;
+                    top: 7px;
+                    width: 10px;
+                    height: 2px;
+                }
+                .shu {
+                    background-color: #4c4c4c;
+                    position: absolute;
+                    left: 7px;
+                    top: 3px;
+                    width: 2px;
+                    height: 10px;
+                }
+            }
         }
 
         .btn {
@@ -163,7 +231,8 @@
             }
 
             .E--content {
-                width: 100%;
+                //width: 100%;
+                width:718px;
 
                 .item {
                     &:last-child .left-line {
@@ -202,7 +271,9 @@
                     margin-left: 8px;
                 }
 
-                .item-main { }
+                .item-main {
+                    width: 703.5px;
+                }
 
                 .item-header {
                     //height: 28px;
@@ -532,6 +603,7 @@
                                                     border-top: 1px solid #313131;
                                                 }
                                                 .ant-input-number-handler-up-inner {
+                                                    top:-2px;
                                                     right: 2px;
                                                     &:before {
                                                         content: '\E610';
@@ -594,6 +666,10 @@
 
                             &.middle {
                                 width: 100px;
+                               &.com120{
+                                   width:120px;
+                                   .compareObjFlag-input{width: 100%;}
+                               }
                             }
 
                             &.short {
@@ -776,6 +852,7 @@
                                 &:active { background-position: -1722px 0 !important; }
                             }
                         }
+
                     }
                     .right {
                         .plus-btn:disabled{
@@ -810,6 +887,7 @@
 
             .P--left-line{
                 width: 1px;
+                padding-left: 1px;
                 background: #4d4d4d;
                 margin-left: 20px;
             }
@@ -1068,6 +1146,8 @@
 
                     .p--property {
                         margin-bottom: 2px;
+                        width: 475px;
+                        overflow: hidden;
                     }
 
                     .p--title {
@@ -1087,11 +1167,12 @@
 
                     .pp-content {
                         width: 100%;
+                        padding-left: 25px;
 
-                        &:before{
-                            content:"";
-                            width: 25px;
-                        }
+                        //&:before{
+                        //    content:"";
+                        //    width: 25px;
+                        //}
                     }
 
                     .pp--list-layer {

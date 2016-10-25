@@ -78,7 +78,7 @@ class SelectTargetButton extends React.Component {
     }
 
     onBtnClick(e) {
-        if((this.onClick!=undefined&&this.onClick()!==false) || this.onClick==undefined) {
+        if((this.onClick!=undefined&&this.onClick()!==false) || this.onClick===undefined) {
             e.stopPropagation();
             SelectTargetAction['selectBtnClick'](this.state.stId, !this.state.isActive);
         }
