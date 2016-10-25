@@ -471,21 +471,21 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-        //  console.log(node);
+       //  console.log(node);
 
         if (!node)  return null;
 
-        if (node.node.keepRatio === undefined) {
-            node.node.keepRatio = ( node.node.class == 'qrcode' || node.node.class == 'image' || node.node.class == 'bitmaptext' || node.node.class == 'imagelist') ? true : false;
-            let obj = {};
-            obj.keepRatio = node.node.keepRatio;
+        if( node.node.keepRatio ===undefined){
+            node.node.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
+            let obj={};
+            obj.keepRatio =  node.node.keepRatio;
             WidgetActions['updateProperties'](obj, false, true);
         }
 
 
-        let className = node.className.charAt(0) == '_' ? 'class' : node.className;
+        let className = node.className.charAt(0) == '_'?'class':node.className;
 
-        if (className == 'data') {
+        if(className == 'data') {
             switch (node.props.type) {
                 case dataType.oneDArr:
                     className = dataType.oneDArr;
@@ -504,15 +504,15 @@ class PropertyView extends React.Component {
 
             //设置默认值,用于展示
             let defaultValue;
-            if (item.readOnly) {
+            if (item.readOnly ) {
                 defaultValue = node.node[item.name];
                 //console.log(item);
-                if (item.name == 'sockName') {
+                if(item.name=='sockName'){
                     defaultValue = this.state.sockName
                 }
             }
-            else if (item.type == propertyType.Float) {
-                if (node.className == 'html') {
+            else if(item.type==propertyType.Float) {
+                if(node.className=='html') {
                     let str = item.name == 'scaleX' ? 'shapeWidth' : 'shapeHeight';
                     let str2 = item.name == 'scaleX' ? 'width' : 'height';
 
@@ -522,279 +522,254 @@ class PropertyView extends React.Component {
                     this.selectNode.node.defaultData[str2] = node.props[str];
 
                     defaultValue = node.props[str2];
-                    if (!defaultValue) {
+                    if(!defaultValue){
                         defaultValue = node.props[str];
                         node.props[str2] = defaultValue;
                     }
 
-                } else {
+                }else{
                     let str = item.name == 'scaleX' ? 'width' : 'height'
 
-                    defaultValue = (node.node.class == 'bitmaptext' && this.textSizeObj) ? this.textSizeObj[str] : node.node[str];
+                    defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
 
-                    this.textSizeObj = null;
+                    this.textSizeObj =null;
 
-                    if (!this.selectNode.node.defaultData) {
-                        this.selectNode.node.defaultData = {};
-                    }//只执行一次
+                    if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={}; }//只执行一次
 
-                    if (!this.selectNode.node.defaultData[str]) {
-                        this.selectNode.node.defaultData[str] = defaultValue
-                    }//设置初始宽高,便于计算放大缩小的系数
+                    if(!this.selectNode.node.defaultData[str]) {     this.selectNode.node.defaultData[str] = defaultValue   }//设置初始宽高,便于计算放大缩小的系数
 
                 }
-            } else if (item.type == propertyType.Color || item.type == propertyType.Color2 || item.type === propertyType.TbColor) {
-                if (item.name == 'color' && !node.props.color) { //只执行一次
-                    node.props.color = '#FFFFFF';
-                }
-                if (node.props[item.name + '_originColor']) {  //舞台颜色隐藏后保存的颜色
-                    defaultValue = node.props[item.name + '_originColor'];
-                } else {
-                    defaultValue = node.props[item.name];
+            }else if(item.type==propertyType.Color || item.type==propertyType.Color2 || item.type === propertyType.TbColor){
+               if( item.name == 'color' &&  !node.props.color){ //只执行一次
+                   node.props.color='#FFFFFF';
+               }
+                if(node.props[item.name+'_originColor']){  //舞台颜色隐藏后保存的颜色
+                    defaultValue =node.props[item.name+'_originColor'];
+                }else{
+                    defaultValue =node.props[item.name];
                 }
 
-            } else if (item.type == propertyType.Dropdown) {
+            } else if(item.type==propertyType.Dropdown ){
                 //设置中心点
                 defaultValue = item.default;
                 //当originY时才会激活,而不是originPos
-                if (node.props.originPosKey && (item.name == 'originX' || item.name == 'originY' || item.name == 'originPos')) {
+                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
                     defaultValue = node.props.originPosKey;
                 }
-                else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
+            }
+            else if(item.type==propertyType.Select || item.type==propertyType.TbSelect ){
+                defaultValue = item.default;
+                //当originY时才会激活,而不是originPos
+                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
+                    defaultValue = node.props.originPosKey;
+                }else if(item.name=='scaleType' && node.props.scaleTypeKey){
+                    defaultValue = node.props.scaleTypeKey;
+                }else if( item.name=='font' && node.props.fontKey){
+                    defaultValue = node.props.fontKey;
+                }else if( item.name=='fontFamily'  && node.props.fontFamilyKey){
+                    defaultValue = node.props.fontFamily;
+                }else if( (item.name=='forwardTransition' || item.name=='backwardTransition') &&  node.props[item.name+'_val'] ){
+                    defaultValue = node.props[item.name+'_val'];
+                }else if( item.name=='type'  && node.props.type){
+                    defaultValue = node.props.type;
+                }
+            } else if(item.type === propertyType.Boolean2 ){
+                if(node.props[item.name]===undefined){
+                    defaultValue =item.default;
+                }else{
+                     if(node.props[item.name]==false){
+                         defaultValue=2;
+                     }else if(node.props[item.name]==true){
+                         defaultValue=0;
+                     }else{
+                         defaultValue=1;
+                     }
+                }
+            }
+            else  if (node.props[item.name] === undefined){
+                if(item.type === propertyType.Boolean ){
                     defaultValue = item.default;
-                    //当originY时才会激活,而不是originPos
-                    if (node.props.originPosKey && (item.name == 'originX' || item.name == 'originY' || item.name == 'originPos')) {
-                        defaultValue = node.props.originPosKey;
-                    } else if (item.name == 'scaleType' && node.props.scaleTypeKey) {
-
-                        defaultValue = node.props.scaleTypeKey;
-                    } else if (item.name == 'font' && node.props.fontKey) {
-                        defaultValue = node.props.fontKey;
-                    } else if (item.name == 'fontFamily' && node.props.fontFamilyKey) {
-                        defaultValue = node.props.fontFamily;
-                    } else if ((item.name == 'forwardTransition' || item.name == 'backwardTransition') && node.props[item.name + '_val']) {
-                        defaultValue = node.props[item.name + '_val'];
-                    } else if (item.name == 'type' && node.props.type) {
-                        defaultValue = node.props.type;
-                    }
-                } else if (item.type === propertyType.Boolean2) {
-                    if (node.props[item.name] === undefined) {
-                        defaultValue = item.default;
-                    } else {
-                        if (node.props[item.name] == false) {
-                            defaultValue = 2;
-                        } else if (node.props[item.name] == true) {
-                            defaultValue = 0;
-                        } else {
-                            defaultValue = 1;
-                        }
-                    }
-                }
-                else if (node.props[item.name] === undefined) {
-                    if (item.type === propertyType.Boolean) {
-                        defaultValue = item.default;
-                    } else if (item.type === propertyType.Percentage && item.name == 'alpha') {
-                        defaultValue = item.default * 100;
-                    } else {
-                        defaultValue = '';
-                    }
-
-                } else {
-                    defaultValue = node.props[item.name];
-                    if (item.name == 'alpha') {
-                        defaultValue = defaultValue * 100;
-                    }
+                }else if(item.type === propertyType.Percentage && item.name=='alpha'){
+                    defaultValue = item.default*100;
+                }else{
+                    defaultValue='';
                 }
 
-                //设置通用默认参数和事件
-                const defaultProp = {
-                    size: 'small',
-                    placeholder: item.default,
-                    disabled: item.readOnly !== undefined,
-                    onChange: this.onChangePropDom.bind(this, item)
-                };
-
-                //单独设置默认参数
-                if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
-                    defaultProp.checked = defaultValue;
-                } else if (item.type == propertyType.Dropdown) {
-                    defaultProp.value = defaultValue;
-                    defaultProp.item = item;
-                    let arr = [];
-                    for (var i in  item.options) {
-                        arr.push(<MenuItem key={item.options[i]}>
-                            <div className='originIcon'></div>
-                            {i}</MenuItem>);
-                    }
-                    defaultProp.overlay = <Menu className='dropDownMenu' onClick={defaultProp.onChange}>{arr}</Menu>;
-
+            } else {
+                defaultValue = node.props[item.name];
+                if (item.name == 'alpha') {
+                    defaultValue = defaultValue * 100;
                 }
-                else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
-                    let selectClassName = '';
-                    defaultProp.options = [];
-                    defaultProp.value = defaultValue;
-                    if (item.name == 'originY' || item.name == 'originPos') {
-                        selectClassName = 'originIcon';
-                    }
-                    else if (item.name == 'fontFamily') {
-                        for (let i in this.fontList) {
-                            defaultProp.options.push(<Option key={this.fontList[i].file}>
-                                <div className={selectClassName}></div>
-                                {this.fontList[i].name}</Option>);
-                        }
-                    }
-                    else if (item.name == 'font') {
-                        defaultProp.name = item.name;
-                        defaultProp.options.push(<Option key={0}>
-                            <div className={selectClassName}></div>
-                            上传字体</Option>);
-                        for (let i in this.fontList) {
-                            defaultProp.options.push(<Option key={this.fontList[i].file}>
-                                <div className={selectClassName}></div>
-                                {this.fontList[i].name}</Option>);
-                        }
-                    }
-                    else if (item.name == 'type') {
-                        for (let i in  item.options) {
-                            selectClassName = (item.options[i] == 'slideInUp' || item.options[i] == 'jello') ? 'optionline' : '';
-                            defaultProp.options.push(<Option key={item.options[i]}
-                                                             className={selectClassName}>{i}</Option>);
-                        }
-                    }
-                    if (defaultProp.options.length == 0) {
-                        for (var i in  item.options) {
-                            defaultProp.options.push(<Option key={item.options[i]}>
-                                <div className={selectClassName}></div>
-                                {i}</Option>);
-                        }
-                    }
-                    if (item.name == 'chooseColumn') {
-                        defaultProp.tbWidth = item.tbWidth;
-                    }
-                } else if (item.type == propertyType.Color) {
-                    defaultProp.defaultChecked = node.props[item.name + '_originColor'] ? false : true;
-                    defaultProp.value = defaultValue;
-                } else if (item.type === propertyType.TbColor) {
-                    defaultProp.value = defaultValue;
-                    defaultProp.tbHeight = item.tbHeight;
-                } else {
-                    defaultProp.value = defaultValue;
+            }
+
+            //设置通用默认参数和事件
+            const defaultProp = {
+                size: 'small',
+                placeholder: item.default,
+                disabled: item.readOnly !== undefined,
+                onChange:  this.onChangePropDom.bind(this, item)
+            };
+
+            //单独设置默认参数
+            if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
+                defaultProp.checked = defaultValue;
+            }else if(item.type ==propertyType.Dropdown ){
+                defaultProp.value = defaultValue;
+                defaultProp.item=item;
+                let arr=[];
+                for(var i in  item.options){
+                    arr.push(<MenuItem  key={item.options[i]}><div className='originIcon'></div>{i}</MenuItem>);
                 }
+                defaultProp.overlay =  <Menu className='dropDownMenu' onClick={defaultProp.onChange}>{arr}</Menu>;
 
-                let groupName = item.group || 'basic';
-                if (groups[groupName] === undefined)   groups[groupName] = [];
+            }
+            else if(item.type ==propertyType.Select || item.type ==propertyType.TbSelect ){
+                let selectClassName='';
+                    defaultProp.options=[];
+                    defaultProp.value = defaultValue;
+                if(item.name=='originY' ||item.name=='originPos') {
+                    selectClassName='originIcon';
+                }
+                else if(item.name=='fontFamily'){
+                    for(let i in this.fontList){
+                         defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                    }
+                }
+                else if(item.name=='font'){
+                      defaultProp.name=item.name;
+                      defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
+                      for(let i in this.fontList){
+                          defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                      }
+                }
+                else if(item.name=='type'){
+                      for(let i in  item.options){
+                          selectClassName= (item.options[i]=='slideInUp' || item.options[i]== 'jello')? 'optionline':'';
+                          defaultProp.options.push(<Option  key={item.options[i]} className={selectClassName}>{i}</Option>);
+                      }
+                }
+                if(defaultProp.options.length==0){
+                    for(var i in  item.options){
+                        defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
+                    }
+                }
+                if(item.name=='chooseColumn'){
+                    defaultProp.tbWidth = item.tbWidth;
+                }
+            }else if(item.type ==propertyType.Color){
+                defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
+                defaultProp.value = defaultValue;
+            }else if(item.type === propertyType.TbColor){
+                defaultProp.value = defaultValue;
+                defaultProp.tbHeight = item.tbHeight;
+            }else {
+                defaultProp.value = defaultValue;
+            }
 
-                /******** 设置布局结构和图标 *************/
-                    //左右结构显示
-                let hasTwin;
-                if (className == "table") {
-                    hasTwin = ['X', 'Y', 'W', 'H', '旋转度', '中心点', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '行数', '列数', '头部字体', '图表字体大小', '字体', '网格颜色', '网格大小'].indexOf(item.showName) >= 0;
+            let groupName = item.group || 'basic';
+            if (groups[groupName] === undefined)   groups[groupName] = [];
+
+            /******** 设置布局结构和图标 *************/
+            //左右结构显示
+            let hasTwin;
+            if( className == "table"){
+                hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','行数','列数','头部字体','图表字体大小','字体','网格颜色','网格大小'].indexOf(item.showName) >= 0;
+            }
+            else {
+                hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;
+            }
+
+            let hasPx=['X','Y','W','H','网格大小'].indexOf(item.showName)>=0; //判断input中是否添加px单位
+            let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
+            let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
+
+           if(!item.showName){item.showName=item.name;}//当showName不存在时,用name作为showName
+
+            //拼接图标样式
+            let htmlStr;
+            if(item.imgClassName){
+                htmlStr=<label><div className={item.imgClassName}></div></label>
+            }else{
+                htmlStr = hasLock
+                    ? <label>
+                        <div className={cls('ant-lock',{'ant-lock-checked':node.props.isLock})} onClick={this.antLock.bind(this)}></div>
+                        {item.showName}
+                      </label>
+                    : <label>{item.showName}</label>
+            }
+            let style = {};
+            if(item.tbCome){
+                defaultProp.tbCome = item.tbCome;
+                if(item.tbCome == "tbF"){
+                    style['width'] = "184px";
+                    style['height'] = "22px";
+                    style['lineHeight'] = "22px";
                 }
                 else {
-                    hasTwin = ['X', 'Y', 'W', 'H', '旋转度', '中心点', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高'].indexOf(item.showName) >= 0;
+                    style['width'] = "58px";
+                    style['marginLeft'] = "3px";
+                    style['height'] = "22px";
+                    style['lineHeight'] = "22px";
                 }
+            }
+            let tdColorSwitch = false;
+            if(item.name === "tdFontFill" || item.name === "tdBColor" || item.name === "tdB2Color"){
+                tdColorSwitch = true;
+            }
+            groups[groupName].push(
+                <div key={item.name}
+                    className={cls('f--hlc','ant-row','ant-form-item',
+                            {'ant-form-half': hasTwin},
+                            {'ant-form-full': !hasTwin},
+                            {'tdColorSwitch' : tdColorSwitch }
+                    )}
+                    style={style}>
 
-                let hasPx = ['X', 'Y', 'W', 'H', '网格大小'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
-                let hasDegree = ['rotationImgTag'].indexOf(item.showName) >= 0; //判断input中是否添加°单位
-                let hasLock = item.showLock == true; //判断是否在元素前添加锁图标
-
-                if (!item.showName) {
-                    item.showName = item.name;
-                }//当showName不存在时,用name作为showName
-
-                //拼接图标样式
-                let htmlStr;
-                if (item.imgClassName) {
-                    htmlStr = <label>
-                        <div className={item.imgClassName}></div>
-                    </label>
-                } else {
-                    htmlStr = hasLock
-                        ? <label>
-                        <div className={cls('ant-lock', {'ant-lock-checked': node.props.isLock})}
-                             onClick={this.antLock.bind(this)}></div>
-                        {item.showName}
-                    </label>
-                        : <label>{item.showName}</label>
-                }
-                let style = {};
-                if (item.tbCome) {
-                    defaultProp.tbCome = item.tbCome;
-                    if (item.tbCome == "tbF") {
-                        style['width'] = "184px";
-                        style['height'] = "22px";
-                        style['lineHeight'] = "22px";
-                    }
-                    else {
-                        style['width'] = "58px";
-                        style['marginLeft'] = "3px";
-                        style['height'] = "22px";
-                        style['lineHeight'] = "22px";
-                    }
-                }
-                let tdColorSwitch = false;
-                if (item.name === "tdFontFill" || item.name === "tdBColor" || item.name === "tdB2Color") {
-                    tdColorSwitch = true;
-                }
-                groups[groupName].push(
-                    <div key={item.name}
-                         className={cls('f--hlc', 'ant-row', 'ant-form-item',
-                             {'ant-form-half': hasTwin},
-                             {'ant-form-full': !hasTwin},
-                             {'tdColorSwitch': tdColorSwitch}
-                         )}
-                         style={style}>
-
-                        <div
-                            className={cls('ant-col-l ant-form-item-label', {"hidden": defaultProp.tbCome == "tbS"})}>{htmlStr}</div>
-                        <div
-                            className={cls('ant-col-r', {"tbSSStyle": defaultProp.tbCome == "tbS"}, {"tbFSStyle": defaultProp.tbCome == "tbF"})}>
-                            <div
-                                className={cls('ant-form-item-control', {'ant-input-degree': hasDegree}, {'ant-input-px': hasPx})}>
-                                {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
-                            </div>
+                    <div className={cls('ant-col-l ant-form-item-label',{"hidden" : defaultProp.tbCome == "tbS"})}>{htmlStr}</div>
+                    <div className={cls('ant-col-r',{"tbSSStyle" : defaultProp.tbCome == "tbS"},{"tbFSStyle" : defaultProp.tbCome == "tbF"})}>
+                        <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
+                        {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
                         </div>
                     </div>
-                );
-            }
-            ;
+                </div>
+            );
+        };
 
 
-            const saveArr = []; //给部分属性排序用
-            propertyMap[className].forEach((item, index) => {
-                if (item.isProperty) {
-                    if (item.name == 'visible' || item.name == 'initVisible') {
-                        saveArr.push(item);
-                    } else {
-                        //去除属性
-                        if ((className == 'timer' || className == 'container') && ( item.name == 'scaleX' || item.name == 'scaleY')) {
-                            ;
-                        } else {
-                            getInput(item, index);
-                        }
+        const saveArr = []; //给部分属性排序用
+        propertyMap[className].forEach((item, index) => {
+            if (item.isProperty) {
+                if(item.name=='visible' || item.name=='initVisible' ){
+                    saveArr.push(item);
+                }else{
+                    //去除属性
+                    if((className == 'timer' || className == 'container') && ( item.name=='scaleX' ||  item.name=='scaleY')){
+                        ;
+                    }else{
+                        getInput(item, index);
                     }
                 }
-            });
-            saveArr.map(item=> {
-                getInput(item);
-            });
+            }
+        });
+        saveArr.map(item=>{
+            getInput(item);
+        });
 
-            return Object.keys(groups).map((name, index) => {
-                let insertClassName = className + "-" + 'form_' + name;
-                return <Form horizontal key={index} className={'form_' + name} >
-                    {groups[name].map((input, i) => input)}
-                    {
-                        insertClassName == "table-form_basic"
-                            ? <button className="btn-clear table-form_basic_btn">表格数据来源</button>
-                            : null
-                    }
-                </Form>
-            });
-        }
+        return Object.keys(groups).map((name,index) =>{
+                let insertClassName =  className + "-" + 'form_'+name;
+                return <Form horizontal   className={'form_'+name} key={index}>
+                            {groups[name].map((input, i) => input)}
+                            {
+                                insertClassName == "table-form_basic"
+                                    ? <button className="btn-clear table-form_basic_btn">表格数据来源</button>
+                                    : null
+                            }
+                        </Form>
+        });
     }
 
-    onStatusChange(widget){
-
+    onStatusChange(widget) {
+         //console.log(widget);
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
         }
@@ -828,8 +803,7 @@ class PropertyView extends React.Component {
                 }
                 node = node.parent;
             }
-        }
-        else if (widget.updateProperties !== undefined && widget.skipProperty === undefined) {
+        } else if (widget.updateProperties !== undefined && widget.skipProperty === undefined) {
 
             let needRender = (widget.skipRender === undefined);
 
