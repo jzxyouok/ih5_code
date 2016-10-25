@@ -64,6 +64,7 @@ class FormulaInput extends React.Component {
 
         this.onFormulaPrePatternChange = this.onFormulaPrePatternChange.bind(this);
         this.onFormulaPatternChange = this.onFormulaPatternChange.bind(this);
+        this.onFormulaPrePatternKeyDown = this.onFormulaPrePatternKeyDown.bind(this);
         this.onFormulaPatternKeyDown = this.onFormulaPatternKeyDown.bind(this);
         this.onFormulaPatternBlur = this.onFormulaPatternBlur.bind(this);
 
@@ -76,6 +77,10 @@ class FormulaInput extends React.Component {
 
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
+
+        this.onLeftKeyAction = this.onLeftKeyAction.bind(this);
+        this.onRightKeyAction = this.onRightKeyAction.bind(this);
+        this.onDeleteKeyDownAction = this.onDeleteKeyDownAction.bind(this);
     }
 
     componentDidMount() {
@@ -151,8 +156,8 @@ class FormulaInput extends React.Component {
         }
     }
 
-    onFocus(e) {
-        if((this.onChangeFocus!=undefined&&this.onChangeFocus()!==false) || this.onChangeFocus===undefined) {
+    onFocus(activePatternIndex, e) {
+        if(!this.disabled&&((this.onChangeFocus!=undefined&&this.onChangeFocus()!==false) || this.onChangeFocus===undefined)) {
             if(e){
                 e.stopPropagation();
             }
@@ -168,6 +173,14 @@ class FormulaInput extends React.Component {
                         this.onChangeFocus();
                     }
                 })
+            }
+            if(activePatternIndex!==undefined&&
+                activePatternIndex!=null&&
+                activePatternIndex>=0) {
+                let focus = 'pattern'+activePatternIndex;
+                if(this.refs[focus]) {
+                    this.refs[focus].refs.input.focus();
+                }
             }
             return true;
         } else {
@@ -206,7 +219,7 @@ class FormulaInput extends React.Component {
     }
 
     onSelectTargetClick() {
-        if(!this.onFocus()) {
+        if(!this.onFocus(null)) {
             return false;
         }
         this.setState({
@@ -230,6 +243,9 @@ class FormulaInput extends React.Component {
             if(type === inputType.value) {
                 //初次进入formula mode
                 type = inputType.formula;
+                if(value) {
+                    item.prePattern = value;
+                }
                 value = [item];
             } else {
                 value.push(item);
@@ -295,6 +311,10 @@ class FormulaInput extends React.Component {
             value: value,
             // propertyDropDownVisible: false
         }, ()=>{
+            let focus = 'pattern'+i;
+            if(this.refs[focus]) {
+                this.refs[focus].refs.input.focus();
+            }
             this.onChange({value:this.state.value, type:this.state.currentType});
         })
     }
@@ -329,93 +349,158 @@ class FormulaInput extends React.Component {
         });
     }
 
-    onFormulaPatternKeyDown(v,i,e) {
-        if(e.keyCode === 8) {
-            let pos = this.doGetCaretPosition(e.target);
-            if(pos=='0') {
-                let willDeleteObjIndex = i;
-                if(this.state.willDeleteObjIndex!=null&&this.state.willDeleteObjIndex===i) {
-                    willDeleteObjIndex = null;
-                    //delete obj here
-                    let value = this.state.value;
-                    let type = this.state.currentType;
-                    let focus = '';
-                    if(value.length>0) {
-                        if(value.length===1) {
-                            let combine = '';
-                            if(value[i].prePattern) {
-                                combine += value[i].prePattern;
-                            }
-                            if(value[i].pattern) {
-                                combine += value[i].pattern;
-                            }
-                            value = combine===''?null:combine;
-                            type = inputType.value;
-                        } else if(value.length>1&&i===0){
-                            let combine = '';
-                            if(value[i].prePattern) {
-                                combine += value[i].prePattern;
-                            }
-                            if(value[i].pattern) {
-                                combine += value[i].pattern;
-                            }
-                            if(combine!=='') {
-                                if(value[i+1].prePattern) {
-                                    value[i+1].prePattern += combine;
-                                } else {
-                                    value[i+1].prePattern = combine;
-                                }
-                            }
-                            focus = 'prePattern'+i;
-                            type = inputType.formula;
-                            value.splice(i,1);
-                        } else {
-                            let combine = '';
-                            if(value[i].pattern) {
-                                combine += value[i].pattern;
-                            }
-                            if(combine!=='') {
-                                if(value[i-1].pattern) {
-                                    value[i-1].pattern += combine;
-                                } else {
-                                    value[i-1].pattern = combine;
-                                }
-                            }
-                            focus = 'pattern'+(i-1);
-                            type = inputType.formula;
-                            value.splice(i,1);
-                        }
-                        if(this.refs['pattern'+i]) {
-                            this.refs['pattern'+i].refs.input.blur();
-                        }
-                    } else {
-                        value = null;
-                        type = inputType.value;
+    onDeleteKeyDownAction(v,i){
+        let willDeleteObjIndex = i;
+        if(this.state.willDeleteObjIndex!=null&&this.state.willDeleteObjIndex===i) {
+            willDeleteObjIndex = null;
+            //delete obj here
+            let value = this.state.value;
+            let type = this.state.currentType;
+            let focus = '';
+            if(value.length>0) {
+                if(value.length===1) {
+                    let combine = '';
+                    if(value[i].prePattern) {
+                        combine += value[i].prePattern;
                     }
-                    this.setState({
-                        value: value,
-                        currentType: type,
-                        willDeleteObjIndex: willDeleteObjIndex,
-                    }, ()=>{
-                        if(this.state.currentType === inputType.value) {
-                            setTimeout(()=> {
-                                if(this.refs['valueInput']) {
-                                    this.refs['valueInput'].refs.input.focus();
-                                }
-                            }, 50);
-                        } else{
-                            setTimeout(()=> {
-                                if(this.refs[focus]) {
-                                    this.refs[focus].refs.input.focus();
-                                }
-                            }, 50);
+                    if(value[i].pattern) {
+                        combine += value[i].pattern;
+                    }
+                    value = combine===''?null:combine;
+                    type = inputType.value;
+                } else if(value.length>1&&i===0){
+                    let combine = '';
+                    if(value[i].prePattern) {
+                        combine += value[i].prePattern;
+                    }
+                    if(value[i].pattern) {
+                        combine += value[i].pattern;
+                    }
+                    if(combine!=='') {
+                        if(value[i+1].prePattern) {
+                            value[i+1].prePattern += combine;
+                        } else {
+                            value[i+1].prePattern = combine;
                         }
-                    })
+                    }
+                    focus = 'prePattern'+i;
+                    type = inputType.formula;
+                    value.splice(i,1);
                 } else {
-                    this.setState({
-                        willDeleteObjIndex: willDeleteObjIndex
-                    })
+                    let combine = '';
+                    if(value[i].pattern) {
+                        combine += value[i].pattern;
+                    }
+                    if(combine!=='') {
+                        if(value[i-1].pattern) {
+                            value[i-1].pattern += combine;
+                        } else {
+                            value[i-1].pattern = combine;
+                        }
+                    }
+                    focus = 'pattern'+(i-1);
+                    type = inputType.formula;
+                    value.splice(i,1);
                 }
+                if(this.refs['pattern'+i]) {
+                    this.refs['pattern'+i].refs.input.blur();
+                }
+            } else {
+                value = null;
+                type = inputType.value;
+            }
+            this.setState({
+                value: value,
+                currentType: type,
+                willDeleteObjIndex: willDeleteObjIndex,
+            }, ()=>{
+                if(this.state.currentType === inputType.value) {
+                    setTimeout(()=> {
+                        if(this.refs['valueInput']) {
+                            this.refs['valueInput'].refs.input.focus();
+                        }
+                    }, 50);
+                } else{
+                    setTimeout(()=> {
+                        if(this.refs[focus]) {
+                            this.refs[focus].refs.input.focus();
+                        }
+                    }, 50);
+                }
+            })
+        } else {
+            this.setState({
+                willDeleteObjIndex: willDeleteObjIndex
+            })
+        }
+    }
+
+    onLeftKeyAction(v, i, type) {
+        if(type === 'pattern') {
+            if(i === 0) {
+                let focus = 'prePattern'+i;
+                setTimeout(()=> {
+                    if(this.refs[focus]) {
+                        this.refs[focus].refs.input.focus();
+                    }
+                }, 50);
+            } else {
+                let focus = 'pattern'+(i-1);
+                setTimeout(()=> {
+                    if(this.refs[focus]) {
+                        this.refs[focus].refs.input.focus();
+                    }
+                }, 50);
+            }
+        }
+    }
+
+    onRightKeyAction(v, i, type) {
+        if(type === 'pattern') {
+            if(i !== this.state.value.length-1) {
+                let focus = 'pattern'+(i+1);
+                setTimeout(()=> {
+                    if(this.refs[focus]) {
+                        this.refs[focus].refs.input.focus();
+                    }
+                }, 50);
+            }
+        } else {
+            let focus = 'pattern'+(i);
+            setTimeout(()=> {
+                if(this.refs[focus]) {
+                    this.refs[focus].refs.input.focus();
+                }
+            }, 50);
+        }
+    }
+
+    onFormulaPrePatternKeyDown(v,i,e){
+        let pos = this.doGetCaretPosition(e.target);
+        if (e.keyCode === 39) {
+            //右移动
+            if(pos==e.target.value.length){
+                this.onRightKeyAction(v,i,'prePattern');
+            }
+        }
+    }
+
+    onFormulaPatternKeyDown(v,i,e) {
+        let pos = this.doGetCaretPosition(e.target);
+        if(e.keyCode === 37) {
+            //左移动
+            if(pos=='0') {
+                this.onLeftKeyAction(v,i,'pattern');
+            }
+        } else if (e.keyCode === 39) {
+            //右移动
+            if(pos==e.target.value.length){
+                this.onRightKeyAction(v,i,'pattern');
+            }
+        } else if(e.keyCode === 8) {
+            //退格健
+            if(pos=='0') {
+                this.onDeleteKeyDownAction(v, i);
             }
         }
     }
@@ -529,7 +614,7 @@ class FormulaInput extends React.Component {
                 return (
                     <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
                               getPopupContainer={() => document.getElementById(this.containerId)}
-                              onClick={this.onFocus}
+                              onClick={this.onFocus.bind(this,null)}
                               onVisibleChange={this.onPropertyVisibleChange}>
                         <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
                             <div className="dropDown-title">选择属性</div>
@@ -555,21 +640,24 @@ class FormulaInput extends React.Component {
                                               style={{width:this.resizeInputWidth(v.prePattern)}}
                                               className='formula-obj-prePattern'
                                               ref={'prePattern'+i}
-                                              onClick={this.onFocus}
+                                              onKeyDown={this.onFormulaPrePatternKeyDown.bind(this, v, i)}
+                                              onClick={this.onFocus.bind(this,null)}
                                               onChange={this.onFormulaPrePatternChange.bind(this, v, i)}/>)
                                     : null
                             }
                             <div className={$class('formula-obj-div f--hlc',
                                 {'complete': v.property},
                                 {'will-delete-obj':this.state.willDeleteObjIndex===i})}>
-                                <div className="formula-obj-name">
+                                <div className="formula-obj-name"
+                                     onClick={this.onFocus.bind(this, i)}>
                                     <span>{obj.props.name}</span>
                                 </div>
                                 <div className="formula-obj-dot"></div>
                                 {
                                     !v.property
                                         ? formulaPropertyDropdown(obj, v, i)
-                                        : (<div className="formula-obj-property">
+                                        : (<div className="formula-obj-property"
+                                                onClick={this.onFocus.bind(this, i)}>
                                         <span>{v.property.showName}</span>
                                     </div>)
                                 }
@@ -580,7 +668,7 @@ class FormulaInput extends React.Component {
                                    className='formula-obj-pattern'
                                    ref={'pattern'+i}
                                    onKeyDown={this.onFormulaPatternKeyDown.bind(this, v, i)}
-                                   onClick={this.onFocus}
+                                   onClick={this.onFocus.bind(this,null)}
                                    onBlur={this.onFormulaPatternBlur.bind(this,v,i)}
                                    onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
                             {/*{*/}
@@ -612,7 +700,7 @@ class FormulaInput extends React.Component {
             <div className="formula-mode f--hlc"
                  style={{width:this.minWidth, overflow:'hidden', cursor:'pointer'}}
                  ref='formulaMode'
-                 onClick={this.onFocus}>
+                 onClick={this.onFocus.bind(this, this.state.value?this.state.value.length-1:null)}>
                 <SelectTargetButton className={'formula-object-icon'}
                                     disabled={this.disabled}
                                     onClick={this.onSelectTargetClick}

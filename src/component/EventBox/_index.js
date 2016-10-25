@@ -15,7 +15,9 @@ class EventBox extends React.Component {
             activeKey: -1,
             selectWidget: null,
             treeList: [],
+            objectList:[],
             eventTreeList: [],
+            showObjList: false,  //是否显示对象列表
         };
         this.eventData = eventTempData;
 
@@ -23,6 +25,9 @@ class EventBox extends React.Component {
         this.keepBtn = this.keepBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
+        this.doGetNoEventObjList = this.doGetNoEventObjList.bind(this);
+        this.doGetSearchObjList = this.doGetSearchObjList.bind(this);
+        this.onShowNoEventObjList = this.onShowNoEventObjList.bind(this);
     }
 
     componentDidMount() {
@@ -58,6 +63,10 @@ class EventBox extends React.Component {
             this.setState({
                 activeKey: widget.activeEventTreeKey.key
             });
+        } else if(widget.allWidgets){
+            this.setState({
+                objectList: widget.allWidgets
+            })
         }
         if(widget.historyPropertiesUpdate){
             this.forceUpdate();
@@ -75,6 +84,36 @@ class EventBox extends React.Component {
             });
         }
     }
+
+    doGetNoEventObjList() {
+        let noEventObjList = [];
+        if(this.state.objectList) {
+            this.state.objectList.forEach((v,i)=>{
+                if(!(v.props.eventTree&&v.props.eventTree.length>0)&&v.className!=='var') {
+                    noEventObjList.push(v);
+                }
+            });
+        }
+        return noEventObjList;
+    }
+
+    doGetSearchObjList(search) {
+        let searchObjList = [];
+        if(this.state.objectList) {
+            this.state.objectList.forEach((v,i)=>{
+                if(!(v.props.eventTree&&v.props.eventTree.length>0)&&v.className!=='var') {
+                    if(v.props.name.indexOf(search)>=0) {
+                        searchObjList.push(v);
+                    }
+                }
+            });
+        }
+        return searchObjList;
+    }
+
+    onShowNoEventObjList(e) {
+
+    };
 
     keepBtn(){
         this.setState({
@@ -104,10 +143,19 @@ class EventBox extends React.Component {
                     </div>
                     {/*<span className='flex-1'>事件属性</span>*/}
                     <div className="EB--title-search-wrap f--hlc">
-                        <div className='btn-icon'><span className='heng'/><span  className='shu'/></div>
-                        <Input className="search-input"
-                               placeholder="搜索对象"
-                               size="small"/>
+                        <div className="search-group f--hlc">
+                            <button className="search-btn" onClick={this.onShowNoEventObjList} title='添加对象事件'>
+                                <div className='btn-icon'>
+                                    <span className='heng'/><span  className='shu'/>
+                                </div>
+                            </button>
+                            <Input className="search-input"
+                                   placeholder="搜索对象"
+                                   size="small"/>
+                        </div>
+                        <div>
+
+                        </div>
                     </div>
                     <button className='btn btn-clear' title='收起' onClick={this.keepBtn} />
                 </div>
