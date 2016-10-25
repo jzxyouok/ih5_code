@@ -156,7 +156,7 @@ class FormulaInput extends React.Component {
             if(e){
                 e.stopPropagation();
             }
-            if(!this.state.on) {
+            if(!this.state.on&&this.refs.formulaMode) {
                 this.setState({
                     on: true
                 }, ()=>{
