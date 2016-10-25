@@ -15,6 +15,11 @@ const propertyType = {
     Boolean2:10,
     Function:11,
     FormulaInput:12,
+
+    TbSelect : 14,
+    TbColor : 15,
+    TbFont : 16,
+    TdLayout : 17
 };
 
 var level;
@@ -711,17 +716,40 @@ propertyMap[dataType.twoDArr] = [
 ];
 
 propertyMap['table'] = [
-    ...propertyMap['graphics'],
-    { name: 'dbid', type: propertyType.String, default: '', isProperty: true },
-    { name: 'header', type: propertyType.String, default: '', isProperty: true },
-    { name: 'rowNum', type: propertyType.Integer, default: 1, isProperty: true },
-    { name: 'value', type: propertyType.String, default: '', isProperty: true },
-    { name: 'showHeader', type: propertyType.Boolean, default: false, isProperty: true },
-    { name: 'headerColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
-    { name: 'altColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
-    { name: 'getResult', isFunc: true, info:'(pageNum)' },
-    { name: 'nextResult', isFunc: true},
-    { name: 'prevResult', isFunc: true},
+    ...propertyMap['widget'],
+    { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
+    { name: 'positionX',showName:'X', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'positionY',showName:'Y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position', isProperty: true },
+    { name: 'scaleY',showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
+    { name: 'originPos', showName:'中心点',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
+    { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
+
+
+    {'name':'row', showName:'行数', default : "", 'type':propertyType.Integer , group:"tableP", isProperty: true},
+    {'name':'column', showName:'列数', default : "", 'type':propertyType.Integer , group:"tableP", isProperty: true},
+    {'name':'chooseColumn', showName:'列', type: propertyType.TbSelect , group:"tableP", isProperty: true, default:"全部", tbWidth:10,
+        options:{'全部': 0}
+    },
+
+    { name: 'tdHead',showName:'表格头部', type: propertyType.Boolean, default: true,group:'tableH', isProperty: true },
+    {'name':'head', showName:'头部', default : "#FFFFFF", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:2 },
+    { name: 'fontFamily',showName:'头部字体', type: propertyType.Select,group:'tableH', default: '选择字体', isProperty: true, tbCome:"tbF" },
+    { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
+    { name: 'tdFontFill',showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
+
+    { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
+    { name: 'tdBColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '#FFA800', isProperty: true },
+    { name: 'tdB2Color',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '#FFA800', isProperty: true },
+
+    { name: 'tdLayout',showName:'网格布局', type: propertyType.TdLayout,group:'tableW', default: [], isProperty: true },
+    { name: 'tdWColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '#FFA800', isProperty: true , tbCome:"tbF"},
+    { name: 'tdWSize',showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', isProperty: true , tbCome:"tbS"},
+
+    { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true, tbCome:"tbF" },
+    { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, isProperty: true, tbCome:"tbS" },
+    { name: 'tdFontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '#FFA800', isProperty: true },
+    { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true }
 ];
 
 for (var n in propertyMap) {
