@@ -155,21 +155,21 @@ class EventBox extends React.Component {
     };
 
     onClickObj(key, data, e) {
-        if(key !== this.state.activeKey) {
-            e.stopPropagation();
-            switch(this.state.objListType){
-                case objListType.noEvent:
-                    WidgetActions['selectWidget'](data, true, keepType.event);
-                    WidgetActions['initEventTree']();
-                    break;
-                case objListType.search:
+        e.stopPropagation();
+        switch(this.state.objListType){
+            case objListType.noEvent:
+                WidgetActions['selectWidget'](data, true, keepType.event);
+                WidgetActions['initEventTree']();
+                break;
+            case objListType.search:
+                if(key !== this.state.activeKey) {
                     this.chooseEventBtn(key, data);
-                    break;
-                default:
-                    break;
-            }
-            this.onBlur();
+                }
+                break;
+            default:
+                break;
         }
+        this.onBlur();
     }
 
     onBlur() {
