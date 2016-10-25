@@ -7,6 +7,12 @@ import { Input } from 'antd';
 import WidgetStore, {keepType}  from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 
+const objListType = {
+    default: 0,
+    noEvent: 1,
+    search: 2,
+};
+
 class EventBox extends React.Component {
     constructor (props) {
         super(props);
@@ -14,10 +20,11 @@ class EventBox extends React.Component {
             keepIt : false,
             activeKey: -1,
             selectWidget: null,
-            treeList: [],
-            objectList:[],
             eventTreeList: [],
-            showObjList: false,  //是否显示对象列表
+            treeList: [],  //顶部需用到
+            allWidgetList:[],//可选widget的列表
+            objList: [],//下来框的
+            objListType: objListType.default, //default的时候不显示
         };
         this.eventData = eventTempData;
 
@@ -27,16 +34,22 @@ class EventBox extends React.Component {
 
         this.doGetNoEventObjList = this.doGetNoEventObjList.bind(this);
         this.doGetSearchObjList = this.doGetSearchObjList.bind(this);
-        this.onShowNoEventObjList = this.onShowNoEventObjList.bind(this);
+
+        this.onClickShowNoEventObjList = this.onClickShowNoEventObjList.bind(this);
+        this.onSearchPhraseChange = this.onSearchPhraseChange.bind(this);
+        this.onClickObj = this.onClickObj.bind(this);
+        this.onBlur = this.onBlur.bind(this);
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.reorderEventTreeList());
+        window.addEventListener('click', this.onBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+        window.removeEventListener('click', this.onBlur);
     }
 
     onStatusChange(widget) {
@@ -65,7 +78,7 @@ class EventBox extends React.Component {
             });
         } else if(widget.allWidgets){
             this.setState({
-                objectList: widget.allWidgets
+                allWidgetList: widget.allWidgets
             })
         }
         if(widget.historyPropertiesUpdate){
@@ -87,8 +100,8 @@ class EventBox extends React.Component {
 
     doGetNoEventObjList() {
         let noEventObjList = [];
-        if(this.state.objectList) {
-            this.state.objectList.forEach((v,i)=>{
+        if(this.state.allWidgetList) {
+            this.state.allWidgetList.forEach((v,i)=>{
                 if(!(v.props.eventTree&&v.props.eventTree.length>0)&&v.className!=='var') {
                     noEventObjList.push(v);
                 }
@@ -99,9 +112,9 @@ class EventBox extends React.Component {
 
     doGetSearchObjList(search) {
         let searchObjList = [];
-        if(this.state.objectList) {
-            this.state.objectList.forEach((v,i)=>{
-                if(!(v.props.eventTree&&v.props.eventTree.length>0)&&v.className!=='var') {
+        if(this.state.allWidgetList) {
+            this.state.allWidgetList.forEach((v,i)=>{
+                if(v.props.eventTree&&v.props.eventTree.length>0&&v.className!=='var') {
                     if(v.props.name.indexOf(search)>=0) {
                         searchObjList.push(v);
                     }
@@ -111,8 +124,59 @@ class EventBox extends React.Component {
         return searchObjList;
     }
 
-    onShowNoEventObjList(e) {
+    onClickShowNoEventObjList(e) {
+        e.stopPropagation();
+        if(this.state.objListType !== objListType.noEvent) {
+            let list = this.doGetNoEventObjList();
+            this.setState({
+                objListType: objListType.noEvent,
+                objList: list
+            });
+        } else {
+            this.setState({
+                objListType: objListType.default,
+                objList: []
+            });
+        }
+    };
 
+    onSearchPhraseChange(e) {
+        e.stopPropagation();
+        let search = e.target.value;
+        let list = this.doGetSearchObjList(search);
+        let type = objListType.search;
+        if(search===null || search==='') {
+            type = objListType.default;
+        }
+        this.setState({
+            objListType: type,
+            objList: list
+        });
+    };
+
+    onClickObj(key, data, e) {
+        if(key !== this.state.activeKey) {
+            e.stopPropagation();
+            switch(this.state.objListType){
+                case objListType.noEvent:
+                    WidgetActions['selectWidget'](data, true, keepType.event);
+                    WidgetActions['initEventTree']();
+                    break;
+                case objListType.search:
+                    this.chooseEventBtn(key, data);
+                    break;
+                default:
+                    break;
+            }
+            this.onBlur();
+        }
+    }
+
+    onBlur() {
+        this.setState({
+            objListType: objListType.default,
+            objList: []
+        });
     };
 
     keepBtn(){
@@ -144,18 +208,42 @@ class EventBox extends React.Component {
                     {/*<span className='flex-1'>事件属性</span>*/}
                     <div className="EB--title-search-wrap f--hlc">
                         <div className="search-group f--hlc">
-                            <button className="search-btn" onClick={this.onShowNoEventObjList} title='添加对象事件'>
+                            <button className="search-btn" onClick={this.onClickShowNoEventObjList} title='添加对象事件'>
                                 <div className='btn-icon'>
                                     <span className='heng'/><span  className='shu'/>
                                 </div>
                             </button>
                             <Input className="search-input"
                                    placeholder="搜索对象"
+                                   onClick={this.onSearchPhraseChange}
+                                   onChange={this.onSearchPhraseChange}
                                    size="small"/>
                         </div>
-                        <div>
+                        {
+                            this.state.objListType === objListType.default
+                                ? null
+                                : (<div className="object-list-wrap">
+                                <div className="icon"></div>
+                                <div className="title">
+                                    {
+                                        this.state.objListType === objListType.noEvent
+                                            ? '可添加事件的对象'
+                                            : '搜索结果'
+                                    }
+                                </div>
+                                <div className="object-list">
+                                    {
+                                        this.state.objList&&this.state.objList.length>0
+                                            ? this.state.objList.map((v,i)=>{
+                                                return <div className="item" key={i}
+                                                            onClick={this.onClickObj.bind(this, v.key, v)}>{v.props.name}</div>
+                                            })
+                                            : (<div className="no-item">暂无相关对象</div>)
 
-                        </div>
+                                    }
+                                </div>
+                            </div>)
+                        }
                     </div>
                     <button className='btn btn-clear' title='收起' onClick={this.keepBtn} />
                 </div>
