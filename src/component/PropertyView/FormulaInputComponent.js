@@ -303,6 +303,10 @@ class FormulaInput extends React.Component {
             value: value,
             // propertyDropDownVisible: false
         }, ()=>{
+            let focus = 'pattern'+i;
+            if(this.refs[focus]) {
+                this.refs[focus].refs.input.focus();
+            }
             this.onChange({value:this.state.value, type:this.state.currentType});
         })
     }
