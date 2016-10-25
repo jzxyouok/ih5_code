@@ -7,7 +7,7 @@ import $class from 'classnames'
 import { Menu, Dropdown } from 'antd';
 import { Input } from 'antd';
 
-import WidgetStore from '../../stores/WidgetStore'
+import WidgetStore, {varType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap } from '../PropertyMap'
@@ -163,6 +163,7 @@ class FormulaInput extends React.Component {
                     if(this.refs.formulaMode) {
                         this.refs.formulaMode.style.cursor = 'auto';
                         this.refs.formulaMode.style.width = 'auto';
+                        this.refs.formulaMode.style.minWidth = this.minWidth;
                         this.refs.formulaMode.style.overflow = 'visible';
                         this.onChangeFocus();
                     }
@@ -245,22 +246,30 @@ class FormulaInput extends React.Component {
     onGetPropertyList(obj){
         let props = [];
         if(obj&&obj.className){
-            if(obj.className = 'var'){
-                props.push({name:'value', showName:'值'});
-            } else {
-                propertyMap[obj.className].map((v)=> {
-                    if (v.isProperty && v.name != 'id') {
-                        if(v.showName=='W'){
-                            props.push({name:v.name, showName:'宽度'});
-                        }else if(v.showName=='H'){
-                            props.push({name:v.name, showName:'高度'});
-                        }else if(v.showName=='中心点'){
-                        }else{
-                            props.push({name:v.name, showName:v.showName});
-                        }
-                    }
-                });
+            let className = obj.className;
+            if(obj.className === 'var'){
+                switch (obj.type) {
+                    case varType.string:
+                        className = 'strVar';
+                        break;
+                    case varType.number:
+                        className = 'intVar';
+                        break;
+                }
             }
+            propertyMap[className].map((v)=> {
+                if (v.isProperty && v.name != 'id') {
+                    if(v.showName=='W'){
+                        props.push({name:v.name, showName:'宽度'});
+                    }else if(v.showName=='H'){
+                        props.push({name:v.name, showName:'高度'});
+                    }else if(v.showName=='中心点'){
+                    }else{
+                        props.push({name:v.name, showName:v.showName});
+                    }
+                }
+            });
+
         }
         return props;
     }

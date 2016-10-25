@@ -690,6 +690,7 @@ propertyMap['strVar'] = [
         property:[
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ], isFunc: true },
+    { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
 propertyMap['intVar'] = [
        { name: 'changeValue', showName:'赋值', info:'(value)',
@@ -697,6 +698,7 @@ propertyMap['intVar'] = [
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
         ],
            isFunc: true },
+    { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
 propertyMap[dataType.oneDArr] = [
     { addRequires: widgetFlags.Root},
