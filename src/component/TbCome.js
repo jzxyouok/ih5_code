@@ -50,10 +50,22 @@ class  TbCome extends React.Component {
                     <div className="title">数据选择：（每一列只能对应当前选中数据库字段）</div>
                     <div className="TC-db">
                         <div className="TC-db-content">
-
+                            <div className="item">
+                                <div className="item-title">第一列</div>
+                                <div className="item-dropDown">
+                                    <div className="iDropDown-title">
+                                        选择字段
+                                    </div>
+                                    <div className="iDropDown">
+                                        <ul>
+                                            <li>asddddd</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="scroll">《span/》</div>
+                        <div className="scroll"><span /></div>
                     </div>
                 </div>
             </div>
