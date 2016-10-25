@@ -781,7 +781,7 @@ class PropertyView extends React.Component {
 
             return Object.keys(groups).map((name, index) => {
                 let insertClassName = className + "-" + 'form_' + name;
-                return <Form horizontal key={index} className={'form_' + name} key={index}>
+                return <Form horizontal key={index} className={'form_' + name} >
                     {groups[name].map((input, i) => input)}
                     {
                         insertClassName == "table-form_basic"
