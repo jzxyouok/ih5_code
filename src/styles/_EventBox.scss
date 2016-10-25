@@ -26,7 +26,15 @@
             color: #b5b5b5;
             //padding-left: 12px;
             cursor: pointer;
-            padding: 4.5px 12px;
+            padding: 4.5px 0;
+
+            .name-wrap {
+                @extend %font-omitted;
+                padding: 2px 12px;
+            }
+            .name-wrap-border {
+                border-left: 1px solid #232323;
+            }
 
             &.active {
                 background-color: #232323;
@@ -34,63 +42,124 @@
         }
         .EB--title-search-wrap {
             background-color: #272727;
-            padding: 2px 4px;
+            padding: 0 4px;
             border-radius: 2px;
-            .search-btn {
-                background: none;
-                border: 0;
-                outline: 0;
-                cursor: pointer;
-            }
-            .ant-input-wrapper {
-                input {
-                    background-color: #272727;
-                    border: none;
-                }
-                .ant-input,
-                .ant-input-sm{
-                    &:focus {
-                        border: 0 !important;
-                        outline: 0;
-                        box-shadow: none;
-                    }
-                }
-            }
-            .btn-icon {
-                border-radius: 8px;
-                position: relative;
-                width: 16px;
-                height: 16px;
-                background-color: #333333;
+            position: relative;
+            .search-group {
+                .search-btn {
+                    background: none;
+                    border: 0;
+                    outline: 0;
+                    cursor: pointer;
+                    .btn-icon {
+                        border-radius: 8px;
+                        position: relative;
+                        width: 16px;
+                        height: 16px;
+                        background-color: #333333;
 
-                &:hover {
-                    background-color: #b5b5b5;
-                    span {
-                        background-color: #4c4c4c;
-                    }
-                }
-                &:active {
-                    background-color: #fff;
-                    span {
-                        background-color: #4c4c4c;
-                    }
-                }
+                        &:hover {
+                            background-color: #b5b5b5;
+                            span {
+                                background-color: #4c4c4c;
+                            }
+                        }
+                        &:active {
+                            background-color: #fff;
+                            span {
+                                background-color: #4c4c4c;
+                            }
+                        }
 
-                .heng {
-                    background-color: #4c4c4c;
-                    position: absolute;
-                    left: 3px;
-                    top: 7px;
-                    width: 10px;
-                    height: 2px;
+                        .heng {
+                            background-color: #4c4c4c;
+                            position: absolute;
+                            left: 3px;
+                            top: 7px;
+                            width: 10px;
+                            height: 2px;
+                        }
+                        .shu {
+                            background-color: #4c4c4c;
+                            position: absolute;
+                            left: 7px;
+                            top: 3px;
+                            width: 2px;
+                            height: 10px;
+                        }
+                    }
                 }
-                .shu {
-                    background-color: #4c4c4c;
-                    position: absolute;
-                    left: 7px;
-                    top: 3px;
-                    width: 2px;
-                    height: 10px;
+                .ant-input-wrapper {
+                    input {
+                        background-color: #272727;
+                        border: none;
+                    }
+                    .ant-input,
+                    .ant-input-sm{
+                        width: 112px;
+                        &:focus {
+                            border: 0 !important;
+                            outline: 0;
+                            box-shadow: none;
+                        }
+                    }
+                }
+            }
+            .object-list-wrap {
+                position: absolute;
+                z-index: 1;
+                width: 110.294%;
+                left: -7px;
+                top: 22px;
+                .icon {
+                    margin: 0 auto;
+                    width: 0;
+                    height: 0;
+                    border-left: 5px solid transparent;
+                    border-right: 5px solid transparent;
+                    border-bottom: 10px solid #383838;
+                }
+                .item,
+                .no-item,
+                .title {
+                    text-align: center;
+                    background-color: #383838;
+                    color: #808080;
+                    padding: 3px 4px;
+                }
+                .no-item {
+                    background-color: #3e3e3e;
+                    color: #5c5c5c;
+                }
+                .item {
+                    background-color: #3e3e3e;
+                    .text {
+                        margin-left: 4px;
+                        @extend %font-omitted;
+                    }
+                    .item-icon,
+                    .item-icon2 {
+                        .item-img {
+                            max-height: 16px;
+                            max-width: 16px;
+                            filter: Gray;
+                            -webkit-filter: grayscale(100%);
+                        }
+
+                        &.stage-icon {
+                            background: url("img/button-icon.svg") no-repeat -720px 0;
+                        }
+                    }
+                    color: #5c5c5c;
+                    cursor: pointer;
+                    &:hover {
+                        background-color: #232323;
+                        color: #ececec;
+                        .item-icon,
+                        .item-icon2 {
+                            opacity: 1;
+                        }
+                    }
                 }
             }
         }
