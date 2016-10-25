@@ -243,6 +243,9 @@ class FormulaInput extends React.Component {
             if(type === inputType.value) {
                 //初次进入formula mode
                 type = inputType.formula;
+                if(value) {
+                    item.prePattern = value;
+                }
                 value = [item];
             } else {
                 value.push(item);
