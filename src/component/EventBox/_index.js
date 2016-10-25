@@ -4,14 +4,16 @@ import $class from 'classnames';
 import Event from './Event';
 import {eventTempData} from './tempData';
 import { Input } from 'antd';
-import WidgetStore, {keepType}  from '../../stores/WidgetStore'
+import WidgetStore, {keepType, isCustomizeWidget, dataType}  from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
+import ComponentPanel from '../ComponentPanel';
 
 const objListType = {
     default: 0,
     noEvent: 1,
     search: 2,
 };
+const imgServerPrefix = 'http://play.vt.vxplo.cn/v3data/files/';
 
 class EventBox extends React.Component {
     constructor (props) {
@@ -39,6 +41,8 @@ class EventBox extends React.Component {
         this.onSearchPhraseChange = this.onSearchPhraseChange.bind(this);
         this.onClickObj = this.onClickObj.bind(this);
         this.onBlur = this.onBlur.bind(this);
+
+        this.getObjIcon = this.getObjIcon.bind(this);
     }
 
     componentDidMount() {
@@ -185,6 +189,56 @@ class EventBox extends React.Component {
         })
     }
 
+    getObjIcon(obj){
+        let pic = null;
+        let picIsImage = false;
+        this.refs.ComponentPanel.panels[0].cplist.map((v1,i2)=>{
+            if(isCustomizeWidget(obj.className)) {
+                pic = 'component-icon';
+            }
+            else if(obj.className == 'db'){
+                if(obj.node.dbType == "shareDb"){
+                    pic = 'shareDb-icon';
+                }
+                else {
+                    pic = 'personalDb-icon';
+                }
+            }
+            else if(obj.className === 'data'){
+                if(obj.props.type === dataType.twoDArr) {
+                    pic = 'twoDArr-icon';
+                } else if (obj.props.type === dataType.oneDArr) {
+                    pic = 'oneDArr-icon';
+                }
+            }
+            else if(obj.className === 'sock'){
+                pic = 'sock-icon';
+            }
+            else if (v1.className === obj.className){
+                if(obj.className === 'image' || obj.className === 'imagelist') {
+                    if(obj.props.link !== undefined &&
+                        obj.rootWidget.imageList&&
+                        obj.rootWidget.imageList.length>obj.props.link){
+                        if(obj.className === 'imagelist') {
+                            pic = obj.rootWidget.imageList[obj.props.link][0];
+                        } else {
+                            pic = obj.rootWidget.imageList[obj.props.link];
+                        }
+                        if(pic.substring(0,5) !== 'data:') {
+                            pic = imgServerPrefix+pic;
+                        }
+                        picIsImage = true;
+                    } else {
+                        pic = v1.icon;
+                    }
+                } else {
+                    pic = v1.icon;
+                }
+            }
+        });
+        return {picIsImage:picIsImage, pic:pic};
+    }
+
     render() {
         let currentObj = WidgetStore.getWidgetByKey(this.state.activeKey);
         return (
@@ -235,11 +289,20 @@ class EventBox extends React.Component {
                                     {
                                         this.state.objList&&this.state.objList.length>0
                                             ? this.state.objList.map((v,i)=>{
-                                                return <div className="item" key={i}
-                                                            onClick={this.onClickObj.bind(this, v.key, v)}>{v.props.name}</div>
+                                                let picProps = this.getObjIcon(v);
+                                                return <div className="item f--hlc" key={i}
+                                                            onClick={this.onClickObj.bind(this, v.key, v)}>
+                                                    {
+                                                        picProps.picIsImage
+                                                            ?<span className="item-icon2">
+                                                                <img className="item-img" src={ picProps.pic } />
+                                                            </span>
+                                                            : <span className={$class('item-icon', picProps.pic)} />
+                                                    }
+                                                        <div className="text">{v.props.name}</div>
+                                                    </div>
                                             })
                                             : (<div className="no-item">暂无相关对象</div>)
-
                                     }
                                 </div>
                             </div>)
@@ -264,6 +327,10 @@ class EventBox extends React.Component {
                                   })
                         }
                     </div>
+                </div>
+
+                <div className='hidden'>
+                    <ComponentPanel ref='ComponentPanel' />
                 </div>
             </div>
         );
