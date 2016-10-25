@@ -21,6 +21,7 @@ import {chooseFile} from  '../utils/upload';
 
 require("jscolor/jscolor");
 
+import TbCome from './TbCome'
 
 class PropertyView extends React.Component {
     constructor(props) {
@@ -59,7 +60,12 @@ class PropertyView extends React.Component {
          let style = {};
         switch (type) {
             case propertyType.Integer:
-                return <InputNumber {...defaultProp} />;
+                if(defaultProp.tbCome == "tbS"){
+                    return <InputNumber placeholder={defaultProp.placeholder} />;
+                }
+                else {
+                    return <InputNumber {...defaultProp} />;
+                }
 
             case propertyType.Float:
                 return <InputNumber {...defaultProp}  />;
@@ -69,9 +75,11 @@ class PropertyView extends React.Component {
                     style['width'] = "58px";
                     style['height'] = "22px";
                     style['lineHeight'] = "22px";
+                    return <InputNumber step={0.1}  placeholder={defaultProp.placeholder} style={style} />;
                 }
-                return <InputNumber step={0.1} {...defaultProp} style={style} />;
-
+                else {
+                    return <InputNumber step={0.1}  {...defaultProp} style={style} />;
+                }
             case propertyType.Percentage:
                 return  <div>
                     <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
@@ -289,24 +297,7 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select || propertyType.TbSelect:
-                  if(prop.name == 'originPos'){
-                      //数组
-                      let arr=value.split(',');
-                      let x = parseFloat(arr[0]);
-                      let y = parseFloat(arr[1]);
-                      this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
-                      const obj = {};
-                       prop.name='originX';
-                       obj[prop.name] =x;
-                      this.onStatusChange({updateProperties: obj});
-
-                      prop.name='originY';
-                      obj[prop.name] = y;
-                      this.onStatusChange({updateProperties: obj});
-                      WidgetActions['updateProperties']({originX:x,originY:y}, false, true);
-                      prop.name='originPos';
-                       bTag=false;
-                  }else if(prop.name == 'scaleType'){
+                  if(prop.name == 'scaleType'){
                       this.selectNode.props.scaleTypeKey=this.getScaleTypeDefault(value,prop.options);
                       v = parseInt(value);
                   }else if(prop.name == 'fontFamily'){
@@ -528,7 +519,7 @@ class PropertyView extends React.Component {
                     }
 
                 }else{
-                    let str = item.name == 'scaleX' ? 'width' : 'height'
+                    let str = item.name == 'scaleX' ? 'width' : 'height';
 
                     defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
 
@@ -560,9 +551,7 @@ class PropertyView extends React.Component {
             else if(item.type==propertyType.Select || item.type==propertyType.TbSelect ){
                 defaultValue = item.default;
                 //当originY时才会激活,而不是originPos
-                if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
-                    defaultValue = node.props.originPosKey;
-                }else if(item.name=='scaleType' && node.props.scaleTypeKey){
+               if(item.name=='scaleType' && node.props.scaleTypeKey){
                     defaultValue = node.props.scaleTypeKey;
                 }else if( item.name=='font' && node.props.fontKey){
                     defaultValue = node.props.fontKey;
@@ -901,16 +890,19 @@ class PropertyView extends React.Component {
     render() {
 
         return (
-            <div id='PropertyView'
-                 ref='PropertyView'
-                 style={{ left : this.props.expanded? '65px':'37px'}}
-                 className={cls({'hidden':this.props.isHidden})}>
-                <h1 id='PropertyViewHeader'
-                    onMouseDown={this.mouseDown.bind(this)}
-                    >{this.state.propertyName}的属性</h1>
-                <div id='PropertyViewBody'>
-                    {this.state.fields}
+            <div>
+                <div id='PropertyView'
+                     ref='PropertyView'
+                     style={{ left : this.props.expanded? '65px':'37px'}}
+                     className={cls({'hidden':this.props.isHidden})}>
+                    <h1 id='PropertyViewHeader'
+                        onMouseDown={this.mouseDown.bind(this)}
+                        >{this.state.propertyName}的属性</h1>
+                    <div id='PropertyViewBody'>
+                        {this.state.fields}
+                    </div>
                 </div>
+
             </div>
         );
     }
