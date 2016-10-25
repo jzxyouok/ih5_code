@@ -399,12 +399,16 @@ class FormulaInput extends React.Component {
                     }, ()=>{
                         if(this.state.currentType === inputType.value) {
                             setTimeout(()=> {
-                                this.refs['valueInput'].refs.input.focus();
-                            }, 100);
+                                if(this.refs['valueInput']) {
+                                    this.refs['valueInput'].refs.input.focus();
+                                }
+                            }, 50);
                         } else{
                             setTimeout(()=> {
-                                this.refs[focus].refs.input.focus();
-                            }, 100);
+                                if(this.refs[focus]) {
+                                    this.refs[focus].refs.input.focus();
+                                }
+                            }, 50);
                         }
                     })
                 } else {
