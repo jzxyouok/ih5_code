@@ -547,6 +547,50 @@ class ObjectTree extends React.Component {
 
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+        //复制 67
+        if (didPressCtrl && event.keyCode == 67) {
+            if(this.state.selectWidget){
+                if(this.state.selectWidget.className == "db"
+                    || this.state.selectWidget.className == "sock"){
+                    window.macKeys.reset();
+                    return ;
+                }
+            }
+            WidgetActions['copyTreeNode'](this.state.nodeType);
+            window.macKeys.reset();
+        }
+        //黏贴 86
+        if (didPressCtrl && event.keyCode == 86) {
+            //当前选中func or var就不理会
+            if(this.state.nodeType === nodeType.func ||
+                this.state.nodeType==nodeType.var ||
+                this.state.nodeType == nodeType.dbItem) {
+                window.macKeys.reset();
+                return;
+            }
+            if(this.state.selectWidget){
+                if(this.state.selectWidget.className == "db"
+                    || this.state.selectWidget.className == "sock"){
+                    window.macKeys.reset();
+                    return ;
+                }
+            }
+            WidgetActions['pasteTreeNode']();
+            window.macKeys.reset();
+        }
+        //剪切 88
+        if (didPressCtrl && event.keyCode == 88) {
+            if(this.state.selectWidget){
+                if(this.state.selectWidget.className == "db"
+                    || this.state.selectWidget.className == "sock"){
+                    window.macKeys.reset();
+                    return ;
+                }
+            }
+            WidgetActions['cutTreeNode'](this.state.nodeType);
+            window.macKeys.reset();
+        }
+        //删除 delete
         if (!didPressCtrl && event.keyCode == 8) {
             WidgetActions['deleteTreeNode'](this.state.nodeType);
             window.macKeys.reset();
