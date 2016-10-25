@@ -110,8 +110,7 @@ class PropertyView extends React.Component {
                     <div id={cls({'ant-progress':defaultProp.name=='font'})}><div className='ant-progress-bar'></div><div className='ant-progress-txt'>上传 10%</div></div>
                 </div>;
             case propertyType.Dropdown:
-                return  ;
-               // return  <DropDownInput {...defaultProp} />;
+                 return  <DropDownInput {...defaultProp} />;
             default:
                 return <Input {...defaultProp} />;
         }
@@ -203,7 +202,6 @@ class PropertyView extends React.Component {
                 case propertyType.Dropdown:
                     if(prop.name == 'originPos'){
                         //数组
-                        console.log('haha',value)
                         let arr=value.key.split(',');
                         let x = parseFloat(arr[0]);
                         let y = parseFloat(arr[1]);
@@ -296,6 +294,7 @@ class PropertyView extends React.Component {
        if(bTag){
            const obj = {};
            obj[prop.name] = v;
+           console.log(obj,prop.name);
            this.onStatusChange({updateProperties: obj});
            WidgetActions['updateProperties'](obj, false, true);
        }
@@ -357,31 +356,32 @@ class PropertyView extends React.Component {
     //锁定
     antLock(){
         if(this.selectNode.node.class != 'qrcode'){
-            this.selectNode.props.isLock=!this.selectNode.props.isLock;
-            let  oLock=  document.getElementsByClassName('ant-lock')[0];
-            if(this.selectNode.props.isLock){
-                oLock.classList.add('ant-lock-checked');
-                let k =this.selectNode.props.scaleX;
-                WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
-            }else{
-                oLock.classList.remove('ant-lock-checked');
-            }
+            this.selectNode.node.keepRatio=!this.selectNode.node.keepRatio;
+            let obj={};
+            obj.keepRatio =  this.selectNode.node.keepRatio;
+            WidgetActions['updateProperties'](obj, false, false);
+            // let  oLock=  document.getElementsByClassName('ant-lock')[0];
+            // if(this.selectNode.props.isLock){
+            //     oLock.classList.add('ant-lock-checked');
+            //     let k =this.selectNode.props.scaleX;
+            //     WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
+            // }else{
+            //     oLock.classList.remove('ant-lock-checked');
+            // }
         }
     }
 
     getFields() {
 
         let node = this.selectNode;
-        console.log(node);
+      //  console.log(node);
 
         if (!node)  return null;
 
-        if( node.props.keepRatio ===undefined){
-             // node.props.isLock =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
-             node.props.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
+        if( node.node.keepRatio ===undefined){
+            node.node.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
             let obj={};
-            obj.keepRatio =  node.props.keepRatio;
-            this.onStatusChange({updateProperties: obj});
+            obj.keepRatio =  node.node.keepRatio;
             WidgetActions['updateProperties'](obj, false, true);
         }
 
@@ -568,7 +568,7 @@ class PropertyView extends React.Component {
             if(item.imgClassName){
                 htmlStr=<label><div className={item.imgClassName}></div></label>
             }else{
-                htmlStr= hasLock ?<label><div className={cls('ant-lock',{'ant-lock-checked':node.props.isLock})} onClick={this.antLock.bind(this)}></div>{item.showName}</label>:<label>{item.showName}</label>
+                htmlStr= hasLock ?<label><div className={cls('ant-lock',{'ant-lock-checked':node.node.keepRatio})} onClick={this.antLock.bind(this)}></div>{item.showName}</label>:<label>{item.showName}</label>
             }
             groups[groupName].push(
                 <div key={item.name}
