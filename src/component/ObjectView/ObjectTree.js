@@ -104,12 +104,15 @@ class ObjectTree extends React.Component {
         this.chooseMore=this.chooseMore.bind(this);
         this.addModuleBtn = this.addModuleBtn.bind(this);
 
+        this.itemDeleteKeyAction = this.itemDeleteKeyAction.bind(this);
+
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.stUnsubscribe = SelectTargetStore.listen(this.onSelectTargetModeChange);
         this.onStatusChange(WidgetStore.getStore());
+        window.addEventListener('keyup', this.itemDeleteKeyAction);
 
         //多选
         //  document.body.addEventListener('keydown', this.onKeyDown);
@@ -119,6 +122,7 @@ class ObjectTree extends React.Component {
     componentWillUnmount() {
         this.unsubscribe();
         this.stUnsubscribe();
+        window.removeEventListener('keyup', this.itemDeleteKeyAction);
     }
 
     onSelectTargetModeChange(result) {
@@ -520,6 +524,43 @@ class ObjectTree extends React.Component {
         //黏贴
         if (didPressCtrl && event.keyCode == 86) {
             WidgetActions['pasteTreeNode']();
+        }
+    }
+
+    itemDeleteKeyAction(e) {
+        //删除 delete
+        event.preventDefault();
+        event.stopPropagation();
+
+        //如果是input的话
+        if(e.target.nodeName==='INPUT' || e.target.nodeName==='TEXTAREA') {
+            return;
+        }
+
+        if(this.state.selectTargetMode) {
+            return;
+        }
+        //如果是edit模式，不做任何事情
+        if(this.state.editMode){
+            return;
+        }
+
+        let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+        if (!didPressCtrl && event.keyCode == 8) {
+            WidgetActions['deleteTreeNode'](this.state.nodeType);
+            window.macKeys.reset();
+
+            if(this.state.selectWidget) {
+                if(this.state.selectWidget.className == "db"){
+                    if(this.state.selectWidget.node.dbType = "shareDb"){
+                        ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
+                    }
+                }
+                if(this.state.selectWidget.className == "sock"){
+                    ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+                }
+            }
         }
     }
 
