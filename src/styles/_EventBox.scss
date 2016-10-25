@@ -26,8 +26,7 @@
             color: #b5b5b5;
             //padding-left: 12px;
             cursor: pointer;
-            line-height: 30px;
-            padding: 0 12px;
+            padding: 4.5px 12px;
 
             &.active {
                 background-color: #232323;
@@ -37,6 +36,12 @@
             background-color: #272727;
             padding: 2px 4px;
             border-radius: 2px;
+            .search-btn {
+                background: none;
+                border: 0;
+                outline: 0;
+                cursor: pointer;
+            }
             .ant-input-wrapper {
                 input {
                     background-color: #272727;
