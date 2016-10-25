@@ -59,7 +59,7 @@ class PropertyView extends React.Component {
          let style = {};
         switch (type) {
             case propertyType.Integer:
-                return <InputNumber placeholder={defaultProp.placeholder} />;
+                return <InputNumber {...defaultProp} />;
 
             case propertyType.Float:
                 return <InputNumber {...defaultProp}  />;
@@ -70,7 +70,7 @@ class PropertyView extends React.Component {
                     style['height'] = "22px";
                     style['lineHeight'] = "22px";
                 }
-                return <InputNumber step={0.1}  placeholder={defaultProp.placeholder} style={style} />;
+                return <InputNumber step={0.1} {...defaultProp} style={style} />;
 
             case propertyType.Percentage:
                 return  <div>

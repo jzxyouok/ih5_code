@@ -634,9 +634,10 @@ $toBottom:14px;
 
 //动态插入到body的弹框
 
-//dropdown
+//dropdown,select
 
-	.dropDownMenu{
+
+	.dropDownMenu,.ant-select-dropdown-menu{
   width: 60px;
   color: #858585 !important;
   border: 1px solid #353535 !important;
@@ -647,27 +648,27 @@ $toBottom:14px;
   border-top-right-radius: 0;
   box-shadow: 2px 2px 5px #1d1d1d;
 
-  .ant-select-dropdown-menu-item:nth-child(1) .originIcon{	background-position: -4px -8px;}
-  .ant-select-dropdown-menu-item:nth-child(2) .originIcon{	background-position: -36px -8px;}
-  .ant-select-dropdown-menu-item:nth-child(3) .originIcon{	background-position: -68px -8px;}
-  .ant-select-dropdown-menu-item:nth-child(4) .originIcon{	background-position: -100px -8px;}
-  .ant-select-dropdown-menu-item:nth-child(5) .originIcon{	background-position: -132px -8px;}
-  .ant-select-dropdown-menu-item:nth-child(6) .originIcon{	background-position: -164px -8px;}
-  .ant-select-dropdown-menu-item:nth-child(7) .originIcon{	background-position: -196px -8px;}
-  .ant-select-dropdown-menu-item:nth-child(8) .originIcon{	background-position: -228px -8px;}
-  .ant-select-dropdown-menu-item:nth-child(9) .originIcon{	background-position: -260px -8px;}
+  .ant-dropdown-menu-item:nth-child(1) .originIcon{	background-position: -4px -8px;}
+  .ant-dropdown-menu-item:nth-child(2) .originIcon{	background-position: -36px -8px;}
+  .ant-dropdown-menu-item:nth-child(3) .originIcon{	background-position: -68px -8px;}
+  .ant-dropdown-menu-item:nth-child(4) .originIcon{	background-position: -100px -8px;}
+  .ant-dropdown-menu-item:nth-child(5) .originIcon{	background-position: -132px -8px;}
+  .ant-dropdown-menu-item:nth-child(6) .originIcon{	background-position: -164px -8px;}
+  .ant-dropdown-menu-item:nth-child(7) .originIcon{	background-position: -196px -8px;}
+  .ant-dropdown-menu-item:nth-child(8) .originIcon{	background-position: -228px -8px;}
+  .ant-dropdown-menu-item:nth-child(9) .originIcon{	background-position: -260px -8px;}
 
-  .ant-select-dropdown-menu-item:nth-child(1):hover .originIcon{background-position: -4px -40px;}
-  .ant-select-dropdown-menu-item:nth-child(2):hover .originIcon{background-position: -36px -40px;}
-  .ant-select-dropdown-menu-item:nth-child(3):hover .originIcon{background-position: -68px -40px;}
-  .ant-select-dropdown-menu-item:nth-child(4):hover .originIcon{background-position: -100px -40px;}
-  .ant-select-dropdown-menu-item:nth-child(5):hover .originIcon{background-position: -132px -40px;}
-  .ant-select-dropdown-menu-item:nth-child(6):hover .originIcon{background-position: -164px -40px;}
-  .ant-select-dropdown-menu-item:nth-child(7):hover .originIcon{background-position: -196px -40px;}
-  .ant-select-dropdown-menu-item:nth-child(8):hover .originIcon{background-position: -228px -40px;}
-  .ant-select-dropdown-menu-item:nth-child(9):hover .originIcon{background-position: -260px -40px;}
+  .ant-dropdown-menu-item:nth-child(1):hover .originIcon{background-position: -4px -40px;}
+  .ant-dropdown-menu-item:nth-child(2):hover .originIcon{background-position: -36px -40px;}
+  .ant-dropdown-menu-item:nth-child(3):hover .originIcon{background-position: -68px -40px;}
+  .ant-dropdown-menu-item:nth-child(4):hover .originIcon{background-position: -100px -40px;}
+  .ant-dropdown-menu-item:nth-child(5):hover .originIcon{background-position: -132px -40px;}
+  .ant-dropdown-menu-item:nth-child(6):hover .originIcon{background-position: -164px -40px;}
+  .ant-dropdown-menu-item:nth-child(7):hover .originIcon{background-position: -196px -40px;}
+  .ant-dropdown-menu-item:nth-child(8):hover .originIcon{background-position: -228px -40px;}
+  .ant-dropdown-menu-item:nth-child(9):hover .originIcon{background-position: -260px -40px;}
 
-  .ant-select-dropdown-menu-item:hover {
+  .ant-dropdown-menu-item:hover {
       .ant-dropdown-menu-item:nth-child(1) .originIcon {
           background-position: -4px -8px;
       }
