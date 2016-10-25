@@ -94,7 +94,6 @@ class DropDownInput extends React.Component {
             item:props.item,
             dropDownOnChange:props.onChange
         };
-        console.log(props);
     }
     componentDidMount() {
 
@@ -102,7 +101,7 @@ class DropDownInput extends React.Component {
     componentWillReceiveProps(nextProps){
         this.setState({
             value:nextProps.value,
-            item:props.item,
+            item:nextProps.item,
             dropDownOnChange:nextProps.onChange
         });
     }
@@ -116,10 +115,10 @@ class DropDownInput extends React.Component {
         })
     }
      inputBlur(e){
-         // let arr =e.target.value.split(',');
-         // if(arr.length==2){
-         //     this.state.dropDownOnChange({key:e.target.value},this.state.item);
-         // }
+         let arr =e.target.value.split(',');
+         if(arr.length==2){
+             this.state.dropDownOnChange({key:e.target.value},this.state.item);
+         }
      }
     render() {
         return (

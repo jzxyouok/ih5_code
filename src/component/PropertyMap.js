@@ -195,7 +195,8 @@ propertyMap['audio'] = [
 ];
 propertyMap['image'] = [
     ...propertyMap['sprite'],
-    { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: false }
+    { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: false },
+    { name: 'keepRatio',showName:'等比缩放', type: propertyType.Boolean, default:false, isProperty: false }
 ];
 propertyMap['imagelist'] = [
     ...propertyMap['sprite'],

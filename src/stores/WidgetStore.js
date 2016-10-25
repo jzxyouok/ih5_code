@@ -1612,37 +1612,37 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-      if(this.currentWidget.props.isLock){
-          let newObj =cpJson(obj);
-          if(prevObj) {
-              if (prevObj.scaleX == obj.scaleX && prevObj.scaleY == obj.scaleY) {
-                  //松开鼠标
-                  newObj.scaleX = prevNewObj.scaleX;
-                  newObj.scaleY = prevNewObj.scaleY;
-                  dragTag = null;
-              } else if ( prevObj.scaleY != obj.scaleY && prevObj.scaleX != obj.scaleX) {
-                  //x y轴变动
-                  newObj.scaleY = newObj.scaleX;
-                     dragTag = 'xy';
-              } else if (prevObj.scaleY == obj.scaleY && prevObj.scaleX != obj.scaleX) {
-                  //x轴变动
-                  newObj.scaleY = newObj.scaleX;
-                  dragTag = 'x';
-              } else if(prevObj.scaleX == obj.scaleX && prevObj.scaleY != obj.scaleY){
-                  //y轴变动
-                  if(dragTag=='x' || dragTag =='xy'){
-                      //修复闪动的bug
-                      newObj.scaleY = newObj.scaleX;
-                  }else{
-                      newObj.scaleX = newObj.scaleY;
-                      dragTag = 'y';
-                  }
-              }
-          }
-          prevObj =cpJson(obj);
-          obj =newObj;
-          prevNewObj =cpJson(newObj);
-        }
+      // if(this.currentWidget.props.isLock){
+      //     let newObj =cpJson(obj);
+      //     if(prevObj) {
+      //         if (prevObj.scaleX == obj.scaleX && prevObj.scaleY == obj.scaleY) {
+      //             //松开鼠标
+      //             newObj.scaleX = prevNewObj.scaleX;
+      //             newObj.scaleY = prevNewObj.scaleY;
+      //             dragTag = null;
+      //         } else if ( prevObj.scaleY != obj.scaleY && prevObj.scaleX != obj.scaleX) {
+      //             //x y轴变动
+      //             newObj.scaleY = newObj.scaleX;
+      //                dragTag = 'xy';
+      //         } else if (prevObj.scaleY == obj.scaleY && prevObj.scaleX != obj.scaleX) {
+      //             //x轴变动
+      //             newObj.scaleY = newObj.scaleX;
+      //             dragTag = 'x';
+      //         } else if(prevObj.scaleX == obj.scaleX && prevObj.scaleY != obj.scaleY){
+      //             //y轴变动
+      //             if(dragTag=='x' || dragTag =='xy'){
+      //                 //修复闪动的bug
+      //                 newObj.scaleY = newObj.scaleX;
+      //             }else{
+      //                 newObj.scaleX = newObj.scaleY;
+      //                 dragTag = 'y';
+      //             }
+      //         }
+      //     }
+      //     prevObj =cpJson(obj);
+      //     obj =newObj;
+      //     prevNewObj =cpJson(newObj);
+      //   }
 
         if(obj && obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
