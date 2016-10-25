@@ -43,6 +43,7 @@ class EventBox extends React.Component {
         this.onBlur = this.onBlur.bind(this);
 
         this.getObjIcon = this.getObjIcon.bind(this);
+        // this.getTitleMaxWidth = this.getTitleMaxWidth.bind(this);
     }
 
     componentDidMount() {
@@ -193,6 +194,13 @@ class EventBox extends React.Component {
         let pic = null;
         let picIsImage = false;
         this.refs.ComponentPanel.panels[0].cplist.map((v1,i2)=>{
+            if(obj.className === 'root') {
+                if(obj.props.name.substr(0,1)==='_') {
+                    pic = 'component-icon';
+                } else {
+                    pic = 'stage-icon';
+                }
+            }
             if(isCustomizeWidget(obj.className)) {
                 pic = 'component-icon';
             }
@@ -239,8 +247,19 @@ class EventBox extends React.Component {
         return {picIsImage:picIsImage, pic:pic};
     }
 
+    // getTitleMaxWidth () {
+    //     let maxWidth = 0;
+    //     if(this.refs['eventBox']&&this.refs['eventBox'].style.width === '740px') {
+    //         maxWidth = 572/this.state.treeList.length;
+    //     } else if (this.refs['eventBox']&&this.refs['eventBox'].style.width === '820px') {
+    //         maxWidth = 572/this.state.treeList.length;
+    //     }
+    //     return maxWidth;
+    // }
+
     render() {
         let currentObj = WidgetStore.getWidgetByKey(this.state.activeKey);
+        // let maxWidth = this.getTitleMaxWidth();
         return (
             <div className={$class('EventBox',{'keep':this.state.keepIt}, {'hidden':this.props.isHidden})}
                  style={{ left : this.props.expanded? '65px':'37px'}}
@@ -252,10 +271,14 @@ class EventBox extends React.Component {
                                 ? null
                                 : this.state.treeList.map((v,i)=>{
                                 let name = v.tree.props.name+'事件';
-                                return (<span className={$class('EB--title-name',
-                                    {'active':currentObj&&currentObj.rootWidget&&currentObj.rootWidget.key === v.tree.key})}
+                                return (<div className={$class('EB--title-name',
+                                        {'active':currentObj&&currentObj.rootWidget&&currentObj.rootWidget.key === v.tree.key})}
                                               onClick={this.chooseEventBtn.bind(this, v.tree.key, v.tree)}
-                                              key={i}>{name}</span>);
+                                              key={i}>
+                                              <div className={$class("name-wrap", {'name-wrap-border':i!==0})}>
+                                                  <span className="name">{name}</span>
+                                              </div>
+                                        </div>);
                             })
                         }
                     </div>

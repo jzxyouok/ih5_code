@@ -26,7 +26,15 @@
             color: #b5b5b5;
             //padding-left: 12px;
             cursor: pointer;
-            padding: 4.5px 12px;
+            padding: 4.5px 0;
+
+            .name-wrap {
+                @extend %font-omitted;
+                padding: 2px 12px;
+            }
+            .name-wrap-border {
+                border-left: 1px solid #232323;
+            }
 
             &.active {
                 background-color: #232323;
@@ -137,7 +145,10 @@
                             filter: Gray;
                             -webkit-filter: grayscale(100%);
                         }
-                        opacity: 0.6;
+
+                        &.stage-icon {
+                            background: url("img/button-icon.svg") no-repeat -720px 0;
+                        }
                     }
                     color: #5c5c5c;
                     cursor: pointer;
