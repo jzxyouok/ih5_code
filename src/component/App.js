@@ -26,7 +26,7 @@ class App extends React.Component {
         this.state = {
             stageZoom : 100,
             expandedToolbox: false,
-            activeEventTreeKey: null,
+            activeEventKey: null,
             activeFunc: null,
             activeVar: null,
             activeDBItem: null,
@@ -57,7 +57,7 @@ class App extends React.Component {
     onStatusChange(widget) {
         if(widget.activeEventTreeKey) {
             this.setState({
-                activeEventTreeKey: widget.activeEventTreeKey.key,
+                activeEventKey: widget.activeEventTreeKey.key,
                 editDb : false,
                 lastSelectID: null
             })
@@ -173,28 +173,32 @@ class App extends React.Component {
                 <ToolBox />
 
                 <PropertyView expanded={this.state.expandedToolbox}
-                              isHidden={this.state.activeEventTreeKey != null
+                              isHidden={this.state.activeEventKey != null
                               || this.state.activeFunc != null
                               || this.state.activeVar != null
                               || this.state.activeDBItem != null
                               || this.state.editDb} />
 
                 <EventBox expanded={this.state.expandedToolbox}
-                          isHidden={!(this.state.activeEventTreeKey != null)} />
+                          isHidden={!(this.state.activeEventKey != null)} />
 
                 <FunctionView expanded={this.state.expandedToolbox}
-                              isHidden={!(this.state.activeFunc != null)}/>
+                              isHidden={!(this.state.activeFunc != null)
+                              ||this.state.activeEventKey != null}/>
 
                 <VariableView expanded={this.state.expandedToolbox}
-                              isHidden={!(this.state.activeVar != null)}/>
+                              isHidden={!(this.state.activeVar != null)
+                              ||this.state.activeEventKey != null}/>
 
                 <DBItemView expanded={this.state.expandedToolbox}
-                            isHidden={!(this.state.activeDBItem != null)}/>
+                            isHidden={!(this.state.activeDBItem != null)
+                            ||this.state.activeEventKey != null}/>
 
                 <ObjectView />
 
                 <TimelineView isHidden={this.state.activeFunc != null
-                              || this.state.activeVar != null}/>
+                              || this.state.activeVar != null
+                              || this.state.activeDBItem != null }/>
 
                 <div className={$class({"hidden": !this.state.editDb})}>
                     <EditDb />

@@ -19,7 +19,7 @@ import pathData from './path-data'
 import bridge from 'bridge';
 const PREFIX = 'app/';
 import WidgetActions from '../actions/WidgetActions';
-import WidgetStore from '../stores/WidgetStore';
+import WidgetStore, {nodeType} from '../stores/WidgetStore';
 import DbHeaderAction from '../actions/DbHeader'
 import DbHeaderStores from '../stores/DbHeader';
 import DrawRect from './ToolBox/DrawRect';
@@ -47,6 +47,8 @@ class NavBar extends React.Component {
             dbList : [],
             createDb : false,
             selectWidget : null,
+            selectFadeWidgetKey: null,
+            nodeType: nodeType.widget,
             arrangeDb : false,
             zoomInputState: 0,
             sockList : [],
@@ -77,7 +79,8 @@ class NavBar extends React.Component {
             historyNameList : ["初始化"],
             historyShow : false,
             historyLayerHide : false,
-            isShowRulerLine:true
+            isShowRulerLine:true,
+            activeKey: null,
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -129,6 +132,8 @@ class NavBar extends React.Component {
         this.chooseHistory = this.chooseHistory.bind(this);
         this.historyLayerHide = this.historyLayerHide.bind(this);
         this.historyShow = this.historyShow.bind(this);
+
+        this.onEvent = this.onEvent.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -194,6 +199,7 @@ class NavBar extends React.Component {
         if(widget.selectWidget){
             this.setState({
                 selectWidget : widget.selectWidget,
+                nodeType: nodeType.widget,
                 isAddShape : checkChildClass(widget.selectWidget, 'path')
             });
             if(widget.selectWidget.className == "root"){
@@ -225,6 +231,25 @@ class NavBar extends React.Component {
                     isAddSock : false
                 })
             }
+        } else if (widget.selectFunction) {
+            this.setState({
+                selectFadeWidgetKey: widget.selectFunction.key,
+                nodeType: nodeType.func
+            });
+        } else if (widget.selectVariable) {
+            this.setState({
+                selectFadeWidgetKey: widget.selectVariable.key,
+                nodeType: nodeType.var
+            });
+        } else if (widget.selectDBItem) {
+            this.setState({
+                selectFadeWidgetKey: widget.selectDBItem.key,
+                nodeType: nodeType.dbItem
+            });
+        } else if(widget.activeEventTreeKey) {
+            this.setState({
+                activeKey: widget.activeEventTreeKey.key
+            });
         }
         if(widget.historyRW){
             this.setState({
@@ -424,6 +449,30 @@ class NavBar extends React.Component {
             specialLayer : false,
             qrCodeType : false
         })
+    }
+
+    onEvent(){
+        if(this.state.activeKey) {
+            WidgetActions['activeEventTree'](null);
+        } else {
+            switch (this.state.nodeType) {
+                case nodeType.widget:
+                    if(this.state.selectWidget.key !== this.state.activeKey){
+                        WidgetActions['activeEventTree'](this.state.selectWidget.key);
+                    }
+                    break;
+                case nodeType.func:
+                case nodeType.dbItem:
+                case nodeType.var:
+                    if(this.state.selectFadeWidgetKey !== this.state.activeKey){
+                        WidgetActions['activeEventTree'](this.state.selectFadeWidgetKey);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
     }
 
     qrCode() {
@@ -1058,9 +1107,9 @@ class NavBar extends React.Component {
                                 <span className="title">保存</span>
                             </button>
 
-                            <button className='btn btn-clear template-btn' title='模板'>
+                            <button className='btn btn-clear template-btn' title='事件' onClick={this.onEvent}>
                                 <span className="icon" />
-                                <span className="title">模板</span>
+                                <span className="title">事件</span>
                             </button>
 
                             <div className='dropDown-btn module-dropDown f--hlc'>

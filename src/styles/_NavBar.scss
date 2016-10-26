@@ -141,6 +141,15 @@
                 display: block;
                 overflow: hidden;
 
+                .icon {
+                    width: 24px;
+                    height: 24px;
+                    background: url("img/button-icon.svg") no-repeat;
+                    display: block;
+                    margin-right: 4px;
+                    float: left;
+                }
+
                 &.save-btn{
                     .icon{ background-position: -40px 0 ; }
                     &:hover .icon{ background-position: -40px -40px; }
@@ -176,15 +185,6 @@
                     .icon{background-position: 0 -200px;}
                     &:hover .icon{ background-position: 0 -240px; }
                     &:active .icon{ background-position: 0 -280px; }
-                }
-
-                .icon {
-                    width: 24px;
-                    height: 24px;
-                    background: url("img/button-icon.svg") no-repeat;
-                    display: block;
-                    margin-right: 4px;
-                    float: left;
                 }
 
                 .title{

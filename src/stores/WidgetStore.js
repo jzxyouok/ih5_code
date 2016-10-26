@@ -80,12 +80,12 @@ function isCustomizeWidget(className) {
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
 
-function onSelect() {
-  WidgetActions['selectWidget'](this);
+function onSelect(isMulti) {
+  WidgetActions['selectWidget'](this, true, null, isMulti);
 }
 
 const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer',
-    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas'];
+    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas', 'table'];
 var currentLoading;
 
 function loadTree(parent, node, idList) {
@@ -316,6 +316,29 @@ function resolveEventTree(node, list) {
         delete(judge.compareVarId);
       });
 
+        let dealWithPropertyFormulaInput = (cmd)=>{
+            cmd.action.property.forEach(v=> {
+                if (v.value&&v.value.type === 2) {
+                    v.value.value.forEach((v1,i)=>{
+                        if(v1.objId) {
+                            v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                        } else {
+                            v1.objKey = null;
+                        }
+                        (delete v1.objId);
+                        if(v1.objKey === null) {
+                            //如果不存在就直接删除
+                            v.value.value.splice(i, 1);
+                        }
+                    });
+                    if(v.value.value.length===0){
+                        v.value.type = 1;
+                        v.value.value = null;
+                    }
+                }
+            });
+        };
+
       item.specificList.forEach(cmd => {
           if(cmd.sObjId){
               cmd.object = idToObjectKey(list, cmd.sObjId[0], cmd.sObjId[1]);
@@ -336,6 +359,7 @@ function resolveEventTree(node, list) {
                           cmd.action = null;
                       }
                       (delete cmd.action.funcId);
+                      dealWithPropertyFormulaInput(cmd);
                       break;
                   default:
                       let o = keyMap[cmd.object];
@@ -351,22 +375,7 @@ function resolveEventTree(node, list) {
                               }
                           });
                       } else if(cmd.action.name==='changeValue') {
-                          cmd.action.property.forEach(v=> {
-                              if (v.value&&v.value.type === 2) {
-                                  v.value.value.forEach((v1,i)=>{
-                                      if(v1.objId) {
-                                          v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
-                                      } else {
-                                          v1.objKey = null;
-                                      }
-                                      (delete v1.objId);
-                                      if(v1.objKey == null) {
-                                          //如果不存在就直接删除
-                                          v.value.value.splice(i);
-                                      }
-                                  });
-                              }
-                          });
+                          dealWithPropertyFormulaInput(cmd);
                       }
                       break;
               }
@@ -489,6 +498,16 @@ function generateId(node) {
         generateObjectId(data);
     };
 
+    let genPropertyFormulaInputId = (cmd) =>{
+        cmd.action.property.forEach(v=>{
+            if (v.value&&v.value.type === 2) {
+                v.value.value.forEach(v1=>{
+                    specGenIdsData(v1.objKey);
+                });
+            }
+        });
+    };
+
   if (node.props['eventTree']) {
       generateObjectId(node);
 
@@ -506,17 +525,12 @@ function generateId(node) {
               switch (cmd.action.type){
                   case funcType.customize:
                       specGenIdsData(cmd.action.func);
+                      genPropertyFormulaInputId(cmd);
                       break;
                   default:
                       if(cmd.action.property){
                           if(cmd.action.name==='changeValue') {
-                              cmd.action.property.forEach(v=>{
-                                  if (v.value&&v.value.type === 2) {
-                                      v.value.value.forEach(v1=>{
-                                          specGenIdsData(v1.objKey);
-                                      });
-                                  }
-                              });
+                              genPropertyFormulaInputId(cmd);
                           } else {
                               cmd.action.property.forEach(v=>{
                                   //看是否需要generateid
@@ -563,6 +577,41 @@ function generateJsFunc(etree) {
       return temp;
   };
 
+  let formulaGenLine = (cmd, lines)=>{
+      cmd.action.property.forEach(prop => {
+          if(prop.value){
+              if(prop.value.type === 1){
+                  if(cmd.action.type == funcType.default) {
+                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop.value.value));
+                  } else {
+                      lines.push(JSON.stringify(prop.value.value));
+                  }
+              } else if (prop.value.type === 2) {
+                  let subLine = '';
+                  prop.value.value.forEach((fV,i) =>{
+                      if(fV.objId&&fV.property){
+                          if(i===0&&fV.prePattern){
+                              subLine += replaceSymbolStr(fV.prePattern);
+                          }
+                          subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
+                          if(fV.pattern) {
+                              subLine += replaceSymbolStr(fV.pattern);
+                          }
+                      }
+                  });
+                  if(subLine!=='') {
+                      if(cmd.action.type == funcType.default) {
+                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
+                      } else {
+                          lines.push(subLine);
+                      }
+                  }
+              }
+          }
+      });
+      return lines;
+  };
+
   etree.forEach(function(item) {
     if (item.judges.conFlag && item.enable) {
       var out = '';
@@ -598,29 +647,7 @@ function generateJsFunc(etree) {
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
-              cmd.action.property.forEach(prop => {
-                  if(prop.value){
-                      if(prop.value.type === 1){
-                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
-                      } else if (prop.value.type === 2) {
-                          let subLine = '';
-                          prop.value.value.forEach((fV,i) =>{
-                              if(fV.objId&&fV.property){
-                                  if(i===0&&fV.prePattern){
-                                      subLine += replaceSymbolStr(fV.prePattern);
-                                  }
-                                  subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
-                                  if(fV.pattern) {
-                                      subLine += replaceSymbolStr(fV.pattern);
-                                  }
-                              }
-                          });
-                          if(subLine!=='') {
-                              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
-                          }
-                      }
-                  }
-              });
+              lines = formulaGenLine(cmd, lines);
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -674,9 +701,7 @@ function generateJsFunc(etree) {
         } else if (cmd.action&&cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
-            cmd.action.property.forEach(function(p) {
-              ps.push(JSON.stringify(p.value));
-            });
+              ps = formulaGenLine(cmd, ps);
           }
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
@@ -897,7 +922,7 @@ function saveTree(data, node, saveKey) {
                             }
                         });
                         c.action.property = property;
-                    } else if(cmd.action.name=='changeValue') {
+                    } else if(cmd.action.name=='changeValue' || cmd.action.type===funcType.customize) {
                             cmd.action.property.forEach(v => {
                                 if(v.value && v.value.type === 2) {
                                     let temp = {
@@ -1245,7 +1270,7 @@ export default Reflux.createStore({
         this.eventTreeList = [];
         this.historyRoad;
     },
-    selectWidget: function(widget, shouldTrigger, keepValueType) {
+    selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
         if (widget) {
             if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -1280,20 +1305,52 @@ export default Reflux.createStore({
             }
         }
 
-        this.currentWidget = widget;
-
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
-            this.trigger({selectWidget: widget});
+            if (isMulti) {
+                this.selectWidgets = this.selectWidgets || [];
+                this.selectWidgetNodes = this.selectWidgetNodes || [];
+                if (this.selectWidgets.indexOf(widget) < 0) {
+                    this.selectWidgets.push(widget);
+                    this.selectWidgetNodes.push(widget.node);
+                }
+            } else {
+                this.selectWidgets = [widget];
+                this.selectWidgetNodes = [widget.node];
+            }
+            if (this.selectWidgets.indexOf(widget) == 0) {
+                this.currentWidget = widget;
+                this.trigger({selectWidget: widget});
+            }
 
             //判断是否是可选择的，是否加锁
             if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
-                  bridge.selectWidget(widget.node, this.updateProperties.bind(this));
+                bridge.selectWidget(this.selectWidgetNodes, function(w, obj) {
+                    var currentIndex;
+                    this.selectWidgetNodes.forEach((n, index) => {
+                        if (n != w) {
+                            this.selectWidgets[index].props['positionX'] = n['positionX'];
+                            this.selectWidgets[index].props['positionY'] = n['positionY'];
+                        } else {
+                            currentIndex = index;
+                        }
+                    });
+                    if (w == this.currentWidget.node) {
+                        this.updateProperties(obj);
+                    } else {
+                        for (var p in obj) {
+                            this.selectWidgets[currentIndex].props[p] = w[p] = obj[p];
+                        }
+                        this.updateProperties({'positionX':this.currentWidget.node['positionX'], 'positionY':this.currentWidget.node['positionY']});
+                    }
+                }.bind(this));
             } else {
                   bridge.selectWidget(widget.node);
             }
             if (render)
                 this.render();
+        } else {
+            this.currentWidget = widget;
         }
     },
     addWidget: function(className, props, link, name, dbType) {
@@ -2435,6 +2492,9 @@ export default Reflux.createStore({
             rootDiv.addEventListener('dragenter', dragenter, false);
             rootDiv.addEventListener('dragover', dragover, false);
             rootDiv.addEventListener('drop', drop.bind(this), false);
+            rootDiv.addEventListener('mousedown', function() {
+                this.selectWidget(this.currentWidget);
+            }.bind(this), false);
         }
 
         this.trigger({
@@ -2690,8 +2750,7 @@ export default Reflux.createStore({
               callback(xhr.responseText);
         };
         //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        //http://test-beta.ih5.cn
-         xhr.open(method, url);
+        xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)

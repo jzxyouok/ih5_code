@@ -729,13 +729,13 @@ propertyMap['table'] = [
     { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
 
 
-    {'name':'row', showName:'行数', default : "", 'type':propertyType.Integer , group:"tableP", isProperty: true},
-    {'name':'column', showName:'列数', default : "", 'type':propertyType.Integer , group:"tableP", isProperty: true},
+    {'name':'rowNum', showName:'行数', default : 0, 'type':propertyType.Integer , group:"tableP", isProperty: true},
+    {'name':'header', showName:'列数', default : 0, 'type':propertyType.Integer , group:"tableP", isProperty: true},
     {'name':'chooseColumn', showName:'列', type: propertyType.TbSelect , group:"tableP", isProperty: true, default:"全部", tbWidth:10,
         options:{'全部': 0}
     },
 
-    { name: 'tdHead',showName:'表格头部', type: propertyType.Boolean, default: true,group:'tableH', isProperty: true },
+    { name: 'showHeader',showName:'表格头部', type: propertyType.Boolean, default: false, group:'tableH', isProperty: true },
     {'name':'head', showName:'头部', default : "#FFFFFF", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:2 },
     { name: 'fontFamily',showName:'头部字体', type: propertyType.Select,group:'tableH', default: '选择字体', isProperty: true, tbCome:"tbF" },
     { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
@@ -753,6 +753,17 @@ propertyMap['table'] = [
     { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, isProperty: true, tbCome:"tbS" },
     { name: 'tdFontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '#FFA800', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true }
+
+    //{ name: 'dbid', type: propertyType.String, default: '', isProperty: true },
+    //{ name: 'header', type: propertyType.String, default: '', isProperty: true },
+    //{ name: 'rowNum', type: propertyType.Integer, default: 1, isProperty: true },
+    //{ name: 'value', type: propertyType.String, default: '', isProperty: true },
+    //{ name: 'showHeader', type: propertyType.Boolean, default: false, isProperty: true },
+    //{ name: 'headerColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
+    //{ name: 'altColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
+    //{ name: 'getResult', isFunc: true, info:'(pageNum)' },
+    //{ name: 'nextResult', isFunc: true},
+    //{ name: 'prevResult', isFunc: true},
 ];
 
 for (var n in propertyMap) {
