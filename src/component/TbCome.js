@@ -123,7 +123,12 @@ class  TbCome extends React.Component {
             this.state.dbList.map((v,i)=>{
                 if(v.id == data){
                     dbName = v.name;
-                    dbHeader = v.header.split(',');
+                    if(v.header == undefined){
+                        dbHeader = [];
+                    }
+                    else {
+                        dbHeader = v.header.split(',');
+                    }
                     return {
                         dbName,
                         dbHeader
