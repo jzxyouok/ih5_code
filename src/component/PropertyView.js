@@ -281,10 +281,10 @@ class PropertyView extends React.Component {
                         let posY=this.selectNode.node.positionY+this.selectNode.node.height*(y-parseFloat(oldOrigin[1]));
 
                         this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
+
                         const obj = {};
                         prop.name='originX';
                         obj[prop.name] =x;
-
                         this.onStatusChange({updateProperties: obj});
 
                         prop.name='originY';
@@ -434,7 +434,7 @@ class PropertyView extends React.Component {
     }
     getOldOrigin(key,options){
         if(key == undefined){
-            key='左上';
+            key='中心';
         }
         for(let i in options){
             if(i==key){
@@ -542,9 +542,11 @@ class PropertyView extends React.Component {
                 //设置中心点
                 defaultValue = item.default;
                 //当originY时才会激活,而不是originPos
+
                 if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
                     defaultValue = node.props.originPosKey;
                 }
+
             }
             else if(item.type==propertyType.Select || item.type==propertyType.TbSelect ){
                 defaultValue = item.default;

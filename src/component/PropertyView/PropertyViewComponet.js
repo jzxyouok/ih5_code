@@ -122,7 +122,7 @@ class DropDownInput extends React.Component {
      inputBlur(e){
          let newVal=e.target.value;
          let arr =newVal.split(',');
-         var reg = /^[0-9]+$/;
+         var reg = /^[-]?[0-9]+$/;
 
          if(newVal!=this.oldVal && arr.length==2 && reg.test(arr[0]) && reg.test(arr[1])){
              this.state.dropDownOnChange({key:e.target.value},this.state.item);
