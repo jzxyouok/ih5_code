@@ -274,6 +274,7 @@ class  TbCome extends React.Component {
         this.selectWidget.props.header = header.join(',');
         this.selectWidget.node.header = header.join(',');
         WidgetActions['updateProperties'](this.selectWidget, false, true);
+        this.selectWidget.node['getResult'](0);
     }
 
     changeInput(i,event){
