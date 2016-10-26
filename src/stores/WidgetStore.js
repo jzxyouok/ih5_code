@@ -1673,7 +1673,7 @@ export default Reflux.createStore({
                 obj.alpha = 1;
             }
         }
-        console.log(obj);
+        //console.log(obj);
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;

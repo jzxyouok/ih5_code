@@ -29,7 +29,8 @@ class PropertyView extends React.Component {
         this.state = {
             fields: null,
             propertyName:null,
-            sockName : null
+            sockName : null,
+            tbHeadHeight: 0
         };
         this.selectNode = null;
         this.currentPage = null;
@@ -53,6 +54,8 @@ class PropertyView extends React.Component {
         };
 
         this.tbComeShow = this.tbComeShow.bind(this);
+        this.tbHeadHeight = this.tbHeadHeight.bind(this);
+        this.tbHeadHeightInput = this.tbHeadHeightInput.bind(this);
     }
 
      //获取封装的form组件
@@ -164,7 +167,10 @@ class PropertyView extends React.Component {
                             </div>
 
                             <div style={{ width: "58px", marginLeft: "3px",height:"22px" }}>
-                                <Input placeholder={ defaultProp.tbHeight }  style={{height:"22px",padding:"0 7px"}} />
+                                <Input placeholder={ defaultProp.tbHeight }
+                                       onChange={ this.tbHeadHeightInput.bind(this) }
+                                       onBlur={ this.tbHeadHeight.bind(this) }
+                                       style={{height:"22px",padding:"0 7px"}} />
                                 <span className="TbColor-icon" />
                             </div>
                         </div>;
@@ -409,13 +415,36 @@ class PropertyView extends React.Component {
                WidgetActions['updateProperties'](obj, false, true);
                this.refs.TbCome.updateColumn(v,header);
            }
+           if(this.selectNode.className == "table" && prop.name == "head"){
+               obj['headerColor'] = v;
+               this.selectNode.props.headerColor = v;
+               this.selectNode.node.headerColor = v;
+               this.onStatusChange({updateProperties: obj});
+               WidgetActions['updateProperties'](obj, false, true);
+           }
            else {
                obj[prop.name] = v;
-               console.log(v,obj);
+               //console.log(v,obj);
                this.onStatusChange({updateProperties: obj});
                WidgetActions['updateProperties'](obj, false, true);
            }
        }
+    }
+
+    tbHeadHeightInput(event){
+        this.setState({
+            tbHeadHeight : event.target.value
+        })
+    }
+
+    tbHeadHeight(){
+        let v = parseInt(this.state.tbHeadHeight);
+        const obj = {};
+        obj['headerHeight'] = v;
+        this.selectNode.props.headerHeight = v;
+        this.selectNode.node.headerHeight = v;
+        this.onStatusChange({updateProperties: obj});
+        WidgetActions['updateProperties'](obj, false, true);
     }
 
     onChangePropDom(item, value) {
@@ -576,7 +605,9 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue =node.props[item.name];
                 }
-
+                if(item.type === propertyType.TbColor){
+                    defaultValue = node.props['headerColor'];
+                }
             } else if(item.type==propertyType.Dropdown ){
                 //设置中心点
                 defaultValue = item.default;
@@ -709,7 +740,7 @@ class PropertyView extends React.Component {
                 defaultProp.value = defaultValue;
             }else if(item.type === propertyType.TbColor){
                 defaultProp.value = defaultValue;
-                defaultProp.tbHeight = item.tbHeight;
+                defaultProp.tbHeight = node.props['headerHeight'] ?  node.props['headerHeight']  : 0;
             }else {
                 defaultProp.value = defaultValue;
             }

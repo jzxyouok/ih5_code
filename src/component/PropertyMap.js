@@ -736,10 +736,10 @@ propertyMap['table'] = [
     },
 
     { name: 'showHeader',showName:'表格头部', type: propertyType.Boolean, default: false, group:'tableH', isProperty: true },
-    {'name':'head', showName:'头部', default : "#FFFFFF", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:2 },
-    { name: 'fontFamily',showName:'头部字体', type: propertyType.Select,group:'tableH', default: '选择字体', isProperty: true, tbCome:"tbF" },
-    { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
-    { name: 'tdFontFill',showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
+    {'name':'head', showName:'头部', default : "", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:0 },
+    { name: 'headerFontFamily',showName:'头部字体', type: propertyType.Select,group:'tableH', default: '选择字体', isProperty: true, tbCome:"tbF" },
+    { name: 'headerFontSize',showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
+    { name: 'headerFontFill',showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
 
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
     { name: 'tdBColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '#FFA800', isProperty: true },
@@ -764,6 +764,7 @@ propertyMap['table'] = [
     //{ name: 'headerFontSize', type: propertyType.Number, default: 26, group:'header', isProperty: true },
     //{ name: 'headerFontFamily', type: propertyType.String, default: '', group:'header', isProperty: true },
     //{ name: 'headerFontFill', type: propertyType.Color, default: '#000000', group:'header', isProperty: true },
+
     //{ name: 'fontSize', type: propertyType.Number, default: 26, group:'cell', isProperty: true },
     //{ name: 'fontFamily', type: propertyType.String, default: '', group:'cell', isProperty: true },
     //{ name: 'fontFill', type: propertyType.Color, default: '#000000', group:'cell', isProperty: true },

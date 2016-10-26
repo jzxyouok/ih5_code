@@ -59,7 +59,7 @@ class  TbCome extends React.Component {
     }
 
     onStatusChange(widget) {
-        //console.log(widget);
+        console.log(widget);
         if(widget.selectWidget !== undefined){
             if(widget.selectWidget.className == "table"){
                 this.selectWidget = widget.selectWidget;
