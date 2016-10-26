@@ -67,7 +67,13 @@ class ObjectTree extends React.Component {
         this.itemAddKeyListener = this.itemAddKeyListener.bind(this);
         this.itemRemoveKeyListener = this.itemRemoveKeyListener.bind(this);
         this.itemKeyAction = this.itemKeyAction.bind(this);
-        this.itemPaste = this.itemPaste.bind(this);
+        this.rootKeyAction = this.rootKeyAction.bind(this);
+        this.itemActions = this.itemActions.bind(this);
+        this.itemWindowKeyAction = this.itemWindowKeyAction.bind(this);
+
+        this.didPressMacCmdKey = false;
+        this.checkPressCmdKey = this.checkPressCmdKey.bind(this);
+        this.resetCmdKey = this.resetCmdKey.bind(this);
 
         //伪对象相关
         this.fadeWidgetBtn = this.fadeWidgetBtn.bind(this);
@@ -103,16 +109,14 @@ class ObjectTree extends React.Component {
         this.onKeyUp =this.onKeyUp.bind(this);
         this.chooseMore=this.chooseMore.bind(this);
         this.addModuleBtn = this.addModuleBtn.bind(this);
-
-        this.itemDeleteKeyAction = this.itemDeleteKeyAction.bind(this);
-
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.stUnsubscribe = SelectTargetStore.listen(this.onSelectTargetModeChange);
         this.onStatusChange(WidgetStore.getStore());
-        window.addEventListener('keyup', this.itemDeleteKeyAction);
+        window.addEventListener('keydown', this.itemWindowKeyAction);
+        window.addEventListener('keyup', this.resetCmdKey);
 
         //多选
         //  document.body.addEventListener('keydown', this.onKeyDown);
@@ -122,7 +126,8 @@ class ObjectTree extends React.Component {
     componentWillUnmount() {
         this.unsubscribe();
         this.stUnsubscribe();
-        window.removeEventListener('keyup', this.itemDeleteKeyAction);
+        window.removeEventListener('keydown', this.itemWindowKeyAction);
+        window.removeEventListener('keyup', this.resetCmdKey);
     }
 
     onSelectTargetModeChange(result) {
@@ -499,112 +504,160 @@ class ObjectTree extends React.Component {
         event.stopPropagation();
     }
 
-    itemAddKeyListener(event){
-        this.itemRemoveKeyListener(event);
-        if (event.currentTarget.className == 'stage'){
-            event.currentTarget.addEventListener('keyup', this.itemPaste);
+    itemAddKeyListener(type, event){
+        this.itemRemoveKeyListener(type, event);
+        if (type == 'root'){
+            event.currentTarget.addEventListener('keydown', this.rootKeyAction);
+            event.currentTarget.addEventListener('keyup', this.resetCmdKey);
         } else {
-            event.currentTarget.addEventListener('keyup', this.itemKeyAction);
+            event.currentTarget.addEventListener('keydown', this.itemKeyAction);
+            event.currentTarget.addEventListener('keyup', this.resetCmdKey);
         }
     }
 
-    itemRemoveKeyListener(event){
-        if (event.currentTarget.className == 'stage'){
-            event.currentTarget.removeEventListener('keyup', this.itemPaste);
+    itemRemoveKeyListener(type, event){
+        if (type == 'root'){
+            event.currentTarget.removeEventListener('keydown', this.rootKeyAction);
+            event.currentTarget.removeEventListener('keyup', this.resetCmdKey);
         } else {
-            event.currentTarget.removeEventListener('keyup', this.itemKeyAction);
+            event.currentTarget.removeEventListener('keydown', this.itemKeyAction);
+            event.currentTarget.removeEventListener('keyup', this.resetCmdKey);
         }
     }
 
-    itemPaste(event){
-        event.preventDefault();
-        event.stopPropagation();
+    resetCmdKey() {
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-        let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
-        //黏贴
-        if (didPressCtrl && event.keyCode == 86) {
-            WidgetActions['pasteTreeNode']();
+        if (isMac) {
+            this.didPressCmdKey = false;
         }
     }
 
-    itemDeleteKeyAction(e) {
-        //删除 delete
-        event.preventDefault();
-        event.stopPropagation();
+    checkPressCmdKey(kC) {
+        if(navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+            let saywho = function(){
+                var ua = navigator.userAgent, tem,
+                    M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+                if (/trident/i.test(M[1])) {
+                    tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+                    return { 'browser': 'IE', 'version': (tem[1] || '') };
+                }
+                if (M[1] === 'Chrome') {
+                    tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+                    //if(tem != null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+                    if (tem != null) return {'browser':tem.slice(1)[0].replace('OPR', 'Opera'), 'version': tem.slice(1)[1]}
+                }
+                M = M[2] ? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+                if ((tem = ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+                return { 'browser': M[0], 'version': M[1] };
+            };
+            let webkit = (saywho().browser === 'Chrome' || saywho().browser === 'Safari');
+            let mozilla = saywho().browser === 'Firefox';
+            let opera = saywho().browser === 'Opera';
+            if (((webkit || opera) && (kC === 91 || kC === 93)) || (mozilla && kC === 224)) {
+                this.didPressCmdKey = true;
+            }
+        }
+    }
 
+    itemActions(type) {
+        switch (type) {
+            case 'copy':
+                if(this.state.selectWidget){
+                    if(this.state.selectWidget.className == "db"
+                        || this.state.selectWidget.className == "sock"){
+                        return ;
+                    }
+                }
+                WidgetActions['copyTreeNode'](this.state.nodeType);
+                break;
+            case 'paste':
+                //当前选中func or var就不理会
+                if(this.state.nodeType === nodeType.func ||
+                    this.state.nodeType==nodeType.var ||
+                    this.state.nodeType == nodeType.dbItem) {
+                    return;
+                }
+                if(this.state.selectWidget){
+                    if(this.state.selectWidget.className == "db"
+                        || this.state.selectWidget.className == "sock"){
+                        return ;
+                    }
+                }
+                WidgetActions['pasteTreeNode']();
+                break;
+            case 'cut':
+                if(this.state.selectWidget){
+                    if(this.state.selectWidget.className == "db"
+                        || this.state.selectWidget.className == "sock"){
+                        return;
+                    }
+                }
+                WidgetActions['cutTreeNode'](this.state.nodeType);
+                break;
+            case 'delete':
+                if(this.state.selectWidget) {
+                    if(this.state.selectWidget.className == "db"){
+                        if(this.state.selectWidget.node.dbType = "shareDb"){
+                            ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
+                        }
+                    }
+                    if(this.state.selectWidget.className == "sock"){
+                        ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+                    }
+                }
+                WidgetActions['deleteTreeNode'](this.state.nodeType);
+                break;
+            default:
+                break;
+        }
+    }
+
+    itemWindowKeyAction(e) {
         //如果是input的话
         if(e.target.nodeName==='INPUT' || e.target.nodeName==='TEXTAREA') {
             return;
         }
 
-        if(this.state.selectTargetMode) {
-            return;
-        }
-        //如果是edit模式，不做任何事情
-        if(this.state.editMode){
+        if(this.state.selectTargetMode||
+            this.state.editMode) {
             return;
         }
 
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+
+        let disable = false;
+        if (this.state.selectWidget&&this.state.selectWidget.className === 'root') {
+            disable = true;
+        }
+
         //复制 67
-        if (didPressCtrl && event.keyCode == 67) {
-            if(this.state.selectWidget){
-                if(this.state.selectWidget.className == "db"
-                    || this.state.selectWidget.className == "sock"){
-                    window.macKeys.reset();
-                    return ;
-                }
-            }
-            WidgetActions['copyTreeNode'](this.state.nodeType);
-            window.macKeys.reset();
+        if (didPressCtrl && event.keyCode == 67 && !disable) {
+            this.itemActions('copy');
         }
         //黏贴 86
         if (didPressCtrl && event.keyCode == 86) {
-            //当前选中func or var就不理会
-            if(this.state.nodeType === nodeType.func ||
-                this.state.nodeType==nodeType.var ||
-                this.state.nodeType == nodeType.dbItem) {
-                window.macKeys.reset();
-                return;
-            }
-            if(this.state.selectWidget){
-                if(this.state.selectWidget.className == "db"
-                    || this.state.selectWidget.className == "sock"){
-                    window.macKeys.reset();
-                    return ;
-                }
-            }
-            WidgetActions['pasteTreeNode']();
-            window.macKeys.reset();
+            this.itemActions('paste');
         }
         //剪切 88
-        if (didPressCtrl && event.keyCode == 88) {
-            if(this.state.selectWidget){
-                if(this.state.selectWidget.className == "db"
-                    || this.state.selectWidget.className == "sock"){
-                    window.macKeys.reset();
-                    return ;
-                }
-            }
-            WidgetActions['cutTreeNode'](this.state.nodeType);
-            window.macKeys.reset();
+        if (didPressCtrl && event.keyCode == 88 && !disable) {
+            this.itemActions('cut');
         }
         //删除 delete
-        if (!didPressCtrl && event.keyCode == 8) {
-            WidgetActions['deleteTreeNode'](this.state.nodeType);
-            window.macKeys.reset();
+        if (!didPressCtrl && event.keyCode == 8 && !disable) {
+            this.itemActions('delete');
+        }
+    }
 
-            if(this.state.selectWidget) {
-                if(this.state.selectWidget.className == "db"){
-                    if(this.state.selectWidget.node.dbType = "shareDb"){
-                        ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
-                    }
-                }
-                if(this.state.selectWidget.className == "sock"){
-                    ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
-                }
-            }
+    rootKeyAction(event){
+        event.preventDefault();
+        event.stopPropagation();
+        this.checkPressCmdKey(event.keyCode);
+        let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        let didPressCtrl = (isMac && this.didPressCmdKey) || (!isMac && event.ctrlKey);
+        //黏贴
+        if (didPressCtrl && event.keyCode == 86) {
+            WidgetActions['pasteTreeNode']();
         }
     }
 
@@ -623,66 +676,24 @@ class ObjectTree extends React.Component {
             return;
         }
 
+        this.checkPressCmdKey(event.keyCode);
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-        let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+        let didPressCtrl = (isMac && this.didPressCmdKey) || (!isMac && event.ctrlKey);
         //复制 67
         if (didPressCtrl && event.keyCode == 67) {
-            if(this.state.selectWidget){
-                if(this.state.selectWidget.className == "db"
-                    || this.state.selectWidget.className == "sock"){
-                    window.macKeys.reset();
-                    return ;
-                }
-            }
-            WidgetActions['copyTreeNode'](this.state.nodeType);
-            window.macKeys.reset();
+            this.itemActions('copy');
         }
         //黏贴 86
         if (didPressCtrl && event.keyCode == 86) {
-            //当前选中func or var就不理会
-            if(this.state.nodeType === nodeType.func ||
-                this.state.nodeType==nodeType.var ||
-                this.state.nodeType == nodeType.dbItem) {
-                window.macKeys.reset();
-                return;
-            }
-            if(this.state.selectWidget){
-                if(this.state.selectWidget.className == "db"
-                    || this.state.selectWidget.className == "sock"){
-                    window.macKeys.reset();
-                    return ;
-                }
-            }
-            WidgetActions['pasteTreeNode']();
-            window.macKeys.reset();
+            this.itemActions('paste');
         }
         //剪切 88
         if (didPressCtrl && event.keyCode == 88) {
-            if(this.state.selectWidget){
-                if(this.state.selectWidget.className == "db"
-                    || this.state.selectWidget.className == "sock"){
-                    window.macKeys.reset();
-                    return ;
-                }
-            }
-            WidgetActions['cutTreeNode'](this.state.nodeType);
-            window.macKeys.reset();
+            this.itemActions('cut');
         }
         //删除 delete
         if (!didPressCtrl && event.keyCode == 8) {
-            WidgetActions['deleteTreeNode'](this.state.nodeType);
-            window.macKeys.reset();
-
-            if(this.state.selectWidget) {
-                if(this.state.selectWidget.className == "db"){
-                    if(this.state.selectWidget.node.dbType = "shareDb"){
-                        ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
-                    }
-                }
-                if(this.state.selectWidget.className == "sock"){
-                    ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
-                }
-            }
+            this.itemActions('delete');
         }
     }
 
@@ -1118,8 +1129,8 @@ class ObjectTree extends React.Component {
                             key={i}
                             id={'tree-item-'+ item.key}
                             tabIndex={item.key}
-                            onFocus={this.itemAddKeyListener.bind(this)}
-                            onBlur={this.itemRemoveKeyListener.bind(this)}>
+                            onFocus={this.itemAddKeyListener.bind(this, 'item')}
+                            onBlur={this.itemRemoveKeyListener.bind(this, 'item')}>
                     <div className={$class('fade-widget-title f--h f--hlc',
                         {'active': item.key === this.state.nid})}
                          onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}
@@ -1232,8 +1243,8 @@ class ObjectTree extends React.Component {
                      draggable='true'
                      onDragStart={this.itemDragStart.bind(this,v.key, v)}
                      onDragEnd={this.itemDragEnd}
-                     onFocus={this.itemAddKeyListener.bind(this)}
-                     onBlur={this.itemRemoveKeyListener.bind(this)}>
+                     onFocus={this.itemAddKeyListener.bind(this, 'item')}
+                     onBlur={this.itemRemoveKeyListener.bind(this, 'item')}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid})}
                          onClick={this.chooseBtn.bind(this,v.key, v)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
@@ -1347,8 +1358,8 @@ class ObjectTree extends React.Component {
                                       tabIndex={v.tree.key}
                                       data-wKey={v.tree.key}
                                       data-parentKey={i==0?'-1':'custom'}
-                                      onFocus={this.itemAddKeyListener.bind(this)}
-                                      onBlur={this.itemRemoveKeyListener.bind(this)}>
+                                      onFocus={this.itemAddKeyListener.bind(this, 'root')}
+                                      onBlur={this.itemRemoveKeyListener.bind(this, 'root')}>
                                      <div className={$class('stage-title f--h f--hlc',{'active': v.tree.key === this.state.nid})}
                                           style={{ width : this.props.width - 36 - 24 }}
                                           onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}>

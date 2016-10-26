@@ -553,6 +553,16 @@ function getIdsName(idName, varName, propName) {
 function generateJsFunc(etree) {
   var output = {};
 
+  let replaceSymbolStr = (str)=>{
+      let temp = str;
+      let chineseSymbol = [/＋/g,/－/g,/＊/g,/／/g,/（/g,/）/g,/？/g,/：/g,/‘/g];
+      let englishSymbol = ["+","-","*","/","(",")","?",":","'"];
+      for(let i=0; i<chineseSymbol.length; i++) {
+          temp=temp.replace(chineseSymbol[i], englishSymbol[i]);
+      }
+      return temp;
+  };
+
   etree.forEach(function(item) {
     if (item.judges.conFlag && item.enable) {
       var out = '';
@@ -597,11 +607,11 @@ function generateJsFunc(etree) {
                           prop.value.value.forEach((fV,i) =>{
                               if(fV.objId&&fV.property){
                                   if(i===0&&fV.prePattern){
-                                      subLine += fV.prePattern;
+                                      subLine += replaceSymbolStr(fV.prePattern);
                                   }
                                   subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
                                   if(fV.pattern) {
-                                      subLine += fV.pattern;
+                                      subLine += replaceSymbolStr(fV.pattern);
                                   }
                               }
                           });
@@ -1422,21 +1432,9 @@ export default Reflux.createStore({
 
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
-          //清event
-          let clearEvent = copyObj =>{
-              if(copyObj.etree&&copyObj.etree.length>0){
-                  copyObj.etree.forEach(i =>(
-                      i.cmds = []
-                  ));
-              }
-              if(copyObj.children&&copyObj.children.length>0){
-                copyObj.children.forEach(value =>{
-                    clearEvent(value);
-                });
-              }
-          };
-          clearEvent(copyObj);
-
+          if(copyObj.props&&copyObj.props.key) {
+              (delete copyObj.props.key);
+          }
         loadTree(this.currentWidget, copyObj);
         if(copyObj.props.eventTree){
           this.reorderEventTreeList();
@@ -1449,7 +1447,7 @@ export default Reflux.createStore({
     },
     cutWidget: function() {
         this.copyWidget();
-        this.removeWidget();
+        this.removeWidget(true);
     },
     lockWidget: function () {
         if (this.currentWidget) {
@@ -2043,9 +2041,9 @@ export default Reflux.createStore({
                 keyMap[this.currentFunction.key]= undefined;
                 this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.remove}});
                 this.selectWidget(this.currentWidget);
-                historyName = "删除函数" + this.currentWidget.node.name;
-                this.updateHistoryRecord(historyName);
             }
+            historyName = "删除函数" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     copyFunction: function () {
