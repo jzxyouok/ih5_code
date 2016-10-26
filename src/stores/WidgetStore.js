@@ -316,6 +316,29 @@ function resolveEventTree(node, list) {
         delete(judge.compareVarId);
       });
 
+        let dealWithPropertyFormulaInput = (cmd)=>{
+            cmd.action.property.forEach(v=> {
+                if (v.value&&v.value.type === 2) {
+                    v.value.value.forEach((v1,i)=>{
+                        if(v1.objId) {
+                            v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                        } else {
+                            v1.objKey = null;
+                        }
+                        (delete v1.objId);
+                        if(v1.objKey === null) {
+                            //如果不存在就直接删除
+                            v.value.value.splice(i, 1);
+                        }
+                    });
+                    if(v.value.value.length===0){
+                        v.value.type = 1;
+                        v.value.value = null;
+                    }
+                }
+            });
+        };
+
       item.specificList.forEach(cmd => {
           if(cmd.sObjId){
               cmd.object = idToObjectKey(list, cmd.sObjId[0], cmd.sObjId[1]);
@@ -336,6 +359,7 @@ function resolveEventTree(node, list) {
                           cmd.action = null;
                       }
                       (delete cmd.action.funcId);
+                      dealWithPropertyFormulaInput(cmd);
                       break;
                   default:
                       let o = keyMap[cmd.object];
@@ -351,22 +375,7 @@ function resolveEventTree(node, list) {
                               }
                           });
                       } else if(cmd.action.name==='changeValue') {
-                          cmd.action.property.forEach(v=> {
-                              if (v.value&&v.value.type === 2) {
-                                  v.value.value.forEach((v1,i)=>{
-                                      if(v1.objId) {
-                                          v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
-                                      } else {
-                                          v1.objKey = null;
-                                      }
-                                      (delete v1.objId);
-                                      if(v1.objKey == null) {
-                                          //如果不存在就直接删除
-                                          v.value.value.splice(i);
-                                      }
-                                  });
-                              }
-                          });
+                          dealWithPropertyFormulaInput(cmd);
                       }
                       break;
               }
@@ -489,6 +498,16 @@ function generateId(node) {
         generateObjectId(data);
     };
 
+    let genPropertyFormulaInputId = (cmd) =>{
+        cmd.action.property.forEach(v=>{
+            if (v.value&&v.value.type === 2) {
+                v.value.value.forEach(v1=>{
+                    specGenIdsData(v1.objKey);
+                });
+            }
+        });
+    };
+
   if (node.props['eventTree']) {
       generateObjectId(node);
 
@@ -506,17 +525,12 @@ function generateId(node) {
               switch (cmd.action.type){
                   case funcType.customize:
                       specGenIdsData(cmd.action.func);
+                      genPropertyFormulaInputId(cmd);
                       break;
                   default:
                       if(cmd.action.property){
                           if(cmd.action.name==='changeValue') {
-                              cmd.action.property.forEach(v=>{
-                                  if (v.value&&v.value.type === 2) {
-                                      v.value.value.forEach(v1=>{
-                                          specGenIdsData(v1.objKey);
-                                      });
-                                  }
-                              });
+                              genPropertyFormulaInputId(cmd);
                           } else {
                               cmd.action.property.forEach(v=>{
                                   //看是否需要generateid
@@ -563,6 +577,41 @@ function generateJsFunc(etree) {
       return temp;
   };
 
+  let formulaGenLine = (cmd, lines)=>{
+      cmd.action.property.forEach(prop => {
+          if(prop.value){
+              if(prop.value.type === 1){
+                  if(cmd.action.type == funcType.default) {
+                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
+                  } else {
+                      lines.push(JSON.stringify(prop['value']));
+                  }
+              } else if (prop.value.type === 2) {
+                  let subLine = '';
+                  prop.value.value.forEach((fV,i) =>{
+                      if(fV.objId&&fV.property){
+                          if(i===0&&fV.prePattern){
+                              subLine += replaceSymbolStr(fV.prePattern);
+                          }
+                          subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
+                          if(fV.pattern) {
+                              subLine += replaceSymbolStr(fV.pattern);
+                          }
+                      }
+                  });
+                  if(subLine!=='') {
+                      if(cmd.action.type == funcType.default) {
+                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
+                      } else {
+                          lines.push(subLine);
+                      }
+                  }
+              }
+          }
+      });
+      return lines;
+  };
+
   etree.forEach(function(item) {
     if (item.judges.conFlag && item.enable) {
       var out = '';
@@ -598,29 +647,7 @@ function generateJsFunc(etree) {
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue') {
-              cmd.action.property.forEach(prop => {
-                  if(prop.value){
-                      if(prop.value.type === 1){
-                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
-                      } else if (prop.value.type === 2) {
-                          let subLine = '';
-                          prop.value.value.forEach((fV,i) =>{
-                              if(fV.objId&&fV.property){
-                                  if(i===0&&fV.prePattern){
-                                      subLine += replaceSymbolStr(fV.prePattern);
-                                  }
-                                  subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
-                                  if(fV.pattern) {
-                                      subLine += replaceSymbolStr(fV.pattern);
-                                  }
-                              }
-                          });
-                          if(subLine!=='') {
-                              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
-                          }
-                      }
-                  }
-              });
+              lines = formulaGenLine(cmd, lines);
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -674,9 +701,7 @@ function generateJsFunc(etree) {
         } else if (cmd.action&&cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
-            cmd.action.property.forEach(function(p) {
-              ps.push(JSON.stringify(p.value));
-            });
+              ps = formulaGenLine(cmd, ps);
           }
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
@@ -897,7 +922,7 @@ function saveTree(data, node, saveKey) {
                             }
                         });
                         c.action.property = property;
-                    } else if(cmd.action.name=='changeValue') {
+                    } else if(cmd.action.name=='changeValue' || cmd.action.type===funcType.customize) {
                             cmd.action.property.forEach(v => {
                                 if(v.value && v.value.type === 2) {
                                     let temp = {
