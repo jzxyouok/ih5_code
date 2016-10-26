@@ -69,7 +69,7 @@ class  TbCome extends React.Component {
             }
         }
         if(widget.updateProperties){
-            //console.log(widget);
+            console.log(widget);
             if(this.state.isGetTb){
                 this.selectWidget.node['getResult'](0);
                 this.setState({
@@ -514,7 +514,7 @@ class  TbCome extends React.Component {
                                                 }
                                                 return  <li key={i}
                                                             className={ $class({"hidden": isSearch && searchResult < 0 })}
-                                                            onClick={ this.addHeader.bind(this,a,k)}>
+                                                            onClick={ this.addHeader.bind(this,a,name)}>
                                                             {name}
                                                         </li>
                                             })

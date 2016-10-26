@@ -735,7 +735,7 @@ propertyMap['table'] = [
         options:{'全部': 0}
     },
 
-    { name: 'tdHead',showName:'表格头部', type: propertyType.Boolean, default: true,group:'tableH', isProperty: true },
+    { name: 'showHeader',showName:'表格头部', type: propertyType.Boolean, default: false, group:'tableH', isProperty: true },
     {'name':'head', showName:'头部', default : "#FFFFFF", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:2 },
     { name: 'fontFamily',showName:'头部字体', type: propertyType.Select,group:'tableH', default: '选择字体', isProperty: true, tbCome:"tbF" },
     { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
