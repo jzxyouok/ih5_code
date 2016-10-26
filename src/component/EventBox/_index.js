@@ -20,7 +20,7 @@ class EventBox extends React.Component {
         super(props);
         this.state = {
             keepIt : false,
-            activeKey: -1,
+            activeKey: null,
             selectWidget: null,
             eventTreeList: [],
             treeList: [],  //顶部需用到
