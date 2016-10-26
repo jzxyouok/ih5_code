@@ -80,8 +80,8 @@ function isCustomizeWidget(className) {
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
 
-function onSelect() {
-  WidgetActions['selectWidget'](this);
+function onSelect(isMulti) {
+  WidgetActions['selectWidget'](this, true, null, isMulti);
 }
 
 const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer',
@@ -1270,7 +1270,7 @@ export default Reflux.createStore({
         this.eventTreeList = [];
         this.historyRoad;
     },
-    selectWidget: function(widget, shouldTrigger, keepValueType) {
+    selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
         if (widget) {
             if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
@@ -1305,20 +1305,52 @@ export default Reflux.createStore({
             }
         }
 
-        this.currentWidget = widget;
-
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
-            this.trigger({selectWidget: widget});
+            if (isMulti) {
+                this.selectWidgets = this.selectWidgets || [];
+                this.selectWidgetNodes = this.selectWidgetNodes || [];
+                if (this.selectWidgets.indexOf(widget) < 0) {
+                    this.selectWidgets.push(widget);
+                    this.selectWidgetNodes.push(widget.node);
+                }
+            } else {
+                this.selectWidgets = [widget];
+                this.selectWidgetNodes = [widget.node];
+            }
+            if (this.selectWidgets.indexOf(widget) == 0) {
+                this.currentWidget = widget;
+                this.trigger({selectWidget: widget});
+            }
 
             //判断是否是可选择的，是否加锁
             if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
-                  bridge.selectWidget(widget.node, this.updateProperties.bind(this));
+                bridge.selectWidget(this.selectWidgetNodes, function(w, obj) {
+                    var currentIndex;
+                    this.selectWidgetNodes.forEach((n, index) => {
+                        if (n != w) {
+                            this.selectWidgets[index].props['positionX'] = n['positionX'];
+                            this.selectWidgets[index].props['positionY'] = n['positionY'];
+                        } else {
+                            currentIndex = index;
+                        }
+                    });
+                    if (w == this.currentWidget.node) {
+                        this.updateProperties(obj);
+                    } else {
+                        for (var p in obj) {
+                            this.selectWidgets[currentIndex].props[p] = w[p] = obj[p];
+                        }
+                        this.updateProperties({'positionX':this.currentWidget.node['positionX'], 'positionY':this.currentWidget.node['positionY']});
+                    }
+                }.bind(this));
             } else {
                   bridge.selectWidget(widget.node);
             }
             if (render)
                 this.render();
+        } else {
+            this.currentWidget = widget;
         }
     },
     addWidget: function(className, props, link, name, dbType) {
@@ -2460,6 +2492,9 @@ export default Reflux.createStore({
             rootDiv.addEventListener('dragenter', dragenter, false);
             rootDiv.addEventListener('dragover', dragover, false);
             rootDiv.addEventListener('drop', drop.bind(this), false);
+            rootDiv.addEventListener('mousedown', function() {
+                this.selectWidget(this.currentWidget);
+            }.bind(this), false);
         }
 
         this.trigger({
