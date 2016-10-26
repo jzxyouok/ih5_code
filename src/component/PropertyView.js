@@ -52,7 +52,7 @@ class PropertyView extends React.Component {
             y:null
         };
 
-
+        this.tbComeShow = this.tbComeShow.bind(this);
     }
 
      //获取封装的form组件
@@ -210,7 +210,6 @@ class PropertyView extends React.Component {
                         bTag=false;
                         break;
                     }
-
                     v = parseInt(value);
                     break;
                 case propertyType.Number:
@@ -382,9 +381,40 @@ class PropertyView extends React.Component {
 
        if(bTag){
            const obj = {};
-           obj[prop.name] = v;
-           this.onStatusChange({updateProperties: obj});
-            WidgetActions['updateProperties'](obj, false, true);
+           if(this.selectNode.className == "table" && prop.name == "header"){
+               if(v <= 0 || v == null) return;
+               let header = this.selectNode.props.header;
+               if(header !== undefined){
+                   header = header.split(",");
+                   let b = v - header.length;
+                   if(b > 0){
+                       for(let a=1; a <= b ; a++){
+                           header.push("");
+                       }
+                   }
+                   else if(b < 0){
+                       for(let a = -b; a > 0 ; a--){
+                           header.splice(header.length-1, 1);
+                       }
+                   }
+               }
+               else {
+                   header = [""];
+                   for(let a=1; a < v ; a++){
+                       header.push("");
+                   }
+               }
+               //console.log(v,header);
+               obj[prop.name] = header.join(",");
+               this.onStatusChange({updateProperties: obj});
+               WidgetActions['updateProperties'](obj, false, true);
+               this.refs.TbCome.updateColumn(v,header);
+           }
+           else {
+               obj[prop.name] = v;
+               this.onStatusChange({updateProperties: obj});
+               WidgetActions['updateProperties'](obj, false, true);
+           }
        }
     }
 
@@ -594,7 +624,24 @@ class PropertyView extends React.Component {
                 }
 
             } else {
-                defaultValue = node.props[item.name];
+                if(className == "table"){
+                    if(item.name == "rowNum"){
+                        defaultValue = node.props[item.name] ? node.props[item.name] : 0;
+                    }
+                    else if(item.name == "header"){
+                        if(node.props[item.name] == undefined) {
+                            node.props[item.name] = " ";
+                            defaultValue = 0;
+                        }
+                        else {
+                            let header = node.props[item.name].split(",");
+                            defaultValue = header.length;
+                        }
+                    }
+                }
+                else {
+                    defaultValue = node.props[item.name];
+                }
                 if (item.name == 'alpha') {
                     defaultValue = defaultValue * 100;
                 }
@@ -759,7 +806,9 @@ class PropertyView extends React.Component {
                             {groups[name].map((input, i) => input)}
                             {
                                 insertClassName == "table-form_basic"
-                                    ? <button className="btn-clear table-form_basic_btn">表格数据来源</button>
+                                    ?   <button className="btn-clear table-form_basic_btn" onClick={this.tbComeShow}>
+                                            表格数据来源
+                                        </button>
                                     : null
                             }
                         </Form>
@@ -767,7 +816,6 @@ class PropertyView extends React.Component {
     }
 
     onStatusChange(widget) {
-         //console.log(widget);
         if(widget.fontListObj){
            this.fontList =  widget.fontListObj.fontList;
         }
@@ -821,6 +869,7 @@ class PropertyView extends React.Component {
                 }
             }
 
+
             propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
                     if (obj[item.name] === null) {
@@ -860,6 +909,17 @@ class PropertyView extends React.Component {
         document.removeEventListener('mousemove', this.mouseMove.bind(this));
         document.removeEventListener('mouseup', this.mouseUp.bind(this));
         $('#PropertyView').unbind();
+    }
+
+    tbComeShow(){
+        if( this.selectNode.className !== "table") return;
+        let data = this.selectNode.props.dbid ? this.selectNode.props.dbid : null;
+        let header = this.selectNode.props.header;
+        let column = 0;
+        if(header != undefined){
+            column = header.split(',').length;
+        }
+        this.refs.TbCome.show(data,column,header);
     }
 
     mouseDown(e){
@@ -920,6 +980,7 @@ class PropertyView extends React.Component {
                     </div>
                 </div>
 
+                <TbCome ref="TbCome" />
             </div>
         );
     }

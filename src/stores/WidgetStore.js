@@ -85,7 +85,7 @@ function onSelect(isMulti) {
 }
 
 const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer',
-    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas'];
+    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas', 'table'];
 var currentLoading;
 
 function loadTree(parent, node, idList) {
@@ -2750,7 +2750,6 @@ export default Reflux.createStore({
               callback(xhr.responseText);
         };
         //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        //http://test-beta.ih5.cn
          xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
