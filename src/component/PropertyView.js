@@ -276,26 +276,35 @@ class PropertyView extends React.Component {
                         let arr=value.key.split(',');
                         let x = parseFloat(arr[0]);
                         let y = parseFloat(arr[1]);
-                        let oldOrigin =this.getOldOrigin(this.selectNode.props.originPosKey,prop.options);
-                        let posX=this.selectNode.node.positionX+this.selectNode.node.width*(x-parseFloat(oldOrigin[0]));
-                        let posY=this.selectNode.node.positionY+this.selectNode.node.height*(y-parseFloat(oldOrigin[1]));
+                        let propsObj=this.selectNode.props;
+                        let nodeObj=this.selectNode.node;
+                        let oldOrigin =this.getOldOrigin(propsObj.originPosKey,prop.options);
+                        let w =nodeObj.width*(x-parseFloat(oldOrigin[0]));
+                        let h =nodeObj.height*(y-parseFloat(oldOrigin[1]));
+                        let sin =  Math.sin(nodeObj.rotation*Math.PI/180);
+                        let cos =  Math.cos(nodeObj.rotation*Math.PI/180);
+                        debugger;
 
-                        this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
+                        let posX=nodeObj.positionX+(h*sin+w*cos);
+                        let posY=nodeObj.positionY+(h*cos-w*sin);
 
-                        const obj = {};
-                        prop.name='originX';
-                        obj[prop.name] =x;
-                        this.onStatusChange({updateProperties: obj});
-
-                        prop.name='originY';
-                        obj[prop.name] = y;
-
-                        this.onStatusChange({updateProperties: obj});
+                        propsObj.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
 
 
-                        WidgetActions['updateProperties']({originX:x,originY:y,positionX:posX,positionY:posY}, false, false);
+                        propsObj.originX =x;
+                        nodeObj.originX =x;
+                        propsObj.originY =y;
+                        nodeObj.originY =y;
 
-                        prop.name='originPos';
+                        propsObj.positionX =posX;
+                        nodeObj.positionX =posX;
+                        propsObj.positionY =posY;
+                        nodeObj.positionY =posY;
+
+
+                         WidgetActions['render']();
+                        this.setState({fields: this.getFields()});
+
                         bTag=false;
                     }
                     break;
@@ -375,7 +384,7 @@ class PropertyView extends React.Component {
            const obj = {};
            obj[prop.name] = v;
            this.onStatusChange({updateProperties: obj});
-           WidgetActions['updateProperties'](obj, false, true);
+            WidgetActions['updateProperties'](obj, false, true);
        }
     }
 
@@ -460,7 +469,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-      //   console.log(node);
+       //  console.log(node);
 
         if (!node)  return null;
 
