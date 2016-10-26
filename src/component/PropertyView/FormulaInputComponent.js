@@ -51,6 +51,8 @@ class FormulaInput extends React.Component {
         this.onChangeFocus = props.onFocus;
         this.onChangeBlur = props.onBlur;
 
+        this.allowChange = true;
+
         this.onStatusChange = this.onStatusChange.bind(this);
 
         this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
@@ -67,6 +69,7 @@ class FormulaInput extends React.Component {
         this.onFormulaPrePatternKeyDown = this.onFormulaPrePatternKeyDown.bind(this);
         this.onFormulaPatternKeyDown = this.onFormulaPatternKeyDown.bind(this);
         this.onFormulaPatternBlur = this.onFormulaPatternBlur.bind(this);
+        this.onFormulaKeyUp = this.onFormulaKeyUp.bind(this);
 
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
 
@@ -161,7 +164,7 @@ class FormulaInput extends React.Component {
             if(e){
                 e.stopPropagation();
             }
-            if(!this.state.on&&this.refs.formulaMode) {
+            if(this.refs.formulaMode) {
                 this.setState({
                     on: true
                 }, ()=>{
@@ -335,6 +338,12 @@ class FormulaInput extends React.Component {
     }
 
     onFormulaPatternChange(v, i, e) {
+        e.stopPropagation();
+        if(!this.allowChange) {
+            this.allowChange = true;
+            return;
+        }
+
         let pattern = e.target.value;
         let value = this.state.value;
         if(value&&value.length>0){
@@ -351,7 +360,7 @@ class FormulaInput extends React.Component {
 
     onDeleteKeyDownAction(v,i){
         let willDeleteObjIndex = i;
-        if(this.state.willDeleteObjIndex!=null&&this.state.willDeleteObjIndex===i) {
+        if(this.state.willDeleteObjIndex!==null&&this.state.willDeleteObjIndex===i) {
             willDeleteObjIndex = null;
             //delete obj here
             let value = this.state.value;
@@ -402,9 +411,6 @@ class FormulaInput extends React.Component {
                     type = inputType.formula;
                     value.splice(i,1);
                 }
-                if(this.refs['pattern'+i]) {
-                    this.refs['pattern'+i].refs.input.blur();
-                }
             } else {
                 value = null;
                 type = inputType.value;
@@ -414,20 +420,20 @@ class FormulaInput extends React.Component {
                 currentType: type,
                 willDeleteObjIndex: willDeleteObjIndex,
             }, ()=>{
+                this.onChange({value:this.state.value, type:this.state.currentType});
                 if(this.state.currentType === inputType.value) {
-                    setTimeout(()=> {
-                        if(this.refs['valueInput']) {
-                            this.refs['valueInput'].refs.input.focus();
-                        }
-                    }, 50);
+                    if(this.refs['valueInput']) {
+                        this.allowChange = false;
+                        this.refs['valueInput'].refs.input.focus();
+                    }
                 } else{
-                    setTimeout(()=> {
-                        if(this.refs[focus]) {
-                            this.refs[focus].refs.input.focus();
-                        }
-                    }, 50);
+                    if(this.refs[focus]) {
+                        this.allowChange = false;
+                        this.refs[focus].refs.input.focus();
+                    }
                 }
-            })
+            });
+            return false;
         } else {
             this.setState({
                 willDeleteObjIndex: willDeleteObjIndex
@@ -439,18 +445,14 @@ class FormulaInput extends React.Component {
         if(type === 'pattern') {
             if(i === 0) {
                 let focus = 'prePattern'+i;
-                setTimeout(()=> {
-                    if(this.refs[focus]) {
-                        this.refs[focus].refs.input.focus();
-                    }
-                }, 50);
+                if(this.refs[focus]) {
+                    this.refs[focus].refs.input.focus();
+                }
             } else {
                 let focus = 'pattern'+(i-1);
-                setTimeout(()=> {
-                    if(this.refs[focus]) {
-                        this.refs[focus].refs.input.focus();
-                    }
-                }, 50);
+                if(this.refs[focus]) {
+                    this.refs[focus].refs.input.focus();
+                }
             }
         }
     }
@@ -459,23 +461,27 @@ class FormulaInput extends React.Component {
         if(type === 'pattern') {
             if(i !== this.state.value.length-1) {
                 let focus = 'pattern'+(i+1);
-                setTimeout(()=> {
-                    if(this.refs[focus]) {
-                        this.refs[focus].refs.input.focus();
-                    }
-                }, 50);
-            }
-        } else {
-            let focus = 'pattern'+(i);
-            setTimeout(()=> {
                 if(this.refs[focus]) {
                     this.refs[focus].refs.input.focus();
                 }
-            }, 50);
+            }
+        } else {
+            let focus = 'pattern'+(i);
+            if(this.refs[focus]) {
+                this.refs[focus].refs.input.focus();
+            }
+        }
+    }
+
+    onFormulaKeyUp(e) {
+        e.stopPropagation();
+        if(!this.allowChange) {
+            this.allowChange = true;
         }
     }
 
     onFormulaPrePatternKeyDown(v,i,e){
+        e.stopPropagation();
         let pos = this.doGetCaretPosition(e.target);
         if (e.keyCode === 39) {
             //右移动
@@ -486,6 +492,7 @@ class FormulaInput extends React.Component {
     }
 
     onFormulaPatternKeyDown(v,i,e) {
+        e.stopPropagation();
         let pos = this.doGetCaretPosition(e.target);
         if(e.keyCode === 37) {
             //左移动
@@ -500,7 +507,7 @@ class FormulaInput extends React.Component {
         } else if(e.keyCode === 8) {
             //退格健
             if(pos=='0') {
-                this.onDeleteKeyDownAction(v, i);
+                return this.onDeleteKeyDownAction(v, i);
             }
         }
     }
@@ -546,6 +553,11 @@ class FormulaInput extends React.Component {
 
     //value mode
     onInputTypeValueChange(e) {
+        e.stopPropagation();
+        if(!this.allowChange) {
+            this.allowChange = true;
+            return;
+        }
         this.setState({
             value:e.target.value,
             currentType:inputType.value
@@ -641,6 +653,7 @@ class FormulaInput extends React.Component {
                                               className='formula-obj-prePattern'
                                               ref={'prePattern'+i}
                                               onKeyDown={this.onFormulaPrePatternKeyDown.bind(this, v, i)}
+                                              onKeyUp={this.onFormulaKeyUp}
                                               onClick={this.onFocus.bind(this,null)}
                                               onChange={this.onFormulaPrePatternChange.bind(this, v, i)}/>)
                                     : null
@@ -668,6 +681,7 @@ class FormulaInput extends React.Component {
                                    className='formula-obj-pattern'
                                    ref={'pattern'+i}
                                    onKeyDown={this.onFormulaPatternKeyDown.bind(this, v, i)}
+                                   onKeyUp={this.onFormulaKeyUp}
                                    onClick={this.onFocus.bind(this,null)}
                                    onBlur={this.onFormulaPatternBlur.bind(this,v,i)}
                                    onChange={this.onFormulaPatternChange.bind(this, v, i)}/>

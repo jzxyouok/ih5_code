@@ -149,7 +149,7 @@ class Property extends React.Component {
                     let property = [];
                     func.params.forEach(p =>{
                         if(p.name&&p.type){
-                            property.push({'name':p.name, 'showName':p.name, 'value':null, 'type':p.type.type});
+                            property.push({'name':p.name, 'showName':p.name, 'value':null, 'type':propertyType.FormulaInput}); //'type':p.type.type
                         }
                     });
                     if(property.length>0){

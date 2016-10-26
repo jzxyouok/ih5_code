@@ -4,20 +4,29 @@ import $class from 'classnames';
 import Event from './Event';
 import {eventTempData} from './tempData';
 import { Input } from 'antd';
-import WidgetStore, {keepType}  from '../../stores/WidgetStore'
+import WidgetStore, {keepType, isCustomizeWidget, dataType}  from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
+import ComponentPanel from '../ComponentPanel';
+
+const objListType = {
+    default: 0,
+    noEvent: 1,
+    search: 2,
+};
+const imgServerPrefix = 'http://play.vt.vxplo.cn/v3data/files/';
 
 class EventBox extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
             keepIt : false,
-            activeKey: -1,
+            activeKey: null,
             selectWidget: null,
-            treeList: [],
-            objectList:[],
             eventTreeList: [],
-            showObjList: false,  //是否显示对象列表
+            treeList: [],  //顶部需用到
+            allWidgetList:[],//可选widget的列表
+            objList: [],//下来框的
+            objListType: objListType.default, //default的时候不显示
         };
         this.eventData = eventTempData;
 
@@ -27,16 +36,25 @@ class EventBox extends React.Component {
 
         this.doGetNoEventObjList = this.doGetNoEventObjList.bind(this);
         this.doGetSearchObjList = this.doGetSearchObjList.bind(this);
-        this.onShowNoEventObjList = this.onShowNoEventObjList.bind(this);
+
+        this.onClickShowNoEventObjList = this.onClickShowNoEventObjList.bind(this);
+        this.onSearchPhraseChange = this.onSearchPhraseChange.bind(this);
+        this.onClickObj = this.onClickObj.bind(this);
+        this.onBlur = this.onBlur.bind(this);
+
+        this.getObjIcon = this.getObjIcon.bind(this);
+        // this.getTitleMaxWidth = this.getTitleMaxWidth.bind(this);
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.reorderEventTreeList());
+        window.addEventListener('click', this.onBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+        window.removeEventListener('click', this.onBlur);
     }
 
     onStatusChange(widget) {
@@ -65,7 +83,7 @@ class EventBox extends React.Component {
             });
         } else if(widget.allWidgets){
             this.setState({
-                objectList: widget.allWidgets
+                allWidgetList: widget.allWidgets
             })
         }
         if(widget.historyPropertiesUpdate){
@@ -87,8 +105,8 @@ class EventBox extends React.Component {
 
     doGetNoEventObjList() {
         let noEventObjList = [];
-        if(this.state.objectList) {
-            this.state.objectList.forEach((v,i)=>{
+        if(this.state.allWidgetList) {
+            this.state.allWidgetList.forEach((v,i)=>{
                 if(!(v.props.eventTree&&v.props.eventTree.length>0)&&v.className!=='var') {
                     noEventObjList.push(v);
                 }
@@ -99,9 +117,9 @@ class EventBox extends React.Component {
 
     doGetSearchObjList(search) {
         let searchObjList = [];
-        if(this.state.objectList) {
-            this.state.objectList.forEach((v,i)=>{
-                if(!(v.props.eventTree&&v.props.eventTree.length>0)&&v.className!=='var') {
+        if(this.state.allWidgetList) {
+            this.state.allWidgetList.forEach((v,i)=>{
+                if(v.props.eventTree&&v.props.eventTree.length>0&&v.className!=='var') {
                     if(v.props.name.indexOf(search)>=0) {
                         searchObjList.push(v);
                     }
@@ -111,8 +129,59 @@ class EventBox extends React.Component {
         return searchObjList;
     }
 
-    onShowNoEventObjList(e) {
+    onClickShowNoEventObjList(e) {
+        e.stopPropagation();
+        if(this.state.objListType !== objListType.noEvent) {
+            let list = this.doGetNoEventObjList();
+            this.setState({
+                objListType: objListType.noEvent,
+                objList: list
+            });
+        } else {
+            this.setState({
+                objListType: objListType.default,
+                objList: []
+            });
+        }
+    };
 
+    onSearchPhraseChange(e) {
+        e.stopPropagation();
+        let search = e.target.value;
+        let list = this.doGetSearchObjList(search);
+        let type = objListType.search;
+        if(search===null || search==='') {
+            type = objListType.default;
+        }
+        this.setState({
+            objListType: type,
+            objList: list
+        });
+    };
+
+    onClickObj(key, data, e) {
+        e.stopPropagation();
+        switch(this.state.objListType){
+            case objListType.noEvent:
+                WidgetActions['selectWidget'](data, true, keepType.event);
+                WidgetActions['initEventTree']();
+                break;
+            case objListType.search:
+                if(key !== this.state.activeKey) {
+                    this.chooseEventBtn(key, data);
+                }
+                break;
+            default:
+                break;
+        }
+        this.onBlur();
+    }
+
+    onBlur() {
+        this.setState({
+            objListType: objListType.default,
+            objList: []
+        });
     };
 
     keepBtn(){
@@ -121,8 +190,76 @@ class EventBox extends React.Component {
         })
     }
 
+    getObjIcon(obj){
+        let pic = null;
+        let picIsImage = false;
+        this.refs.ComponentPanel.panels[0].cplist.map((v1,i2)=>{
+            if(obj.className === 'root') {
+                if(obj.props.name.substr(0,1)==='_') {
+                    pic = 'component-icon';
+                } else {
+                    pic = 'stage-icon';
+                }
+            }
+            if(isCustomizeWidget(obj.className)) {
+                pic = 'component-icon';
+            }
+            else if(obj.className == 'db'){
+                if(obj.node.dbType == "shareDb"){
+                    pic = 'shareDb-icon';
+                }
+                else {
+                    pic = 'personalDb-icon';
+                }
+            }
+            else if(obj.className === 'data'){
+                if(obj.props.type === dataType.twoDArr) {
+                    pic = 'twoDArr-icon';
+                } else if (obj.props.type === dataType.oneDArr) {
+                    pic = 'oneDArr-icon';
+                }
+            }
+            else if(obj.className === 'sock'){
+                pic = 'sock-icon';
+            }
+            else if (v1.className === obj.className){
+                if(obj.className === 'image' || obj.className === 'imagelist') {
+                    if(obj.props.link !== undefined &&
+                        obj.rootWidget.imageList&&
+                        obj.rootWidget.imageList.length>obj.props.link){
+                        if(obj.className === 'imagelist') {
+                            pic = obj.rootWidget.imageList[obj.props.link][0];
+                        } else {
+                            pic = obj.rootWidget.imageList[obj.props.link];
+                        }
+                        if(pic.substring(0,5) !== 'data:') {
+                            pic = imgServerPrefix+pic;
+                        }
+                        picIsImage = true;
+                    } else {
+                        pic = v1.icon;
+                    }
+                } else {
+                    pic = v1.icon;
+                }
+            }
+        });
+        return {picIsImage:picIsImage, pic:pic};
+    }
+
+    // getTitleMaxWidth () {
+    //     let maxWidth = 0;
+    //     if(this.refs['eventBox']&&this.refs['eventBox'].style.width === '740px') {
+    //         maxWidth = 572/this.state.treeList.length;
+    //     } else if (this.refs['eventBox']&&this.refs['eventBox'].style.width === '820px') {
+    //         maxWidth = 572/this.state.treeList.length;
+    //     }
+    //     return maxWidth;
+    // }
+
     render() {
         let currentObj = WidgetStore.getWidgetByKey(this.state.activeKey);
+        // let maxWidth = this.getTitleMaxWidth();
         return (
             <div className={$class('EventBox',{'keep':this.state.keepIt}, {'hidden':this.props.isHidden})}
                  style={{ left : this.props.expanded? '65px':'37px'}}
@@ -134,28 +271,65 @@ class EventBox extends React.Component {
                                 ? null
                                 : this.state.treeList.map((v,i)=>{
                                 let name = v.tree.props.name+'事件';
-                                return (<span className={$class('EB--title-name',
-                                    {'active':currentObj&&currentObj.rootWidget&&currentObj.rootWidget.key === v.tree.key})}
+                                return (<div className={$class('EB--title-name',
+                                        {'active':currentObj&&currentObj.rootWidget&&currentObj.rootWidget.key === v.tree.key})}
                                               onClick={this.chooseEventBtn.bind(this, v.tree.key, v.tree)}
-                                              key={i}>{name}</span>);
+                                              key={i}>
+                                              <div className={$class("name-wrap", {'name-wrap-border':i!==0})}>
+                                                  <span className="name">{name}</span>
+                                              </div>
+                                        </div>);
                             })
                         }
                     </div>
                     {/*<span className='flex-1'>事件属性</span>*/}
                     <div className="EB--title-search-wrap f--hlc">
                         <div className="search-group f--hlc">
-                            <button className="search-btn" onClick={this.onShowNoEventObjList} title='添加对象事件'>
+                            <button className="search-btn" onClick={this.onClickShowNoEventObjList} title='添加对象事件'>
                                 <div className='btn-icon'>
                                     <span className='heng'/><span  className='shu'/>
                                 </div>
                             </button>
                             <Input className="search-input"
                                    placeholder="搜索对象"
+                                   onClick={this.onSearchPhraseChange}
+                                   onChange={this.onSearchPhraseChange}
                                    size="small"/>
                         </div>
-                        <div>
-
-                        </div>
+                        {
+                            this.state.objListType === objListType.default
+                                ? null
+                                : (<div className="object-list-wrap">
+                                <div className="icon"></div>
+                                <div className="title">
+                                    {
+                                        this.state.objListType === objListType.noEvent
+                                            ? '可添加事件的对象'
+                                            : '搜索结果'
+                                    }
+                                </div>
+                                <div className="object-list">
+                                    {
+                                        this.state.objList&&this.state.objList.length>0
+                                            ? this.state.objList.map((v,i)=>{
+                                                let picProps = this.getObjIcon(v);
+                                                return <div className="item f--hlc" key={i}
+                                                            onClick={this.onClickObj.bind(this, v.key, v)}>
+                                                    {
+                                                        picProps.picIsImage
+                                                            ?<span className="item-icon2">
+                                                                <img className="item-img" src={ picProps.pic } />
+                                                            </span>
+                                                            : <span className={$class('item-icon', picProps.pic)} />
+                                                    }
+                                                        <div className="text">{v.props.name}</div>
+                                                    </div>
+                                            })
+                                            : (<div className="no-item">暂无相关对象</div>)
+                                    }
+                                </div>
+                            </div>)
+                        }
                     </div>
                     <button className='btn btn-clear' title='收起' onClick={this.keepBtn} />
                 </div>
@@ -176,6 +350,10 @@ class EventBox extends React.Component {
                                   })
                         }
                     </div>
+                </div>
+
+                <div className='hidden'>
+                    <ComponentPanel ref='ComponentPanel' />
                 </div>
             </div>
         );

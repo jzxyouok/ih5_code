@@ -229,7 +229,7 @@ propertyMap['graphics'] = [
 ];
 propertyMap['rect'] = [
     ...propertyMap['graphics'],
-    { name: 'radius',showName:'移动距离',  type: propertyType.Integer, default: 0,  group:'tools', isProperty: true },
+    { name: 'radius',showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools', isProperty: true },
 ];
 propertyMap['taparea'] = [
     ...propertyMap['box'],
@@ -517,7 +517,7 @@ propertyMap['easing'] = [
         '反弹出':'easeOutBounce',
         '反弹进出':'easeInOutBounce'
     }, isProperty: true },
-    { name: 'radius',showName:'移动距离', type: propertyType.Number, default: 0, isProperty: true },
+    { name: 'radius',showName:'圆角', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'angle',showName:'移动方向', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'duration',showName:'时长',type: propertyType.Number, default: 2, isProperty: true },
     { name: 'autoPlay',showName:'自动播放', type: propertyType.Boolean, default: false, isProperty: true },

@@ -4,14 +4,14 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import  $ from 'jquery';
 import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
 const Option = Select.Option;
 const Panel = Collapse.Panel;
 const MenuItem = Menu.Item;
 import cls from 'classnames';
 
-import { SwitchMore,DropDownInput } from  './PropertyView/PropertyViewComponet';
+import { SwitchMore,DropDownInput ,ConInputNumber} from  './PropertyView/PropertyViewComponet';
 
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -61,28 +61,29 @@ class PropertyView extends React.Component {
         switch (type) {
             case propertyType.Integer:
                 if(defaultProp.tbCome == "tbS"){
-                    return <InputNumber placeholder={defaultProp.placeholder} />;
+                    return <ConInputNumber placeholder={defaultProp.placeholder} />;
                 }
                 else {
-                    return <InputNumber {...defaultProp} />;
+                    return <ConInputNumber {...defaultProp} />;
                 }
-
             case propertyType.Float:
-                return <InputNumber {...defaultProp}  />;
+                return <ConInputNumber {...defaultProp}  />;
 
             case propertyType.Number:
                 if(defaultProp.tbCome == "tbS"){
                     style['width'] = "58px";
                     style['height'] = "22px";
                     style['lineHeight'] = "22px";
-                    return <InputNumber step={0.1}  placeholder={defaultProp.placeholder} style={style} />;
+                    return <ConInputNumber step={0.1}  placeholder={defaultProp.placeholder} style={style} />;
                 }
                 else {
-                    return <InputNumber step={0.1}  {...defaultProp} style={style} />;
+                    return <ConInputNumber  {...defaultProp}  />;
                 }
             case propertyType.Percentage:
+                // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                 return  <div>
-                    <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+                    <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+
                     <Slider    step={1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
                 </div>;
 
@@ -227,71 +228,82 @@ class PropertyView extends React.Component {
                     v = (prop.name =='alpha') ?parseFloat(value)/100:parseFloat(value);
                     break;
                 case propertyType.Float:
-                    let h;
-                    let w;
-                    let width= this.selectNode.node.width;
-                    let height= this.selectNode.node.height;
                     let defaultWidth =this.selectNode.node.defaultData.width;
                     let defaultHeight =this.selectNode.node.defaultData.height;
-                    const obj = {};
 
-                    if(this.selectNode.props.isLock){
+                    if(this.selectNode.node.keepRatio){
+                        //修改之前的宽度和高度
+                        let oldWidth = this.selectNode.node.width;
+                        let oldHeight = this.selectNode.node.height;
+                        //修改后的宽度 和应该显示的高度
                         if('scaleX'== prop.name) {
-                              h  =parseInt(value)*(height/width)/defaultHeight;
-                              w =parseInt(value) /defaultWidth;
-                              this.selectNode.props.height =parseInt(value)*(height/width);
-                              this.selectNode.props.width =parseInt(value);
-                        }else if('scaleY'== prop.name) {
-                            w = parseInt(value) * (width / height) / defaultWidth;
-                            h = parseInt(value) /defaultHeight;
-                            this.selectNode.props.width =parseInt(value)*(width/height);
-                            this.selectNode.props.height =parseInt(value);
-                        }
+                            let obj={}
+                            obj.scaleX =parseInt(value) /defaultWidth;
 
-                        obj['scaleY'] =h;
-                        obj['scaleX']=w;
-                        this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, true);
+                            obj.scaleY= ( oldHeight*value)/(oldWidth*defaultHeight);
+
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, false);
+
+                        }else if('scaleY'== prop.name ){
+
+                            let obj={}
+                            obj.scaleY =parseInt(value) /defaultHeight;
+
+                            obj.scaleX= ( oldWidth*value)/(oldHeight*defaultWidth);
+
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, false);
+
+                        }
                         bTag=false;
+                        break;
                     }else{
                         if('scaleX'== prop.name) {
                             v =parseInt(value) /defaultWidth;
                             this.selectNode.props.width =value;
-                        }else if('scaleY'== prop.name){
-                            v = parseInt(value)/defaultHeight;
-                            this.selectNode.props.height =value;
+                        }else if('scaleY'== prop.name) {
+                            v = parseInt(value) / defaultHeight;
+                            this.selectNode.props.height = value;
                         }
                     }
+
                     break;
                 case propertyType.Dropdown:
                     if(prop.name == 'originPos'){
-
                         //数组
                         let arr=value.key.split(',');
                         let x = parseFloat(arr[0]);
                         let y = parseFloat(arr[1]);
-                        let oldOrigin =this.getOldOrigin(this.selectNode.props.originPosKey,prop.options);
-                        let posX=this.selectNode.node.positionX+this.selectNode.node.width*(x-parseFloat(oldOrigin[0]));
-                        let posY=this.selectNode.node.positionY+this.selectNode.node.height*(y-parseFloat(oldOrigin[1]));
+                        let propsObj=this.selectNode.props;
+                        let nodeObj=this.selectNode.node;
+                        let oldOrigin =this.getOldOrigin(propsObj.originPosKey,prop.options);
+                        let w =nodeObj.width*(x-parseFloat(oldOrigin[0]));
+                        let h =nodeObj.height*(y-parseFloat(oldOrigin[1]));
+                        let sin =  Math.sin(nodeObj.rotation*Math.PI/180);
+                        let cos =  Math.cos(nodeObj.rotation*Math.PI/180);
+                        debugger;
+
+                        let posX=nodeObj.positionX+(h*sin+w*cos);
+                        let posY=nodeObj.positionY+(h*cos-w*sin);
+
+                        propsObj.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
 
 
+                        propsObj.originX =x;
+                        nodeObj.originX =x;
+                        propsObj.originY =y;
+                        nodeObj.originY =y;
 
-                        this.selectNode.props.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
-                        const obj = {};
-                        prop.name='originX';
-                        obj[prop.name] =x;
-
-                        this.onStatusChange({updateProperties: obj});
-
-                        prop.name='originY';
-                        obj[prop.name] = y;
-
-                        this.onStatusChange({updateProperties: obj});
+                        propsObj.positionX =posX;
+                        nodeObj.positionX =posX;
+                        propsObj.positionY =posY;
+                        nodeObj.positionY =posY;
 
 
-                        WidgetActions['updateProperties']({originX:x,originY:y,positionX:posX,positionY:posY}, false, false);
+                         WidgetActions['render']();
+                        this.setState({fields: this.getFields()});
 
-                        prop.name='originPos';
                         bTag=false;
                     }
                     break;
@@ -477,15 +489,10 @@ class PropertyView extends React.Component {
             this.selectNode.node.keepRatio=!this.selectNode.node.keepRatio;
             let obj={};
             obj.keepRatio =  this.selectNode.node.keepRatio;
+
             WidgetActions['updateProperties'](obj, false, false);
-            // let  oLock=  document.getElementsByClassName('ant-lock')[0];
-            // if(this.selectNode.props.isLock){
-            //     oLock.classList.add('ant-lock-checked');
-            //     let k =this.selectNode.props.scaleX;
-            //     WidgetActions['updateProperties']({scaleX:k,scaleY:k}, false, false);
-            // }else{
-            //     oLock.classList.remove('ant-lock-checked');
-            // }
+
+
         }
     }
 
@@ -574,9 +581,11 @@ class PropertyView extends React.Component {
                 //设置中心点
                 defaultValue = item.default;
                 //当originY时才会激活,而不是originPos
+
                 if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
                     defaultValue = node.props.originPosKey;
                 }
+
             }
             else if(item.type==propertyType.Select || item.type==propertyType.TbSelect ){
                 defaultValue = item.default;
@@ -656,7 +665,7 @@ class PropertyView extends React.Component {
                 for(var i in  item.options){
                     arr.push(<MenuItem  key={item.options[i]}><div className='originIcon'></div>{i}</MenuItem>);
                 }
-                defaultProp.overlay =  <Menu className='dropDownMenu' onClick={defaultProp.onChange}>{arr}</Menu>;
+                defaultProp.overlay =  <Menu className='dropDownMenu2' onClick={defaultProp.onChange}>{arr}</Menu>;
 
             }
             else if(item.type ==propertyType.Select || item.type ==propertyType.TbSelect ){
@@ -728,7 +737,7 @@ class PropertyView extends React.Component {
             }else{
                 htmlStr = hasLock
                     ? <label>
-                        <div className={cls('ant-lock',{'ant-lock-checked':node.props.isLock})} onClick={this.antLock.bind(this)}></div>
+                        <div className={cls('ant-lock',{'ant-lock-checked':node.node.keepRatio})} onClick={this.antLock.bind(this)}></div>
                         {item.showName}
                       </label>
                     : <label>{item.showName}</label>
@@ -883,15 +892,23 @@ class PropertyView extends React.Component {
         if(widget.historyPropertiesUpdate){
             this.forceUpdate();
         }
+
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         document.addEventListener('mousemove', this.mouseMove.bind(this));
         document.addEventListener('mouseup', this.mouseUp.bind(this));
+
+         $('#PropertyView').on('focus','textarea,input',function () {
+               $(this).select();
+         });
     }
     componentWillUnmount() {
         this.unsubscribe();
+        document.removeEventListener('mousemove', this.mouseMove.bind(this));
+        document.removeEventListener('mouseup', this.mouseUp.bind(this));
+        $('#PropertyView').unbind();
     }
 
     tbComeShow(){

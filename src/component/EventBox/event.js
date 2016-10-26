@@ -6,7 +6,7 @@ import $class from 'classnames'
 import Property from './Property'
 import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-import  {propertyMap} from '../PropertyMap'
+import  {propertyMap, propertyType} from '../PropertyMap'
 import {eventTempData} from './tempData';
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
@@ -212,7 +212,7 @@ class Event extends React.Component {
                         });
                     }
                     if (index === -1) {
-                        newProperty.push({'name': p.name, 'showName': p.name, 'value': null, 'type': p.type.type});
+                        newProperty.push({'name': p.name, 'showName': p.name, 'value': null, 'type':propertyType.FormulaInput}); //'type':p.type.type
                     }
                 }
             });
