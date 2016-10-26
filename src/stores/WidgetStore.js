@@ -582,9 +582,9 @@ function generateJsFunc(etree) {
           if(prop.value){
               if(prop.value.type === 1){
                   if(cmd.action.type == funcType.default) {
-                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop['value']));
+                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop.value.value));
                   } else {
-                      lines.push(JSON.stringify(prop['value']));
+                      lines.push(JSON.stringify(prop.value.value));
                   }
               } else if (prop.value.type === 2) {
                   let subLine = '';
