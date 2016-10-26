@@ -282,7 +282,7 @@ class PropertyView extends React.Component {
                         let h =nodeObj.height*(y-parseFloat(oldOrigin[1]));
                         let sin =  Math.sin(nodeObj.rotation*Math.PI/180);
                         let cos =  Math.cos(nodeObj.rotation*Math.PI/180);
-                        debugger;
+                        //debugger;
 
                         let posX=nodeObj.positionX+(h*sin+w*cos);
                         let posY=nodeObj.positionY+(h*cos-w*sin);
@@ -295,10 +295,10 @@ class PropertyView extends React.Component {
                         propsObj.originY =y;
                         nodeObj.originY =y;
 
-                        propsObj.positionX =posX;
-                        nodeObj.positionX =posX;
-                        propsObj.positionY =posY;
-                        nodeObj.positionY =posY;
+                        //propsObj.positionX =posX;
+                        //nodeObj.positionX =posX;
+                        //propsObj.positionY =posY;
+                        //nodeObj.positionY =posY;
 
 
                          WidgetActions['render']();
@@ -637,6 +637,9 @@ class PropertyView extends React.Component {
                             let header = node.props[item.name].split(",");
                             defaultValue = header.length;
                         }
+                    }
+                    else {
+                        defaultValue = node.props[item.name];
                     }
                 }
                 else {

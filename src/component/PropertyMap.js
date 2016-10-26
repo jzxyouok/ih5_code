@@ -725,7 +725,7 @@ propertyMap['table'] = [
     { name: 'positionY',showName:'Y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position', isProperty: true },
     { name: 'scaleY',showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
-    { name: 'originPos', showName:'中心点',type: propertyType.Select,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
+    { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
     { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
 
 
@@ -741,7 +741,7 @@ propertyMap['table'] = [
     { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
     { name: 'tdFontFill',showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
 
-    //{ name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
+    { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
     { name: 'tdBColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '#FFA800', isProperty: true },
     { name: 'tdB2Color',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '#FFA800', isProperty: true },
 
@@ -758,9 +758,16 @@ propertyMap['table'] = [
     //{ name: 'header', type: propertyType.String, default: '', isProperty: true },
     //{ name: 'rowNum', type: propertyType.Integer, default: 1, isProperty: true },
     //{ name: 'value', type: propertyType.String, default: '', isProperty: true },
-    //{ name: 'showHeader', type: propertyType.Boolean, default: false, isProperty: true },
-    //{ name: 'headerColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
-    //{ name: 'altColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
+    //{ name: 'showHeader', type: propertyType.Boolean, default: false, group:'header', isProperty: true },
+    //{ name: 'headerHeight', type: propertyType.Integer, default: 0, group:'header', isProperty: true },
+    //{ name: 'headerColor', type: propertyType.Color, default: '', group:'header', isProperty: true },
+    //{ name: 'headerFontSize', type: propertyType.Number, default: 26, group:'header', isProperty: true },
+    //{ name: 'headerFontFamily', type: propertyType.String, default: '', group:'header', isProperty: true },
+    //{ name: 'headerFontFill', type: propertyType.Color, default: '#000000', group:'header', isProperty: true },
+    //{ name: 'fontSize', type: propertyType.Number, default: 26, group:'cell', isProperty: true },
+    //{ name: 'fontFamily', type: propertyType.String, default: '', group:'cell', isProperty: true },
+    //{ name: 'fontFill', type: propertyType.Color, default: '#000000', group:'cell', isProperty: true },
+    //{ name: 'altColor', type: propertyType.Color, default: '', group:'display', group:'cell', isProperty: true },
     //{ name: 'getResult', isFunc: true, info:'(pageNum)' },
     //{ name: 'nextResult', isFunc: true},
     //{ name: 'prevResult', isFunc: true},

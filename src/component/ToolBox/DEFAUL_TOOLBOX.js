@@ -274,7 +274,7 @@ var DEFAULT_TOOLBOX = {
         gid:25,
         primary: 0,
         secondary: [{cid:TOOL_ID.TABLE,name:'表格',icon:tableIcon, className:'table', drawRect:true,
-            param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'#fff', 'lineColor': '#8F9191'}
+            param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'transparent'}
         }]
     }
     ]

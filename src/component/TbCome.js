@@ -69,7 +69,7 @@ class  TbCome extends React.Component {
             }
         }
         if(widget.updateProperties){
-            console.log(widget);
+            //console.log(widget);
             if(this.state.isGetTb){
                 this.selectWidget.node['getResult'](0);
                 this.setState({
