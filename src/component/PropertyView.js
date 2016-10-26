@@ -281,12 +281,17 @@ class PropertyView extends React.Component {
                         let oldOrigin =this.getOldOrigin(propsObj.originPosKey,prop.options);
                         let w =nodeObj.width*(x-parseFloat(oldOrigin[0]));
                         let h =nodeObj.height*(y-parseFloat(oldOrigin[1]));
-                        let sin =  Math.sin(nodeObj.rotation*Math.PI/180);
-                        let cos =  Math.cos(nodeObj.rotation*Math.PI/180);
-                        debugger;
 
-                        let posX=nodeObj.positionX+(h*sin+w*cos);
-                        let posY=nodeObj.positionY+(h*cos-w*sin);
+
+                        let D = Math.sqrt(h*h+w*w);
+
+
+                        let ran =Math.atan(h/w)-nodeObj.rotation*Math.PI/180;
+
+
+
+                        let posX =nodeObj.positionX+D*Math.cos(ran);
+                        let posY =nodeObj.positionY+D*Math.sin(ran);
 
                         propsObj.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
 
@@ -295,6 +300,8 @@ class PropertyView extends React.Component {
                         nodeObj.originX =x;
                         propsObj.originY =y;
                         nodeObj.originY =y;
+
+
 
                         propsObj.positionX =posX;
                         nodeObj.positionX =posX;
