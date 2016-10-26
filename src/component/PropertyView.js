@@ -404,7 +404,6 @@ class PropertyView extends React.Component {
                        header.push("");
                    }
                }
-               //console.log(v,header);
                obj[prop.name] = header.join(",");
                this.onStatusChange({updateProperties: obj});
                WidgetActions['updateProperties'](obj, false, true);
@@ -412,6 +411,7 @@ class PropertyView extends React.Component {
            }
            else {
                obj[prop.name] = v;
+               console.log(v,obj);
                this.onStatusChange({updateProperties: obj});
                WidgetActions['updateProperties'](obj, false, true);
            }
