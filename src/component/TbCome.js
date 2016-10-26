@@ -26,7 +26,8 @@ class  TbCome extends React.Component {
             moveLength : 0,
             multiple : 1,
             marginLeft : 0,
-            AllDbList : []
+            AllDbList : [],
+            isGetTb : false
         };
 
         this.selectWidget = null;
@@ -69,6 +70,12 @@ class  TbCome extends React.Component {
         }
         if(widget.updateProperties){
             //console.log(widget);
+            if(this.state.isGetTb){
+                this.selectWidget.node['getResult'](0);
+                this.setState({
+                    isGetTb : false
+                })
+            }
         }
         if(widget.allWidgets){
             let dbList = [];
@@ -274,12 +281,12 @@ class  TbCome extends React.Component {
         this.setState({
             chooseHeader : header,
             whichHeader : -1,
-            whichInput : -1
+            whichInput : -1,
+            isGetTb : true
         });
         this.selectWidget.props.header = header.join(',');
         this.selectWidget.node.header = header.join(',');
         WidgetActions['updateProperties'](this.selectWidget, false, true);
-        this.selectWidget.node['getResult'](0);
     }
 
     changeInput(i,event){
