@@ -1422,21 +1422,9 @@ export default Reflux.createStore({
 
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
-          //清event
-          let clearEvent = copyObj =>{
-              if(copyObj.etree&&copyObj.etree.length>0){
-                  copyObj.etree.forEach(i =>(
-                      i.cmds = []
-                  ));
-              }
-              if(copyObj.children&&copyObj.children.length>0){
-                copyObj.children.forEach(value =>{
-                    clearEvent(value);
-                });
-              }
-          };
-          clearEvent(copyObj);
-
+          if(copyObj.props&&copyObj.props.key) {
+              (delete copyObj.props.key);
+          }
         loadTree(this.currentWidget, copyObj);
         if(copyObj.props.eventTree){
           this.reorderEventTreeList();
@@ -1449,7 +1437,7 @@ export default Reflux.createStore({
     },
     cutWidget: function() {
         this.copyWidget();
-        this.removeWidget();
+        this.removeWidget(true);
     },
     lockWidget: function () {
         if (this.currentWidget) {
@@ -2074,9 +2062,9 @@ export default Reflux.createStore({
                 this.currentWidget.funcList.splice(index,1);
                 keyMap[this.currentFunction.key]= undefined;
                 this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.remove}});
-                this.selectWidget(this.currentWidget);
                 historyName = "删除函数" + this.currentWidget.node.name;
                 this.updateHistoryRecord(historyName);
+                this.selectWidget(this.currentWidget);
             }
         }
     },
