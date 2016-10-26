@@ -553,6 +553,16 @@ function getIdsName(idName, varName, propName) {
 function generateJsFunc(etree) {
   var output = {};
 
+  let replaceSymbolStr = (str)=>{
+      let temp = str;
+      let chineseSymbol = [/＋/g,/－/g,/＊/g,/／/g,/（/g,/）/g,/？/g,/：/g,/‘/g];
+      let englishSymbol = ["+","-","*","/","(",")","?",":","'"];
+      for(let i=0; i<chineseSymbol.length; i++) {
+          temp=temp.replace(chineseSymbol[i], englishSymbol[i]);
+      }
+      return temp;
+  };
+
   etree.forEach(function(item) {
     if (item.judges.conFlag && item.enable) {
       var out = '';
@@ -597,11 +607,11 @@ function generateJsFunc(etree) {
                           prop.value.value.forEach((fV,i) =>{
                               if(fV.objId&&fV.property){
                                   if(i===0&&fV.prePattern){
-                                      subLine += fV.prePattern;
+                                      subLine += replaceSymbolStr(fV.prePattern);
                                   }
                                   subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
                                   if(fV.pattern) {
-                                      subLine += fV.pattern;
+                                      subLine += replaceSymbolStr(fV.pattern);
                                   }
                               }
                           });
