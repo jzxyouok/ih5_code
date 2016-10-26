@@ -1,9 +1,344 @@
 .TbCome {
     position: fixed;
-    top: 36px;
+    top: 37px;
     left: 298px;
     z-index: 99;
     width: 481px;
-    height: 217px;
+    height: 220px;
     background: #232323;
+
+    .TC-header {
+        position: relative;
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        background: #353535;
+        font-size: 12px;
+        color: #b5b5b5;
+        padding-left: 12px;
+
+        .close-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            display: block;
+            cursor: pointer;
+            background: url("img/button-icon.svg") no-repeat -1200px -202px;
+
+            &:hover { background-position: -1200px -242px;}
+            &:active { background-position: -1200px -282px;}
+        }
+    }
+
+    .TC-content {
+        width: 100%;
+        padding: 0 20px;
+
+        .title {
+            width: 100%;
+            height: 26px;
+            line-height: 26px;
+            margin-top: 3px;
+            font-size: 12px;
+            color: #858585;
+        }
+
+        .dropDown-layer {
+            position: relative;
+            width: 160px;
+            height: 22px;
+            transition: 500ms;
+
+            &.active {
+                .dropDown-title{
+                    border: 1px solid #ff8000;
+                    transition: 500ms;
+
+                    &:after{
+                        transform:rotate(180deg);
+                        transition: 500ms;
+                        top: 7px;
+                    }
+                }
+                .dropDown-content {
+                    //height: 198px;
+                    transition: 500ms;
+                }
+            }
+
+            .dropDown-title {
+                position: relative;
+                @include border-radius(2px);
+                width: 160px;
+                height: 22px;
+                line-height: 22px;
+                background: #353535;
+                font-size: 12px;
+                color: #858585;
+                padding-left: 10px;
+                cursor: pointer;
+
+                &:after{
+                    @include triangle(10px, #858585 ,up);
+                    content: "";
+                    position: absolute;
+                    top: 3px;
+                    right: 8px;
+                    display: block;
+                    background: #353535;
+                    transition: 500ms;
+                }
+            }
+
+            .dropDown-content {
+                position: absolute;
+                left: 0;
+                top: 22px;
+                z-index: 99;
+                width: 100%;
+                height: 0;
+                background: #3e3e3e;
+                overflow: hidden;
+                transition: 500ms;
+
+                .dropDown {
+                    position: absolute;
+                    left: 0;
+                    right: -20px;
+                    top: 0;
+                    bottom :0;
+                    overflow: scroll;
+                    overflow-x: hidden;
+
+                    ul{
+                        width: 160px;
+                        padding-top: 4px;
+
+                        li{
+                            width: 100%;
+                            height: 20px;
+                            line-height: 20px;
+                            font-size: 12px;
+                            color: #858585;
+                            padding-left: 10px;
+                            cursor: pointer;
+
+                            &:hover {
+                                background: #151515;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .TC-db {
+            @include border-radius(2px);
+            width: 100%;
+            height: 94px;
+            background: #353535;
+            padding: 1px;
+
+            .TC-db-content {
+                position: relative;
+                width: 100%;
+                height:77px;
+                background: #151515;
+                margin-bottom: 1px;
+
+                .item-layer {
+                    @include border-radius(2px);
+                    position: absolute;
+                    top: 5px;
+                    right: 0;
+                    left: 5px;
+                    height: 67px;
+                    //background: #232323;
+                    overflow: hidden;
+
+                    &.active {
+                        height: 232px;
+                    }
+
+                    .item-main{
+                        height: 100%;
+                        clear: both;
+                    }
+
+                    .item{
+                        width: 129px;
+                        height: 100%;
+                        float: left;
+
+                        .item-title {
+                            width: 100%;
+                            height: 34px;
+                            background: #353535;
+                            font-size: 12px;
+                            color: #858585;
+                            border-right: 1px solid #232323;
+                            border-bottom: 1px solid #232323;
+                        }
+
+                        .item-dropDown {
+                            position: relative;
+                            width: 100%;
+                            height: 33px;
+                            background: #353535;
+                            transition: 500ms;
+
+                            &.not-active {
+                                background: #2e2e2e !important;
+                                opacity: 0.4;
+                                cursor: not-allowed;
+                                input {
+                                    cursor: not-allowed;
+                                }
+                            }
+
+                            &.active {
+                                .iDropDown-title{
+                                    border: 1px solid #ff8000;
+                                    transition: 500ms;
+
+                                    .btn span{
+                                        transform:rotate(180deg);
+                                        transition: 500ms;
+                                        top: 7px;
+                                    }
+                                }
+                                .iDropDown-content {
+                                    //height: 198px;
+                                    transition: 500ms;
+                                }
+                            }
+                            .iDropDown-title-layer{
+                                width: 100%;
+                                height: 33px;
+                                padding: 4px;
+                                border-right: 1px solid #232323;
+                            }
+
+                            .iDropDown-title {
+                                @include border-radius(2px);
+                                width: 100%;
+                                height: 100%;
+                                background: #232323;
+                                font-size: 12px;
+                                color: #858585;
+                                padding: 2px;
+
+                                input{
+                                    @include border-radius(2px);
+                                    width: 98px;
+                                    //height: 100%;
+                                    height: 21px;
+                                    border: none;
+                                    outline: none;
+                                    background: none;
+                                    font-size: 12px;
+                                    color: #858585;
+                                    padding : 0 0 0 8px;
+                                    margin-right: 2px;
+                                    line-height: 21px;
+                                    display: block;
+
+                                    &:focus{
+                                        background: #353535;
+                                        color: #fff;
+                                    }
+                                }
+
+                                .btn {
+                                    position: relative;
+                                    width: 16px;
+                                    height: 100%;
+
+                                    span{
+                                        @include triangle(10px, #858585 ,up);
+                                        content: "";
+                                        position: absolute;
+                                        top: 3px;
+                                        left: 3px;
+                                        display: block;
+                                        background: #232323;
+                                        transition: 500ms;
+                                    }
+
+                                    &:hover {
+                                        background: #151515;
+
+                                        span {
+                                            background: #151515;
+                                        }
+                                    }
+                                }
+                            }
+
+                            .iDropDown-content {
+                                position: absolute;
+                                left: 4px;
+                                top: 30px;
+                                width: 120px;
+                                height: 0;
+                                background: #3e3e3e;
+                                overflow: hidden;
+                                transition: 500ms;
+
+                                .iDropDown {
+                                    position: absolute;
+                                    left: 0;
+                                    right: -20px;
+                                    top: 0;
+                                    bottom :0;
+                                    overflow: scroll;
+                                    overflow-x: hidden;
+
+                                    ul{
+                                        width: 160px;
+                                        padding-top: 4px;
+
+                                        li{
+                                            @extend %font-omitted;
+                                            width: 100%;
+                                            height: 20px;
+                                            line-height: 20px;
+                                            font-size: 12px;
+                                            color: #858585;
+                                            padding-left: 10px;
+                                            cursor: pointer;
+
+                                            &.fkl{
+                                                @include font-omitted(2);
+                                                height: 40px;
+                                            }
+
+                                            &:hover {
+                                                background: #151515;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .scroll {
+                width: 100%;
+                height: 10px;
+
+                span{
+                    width: 80px;
+                    height: 13px;
+                    display: block;
+                    background: #232323;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 }
