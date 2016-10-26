@@ -116,6 +116,7 @@ class ObjectTree extends React.Component {
         this.stUnsubscribe = SelectTargetStore.listen(this.onSelectTargetModeChange);
         this.onStatusChange(WidgetStore.getStore());
         window.addEventListener('keydown', this.itemWindowKeyAction);
+        window.addEventListener('keyup', this.resetCmdKey);
 
         //多选
         //  document.body.addEventListener('keydown', this.onKeyDown);
@@ -126,6 +127,7 @@ class ObjectTree extends React.Component {
         this.unsubscribe();
         this.stUnsubscribe();
         window.removeEventListener('keydown', this.itemWindowKeyAction);
+        window.removeEventListener('keyup', this.resetCmdKey);
     }
 
     onSelectTargetModeChange(result) {
@@ -593,7 +595,6 @@ class ObjectTree extends React.Component {
                 WidgetActions['cutTreeNode'](this.state.nodeType);
                 break;
             case 'delete':
-                WidgetActions['deleteTreeNode'](this.state.nodeType);
                 if(this.state.selectWidget) {
                     if(this.state.selectWidget.className == "db"){
                         if(this.state.selectWidget.node.dbType = "shareDb"){
@@ -604,6 +605,7 @@ class ObjectTree extends React.Component {
                         ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
                     }
                 }
+                WidgetActions['deleteTreeNode'](this.state.nodeType);
                 break;
             default:
                 break;
@@ -623,8 +625,14 @@ class ObjectTree extends React.Component {
 
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+
+        let disable = false;
+        if (this.state.selectWidget&&this.state.selectWidget.className === 'root') {
+            disable = true;
+        }
+
         //复制 67
-        if (didPressCtrl && event.keyCode == 67 && (this.state.selectWidget&&this.state.selectWidget.className !== 'root')) {
+        if (didPressCtrl && event.keyCode == 67 && !disable) {
             this.itemActions('copy');
         }
         //黏贴 86
@@ -632,11 +640,11 @@ class ObjectTree extends React.Component {
             this.itemActions('paste');
         }
         //剪切 88
-        if (didPressCtrl && event.keyCode == 88 && (this.state.selectWidget&&this.state.selectWidget.className !== 'root')) {
+        if (didPressCtrl && event.keyCode == 88 && !disable) {
             this.itemActions('cut');
         }
         //删除 delete
-        if (!didPressCtrl && event.keyCode == 8 && (this.state.selectWidget&&this.state.selectWidget.className !== 'root')) {
+        if (!didPressCtrl && event.keyCode == 8 && !disable) {
             this.itemActions('delete');
         }
     }

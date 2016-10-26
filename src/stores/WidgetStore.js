@@ -2062,10 +2062,10 @@ export default Reflux.createStore({
                 this.currentWidget.funcList.splice(index,1);
                 keyMap[this.currentFunction.key]= undefined;
                 this.trigger({updateWidget: {widget:this.currentFunction, type:nodeType.func, action:nodeAction.remove}});
-                historyName = "删除函数" + this.currentWidget.node.name;
-                this.updateHistoryRecord(historyName);
                 this.selectWidget(this.currentWidget);
             }
+            historyName = "删除函数" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
     },
     copyFunction: function () {
