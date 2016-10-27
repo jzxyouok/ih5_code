@@ -242,7 +242,7 @@ propertyMap['button'] = [
 ];
 propertyMap['slidetimer'] = [
     ...propertyMap['box'],
-    { addProvidesRecursive: widgetFlags.Timer},
+    { addProvidesRecursive: widgetFlags.Timer, addProvides: widgetFlags.Container},
     { name: 'fillColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
     { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
     { name: 'vertical', type: propertyType.Boolean,group:'tools', default: false, isProperty: true },
@@ -458,7 +458,7 @@ propertyMap['timer'] = [
     { name: 'stop', showName:'停止', isEvent: true }
 ];
 propertyMap['world'] = [
-    ...propertyMap['widget'],
+    ...propertyMap['container'],
     { addRequires: widgetFlags.Root | widgetFlags.CanvasOnly},
     { name: 'autoGravity', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'gravityX', type: propertyType.Number, default: 0, isProperty: true },
@@ -845,6 +845,24 @@ function checkNotInDomMode(selected, className) {
     return false;
 }
 
+function checkNotInCanvasMode(selected, className) {
+    let selectWidget = selected;
+    if(selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        selectWidget = selected.widget;
+    } else {
+        selectWidget = selected;
+    }
+    if(propertyFlags[className]===undefined){
+        return false;
+    }
+    var requires = propertyFlags[className].requires;
+    if ((requires & widgetFlags.CanvasOnly) != 0 && bridge.getRendererType(selectWidget.node) != 2)
+        return true;
+    return false;
+}
+
 function checkChildClass(selected, className) {
     // 对函数,变量,自定义函数等的处理
     if(className ==='dbItem'){
@@ -907,4 +925,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass, checkNotInDomMode, checkIsClassType};
+export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkIsClassType};
