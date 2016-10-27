@@ -412,6 +412,8 @@ class PropertyView extends React.Component {
                    }
                }
                obj[prop.name] = header.join(",");
+               this.selectNode.props.header = header.join(",");
+               this.selectNode.node.header = header.join(",");
                this.onStatusChange({updateProperties: obj});
                WidgetActions['updateProperties'](obj, false, true);
                this.refs.TbCome.updateColumn(v,header);
