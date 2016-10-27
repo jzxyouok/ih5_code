@@ -120,7 +120,7 @@ class PropertyView extends React.Component {
                         dom.jscolor.onFineChange = defaultProp.onChange;
                     }
                 }
-                }} placeholder={defaultProp.placeholder}  /> ;
+                }}  {...defaultProp}   /> ;
 
             case propertyType.Boolean:
                 return <Switch   {...defaultProp} />;
@@ -585,8 +585,7 @@ class PropertyView extends React.Component {
     getFields() {
         let node = this.selectNode;
 
-    //    console.log(node);
-
+//        console.log(node);
 
         if (!node)  return null;
 
@@ -667,6 +666,8 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue =node.props[item.name];
                 }
+
+
                 if(item.type === propertyType.TbColor){
                     defaultValue = node.props['headerColor'];
                 }
@@ -820,7 +821,7 @@ class PropertyView extends React.Component {
                 if(item.name=='chooseColumn'){
                     defaultProp.tbWidth = item.tbWidth;
                 }
-            }else if(item.type ==propertyType.Color){
+            }else if(item.type ==propertyType.Color||item.type ==propertyType.Color2){
                 defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
                 defaultProp.value = defaultValue;
             }else if(item.type === propertyType.TbColor){
