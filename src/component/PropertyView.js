@@ -54,6 +54,7 @@ class PropertyView extends React.Component {
             y:null
         };
         this.lastSelectKey = null;
+        this.isCanKeepRatio = true;
         this.tbComeShow = this.tbComeShow.bind(this);
         this.tbHeadHeight = this.tbHeadHeight.bind(this);
         this.tbHeadHeightInput = this.tbHeadHeightInput.bind(this);
@@ -572,25 +573,22 @@ class PropertyView extends React.Component {
             obj.keepRatio =  this.selectNode.node.keepRatio;
 
             WidgetActions['updateProperties'](obj, false, false);
-
-
+            this.isCanKeepRatio = true;
         }
     }
 
     getFields() {
-
         let node = this.selectNode;
-        //console.log(node);
 
         if (!node)  return null;
 
-        if( node.node.keepRatio ===undefined){
+        if( node.node.keepRatio ===undefined && this.isCanKeepRatio){
             node.node.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
             let obj={};
             obj.keepRatio =  node.node.keepRatio;
             WidgetActions['updateProperties'](obj, false, true);
+            this.isCanKeepRatio = false;
         }
-
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
 

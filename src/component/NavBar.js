@@ -80,7 +80,7 @@ class NavBar extends React.Component {
             historyShow : false,
             historyLayerHide : false,
             isShowRulerLine:true,
-            activeKey: null,
+            activeKey: null
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -132,8 +132,8 @@ class NavBar extends React.Component {
         this.chooseHistory = this.chooseHistory.bind(this);
         this.historyLayerHide = this.historyLayerHide.bind(this);
         this.historyShow = this.historyShow.bind(this);
-
         this.onEvent = this.onEvent.bind(this);
+        this.onKeyHistory = this.onKeyHistory.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -161,6 +161,7 @@ class NavBar extends React.Component {
         getSockListStore.listen(this.getSockList.bind(this));
         ReDbOrSockIdStore.listen(this.reDbOrSockId.bind(this));
         CreateModuleStore.listen(this.createModule.bind(this));
+        document.body.addEventListener('keyup', this.onKeyHistory);
 
         window.onbeforeunload = ()=>{
             var n = window.event.screenX - window.screenLeft;
@@ -187,6 +188,7 @@ class NavBar extends React.Component {
         this.unsubscribe();
         clearTimeout(this.closeTimeFuc());
         localStorage.setItem("workID", null);
+        document.body.removeEventListener('keyup', this.onKeyHistory);
     }
 
     onStatusChange(widget) {
@@ -1013,6 +1015,25 @@ class NavBar extends React.Component {
         this.setState({
             historyLayerHide : !this.state.historyLayerHide
         })
+    }
+
+    onKeyHistory(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+
+        //Ctrl+Z
+        if (didPressCtrl && event.keyCode == 90) {
+            //console.log('Ctrl+Z');
+            this.revokedHistory();
+        }
+        //Ctrl+y
+        if (didPressCtrl && event.keyCode == 89){
+            //console.log('Ctrl+y');
+            this.replyHistory();
+        }
     }
 
     render() {
