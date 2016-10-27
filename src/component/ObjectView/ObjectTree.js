@@ -1153,7 +1153,7 @@ class ObjectTree extends React.Component {
         let name = "_" + event.currentTarget.getAttribute("data-name");
         let select = this.state.selectWidget;
         if(
-            (select.className == "root" && select.props.name.charAt(0) == "_")
+            (select.className == "root" && select.props.name!== "stage")
             || (select.className.charAt(0) == "_" && select.props.name.charAt(0) == "_")
         ) return;
 
@@ -1348,7 +1348,7 @@ class ObjectTree extends React.Component {
                         {
                             isCustomizeWidget(v.className) || v.className == 'db'|| v.className == "sock"
                                 ? <div className='item-name-wrap'>
-                                    <p>{v.props.name.charAt(0) == "_" ? v.props.name.substring(1) : v.props.name}</p>
+                                    <p>{v.props.name}</p>
                                   </div>
                                 : <div className='item-name-wrap'
                                        onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>

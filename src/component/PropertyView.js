@@ -54,6 +54,7 @@ class PropertyView extends React.Component {
             y:null
         };
         this.lastSelectKey = null;
+        this.isCanKeepRatio = true;
         this.tbComeShow = this.tbComeShow.bind(this);
         this.tbHeadHeight = this.tbHeadHeight.bind(this);
         this.tbHeadHeightInput = this.tbHeadHeightInput.bind(this);
@@ -195,85 +196,85 @@ class PropertyView extends React.Component {
 
     onChangeProp(prop, value) {
         let v;
-        var bTag=true; //开关,控制执行
+        var bTag = true; //开关,控制执行
         if (value === undefined) {
             v = null;
         } else {
             switch (prop.type) {
                 case propertyType.Integer:
-                    if(prop.name=='size'){
+                    if (prop.name == 'size') {
                         v = parseInt(value);
                         const obj = {};
                         obj[prop.name] = v;
-                        obj.scaleY = obj.scaleX=1;
+                        obj.scaleY = obj.scaleX = 1;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
-                        bTag=false;
+                        bTag = false;
                         break;
-                    }else if(prop.name=='shapeWidth'|| prop.name=='shapeHeight'){
+                    } else if (prop.name == 'shapeWidth' || prop.name == 'shapeHeight') {
                         v = parseInt(value);
-                        this.selectNode.props.height =  this.selectNode.props.width=null;
+                        this.selectNode.props.height = this.selectNode.props.width = null;
                         const obj = {};
                         obj[prop.name] = v;
-                        obj.scaleY = obj.scaleX=1;
+                        obj.scaleY = obj.scaleX = 1;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
-                        bTag=false;
+                        bTag = false;
                         break;
                     }
                     v = parseInt(value);
                     break;
                 case propertyType.Number:
-                    if(prop.name=='fontSize' || prop.name=='headerFontSize'){
+                    if (prop.name == 'fontSize' || prop.name == 'headerFontSize') {
                         const obj = {};
                         obj[prop.name] = parseInt(value);
-                        obj.scaleY = obj.scaleX=1;
+                        obj.scaleY = obj.scaleX = 1;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
-                        bTag=false;
+                        bTag = false;
                         break;
                     }
                     v = parseFloat(value);
                     break;
                 case propertyType.Percentage:
-                    v = (prop.name =='alpha') ?parseFloat(value)/100:parseFloat(value);
+                    v = (prop.name == 'alpha') ? parseFloat(value) / 100 : parseFloat(value);
                     break;
                 case propertyType.Float:
-                    let defaultWidth =this.selectNode.node.defaultData.width;
-                    let defaultHeight =this.selectNode.node.defaultData.height;
+                    let defaultWidth = this.selectNode.node.defaultData.width;
+                    let defaultHeight = this.selectNode.node.defaultData.height;
 
-                    if(this.selectNode.node.keepRatio){
+                    if (this.selectNode.node.keepRatio) {
                         //修改之前的宽度和高度
                         let oldWidth = this.selectNode.node.width;
                         let oldHeight = this.selectNode.node.height;
                         //修改后的宽度 和应该显示的高度
-                        if('scaleX'== prop.name) {
-                            let obj={}
-                            obj.scaleX =parseInt(value) /defaultWidth;
+                        if ('scaleX' == prop.name) {
+                            let obj = {}
+                            obj.scaleX = parseInt(value) / defaultWidth;
 
-                            obj.scaleY= ( oldHeight*value)/(oldWidth*defaultHeight);
+                            obj.scaleY = ( oldHeight * value) / (oldWidth * defaultHeight);
 
                             this.onStatusChange({updateProperties: obj});
                             WidgetActions['updateProperties'](obj, false, false);
 
-                        }else if('scaleY'== prop.name ){
+                        } else if ('scaleY' == prop.name) {
 
-                            let obj={}
-                            obj.scaleY =parseInt(value) /defaultHeight;
+                            let obj = {}
+                            obj.scaleY = parseInt(value) / defaultHeight;
 
-                            obj.scaleX= ( oldWidth*value)/(oldHeight*defaultWidth);
+                            obj.scaleX = ( oldWidth * value) / (oldHeight * defaultWidth);
 
                             this.onStatusChange({updateProperties: obj});
                             WidgetActions['updateProperties'](obj, false, false);
 
                         }
-                        bTag=false;
+                        bTag = false;
                         break;
-                    }else{
-                        if('scaleX'== prop.name) {
-                            v =parseInt(value) /defaultWidth;
-                            this.selectNode.props.width =value;
-                        }else if('scaleY'== prop.name) {
+                    } else {
+                        if ('scaleX' == prop.name) {
+                            v = parseInt(value) / defaultWidth;
+                            this.selectNode.props.width = value;
+                        } else if ('scaleY' == prop.name) {
                             v = parseInt(value) / defaultHeight;
                             this.selectNode.props.height = value;
                         }
@@ -281,29 +282,29 @@ class PropertyView extends React.Component {
 
                     break;
                 case propertyType.Dropdown:
-                    if(prop.name == 'originPos'){
+                    if (prop.name == 'originPos') {
                         //数组
-                        let arr=value.key.split(',');
+                        let arr = value.key.split(',');
                         let x = parseFloat(arr[0]);
                         let y = parseFloat(arr[1]);
-                        let propsObj=this.selectNode.props;
-                        let nodeObj=this.selectNode.node;
-                        let oldOrigin =this.getOldOrigin(propsObj.originPosKey,prop.options);
-                        let w =nodeObj.width*(x-parseFloat(oldOrigin[0]));
-                        let h =nodeObj.height*(parseFloat(oldOrigin[1])-y);
+                        let propsObj = this.selectNode.props;
+                        let nodeObj = this.selectNode.node;
+                        let oldOrigin = this.getOldOrigin(propsObj.originPosKey, prop.options);
+                        let w = nodeObj.width * (x - parseFloat(oldOrigin[0]));
+                        let h = nodeObj.height * (parseFloat(oldOrigin[1]) - y);
 
-                        let D = Math.sqrt(h*h+w*w);
+                        let D = Math.sqrt(h * h + w * w);
 
-                        let d=null;
-                        if(w ==0){
-                           if(h>0){
-                               d=Math.PI/2;
-                           }else if(h==0){
-                             return false ;  //选择了同一中心点,不做任何操作
-                           }else{
-                               d=3*Math.PI/2;
-                           }
-                         }else {
+                        let d = null;
+                        if (w == 0) {
+                            if (h > 0) {
+                                d = Math.PI / 2;
+                            } else if (h == 0) {
+                                return false;  //选择了同一中心点,不做任何操作
+                            } else {
+                                d = 3 * Math.PI / 2;
+                            }
+                        } else {
                             d = Math.atan(h / w);
                             if (h > 0 && w > 0) {
                                 ;
@@ -312,7 +313,7 @@ class PropertyView extends React.Component {
                             } else if (h < 0 && w > 0) {
                                 ;
                             } else if (h < 0 && w < 0) {
-                                d = d + 3 * Math.PI / 2;
+                                d = d + Math.PI ;
                             } else if (h == 0 && w > 0) {
                                 ;
                             } else if (h == 0 && w < 0) {
@@ -322,107 +323,111 @@ class PropertyView extends React.Component {
                             }
                         }
 
-                        let ran =d-nodeObj.rotation*Math.PI/180;
+                        let ran = d - nodeObj.rotation * Math.PI / 180;
 
-                        let a=Math.cos(ran)*D;
-                        let b=Math.sin(ran)*D;
-                        let posX =nodeObj.positionX+ Math.cos(ran)*D;
-                        let posY = nodeObj.positionY-Math.sin(ran)*D;
-                        propsObj.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
+                        let posX = nodeObj.positionX + Math.cos(ran) * D;
+                        let posY = nodeObj.positionY - Math.sin(ran) * D;
+                        propsObj.originPosKey = this.getSelectDefault({x: x, y: y}, prop.options);
 
 
-                        propsObj.originX =x;
-                        nodeObj.originX =x;
-                        propsObj.originY =y;
-                        nodeObj.originY =y;
+                        propsObj.originX = x;
+                        nodeObj.originX = x;
+                        propsObj.originY = y;
+                        nodeObj.originY = y;
 
 
-                        propsObj.positionX =posX;
-                        nodeObj.positionX =posX;
-                        propsObj.positionY =posY;
-                        nodeObj.positionY =posY;
+                        propsObj.positionX = posX;
+                        nodeObj.positionX = posX;
+                        propsObj.positionY = posY;
+                        nodeObj.positionY = posY;
 
+                        WidgetActions['updateProperties']({
+                            originX:x,
+                            originY:y,
+                            positionX:posX,
+                            positionY:posY
+                        }, true, false);
+                       // WidgetActions['render']();
+                       // this.setState({fields: this.getFields()});
 
-                         WidgetActions['render']();
-                        this.setState({fields: this.getFields()});
-
-                        bTag=false;
+                        bTag = false;
                     }
                     break;
                 case propertyType.Select || propertyType.TbSelect:
-                  if(prop.name == 'scaleType'){
-                      this.selectNode.props.scaleTypeKey=this.getScaleTypeDefault(value,prop.options);
-                      v = parseInt(value);
-                  }else if(prop.name == 'fontFamily'){
-                      this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
-                      v = value;
-                  }else if(prop.name == 'headerFontFamily'){
-                      this.selectNode.props.headerFontFamily=this.getFontDefault(value);
-                      v = value;
-                  }else if(prop.name == 'type'){
-                      this.selectNode.props.type=this.getScaleTypeDefault(value,prop.options);
-                      //属于第一组则设置初始隐藏,否则设置隐藏
-                      this.selectNode.props.initHide=false;
-                      for(let i in   prop.optionsToJudge){
-                          if(prop.optionsToJudge[i] == value){
-                              this.selectNode.props.initHide=true;
-                              break;
-                          }
-                      }
-                      v = value;
-                  }else if(prop.name == 'forwardTransition' ||prop.name == 'backwardTransition'){
-                      this.selectNode.props[prop.name+'_val']=this.getScaleTypeDefault(value,prop.options);
-                       v = parseInt(value);
-                  }else if(prop.name == 'font'){
-                      if(value == 0){
-                          chooseFile('font', true, function(){
-                              let  fontObj =eval("("+arguments[1]+")");
-                              let oProgress=document.getElementById('ant-progress');
-                              //回调完成
-                              oProgress.style.display='none';
-                              //设置默认值
-                              this.selectNode.props.fontKey=fontObj.name;
-                              //更新属性面板
-                              const obj = {};
-                              obj[prop.name] = fontObj.file;
-                              this.onStatusChange({updateProperties: obj});
-                              WidgetActions['updateProperties'](obj, false, true);
+                    if (prop.name == 'scaleType') {
+                        this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
+                        v = parseInt(value);
+                    } else if (prop.name == 'fontFamily') {
+                        this.selectNode.props.fontFamilyKey = this.getFontDefault(value);
+                        v = value;
+                    } else if (prop.name == 'headerFontFamily') {
+                        this.selectNode.props.headerFontFamily = this.getFontDefault(value);
+                        v = value;
+                    } else if (prop.name == 'type') {
+                        this.selectNode.props.type = this.getScaleTypeDefault(value, prop.options);
+                        //属于第一组则设置初始隐藏,否则设置隐藏
+                        this.selectNode.props.initHide = false;
+                        for (let i in   prop.optionsToJudge) {
+                            if (prop.optionsToJudge[i] == value) {
+                                this.selectNode.props.initHide = true;
+                                break;
+                            }
+                        }
+                        v = value;
+                    } else if (prop.name == 'forwardTransition' || prop.name == 'backwardTransition') {
+                        this.selectNode.props[prop.name + '_val'] = this.getScaleTypeDefault(value, prop.options);
+                        v = parseInt(value);
+                    } else if (prop.name == 'font') {
+                        if (value == 0) {
+                            chooseFile('font', true, function () {
+                                let fontObj = eval("(" + arguments[1] + ")");
+                                let oProgress = document.getElementById('ant-progress');
+                                //回调完成
+                                oProgress.style.display = 'none';
+                                //设置默认值
+                                this.selectNode.props.fontKey = fontObj.name;
+                                //更新属性面板
+                                const obj = {};
+                                obj[prop.name] = fontObj.file;
+                                this.onStatusChange({updateProperties: obj});
+                                WidgetActions['updateProperties'](obj, false, true);
 
-                          }.bind(this), function(evt){
-                              let oProgress=document.getElementById('ant-progress');
-                              if(evt.lengthComputable && oProgress) {
-                                  oProgress.style.display='block';
-                                  var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                                  oProgress.childNodes[1].innerHTML='上传 '+percentComplete+'%';
-                                  oProgress.childNodes[0].style.width=percentComplete+'%';
-                              }else {
-                                  //console.log('failed');
-                              }
-                          });
-                          bTag=false;
-                      }else{
-                          this.selectNode.props.fontKey=this.getFontDefault(value);
-                          v = value;
-                      }
-                  }else{
-                      v = parseInt(value);
-                  }
+                            }.bind(this), function (evt) {
+                                let oProgress = document.getElementById('ant-progress');
+                                if (evt.lengthComputable && oProgress) {
+                                    oProgress.style.display = 'block';
+                                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                    oProgress.childNodes[1].innerHTML = '上传 ' + percentComplete + '%';
+                                    oProgress.childNodes[0].style.width = percentComplete + '%';
+                                } else {
+                                    //console.log('failed');
+                                }
+                            });
+                            bTag = false;
+                        } else {
+                            this.selectNode.props.fontKey = this.getFontDefault(value);
+                            v = value;
+                        }
+                    } else {
+                        v = parseInt(value);
+                    }
                     break;
                 case propertyType.Boolean:
-                    v =value;
+                    v = value;
                     break;
                 case propertyType.Boolean2:
-                    if(value===null){
-                       delete  this.selectNode.props.initVisible;
-                    }else{
+                    if (value === null) {
+                        delete  this.selectNode.props.initVisible;
+                    } else {
                         this.selectNode.props.initVisible = value;
                     }
-                    bTag=false;
+                    bTag = false;
                     break;
                 default:
                     v = value;
             }
         }
+
 
        if(bTag){
            const obj = {};
@@ -481,6 +486,7 @@ class PropertyView extends React.Component {
                WidgetActions['updateProperties'](obj, false, true);
            }
        }
+
     }
 
     tbHeadHeightInput(event){
@@ -572,25 +578,29 @@ class PropertyView extends React.Component {
             obj.keepRatio =  this.selectNode.node.keepRatio;
 
             WidgetActions['updateProperties'](obj, false, false);
-
-
+            this.isCanKeepRatio = true;
         }
     }
 
     getFields() {
-
         let node = this.selectNode;
-        //console.log(node);
+
+    //    console.log(node);
+
 
         if (!node)  return null;
 
-        if( node.node.keepRatio ===undefined){
-            node.node.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
-            let obj={};
-            obj.keepRatio =  node.node.keepRatio;
-            WidgetActions['updateProperties'](obj, false, true);
+        if( node.node.keepRatio ===undefined && ( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist')){
+            this.isCanKeepRatio = true;
         }
 
+        if( node.node.keepRatio ===undefined  && this.isCanKeepRatio){
+            node.node.keepRatio = true;
+               let obj={};
+               obj.keepRatio =  node.node.keepRatio;
+               WidgetActions['updateProperties'](obj, false, true);
+               this.isCanKeepRatio = false;
+        }
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
 
