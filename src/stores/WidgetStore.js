@@ -76,6 +76,22 @@ function isCustomizeWidget(className) {
     }
     return false;
 }
+function getX(obj){
+    var ParentObj=obj;
+    var left=obj.offsetLeft;
+    while(ParentObj=ParentObj.offsetParent){
+        left+=ParentObj.offsetLeft;
+    }
+    return left;
+}
+function getY(obj){
+    var ParentObj=obj;
+    var top=obj.offsetTop;
+    while(ParentObj=ParentObj.offsetParent){
+        top+=ParentObj.offsetTop;
+    }
+    return top;
+}
 
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
@@ -1151,27 +1167,11 @@ function drop(e) {
     }
   }*/
 
-    function getX(obj){
-        var ParentObj=obj;
-        var left=obj.offsetLeft;
-        while(ParentObj=ParentObj.offsetParent){
-            left+=ParentObj.offsetLeft;
-        }
-        return left;
-    }
-    function getY(obj){
-        var ParentObj=obj;
-        var top=obj.offsetTop;
-        while(ParentObj=ParentObj.offsetParent){
-            top+=ParentObj.offsetTop;
-        }
-        return top;
-    }
     let oDiv = document.getElementById("canvas-dom");
     let top = getY(oDiv);
     let left = getX(oDiv);
     let x = e.clientX-left+document.body.scrollLeft;
-    let y = e.clientY-top+document.body.scrollLeft;
+    let y = e.clientY-top+document.body.scrollTop;
 
     if (this.currentWidget && this.currentWidget.node['create']) {
     for (i = 0; i < files.length; i++) {
