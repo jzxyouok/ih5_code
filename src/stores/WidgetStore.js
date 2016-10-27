@@ -1151,7 +1151,29 @@ function drop(e) {
     }
   }*/
 
-  if (this.currentWidget && this.currentWidget.node['create']) {
+    function getX(obj){
+        var ParentObj=obj;
+        var left=obj.offsetLeft;
+        while(ParentObj=ParentObj.offsetParent){
+            left+=ParentObj.offsetLeft;
+        }
+        return left;
+    }
+    function getY(obj){
+        var ParentObj=obj;
+        var top=obj.offsetTop;
+        while(ParentObj=ParentObj.offsetParent){
+            top+=ParentObj.offsetTop;
+        }
+        return top;
+    }
+    let oDiv = document.getElementById("canvas-dom");
+    let top = getY(oDiv);
+    let left = getX(oDiv);
+    let x = e.clientX-left+document.body.scrollLeft;
+    let y = e.clientY-top+document.body.scrollLeft;
+
+    if (this.currentWidget && this.currentWidget.node['create']) {
     for (i = 0; i < files.length; i++) {
       file = files[i];
       if (file.type.match(/image.*/)) {
@@ -1165,7 +1187,7 @@ function drop(e) {
           }
         let reader = new FileReader();
         reader.onload = e => {
-            let props = {name: fileName};
+          let props = {name: fileName, originX:0.5, originY:0.5, positionX:x, positionY:y};
           this.addWidget('image', props, e.target.result);
         };
         reader.readAsDataURL(file);
