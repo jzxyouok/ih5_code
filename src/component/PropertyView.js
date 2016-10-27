@@ -30,7 +30,8 @@ class PropertyView extends React.Component {
             fields: null,
             propertyName:null,
             sockName : null,
-            tbHeadHeight: 0
+            tbHeadHeight: 0,
+            tbHeaderToggle : false
         };
         this.selectNode = null;
         this.currentPage = null;
@@ -462,6 +463,18 @@ class PropertyView extends React.Component {
                this.onStatusChange({updateProperties: obj});
                WidgetActions['updateProperties'](obj, false, true);
            }
+           else if(this.selectNode.className == "table" && prop.name == "showHeader"){
+               obj[prop.name] = v;
+               this.selectNode.props.showHeader = v;
+               this.selectNode.node.showHeader = v;
+               this.onStatusChange({updateProperties: obj});
+               WidgetActions['updateProperties'](obj, false, true);
+               this.setState({
+                   tbHeaderToggle : !v
+               },()=>{
+                   this.setState({fields: this.getFields()});
+               });
+           }
            else {
                obj[prop.name] = v;
                this.onStatusChange({updateProperties: obj});
@@ -858,7 +871,11 @@ class PropertyView extends React.Component {
                     className={cls('f--hlc','ant-row','ant-form-item',
                             {'ant-form-half': hasTwin},
                             {'ant-form-full': !hasTwin},
-                            {'tdColorSwitch' : tdColorSwitch }
+                            {'tdColorSwitch' : tdColorSwitch },
+                            {'hidden': this.state.tbHeaderToggle
+                                            && (item.name =='head' || item.name =='headerFontFamily'
+                                            || item.name =='headerFontSize' || item.name =='headerFontFill')
+                            }
                     )}
                     style={style}>
 
