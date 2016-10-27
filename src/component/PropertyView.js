@@ -53,7 +53,7 @@ class PropertyView extends React.Component {
             x:null,
             y:null
         };
-
+        this.lastSelectKey = null;
         this.tbComeShow = this.tbComeShow.bind(this);
         this.tbHeadHeight = this.tbHeadHeight.bind(this);
         this.tbHeadHeightInput = this.tbHeadHeightInput.bind(this);
@@ -762,6 +762,11 @@ class PropertyView extends React.Component {
             //单独设置默认参数
             if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
                 defaultProp.checked = defaultValue;
+                if(className=='table' && item.name == "showHeader"){
+                    this.setState({
+                        tbHeaderToggle : !defaultProp.checked
+                    })
+                }
             }else if(item.type ==propertyType.Dropdown ){
                 defaultProp.value = defaultValue;
                 defaultProp.item=item;
@@ -958,6 +963,17 @@ class PropertyView extends React.Component {
                 }
                 node = node.parent;
             }
+
+            if(widget.selectWidget.className == "table" && this.lastSelectKey !== widget.selectWidget.key){
+                this.lastSelectKey = widget.selectWidget.key;
+                this.setState({
+                    tbHeaderToggle : false
+                })
+            }
+            else if(widget.selectWidget.className != "table"){
+                this.lastSelectKey = null;
+            }
+
         } else if (widget.updateProperties !== undefined && widget.skipProperty === undefined) {
 
             let needRender = (widget.skipRender === undefined);
