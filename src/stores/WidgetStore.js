@@ -509,13 +509,15 @@ function generateId(node) {
     };
 
     let genPropertyFormulaInputId = (cmd) =>{
-        cmd.action.property.forEach(v=>{
-            if (v.value&&v.value.type === 2) {
-                v.value.value.forEach(v1=>{
-                    specGenIdsData(v1.objKey);
-                });
-            }
-        });
+        if(cmd.action.property) {
+            cmd.action.property.forEach(v=>{
+                if (v.value&&v.value.type === 2) {
+                    v.value.value.forEach(v1=>{
+                        specGenIdsData(v1.objKey);
+                    });
+                }
+            });
+        }
     };
 
   if (node.props['eventTree']) {
