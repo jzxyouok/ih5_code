@@ -125,6 +125,7 @@ class ObjectTree extends React.Component {
         //多选
         window.addEventListener('keydown', this.onMultiSelectKeyDown);
         window.addEventListener('keyup', this.onMultiSelectKeyUp);
+        window.addEventListener('blur', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').addEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').addEventListener('mousedown', this.onLeaveMultiSelectMode);
     }
@@ -146,7 +147,7 @@ class ObjectTree extends React.Component {
         //initTree : 初始化对象树
         if (widget.initTree !== undefined){
             this.setState({
-                widgetTree: widget.initTree[0] ,
+                widgetTree: widget.initTree[0],
                 allTreeData : widget.initTree
             });
             this.addOpenId();
@@ -167,41 +168,50 @@ class ObjectTree extends React.Component {
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
                 document.getElementById('tree-item-'+this.state.nid).blur();
             }
+            let content = null;
+
+            let activeFocus = (content)=>{
+                this.setState(content, ()=>{
+                    //触发聚焦
+                    if(document.getElementById('tree-item-'+this.state.nid)){
+                        document.getElementById('tree-item-'+this.state.nid).focus();
+                    }
+                });
+            };
 
             if(widget.selectWidget){
-                this.setState({
+                let content = {
                     selectWidget : widget.selectWidget,
                     nid : widget.selectWidget.key,
                     nodeType: nodeType.widget,
                     nids: []
-                });
+                };
+                activeFocus(content);
                 this.addOpenId();
             } else if (widget.selectFunction) {
-                this.setState({
+                let content = {
                     selectWidget: null,
                     nid: widget.selectFunction.key,
                     nodeType: nodeType.func,
                     nids: []
-                });
+                };
+                activeFocus(content);
             } else if (widget.selectVariable) {
-                this.setState({
+                let content = {
                     selectWidget: null,
                     nid: widget.selectVariable.key,
                     nodeType: nodeType.var,
                     nids: []
-                });
+                };
+                activeFocus(content);
             } else if (widget.selectDBItem) {
-                this.setState({
+                let content = {
                     selectWidget: null,
                     nid: widget.selectDBItem.key,
                     nodeType: nodeType.dbItem,
                     nids: []
-                });
-            }
-
-            //触发聚焦
-            if(document.getElementById('tree-item-'+this.state.nid)){
-                document.getElementById('tree-item-'+this.state.nid).focus();
+                };
+                activeFocus(content);
             }
         } else if(widget.activeEventTreeKey) {
             //激活对象key对应对象的事件树
@@ -398,7 +408,7 @@ class ObjectTree extends React.Component {
 
     onMultiSelectKeyUp(e) {
         e = e || window.event;
-        if(e.shiftKey||e.key==='Shift') {
+        if(e.shiftKey||e.key==='Shift'||(e.currentTarget === window&&e.type==='blur')) {
             if(this.state.multiSelectMode) {
                 this.setState({
                     multiSelectMode: false
@@ -416,7 +426,11 @@ class ObjectTree extends React.Component {
 
     onLeaveMultiSelectMode(e) {
         if(!this.state.multiSelectMode&&this.state.selectWidget) {
-            WidgetActions['selectWidget'](this.state.selectWidget, true);
+            this.setState({
+                multiSelectMode: false
+            }, ()=>{
+                WidgetActions['selectWidget'](this.state.selectWidget, true);
+            });
         }
     }
 

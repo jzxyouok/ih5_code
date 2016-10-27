@@ -76,6 +76,22 @@ function isCustomizeWidget(className) {
     }
     return false;
 }
+function getX(obj){
+    var ParentObj=obj;
+    var left=obj.offsetLeft;
+    while(ParentObj=ParentObj.offsetParent){
+        left+=ParentObj.offsetLeft;
+    }
+    return left;
+}
+function getY(obj){
+    var ParentObj=obj;
+    var top=obj.offsetTop;
+    while(ParentObj=ParentObj.offsetParent){
+        top+=ParentObj.offsetTop;
+    }
+    return top;
+}
 
 //json对象浅克隆
 function cpJson(a){return JSON.parse(JSON.stringify(a))}
@@ -509,13 +525,15 @@ function generateId(node) {
     };
 
     let genPropertyFormulaInputId = (cmd) =>{
-        cmd.action.property.forEach(v=>{
-            if (v.value&&v.value.type === 2) {
-                v.value.value.forEach(v1=>{
-                    specGenIdsData(v1.objKey);
-                });
-            }
-        });
+        if(cmd.action.property) {
+            cmd.action.property.forEach(v=>{
+                if (v.value&&v.value.type === 2) {
+                    v.value.value.forEach(v1=>{
+                        specGenIdsData(v1.objKey);
+                    });
+                }
+            });
+        }
     };
 
   if (node.props['eventTree']) {
@@ -1149,7 +1167,13 @@ function drop(e) {
     }
   }*/
 
-  if (this.currentWidget && this.currentWidget.node['create']) {
+    let oDiv = document.getElementById("canvas-dom");
+    let top = getY(oDiv);
+    let left = getX(oDiv);
+    let x = e.clientX-left+document.body.scrollLeft;
+    let y = e.clientY-top+document.body.scrollTop;
+
+    if (this.currentWidget && this.currentWidget.node['create']) {
     for (i = 0; i < files.length; i++) {
       file = files[i];
       if (file.type.match(/image.*/)) {
@@ -1163,7 +1187,7 @@ function drop(e) {
           }
         let reader = new FileReader();
         reader.onload = e => {
-            let props = {name: fileName};
+          let props = {name: fileName, originX:0.5, originY:0.5, positionX:x, positionY:y};
           this.addWidget('image', props, e.target.result);
         };
         reader.readAsDataURL(file);
@@ -1277,6 +1301,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cleanHistory'], this.cleanHistory);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
+        this.listenTo(WidgetActions['alignWidgets'], this.alignWidgets);
+
         this.eventTreeList = [];
         this.historyRoad;
     },
@@ -1321,8 +1347,13 @@ export default Reflux.createStore({
                 this.selectWidgets = this.selectWidgets || [];
                 this.selectWidgetNodes = this.selectWidgetNodes || [];
 
-                if(this.selectWidgets.length===1) {
-                    if(this.selectWidgets[0] && selectableClass.indexOf(this.selectWidgets[0].className)>=0) {
+                if(this.selectWidgets.length>0) {
+                    if((this.selectWidgets[0] &&
+                        selectableClass.indexOf(this.selectWidgets[0].className)>=0 &&
+                        !this.selectWidgets[0].props['locked']) &&
+                        (widget &&
+                        selectableClass.indexOf(widget.className) >= 0 &&
+                        !widget.props['locked'])) {
                         if (this.selectWidgets.indexOf(widget) < 0) {
                             this.selectWidgets.push(widget);
                             this.selectWidgetNodes.push(widget.node);
@@ -1369,7 +1400,7 @@ export default Reflux.createStore({
                     }
                 }.bind(this));
             } else {
-                  bridge.selectWidget(widget.node);
+                  bridge.selectWidget([widget.node]);
             }
             if (render)
                 this.render();
@@ -1536,9 +1567,9 @@ export default Reflux.createStore({
             this.currentWidget.props['locked'] = !this.currentWidget.props['locked'];
             this.updateProperties({'locked':this.currentWidget.props['locked']});
             if (!this.currentWidget.props['locked']) {
-                bridge.selectWidget(this.currentWidget.node, this.updateProperties.bind(this));
+                bridge.selectWidget([this.currentWidget.node], this.updateProperties.bind(this));
             } else {
-                bridge.selectWidget(this.currentWidget.node);
+                bridge.selectWidget([this.currentWidget.node]);
             }
             //递归遍历加锁
             let parentLock = this.currentWidget.props['locked'];
@@ -1557,6 +1588,9 @@ export default Reflux.createStore({
             historyName = "加锁" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);
         }
+    },
+    alignWidgets: function(typeId, type) {
+
     },
     getWidgetByKey: function (key) {
         return keyMap[key];
@@ -2066,7 +2100,7 @@ export default Reflux.createStore({
     selectFunction: function (data) {
         if (data!=null) {
             //取消在canvas上的widget选择
-            bridge.selectWidget(this.currentWidget.node);
+            bridge.selectWidget([this.currentWidget.node]);
             this.currentFunction = data;
         } else {
             this.currentFunction = null;
@@ -2162,7 +2196,7 @@ export default Reflux.createStore({
     selectVariable: function (data) {
         if (data!=null) {
             //取消在canvas上的widget选择
-            bridge.selectWidget(this.currentWidget.node);
+            bridge.selectWidget([this.currentWidget.node]);
             this.currentVariable = data;
         } else {
             this.currentVariable = null;
@@ -2283,7 +2317,7 @@ export default Reflux.createStore({
     selectDBItem: function(data){
         if (data!=null) {
             //取消在canvas上的widget选择
-            bridge.selectWidget(this.currentWidget.node);
+            bridge.selectWidget([this.currentWidget.node]);
             this.currentDBItem = data;
         } else {
             this.currentDBItem = null;

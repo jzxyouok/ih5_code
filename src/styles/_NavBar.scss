@@ -964,34 +964,42 @@
                     &.left-icon {
                         .icon{ background-position: -920px 0 ; }
                         &:active .icon{ background-position: -920px -40px; }
+                        &.inactive { opacity: 0.6; cursor: not-allowed;}
                     }
                     &.zhong-icon {
                         .icon{ background-position: -960px 0 ; }
                         &:active .icon{ background-position: -960px -40px; }
+                        &.inactive { opacity: 0.6; cursor: not-allowed;}
                     }
                     &.right-icon {
                         .icon{ background-position: -1000px 0 ; }
                         &:active .icon{ background-position: -1000px -40px; }
+                        &.inactive { opacity: 0.6; cursor: not-allowed;}
                     }
                     &.top-icon {
                         .icon{ background-position: -1040px 0 ; }
                         &:active .icon{ background-position: -1040px -40px; }
+                        &.inactive { opacity: 0.6; cursor: not-allowed;}
                     }
                     &.middle-icon {
                         .icon{ background-position: -1080px 0 ; }
                         &:active .icon{ background-position: -1080px -40px; }
+                        &.inactive { opacity: 0.6; cursor: not-allowed;}
                     }
                     &.bottom-icon {
                         .icon{ background-position: -1120px 0 ; }
                         &:active .icon{ background-position: -1120px -40px; }
+                        &.inactive { opacity: 0.6; cursor: not-allowed;}
                     }
                     &.stretch-icon{
                         .icon{ background-position: -1160px 0 ; }
                         &:active .icon{ background-position: -1160px -40px; }
+                        &.inactive { opacity: 0.6; cursor: not-allowed;}
                     }
                     &.vertical-icon{
                         .icon{ background-position: -1200px 0 ; }
                         &:active .icon{ background-position: -1200px -40px; }
+                        &.inactive { opacity: 0.6; cursor: not-allowed;}
                     }
                 }
             }
