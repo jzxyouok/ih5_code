@@ -30,7 +30,8 @@ class PropertyView extends React.Component {
             fields: null,
             propertyName:null,
             sockName : null,
-            tbHeadHeight: 0
+            tbHeadHeight: 0,
+            tbHeaderToggle : false
         };
         this.selectNode = null;
         this.currentPage = null;
@@ -52,7 +53,8 @@ class PropertyView extends React.Component {
             x:null,
             y:null
         };
-
+        this.lastSelectKey = null;
+        this.isCanKeepRatio = true;
         this.tbComeShow = this.tbComeShow.bind(this);
         this.tbHeadHeight = this.tbHeadHeight.bind(this);
         this.tbHeadHeightInput = this.tbHeadHeightInput.bind(this);
@@ -105,7 +107,7 @@ class PropertyView extends React.Component {
                                 dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                 dom.jscolor.onFineChange = defaultProp.onChange;
                             }
-                        }
+                        } 
                     }} {...defaultProp}   className='color-input' />
                     <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
                 </div>;
@@ -426,51 +428,65 @@ class PropertyView extends React.Component {
             }
         }
 
-        if (bTag) {
-            const obj = {};
-            if (this.selectNode.className == "table" && prop.name == "header") {
-                if (v <= 0 || v == null) return;
-                let header = this.selectNode.props.header;
-                if (header !== undefined) {
-                    header = header.split(",");
-                    let b = v - header.length;
-                    if (b > 0) {
-                        for (let a = 1; a <= b; a++) {
-                            header.push("");
-                        }
-                    }
-                    else if (b < 0) {
-                        for (let a = -b; a > 0; a--) {
-                            header.splice(header.length - 1, 1);
-                        }
-                    }
-                }
-                else {
-                    header = [""];
-                    for (let a = 1; a < v; a++) {
-                        header.push("");
-                    }
-                }
-                obj[prop.name] = header.join(",");
-                this.selectNode.props.header = header.join(",");
-                this.selectNode.node.header = header.join(",");
-                this.onStatusChange({updateProperties: obj});
-                WidgetActions['updateProperties'](obj, false, true);
-                this.refs.TbCome.updateColumn(v, header);
-            }
-            else if (this.selectNode.className == "table" && prop.name == "head") {
-                obj['headerColor'] = v;
-                this.selectNode.props.headerColor = v;
-                this.selectNode.node.headerColor = v;
-                this.onStatusChange({updateProperties: obj});
-                WidgetActions['updateProperties'](obj, false, true);
-            }
-            else {
-                obj[prop.name] = v;
-                this.onStatusChange({updateProperties: obj});
-                WidgetActions['updateProperties'](obj, false, true);
-            }
-        }
+
+       if(bTag){
+           const obj = {};
+           if(this.selectNode.className == "table" && prop.name == "header"){
+               if(v <= 0 || v == null) return;
+               let header = this.selectNode.props.header;
+               if(header !== undefined){
+                   header = header.split(",");
+                   let b = v - header.length;
+                   if(b > 0){
+                       for(let a=1; a <= b ; a++){
+                           header.push("");
+                       }
+                   }
+                   else if(b < 0){
+                       for(let a = -b; a > 0 ; a--){
+                           header.splice(header.length-1, 1);
+                       }
+                   }
+               }
+               else {
+                   header = [""];
+                   for(let a=1; a < v ; a++){
+                       header.push("");
+                   }
+               }
+               obj[prop.name] = header.join(",");
+               this.selectNode.props.header = header.join(",");
+               this.selectNode.node.header = header.join(",");
+               this.onStatusChange({updateProperties: obj});
+               WidgetActions['updateProperties'](obj, false, true);
+               this.refs.TbCome.updateColumn(v,header);
+           }
+           else if(this.selectNode.className == "table" && prop.name == "head"){
+               obj['headerColor'] = v;
+               this.selectNode.props.headerColor = v;
+               this.selectNode.node.headerColor = v;
+               this.onStatusChange({updateProperties: obj});
+               WidgetActions['updateProperties'](obj, false, true);
+           }
+           else if(this.selectNode.className == "table" && prop.name == "showHeader"){
+               obj[prop.name] = v;
+               this.selectNode.props.showHeader = v;
+               this.selectNode.node.showHeader = v;
+               this.onStatusChange({updateProperties: obj});
+               WidgetActions['updateProperties'](obj, false, true);
+               this.setState({
+                   tbHeaderToggle : !v
+               },()=>{
+                   this.setState({fields: this.getFields()});
+               });
+           }
+           else {
+               obj[prop.name] = v;
+               this.onStatusChange({updateProperties: obj});
+               WidgetActions['updateProperties'](obj, false, true);
+           }
+       }
+
     }
 
     tbHeadHeightInput(event){
@@ -562,25 +578,25 @@ class PropertyView extends React.Component {
             obj.keepRatio =  this.selectNode.node.keepRatio;
 
             WidgetActions['updateProperties'](obj, false, false);
-
-
+            this.isCanKeepRatio = true;
         }
     }
 
     getFields() {
-
         let node = this.selectNode;
+
     //    console.log(node);
+
 
         if (!node)  return null;
 
-        if( node.node.keepRatio ===undefined){
+        if( node.node.keepRatio ===undefined && this.isCanKeepRatio){
             node.node.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
             let obj={};
             obj.keepRatio =  node.node.keepRatio;
             WidgetActions['updateProperties'](obj, false, true);
+            this.isCanKeepRatio = false;
         }
-
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
 
@@ -752,6 +768,11 @@ class PropertyView extends React.Component {
             //单独设置默认参数
             if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
                 defaultProp.checked = defaultValue;
+                if(className=='table' && item.name == "showHeader"){
+                    this.setState({
+                        tbHeaderToggle : !defaultProp.checked
+                    })
+                }
             }else if(item.type ==propertyType.Dropdown ){
                 defaultProp.value = defaultValue;
                 defaultProp.item=item;
@@ -861,7 +882,11 @@ class PropertyView extends React.Component {
                     className={cls('f--hlc','ant-row','ant-form-item',
                             {'ant-form-half': hasTwin},
                             {'ant-form-full': !hasTwin},
-                            {'tdColorSwitch' : tdColorSwitch }
+                            {'tdColorSwitch' : tdColorSwitch },
+                            {'hidden': this.state.tbHeaderToggle
+                                            && (item.name =='head' || item.name =='headerFontFamily'
+                                            || item.name =='headerFontSize' || item.name =='headerFontFill')
+                            }
                     )}
                     style={style}>
 
@@ -944,6 +969,17 @@ class PropertyView extends React.Component {
                 }
                 node = node.parent;
             }
+
+            if(widget.selectWidget.className == "table" && this.lastSelectKey !== widget.selectWidget.key){
+                this.lastSelectKey = widget.selectWidget.key;
+                this.setState({
+                    tbHeaderToggle : false
+                })
+            }
+            else if(widget.selectWidget.className != "table"){
+                this.lastSelectKey = null;
+            }
+
         } else if (widget.updateProperties !== undefined && widget.skipProperty === undefined) {
 
             let needRender = (widget.skipRender === undefined);

@@ -29,6 +29,20 @@ import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
 import CreateModuleStore from '../stores/CreateModuleStore';
 
+const orderType = [
+    {name: '左对齐', className: 'left-icon', type:1},
+    {name: '左右居中', className: 'zhong-icon', type:2},
+    {name: '右对齐', className: 'right-icon', type:3},
+    {name: '底部对齐', className: 'top-icon', type:4},
+    {name: '上下居中', className: 'middle-icon', type:5},
+    {name: '顶部对齐', className: 'bottom-icon', type:6},
+];
+
+const distributeType = [
+    {name: '水平分布', className: 'stretch-icon', type:1},
+    {name: '垂直分布', className: 'vertical-icon', type:2},
+];
+
 class NavBar extends React.Component {
     constructor(props) {
         super(props);
@@ -81,6 +95,7 @@ class NavBar extends React.Component {
             historyLayerHide : false,
             isShowRulerLine:true,
             activeKey: null,
+            selectWidgets: []
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -132,8 +147,11 @@ class NavBar extends React.Component {
         this.chooseHistory = this.chooseHistory.bind(this);
         this.historyLayerHide = this.historyLayerHide.bind(this);
         this.historyShow = this.historyShow.bind(this);
-
         this.onEvent = this.onEvent.bind(this);
+        this.onKeyHistory = this.onKeyHistory.bind(this);
+
+        this.onClickAlignWidgets = this.onClickAlignWidgets.bind(this);
+        this.onClickDistributeWidgets = this.onClickDistributeWidgets.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -161,6 +179,7 @@ class NavBar extends React.Component {
         getSockListStore.listen(this.getSockList.bind(this));
         ReDbOrSockIdStore.listen(this.reDbOrSockId.bind(this));
         CreateModuleStore.listen(this.createModule.bind(this));
+        document.body.addEventListener('keyup', this.onKeyHistory);
 
         window.onbeforeunload = ()=>{
             var n = window.event.screenX - window.screenLeft;
@@ -187,6 +206,7 @@ class NavBar extends React.Component {
         this.unsubscribe();
         clearTimeout(this.closeTimeFuc());
         localStorage.setItem("workID", null);
+        document.body.removeEventListener('keyup', this.onKeyHistory);
     }
 
     onStatusChange(widget) {
@@ -200,7 +220,8 @@ class NavBar extends React.Component {
             this.setState({
                 selectWidget : widget.selectWidget,
                 nodeType: nodeType.widget,
-                isAddShape : checkChildClass(widget.selectWidget, 'path')
+                isAddShape : checkChildClass(widget.selectWidget, 'path'),
+                selectWidgets: []
             });
             if(widget.selectWidget.className == "root"){
                 let data = widget.selectWidget.children;
@@ -234,22 +255,29 @@ class NavBar extends React.Component {
         } else if (widget.selectFunction) {
             this.setState({
                 selectFadeWidgetKey: widget.selectFunction.key,
-                nodeType: nodeType.func
+                nodeType: nodeType.func,
+                selectWidgets: []
             });
         } else if (widget.selectVariable) {
             this.setState({
                 selectFadeWidgetKey: widget.selectVariable.key,
-                nodeType: nodeType.var
+                nodeType: nodeType.var,
+                selectWidgets: []
             });
         } else if (widget.selectDBItem) {
             this.setState({
                 selectFadeWidgetKey: widget.selectDBItem.key,
-                nodeType: nodeType.dbItem
+                nodeType: nodeType.dbItem,
+                selectWidgets: []
             });
         } else if(widget.activeEventTreeKey) {
             this.setState({
                 activeKey: widget.activeEventTreeKey.key
             });
+        } else if(widget.selectWidgets) {
+            this.setState({
+                selectWidgets: widget.selectWidgets
+            })
         }
         if(widget.historyRW){
             this.setState({
@@ -1015,6 +1043,46 @@ class NavBar extends React.Component {
         })
     }
 
+    onKeyHistory(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+
+        //Ctrl+Z
+        if (didPressCtrl && event.keyCode == 90) {
+            //console.log('Ctrl+Z');
+            this.revokedHistory();
+        }
+        //Ctrl+y
+        if (didPressCtrl && event.keyCode == 89) {
+            //console.log('Ctrl+y');
+            this.replyHistory();
+        }
+    }
+    onClickAlignWidgets(type, e) {
+        if(this.state.selectWidgets.length<2) {
+            return;
+        }
+        this.setState({
+            dropDownState : 0
+        },()=>{
+            //do change align here;
+        })
+    }
+
+    onClickDistributeWidgets(type, e) {
+        if(this.state.selectWidgets.length<3) {
+            return;
+        }
+        this.setState({
+            dropDownState : 0
+        },()=>{
+            //do change distribute here;
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -1335,12 +1403,15 @@ class NavBar extends React.Component {
                                     onClick={this.dropDownShow.bind(this, 1)} />
 
                             <ul className={$class('dropDownToggle', { 'hide': 1 !== this.state.dropDownState })}>
-                                <li className='left-icon'><span className='icon' />左对齐</li>
-                                <li className='zhong-icon'><span className='icon zhong-icon' />左右居中</li>
-                                <li className='right-icon' ><span className='icon right-icon' />右对齐</li>
-                                <li className='top-icon'><span className='icon top-icon' />底部对齐</li>
-                                <li className='middle-icon'><span className='icon middle-icon' />上下居中</li>
-                                <li className='bottom-icon'><span className='icon bottom-icon' />顶部对齐</li>
+                                {
+                                    orderType.map((v,i)=>{
+                                        return (<li className={$class(v.className, {'inactive':this.state.selectWidgets.length<2})}
+                                                    key={i}
+                                                    onClick={this.onClickAlignWidgets.bind(this, v.type)}>
+                                            <span className={$class('icon', v.className)} />
+                                            {v.name}</li>)
+                                    })
+                                }
                             </ul>
                         </div>
 
@@ -1350,8 +1421,15 @@ class NavBar extends React.Component {
                                     onClick={this.dropDownShow.bind(this, 2)} />
 
                             <ul className={$class('dropDownToggle', { 'hide': 2 !== this.state.dropDownState })}>
-                                <li className='stretch-icon'><span className='icon' />水平分布</li>
-                                <li className='vertical-icon'><span className='icon' />垂直分布</li>
+                                {
+                                    distributeType.map((v,i)=>{
+                                        return (<li className={$class(v.className, {'inactive':this.state.selectWidgets.length<3})}
+                                                    key={i}
+                                                    onClick={this.onClickDistributeWidgets.bind(this, v.type)}>
+                                            <span className='icon' />
+                                            {v.name}</li>)
+                                    })
+                                }
                             </ul>
                         </div>
 

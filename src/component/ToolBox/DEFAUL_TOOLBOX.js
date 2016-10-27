@@ -40,8 +40,9 @@ let inputIcon = img('input.svg');
 let moduleIcon = img('module.svg');
 let tableIcon = img('table.svg');
 
+let worldIcon = img('world.svg');
+
 // let trackIcon = img('track.svg');
-// let worldIcon = img('world.svg');
 // let bodyIcon = img('body.svg');
 // let easingIcon = img('easing.svg');
 // let effectIcon = img('effect.svg');
@@ -71,7 +72,7 @@ var TOOL_ID = {
     PAGE: 16,
     EFFECT: 17,
     CANVAS: 18,
-    WECAHT: 19,
+    WECHAT: 19,
     BITMAPTEXT: 20,
 
     BUTTON: 21,
@@ -224,6 +225,13 @@ var DEFAULT_TOOLBOX = {
         secondary: [
             {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0, 'fontSize':26, 'fontFill':'#000000'}}]
     },{
+        name:'物理世界',
+        key:25,
+        gid:25,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.WORLD, name:'物理世界', icon: worldIcon, className:'world', param: {'value':0, 'fontSize':26, 'fontFill':'#000000'}}]
+    },{
         name:'数据库',
         key:16,
         gid:16,
@@ -233,11 +241,13 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.ShAREDB, name:'共享数据库', icon: shareDbIcon, DbType: 0, className:'db'}
         ]
     },{
-        name:'二维数组',
+        name:'表格',
         key:17,
         gid:17,
         primary: 0,
         secondary: [
+            {cid:TOOL_ID.TABLE,name:'表格',icon:tableIcon, className:'table', drawRect:true,
+                param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'transparent','rowNum':5,'header':',,'}},
             {cid:TOOL_ID.TWODARR, name:'二维数组', icon: twodarrIcon, className:'data', param:{'type': dataType.twoDArr}},
             {cid:TOOL_ID.ONEDARR, name:'一维数组', icon: onedarrIcon, className:'data', param:{'type': dataType.oneDArr}}]
     },{
@@ -261,21 +271,21 @@ var DEFAULT_TOOLBOX = {
         key:23,
         gid:23,
         primary: 0,
-        secondary: [{cid:TOOL_ID.WECAHT,name:'微信',icon:wechatIcon, className:'wechat'}]
+        secondary: [{cid:TOOL_ID.WECHAT,name:'微信',icon:wechatIcon, className:'wechat'}]
     },{
         name:'组件',
         key:24,
         gid:24,
         primary: 0,
         secondary: [{cid:TOOL_ID.MODULE,name:'组件',icon:moduleIcon, className:'module'}]
-    },{
-        name:'表格',
-        key:25,
-        gid:25,
-        primary: 0,
-        secondary: [{cid:TOOL_ID.TABLE,name:'表格',icon:tableIcon, className:'table', drawRect:true,
-            param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'transparent'}
-        }]
+    // },{
+    //     name:'表格',
+    //     key:25,
+    //     gid:25,
+    //     primary: 0,
+    //     secondary: [{cid:TOOL_ID.TABLE,name:'表格',icon:tableIcon, className:'table', drawRect:true,
+    //         param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'transparent'}
+    //     }]
     }
     ]
 
