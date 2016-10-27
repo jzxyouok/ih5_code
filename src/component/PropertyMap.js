@@ -742,12 +742,12 @@ propertyMap['table'] = [
     { name: 'headerFontFill',showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
 
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
-    { name: 'tdBColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '', isProperty: true },
+    { name: 'fillColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '', isProperty: true },
     { name: 'altColor',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '', isProperty: true },
 
     { name: 'tdLayout',showName:'网格布局', type: propertyType.TdLayout,group:'tableW', default: [], isProperty: true },
-    { name: 'tdWColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', isProperty: true , tbCome:"tbF"},
-    { name: 'tdWSize',showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', isProperty: true , tbCome:"tbS"},
+    { name: 'lineColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', isProperty: true , tbCome:"tbF"},
+    { name: 'lineWidth',showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', isProperty: true , tbCome:"tbS"},
 
     { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true, tbCome:"tbF" },
     { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, isProperty: true, tbCome:"tbS" },

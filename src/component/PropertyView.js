@@ -682,7 +682,6 @@ class PropertyView extends React.Component {
                 }
             } else {
                 if(className == "table"){
-                    this.selectWidget.node['getResult'](0);
                     if(item.name == "rowNum"){
                         defaultValue = node.props[item.name] ? node.props[item.name] : 0;
                     }
@@ -819,7 +818,7 @@ class PropertyView extends React.Component {
                 }
             }
             let tdColorSwitch = false;
-            if( className == "table" && (item.name === "fontFill" || item.name === "tdBColor" || item.name === "altColor")){
+            if( className == "table" && (item.name === "fontFill" || item.name === "fillColor" || item.name === "altColor")){
                 tdColorSwitch = true;
             }
 
