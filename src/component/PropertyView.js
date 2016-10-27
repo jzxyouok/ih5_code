@@ -682,6 +682,7 @@ class PropertyView extends React.Component {
                 }
             } else {
                 if(className == "table"){
+                    this.selectWidget.node['getResult'](0);
                     if(item.name == "rowNum"){
                         defaultValue = node.props[item.name] ? node.props[item.name] : 0;
                     }
