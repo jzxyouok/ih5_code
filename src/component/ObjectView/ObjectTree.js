@@ -125,6 +125,7 @@ class ObjectTree extends React.Component {
         //多选
         window.addEventListener('keydown', this.onMultiSelectKeyDown);
         window.addEventListener('keyup', this.onMultiSelectKeyUp);
+        window.addEventListener('blur', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').addEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').addEventListener('mousedown', this.onLeaveMultiSelectMode);
     }
@@ -407,7 +408,7 @@ class ObjectTree extends React.Component {
 
     onMultiSelectKeyUp(e) {
         e = e || window.event;
-        if(e.shiftKey||e.key==='Shift') {
+        if(e.shiftKey||e.key==='Shift'||(e.currentTarget === window&&e.type==='blur')) {
             if(this.state.multiSelectMode) {
                 this.setState({
                     multiSelectMode: false
