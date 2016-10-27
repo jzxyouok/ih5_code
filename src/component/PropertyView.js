@@ -90,7 +90,6 @@ class PropertyView extends React.Component {
                 // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                 return  <div>
                     <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
-
                     <Slider    step={1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
                 </div>;
 
@@ -290,21 +289,44 @@ class PropertyView extends React.Component {
                         let nodeObj=this.selectNode.node;
                         let oldOrigin =this.getOldOrigin(propsObj.originPosKey,prop.options);
                         let w =nodeObj.width*(x-parseFloat(oldOrigin[0]));
-                        let h =nodeObj.height*(y-parseFloat(oldOrigin[1]));
-
-                        let sin =  Math.sin(nodeObj.rotation*Math.PI/180);
-                        let cos =  Math.cos(nodeObj.rotation*Math.PI/180);
+                        let h =nodeObj.height*(parseFloat(oldOrigin[1])-y);
 
                         let D = Math.sqrt(h*h+w*w);
 
+                        let d=null;
+                        if(w ==0){
+                           if(h>0){
+                               d=Math.PI/2;
+                           }else if(h==0){
+                             return false ;  //选择了同一中心点,不做任何操作
+                           }else{
+                               d=3*Math.PI/2;
+                           }
+                         }else {
+                            d = Math.atan(h / w);
+                            if (h > 0 && w > 0) {
+                                ;
+                            } else if (h > 0 && w < 0) {
+                                d = d + Math.PI;
+                            } else if (h < 0 && w > 0) {
+                                ;
+                            } else if (h < 0 && w < 0) {
+                                d = d + 3 * Math.PI / 2;
+                            } else if (h == 0 && w > 0) {
+                                ;
+                            } else if (h == 0 && w < 0) {
+                                d = Math.PI;
+                            } else {
+                                alert('bug!');
+                            }
+                        }
 
-                        let ran =Math.atan(h/w)-nodeObj.rotation*Math.PI/180;
+                        let ran =d-nodeObj.rotation*Math.PI/180;
 
-
-
-                        let posX =nodeObj.positionX+D*Math.cos(ran);
-                        let posY =nodeObj.positionY+D*Math.sin(ran);
-
+                        let a=Math.cos(ran)*D;
+                        let b=Math.sin(ran)*D;
+                        let posX =nodeObj.positionX+ Math.cos(ran)*D;
+                        let posY = nodeObj.positionY-Math.sin(ran)*D;
                         propsObj.originPosKey=this.getSelectDefault({x:x,y:y},prop.options);
 
 
@@ -312,6 +334,13 @@ class PropertyView extends React.Component {
                         nodeObj.originX =x;
                         propsObj.originY =y;
                         nodeObj.originY =y;
+
+
+                        propsObj.positionX =posX;
+                        nodeObj.positionX =posX;
+                        propsObj.positionY =posY;
+                        nodeObj.positionY =posY;
+
 
                          WidgetActions['render']();
                         this.setState({fields: this.getFields()});
@@ -435,7 +464,6 @@ class PropertyView extends React.Component {
            }
            else {
                obj[prop.name] = v;
-               //console.log(v,obj);
                this.onStatusChange({updateProperties: obj});
                WidgetActions['updateProperties'](obj, false, true);
            }
@@ -539,7 +567,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-       //  console.log(node);
+        //console.log(node);
 
         if (!node)  return null;
 
@@ -657,12 +685,15 @@ class PropertyView extends React.Component {
                          defaultValue=1;
                      }
                 }
+            }else if(item.type === propertyType.Percentage ){
+                defaultValue = item.default*100;
+                if(node.props[item.name] ) {
+                    defaultValue =node.props[item.name]*100;
+                }
             }
             else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default;
-                }else if(item.type === propertyType.Percentage && item.name=='alpha'){
-                    defaultValue = item.default*100;
                 }else if(className == "table" && item.name == "headerFontSize"){
                     defaultValue = 26;
                     this.selectNode.props.headerFontSize = 26;

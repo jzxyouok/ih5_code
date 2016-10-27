@@ -95,6 +95,10 @@ function loadTree(parent, node, idList) {
   current.props = node['props'] || {};
   current.events = node['events'] || {};
 
+
+
+
+
   if (current.props['key'] !== undefined) {
     current.key = current.props['key'];
     delete(current.props['key']);
@@ -236,6 +240,8 @@ function loadTree(parent, node, idList) {
       idList[node['id']] = current;
   }
 
+
+
   var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
 
   current.node = bridge.addWidget(renderer,
@@ -245,7 +251,11 @@ function loadTree(parent, node, idList) {
         (parent && parent.timerWidget) ? parent.timerWidget.node : null
   );
 
-  current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
+
+
+    current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
+
+
 
   if (parent) {
     parent.children.unshift(current);
@@ -1424,7 +1434,8 @@ export default Reflux.createStore({
           if (className == 'bitmaptext')
               currentLoading = o;
         var cmd = {redrawTree: true};
-        if (className == 'body')
+
+        if (className == 'body'  )
           cmd.updateProperties = {'originX':0.5, 'originY':0.5};
         this.trigger(cmd);
         this.getAllWidgets();
@@ -1681,13 +1692,14 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-        if(obj && obj.alpha !== 0){
+       
+        if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
                 obj.alpha = 1;
             }
         }
-        //console.log(obj);
+
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;

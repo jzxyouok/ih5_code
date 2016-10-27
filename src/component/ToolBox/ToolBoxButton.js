@@ -203,6 +203,7 @@ class ToolBoxButton extends Component {
                 this.props.param.originY = 0.5;
                 this.props.param.positionX += this.props.param.shapeWidth*0.5;
                 this.props.param.positionY += this.props.param.shapeHeight*0.5;
+
                 //普通画框
                 if(this.props.className === 'qrcode') {
                     //qrcode处理
