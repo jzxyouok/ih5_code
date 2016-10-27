@@ -5,7 +5,7 @@ import $ from 'jquery';
 
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget} from '../../stores/WidgetStore';
+import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget, selectableClass} from '../../stores/WidgetStore';
 import {checkChildClass} from '../PropertyMap';
 
 import SelectTargetStore from '../../stores/SelectTargetStore'
@@ -138,7 +138,7 @@ class ObjectTree extends React.Component {
         window.removeEventListener('keydown', this.onMultiSelectKeyDown);
         window.removeEventListener('keyup', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
-        document.getElementById('ObjectTree').addEventListener('mousedown', this.onLeaveMultiSelectMode);
+        document.getElementById('ObjectTree').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
     }
 
     onSelectTargetModeChange(result) {
@@ -431,13 +431,15 @@ class ObjectTree extends React.Component {
         }
 
         if(this.state.multiSelectMode) {
-            this.setState({
-                editMode: false
-            },()=>{
-                if(!this.isInMultiList(nid)){
-                    WidgetActions['selectWidget'](data, true, null, true);
-                }
-            });
+            if(selectableClass.indexOf(data.className)>=0&&!data.props.locked) {
+                this.setState({
+                    editMode: false
+                },()=>{
+                    if(!this.isInMultiList(nid)){
+                        WidgetActions['selectWidget'](data, true, null, true);
+                    }
+                });
+            }
         } else {
             this.setState({
                 nid : nid,
@@ -453,6 +455,9 @@ class ObjectTree extends React.Component {
             event.stopPropagation();
             return false;
         }
+        if(this.state.multiSelectMode) {
+            return false;
+        }
         //console.log(data);
         data.props['visible'] = bool;
         data.node['visible'] = bool;
@@ -464,6 +469,9 @@ class ObjectTree extends React.Component {
             event.stopPropagation();
             return false;
         }
+        if(this.state.multiSelectMode) {
+            return false;
+        }
         if(nid === this.state.nid){
             WidgetActions['lockWidget']();
             WidgetActions['render']();
@@ -473,6 +481,9 @@ class ObjectTree extends React.Component {
     eventBtn(nid, data,event) {
         if(this.onSelectTargetMode(data)) {
             event.stopPropagation();
+            return false;
+        }
+        if(this.state.multiSelectMode) {
             return false;
         }
         //分情况处理
@@ -496,6 +507,8 @@ class ObjectTree extends React.Component {
     fadeWidgetBtn(nid, data, type,event) {
         if(this.onSelectTargetMode(data)) {
             event.stopPropagation();
+            return false;
+        }if(this.state.multiSelectMode) {
             return false;
         }
         switch (type){
@@ -531,6 +544,9 @@ class ObjectTree extends React.Component {
 
     startEditObjName(id, data, event) {
         if(this.state.selectTargetMode){
+            return;
+        }
+        if(this.state.multiSelectMode) {
             return;
         }
 
@@ -578,6 +594,9 @@ class ObjectTree extends React.Component {
             event.currentTarget.addEventListener('keydown', this.itemKeyAction);
             event.currentTarget.addEventListener('keyup', this.resetCmdKey);
         }
+        event.currentTarget.addEventListener('mousedown', (e)=>{
+            e.stopPropagation();
+        });
         event.currentTarget.addEventListener('keydown', this.onMultiSelectKeyDown);
         event.currentTarget.addEventListener('keyup', this.onMultiSelectKeyUp);
     }
@@ -590,6 +609,9 @@ class ObjectTree extends React.Component {
             event.currentTarget.removeEventListener('keydown', this.itemKeyAction);
             event.currentTarget.removeEventListener('keyup', this.resetCmdKey);
         }
+        event.currentTarget.removeEventListener('mousedown', (e)=>{
+            e.stopPropagation();
+        });
         event.currentTarget.removeEventListener('keydown', this.onMultiSelectKeyDown);
         event.currentTarget.removeEventListener('keyup', this.onMultiSelectKeyUp);
     }

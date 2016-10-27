@@ -1310,9 +1310,21 @@ export default Reflux.createStore({
             if (isMulti) {
                 this.selectWidgets = this.selectWidgets || [];
                 this.selectWidgetNodes = this.selectWidgetNodes || [];
-                if (this.selectWidgets.indexOf(widget) < 0) {
-                    this.selectWidgets.push(widget);
-                    this.selectWidgetNodes.push(widget.node);
+
+                if(this.selectWidgets.length===1) {
+                    if(this.selectWidgets[0] && selectableClass.indexOf(this.selectWidgets[0].className)>=0) {
+                        if (this.selectWidgets.indexOf(widget) < 0) {
+                            this.selectWidgets.push(widget);
+                            this.selectWidgetNodes.push(widget.node);
+                        }
+                    } else {
+                        return;
+                    }
+                } else {
+                    if (this.selectWidgets.indexOf(widget) < 0) {
+                        this.selectWidgets.push(widget);
+                        this.selectWidgetNodes.push(widget.node);
+                    }
                 }
             } else {
                 this.selectWidgets = [widget];
@@ -2950,4 +2962,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType, classList}
+export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType, classList, selectableClass}
