@@ -1400,7 +1400,7 @@ export default Reflux.createStore({
                     }
                 }.bind(this));
             } else {
-                  bridge.selectWidget(widget.node);
+                  bridge.selectWidget([widget.node]);
             }
             if (render)
                 this.render();
@@ -1567,9 +1567,9 @@ export default Reflux.createStore({
             this.currentWidget.props['locked'] = !this.currentWidget.props['locked'];
             this.updateProperties({'locked':this.currentWidget.props['locked']});
             if (!this.currentWidget.props['locked']) {
-                bridge.selectWidget(this.currentWidget.node, this.updateProperties.bind(this));
+                bridge.selectWidget([this.currentWidget.node], this.updateProperties.bind(this));
             } else {
-                bridge.selectWidget(this.currentWidget.node);
+                bridge.selectWidget([this.currentWidget.node]);
             }
             //递归遍历加锁
             let parentLock = this.currentWidget.props['locked'];
@@ -2100,7 +2100,7 @@ export default Reflux.createStore({
     selectFunction: function (data) {
         if (data!=null) {
             //取消在canvas上的widget选择
-            bridge.selectWidget(this.currentWidget.node);
+            bridge.selectWidget([this.currentWidget.node]);
             this.currentFunction = data;
         } else {
             this.currentFunction = null;
@@ -2196,7 +2196,7 @@ export default Reflux.createStore({
     selectVariable: function (data) {
         if (data!=null) {
             //取消在canvas上的widget选择
-            bridge.selectWidget(this.currentWidget.node);
+            bridge.selectWidget([this.currentWidget.node]);
             this.currentVariable = data;
         } else {
             this.currentVariable = null;
@@ -2317,7 +2317,7 @@ export default Reflux.createStore({
     selectDBItem: function(data){
         if (data!=null) {
             //取消在canvas上的widget选择
-            bridge.selectWidget(this.currentWidget.node);
+            bridge.selectWidget([this.currentWidget.node]);
             this.currentDBItem = data;
         } else {
             this.currentDBItem = null;
