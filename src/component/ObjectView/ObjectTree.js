@@ -606,11 +606,6 @@ class ObjectTree extends React.Component {
             event.currentTarget.removeEventListener('keydown', this.itemKeyAction);
             event.currentTarget.removeEventListener('keyup', this.resetCmdKey);
         }
-        event.currentTarget.removeEventListener('mousedown', (e)=>{
-            e.stopPropagation();
-        });
-        event.currentTarget.removeEventListener('keydown', this.onMultiSelectKeyDown);
-        event.currentTarget.removeEventListener('keyup', this.onMultiSelectKeyUp);
     }
 
     resetCmdKey() {
