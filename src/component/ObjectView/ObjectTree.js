@@ -141,14 +141,6 @@ class ObjectTree extends React.Component {
         document.getElementById('ObjectTree').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
     }
 
-    onSelectTargetModeChange(result) {
-        if(result.stUpdate){
-            this.setState({
-                selectTargetMode: result.stUpdate.isActive
-            })
-        }
-    }
-
     onStatusChange(widget) {
         //console.log("tree",widget);
         //initTree : 初始化对象树
@@ -341,6 +333,14 @@ class ObjectTree extends React.Component {
         return false;
     }
 
+    onSelectTargetModeChange(result) {
+        if(result.stUpdate){
+            this.setState({
+                selectTargetMode: result.stUpdate.isActive
+            })
+        }
+    }
+
     checkAllSelectTarget(key) {
         if(this.state.targetList) {
             let getTarget = false;
@@ -483,7 +483,7 @@ class ObjectTree extends React.Component {
             event.stopPropagation();
             return false;
         }
-        if(this.state.multiSelectMode) {
+        if(this.state.multiSelectMode&&this.state.nids.length>0) {
             return false;
         }
         //分情况处理
@@ -733,7 +733,6 @@ class ObjectTree extends React.Component {
     }
 
     rootKeyAction(event){
-        event.preventDefault();
         event.stopPropagation();
         this.checkPressCmdKey(event.keyCode);
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -745,7 +744,6 @@ class ObjectTree extends React.Component {
     }
 
     itemKeyAction(event){
-        event.preventDefault();
         event.stopPropagation();
         if(this.state.selectTargetMode||this.state.nids.length>0) {
             return;
