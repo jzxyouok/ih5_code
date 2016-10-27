@@ -742,16 +742,16 @@ propertyMap['table'] = [
     { name: 'headerFontFill',showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
 
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
-    { name: 'tdBColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '#FFA800', isProperty: true },
-    { name: 'tdB2Color',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '#FFA800', isProperty: true },
+    { name: 'tdBColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '', isProperty: true },
+    { name: 'altColor',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '', isProperty: true },
 
     { name: 'tdLayout',showName:'网格布局', type: propertyType.TdLayout,group:'tableW', default: [], isProperty: true },
-    { name: 'tdWColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '#FFA800', isProperty: true , tbCome:"tbF"},
+    { name: 'tdWColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', isProperty: true , tbCome:"tbF"},
     { name: 'tdWSize',showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', isProperty: true , tbCome:"tbS"},
 
     { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true, tbCome:"tbF" },
     { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, isProperty: true, tbCome:"tbS" },
-    { name: 'tdFontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '#FFA800', isProperty: true },
+    { name: 'fontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true }
 
     //{ name: 'dbid', type: propertyType.String, default: '', isProperty: true },
@@ -764,11 +764,11 @@ propertyMap['table'] = [
     //{ name: 'headerFontSize', type: propertyType.Number, default: 26, group:'header', isProperty: true },
     //{ name: 'headerFontFamily', type: propertyType.String, default: '', group:'header', isProperty: true },
     //{ name: 'headerFontFill', type: propertyType.Color, default: '#000000', group:'header', isProperty: true },
-
     //{ name: 'fontSize', type: propertyType.Number, default: 26, group:'cell', isProperty: true },
     //{ name: 'fontFamily', type: propertyType.String, default: '', group:'cell', isProperty: true },
     //{ name: 'fontFill', type: propertyType.Color, default: '#000000', group:'cell', isProperty: true },
     //{ name: 'altColor', type: propertyType.Color, default: '', group:'display', group:'cell', isProperty: true },
+
     //{ name: 'getResult', isFunc: true, info:'(pageNum)' },
     //{ name: 'nextResult', isFunc: true},
     //{ name: 'prevResult', isFunc: true},
