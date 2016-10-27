@@ -580,7 +580,7 @@ function generateJsFunc(etree) {
   let replaceSymbolStr = (str)=>{
       let temp = str;
       let chineseSymbol = [/＋/g,/－/g,/＊/g,/／/g,/（/g,/）/g,/？/g,/：/g,/‘/g,/’/g];
-      let englishSymbol = ["+","-","*","/","(",")","?",":","'"];
+      let englishSymbol = ["+","-","*","/","(",")","?",":","'","'"];
       for(let i=0; i<chineseSymbol.length; i++) {
           temp=temp.replace(chineseSymbol[i], englishSymbol[i]);
       }
