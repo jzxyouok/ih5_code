@@ -242,7 +242,7 @@ propertyMap['button'] = [
 ];
 propertyMap['slidetimer'] = [
     ...propertyMap['box'],
-    { addProvidesRecursive: widgetFlags.Timer},
+    { addProvidesRecursive: widgetFlags.Timer, addProvides: widgetFlags.Container},
     { name: 'fillColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
     { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
     { name: 'vertical', type: propertyType.Boolean,group:'tools', default: false, isProperty: true },
@@ -448,6 +448,7 @@ propertyMap['timer'] = [
     { name: 'autoPlay',showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false, isProperty: true},
     { name: 'loop',showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
     { name: 'play', showName:'播放', isFunc: true },
+    { name: 'replay', showName:'重新播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true },
     { name: 'seek', showName:'跳至', info: '(time)',
         property:[
@@ -457,7 +458,7 @@ propertyMap['timer'] = [
     { name: 'stop', showName:'停止', isEvent: true }
 ];
 propertyMap['world'] = [
-    ...propertyMap['widget'],
+    ...propertyMap['container'],
     { addRequires: widgetFlags.Root | widgetFlags.CanvasOnly},
     { name: 'autoGravity', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'gravityX', type: propertyType.Number, default: 0, isProperty: true },
@@ -752,7 +753,14 @@ propertyMap['table'] = [
     { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true, tbCome:"tbF" },
     { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, isProperty: true, tbCome:"tbS" },
     { name: 'fontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '', isProperty: true },
-    { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true }
+    { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
+
+    { name: 'getResult', showName:'获取表格数据', isFunc: true, info:'(pageNum)',
+        property:[
+            {'name':'pageNum', showName:'页数', 'value':null, 'type':propertyType.Integer},
+        ]},
+    { name: 'nextResult', showName:'获取下一页数据', isFunc: true},
+    { name: 'prevResult', showName:'获取上一页数据', isFunc: true},
 
     //{ name: 'dbid', type: propertyType.String, default: '', isProperty: true },
     //{ name: 'header', type: propertyType.String, default: '', isProperty: true },
@@ -768,10 +776,6 @@ propertyMap['table'] = [
     //{ name: 'fontFamily', type: propertyType.String, default: '', group:'cell', isProperty: true },
     //{ name: 'fontFill', type: propertyType.Color, default: '#000000', group:'cell', isProperty: true },
     //{ name: 'altColor', type: propertyType.Color, default: '', group:'display', group:'cell', isProperty: true },
-
-    //{ name: 'getResult', isFunc: true, info:'(pageNum)' },
-    //{ name: 'nextResult', isFunc: true},
-    //{ name: 'prevResult', isFunc: true},
 ];
 
 for (var n in propertyMap) {
@@ -841,6 +845,24 @@ function checkNotInDomMode(selected, className) {
     return false;
 }
 
+function checkNotInCanvasMode(selected, className) {
+    let selectWidget = selected;
+    if(selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        selectWidget = selected.widget;
+    } else {
+        selectWidget = selected;
+    }
+    if(propertyFlags[className]===undefined){
+        return false;
+    }
+    var requires = propertyFlags[className].requires;
+    if ((requires & widgetFlags.CanvasOnly) != 0 && bridge.getRendererType(selectWidget.node) != 2)
+        return true;
+    return false;
+}
+
 function checkChildClass(selected, className) {
     // 对函数,变量,自定义函数等的处理
     if(className ==='dbItem'){
@@ -903,4 +925,4 @@ function checkChildClass(selected, className) {
     return true;
 }
 
-export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass, checkNotInDomMode, checkIsClassType};
+export { propertyType, propertyMap, checkChildClass, propertyFlags, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkIsClassType};
