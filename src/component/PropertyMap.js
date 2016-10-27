@@ -448,6 +448,7 @@ propertyMap['timer'] = [
     { name: 'autoPlay',showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false, isProperty: true},
     { name: 'loop',showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
     { name: 'play', showName:'播放', isFunc: true },
+    { name: 'replay', showName:'重新播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true },
     { name: 'seek', showName:'跳至', info: '(time)',
         property:[
