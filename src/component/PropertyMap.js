@@ -753,7 +753,14 @@ propertyMap['table'] = [
     { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true, tbCome:"tbF" },
     { name: 'fontSize',showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, isProperty: true, tbCome:"tbS" },
     { name: 'fontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '', isProperty: true },
-    { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true }
+    { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
+
+    { name: 'getResult', showName:'获取表格数据', isFunc: true, info:'(pageNum)',
+        property:[
+            {'name':'pageNum', showName:'页数', 'value':null, 'type':propertyType.Integer},
+        ]},
+    { name: 'nextResult', showName:'获取下一页数据', isFunc: true},
+    { name: 'prevResult', showName:'获取上一页数据', isFunc: true},
 
     //{ name: 'dbid', type: propertyType.String, default: '', isProperty: true },
     //{ name: 'header', type: propertyType.String, default: '', isProperty: true },
@@ -769,10 +776,6 @@ propertyMap['table'] = [
     //{ name: 'fontFamily', type: propertyType.String, default: '', group:'cell', isProperty: true },
     //{ name: 'fontFill', type: propertyType.Color, default: '#000000', group:'cell', isProperty: true },
     //{ name: 'altColor', type: propertyType.Color, default: '', group:'display', group:'cell', isProperty: true },
-
-    //{ name: 'getResult', isFunc: true, info:'(pageNum)' },
-    //{ name: 'nextResult', isFunc: true},
-    //{ name: 'prevResult', isFunc: true},
 ];
 
 for (var n in propertyMap) {
