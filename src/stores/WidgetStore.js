@@ -2099,7 +2099,7 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     changeFunction: function (props) {
-        if(props) {
+        if(props&&this.currentFunction) {
             if(props['name']) {
                 this.currentFunction['name'] = props['name'];
             } else if(props['value']) {
@@ -2210,7 +2210,7 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     changeVariable: function (props) {
-        if(props) {
+        if(props&&this.currentVariable) {
             if(props['name']) {
                 this.currentVariable['name'] = props['name'];
             } else if(props['value']) {
@@ -2313,13 +2313,11 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     changeDBItem: function (props) {
-        if(this.currentDBItem){
-            if(props) {
-                if(props['name']) {
-                    this.currentDBItem['name'] = props['name'];
-                } else if (props['fields']){
-                    this.currentDBItem['fields'] = props['fields'];
-                }
+        if(props&&this.currentDBItem){
+            if(props['name']) {
+                this.currentDBItem['name'] = props['name'];
+            } else if (props['fields']){
+                this.currentDBItem['fields'] = props['fields'];
             }
             historyName = "更改数据库变量" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);
@@ -2521,7 +2519,9 @@ export default Reflux.createStore({
             rootDiv.addEventListener('dragover', dragover, false);
             rootDiv.addEventListener('drop', drop.bind(this), false);
             rootDiv.addEventListener('mousedown', function(e) {
-                this.selectWidget(this.currentWidget);
+                if(!(this.currentFunction|| this.currentVariable || this.currentDBItem)){
+                    this.selectWidget(this.currentWidget);
+                }
             }.bind(this), false);
         }
 

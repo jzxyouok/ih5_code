@@ -431,7 +431,7 @@ class ObjectTree extends React.Component {
         }
 
         if(this.state.multiSelectMode) {
-            if(selectableClass.indexOf(data.className)>=0&&!data.props.locked) {
+            if(selectableClass.indexOf(data.className)>=0&&!data.props.locked&&this.state.selectWidget) {
                 this.setState({
                     editMode: false
                 },()=>{
@@ -543,7 +543,7 @@ class ObjectTree extends React.Component {
     }
 
     startEditObjName(id, data, event) {
-        if(this.state.selectTargetMode){
+        if(this.state.selectTargetMode||this.state.multiSelectMode){
             return;
         }
 
@@ -583,7 +583,7 @@ class ObjectTree extends React.Component {
     }
 
     itemAddKeyListener(type, event){
-        this.itemRemoveKeyListener(type, event);
+        // this.itemRemoveKeyListener(type, event);
         if (type == 'root'){
             event.currentTarget.addEventListener('keydown', this.rootKeyAction);
             event.currentTarget.addEventListener('keyup', this.resetCmdKey);
