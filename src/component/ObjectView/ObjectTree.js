@@ -546,9 +546,6 @@ class ObjectTree extends React.Component {
         if(this.state.selectTargetMode){
             return;
         }
-        if(this.state.multiSelectMode) {
-            return;
-        }
 
         event.stopPropagation();
         var editItem = document.getElementById('item-name-input-'+ id);
@@ -609,11 +606,6 @@ class ObjectTree extends React.Component {
             event.currentTarget.removeEventListener('keydown', this.itemKeyAction);
             event.currentTarget.removeEventListener('keyup', this.resetCmdKey);
         }
-        event.currentTarget.removeEventListener('mousedown', (e)=>{
-            e.stopPropagation();
-        });
-        event.currentTarget.removeEventListener('keydown', this.onMultiSelectKeyDown);
-        event.currentTarget.removeEventListener('keyup', this.onMultiSelectKeyUp);
     }
 
     resetCmdKey() {
@@ -710,7 +702,7 @@ class ObjectTree extends React.Component {
         }
 
         if(this.state.selectTargetMode||
-            this.state.editMode) {
+            this.state.editMode||this.state.nids.length>0) {
             return;
         }
 
@@ -755,7 +747,7 @@ class ObjectTree extends React.Component {
     itemKeyAction(event){
         event.preventDefault();
         event.stopPropagation();
-        if(this.state.selectTargetMode) {
+        if(this.state.selectTargetMode||this.state.nids.length>0) {
             return;
         }
 
@@ -811,7 +803,8 @@ class ObjectTree extends React.Component {
 
     itemDragStart(nid, data, e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode|| this.state.selectTargetMode){
+        if(this.state.editMode|| this.state.selectTargetMode
+            ||this.state.selectTargetMode||this.state.nids.length>0){
             e.preventDefault();
             return;
         }
@@ -839,7 +832,8 @@ class ObjectTree extends React.Component {
 
     itemDragEnd(e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode|| this.state.selectTargetMode){
+        if(this.state.editMode|| this.state.selectTargetMode
+            ||this.state.selectTargetMode||this.state.nids.length>0){
             e.preventDefault();
             return;
         }
@@ -969,7 +963,8 @@ class ObjectTree extends React.Component {
 
     itemDragOver(e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode||this.state.selectTargetMode){
+        if(this.state.editMode||this.state.selectTargetMode
+            ||this.state.selectTargetMode||this.state.nids.length>0){
             e.preventDefault();
             return;
         }
