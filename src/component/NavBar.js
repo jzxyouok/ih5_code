@@ -1049,7 +1049,7 @@ class NavBar extends React.Component {
         this.setState({
             dropDownState : 0
         },()=>{
-            //do change align here;
+            WidgetActions['alignWidgets'](type, 'align');
         })
     }
 
@@ -1060,7 +1060,7 @@ class NavBar extends React.Component {
         this.setState({
             dropDownState : 0
         },()=>{
-            //do change distribute here;
+            WidgetActions['alignWidgets'](type, 'distribute');
         })
     }
 
