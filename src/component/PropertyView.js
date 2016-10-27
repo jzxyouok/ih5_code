@@ -90,7 +90,6 @@ class PropertyView extends React.Component {
                 // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                 return  <div>
                     <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
-
                     <Slider    step={1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
                 </div>;
 
@@ -290,7 +289,7 @@ class PropertyView extends React.Component {
                         let nodeObj=this.selectNode.node;
                         let oldOrigin =this.getOldOrigin(propsObj.originPosKey,prop.options);
                         let w =nodeObj.width*(x-parseFloat(oldOrigin[0]));
-
+                        let h =nodeObj.height*(parseFloat(oldOrigin[1])-y);
 
                         let D = Math.sqrt(h*h+w*w);
 
@@ -465,7 +464,6 @@ class PropertyView extends React.Component {
            }
            else {
                obj[prop.name] = v;
-
                this.onStatusChange({updateProperties: obj});
                WidgetActions['updateProperties'](obj, false, true);
            }
@@ -569,7 +567,7 @@ class PropertyView extends React.Component {
     getFields() {
 
         let node = this.selectNode;
-         console.log(node);
+        console.log(node);
 
         if (!node)  return null;
 
@@ -687,12 +685,15 @@ class PropertyView extends React.Component {
                          defaultValue=1;
                      }
                 }
+            }else if(item.type === propertyType.Percentage ){
+                defaultValue = item.default*100;
+                if(node.props[item.name] ) {
+                    defaultValue =node.props[item.name]*100;
+                }
             }
             else  if (node.props[item.name] === undefined){
                 if(item.type === propertyType.Boolean ){
                     defaultValue = item.default;
-                }else if(item.type === propertyType.Percentage && item.name=='alpha'){
-                    defaultValue = item.default*100;
                 }else if(className == "table" && item.name == "headerFontSize"){
                     defaultValue = 26;
                     this.selectNode.props.headerFontSize = 26;
