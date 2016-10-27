@@ -1301,6 +1301,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cleanHistory'], this.cleanHistory);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
+        this.listenTo(WidgetActions['alignWidgets'], this.alignWidgets);
+
         this.eventTreeList = [];
         this.historyRoad;
     },
@@ -1345,8 +1347,13 @@ export default Reflux.createStore({
                 this.selectWidgets = this.selectWidgets || [];
                 this.selectWidgetNodes = this.selectWidgetNodes || [];
 
-                if(this.selectWidgets.length===1) {
-                    if(this.selectWidgets[0] && selectableClass.indexOf(this.selectWidgets[0].className)>=0) {
+                if(this.selectWidgets.length>0) {
+                    if((this.selectWidgets[0] &&
+                        selectableClass.indexOf(this.selectWidgets[0].className)>=0 &&
+                        !this.selectWidgets[0].props['locked']) &&
+                        (widget &&
+                        selectableClass.indexOf(widget.className) >= 0 &&
+                        !widget.props['locked'])) {
                         if (this.selectWidgets.indexOf(widget) < 0) {
                             this.selectWidgets.push(widget);
                             this.selectWidgetNodes.push(widget.node);
@@ -1581,6 +1588,9 @@ export default Reflux.createStore({
             historyName = "加锁" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);
         }
+    },
+    alignWidgets: function(typeId, type) {
+
     },
     getWidgetByKey: function (key) {
         return keyMap[key];
