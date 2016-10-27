@@ -253,10 +253,9 @@ function loadTree(parent, node, idList) {
 
 
 
-  current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
+    current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
 
-    current.node.originX=0.5;
-    console.log('current',current);
+
 
   if (parent) {
     parent.children.unshift(current);
@@ -1417,7 +1416,7 @@ export default Reflux.createStore({
           if (link)
             p['link'] = this.currentWidget.rootWidget.imageList.push(link) - 1;
         }
-          var o = loadTree(this.currentWidget, {'cls':className, 'props': p,'node': {'originX':0.5, 'originY':0.5}});
+          var o = loadTree(this.currentWidget, {'cls':className, 'props': p});
           if (className == 'bitmaptext')
               currentLoading = o;
         var cmd = {redrawTree: true};
@@ -1685,6 +1684,7 @@ export default Reflux.createStore({
                 obj.alpha = 1;
             }
         }
+        //console.log(obj);
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;
