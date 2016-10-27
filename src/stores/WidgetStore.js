@@ -1321,6 +1321,8 @@ export default Reflux.createStore({
             if (this.selectWidgets.indexOf(widget) == 0) {
                 this.currentWidget = widget;
                 this.trigger({selectWidget: widget});
+            } else {
+                this.trigger({selectWidgets: this.selectWidgets})
             }
 
             //判断是否是可选择的，是否加锁
@@ -2489,11 +2491,12 @@ export default Reflux.createStore({
         // bridge.createSelector(null);
 
         if (!rootDiv) {
+            this.mutliSelectMode = false;
             rootDiv = document.getElementById('canvas-dom');
             rootDiv.addEventListener('dragenter', dragenter, false);
             rootDiv.addEventListener('dragover', dragover, false);
             rootDiv.addEventListener('drop', drop.bind(this), false);
-            rootDiv.addEventListener('mousedown', function() {
+            rootDiv.addEventListener('mousedown', function(e) {
                 this.selectWidget(this.currentWidget);
             }.bind(this), false);
         }
