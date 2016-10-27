@@ -418,7 +418,7 @@ class PropertyView extends React.Component {
                WidgetActions['updateProperties'](obj, false, true);
                this.refs.TbCome.updateColumn(v,header);
            }
-           if(this.selectNode.className == "table" && prop.name == "head"){
+           else if(this.selectNode.className == "table" && prop.name == "head"){
                obj['headerColor'] = v;
                this.selectNode.props.headerColor = v;
                this.selectNode.node.headerColor = v;
