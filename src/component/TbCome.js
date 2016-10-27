@@ -31,6 +31,7 @@ class  TbCome extends React.Component {
         };
 
         this.selectWidget = null;
+        this.lastSelectKey = null;
 
         this.show = this.show.bind(this);
         this.hide = this.hide.bind(this);
@@ -61,12 +62,14 @@ class  TbCome extends React.Component {
     onStatusChange(widget) {
         //console.log(widget);
         if(widget.selectWidget !== undefined){
-            if(widget.selectWidget.className == "table"){
+            if(widget.selectWidget.className == "table" && this.lastSelectKey !== widget.selectWidget.key){
                 this.selectWidget = widget.selectWidget;
+                this.lastSelectKey = widget.selectWidget.key;
                 widget.selectWidget.node['getResult'](0);
             }
-            else {
+            else if(widget.selectWidget.className != "table"){
                 this.hide();
+                this.lastSelectKey = null;
             }
         }
         if(widget.updateProperties){
