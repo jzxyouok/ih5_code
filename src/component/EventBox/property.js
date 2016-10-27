@@ -1,17 +1,18 @@
 //事件的属性
 import React from 'react';
+import ReactDOM from 'react-dom';
 import $class from 'classnames'
 import WidgetStore, {varType, funcType, nodeType, nodeAction, classList} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-import { Menu, Dropdown } from 'antd';
-import { Input, InputNumber, Select} from 'antd';
-import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
+import { SwitchMore,DropDownInput ,ConInputNumber} from  '../PropertyView/PropertyViewComponet';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 
-const MenuItem = Menu.Item;
 const Option = Select.Option;
+const Panel = Collapse.Panel;
+const MenuItem = Menu.Item;
 
 const optionType = {
     widget: 1, //是树节点（有key）
@@ -60,6 +61,8 @@ class Property extends React.Component {
 
         this.onFormulaInputFocus = this.onFormulaInputFocus.bind(this);
         this.onFormulaInputBlur = this.onFormulaInputBlur.bind(this);
+
+        this.getSetPropsObj=this.getSetPropsObj.bind(this);
 
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
@@ -186,11 +189,31 @@ class Property extends React.Component {
                 }
             });
         }
+
+        actionList.unshift(this.getSetPropsObj());
         this.setState({
             actionList: actionList
         })
     }
-
+    getSetPropsObj() {
+        let obj = {
+            name: 'setProps',
+            showName: '设置属性',
+            type: funcType.default
+        }
+        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
+        let className = widget.className;
+        let propertyList=[];
+        propertyMap[className].map((v, i)=> {
+            if (v.isProperty && v.name != 'id') {
+                let o = v;
+                o.value =o.value ?o.value : null;
+                propertyList.push(o);
+            }
+        });
+        obj.property=propertyList;
+        return obj;
+    }
     onSTButtonClick(){
         if(this.state.activeKey !== this.state.wKey) {
             return false;
@@ -400,7 +423,8 @@ class Property extends React.Component {
     getProps(item, index) {
         var defaultProp = {
             size: 'small',
-            onChange:  this.onChangePropDom.bind(this, item, index)
+            onChange:  this.onChangePropDom.bind(this, item, index),
+            default:item.default
         };
         switch (item.type) {
             case propertyType.String:
@@ -423,7 +447,18 @@ class Property extends React.Component {
                 defaultProp.objectList=this.state.objectList;
                 break;
             case propertyType.Function:
+                break;
             case propertyType.Select:
+                if(item.name=='scaleType'){
+                    defaultProp.options=[];
+                    for(var i in  item.options){
+                        defaultProp.options.push(i);
+                    }
+                }
+                break;
+            case propertyType.Color2:
+                defaultProp.placeholder=null;
+                break;
             default:
                 break;
         }
@@ -550,6 +585,19 @@ class Property extends React.Component {
                     return <InputNumber step={0.1} {...defaultProp}/>;
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
+                case propertyType.Boolean:
+                    return <Switch   {...defaultProp} />;
+                case propertyType.Color2:
+                    return  <Input ref={(inputDom) => {
+                        if (inputDom) {
+                            var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                            if (!dom.jscolor) {
+                                dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                                dom.jscolor.onFineChange = defaultProp.onChange;
+                            }
+                        }
+                    }} placeholder={defaultProp.placeholder}  /> ;
+
                 case propertyType.FormulaInput:
                     return <FormulaInput containerId={propertyId}
                                          disabled={!this.state.currentEnable}
@@ -571,12 +619,14 @@ class Property extends React.Component {
                             list = this.arrList;
                         }
                     } else if(item.name === 'class'){
-                         {
                             titleTemp = '类别';
                             oType = optionType.class;
                             list = this.classNameList;
-                        }
-                    } else {
+                    } else if(item.name=='scaleType'){
+                         titleTemp =defaultProp.default ;
+                         oType = optionType.class;
+                         list = defaultProp.options;
+                    }else {
                         return <div>未定义类型</div>;
                     }
                     return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
@@ -627,6 +677,8 @@ class Property extends React.Component {
                 }
             </Menu>
         );
+
+
 
         return (
             <div className={$class("Property f--h", {'Property-not-enable':!this.state.currentEnable})} id={propertyId}>
