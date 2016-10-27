@@ -61,10 +61,12 @@ class PropertyView extends React.Component {
      //获取封装的form组件
      getInputBox(type, defaultProp) {
          let style = {};
+         let defaultData =  defaultProp;
         switch (type) {
             case propertyType.Integer:
                 if(defaultProp.tbCome == "tbS"){
-                    return <ConInputNumber placeholder={defaultProp.placeholder} />;
+                    delete defaultData.tbCome;
+                    return <ConInputNumber  {...defaultData}/>;
                 }
                 else {
                     return <ConInputNumber {...defaultProp} />;
@@ -77,7 +79,9 @@ class PropertyView extends React.Component {
                     style['width'] = "58px";
                     style['height'] = "22px";
                     style['lineHeight'] = "22px";
-                    return <ConInputNumber step={0.1}  placeholder={defaultProp.placeholder} style={style} />;
+                    //console.log(defaultProp);
+                    delete defaultData.tbCome;
+                    return <ConInputNumber  {...defaultData} style={style} />;
                 }
                 else {
                     return <ConInputNumber  {...defaultProp}  />;
@@ -123,7 +127,8 @@ class PropertyView extends React.Component {
                 return <SwitchMore   {...defaultProp} />;
             case propertyType.Select:
                 if(defaultProp.tbCome == "tbF"){
-                    style['width'] = "100%";
+                    style['width'] = "125px";
+                    style['maxWidth'] = "125px";
                 }
                 return <div className={cls({"flex-1": defaultProp.tbCome == "tbF"})}>
                             <Select {...defaultProp} style={style}>
@@ -219,7 +224,7 @@ class PropertyView extends React.Component {
                     v = parseInt(value);
                     break;
                 case propertyType.Number:
-                    if(prop.name=='fontSize'){
+                    if(prop.name=='fontSize' || prop.name=='headerFontSize'){
                         const obj = {};
                         obj[prop.name] = parseInt(value);
                         obj.scaleY = obj.scaleX=1;
@@ -320,6 +325,9 @@ class PropertyView extends React.Component {
                       v = parseInt(value);
                   }else if(prop.name == 'fontFamily'){
                       this.selectNode.props.fontFamilyKey=this.getFontDefault(value);
+                      v = value;
+                  }else if(prop.name == 'headerFontFamily'){
+                      this.selectNode.props.headerFontFamily=this.getFontDefault(value);
                       v = value;
                   }else if(prop.name == 'type'){
                       this.selectNode.props.type=this.getScaleTypeDefault(value,prop.options);
@@ -634,6 +642,8 @@ class PropertyView extends React.Component {
                     defaultValue = node.props[item.name+'_val'];
                 }else if( item.name=='type'  && node.props.type){
                     defaultValue = node.props.type;
+                }else if( item.name=='headerFontFamily'  && node.props.headerFontFamily){
+                   defaultValue = node.props.headerFontFamily;
                 }
             } else if(item.type === propertyType.Boolean2 ){
                 if(node.props[item.name]===undefined){
@@ -653,10 +663,23 @@ class PropertyView extends React.Component {
                     defaultValue = item.default;
                 }else if(item.type === propertyType.Percentage && item.name=='alpha'){
                     defaultValue = item.default*100;
+                }else if(className == "table" && item.name == "headerFontSize"){
+                    defaultValue = 26;
+                    this.selectNode.props.headerFontSize = 26;
+                    this.selectNode.node.headerFontSize = 26;
+                    let obj = {};
+                    obj['headerFontSize'] = 26;
+                    WidgetActions['updateProperties'](obj, false, true);
+                }else if(className == "table" && item.name == "fontSize"){
+                    defaultValue = 26;
+                    this.selectNode.props.fontSize = 26;
+                    this.selectNode.node.fontSize = 26;
+                    let obj = {};
+                    obj['fontSize'] = 26;
+                    WidgetActions['updateProperties'](obj, false, true);
                 }else{
                     defaultValue='';
                 }
-
             } else {
                 if(className == "table"){
                     if(item.name == "rowNum"){
@@ -712,7 +735,7 @@ class PropertyView extends React.Component {
                 if(item.name=='originY' ||item.name=='originPos') {
                     selectClassName='originIcon';
                 }
-                else if(item.name=='fontFamily'){
+                else if(item.name=='fontFamily' || item.name=='headerFontFamily'){
                     for(let i in this.fontList){
                          defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
                     }
@@ -795,9 +818,10 @@ class PropertyView extends React.Component {
                 }
             }
             let tdColorSwitch = false;
-            if(item.name === "tdFontFill" || item.name === "tdBColor" || item.name === "tdB2Color"){
+            if( className == "table" && (item.name === "fontFill" || item.name === "tdBColor" || item.name === "altColor")){
                 tdColorSwitch = true;
             }
+
             groups[groupName].push(
                 <div key={item.name}
                     className={cls('f--hlc','ant-row','ant-form-item',
