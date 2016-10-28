@@ -609,6 +609,7 @@ class Property extends React.Component {
                 case propertyType.FormulaInput:
                     return <FormulaInput containerId={propertyId}
                                          disabled={!this.state.currentEnable}
+                                         objectList={this.state.objectList}
                                          onFocus={this.onFormulaInputFocus}
                                          onBlur={this.onFormulaInputBlur}
                                          {...defaultProp}/>;
@@ -711,6 +712,7 @@ class Property extends React.Component {
                                         <div className="title p--title f--hlc">
                                             <SelectTargetButton className={'p--icon'}
                                                 disabled={!this.state.currentEnable}
+                                                targetList={this.state.objectList}
                                                 onClick={this.onSTButtonClick}
                                                 getResult={this.onSTResultGet} />
                                             { !w || !w.props || !w.props.name

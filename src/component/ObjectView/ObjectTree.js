@@ -45,8 +45,8 @@ class ObjectTree extends React.Component {
             , allTreeData : [],
             nodeType: nodeType.widget,
 
-            targetList: null, //目标选择
-            selectTargetMode: false, //目标选择
+            targetList: [], //目标选择列表
+            selectTargetMode: false, //目标选择模式
 
             multiSelectMode: false,
             nids: []   //多选的
@@ -219,10 +219,6 @@ class ObjectTree extends React.Component {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
-        } else if(widget.allWidgets) {
-            this.setState({
-                targetList:widget.allWidgets
-            });
         } else if(widget.selectWidgets) {
             let nids = [];
             widget.selectWidgets.forEach((v)=>{
@@ -347,7 +343,8 @@ class ObjectTree extends React.Component {
     onSelectTargetModeChange(result) {
         if(result.stUpdate){
             this.setState({
-                selectTargetMode: result.stUpdate.isActive
+                selectTargetMode: result.stUpdate.isActive,
+                targetList: result.stUpdate.targetList
             })
         }
     }
