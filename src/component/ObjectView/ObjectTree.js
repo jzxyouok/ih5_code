@@ -113,6 +113,7 @@ class ObjectTree extends React.Component {
         this.onLeaveMultiSelectMode = this.onLeaveMultiSelectMode.bind(this);
 
         this.addModuleBtn = this.addModuleBtn.bind(this);
+
     }
 
     componentDidMount() {
@@ -128,6 +129,8 @@ class ObjectTree extends React.Component {
         window.addEventListener('blur', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').addEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').addEventListener('mousedown', this.onLeaveMultiSelectMode);
+
+
     }
 
     componentWillUnmount() {
@@ -140,6 +143,7 @@ class ObjectTree extends React.Component {
         window.removeEventListener('keyup', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
+
     }
 
     onStatusChange(widget) {

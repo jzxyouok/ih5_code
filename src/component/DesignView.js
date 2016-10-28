@@ -34,6 +34,7 @@ class DesignView extends React.Component {
         this.mouseDown_left = this.mouseDown_left.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
+
     }
 
     componentDidMount() {
@@ -47,6 +48,7 @@ class DesignView extends React.Component {
         document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
         document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
 
+
     }
 
     componentWillUnmount() {
@@ -57,13 +59,15 @@ class DesignView extends React.Component {
         document.getElementById('v_ruler').removeEventListener('mousedown',this.mouseDown_left);
         document.getElementById('DesignView-Container').removeEventListener('mousemove',this.mouseMove);
         document.getElementById('DesignView-Container').removeEventListener('mouseup',this.mouseUp);
+
     }
 
 
     onStatusChange(widget) {
-
         console.log(widget);
+
         if(widget.selectWidget){
+
             this.selectNode =widget.selectWidget;
             if(widget.selectWidget.className == "root" && widget.selectWidget.props.name == "stage") {
                 this.rootWidget = widget.selectWidget;
@@ -82,6 +86,7 @@ class DesignView extends React.Component {
             let iHeightSum=Math.floor(widget.updateProperties .height/100);
             this.setRuler(iWidthSum,iHeightSum);
         }
+
     }
 
     stageZoomChange(){
@@ -276,7 +281,7 @@ class DesignView extends React.Component {
     }
 
     mouseDown_top(event){
-        event.stopPropagation();
+            event.stopPropagation();
             this.curODiv =  document.createElement('div');
             this.curODiv.appendChild(document.createElement('div'));
             this.curODiv.setAttribute('class','rulerWLine');
@@ -286,7 +291,7 @@ class DesignView extends React.Component {
     }
 
     mouseDown_left(event){
-        event.stopPropagation();
+       event.stopPropagation();
         this.curODiv =  document.createElement('div');
         this.curODiv.appendChild(document.createElement('div'));
         this.curODiv.setAttribute('class','rulerHLine');
@@ -353,10 +358,11 @@ class DesignView extends React.Component {
         this.curODiv=null;
         this.whichDrag=null;
         //全部显示 ,如果处于非显示状态,则触发显示
-        if( this.selectNode.props.isShow != undefined && !this.selectNode.props.isShow){
+        if( this.selectNode&& this.selectNode.props.isShow != undefined && !this.selectNode.props.isShow){
             WidgetActions['setRulerLineBtn'](true);
         }
     }
+
 
     render() {
         //缩放后设置参考线位置

@@ -29,6 +29,8 @@ import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
 import CreateModuleStore from '../stores/CreateModuleStore';
 
+
+
 const orderType = [
     {name: '左对齐', className: 'left-icon', type:1},
     {name: '左右居中', className: 'zhong-icon', type:2},
@@ -148,7 +150,9 @@ class NavBar extends React.Component {
         this.historyLayerHide = this.historyLayerHide.bind(this);
         this.historyShow = this.historyShow.bind(this);
         this.onEvent = this.onEvent.bind(this);
+
         this.onKeyHistory = this.onKeyHistory.bind(this);
+
 
         this.onClickAlignWidgets = this.onClickAlignWidgets.bind(this);
         this.onClickDistributeWidgets = this.onClickDistributeWidgets.bind(this);
@@ -207,6 +211,8 @@ class NavBar extends React.Component {
         clearTimeout(this.closeTimeFuc());
         localStorage.setItem("workID", null);
         document.body.removeEventListener('keyup', this.onKeyHistory);
+
+
     }
 
     onStatusChange(widget) {
@@ -1052,15 +1058,21 @@ class NavBar extends React.Component {
 
         //Ctrl+Z
         if (didPressCtrl && event.keyCode == 90) {
-            //console.log('Ctrl+Z');
+             console.log('Ctrl+Z');
             this.revokedHistory();
         }
         //Ctrl+y
         if (didPressCtrl && event.keyCode == 89) {
-            //console.log('Ctrl+y');
+            console.log('Ctrl+y');
             this.replyHistory();
         }
+        //Ctrl+s
+        if (didPressCtrl && event.keyCode == 83) {
+            console.log('ctrl+s');
+            event.preventDefault();
+        }
     }
+
     onClickAlignWidgets(type, e) {
         if(this.state.selectWidgets.length<2) {
             return;
