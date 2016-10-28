@@ -1094,6 +1094,7 @@ class Event extends React.Component {
                                                     <SelectTargetButton
                                                                         className={'p--icon'}
                                                                         disabled={!v.enable || !v1.enable}
+                                                                        targetList={this.state.allWidgetsList}
                                                                         onClick={this.onSTButtonClick.bind(this,i1,i)}
                                                                         getResult={this.onSTResultGet.bind(this,'judgeObjFlag')}
                                                     />
@@ -1161,6 +1162,7 @@ class Event extends React.Component {
                                                     <SelectTargetButton
                                                         className={'p--icon'}
                                                         disabled={!v.enable || !v1.enable}
+                                                        targetList={this.state.allWidgetsList}
                                                         onClick={this.onSTButtonClick.bind(this,i1,i)}
                                                         getResult={this.onSTResultGet.bind(this,'compareObjFlag')}
                                                     />

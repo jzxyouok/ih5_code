@@ -44,7 +44,7 @@ class SelectTargetButton extends React.Component {
 
     onSelectTargetModeBlur() {
         if(this.state.isActive) {
-            SelectTargetAction['selectBtnClick'](null, false);
+            SelectTargetAction['selectBtnClick'](null, false, []);
         }
     }
 
@@ -54,7 +54,7 @@ class SelectTargetButton extends React.Component {
 
     onWidgetStatusChange(widget){
         if(widget.didSelectTarget&&widget.didSelectTarget.target&&this.state.isActive) {
-            SelectTargetAction['selectBtnClick'](null, false);
+            SelectTargetAction['selectBtnClick'](null, false, []);
             this.getResult(widget.didSelectTarget.target);
         }
     }
@@ -80,7 +80,7 @@ class SelectTargetButton extends React.Component {
     onBtnClick(e) {
         if((this.onClick!=undefined&&this.onClick()!==false) || this.onClick===undefined) {
             e.stopPropagation();
-            SelectTargetAction['selectBtnClick'](this.state.stId, !this.state.isActive);
+            SelectTargetAction['selectBtnClick'](this.state.stId, !this.state.isActive, this.props.targetList);
         }
     }
 

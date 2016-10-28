@@ -7,11 +7,13 @@ export default Reflux.createStore({
         this.activeStId = null;
     },
 
-    selectBtnClick: function(btnId, willActive) {
+    selectBtnClick: function(btnId, willActive, targetList) {
         this.activeStId = btnId;
+        this.targetList = targetList;
         if(!willActive) {
             this.activeStId = null;
+            this.targetList = [];
         }
-        this.trigger({stUpdate: {stId: this.activeStId, isActive: willActive}});
+        this.trigger({stUpdate: {stId: this.activeStId, isActive: willActive, targetList:this.targetList}});
     }
 });
