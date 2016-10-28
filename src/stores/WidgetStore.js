@@ -1975,7 +1975,7 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-       
+       //console.log(obj);
         if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
@@ -2760,7 +2760,8 @@ export default Reflux.createStore({
       this.trigger({syncTrack: true});
     },
     deletePoint: function() {
-      this.trigger({deletePoint: true});
+        //debugger;
+        this.trigger({deletePoint: true});
         this.updateHistoryRecord();
     },
     initTree: function(data) {

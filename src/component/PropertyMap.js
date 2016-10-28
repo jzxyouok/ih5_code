@@ -737,7 +737,7 @@ propertyMap['table'] = [
     },
 
     { name: 'showHeader',showName:'表格头部', type: propertyType.Boolean, default: false, group:'tableH', isProperty: true },
-    {'name':'head', showName:'头部', default : "", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:0 },
+    {'name':'head', showName:'头部', default : "", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:"自动" },
     { name: 'headerFontFamily',showName:'头部字体', type: propertyType.Select,group:'tableH', default: '选择字体', isProperty: true, tbCome:"tbF" },
     { name: 'headerFontSize',showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
     { name: 'headerFontFill',showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
@@ -746,7 +746,7 @@ propertyMap['table'] = [
     { name: 'fillColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '', isProperty: true },
     { name: 'altColor',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '', isProperty: true },
 
-    { name: 'tdLayout',showName:'网格布局', type: propertyType.TdLayout,group:'tableW', default: [], isProperty: true },
+    //{ name: 'tdLayout',showName:'网格布局', type: propertyType.TdLayout,group:'tableW', default: [], isProperty: true },
     { name: 'lineColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', isProperty: true , tbCome:"tbF"},
     { name: 'lineWidth',showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', isProperty: true , tbCome:"tbS"},
 
