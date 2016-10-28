@@ -451,7 +451,8 @@ class ObjectTree extends React.Component {
         }
 
         if(this.state.multiSelectMode) {
-            if(selectableClass.indexOf(data.className)>=0&&!data.props.locked&&this.state.selectWidget) {
+            if((selectableClass.indexOf(data.className)>=0||isCustomizeWidget(data.className))&&
+                !data.props.locked&&this.state.selectWidget) {
                 this.setState({
                     editMode: false
                 },()=>{

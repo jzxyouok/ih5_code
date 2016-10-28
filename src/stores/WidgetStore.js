@@ -1349,10 +1349,10 @@ export default Reflux.createStore({
 
                 if(this.selectWidgets.length>0) {
                     if((this.selectWidgets[0] &&
-                        selectableClass.indexOf(this.selectWidgets[0].className)>=0 &&
+                        (selectableClass.indexOf(this.selectWidgets[0].className)>=0 || isCustomizeWidget(this.selectWidgets[0].className)) &&
                         !this.selectWidgets[0].props['locked']) &&
                         (widget &&
-                        selectableClass.indexOf(widget.className) >= 0 &&
+                        (selectableClass.indexOf(widget.className) >= 0 || isCustomizeWidget(widget.className)) &&
                         !widget.props['locked'])) {
                         if (this.selectWidgets.indexOf(widget) < 0) {
                             this.selectWidgets.push(widget);
@@ -1379,7 +1379,9 @@ export default Reflux.createStore({
             }
 
             //判断是否是可选择的，是否加锁
-            if (widget && selectableClass.indexOf(widget.className) >= 0 && !widget.props['locked']) {
+            if (widget &&
+                (selectableClass.indexOf(widget.className) >= 0 || isCustomizeWidget(widget.className)) &&
+                !widget.props['locked']) {
                 bridge.selectWidget(this.selectWidgetNodes, function(w, obj) {
                     var currentIndex;
                     this.selectWidgetNodes.forEach((n, index) => {
