@@ -31,6 +31,16 @@ $toBottom:14px;
     .form_tools{
 
 	}
+    .form_tableH{
+        transition: 600ms;
+        height: 45px;
+        overflow: hidden;
+
+        &.active {
+            height: 155px;
+        }
+    }
+
 	#PropertyViewHeader {
 		@include title();
 		font-size: 12px;
