@@ -610,7 +610,7 @@ function generateJsFunc(etree) {
           if(prop.value){
               if(prop.value.type === 1){
                   if(cmd.action.type == funcType.default) {
-                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + JSON.stringify(prop.value.value));
+                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + JSON.stringify(prop.value.value));
                   } else {
                       lines.push(JSON.stringify(prop.value.value));
                   }
@@ -621,7 +621,7 @@ function generateJsFunc(etree) {
                           if(i===0&&fV.prePattern){
                               subLine += replaceSymbolStr(fV.prePattern);
                           }
-                          subLine += getIdsName(fV.objId[0], fV.objId[1], fV.property.name);
+                          subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
                           if(fV.pattern) {
                               subLine += replaceSymbolStr(fV.pattern);
                           }
@@ -629,7 +629,7 @@ function generateJsFunc(etree) {
                   });
                   if(subLine!=='') {
                       if(cmd.action.type == funcType.default) {
-                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + subLine);
+                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + subLine);
                       } else {
                           lines.push(subLine);
                       }
@@ -677,24 +677,24 @@ function generateJsFunc(etree) {
           if (cmd.action.name === 'changeValue') {
               lines = formulaGenLine(cmd, lines);
           } else if (cmd.action.name === 'add1') {
-              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '++');
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
-              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '--');
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '--');
           } else if (cmd.action.name === 'addN') {
-              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '+=' + JSON.stringify(cmd.action.property[0]['value']));
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '+=' + JSON.stringify(cmd.action.property[0]['value']));
           } else if (cmd.action.name === 'minusN') {
-              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '-=' + JSON.stringify(cmd.action.property[0]['value']));
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '-=' + JSON.stringify(cmd.action.property[0]['value']));
           } else if (cmd.action.name === 'getInt') {
-              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + 'Math.round(' + getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + ')');
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + 'Math.round(' + getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + ')');
           } else if (cmd.action.name === 'randomValue') {
               let max = JSON.stringify(cmd.action.property[1]['value']);
               let min = JSON.stringify(cmd.action.property[0]['value']);
-              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[1], 'value') + '=' + 'Math.round(Math.random()*('
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + 'Math.round(Math.random()*('
                   + max + '-'
                   + min + '+1)+' + min + ')');
           } else {
               //数据库
-              var line = getIdsName(cmd.sObjId[0], cmd.sObjId[1], cmd.action.name) + '(';
+              var line = getIdsName(cmd.sObjId[0], cmd.sObjId[2], cmd.action.name) + '(';
               if (cmd.action.property) {
                   line += cmd.action.property.map(function(p) {
                       let va = null;
@@ -1591,30 +1591,36 @@ export default Reflux.createStore({
     },
 
     getPointsOfWidget: function(widget) {
+        //每个对象需要获取相对于舞台的绝对位置（6个点）
+        //left，top，right，bottom，centreX, centreY
         let props = widget.node;
         let points = {};
         points.left = props.positionX-props.width*props.originX;
-        points.right = props.positionX+props.width*props.originX;
+        points.right = props.positionX+props.width*(1-props.originX);
+        points.centreX = props.positionX-props.width*props.originX+props.width/2;
+        if(props.scaleX<0){
+            points.left = props.positionX-props.width*(1-props.originX);
+            points.right = props.positionX+props.width*props.originX;
+            points.centreX = props.positionX+props.width*props.originX-props.width/2;
+        }
         points.top = props.positionY-props.height*props.originY;
-        points.bottom = props.positionY+props.height*props.originY;
-        points.centreX = (points.left+points.right)/2;
-        points.centreY = (points.top+points.bottom)/2;
-        points.originX = props.originX;
-        points.originY = props.originY;
-        points.positionX = props.positionX;
-        points.positionY = props.positionY;
-        points.height = props.height;
+        points.bottom = props.positionY+props.height*(1-props.originY);
+        points.centreY = props.positionY-props.height*props.originY+props.height/2;
+        if(props.scaleY<0){
+            points.top = props.positionY-props.height*(1-props.originY);
+            points.bottom = props.positionY+props.height*props.originY;
+            points.centreY = props.positionY+props.height*props.originY-props.height/2;
+        }
         points.width = props.width;
+        points.height = props.height;
       return points;
     },
     alignWidgets: function(typeId, type) {
-        //每个对象需要获取相对于舞台的绝对位置（5个点）
-        //left，top，right，bottom，middle
         let pointsList = [];
         this.selectWidgets.forEach((v)=>{
             pointsList.push(this.getPointsOfWidget(v));
         });
-        if(pointsList.length<1) {
+        if(pointsList.length<2) {
             return;
         }
         switch (type) {
@@ -1622,6 +1628,7 @@ export default Reflux.createStore({
                 let standard = pointsList[0];
                 switch (typeId) {
                     case 1:
+                        //左
                         pointsList.forEach((v)=>{
                             if(v.left<standard.left) {
                                 standard = v;
@@ -1629,13 +1636,28 @@ export default Reflux.createStore({
                         });
                         this.selectWidgets.forEach((v)=>{
                             let px = standard.left+v.node.width*v.node.originX;
+                            if(v.node.scaleX<0) {
+                                px = standard.left+v.node.width*(1-v.node.originX);
+                            }
                             v.node['positionX'] = px;
                             v.props['positionX'] = px;
                         });
-                        //左
                         break;
                     case 2:
                         //左右居中
+                        let allCenterX = 0;
+                        pointsList.forEach((v)=>{
+                            allCenterX+=v.centreX;
+                        });
+                        let avgCenterX = allCenterX/pointsList.length;
+                        this.selectWidgets.forEach((v)=>{
+                            let px = avgCenterX+v.node.width*v.node.originX-v.node.width/2;
+                            if(v.node.scaleX<0) {
+                                px = avgCenterX-v.node.width*v.node.originX+v.node.width/2;
+                            }
+                            v.node['positionX'] = px;
+                            v.props['positionX'] = px;
+                        });
                         break;
                     case 3:
                         //右
@@ -1645,7 +1667,10 @@ export default Reflux.createStore({
                             }
                         });
                         this.selectWidgets.forEach((v)=>{
-                            let px = standard.right-v.node.width*v.node.originX;
+                            let px = standard.right-v.node.width*(1-v.node.originX);
+                            if(v.node.scaleX<0) {
+                                px = standard.right-v.node.width*v.node.originX;
+                            }
                             v.node['positionX'] = px;
                             v.props['positionX'] = px;
                         });
@@ -1658,13 +1683,29 @@ export default Reflux.createStore({
                             }
                         });
                         this.selectWidgets.forEach((v)=>{
-                            let px = standard.bottom-v.node.height*v.node.originY;
-                            v.node['positionY'] = px;
-                            v.props['positionY'] = px;
+                            let py = standard.bottom-v.node.height*(1-v.node.originY);
+                            if(v.node.scaleY<0) {
+                                py = standard.bottom-v.node.height*v.node.originY;
+                            }
+                            v.node['positionY'] = py;
+                            v.props['positionY'] = py;
                         });
                         break;
                     case 5:
                         //上下居中
+                        let allCenterY = 0;
+                        pointsList.forEach((v)=>{
+                            allCenterY+=v.centreY;
+                        });
+                        let avgCenterY = allCenterY/pointsList.length;
+                        this.selectWidgets.forEach((v)=>{
+                            let py = avgCenterY+v.node.height*v.node.originY-v.node.height/2;
+                            if(v.node.scaleX<0) {
+                                py = avgCenterY-v.node.height*v.node.originY+v.node.height/2;
+                            }
+                            v.node['positionY'] = py;
+                            v.props['positionY'] = py;
+                        });
                         break;
                     case 6:
                         //顶部对齐
@@ -1674,9 +1715,12 @@ export default Reflux.createStore({
                             }
                         });
                         this.selectWidgets.forEach((v)=>{
-                            let px = standard.top+v.node.height*v.node.originY;
-                            v.node['positionY'] = px;
-                            v.props['positionY'] = px;
+                            let py = standard.top+v.node.height*v.node.originY;
+                            if(v.node.scaleY<0) {
+                                py = standard.top+v.node.height*(1-v.node.originY);
+                            }
+                            v.node['positionY'] = py;
+                            v.props['positionY'] = py;
                         });
                         break;
                     default:
@@ -1684,12 +1728,110 @@ export default Reflux.createStore({
                 }
                 break;
             case 'distribute':
+                if(pointsList.length<3){
+                    return;
+                }
+                let orderedSelectWidget =[];
+                let orderedPointsList =[];
+                //复制一下准备排序
+                this.selectWidgets.forEach((v)=>{
+                    orderedSelectWidget.push(v);
+                });
+
+                let gap = 0;
+                let len = pointsList.length;
+                let step, key, pointsKey, j; //排序用到的变量
+
                 switch (typeId) {
                     case 1:
                         //水平
+                        let minLeft = pointsList[0].left;
+                        let maxRight = pointsList[0].right;
+                        let totalWidth = 0;
+                        pointsList.forEach((v)=>{
+                            if(v.left<minLeft) {
+                                minLeft = v.left;
+                            }
+                            if(v.right>maxRight) {
+                                maxRight = v.right;
+                            }
+                            totalWidth += v.width;
+                            orderedPointsList.push(v);
+                        });
+                        //先排序，按照left由小往大 (使用插排)
+                        for (let i = 1; i < len; i++) {
+                            step = j = i;
+                            pointsKey = orderedPointsList[j];
+                            key = orderedSelectWidget[j];
+
+                            while (--j > -1) {
+                                if (orderedPointsList[j].left > pointsKey.left) {
+                                    orderedPointsList[j + 1] = orderedPointsList[j];
+                                    orderedSelectWidget[j + 1] = orderedSelectWidget[j];
+                                } else {
+                                    break;
+                                }
+                            }
+                            orderedPointsList[j + 1] = pointsKey;
+                            orderedSelectWidget[j + 1] = key;
+                        };
+                        //间距
+                        gap = (maxRight-minLeft-totalWidth)/(len-1);
+                        //最左和最右边不需要再计算positionX
+                        for(let i=1; i<len-1; i++) {
+                            let newLeft = this.getPointsOfWidget(orderedSelectWidget[i-1]).right+gap;
+                            let px = newLeft+orderedSelectWidget[i].node.width*orderedSelectWidget[i].node.originX;
+                            if(orderedSelectWidget[i].node.scaleX<0) {
+                                px = newLeft+orderedSelectWidget[i].node.width*(1-orderedSelectWidget[i].node.originX);
+                            }
+                            orderedSelectWidget[i].node['positionX'] = px;
+                            orderedSelectWidget[i].props['positionX'] = px;
+                        }
                         break;
                     case 2:
                         //垂直
+                        let minTop = pointsList[0].top;
+                        let maxBottom = pointsList[0].bottom;
+                        let totalHeight = 0;
+                        pointsList.forEach((v)=>{
+                            if(v.top<minTop) {
+                                minTop = v.top;
+                            }
+                            if(v.bottom>maxBottom) {
+                                maxBottom = v.bottom;
+                            }
+                            totalHeight += v.height;
+                            orderedPointsList.push(v);
+                        });
+                        //先排序，按照top由小往大 (使用插排)
+                        for (let i = 1; i < len; i++) {
+                            step = j = i;
+                            pointsKey = orderedPointsList[j];
+                            key = orderedSelectWidget[j];
+
+                            while (--j > -1) {
+                                if (orderedPointsList[j].top > pointsKey.top) {
+                                    orderedPointsList[j + 1] = orderedPointsList[j];
+                                    orderedSelectWidget[j + 1] = orderedSelectWidget[j];
+                                } else {
+                                    break;
+                                }
+                            }
+                            orderedPointsList[j + 1] = pointsKey;
+                            orderedSelectWidget[j + 1] = key;
+                        };
+                        //间距
+                        gap = (maxBottom-minTop-totalHeight)/(len-1);
+                        //最上和最下边不需要再计算positionX
+                        for(let i=1; i<len-1; i++) {
+                            let newTop = this.getPointsOfWidget(orderedSelectWidget[i-1]).top+gap;
+                            let py = newTop+orderedSelectWidget[i].node.height*orderedSelectWidget[i].node.originY;
+                            if(orderedSelectWidget[i].node.scaleY<0) {
+                                py = newTop+orderedSelectWidget[i].node.height*(1-orderedSelectWidget[i].node.originY);
+                            }
+                            orderedSelectWidget[i].node['positionY'] = py;
+                            orderedSelectWidget[i].props['positionY'] = py;
+                        }
                         break;
                     default:
                         break;
