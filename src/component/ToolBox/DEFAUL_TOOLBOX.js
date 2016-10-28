@@ -247,7 +247,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.TABLE,name:'表格',icon:tableIcon, className:'table', drawRect:true,
-                param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'transparent','rowNum':5,'header':',,'}},
+                param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'#FFFFFF','rowNum':5,'header':',,'}},
             {cid:TOOL_ID.TWODARR, name:'二维数组', icon: twodarrIcon, className:'data', param:{'type': dataType.twoDArr}},
             {cid:TOOL_ID.ONEDARR, name:'一维数组', icon: onedarrIcon, className:'data', param:{'type': dataType.oneDArr}}]
     },{

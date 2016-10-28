@@ -112,6 +112,9 @@ class PropertyView extends React.Component {
                     <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
                 </div>;
             case propertyType.Color2:
+                if(defaultProp.tbCome){
+                    delete defaultData.tbCome;
+                }
                 return  <Input ref={(inputDom) => {
                 if (inputDom) {
                     var dom = ReactDOM.findDOMNode(inputDom).firstChild;
@@ -120,7 +123,7 @@ class PropertyView extends React.Component {
                         dom.jscolor.onFineChange = defaultProp.onChange;
                     }
                 }
-                }}  {...defaultProp}   /> ;
+                }}  {...defaultData}   /> ;
 
             case propertyType.Boolean:
                 return <Switch   {...defaultProp} />;
@@ -826,7 +829,7 @@ class PropertyView extends React.Component {
                 defaultProp.value = defaultValue;
             }else if(item.type === propertyType.TbColor){
                 defaultProp.value = defaultValue;
-                defaultProp.tbHeight = node.props['headerHeight'] ?  node.props['headerHeight']  : 0;
+                defaultProp.tbHeight = node.props['headerHeight'] ?  node.props['headerHeight']  : "自动";
             }else {
                 defaultProp.value = defaultValue;
             }
@@ -881,17 +884,20 @@ class PropertyView extends React.Component {
             if( className == "table" && (item.name === "fontFill" || item.name === "fillColor" || item.name === "altColor")){
                 tdColorSwitch = true;
             }
+            //if( this.state.tbHeaderToggle && item.name == 'showHeader'){
+            //    style['margin'] = "0";
+            //}
 
             groups[groupName].push(
                 <div key={item.name}
                     className={cls('f--hlc','ant-row','ant-form-item',
                             {'ant-form-half': hasTwin},
                             {'ant-form-full': !hasTwin},
-                            {'tdColorSwitch' : tdColorSwitch },
-                            {'hidden': this.state.tbHeaderToggle
-                                            && (item.name =='head' || item.name =='headerFontFamily'
-                                            || item.name =='headerFontSize' || item.name =='headerFontFill')
-                            }
+                            {'tdColorSwitch' : tdColorSwitch }
+                            //,{'hidden': this.state.tbHeaderToggle
+                            //                && (item.name =='head' || item.name =='headerFontFamily'
+                            //                || item.name =='headerFontSize' || item.name =='headerFontFill')
+                            //}
                     )}
                     style={style}>
 
@@ -927,7 +933,9 @@ class PropertyView extends React.Component {
 
         return Object.keys(groups).map((name,index) =>{
                 let insertClassName =  className + "-" + 'form_'+name;
-                return <Form horizontal   className={'form_'+name} key={index}>
+                return <Form horizontal
+                             className={cls('form_'+name,{"active" : !this.state.tbHeaderToggle })}
+                             key={index}>
                             {groups[name].map((input, i) => input)}
                             {
                                 insertClassName == "table-form_basic"
