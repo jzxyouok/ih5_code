@@ -368,6 +368,64 @@ class Property extends React.Component {
         });
     }
 
+
+
+    onPropertyContentSelect(prop, index, type, e) {
+        e.domEvent.stopPropagation();
+        let data = e.item.props.data;
+        switch (type) {
+            case optionType.widget:
+                prop.value = data.key;
+                break;
+            default:
+                prop.value = data;
+        }
+        let property = this.state.currentAction.property;
+        property[index] = prop;
+        let action = this.state.currentAction;
+        action.property = property;
+        this.setState({
+            currentAction: action,
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+        });
+    }
+    onGetClassListByKey(key) {
+        this.classNameList = [];
+        let widget = WidgetStore.getWidgetByKey(key);
+        if(widget) {
+            if(widget.className === 'root' || widget.className === 'container') {
+                this.customClassList = classList;
+                this.customClassList.forEach(v=>{
+                    this.classNameList.push(v)
+                });
+            }
+            for (let cls in propertyMap) {
+                if(checkChildClass(widget, cls)&&checkIsClassType(cls)){
+                    this.classNameList.push(cls);
+                }
+            }
+        }
+    }
+
+    onFormulaInputFocus() {
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
+        if(this.state.event&&!this.state.event.enable) {
+            return false;
+        }
+        this.refs.pProperty.style.overflow = 'visible';
+        document.getElementById('EventBox').style.overflow = 'visible';
+        document.getElementById('EBContentLayer').style.overflow = 'visible';
+        return true;
+    }
+
+    onFormulaInputBlur() {
+        this.refs.pProperty.style.overflow = 'hidden';
+        document.getElementById('EventBox').style.overflow = 'hidden';
+        document.getElementById('EBContentLayer').style.overflow = 'scroll';
+    }
     onChangePropDom(prop, index, e){
         var value = null;
         switch (prop.type) {
@@ -399,34 +457,12 @@ class Property extends React.Component {
             WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
         });
     }
-
-    onPropertyContentSelect(prop, index, type, e) {
-        e.domEvent.stopPropagation();
-        let data = e.item.props.data;
-        switch (type) {
-            case optionType.widget:
-                prop.value = data.key;
-                break;
-            default:
-                prop.value = data;
-        }
-        let property = this.state.currentAction.property;
-        property[index] = prop;
-        let action = this.state.currentAction;
-        action.property = property;
-        this.setState({
-            currentAction: action,
-        }, ()=>{
-            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
-        });
-    }
-
-
     getProps(item, index) {
         var defaultProp = {
             size: 'small',
-            onChange:  this.onChangePropDom.bind(this, item, index),
-            placeholder:item.default
+            placeholder:item.default,
+            disabled: item.readOnly !== undefined,
+            onChange:  this.onChangePropDom.bind(this, item, index)
         };
         switch (item.type) {
             case propertyType.String:
@@ -466,49 +502,11 @@ class Property extends React.Component {
 
         //设置值
         let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-        if(widget.node[item.name] &&  !defaultProp.value){
+        if(widget.node[item.name] && defaultProp.value === undefined){
             defaultProp.value =widget.node[item.name];
         }
         return defaultProp;
     }
-
-    onGetClassListByKey(key) {
-        this.classNameList = [];
-        let widget = WidgetStore.getWidgetByKey(key);
-        if(widget) {
-            if(widget.className === 'root' || widget.className === 'container') {
-                this.customClassList = classList;
-                this.customClassList.forEach(v=>{
-                    this.classNameList.push(v)
-                });
-            }
-            for (let cls in propertyMap) {
-                if(checkChildClass(widget, cls)&&checkIsClassType(cls)){
-                    this.classNameList.push(cls);
-                }
-            }
-        }
-    }
-
-    onFormulaInputFocus() {
-        if(this.state.activeKey !== this.state.wKey) {
-            return false;
-        }
-        if(this.state.event&&!this.state.event.enable) {
-            return false;
-        }
-        this.refs.pProperty.style.overflow = 'visible';
-        document.getElementById('EventBox').style.overflow = 'visible';
-        document.getElementById('EBContentLayer').style.overflow = 'visible';
-        return true;
-    }
-
-    onFormulaInputBlur() {
-        this.refs.pProperty.style.overflow = 'hidden';
-        document.getElementById('EventBox').style.overflow = 'hidden';
-        document.getElementById('EBContentLayer').style.overflow = 'scroll';
-    }
-
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
 
@@ -583,13 +581,13 @@ class Property extends React.Component {
             switch (type) {
                 case propertyType.String:
                     return <Input {...defaultProp}/>;
-                    {/*return <input {...defaultProp} className="flex-1" type="text" placeholder={value}/>;*/}
+                {/*return <input {...defaultProp} className="flex-1" type="text" placeholder={value}/>;*/}
                 case propertyType.Integer:
-                    return <InputNumber {...defaultProp}/>;
-                    // return <input className="flex-1" type="text" placeholder={value}/>;
+                    return <ConInputNumber {...defaultProp}/>;
+                // return <input className="flex-1" type="text" placeholder={value}/>;
                 case propertyType.Float:
                 case propertyType.Number:
-                    return <InputNumber step={0.1} {...defaultProp}/>;
+                    return <ConInputNumber step={0.1} {...defaultProp}/>;
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Boolean:
@@ -625,14 +623,14 @@ class Property extends React.Component {
                             list = this.arrList;
                         }
                     } else if(item.name === 'class'){
-                            titleTemp = '类别';
-                            oType = optionType.class;
-                            list = this.classNameList;
+                        titleTemp = '类别';
+                        oType = optionType.class;
+                        list = this.classNameList;
                     } else if(item.name=='scaleType'){
 
-                         titleTemp =defaultProp.placeholder ;
-                         oType = optionType.class;
-                         list = defaultProp.options;
+                        titleTemp =defaultProp.placeholder ;
+                        oType = optionType.class;
+                        list = defaultProp.options;
                     }else {
                         return <div>未定义类型</div>;
                     }
