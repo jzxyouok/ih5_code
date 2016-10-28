@@ -398,6 +398,9 @@ class ObjectTree extends React.Component {
     }
 
     onMultiSelectKeyDown(e) {
+        if(e.target.nodeName==='INPUT' || e.target.nodeName==='TEXTAREA') {
+            return;
+        }
         if(this.state.selectTargetMode) {
             return;
         }
@@ -412,6 +415,9 @@ class ObjectTree extends React.Component {
     }
 
     onMultiSelectKeyUp(e) {
+        if(e.target.nodeName==='INPUT' || e.target.nodeName==='TEXTAREA') {
+            return;
+        }
         e = e || window.event;
         if(e.shiftKey||e.key==='Shift'||(e.currentTarget === window&&e.type==='blur')) {
             if(this.state.multiSelectMode) {
@@ -430,6 +436,9 @@ class ObjectTree extends React.Component {
     }
 
     onLeaveMultiSelectMode(e) {
+        if(e.target.nodeName==='INPUT' || e.target.nodeName==='TEXTAREA') {
+            return;
+        }
         if(!this.state.multiSelectMode) {
             this.setState({
                 multiSelectMode: false
