@@ -445,7 +445,6 @@ class Property extends React.Component {
                 break;
             case propertyType.FormulaInput:
                 defaultProp.value = item.value;
-                defaultProp.objectList=this.state.objectList;
                 break;
             case propertyType.Function:
                 break;
