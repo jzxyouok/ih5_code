@@ -562,7 +562,11 @@ class PropertyView extends React.Component {
     }
 
     tbLineWidth(){
-        let v = parseInt(this.state.tbLineWidth);
+        if(this.state.tbLineWidth == "自动") return;
+        if(this.state.tbLineWidth >= this.selectNode.props.width) return;
+
+        let v = parseInt(this.state.tbLineWidth) ;
+
         const obj = {};
         let header = this.selectNode.props.header;
         if(header !== undefined){
@@ -587,7 +591,7 @@ class PropertyView extends React.Component {
                     header[this.state.tbWhichColumn-1] = header[this.state.tbWhichColumn-1]+":" + v
                 }
             }
-            console.log(header.join(","));
+            //console.log(header.join(","));
             obj['header'] = header.join(",");
             this.selectNode.props.header = header.join(",");
             this.selectNode.node.header = header.join(",");
