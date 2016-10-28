@@ -443,7 +443,7 @@ class ObjectTree extends React.Component {
             this.setState({
                 multiSelectMode: false
             }, ()=>{
-                if(!this.state.selectTargetMode&&this.state.selectWidget) {
+                if(!this.state.selectTargetMode&&this.state.selectWidget&&this.state.nids.length>0) {
                     WidgetActions['selectWidget'](this.state.selectWidget, true);
                 }
             });
