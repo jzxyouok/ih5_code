@@ -123,9 +123,9 @@ class ObjectTree extends React.Component {
         window.addEventListener('keyup', this.resetCmdKey);
 
         //多选
+        window.addEventListener('blur', this.onMultiSelectKeyUp);
         window.addEventListener('keydown', this.onMultiSelectKeyDown);
         window.addEventListener('keyup', this.onMultiSelectKeyUp);
-        window.addEventListener('blur', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').addEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').addEventListener('mousedown', this.onLeaveMultiSelectMode);
     }
@@ -136,6 +136,7 @@ class ObjectTree extends React.Component {
         window.removeEventListener('keydown', this.itemWindowKeyAction);
         window.removeEventListener('keyup', this.resetCmdKey);
         //多选
+        window.removeEventListener('blur', this.onMultiSelectKeyUp);
         window.removeEventListener('keydown', this.onMultiSelectKeyDown);
         window.removeEventListener('keyup', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
@@ -396,6 +397,9 @@ class ObjectTree extends React.Component {
     }
 
     onMultiSelectKeyDown(e) {
+        if(this.state.selectTargetMode) {
+            return;
+        }
         e = e || window.event;
         if(e.shiftKey||e.key==='Shift') {
             if(!this.state.multiSelectMode) {
@@ -425,11 +429,13 @@ class ObjectTree extends React.Component {
     }
 
     onLeaveMultiSelectMode(e) {
-        if(!this.state.multiSelectMode&&this.state.selectWidget) {
+        if(!this.state.multiSelectMode) {
             this.setState({
                 multiSelectMode: false
             }, ()=>{
-                WidgetActions['selectWidget'](this.state.selectWidget, true);
+                if(!this.state.selectTargetMode&&this.state.selectWidget) {
+                    WidgetActions['selectWidget'](this.state.selectWidget, true);
+                }
             });
         }
     }

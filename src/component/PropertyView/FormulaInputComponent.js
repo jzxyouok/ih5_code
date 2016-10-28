@@ -243,6 +243,10 @@ class FormulaInput extends React.Component {
             let type = this.state.currentType;
             let value = this.state.value;
             let item = {objKey:object.key, property:null, pattern:null, prePattern:null};
+            //特殊处理
+            if(object.className === 'var') {
+                item.property = {name:'value', showName:'内容'};
+            }
             if(type === inputType.value) {
                 //初次进入formula mode
                 type = inputType.formula;
@@ -257,6 +261,12 @@ class FormulaInput extends React.Component {
                 value: value,
                 currentType:type,
             }, ()=>{
+                if(object.className === 'var'&&this.state.value.length>0){
+                    let focus = 'pattern'+(this.state.value.length-1);
+                    if(this.refs[focus]) {
+                        this.refs[focus].refs.input.focus();
+                    }
+                }
                 this.onChange({value:this.state.value, type:this.state.currentType});
             })
         }
@@ -279,9 +289,9 @@ class FormulaInput extends React.Component {
             propertyMap[className].map((v)=> {
                 if (v.isProperty && v.name != 'id') {
                     if(v.showName=='W'){
-                        props.push({name:v.name, showName:'宽度'});
+                        props.push({name:'width', showName:'宽度'});
                     }else if(v.showName=='H'){
-                        props.push({name:v.name, showName:'高度'});
+                        props.push({name:'height', showName:'高度'});
                     }else if(v.showName=='中心点'){
                     }else{
                         props.push({name:v.name, showName:v.showName});

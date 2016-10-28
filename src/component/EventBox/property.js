@@ -465,9 +465,11 @@ class Property extends React.Component {
         }
 
         //设置值
-        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-        if(widget.node[item.name] &&  !defaultProp.value){
-            defaultProp.value =widget.node[item.name];
+        if(item.type !== propertyType.FormulaInput) {
+            let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
+            if(widget.node[item.name] &&  !defaultProp.value){
+                defaultProp.value =widget.node[item.name];
+            }
         }
         return defaultProp;
     }
