@@ -20,6 +20,8 @@ import DBItemView from './DBItemView/DBItemView';
 import WidgetStore from '../stores/WidgetStore';
 import ToolBoxStore from '../stores/ToolBoxStore';
 
+
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -41,19 +43,34 @@ class App extends React.Component {
         this.onToolBoxStatusChange = this.onToolBoxStatusChange.bind(this);
         this.editDbShow = this.editDbShow.bind(this);
         this.editDbHide = this.editDbHide.bind(this);
+
+        //保存
+        this.keySave=this.keySave.bind(this);
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.unsubscribeToolbox = ToolBoxStore.listen(this.onToolBoxStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+     //   document.addEventListener('keydown',this.keySave);
+
     }
 
     componentWillUnmount() {
         this.unsubscribe();
         this.unsubscribeToolbox();
-    }
+   //  document.removeEventListener('keydown',this.keySave);
 
+    }
+    keySave(event){
+
+        // let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        // let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+        // if (didPressCtrl && event.keyCode == 83 ) {
+        //     console.log('阻止默认弹窗');
+        //     event.preventDefault();
+        // }
+    }
     onStatusChange(widget) {
         if(widget.activeEventTreeKey) {
             this.setState({

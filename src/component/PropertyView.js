@@ -90,7 +90,7 @@ class PropertyView extends React.Component {
                     return <ConInputNumber  {...defaultData} style={style} />;
                 }
                 else {
-                    return <ConInputNumber  {...defaultProp}  />;
+                    return <ConInputNumber  step={0.1} {...defaultProp}  />;
                 }
             case propertyType.Percentage:
                 // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
