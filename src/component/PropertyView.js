@@ -565,8 +565,7 @@ class PropertyView extends React.Component {
         if(this.state.tbLineWidth == "自动") return;
         if(this.state.tbLineWidth >= this.selectNode.props.width) return;
 
-        let width = this.selectNode.props.width;
-        let v = parseInt(this.state.tbLineWidth / width * 100) ;
+        let v = parseInt(this.state.tbLineWidth) ;
 
         const obj = {};
         let header = this.selectNode.props.header;
