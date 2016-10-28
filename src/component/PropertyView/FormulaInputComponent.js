@@ -12,6 +12,8 @@ import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap } from '../PropertyMap'
 
+import $ from 'jquery';
+
 const MenuItem = Menu.Item;
 
 const inputType = {
@@ -539,17 +541,24 @@ class FormulaInput extends React.Component {
 
     resizeInputWidth(value) {
         if(value){
-            let length = 0;
-            for (let i=0; i<value.length; i++) {
-                if (value[i].charCodeAt(0)<299) {
-                    length++;
-                } else {
-                    length+=1.8;
-                }
+            let sensor = $('<span>'+ value +'</span>').css({display: 'none'});
+            $('body').append(sensor);
+            let width = sensor.width()+1;
+            sensor.remove();
+            if(width>minInputWidth){
+                return width;
             }
-            if((length*7)>minInputWidth) {
-                return length * 7;
-            }
+            // let length = 0;
+            // for (let i=0; i<value.length; i++) {
+            //     if (value[i].charCodeAt(0)<299) {
+            //         length++;
+            //     } else {
+            //         length+=1.8;
+            //     }
+            // }
+            // if((length*7)>minInputWidth) {
+            //     return length * 7;
+            // }
         }
         return minInputWidth;
     }
