@@ -45,8 +45,8 @@ class ObjectTree extends React.Component {
             , allTreeData : [],
             nodeType: nodeType.widget,
 
-            targetList: null, //目标选择
-            selectTargetMode: false, //目标选择
+            targetList: [], //目标选择列表
+            selectTargetMode: false, //目标选择模式
 
             multiSelectMode: false,
             nids: []   //多选的
@@ -123,9 +123,9 @@ class ObjectTree extends React.Component {
         window.addEventListener('keyup', this.resetCmdKey);
 
         //多选
+        window.addEventListener('blur', this.onMultiSelectKeyUp);
         window.addEventListener('keydown', this.onMultiSelectKeyDown);
         window.addEventListener('keyup', this.onMultiSelectKeyUp);
-        window.addEventListener('blur', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').addEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').addEventListener('mousedown', this.onLeaveMultiSelectMode);
     }
@@ -136,6 +136,7 @@ class ObjectTree extends React.Component {
         window.removeEventListener('keydown', this.itemWindowKeyAction);
         window.removeEventListener('keyup', this.resetCmdKey);
         //多选
+        window.removeEventListener('blur', this.onMultiSelectKeyUp);
         window.removeEventListener('keydown', this.onMultiSelectKeyDown);
         window.removeEventListener('keyup', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
@@ -218,10 +219,6 @@ class ObjectTree extends React.Component {
             this.setState({
                 activeEventTreeKey: widget.activeEventTreeKey.key
             })
-        } else if(widget.allWidgets) {
-            this.setState({
-                targetList:widget.allWidgets
-            });
         } else if(widget.selectWidgets) {
             let nids = [];
             widget.selectWidgets.forEach((v)=>{
@@ -346,7 +343,8 @@ class ObjectTree extends React.Component {
     onSelectTargetModeChange(result) {
         if(result.stUpdate){
             this.setState({
-                selectTargetMode: result.stUpdate.isActive
+                selectTargetMode: result.stUpdate.isActive,
+                targetList: result.stUpdate.targetList
             })
         }
     }
@@ -396,6 +394,9 @@ class ObjectTree extends React.Component {
     }
 
     onMultiSelectKeyDown(e) {
+        if(this.state.selectTargetMode) {
+            return;
+        }
         e = e || window.event;
         if(e.shiftKey||e.key==='Shift') {
             if(!this.state.multiSelectMode) {
@@ -425,11 +426,13 @@ class ObjectTree extends React.Component {
     }
 
     onLeaveMultiSelectMode(e) {
-        if(!this.state.multiSelectMode&&this.state.selectWidget) {
+        if(!this.state.multiSelectMode) {
             this.setState({
                 multiSelectMode: false
             }, ()=>{
-                WidgetActions['selectWidget'](this.state.selectWidget, true);
+                if(!this.state.selectTargetMode&&this.state.selectWidget) {
+                    WidgetActions['selectWidget'](this.state.selectWidget, true);
+                }
             });
         }
     }
@@ -445,7 +448,8 @@ class ObjectTree extends React.Component {
         }
 
         if(this.state.multiSelectMode) {
-            if(selectableClass.indexOf(data.className)>=0&&!data.props.locked&&this.state.selectWidget) {
+            if((selectableClass.indexOf(data.className)>=0||isCustomizeWidget(data.className))&&
+                !data.props.locked&&this.state.selectWidget) {
                 this.setState({
                     editMode: false
                 },()=>{

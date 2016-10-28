@@ -12,6 +12,8 @@ import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap } from '../PropertyMap'
 
+import $ from 'jquery';
+
 const MenuItem = Menu.Item;
 
 const inputType = {
@@ -37,7 +39,6 @@ class FormulaInput extends React.Component {
         this.state = {
             value: initValue(props).value,
             currentType: initValue(props).type,
-            objectList: [],
             objectDropDownVisible: false, //对象dropdown
             propertyDropDownVisible: false, //属性dropdown
             willDeleteObjIndex: null,
@@ -107,19 +108,13 @@ class FormulaInput extends React.Component {
 
         this.setState({
             value: initValue(nextProps).value,
-            currentType: initValue(nextProps).type,
-            objectList: nextProps.objectList||[]
+            currentType: initValue(nextProps).type
         });
     }
 
     onStatusChange(widget) {
         if(!widget) {
             return;
-        }
-        if(widget.allWidgets){
-            this.setState({
-                objectList: widget.allWidgets
-            });
         } else if(widget.deleteWidget) {
             this.checkValueObjValid();
         }
@@ -234,7 +229,7 @@ class FormulaInput extends React.Component {
 
     onGetObjectResult(object){
         let getTarget = false;
-        this.state.objectList.forEach((v)=>{
+        this.props.objectList.forEach((v)=>{
             if(object.key === v.key){
                 getTarget = true;
             }
@@ -243,6 +238,10 @@ class FormulaInput extends React.Component {
             let type = this.state.currentType;
             let value = this.state.value;
             let item = {objKey:object.key, property:null, pattern:null, prePattern:null};
+            //特殊处理
+            if(object.className === 'var') {
+                item.property = {name:'value', showName:'内容'};
+            }
             if(type === inputType.value) {
                 //初次进入formula mode
                 type = inputType.formula;
@@ -257,6 +256,12 @@ class FormulaInput extends React.Component {
                 value: value,
                 currentType:type,
             }, ()=>{
+                if(object.className === 'var'&&this.state.value.length>0){
+                    let focus = 'pattern'+(this.state.value.length-1);
+                    if(this.refs[focus]) {
+                        this.refs[focus].refs.input.focus();
+                    }
+                }
                 this.onChange({value:this.state.value, type:this.state.currentType});
             })
         }
@@ -279,9 +284,9 @@ class FormulaInput extends React.Component {
             propertyMap[className].map((v)=> {
                 if (v.isProperty && v.name != 'id') {
                     if(v.showName=='W'){
-                        props.push({name:v.name, showName:'宽度'});
+                        props.push({name:'width', showName:'宽度'});
                     }else if(v.showName=='H'){
-                        props.push({name:v.name, showName:'高度'});
+                        props.push({name:'height', showName:'高度'});
                     }else if(v.showName=='中心点'){
                     }else{
                         props.push({name:v.name, showName:v.showName});
@@ -536,17 +541,24 @@ class FormulaInput extends React.Component {
 
     resizeInputWidth(value) {
         if(value){
-            let length = 0;
-            for (let i=0; i<value.length; i++) {
-                if (value[i].charCodeAt(0)<299) {
-                    length++;
-                } else {
-                    length+=1.8;
-                }
+            let sensor = $('<span>'+ value +'</span>').css({display: 'none'});
+            $('body').append(sensor);
+            let width = sensor.width()+1;
+            sensor.remove();
+            if(width>minInputWidth){
+                return width;
             }
-            if((length*7)>minInputWidth) {
-                return length * 7;
-            }
+            // let length = 0;
+            // for (let i=0; i<value.length; i++) {
+            //     if (value[i].charCodeAt(0)<299) {
+            //         length++;
+            //     } else {
+            //         length+=1.8;
+            //     }
+            // }
+            // if((length*7)>minInputWidth) {
+            //     return length * 7;
+            // }
         }
         return minInputWidth;
     }
@@ -574,9 +586,9 @@ class FormulaInput extends React.Component {
         let objectMenu = (
             <Menu onClick={this.onObjectSelect}>
                 {
-                    !this.state.objectList||this.state.objectList.length==0
+                    !this.props.objectList||this.props.objectList.length==0
                         ? null
-                        : this.state.objectList.map(objectMenuItem)
+                        : this.props.objectList.map(objectMenuItem)
                 }
             </Menu>
         );
@@ -717,6 +729,7 @@ class FormulaInput extends React.Component {
                  onClick={this.onFocus.bind(this, this.state.value?this.state.value.length-1:null)}>
                 <SelectTargetButton className={'formula-object-icon'}
                                     disabled={this.disabled}
+                                    targetList={this.props.objectList}
                                     onClick={this.onSelectTargetClick}
                                     getResult={this.onGetObjectResult} />
                     {
@@ -736,6 +749,7 @@ class FormulaInput extends React.Component {
                         <div className="formula-title f--hlc">
                             <SelectTargetButton className={'formula-object-icon'}
                                                 disabled={this.disabled}
+                                                targetList={this.props.objectList}
                                                 onClick={this.onSelectTargetClick}
                                                 getResult={this.onGetObjectResult} />
                             <Input placeholder="比较值／对象" ref={'valueInput'}
@@ -755,6 +769,7 @@ class FormulaInput extends React.Component {
                                 <div className="formula-title f--hlc">
                                     <SelectTargetButton className={'formula-object-icon'}
                                                         disabled={false}
+                                                        targetList={this.props.objectList}
                                                         onClick={this.onSelectTargetClick}
                                                         getResult={this.onGetObjectResult} />
                                     <Input placeholder="比较值／对象" ref={'valueInput'}

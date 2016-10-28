@@ -445,7 +445,6 @@ class Property extends React.Component {
                 break;
             case propertyType.FormulaInput:
                 defaultProp.value = item.value;
-                defaultProp.objectList=this.state.objectList;
                 break;
             case propertyType.Function:
                 break;
@@ -465,9 +464,11 @@ class Property extends React.Component {
         }
 
         //设置值
-        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-        if(widget.node[item.name] &&  !defaultProp.value){
-            defaultProp.value =widget.node[item.name];
+        if(item.type !== propertyType.FormulaInput) {
+            let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
+            if(widget.node[item.name] &&  !defaultProp.value){
+                defaultProp.value =widget.node[item.name];
+            }
         }
         return defaultProp;
     }
@@ -607,6 +608,7 @@ class Property extends React.Component {
                 case propertyType.FormulaInput:
                     return <FormulaInput containerId={propertyId}
                                          disabled={!this.state.currentEnable}
+                                         objectList={this.state.objectList}
                                          onFocus={this.onFormulaInputFocus}
                                          onBlur={this.onFormulaInputBlur}
                                          {...defaultProp}/>;
@@ -709,6 +711,7 @@ class Property extends React.Component {
                                         <div className="title p--title f--hlc">
                                             <SelectTargetButton className={'p--icon'}
                                                 disabled={!this.state.currentEnable}
+                                                targetList={this.state.objectList}
                                                 onClick={this.onSTButtonClick}
                                                 getResult={this.onSTResultGet} />
                                             { !w || !w.props || !w.props.name
