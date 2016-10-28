@@ -609,6 +609,28 @@ class FormulaInput extends React.Component {
             );
         };
 
+        let drawRow = (row)=> {
+            let data = [];
+            for(let j = 0; j<=row; j++) {
+                data.push((<div className="data">
+
+                </div>));
+            }
+            return data;
+        };
+
+        let drawTable = (row, column)=>{
+            let table = [];
+            for(let i = 0; i<=column; i++) {
+                table.push((<div className="data-column">
+                    {
+                        drawRow(row)
+                    }
+                </div>));
+            }
+            return table;
+        };
+
         // let formulaObjDropDown = () =>{
         //     if(this.disabled) {
         //         return  (<div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
@@ -684,9 +706,15 @@ class FormulaInput extends React.Component {
                                         ? (<div className={$class("formula--dropDown formula-obj-property-dropDown formula-obj-arrType-dropDown f--hlc")}>
                                             <div className="dropDown-title">选择值</div>
                                             <span className="right-icon" />
-                                            <div className="arr-table">
-
-                                            </div>
+                                            {
+                                                obj.props.column&&obj.props.column>0&&obj.props.row&&obj.props.row>0
+                                                    ? (<div className="arr-table">
+                                                        {
+                                                            drawTable(obj.props.row, obj.props.column)
+                                                        }
+                                                    </div>)
+                                                    :null
+                                            }
                                             </div>)
                                         : formulaPropertyDropdown(obj, v, i)
                                         : (<div className="formula-obj-property"
