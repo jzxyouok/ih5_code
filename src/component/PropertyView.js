@@ -31,7 +31,9 @@ class PropertyView extends React.Component {
             propertyName:null,
             sockName : null,
             tbHeadHeight: 0,
-            tbHeaderToggle : false
+            tbHeaderToggle : true,
+            tbWhichColumn : 0,
+            tbLineWidth : "自动"
         };
         this.selectNode = null;
         this.currentPage = null;
@@ -58,6 +60,8 @@ class PropertyView extends React.Component {
         this.tbComeShow = this.tbComeShow.bind(this);
         this.tbHeadHeight = this.tbHeadHeight.bind(this);
         this.tbHeadHeightInput = this.tbHeadHeightInput.bind(this);
+        this.tbLineWidthInput = this.tbLineWidthInput.bind(this);
+        this.tbLineWidth = this.tbLineWidth.bind(this);
     }
 
      //获取封装的form组件
@@ -144,15 +148,19 @@ class PropertyView extends React.Component {
                             </div>
                         </div>;
             case propertyType.TbSelect:
+                //console.log(defaultProp.tbWidth,this.state.tbLineWidth);
                 return  <div className="f--hlc">
                             <div className="flex-1">
-                                <Select {...defaultProp} >
+                                <Select {...defaultProp}>
                                     {defaultProp.options}
                                 </Select>
                             </div>
 
                             <div style={{ width: "58px", marginLeft: "3px", position:"relative"}}>
-                                <Input placeholder={ defaultProp.tbWidth }  style={{height:"22px",padding:"0 7px"}} />
+                                <Input value={ this.state.tbLineWidth }
+                                       onChange={ this.tbLineWidthInput.bind(this) }
+                                       onBlur={ this.tbLineWidth.bind(this) }
+                                       style={{height:"22px",padding:"0 7px"}} />
                                 <span className="TbSelect-icon" />
                             </div>
                         </div>;
@@ -356,7 +364,7 @@ class PropertyView extends React.Component {
                         bTag = false;
                     }
                     break;
-                case propertyType.Select || propertyType.TbSelect:
+                case propertyType.Select:
                     if (prop.name == 'scaleType') {
                         this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
                         v = parseInt(value);
@@ -411,7 +419,8 @@ class PropertyView extends React.Component {
                             this.selectNode.props.fontKey = this.getFontDefault(value);
                             v = value;
                         }
-                    } else {
+                    }
+                    else {
                         v = parseInt(value);
                     }
                     break;
@@ -424,6 +433,42 @@ class PropertyView extends React.Component {
                     } else {
                         this.selectNode.props.initVisible = value;
                     }
+                    bTag = false;
+                    break;
+                case propertyType.TbSelect:
+                    let header = this.selectNode.props.header;
+                    let tbWidth;
+                    value = parseInt(value);
+                    if(header !== undefined) {
+                        header = header.split(",");
+                        if (value == 0) {
+                            let lineWidth = header[0];
+                            let index = lineWidth.indexOf(':');
+                            if( index>=0){
+                                tbWidth = parseInt(lineWidth.substring(index + 1));
+                            }
+                            else {
+                                tbWidth = "自动";
+                            }
+                        }
+                        else {
+                            let lineWidth = header[value-1];
+                            let index = lineWidth.indexOf(':');
+                            if( index>=0){
+                                tbWidth = parseInt(lineWidth.substring(index + 1));
+                            }
+                            else {
+                                tbWidth = "自动";
+                            }
+                        }
+                    }
+
+                    this.setState({
+                        tbWhichColumn: value,
+                        tbLineWidth : tbWidth
+                    },()=>{
+                        this.setState({fields: this.getFields()});
+                    });
                     bTag = false;
                     break;
                 default:
@@ -506,6 +551,52 @@ class PropertyView extends React.Component {
         this.selectNode.node.headerHeight = v;
         this.onStatusChange({updateProperties: obj});
         WidgetActions['updateProperties'](obj, false, true);
+    }
+
+    tbLineWidthInput(event){
+        this.setState({
+            tbLineWidth : event.target.value
+        },()=>{
+            this.setState({fields: this.getFields()});
+        })
+    }
+
+    tbLineWidth(){
+        let v = parseInt(this.state.tbLineWidth);
+        const obj = {};
+        let header = this.selectNode.props.header;
+        if(header !== undefined){
+            header = header.split(",");
+            if(this.state.tbWhichColumn == 0){
+                header.map((k,i)=>{
+                    let index = header[i].indexOf(':');
+                    if(index >=0){
+                        header[i] = k.substring(0,index+1) +v;
+                    }
+                    else {
+                        header[i]= k + ":" + v
+                    }
+                });
+            }
+            else {
+                let index = header[this.state.tbWhichColumn-1].indexOf(':');
+                if(index >=0){
+                    header[this.state.tbWhichColumn-1] = header[this.state.tbWhichColumn-1].substring(0,index+1) +v;
+                }
+                else {
+                    header[this.state.tbWhichColumn-1] = header[this.state.tbWhichColumn-1]+":" + v
+                }
+            }
+            console.log(header.join(","));
+            obj['header'] = header.join(",");
+            this.selectNode.props.header = header.join(",");
+            this.selectNode.node.header = header.join(",");
+            this.onStatusChange({
+                updateProperties: obj
+            });
+            WidgetActions['updateProperties'](obj, false, true);
+            //this.setState({fields: this.getFields()});
+        }
     }
 
     onChangePropDom(item, value) {
@@ -700,6 +791,10 @@ class PropertyView extends React.Component {
                 }else if( item.name=='headerFontFamily'  && node.props.headerFontFamily){
                    defaultValue = node.props.headerFontFamily;
                 }
+                else if(item.name=='chooseColumn'){
+                   defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn  + ' 列';
+                   //console.log(this.state.tbWhichColumn,defaultValue);
+                }
             } else if(item.type === propertyType.Boolean2 ){
                 if(node.props[item.name]===undefined){
                     defaultValue =item.default;
@@ -777,9 +872,11 @@ class PropertyView extends React.Component {
             if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
                 defaultProp.checked = defaultValue;
                 if(className=='table' && item.name == "showHeader"){
-                    this.setState({
-                        tbHeaderToggle : !defaultProp.checked
-                    })
+                    if(!this.state.tbHeaderToggle !== defaultProp.checked){
+                        this.setState({
+                            tbHeaderToggle : !defaultProp.checked
+                        })
+                    }
                 }
             }else if(item.type ==propertyType.Dropdown ){
                 defaultProp.value = defaultValue;
@@ -822,7 +919,51 @@ class PropertyView extends React.Component {
                     }
                 }
                 if(item.name=='chooseColumn'){
-                    defaultProp.tbWidth = item.tbWidth;
+                    defaultProp.options=[];
+                    let tbWidth;
+                    if(node.props['header'] == undefined) {
+                        tbWidth = "自动";
+                        defaultProp.options.push(<Option key={0}>全部</Option>);
+                    }
+                    else {
+                        let header = node.props['header'].split(",");
+                        let nodo = true;
+                        if(this.state.tbWhichColumn == 0){
+                            nodo = false
+                        }
+                        if(nodo){
+                            let lineWidth = header[this.state.tbWhichColumn-1];
+                            let index = lineWidth.indexOf(':');
+                            if( index>=0){
+                                tbWidth = parseInt(lineWidth.substring(index + 1));
+                            }
+                            else {
+                                tbWidth = "自动";
+                            }
+                        }
+                        else {
+                            let lineWidth = header[0];
+                            let index = lineWidth.indexOf(':');
+                            if( index>=0){
+                                tbWidth = parseInt(lineWidth.substring(index + 1));
+                            }
+                            else {
+                                tbWidth = "自动";
+                            }
+                        }
+
+                        for(let x =0; x<= header.length; x++){
+                            let data;
+                            if(x==0){
+                                data = "全部";
+                            }
+                            else {
+                                data = '第 ' + (x) + ' 列';
+                            }
+                            defaultProp.options.push(<Option key={x}>{ data } </Option>);
+                        }
+                    }
+                    defaultProp.tbWidth = tbWidth;
                 }
             }else if(item.type ==propertyType.Color||item.type ==propertyType.Color2){
                 defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
@@ -986,7 +1127,7 @@ class PropertyView extends React.Component {
             if(widget.selectWidget.className == "table" && this.lastSelectKey !== widget.selectWidget.key){
                 this.lastSelectKey = widget.selectWidget.key;
                 this.setState({
-                    tbHeaderToggle : false
+                    tbHeaderToggle : true
                 })
             }
             else if(widget.selectWidget.className != "table"){

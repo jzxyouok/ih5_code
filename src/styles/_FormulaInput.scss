@@ -153,6 +153,18 @@
         width: 100%;
       }
     }
+    .formula-obj-arrType-dropDown {
+      position: relative;
+      .arr-table {
+        position: absolute;
+        top: 18px;
+        background: #315654;
+        border-radius: 2px;
+        left: 0;
+        min-width: 40px;
+        min-height: 40px;
+      }
+    }
     .formula-obj-name,
     .formula-obj-property {
       @extend %font-omitted;
