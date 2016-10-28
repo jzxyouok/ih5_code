@@ -68,6 +68,8 @@ export default Reflux.createActions([
   'renameWidget',
   'didSelectTarget',         //选择了目标对象
 
+    'closeKeyboardMove',      //禁止键盘左右上下移动
+
   'updateHistoryRecord',
   'revokedHistory',
   'replyHistory',

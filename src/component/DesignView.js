@@ -22,6 +22,7 @@ class DesignView extends React.Component {
         this.stageZoomRate=1;
         this.stageZoomTop=0;
         this.stageZoomLeft=0;
+        this.keyboard=false;
 
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
@@ -34,6 +35,7 @@ class DesignView extends React.Component {
         this.mouseDown_left = this.mouseDown_left.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
+
 
     }
 
@@ -64,10 +66,8 @@ class DesignView extends React.Component {
 
 
     onStatusChange(widget) {
-        console.log(widget);
-
+       // console.log(widget);
         if(widget.selectWidget){
-
             this.selectNode =widget.selectWidget;
             if(widget.selectWidget.className == "root" && widget.selectWidget.props.name == "stage") {
                 this.rootWidget = widget.selectWidget;
@@ -75,6 +75,12 @@ class DesignView extends React.Component {
             if(widget.selectWidget.props.rulerArr &&( this.selectNode.props.isShow ||  this.selectNode.props.isShow===undefined)){  //isShow没有定义时和确定显示的时候才执行
                 this.drawLine(widget.selectWidget.props.rulerArr);
             }
+            setTimeout(function () {
+                //点击舞台后,整个页面会渲染一遍,导致浏览器失焦,导致ctrl+s的时候不能阻止默认的保存事件,导致要写下面无奈的代码
+                let oPropertyView =  document.getElementById('PropertyView').getElementsByClassName('ant-input')[0];
+                oPropertyView.focus();
+                oPropertyView.blur();
+            },300)
         }
 
         if(widget.setRulerLine){
@@ -87,6 +93,11 @@ class DesignView extends React.Component {
             this.setRuler(iWidthSum,iHeightSum);
         }
 
+        if(widget.closeKeyboardMove){
+            this.keyboard =widget.closeKeyboardMove.val
+        }else{
+            this.keyboard=false;
+        }
     }
 
     stageZoomChange(){
@@ -153,41 +164,44 @@ class DesignView extends React.Component {
         event.preventDefault();
         event.stopPropagation();
 
-        const STEP = 100;
-        let isEvent = (keycode) => event.keycode===keycode || event.which===keycode;
+        if(!this.keyboard) {
 
-        // left or right
-        if(isEvent(37) || isEvent(39)) {
-            let left = window.getComputedStyle(this.refs.view,null).getPropertyValue("left");
-            let l = parseFloat(left.replace(/(px)?/, ''));
-            l += STEP * (isEvent(37) ? -1 : 1);
-            this.refs.canvasWraper.style.left= l+'px';
+            const STEP = 100;
+            let isEvent = (keycode) => event.keycode === keycode || event.which === keycode;
 
-            this.aODiv.map(item =>{
-                if(item.oDiv.whichDrag =='left'){
-                    item.oDiv.style.left= (this.refs.canvasWraper.offsetLeft + this.stageZoomLeft+item.offsetLeft*this.stageZoomRate)+'px';
-                }
-            });
-            return;
-        }
-        // up or down
-        if(isEvent(38) || isEvent(40)) {
-            let top = window.getComputedStyle(this.refs.view,null).getPropertyValue("top");
-            let t = parseFloat(top.replace(/(px)?/, ''));
-            t += STEP * (isEvent(38) ? -1 : 1);
+            // left or right
+            if (isEvent(37) || isEvent(39)) {
+                let left = window.getComputedStyle(this.refs.view, null).getPropertyValue("left");
+                let l = parseFloat(left.replace(/(px)?/, ''));
+                l += STEP * (isEvent(37) ? -1 : 1);
+                this.refs.canvasWraper.style.left = l + 'px';
 
-            this.refs.view.style.top = t+'px';
-            this.refs.line_top.style.top= t+this.stageZoomTop+'px';
+                this.aODiv.map(item => {
+                    if (item.oDiv.whichDrag == 'left') {
+                        item.oDiv.style.left = (this.refs.canvasWraper.offsetLeft + this.stageZoomLeft + item.offsetLeft * this.stageZoomRate) + 'px';
+                    }
+                });
+                return;
+            }
+            // up or down
+            if (isEvent(38) || isEvent(40)) {
+                let top = window.getComputedStyle(this.refs.view, null).getPropertyValue("top");
+                let t = parseFloat(top.replace(/(px)?/, ''));
+                t += STEP * (isEvent(38) ? -1 : 1);
 
-            this.aODiv.map(item =>{
-                if(item.oDiv.whichDrag =='top'){
-                    item.oDiv.style.top=(t+this.stageZoomTop-item.offsetTop*this.stageZoomRate)+'px';
-                }else{
-                    item.oDiv.style.left= (this.refs.canvasWraper.offsetLeft + this.stageZoomLeft+item.offsetLeft*this.stageZoomRate)+'px';
-                }
-            });
+                this.refs.view.style.top = t + 'px';
+                this.refs.line_top.style.top = t + this.stageZoomTop + 'px';
 
-            return;
+                this.aODiv.map(item => {
+                    if (item.oDiv.whichDrag == 'top') {
+                        item.oDiv.style.top = (t + this.stageZoomTop - item.offsetTop * this.stageZoomRate) + 'px';
+                    } else {
+                        item.oDiv.style.left = (this.refs.canvasWraper.offsetLeft + this.stageZoomLeft + item.offsetLeft * this.stageZoomRate) + 'px';
+                    }
+                });
+
+                return;
+            }
         }
     }
 
@@ -291,7 +305,7 @@ class DesignView extends React.Component {
     }
 
     mouseDown_left(event){
-       event.stopPropagation();
+        event.stopPropagation();
         this.curODiv =  document.createElement('div');
         this.curODiv.appendChild(document.createElement('div'));
         this.curODiv.setAttribute('class','rulerHLine');
@@ -301,8 +315,8 @@ class DesignView extends React.Component {
     }
 
     mouseMove(event){
-        event.stopPropagation();
         if(this.curODiv &&  this.isDraging){
+            event.stopPropagation();
             if(this.whichDrag=='top'){
                this.curODiv.style.top = (event.pageY)+'px';
 
@@ -321,9 +335,9 @@ class DesignView extends React.Component {
     }
 
     mouseUp(event){
-        event.stopPropagation();
         let $this =this;
         if(this.curODiv) {
+            event.stopPropagation();
             //在x_ruler ,则消失,否则存储
             if((event.pageY<=this.refs.view.offsetTop+this.stageZoomTop && this.refs.view.offsetTop+this.stageZoomTop-14 <=event.pageY)||(event.pageX<=this.refs.canvasWraper.offsetLeft +this.stageZoomLeft && this.refs.canvasWraper.offsetLeft +this.stageZoomLeft-13 <=event.pageX) ){
                 this.refs.container.removeChild(this.curODiv);
@@ -352,14 +366,14 @@ class DesignView extends React.Component {
                 });
                 WidgetStore.currentWidget.props.rulerArr =this.aODiv;
             }
-        }
-        document.body.style.cursor='auto';
-        this.isDraging=false;
-        this.curODiv=null;
-        this.whichDrag=null;
-        //全部显示 ,如果处于非显示状态,则触发显示
-        if( this.selectNode&& this.selectNode.props.isShow != undefined && !this.selectNode.props.isShow){
-            WidgetActions['setRulerLineBtn'](true);
+            document.body.style.cursor='auto';
+            this.isDraging=false;
+            this.curODiv=null;
+            this.whichDrag=null;
+            //全部显示 ,如果处于非显示状态,则触发显示
+            if( this.selectNode&& this.selectNode.props.isShow != undefined && !this.selectNode.props.isShow){
+                WidgetActions['setRulerLineBtn'](true);
+            }
         }
     }
 

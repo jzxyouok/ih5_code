@@ -152,7 +152,7 @@ class NavBar extends React.Component {
         this.onEvent = this.onEvent.bind(this);
 
         this.onKeyHistory = this.onKeyHistory.bind(this);
-
+        this.onKeyDown = this.onKeyDown.bind(this);
 
         this.onClickAlignWidgets = this.onClickAlignWidgets.bind(this);
         this.onClickDistributeWidgets = this.onClickDistributeWidgets.bind(this);
@@ -184,6 +184,7 @@ class NavBar extends React.Component {
         ReDbOrSockIdStore.listen(this.reDbOrSockId.bind(this));
         CreateModuleStore.listen(this.createModule.bind(this));
         document.body.addEventListener('keyup', this.onKeyHistory);
+        document.body.addEventListener('keydown', this.onKeyDown);
 
         window.onbeforeunload = ()=>{
             var n = window.event.screenX - window.screenLeft;
@@ -211,7 +212,7 @@ class NavBar extends React.Component {
         clearTimeout(this.closeTimeFuc());
         localStorage.setItem("workID", null);
         document.body.removeEventListener('keyup', this.onKeyHistory);
-
+        document.body.removeEventListener('keydown', this.onKeyDown);
 
     }
 
@@ -1048,6 +1049,15 @@ class NavBar extends React.Component {
             historyLayerHide : !this.state.historyLayerHide
         })
     }
+    onKeyDown(event){
+        let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
+        //Ctrl+s
+        if (didPressCtrl && event.keyCode == 83) {
+            event.preventDefault();
+            this.onSave();
+        }
+    }
 
     onKeyHistory(event) {
         event.preventDefault();
@@ -1058,18 +1068,13 @@ class NavBar extends React.Component {
 
         //Ctrl+Z
         if (didPressCtrl && event.keyCode == 90) {
-             console.log('Ctrl+Z');
+          //console.log('Ctrl+Z');
             this.revokedHistory();
         }
         //Ctrl+y
         if (didPressCtrl && event.keyCode == 89) {
-            console.log('Ctrl+y');
+            //console.log('Ctrl+y');
             this.replyHistory();
-        }
-        //Ctrl+s
-        if (didPressCtrl && event.keyCode == 83) {
-            console.log('ctrl+s');
-            event.preventDefault();
         }
     }
 

@@ -1301,6 +1301,9 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cleanHistory'], this.cleanHistory);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
+
+        this.listenTo(WidgetActions['closeKeyboardMove'], this.closeKeyboardMove);
+
         this.listenTo(WidgetActions['alignWidgets'], this.alignWidgets);
 
         this.eventTreeList = [];
@@ -3049,6 +3052,11 @@ export default Reflux.createStore({
     },
     imageTextSize:function(sizeObj){
         this.trigger({ imageTextSizeObj:sizeObj});
+    },
+    closeKeyboardMove:function(bool){
+        this.trigger({ closeKeyboardMove:{
+            val:bool
+        }});
     },
     saveFontList:function(fontList){
         this.trigger({fontListObj:{'fontList':fontList}});
