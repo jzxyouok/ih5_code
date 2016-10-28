@@ -372,6 +372,7 @@ class Property extends React.Component {
         var value = null;
         switch (prop.type) {
             case propertyType.String:
+            case propertyType.color2:
                 value = e.target.value;
                 break;
             case propertyType.Integer:
@@ -458,7 +459,6 @@ class Property extends React.Component {
                 }
                 break;
             case propertyType.Color2:
-                defaultProp.placeholder=null;
                 break;
             default:
                 break;
