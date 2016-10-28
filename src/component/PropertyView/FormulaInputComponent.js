@@ -7,7 +7,7 @@ import $class from 'classnames'
 import { Menu, Dropdown } from 'antd';
 import { Input } from 'antd';
 
-import WidgetStore, {varType} from '../../stores/WidgetStore'
+import WidgetStore, {varType, dataType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap } from '../PropertyMap'
@@ -680,7 +680,15 @@ class FormulaInput extends React.Component {
                                 <div className="formula-obj-dot"></div>
                                 {
                                     !v.property
-                                        ? formulaPropertyDropdown(obj, v, i)
+                                        ? obj.className === 'data'
+                                        ? (<div className={$class("formula--dropDown formula-obj-property-dropDown formula-obj-arrType-dropDown f--hlc")}>
+                                            <div className="dropDown-title">选择值</div>
+                                            <span className="right-icon" />
+                                            <div className="arr-table">
+
+                                            </div>
+                                            </div>)
+                                        : formulaPropertyDropdown(obj, v, i)
                                         : (<div className="formula-obj-property"
                                                 onClick={this.onFocus.bind(this, i)}>
                                         <span>{v.property.showName}</span>
