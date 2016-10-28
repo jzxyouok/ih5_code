@@ -354,11 +354,12 @@ class VxRcSlider extends RcSlider {
             }
             WidgetActions['updateProperties'](obj, true);
         }
-        if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.props.points.length >= 2) {
-            let points = this.state.points;
+        if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.props.points.length >= 1) {
+            let points = this.props.points;
             points.splice(this.state.currentHandle, 1);
-            this.props.refTrack.props['data'] = this.props.refTrack.node['data'] = points;
-            this.setState({currentHandle: -1, points: points});
+            this.props.refTrack.props['data'] = points;
+            this.props.refTrack.node['data'] = points;
+            this.setState({currentHandle: -1});
         }
         if(widget.selectWidget){
             //console.log(widget.selectWidget);
@@ -668,7 +669,7 @@ class VxRcSlider extends RcSlider {
 			<li className={ cls({'active': this.props.isCurrent || this.props.myID === this.state.nowLayer},
                                     'timeline-row',
                                     'timeline-node',
-                                    `timeline-node-${track.parent.className}`,
+                                    `timeline-node-${this.props.refTrack.parent.props.name}`,
                                     'f--hlc')}>
 				<div className='timeline-node-meta timline-column-left f--hlc' onClick={ this.selectTrack.bind(this) }>
                     {
@@ -676,7 +677,7 @@ class VxRcSlider extends RcSlider {
                     }
                     <span className={cls("timeline-node-type", this.props.pic)}/>
 
-					<span className='timeline-node-name'>{track.parent.className}</span>
+					<span className='timeline-node-name'>{this.props.refTrack.parent.props.name}</span>
 				</div>
 
 				<div className='timeline-node-track timline-column-right'>
