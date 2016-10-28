@@ -7,7 +7,7 @@ import $class from 'classnames'
 import { Menu, Dropdown } from 'antd';
 import { Input } from 'antd';
 
-import WidgetStore, {varType} from '../../stores/WidgetStore'
+import WidgetStore, {varType, dataType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap } from '../PropertyMap'
@@ -609,6 +609,36 @@ class FormulaInput extends React.Component {
             );
         };
 
+        let drawRow = (row, column)=> {
+            let data = [];
+            for(let j = 0; j<=row; j++) {
+                data.push(<div className="data" key={j}>
+                    {
+                        j===0&&column===0
+                            ? null
+                            : j!==0&&column===0
+                            ? j
+                            : j===0&&column!==0
+                            ? column
+                            : <div className="data-btn"></div>
+                    }
+                </div>);
+            }
+            return data;
+        };
+
+        let drawTable = (row, column)=>{
+            let table = [];
+            for(let i = 0; i<=column; i++) {
+                table.push(<div className="data-column f--hlc" key={i}>
+                    {
+                        drawRow(row, i)
+                    }
+                </div>);
+            }
+            return table;
+        };
+
         // let formulaObjDropDown = () =>{
         //     if(this.disabled) {
         //         return  (<div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
@@ -680,7 +710,21 @@ class FormulaInput extends React.Component {
                                 <div className="formula-obj-dot"></div>
                                 {
                                     !v.property
-                                        ? formulaPropertyDropdown(obj, v, i)
+                                        ? obj.className === 'data'
+                                        ? (<div className={$class("formula--dropDown formula-obj-property-dropDown formula-obj-arrType-dropDown f--hlc")}>
+                                            <div className="dropDown-title">选择值</div>
+                                            <span className="right-icon" />
+                                            {
+                                                obj.props.column&&obj.props.column>0&&obj.props.row&&obj.props.row>0
+                                                    ? (<div className="arr-table">
+                                                        {
+                                                            drawTable(obj.props.row, obj.props.column)
+                                                        }
+                                                    </div>)
+                                                    :null
+                                            }
+                                            </div>)
+                                        : formulaPropertyDropdown(obj, v, i)
                                         : (<div className="formula-obj-property"
                                                 onClick={this.onFocus.bind(this, i)}>
                                         <span>{v.property.showName}</span>

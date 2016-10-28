@@ -147,6 +147,7 @@ class FunctionView extends React.Component {
                 WidgetActions['changeFunction']({'value': this.state.value});
             }
         }
+        WidgetActions['closeKeyboardMove'](true);
     }
 
     render() {

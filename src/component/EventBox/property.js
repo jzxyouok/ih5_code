@@ -368,36 +368,7 @@ class Property extends React.Component {
         });
     }
 
-    onChangePropDom(prop, index, e){
-        var value = null;
-        switch (prop.type) {
-            case propertyType.String:
-                value = e.target.value;
-                break;
-            case propertyType.Integer:
-            case propertyType.Float:
-            case propertyType.Boolean2:
-            case propertyType.Number:
-            case propertyType.FormulaInput:
-                value = e;
-                break;
-            case propertyType.Function:
-                break;
-            default:
-                break;
-        }
-        prop.value = value;
-        let property = this.state.currentAction.property;
-        property[index] = prop;
-        let action = this.state.currentAction;
-        action.property = property;
 
-        this.setState({
-            currentAction: action,
-        }, ()=>{
-            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
-        });
-    }
 
     onPropertyContentSelect(prop, index, type, e) {
         e.domEvent.stopPropagation();
@@ -419,60 +390,6 @@ class Property extends React.Component {
             WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
         });
     }
-
-
-    getProps(item, index) {
-        var defaultProp = {
-            size: 'small',
-            onChange:  this.onChangePropDom.bind(this, item, index),
-            placeholder:item.default
-        };
-        switch (item.type) {
-            case propertyType.String:
-            case propertyType.Integer:
-            case propertyType.Float:
-            case propertyType.Number:
-                defaultProp.value = item.value;
-                break;
-            case propertyType.Boolean2:
-                if(item.value==false){
-                    defaultProp.checked = 2;
-                }else if(item.value==true){
-                    defaultProp.checked = 0;
-                }else{
-                    defaultProp.checked = 1;
-                }
-                break;
-            case propertyType.FormulaInput:
-                defaultProp.value = item.value;
-                break;
-            case propertyType.Function:
-                break;
-            case propertyType.Select:
-                if(item.name=='scaleType'){
-                    defaultProp.options=[];
-                    for(var i in  item.options){
-                        defaultProp.options.push(i);
-                    }
-                }
-                break;
-            case propertyType.Color2:
-                defaultProp.placeholder=null;
-                break;
-            default:
-                break;
-        }
-
-        //设置值
-        if(item.type !== propertyType.FormulaInput) {
-            let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-            if(widget.node[item.name] &&  !defaultProp.value){
-                defaultProp.value =widget.node[item.name];
-            }
-        }
-        return defaultProp;
-    }
-
     onGetClassListByKey(key) {
         this.classNameList = [];
         let widget = WidgetStore.getWidgetByKey(key);
@@ -509,7 +426,90 @@ class Property extends React.Component {
         document.getElementById('EventBox').style.overflow = 'hidden';
         document.getElementById('EBContentLayer').style.overflow = 'scroll';
     }
+    onChangePropDom(prop, index, e){
+        var value = null;
+        switch (prop.type) {
+            case propertyType.String:
+            case propertyType.color2:
+                value = e.target.value;
+                break;
+            case propertyType.Integer:
+            case propertyType.Float:
+            case propertyType.Boolean2:
+            case propertyType.Number:
+            case propertyType.FormulaInput:
+                value = e;
+                break;
+            case propertyType.Function:
+                break;
+            default:
+                break;
+        }
+        prop.value = value;
+        let property = this.state.currentAction.property;
+        property[index] = prop;
+        let action = this.state.currentAction;
+        action.property = property;
 
+        this.setState({
+            currentAction: action,
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+        });
+    }
+    getProps(item, index) {
+        var defaultProp = {
+            size: 'small',
+            placeholder:item.default,
+            disabled: item.readOnly !== undefined,
+            onChange:  this.onChangePropDom.bind(this, item, index)
+        };
+        switch (item.type) {
+            case propertyType.String:
+            case propertyType.Integer:
+            case propertyType.Float:
+            case propertyType.Number:
+                defaultProp.value = item.value;
+                break;
+            case propertyType.Boolean2:
+                if(item.value==false){
+                    defaultProp.checked = 2;
+                }else if(item.value==true){
+                    defaultProp.checked = 0;
+                }else{
+                    defaultProp.checked = 1;
+                }
+                break;
+            case propertyType.FormulaInput:
+                defaultProp.value = item.value;
+                break;
+            case propertyType.Function:
+                break;
+            case propertyType.Select:
+                if(item.name=='scaleType'){
+                    defaultProp.options=[];
+                    for(var i in  item.options){
+                        defaultProp.options.push(i);
+                    }
+                }
+                break;
+            case propertyType.Color2:
+                break;
+            default:
+                break;
+        }
+
+        //设置值
+
+        if(item.type !== propertyType.FormulaInput) {
+            let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
+            if(widget.node[item.name] &&  !defaultProp.value){
+                defaultProp.value =widget.node[item.name];
+            }
+
+        }
+        return defaultProp;
+    }
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
 
@@ -584,13 +584,13 @@ class Property extends React.Component {
             switch (type) {
                 case propertyType.String:
                     return <Input {...defaultProp}/>;
-                    {/*return <input {...defaultProp} className="flex-1" type="text" placeholder={value}/>;*/}
+                {/*return <input {...defaultProp} className="flex-1" type="text" placeholder={value}/>;*/}
                 case propertyType.Integer:
-                    return <InputNumber {...defaultProp}/>;
-                    // return <input className="flex-1" type="text" placeholder={value}/>;
+                    return <ConInputNumber {...defaultProp}/>;
+                // return <input className="flex-1" type="text" placeholder={value}/>;
                 case propertyType.Float:
                 case propertyType.Number:
-                    return <InputNumber step={0.1} {...defaultProp}/>;
+                    return <ConInputNumber step={0.1} {...defaultProp}/>;
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Boolean:
@@ -627,14 +627,14 @@ class Property extends React.Component {
                             list = this.arrList;
                         }
                     } else if(item.name === 'class'){
-                            titleTemp = '类别';
-                            oType = optionType.class;
-                            list = this.classNameList;
+                        titleTemp = '类别';
+                        oType = optionType.class;
+                        list = this.classNameList;
                     } else if(item.name=='scaleType'){
 
-                         titleTemp =defaultProp.placeholder ;
-                         oType = optionType.class;
-                         list = defaultProp.options;
+                        titleTemp =defaultProp.placeholder ;
+                        oType = optionType.class;
+                        list = defaultProp.options;
                     }else {
                         return <div>未定义类型</div>;
                     }

@@ -75,7 +75,7 @@ propertyMap['root'] = [
     { name: 'create', showName:'创建对象', info:'(class,id,props,bottom)',
         property:[
             {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
-            {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
+            {'name':'id', showName:'ID', 'value':null, 'type':propertyType.String},
             {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true },
@@ -710,12 +710,15 @@ propertyMap[dataType.oneDArr] = [
     { addRequires: widgetFlags.Root},
     { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
     { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
+    { name: 'row', showName:'行',type: propertyType.Integer, default: 0, isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 propertyMap[dataType.twoDArr] = [
     { addRequires: widgetFlags.Root},
     { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
     { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
+    { name: 'row', showName:'行',type: propertyType.Integer, default: 0, isProperty: true },
+    { name: 'column', showName:'列',type: propertyType.Integer, default: 0, isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 
