@@ -107,7 +107,7 @@ class PropertyView extends React.Component {
                                 dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                 dom.jscolor.onFineChange = defaultProp.onChange;
                             }
-                        } 
+                        }
                     }} {...defaultProp}   className='color-input' />
                     <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
                 </div>;
@@ -120,7 +120,7 @@ class PropertyView extends React.Component {
                         dom.jscolor.onFineChange = defaultProp.onChange;
                     }
                 }
-                }} placeholder={defaultProp.placeholder}  /> ;
+                }}  {...defaultProp}   /> ;
 
             case propertyType.Boolean:
                 return <Switch   {...defaultProp} />;
@@ -585,17 +585,20 @@ class PropertyView extends React.Component {
     getFields() {
         let node = this.selectNode;
 
-    //    console.log(node);
-
+//        console.log(node);
 
         if (!node)  return null;
 
-        if( node.node.keepRatio ===undefined && this.isCanKeepRatio){
-            node.node.keepRatio =( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist') ? true:false;
-            let obj={};
-            obj.keepRatio =  node.node.keepRatio;
-            WidgetActions['updateProperties'](obj, false, true);
-            this.isCanKeepRatio = false;
+        if( node.node.keepRatio ===undefined && ( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist')){
+            this.isCanKeepRatio = true;
+        }
+
+        if( node.node.keepRatio ===undefined  && this.isCanKeepRatio){
+            node.node.keepRatio = true;
+               let obj={};
+               obj.keepRatio =  node.node.keepRatio;
+               WidgetActions['updateProperties'](obj, false, true);
+               this.isCanKeepRatio = false;
         }
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
@@ -663,6 +666,8 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue =node.props[item.name];
                 }
+
+
                 if(item.type === propertyType.TbColor){
                     defaultValue = node.props['headerColor'];
                 }
@@ -816,7 +821,7 @@ class PropertyView extends React.Component {
                 if(item.name=='chooseColumn'){
                     defaultProp.tbWidth = item.tbWidth;
                 }
-            }else if(item.type ==propertyType.Color){
+            }else if(item.type ==propertyType.Color||item.type ==propertyType.Color2){
                 defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
                 defaultProp.value = defaultValue;
             }else if(item.type === propertyType.TbColor){

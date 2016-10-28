@@ -1589,8 +1589,115 @@ export default Reflux.createStore({
             this.updateHistoryRecord(historyName);
         }
     },
-    alignWidgets: function(typeId, type) {
 
+    getPointsOfWidget: function(widget) {
+        let props = widget.node;
+        let points = {};
+        points.left = props.positionX-props.width*props.originX;
+        points.right = props.positionX+props.width*props.originX;
+        points.top = props.positionY-props.height*props.originY;
+        points.bottom = props.positionY+props.height*props.originY;
+        points.centreX = (points.left+points.right)/2;
+        points.centreY = (points.top+points.bottom)/2;
+        points.originX = props.originX;
+        points.originY = props.originY;
+        points.positionX = props.positionX;
+        points.positionY = props.positionY;
+        points.height = props.height;
+        points.width = props.width;
+      return points;
+    },
+    alignWidgets: function(typeId, type) {
+        //每个对象需要获取相对于舞台的绝对位置（5个点）
+        //left，top，right，bottom，middle
+        let pointsList = [];
+        this.selectWidgets.forEach((v)=>{
+            pointsList.push(this.getPointsOfWidget(v));
+        });
+        if(pointsList.length<1) {
+            return;
+        }
+        switch (type) {
+            case 'align':
+                let standard = pointsList[0];
+                switch (typeId) {
+                    case 1:
+                        pointsList.forEach((v)=>{
+                            if(v.left<standard.left) {
+                                standard = v;
+                            }
+                        });
+                        this.selectWidgets.forEach((v)=>{
+                            let px = standard.left+v.node.width*v.node.originX;
+                            v.node['positionX'] = px;
+                            v.props['positionX'] = px;
+                        });
+                        //左
+                        break;
+                    case 2:
+                        //左右居中
+                        break;
+                    case 3:
+                        //右
+                        pointsList.forEach((v)=>{
+                            if(v.right>standard.right) {
+                                standard = v;
+                            }
+                        });
+                        this.selectWidgets.forEach((v)=>{
+                            let px = standard.right-v.node.width*v.node.originX;
+                            v.node['positionX'] = px;
+                            v.props['positionX'] = px;
+                        });
+                        break;
+                    case 4:
+                        //底部
+                        pointsList.forEach((v)=>{
+                            if(v.bottom>standard.bottom) {
+                                standard = v;
+                            }
+                        });
+                        this.selectWidgets.forEach((v)=>{
+                            let px = standard.bottom-v.node.height*v.node.originY;
+                            v.node['positionY'] = px;
+                            v.props['positionY'] = px;
+                        });
+                        break;
+                    case 5:
+                        //上下居中
+                        break;
+                    case 6:
+                        //顶部对齐
+                        pointsList.forEach((v)=>{
+                            if(v.top<standard.top) {
+                                standard = v;
+                            }
+                        });
+                        this.selectWidgets.forEach((v)=>{
+                            let px = standard.top+v.node.height*v.node.originY;
+                            v.node['positionY'] = px;
+                            v.props['positionY'] = px;
+                        });
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 'distribute':
+                switch (typeId) {
+                    case 1:
+                        //水平
+                        break;
+                    case 2:
+                        //垂直
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
     },
     getWidgetByKey: function (key) {
         return keyMap[key];

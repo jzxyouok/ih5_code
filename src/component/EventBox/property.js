@@ -391,6 +391,7 @@ class Property extends React.Component {
         property[index] = prop;
         let action = this.state.currentAction;
         action.property = property;
+
         this.setState({
             currentAction: action,
         }, ()=>{
@@ -424,7 +425,7 @@ class Property extends React.Component {
         var defaultProp = {
             size: 'small',
             onChange:  this.onChangePropDom.bind(this, item, index),
-            default:item.default
+            placeholder:item.default
         };
         switch (item.type) {
             case propertyType.String:
@@ -461,6 +462,12 @@ class Property extends React.Component {
                 break;
             default:
                 break;
+        }
+
+        //设置值
+        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
+        if(widget.node[item.name] &&  !defaultProp.value){
+            defaultProp.value =widget.node[item.name];
         }
         return defaultProp;
     }
@@ -596,8 +603,7 @@ class Property extends React.Component {
                                 dom.jscolor.onFineChange = defaultProp.onChange;
                             }
                         }
-                    }} placeholder={defaultProp.placeholder}  /> ;
-
+                    }}  {...defaultProp}  /> ;
                 case propertyType.FormulaInput:
                     return <FormulaInput containerId={propertyId}
                                          disabled={!this.state.currentEnable}
@@ -623,7 +629,8 @@ class Property extends React.Component {
                             oType = optionType.class;
                             list = this.classNameList;
                     } else if(item.name=='scaleType'){
-                         titleTemp =defaultProp.default ;
+
+                         titleTemp =defaultProp.placeholder ;
                          oType = optionType.class;
                          list = defaultProp.options;
                     }else {
