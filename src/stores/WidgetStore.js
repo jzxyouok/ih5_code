@@ -1824,7 +1824,7 @@ export default Reflux.createStore({
                         gap = (maxBottom-minTop-totalHeight)/(len-1);
                         //最上和最下边不需要再计算positionX
                         for(let i=1; i<len-1; i++) {
-                            let newTop = this.getPointsOfWidget(orderedSelectWidget[i-1]).top+gap;
+                            let newTop = this.getPointsOfWidget(orderedSelectWidget[i-1]).bottom+gap;
                             let py = newTop+orderedSelectWidget[i].node.height*orderedSelectWidget[i].node.originY;
                             if(orderedSelectWidget[i].node.scaleY<0) {
                                 py = newTop+orderedSelectWidget[i].node.height*(1-orderedSelectWidget[i].node.originY);
