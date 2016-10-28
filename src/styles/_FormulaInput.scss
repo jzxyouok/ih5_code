@@ -156,13 +156,34 @@
     .formula-obj-arrType-dropDown {
       position: relative;
       .arr-table {
+        z-index: 10;
         position: absolute;
         top: 18px;
         background: #315654;
         border-radius: 2px;
         left: 0;
-        min-width: 40px;
-        min-height: 40px;
+        padding-right: 15px;
+        padding-bottom: 15px;
+        .data-column {
+          text-align: center;
+          .data {
+            min-width: 20px;
+            min-height: 20px;
+            width: 20px;
+            height: 20px;
+            .data-btn {
+              min-width: 20px;
+              min-height: 20px;
+              width: 20px;
+              height: 20px;
+              &:hover {
+                background-color: #315654;
+              }
+              background-color: #1c2f2e;
+              border: 1px solid #162322;
+            }
+          }
+        }
       }
     }
     .formula-obj-name,

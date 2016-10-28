@@ -609,12 +609,20 @@ class FormulaInput extends React.Component {
             );
         };
 
-        let drawRow = (row)=> {
+        let drawRow = (row, column)=> {
             let data = [];
             for(let j = 0; j<=row; j++) {
-                data.push((<div className="data">
-
-                </div>));
+                data.push(<div className="data" key={j}>
+                    {
+                        j===0&&column===0
+                            ? null
+                            : j!==0&&column===0
+                            ? j
+                            : j===0&&column!==0
+                            ? column
+                            : <div className="data-btn"></div>
+                    }
+                </div>);
             }
             return data;
         };
@@ -622,11 +630,11 @@ class FormulaInput extends React.Component {
         let drawTable = (row, column)=>{
             let table = [];
             for(let i = 0; i<=column; i++) {
-                table.push((<div className="data-column">
+                table.push(<div className="data-column f--hlc" key={i}>
                     {
-                        drawRow(row)
+                        drawRow(row, i)
                     }
-                </div>));
+                </div>);
             }
             return table;
         };
