@@ -201,8 +201,10 @@ class Property extends React.Component {
             showName: '设置属性',
             type: funcType.default
         }
+
         let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
         let className = widget.className;
+
         let propertyList=[];
         propertyMap[className].map((v, i)=> {
             if (v.isProperty && v.name != 'id') {
@@ -348,6 +350,7 @@ class Property extends React.Component {
                 this.onGetClassListByKey(this.state.currentObject);
             }
         }
+
         this.setState({
             currentAction: action,
             actionDropdownVisible: false

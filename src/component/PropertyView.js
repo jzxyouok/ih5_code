@@ -865,7 +865,7 @@ class PropertyView extends React.Component {
             }
 
             //设置通用默认参数和事件
-            const defaultProp = {
+            let defaultProp = {
                 size: 'small',
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
