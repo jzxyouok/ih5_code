@@ -29,14 +29,11 @@ class DesignView extends React.Component {
         this.onresize=this.onresize.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
-
         this.isShowRulerLine = this.isShowRulerLine.bind(this);
         this.mouseDown_top = this.mouseDown_top.bind(this);
         this.mouseDown_left = this.mouseDown_left.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
-
-
     }
 
     componentDidMount() {
@@ -44,26 +41,23 @@ class DesignView extends React.Component {
         this.onStatusChange(WidgetStore.getStore());
         window.onresize=this.onresize;
         this.setRuler(6,10);  //设置基准线
-        document.body.addEventListener('keyup', this.onKeyScroll);
+        document.body.addEventListener('keydown', this.onKeyScroll);
         document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown_top);
         document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);
         document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
         document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
-
-
     }
 
     componentWillUnmount() {
         this.unsubscribe();
-        window.onresize=null;
-        document.body.removeEventListener('keyup', this.onKeyScroll);
-        document.getElementById('h_ruler').removeEventListener('mousedown',this.mouseDown_top);
-        document.getElementById('v_ruler').removeEventListener('mousedown',this.mouseDown_left);
-        document.getElementById('DesignView-Container').removeEventListener('mousemove',this.mouseMove);
-        document.getElementById('DesignView-Container').removeEventListener('mouseup',this.mouseUp);
+        window.onresize = null;
+        document.body.removeEventListener('keydown', this.onKeyScroll);
+        document.getElementById('h_ruler').removeEventListener('mousedown', this.mouseDown_top);
+        document.getElementById('v_ruler').removeEventListener('mousedown', this.mouseDown_left);
+        document.getElementById('DesignView-Container').removeEventListener('mousemove', this.mouseMove);
+        document.getElementById('DesignView-Container').removeEventListener('mouseup', this.mouseUp);
 
     }
-
 
     onStatusChange(widget) {
        // console.log(widget);
@@ -161,6 +155,12 @@ class DesignView extends React.Component {
     }
 
     onKeyScroll(event) {
+        if(this.rootWidget.className !=='root') {
+            return;
+        }
+        if(event.target.nodeName==='INPUT' || event.target.nodeName==='TEXTAREA') {
+            return;
+        }
         event.preventDefault();
         event.stopPropagation();
 
@@ -386,14 +386,14 @@ class DesignView extends React.Component {
             <div className='f--hlt'
                  id='DesignView-Container'
                  ref='container'
-                 onWheel={this.scroll}  >
+                 onWheel={this.scroll}>
                 <div  ref='line_top' id='line_top'></div>
                 <div ref='canvasWraper' className='canvas-wraper' >
                     <div  ref='line_left'  id='line_left'></div>
                     <div id='canvas-dom'
                          className="DesignView"
-                          ref='view'
-                             style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }} >
+                         ref='view'
+                         style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
                         <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
                         <ul id='v_ruler'></ul>
                     </div>
