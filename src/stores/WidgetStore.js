@@ -2335,6 +2335,7 @@ export default Reflux.createStore({
         }
     },
     changeSpecific: function(specific, params){
+
         if(params){
             if(params.object){
                 specific.object = params.object;
@@ -2343,6 +2344,9 @@ export default Reflux.createStore({
                 specific.action = params.action;
             } else if(params.property){
                 specific.action.property = params.property;
+            }else  if(params.className){
+                specific.action={};
+                specific.action.className= params.className;
             }
             this.trigger({redrawEventTree: true});
             historyName = "修改目标对象" + this.currentWidget.node.name;

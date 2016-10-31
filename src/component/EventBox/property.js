@@ -9,6 +9,8 @@ import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
+import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
+
 
 const Option = Select.Option;
 const Panel = Collapse.Panel;
@@ -196,24 +198,23 @@ class Property extends React.Component {
         })
     }
     getSetPropsObj() {
+        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
+        let className = widget.className;
         let obj = {
             name: 'setProps',
             showName: '设置属性',
-            type: funcType.default
+            type: funcType.default,
+            className:className
         }
-
-        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-        let className = widget.className;
-
-        let propertyList=[];
-        propertyMap[className].map((v, i)=> {
-            if (v.isProperty && v.name != 'id') {
-                let o = v;
-                o.value =o.value ?o.value : null;
-                propertyList.push(o);
-            }
-        });
-        obj.property=propertyList;
+        // let propertyList=[];
+        // propertyMap[className].map((v, i)=> {
+        //     if (v.isProperty && v.name != 'id') {
+        //         let o = v;
+        //         o.value =o.value ?o.value : null;
+        //         propertyList.push(o);
+        //     }
+        // });
+        // obj.property=propertyList;
         return obj;
     }
     onSTButtonClick(){
@@ -350,7 +351,6 @@ class Property extends React.Component {
                 this.onGetClassListByKey(this.state.currentObject);
             }
         }
-
         this.setState({
             currentAction: action,
             actionDropdownVisible: false
@@ -765,7 +765,13 @@ class Property extends React.Component {
                                         !w||!this.state.currentAction ||
                                         !this.state.currentAction.property ||
                                          this.state.currentAction.property.length === 0
-                                            ? null
+                                            ? <div>
+                                            {
+                                                this.state.currentAction&&this.state.currentAction.className
+                                                    ?<PropertyViewSetUp  classType={this.state.currentAction.className}/>
+                                                    :null
+                                            }    
+                                            </div>
                                             : <div className="pp--list-layer flex-1">
                                             {
                                                 this.state.currentAction.property.map(propertyContent)
