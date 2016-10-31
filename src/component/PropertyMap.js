@@ -685,7 +685,7 @@ propertyMap['sock'] = [
     { addRequires: widgetFlags.Root},
     { name: 'sockName' , showName:'名称',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
     { name: 'listened', showName:'是否监听', type: propertyType.Boolean, default: false, isProperty: true },
-    { name: 'message', showName:'消息', isEvent: true, info:'data', needFill:[{showName:'值',type:'var',default:null}]},
+    { name: 'message', showName:'消息', isEvent: true, info:'data', needFill:[{showName:'值',type:'var',default:null, actionName:'message'}]},
     { name: 'send', showName:'发送消息', isFunc: true, info:'(data)',
         property:[
             {'name':'value', showName:'内容', 'value':null, 'type':propertyType.FormulaInput},

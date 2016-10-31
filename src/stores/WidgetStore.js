@@ -227,6 +227,9 @@ function loadTree(parent, node, idList) {
         if(needFill.length>0){
             r.needFill=needFill;
         }
+        if(judgesObj.needFills){
+            r.needFills = judgesObj.needFills;
+        }
 
       r.eid = (_eventCount++);
       r.specificList = [];
@@ -341,6 +344,26 @@ function resolveEventTree(node, list) {
         delete(judge.compareObjId);
         delete(judge.compareVarId);
       });
+        if(item.needFills) {
+            if(!item.needFill) {
+                item.needFill = [];
+            }
+            item.needFills.forEach((v1,i)=>{
+                item.conFlag = v1.actionName;
+                if(v1.valueIds) {
+                    v1.default = idToObjectKey(list, v1.valueIds[0], v1.valueIds[1]);
+                } else {
+                    v1.default = null;
+                }
+                (delete v1.valueIds);
+                if(v1.default === null) {
+                    item.needFills.splice(i, 1);
+                } else {
+                    item.needFill.push(v1);
+                }
+            });
+            (delete item.needFills);
+        };
 
         let dealWithPropertyFormulaInput = (cmd)=>{
             cmd.action.property.forEach(v=> {
@@ -782,10 +805,17 @@ function saveTree(data, node, saveKey) {
             judges.children=[];
             if(item.needFill) {
                 judges.conFlag = 'change';//触发条件
+                judges.needFills = [];
                 item.needFill.map((v, i)=> {
                     if(judges.className == 'input' && v.type=='select'){
                         judges.conFlag =v.default;
-                    } else{
+                    } else if (judges.className === 'sock' && v.actionName === 'message') {
+                        let valueObj = keyMap[v.default];
+                        if (valueObj) {
+                            let o = objectToId(valueObj);
+                            judges.needFills.push({showName: v.showName, type: v.type, default: v.default, valueIds:o, actionName:v.actionName});
+                        }
+                    } else {
                         let obj = {};
                         obj.enable=true;
                         obj.judgeObjKey =node.key;
