@@ -1292,6 +1292,32 @@
                                     background: url("img/button-icon.svg") no-repeat -1680px -40px;
                                     display: block;
                                 }
+                                .p--icon {
+                                    cursor: pointer;
+                                    min-width: 22px;
+                                    width: 22px;
+                                    height: 22px;
+                                    outline: 0;
+                                    margin: 0 2px 0 2px;
+                                    border: 1px solid #294140;
+                                    border-radius: 2px;
+                                    //280 360
+                                    background: url('img/button-icon.svg') no-repeat -279px -359px;
+                                    &:hover {
+                                        background: url("img/button-icon.svg") no-repeat -279px -399px;
+                                    }
+                                    &:active {
+                                        background: url("img/button-icon.svg") no-repeat -279px -439px;
+                                    }
+                                    &.active {
+                                        border: 1px solid #7b5815;
+                                        background: url("img/button-icon.svg") no-repeat -279px -359px;
+                                    }
+                                    &:disabled {
+                                        cursor: not-allowed;
+                                        opacity: 0.4;
+                                    }
+                                }
                             }
                         }
 

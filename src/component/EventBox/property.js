@@ -54,6 +54,9 @@ class Property extends React.Component {
         this.onChangePropDom = this.onChangePropDom.bind(this);
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
 
+        this.onPropsObjButtonClick = this.onPropsObjButtonClick.bind(this);
+        this.onPropsObjResultGet = this.onPropsObjResultGet.bind(this);
+
         this.onSTResultGet = this.onSTResultGet.bind(this);
         this.onSTButtonClick = this.onSTButtonClick.bind(this);
 
@@ -368,7 +371,36 @@ class Property extends React.Component {
         });
     }
 
+    onPropsObjButtonClick(){
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
+        if(!this.state.currentEnable) {
+            return false;
+        }
+        return true;
+    }
 
+    onPropsObjResultGet(prop, index, result){
+        let getTarget = false;
+        this.state.objectList.forEach((v)=>{
+            if(result.key === v.key){
+                getTarget = true;
+            }
+        });
+        if (getTarget) {
+            prop.value = result.key;
+            let property = this.state.currentAction.property;
+            property[index] = prop;
+            let action = this.state.currentAction;
+            action.property = property;
+            this.setState({
+                currentAction: action,
+            }, ()=>{
+                WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+            });
+        }
+    }
 
     onPropertyContentSelect(prop, index, type, e) {
         e.domEvent.stopPropagation();
@@ -637,6 +669,27 @@ class Property extends React.Component {
                         return <div>未定义类型</div>;
                     }
                     return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
+                case propertyType.Object:
+                    let objType = optionType.widget;
+                    let objList = this.state.objectList;
+                    let itemObj = WidgetStore.getWidgetByKey(item.value);
+                    return (<Dropdown overlay={propertySelectMenu(objList, item, index, objType)} trigger={['click']}
+                                      getPopupContainer={() => document.getElementById(propertyId)}>
+                        <div className={$class("p--dropDown short")}>
+                            <div className="title p--title f--hlc">
+                                <SelectTargetButton className={'p--icon'}
+                                                    disabled={!this.state.currentEnable}
+                                                    targetList={this.state.objectList}
+                                                    onClick={this.onPropsObjButtonClick.bind(this, index)}
+                                                    getResult={this.onPropsObjResultGet.bind(this, item, index)} />
+                                { !itemObj || !itemObj.props || !itemObj.props.name
+                                    ?'选择对象'
+                                    :itemObj.props.name
+                                }
+                                <span className="icon" />
+                            </div>
+                        </div>
+                    </Dropdown>);
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 case propertyType.Hidden:
