@@ -10,6 +10,7 @@ import { Input } from 'antd';
 import WidgetStore, {varType, dataType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
+import { ArrTableDropDown } from '../PropertyView/ArrTableDropDown';
 import { propertyMap } from '../PropertyMap'
 
 import $ from 'jquery';
@@ -71,6 +72,8 @@ class FormulaInput extends React.Component {
         this.onFormulaPatternKeyDown = this.onFormulaPatternKeyDown.bind(this);
         this.onFormulaPatternBlur = this.onFormulaPatternBlur.bind(this);
         this.onFormulaKeyUp = this.onFormulaKeyUp.bind(this);
+
+        this.onChangeArrTableData = this.onChangeArrTableData.bind(this);
 
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
 
@@ -317,7 +320,23 @@ class FormulaInput extends React.Component {
         }
         this.setState({
             value: value,
-            // propertyDropDownVisible: false
+        }, ()=>{
+            let focus = 'pattern'+i;
+            if(this.refs[focus]) {
+                this.refs[focus].refs.input.focus();
+            }
+            this.onChange({value:this.state.value, type:this.state.currentType});
+        })
+    }
+
+    onChangeArrTableData(v, i, row, column) {
+       let value = this.state.value;
+        if(value&&value.length>0){
+            v.property = [row, column];
+            value[i] = v;
+        }
+        this.setState({
+            value: value,
         }, ()=>{
             let focus = 'pattern'+i;
             if(this.refs[focus]) {
@@ -548,17 +567,6 @@ class FormulaInput extends React.Component {
             if(width>minInputWidth){
                 return width;
             }
-            // let length = 0;
-            // for (let i=0; i<value.length; i++) {
-            //     if (value[i].charCodeAt(0)<299) {
-            //         length++;
-            //     } else {
-            //         length+=1.8;
-            //     }
-            // }
-            // if((length*7)>minInputWidth) {
-            //     return length * 7;
-            // }
         }
         return minInputWidth;
     }
@@ -607,36 +615,6 @@ class FormulaInput extends React.Component {
                     }
                 </Menu>
             );
-        };
-
-        let drawRow = (row, column)=> {
-            let data = [];
-            for(let j = 0; j<=row; j++) {
-                data.push(<div className="data" key={j}>
-                    {
-                        j===0&&column===0
-                            ? null
-                            : j!==0&&column===0
-                            ? j
-                            : j===0&&column!==0
-                            ? column
-                            : <div className="data-btn"></div>
-                    }
-                </div>);
-            }
-            return data;
-        };
-
-        let drawTable = (row, column)=>{
-            let table = [];
-            for(let i = 0; i<=column; i++) {
-                table.push(<div className="data-column f--hlc" key={i}>
-                    {
-                        drawRow(row, i)
-                    }
-                </div>);
-            }
-            return table;
         };
 
         // let formulaObjDropDown = () =>{
@@ -711,23 +689,23 @@ class FormulaInput extends React.Component {
                                 {
                                     !v.property
                                         ? obj.className === 'data'
-                                        ? (<div className={$class("formula--dropDown formula-obj-property-dropDown formula-obj-arrType-dropDown f--hlc")}>
-                                            <div className="dropDown-title">选择值</div>
-                                            <span className="right-icon" />
-                                            {
-                                                obj.props.column&&obj.props.column>0&&obj.props.row&&obj.props.row>0
-                                                    ? (<div className="arr-table">
-                                                        {
-                                                            drawTable(obj.props.row, obj.props.column)
-                                                        }
-                                                    </div>)
-                                                    :null
-                                            }
-                                            </div>)
+                                        ? (<ArrTableDropDown
+                                        className={$class("formula--dropDown formula-obj-property-dropDown formula-obj-arrType-dropDown f--hlc")}
+                                        onChange={this.onChangeArrTableData.bind(this, v, i)}
+                                        onClick={this.onFocus.bind(this,null)}
+                                        row={obj.props.row}
+                                        disable={this.disabled}
+                                        column={obj.props.column}/>)
                                         : formulaPropertyDropdown(obj, v, i)
                                         : (<div className="formula-obj-property"
                                                 onClick={this.onFocus.bind(this, i)}>
-                                        <span>{v.property.showName}</span>
+                                        {
+                                            obj.className === 'data'
+                                                ? v.property.length===2
+                                                ? <span>{v.property[0]}行{v.property[1]}列</span>
+                                                : <span>数据错误</span>
+                                                : <span>{v.property.showName}</span>
+                                        }
                                     </div>)
                                 }
                             </div>
