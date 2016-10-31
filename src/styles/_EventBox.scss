@@ -1354,6 +1354,33 @@
                             }
                         }
 
+                        // switch
+                        .ant-switch{
+                            border: 1px solid #162423;
+                            background-color: #162423;
+                            height: 18px !important;
+                            width: 42px !important;
+                            line-height: 16px;
+                        }
+                        .ant-switch-small:after{
+                            height: 16px !important;
+                            width: 16px !important;
+                            left: 2px !important;
+                        }
+                        .ant-switch:after{
+                            background-color: #858585;
+                        }
+                        .ant-switch-checked {
+                            border-color: #294140;
+                            background-color: #294140;
+                            .ant-switch-inner{
+                                left: 4px;
+                            }
+                            &:after{
+                                left: 22px !important;
+                            }
+                        }
+
                         .on-off-btn {
                             @include border-radius(11px);
                             position: relative;

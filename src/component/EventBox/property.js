@@ -521,7 +521,7 @@ class Property extends React.Component {
 
         let propertyContent = (v1,i1)=>{
             //设置通用默认参数和事件
-            return  <div className="pp--list f--hlc" key={i1}>
+            return  <div className={$class("pp--list f--hlc", {'hidden':v1.type===propertyType.Hidden})} key={i1} >
                         <div className="pp--name">{ v1.showName }</div>
                         { type(v1.type, this.getProps(v1, i1), v1, i1)}
                     </div>
@@ -591,6 +591,8 @@ class Property extends React.Component {
                 case propertyType.Float:
                 case propertyType.Number:
                     return <ConInputNumber step={0.1} {...defaultProp}/>;
+                case propertyType.Boolean3:
+                    return <Switch checkedChildren={'开'} unCheckedChildren={'关'} {...defaultProp}/>
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Boolean:
@@ -621,10 +623,6 @@ class Property extends React.Component {
                             titleTemp = '来源';
                             oType = optionType.widget;
                             list = w.dbItemList;
-                        } else if (item.name ==='option'){
-                            titleTemp = '选项';
-                            oType = optionType.widget;
-                            list = this.arrList;
                         }
                     } else if(item.name === 'class'){
                         titleTemp = '类别';
@@ -641,6 +639,8 @@ class Property extends React.Component {
                     return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
                 case propertyType.Function:
                     return <div>未定义类型</div>;
+                case propertyType.Hidden:
+                    return null;
                 default:
                     return <div>未定义类型</div>;
             }

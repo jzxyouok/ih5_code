@@ -19,7 +19,14 @@ const propertyType = {
     TbSelect : 14,
     TbColor : 15,
     TbFont : 16,
-    TdLayout : 17
+    TdLayout : 17,
+
+    DBCons: 18,
+    DBOrder: 19,
+    Range: 20,
+    Object:21,
+    Hidden: -1,
+    Boolean3:22,
 };
 
 var level;
@@ -666,7 +673,13 @@ propertyMap['db'] = [
     { addRequires: widgetFlags.Root},
     { name: 'find', showName:'输出', isFunc: true, info:'(option, callback(err, result))',
         property:[
-            {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.Select},
+            // {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.Select},
+            {'name':'type', showName:'普通', 'value':'normal', 'type':propertyType.Hidden},
+            {'name':'conditions', showName:'输出条件', 'value':null, 'type':propertyType.DBCons},
+            {'name':'order', showName:'排序方式', 'value':null, 'type':propertyType.DBOrder},
+            {'name':'lines', showName:'输出行数', 'value':null, 'type':propertyType.Range},
+            {'name':'object', showName:'输出至对象', 'value':null, 'type':propertyType.Object},
+            {'name':'onlyMe', showName:'仅当前用户', 'value':null, 'type':propertyType.Boolean3},
             // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',
