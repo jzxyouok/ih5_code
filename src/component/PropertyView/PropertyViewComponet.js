@@ -121,6 +121,7 @@ class DropDownInput extends React.Component {
     }
      inputBlur(e){
          let newVal=e.target.value;
+         newVal =  newVal.replace(/，/g, ',');
          let arr =newVal.split(',');
          var reg = /^[-]?[0-9]+$/;
 

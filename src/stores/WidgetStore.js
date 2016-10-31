@@ -1980,13 +1980,14 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-       //console.log(obj);
+
         if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
                 obj.alpha = 1;
             }
         }
+
 
         let p = {updateProperties: obj};
         if (skipRender) {

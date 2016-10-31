@@ -1,0 +1,892 @@
+/**
+ * Created by vxplo on 2016/10/31.
+ */
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
+const Option = Select.Option;
+const Panel = Collapse.Panel;
+const MenuItem = Menu.Item;
+
+import cls from 'classnames';
+import { SwitchMore,DropDownInput ,ConInputNumber} from  './PropertyViewComponet';
+import WidgetStore, {dataType} from '../../stores/WidgetStore';
+import WidgetActions from '../../actions/WidgetActions';
+import {propertyType, propertyMap} from '../PropertyMap';
+import {chooseFile} from  '../../utils/upload';
+require("jscolor/jscolor");
+
+import TbCome from '../TbCome';
+
+
+let groups = [1,2,3];
+
+//获取小组件
+function getInputBox(type, defaultProp) {
+    let style = {};
+    let defaultData =  defaultProp;
+    switch (type) {
+        case propertyType.Integer:
+            if(defaultProp.tbCome == "tbS"){
+                delete defaultData.tbCome;
+                return <ConInputNumber  {...defaultData}/>;
+            }
+            else {
+                return <ConInputNumber {...defaultProp} />;
+            }
+        case propertyType.Float:
+            return <ConInputNumber {...defaultProp}  />;
+
+        case propertyType.Number:
+            if(defaultProp.tbCome == "tbS"){
+                style['width'] = "58px";
+                style['height'] = "22px";
+                style['lineHeight'] = "22px";
+                //console.log(defaultProp);
+                delete defaultData.tbCome;
+                return <ConInputNumber  {...defaultData} style={style} />;
+            }
+            else {
+                return <ConInputNumber  step={0.1} {...defaultProp}  />;
+            }
+        case propertyType.Percentage:
+            // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+            return  <div>
+                <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+                <Slider    step={1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
+            </div>;
+
+        case propertyType.Text:
+            return <Input type="textarea" {...defaultProp} />;
+
+        case propertyType.Color:
+            return <div>
+                <Input ref={(inputDom) => {
+                    if (inputDom) {
+                        var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                        if (!dom.jscolor) {
+                            dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                            dom.jscolor.onFineChange = defaultProp.onChange;
+                        }
+                    }
+                }} {...defaultProp}   className='color-input' />
+                <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
+            </div>;
+        case propertyType.Color2:
+            if(defaultProp.tbCome){
+                delete defaultData.tbCome;
+            }
+            return  <Input ref={(inputDom) => {
+                if (inputDom) {
+                    var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                    if (!dom.jscolor) {
+                        dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                        dom.jscolor.onFineChange = defaultProp.onChange;
+                    }
+                }
+            }}  {...defaultData}   /> ;
+
+        case propertyType.Boolean:
+            return <Switch   {...defaultProp} />;
+        case propertyType.Boolean2:
+            return <SwitchMore   {...defaultProp} />;
+        case propertyType.Select:
+            if(defaultProp.tbCome == "tbF"){
+                style['width'] = "125px";
+                style['maxWidth'] = "125px";
+            }
+            return <div className={cls({"flex-1": defaultProp.tbCome == "tbF"})}>
+                <Select {...defaultProp} style={style}>
+                    {defaultProp.options}
+                </Select>
+                <div id={cls({'ant-progress':defaultProp.name=='font'})}>
+                    <div className='ant-progress-bar'></div>
+                    <div className='ant-progress-txt'>上传 10%</div>
+                </div>
+            </div>;
+        case propertyType.TbSelect:
+            //console.log(defaultProp.tbWidth,this.state.tbLineWidth);
+            return  <div className="f--hlc">
+                <div className="flex-1">
+                    <Select {...defaultProp}>
+                        {defaultProp.options}
+                    </Select>
+                </div>
+
+                <div style={{ width: "58px", marginLeft: "3px", position:"relative"}}>
+                    <Input value={ this.state.tbLineWidth }
+                           onChange={ this.tbLineWidthInput.bind(this) }
+                           onBlur={ this.tbLineWidth.bind(this) }
+                           style={{height:"22px",padding:"0 7px"}} />
+                    <span className="TbSelect-icon" />
+                </div>
+            </div>;
+
+        case propertyType.TbColor :
+            return  <div className="f--hlc">
+                <div className="flex-1">
+                    <Input
+                        ref={(inputDom) => {
+                            if (inputDom) {
+                                var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                                if (!dom.jscolor) {
+                                    dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                                    dom.jscolor.onFineChange = defaultProp.onChange;
+                                }
+                            }
+                        }}
+                        placeholder={defaultProp.placeholder}
+                        style={{height:"22px",padding:"0 7px", position:"relative"}}
+                        className='color-input' />
+                </div>
+
+                <div style={{ width: "58px", marginLeft: "3px",height:"22px" }}>
+                    <Input placeholder={ defaultProp.tbHeight }
+                           onChange={ this.tbHeadHeightInput.bind(this) }
+                           onBlur={ this.tbHeadHeight.bind(this) }
+                           style={{height:"22px",padding:"0 7px"}} />
+                    <span className="TbColor-icon" />
+                </div>
+            </div>;
+        case propertyType.TdLayout :
+            return  <div className="f--hlc TdLayout">
+                <span className={cls({"active": defaultProp.placeholder.indexOf(1) >=0 })} />
+                <span className={cls({"active": defaultProp.placeholder.indexOf(2) >=0 })} />
+                <span className={cls({"active": defaultProp.placeholder.indexOf(3) >=0 })} />
+                <span className={cls({"active": defaultProp.placeholder.indexOf(4) >=0 })} />
+            </div>;
+        case propertyType.Dropdown:
+            return  <DropDownInput {...defaultProp} />;
+        default:
+            return <Input {...defaultProp} />;
+    }
+}
+
+
+function onChangeProp(prop, value) {
+    let v;
+    var bTag = true; //开关,控制执行
+    if (value === undefined) {
+        v = null;
+    } else {
+        switch (prop.type) {
+            case propertyType.Integer:
+                if (prop.name == 'size') {
+                    v = parseInt(value);
+                    const obj = {};
+                    obj[prop.name] = v;
+                    obj.scaleY = obj.scaleX = 1;
+                    this.onStatusChange({updateProperties: obj});
+                    WidgetActions['updateProperties'](obj, false, true);
+                    bTag = false;
+                    break;
+                } else if (prop.name == 'shapeWidth' || prop.name == 'shapeHeight') {
+                    v = parseInt(value);
+                    this.selectNode.props.height = this.selectNode.props.width = null;
+                    const obj = {};
+                    obj[prop.name] = v;
+                    obj.scaleY = obj.scaleX = 1;
+                    this.onStatusChange({updateProperties: obj});
+                    WidgetActions['updateProperties'](obj, false, true);
+                    bTag = false;
+                    break;
+                }
+                v = parseInt(value);
+                break;
+            case propertyType.Number:
+                if (prop.name == 'fontSize' || prop.name == 'headerFontSize') {
+                    const obj = {};
+                    obj[prop.name] = parseInt(value);
+                    obj.scaleY = obj.scaleX = 1;
+                    this.onStatusChange({updateProperties: obj});
+                    WidgetActions['updateProperties'](obj, false, true);
+                    bTag = false;
+                    break;
+                }
+                v = parseFloat(value);
+                break;
+            case propertyType.Percentage:
+                v = (prop.name == 'alpha') ? parseFloat(value) / 100 : parseFloat(value);
+                break;
+            case propertyType.Float:
+                let defaultWidth = this.selectNode.node.defaultData.width;
+                let defaultHeight = this.selectNode.node.defaultData.height;
+
+                if (this.selectNode.node.keepRatio) {
+                    //修改之前的宽度和高度
+                    let oldWidth = this.selectNode.node.width;
+                    let oldHeight = this.selectNode.node.height;
+                    //修改后的宽度 和应该显示的高度
+                    if ('scaleX' == prop.name) {
+                        let obj = {}
+                        obj.scaleX = parseInt(value) / defaultWidth;
+
+                        obj.scaleY = ( oldHeight * value) / (oldWidth * defaultHeight);
+
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties'](obj, false, false);
+
+                    } else if ('scaleY' == prop.name) {
+
+                        let obj = {}
+                        obj.scaleY = parseInt(value) / defaultHeight;
+
+                        obj.scaleX = ( oldWidth * value) / (oldHeight * defaultWidth);
+
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties'](obj, false, false);
+
+                    }
+                    bTag = false;
+                    break;
+                } else {
+                    if ('scaleX' == prop.name) {
+                        v = parseInt(value) / defaultWidth;
+                        this.selectNode.props.width = value;
+                    } else if ('scaleY' == prop.name) {
+                        v = parseInt(value) / defaultHeight;
+                        this.selectNode.props.height = value;
+                    }
+                }
+
+                break;
+            case propertyType.Dropdown:
+                if (prop.name == 'originPos') {
+                    //数组
+                    let arr = value.key.split(',');
+                    let x = parseFloat(arr[0]);
+                    let y = parseFloat(arr[1]);
+                    let propsObj = this.selectNode.props;
+                    let nodeObj = this.selectNode.node;
+                    let oldOrigin = this.getOldOrigin(propsObj.originPosKey, prop.options);
+                    let w = nodeObj.width * (x - parseFloat(oldOrigin[0]));
+                    let h = nodeObj.height * (parseFloat(oldOrigin[1]) - y);
+
+                    let D = Math.sqrt(h * h + w * w);
+
+                    let d = null;
+                    if (w == 0) {
+                        if (h > 0) {
+                            d = Math.PI / 2;
+                        } else if (h == 0) {
+                            return false;  //选择了同一中心点,不做任何操作
+                        } else {
+                            d = 3 * Math.PI / 2;
+                        }
+                    } else {
+                        d = Math.atan(h / w);
+                        if (h > 0 && w > 0) {
+                            ;
+                        } else if (h > 0 && w < 0) {
+                            d = d + Math.PI;
+                        } else if (h < 0 && w > 0) {
+                            ;
+                        } else if (h < 0 && w < 0) {
+                            d = d + Math.PI ;
+                        } else if (h == 0 && w > 0) {
+                            ;
+                        } else if (h == 0 && w < 0) {
+                            d = Math.PI;
+                        } else {
+                            alert('bug!');
+                        }
+                    }
+
+                    let ran = d - nodeObj.rotation * Math.PI / 180;
+
+                    let posX = nodeObj.positionX + Math.cos(ran) * D;
+                    let posY = nodeObj.positionY - Math.sin(ran) * D;
+                    propsObj.originPosKey = this.getSelectDefault({x: x, y: y}, prop.options);
+
+
+                    propsObj.originX = x;
+                    nodeObj.originX = x;
+                    propsObj.originY = y;
+                    nodeObj.originY = y;
+
+
+                    propsObj.positionX = posX;
+                    nodeObj.positionX = posX;
+                    propsObj.positionY = posY;
+                    nodeObj.positionY = posY;
+
+                    WidgetActions['updateProperties']({
+                        originX:x,
+                        originY:y,
+                        positionX:posX,
+                        positionY:posY
+                    }, true, false);
+                    // WidgetActions['render']();
+                    // this.setState({fields: this.getFields()});
+
+                    bTag = false;
+                }
+                break;
+            case propertyType.Select:
+                if (prop.name == 'scaleType') {
+                    this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
+                    v = parseInt(value);
+                } else if (prop.name == 'fontFamily') {
+                    this.selectNode.props.fontFamilyKey = this.getFontDefault(value);
+                    v = value;
+                } else if (prop.name == 'headerFontFamily') {
+                    this.selectNode.props.headerFontFamily = this.getFontDefault(value);
+                    v = value;
+                } else if (prop.name == 'type') {
+                    this.selectNode.props.type = this.getScaleTypeDefault(value, prop.options);
+                    //属于第一组则设置初始隐藏,否则设置隐藏
+                    this.selectNode.props.initHide = false;
+                    for (let i in   prop.optionsToJudge) {
+                        if (prop.optionsToJudge[i] == value) {
+                            this.selectNode.props.initHide = true;
+                            break;
+                        }
+                    }
+                    v = value;
+                } else if (prop.name == 'forwardTransition' || prop.name == 'backwardTransition') {
+                    this.selectNode.props[prop.name + '_val'] = this.getScaleTypeDefault(value, prop.options);
+                    v = parseInt(value);
+                } else if (prop.name == 'font') {
+                    if (value == 0) {
+                        chooseFile('font', true, function () {
+                            let fontObj = eval("(" + arguments[1] + ")");
+                            let oProgress = document.getElementById('ant-progress');
+                            //回调完成
+                            oProgress.style.display = 'none';
+                            //设置默认值
+                            this.selectNode.props.fontKey = fontObj.name;
+                            //更新属性面板
+                            const obj = {};
+                            obj[prop.name] = fontObj.file;
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, true);
+
+                        }.bind(this), function (evt) {
+                            let oProgress = document.getElementById('ant-progress');
+                            if (evt.lengthComputable && oProgress) {
+                                oProgress.style.display = 'block';
+                                var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                oProgress.childNodes[1].innerHTML = '上传 ' + percentComplete + '%';
+                                oProgress.childNodes[0].style.width = percentComplete + '%';
+                            } else {
+                                //console.log('failed');
+                            }
+                        });
+                        bTag = false;
+                    } else {
+                        this.selectNode.props.fontKey = this.getFontDefault(value);
+                        v = value;
+                    }
+                }
+                else {
+                    v = parseInt(value);
+                }
+                break;
+            case propertyType.Boolean:
+                v = value;
+                break;
+            case propertyType.Boolean2:
+                if (value === null) {
+                    delete  this.selectNode.props.initVisible;
+                } else {
+                    this.selectNode.props.initVisible = value;
+                }
+                bTag = false;
+                break;
+            case propertyType.TbSelect:
+                let header = this.selectNode.props.header;
+                let tbWidth;
+                value = parseInt(value);
+                if(header !== undefined) {
+                    header = header.split(",");
+                    if (value == 0) {
+                        let lineWidth = header[0];
+                        let index = lineWidth.indexOf(':');
+                        if( index>=0){
+                            tbWidth = parseInt(lineWidth.substring(index + 1));
+                        }
+                        else {
+                            tbWidth = "自动";
+                        }
+                    }
+                    else {
+                        let lineWidth = header[value-1];
+                        let index = lineWidth.indexOf(':');
+                        if( index>=0){
+                            tbWidth = parseInt(lineWidth.substring(index + 1));
+                        }
+                        else {
+                            tbWidth = "自动";
+                        }
+                    }
+                }
+
+                this.setState({
+                    tbWhichColumn: value,
+                    tbLineWidth : tbWidth
+                },()=>{
+                    this.setState({fields: this.getFields()});
+                });
+                bTag = false;
+                break;
+            default:
+                v = value;
+        }
+    }
+
+
+    if(bTag){
+        const obj = {};
+        if(this.selectNode.className == "table" && prop.name == "header"){
+            if(v <= 0 || v == null) return;
+            let header = this.selectNode.props.header;
+            if(header !== undefined){
+                header = header.split(",");
+                let b = v - header.length;
+                if(b > 0){
+                    for(let a=1; a <= b ; a++){
+                        header.push("");
+                    }
+                }
+                else if(b < 0){
+                    for(let a = -b; a > 0 ; a--){
+                        header.splice(header.length-1, 1);
+                    }
+                }
+            }
+            else {
+                header = [""];
+                for(let a=1; a < v ; a++){
+                    header.push("");
+                }
+            }
+            obj[prop.name] = header.join(",");
+            this.selectNode.props.header = header.join(",");
+            this.selectNode.node.header = header.join(",");
+            this.onStatusChange({updateProperties: obj});
+            WidgetActions['updateProperties'](obj, false, true);
+            this.refs.TbCome.updateColumn(v,header);
+        }
+        else if(this.selectNode.className == "table" && prop.name == "head"){
+            obj['headerColor'] = v;
+            this.selectNode.props.headerColor = v;
+            this.selectNode.node.headerColor = v;
+            this.onStatusChange({updateProperties: obj});
+            WidgetActions['updateProperties'](obj, false, true);
+        }
+        else if(this.selectNode.className == "table" && prop.name == "showHeader"){
+            obj[prop.name] = v;
+            this.selectNode.props.showHeader = v;
+            this.selectNode.node.showHeader = v;
+            this.onStatusChange({updateProperties: obj});
+            WidgetActions['updateProperties'](obj, false, true);
+            this.setState({
+                tbHeaderToggle : !v
+            },()=>{
+                this.setState({fields: this.getFields()});
+            });
+        }
+        else {
+            obj[prop.name] = v;
+            this.onStatusChange({updateProperties: obj});
+            WidgetActions['updateProperties'](obj, false, true);
+        }
+    }
+
+}
+
+//小组件的事件
+function onChangePropDom(item, value) {
+    if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
+        this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
+    }else if(item.type === propertyType.Color || item.type === propertyType.TbColor){
+        if(typeof value == 'boolean'){
+            let colorStr;
+            if(value){
+                colorStr =this.selectNode.props[item.name+'_originColor'];
+                this.selectNode.props[item.name+'_originColor']=null;
+            }else{
+                colorStr='transparent';
+                this.selectNode.props[item.name+'_originColor'] = this.selectNode.props[item.name];
+            }
+            this.onChangeProp(item,colorStr);
+        }else{
+
+            if(this.selectNode.props[item.name+'_originColor']){
+                this.selectNode.props[item.name+'_originColor']=value.target.value
+            }else{
+                this.onChangeProp(item,value.target.value);
+            }
+        }
+    } else{
+        this.onChangeProp(item,value);
+    }
+}
+
+//小组件的参数
+function getDefaultProps() {
+
+}
+
+//将小组件的参数整合
+function getInput(item,node) {
+
+        //设置默认值,用于展示
+        let defaultValue;
+        if (item.readOnly ) {
+            defaultValue = node.node[item.name];
+            if(item.name=='sockName'){
+                defaultValue = this.state.sockName
+            }
+        }
+        else if(item.type==propertyType.Float) {
+            if(node.className=='html') {
+                let str = item.name == 'scaleX' ? 'shapeWidth' : 'shapeHeight';
+                let str2 = item.name == 'scaleX' ? 'width' : 'height';
+
+                if (!this.selectNode.node.defaultData) {
+                    this.selectNode.node.defaultData = {};
+                }
+                this.selectNode.node.defaultData[str2] = node.props[str];
+
+                defaultValue = node.props[str2];
+                if(!defaultValue){
+                    defaultValue = node.props[str];
+                    node.props[str2] = defaultValue;
+                }
+
+            }else{
+                let str = item.name == 'scaleX' ? 'width' : 'height';
+
+                defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
+
+                this.textSizeObj =null;
+
+                if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={}; }//只执行一次
+
+                if(!this.selectNode.node.defaultData[str]) { this.selectNode.node.defaultData[str] = defaultValue   }//设置初始宽高,便于计算放大缩小的系数
+
+            }
+        }else if(item.type==propertyType.Color || item.type==propertyType.Color2 || item.type === propertyType.TbColor){
+            if( item.name == 'color' &&  !node.props.color){ //只执行一次
+                node.props.color='#FFFFFF';
+            }
+            if(node.props[item.name+'_originColor']){  //舞台颜色隐藏后保存的颜色
+                defaultValue =node.props[item.name+'_originColor'];
+            }else{
+                defaultValue =node.props[item.name];
+            }
+
+
+            if(item.type === propertyType.TbColor){
+                defaultValue = node.props['headerColor'];
+            }
+        } else if(item.type==propertyType.Dropdown ){
+            //设置中心点
+            defaultValue = item.default;
+            //当originY时才会激活,而不是originPos
+
+            if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
+                defaultValue = node.props.originPosKey;
+            }
+
+        }
+        else if(item.type==propertyType.Select || item.type==propertyType.TbSelect ){
+            defaultValue = item.default;
+            //当originY时才会激活,而不是originPos
+            if(item.name=='scaleType' && node.props.scaleTypeKey){
+                defaultValue = node.props.scaleTypeKey;
+            }else if( item.name=='font' && node.props.fontKey){
+                defaultValue = node.props.fontKey;
+            }else if( item.name=='fontFamily'  && node.props.fontFamilyKey){
+                defaultValue = node.props.fontFamily;
+            }else if( (item.name=='forwardTransition' || item.name=='backwardTransition') &&  node.props[item.name+'_val'] ){
+                defaultValue = node.props[item.name+'_val'];
+            }else if( item.name=='type'  && node.props.type){
+                defaultValue = node.props.type;
+            }else if( item.name=='headerFontFamily'  && node.props.headerFontFamily){
+                defaultValue = node.props.headerFontFamily;
+            }
+            else if(item.name=='chooseColumn'){
+                defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn  + ' 列';
+                //console.log(this.state.tbWhichColumn,defaultValue);
+            }
+        } else if(item.type === propertyType.Boolean2 ){
+            if(node.props[item.name]===undefined){
+                defaultValue =item.default;
+            }else{
+                if(node.props[item.name]==false){
+                    defaultValue=2;
+                }else if(node.props[item.name]==true){
+                    defaultValue=0;
+                }else{
+                    defaultValue=1;
+                }
+            }
+        }else if(item.type === propertyType.Percentage ){
+            defaultValue = item.default*100;
+            if(node.props[item.name] ) {
+                defaultValue =node.props[item.name]*100;
+            }
+        }
+        else  if (node.props[item.name] === undefined){
+            if(item.type === propertyType.Boolean ){
+                defaultValue = item.default;
+            }else if(className == "table" && item.name == "headerFontSize"){
+                defaultValue = 26;
+                this.selectNode.props.headerFontSize = 26;
+                this.selectNode.node.headerFontSize = 26;
+                let obj = {};
+                obj['headerFontSize'] = 26;
+                WidgetActions['updateProperties'](obj, false, true);
+            }else if(className == "table" && item.name == "fontSize"){
+                defaultValue = 26;
+                this.selectNode.props.fontSize = 26;
+                this.selectNode.node.fontSize = 26;
+                let obj = {};
+                obj['fontSize'] = 26;
+                WidgetActions['updateProperties'](obj, false, true);
+            }else{
+                defaultValue='';
+            }
+        } else {
+            if(className == "table"){
+                if(item.name == "rowNum"){
+                    defaultValue = node.props[item.name] ? node.props[item.name] : 0;
+                }
+                else if(item.name == "header"){
+                    if(node.props[item.name] == undefined) {
+                        node.props[item.name] = " ";
+                        defaultValue = 0;
+                    }
+                    else {
+                        let header = node.props[item.name].split(",");
+                        defaultValue = header.length;
+                    }
+                }
+                else {
+                    defaultValue = node.props[item.name];
+                }
+            }
+            else {
+                defaultValue = node.props[item.name];
+            }
+            if (item.name == 'alpha') {
+                defaultValue = defaultValue * 100;
+            }
+        }
+
+        //设置通用默认参数和事件
+        const defaultProp = {
+            size: 'small',
+            placeholder: item.default,
+            disabled: item.readOnly !== undefined,
+            onChange:  this.onChangePropDom.bind(this, item)
+        };
+
+        //单独设置默认参数
+        if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
+            defaultProp.checked = defaultValue;
+            if(className=='table' && item.name == "showHeader"){
+                if(!this.state.tbHeaderToggle !== defaultProp.checked){
+                    this.setState({
+                        tbHeaderToggle : !defaultProp.checked
+                    })
+                }
+            }
+        }else if(item.type ==propertyType.Dropdown ){
+            defaultProp.value = defaultValue;
+            defaultProp.item=item;
+            let arr=[];
+            for(var i in  item.options){
+                arr.push(<MenuItem  key={item.options[i]}><div className='originIcon'></div>{i}</MenuItem>);
+            }
+            defaultProp.overlay =  <Menu className='dropDownMenu2' onClick={defaultProp.onChange}>{arr}</Menu>;
+
+        }
+        else if(item.type ==propertyType.Select || item.type ==propertyType.TbSelect ){
+            let selectClassName='';
+            defaultProp.options=[];
+            defaultProp.value = defaultValue;
+            if(item.name=='originY' ||item.name=='originPos') {
+                selectClassName='originIcon';
+            }
+            else if(item.name=='fontFamily' || item.name=='headerFontFamily'){
+                for(let i in this.fontList){
+                    defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                }
+            }
+            else if(item.name=='font'){
+                defaultProp.name=item.name;
+                defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
+                for(let i in this.fontList){
+                    defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                }
+            }
+            else if(item.name=='type'){
+                for(let i in  item.options){
+                    selectClassName= (item.options[i]=='slideInUp' || item.options[i]== 'jello')? 'optionline':'';
+                    defaultProp.options.push(<Option  key={item.options[i]} className={selectClassName}>{i}</Option>);
+                }
+            }
+            if(defaultProp.options.length==0){
+                for(var i in  item.options){
+                    defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
+                }
+            }
+            if(item.name=='chooseColumn'){
+                defaultProp.options=[];
+                let tbWidth;
+                if(node.props['header'] == undefined) {
+                    tbWidth = "自动";
+                    defaultProp.options.push(<Option key={0}>全部</Option>);
+                }
+                else {
+                    let header = node.props['header'].split(",");
+                    let nodo = true;
+                    if(this.state.tbWhichColumn == 0){
+                        nodo = false
+                    }
+                    if(nodo){
+                        let lineWidth = header[this.state.tbWhichColumn-1];
+                        let index = lineWidth.indexOf(':');
+                        if( index>=0){
+                            tbWidth = parseInt(lineWidth.substring(index + 1));
+                        }
+                        else {
+                            tbWidth = "自动";
+                        }
+                    }
+                    else {
+                        let lineWidth = header[0];
+                        let index = lineWidth.indexOf(':');
+                        if( index>=0){
+                            tbWidth = parseInt(lineWidth.substring(index + 1));
+                        }
+                        else {
+                            tbWidth = "自动";
+                        }
+                    }
+
+                    for(let x =0; x<= header.length; x++){
+                        let data;
+                        if(x==0){
+                            data = "全部";
+                        }
+                        else {
+                            data = '第 ' + (x) + ' 列';
+                        }
+                        defaultProp.options.push(<Option key={x}>{ data } </Option>);
+                    }
+                }
+                defaultProp.tbWidth = tbWidth;
+            }
+        }else if(item.type ==propertyType.Color||item.type ==propertyType.Color2){
+            defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
+            defaultProp.value = defaultValue;
+        }else if(item.type === propertyType.TbColor){
+            defaultProp.value = defaultValue;
+            defaultProp.tbHeight = node.props['headerHeight'] ?  node.props['headerHeight']  : "自动";
+        }else {
+            defaultProp.value = defaultValue;
+        }
+
+        let groupName = item.group || 'basic';
+        if (groups[groupName] === undefined)   groups[groupName] = [];
+
+        /******** 设置布局结构和图标 *************/
+            //左右结构显示
+        let hasTwin;
+        if( className == "table"){
+            hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','行数','列数','头部字体','图表字体大小','字体','网格颜色','网格大小'].indexOf(item.showName) >= 0;
+        }
+        else {
+            hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;
+        }
+
+        let hasPx=['X','Y','W','H','网格大小'].indexOf(item.showName)>=0; //判断input中是否添加px单位
+        let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
+        let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
+
+        if(!item.showName){item.showName=item.name;}//当showName不存在时,用name作为showName
+
+        //拼接图标样式
+        let htmlStr;
+        if(item.imgClassName){
+            htmlStr=<label><div className={item.imgClassName}></div></label>
+        }else{
+            htmlStr = hasLock
+                ? <label>
+                <div className={cls('ant-lock',{'ant-lock-checked':node.node.keepRatio})} onClick={this.antLock.bind(this)}></div>
+                {item.showName}
+            </label>
+                : <label>{item.showName}</label>
+        }
+        let style = {};
+        if(item.tbCome){
+            defaultProp.tbCome = item.tbCome;
+            if(item.tbCome == "tbF"){
+                style['width'] = "184px";
+                style['height'] = "22px";
+                style['lineHeight'] = "22px";
+            }
+            else {
+                style['width'] = "58px";
+                style['marginLeft'] = "3px";
+                style['height'] = "22px";
+                style['lineHeight'] = "22px";
+            }
+        }
+        let tdColorSwitch = false;
+        if( className == "table" && (item.name === "fontFill" || item.name === "fillColor" || item.name === "altColor")){
+            tdColorSwitch = true;
+        }
+        //if( this.state.tbHeaderToggle && item.name == 'showHeader'){
+        //    style['margin'] = "0";
+        //}
+
+        groups[groupName].push(
+            <div key={item.name}
+                 className={cls('f--hlc','ant-row','ant-form-item',
+                     {'ant-form-half': hasTwin},
+                     {'ant-form-full': !hasTwin},
+                     {'tdColorSwitch' : tdColorSwitch }
+                 )}
+                 style={style}>
+
+                <div className={cls('ant-col-l ant-form-item-label',{"hidden" : defaultProp.tbCome == "tbS"})}>{htmlStr}</div>
+                <div className={cls('ant-col-r',{"tbSSStyle" : defaultProp.tbCome == "tbS"},{"tbFSStyle" : defaultProp.tbCome == "tbF"})}>
+                    <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
+                        {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
+                    </div>
+                </div>
+            </div>
+        );
+}
+
+//获取属性面板的html
+function getPropertyGroups(className,node) {
+    let saveArr = []; //给部分属性排序用
+    propertyMap[className].forEach((item) => {
+        if (item.isProperty) {
+            if(item.name=='visible' || item.name=='initVisible' ){
+                saveArr.push(item);
+            }else{
+                //去除属性
+                if((className == 'timer' || className == 'container') && ( item.name=='scaleX' ||  item.name=='scaleY')){
+                    ;
+                }else{
+                    getInput(item,node);
+                }
+            }
+        }
+    });
+    saveArr.map(item=>{
+        getInput(item);
+    });
+
+    return groups;
+}
+
+export {getInputBox,onChangeProp,onChangePropDom,getPropertyGroups};
