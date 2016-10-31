@@ -683,12 +683,12 @@ propertyMap['db'] = [
 propertyMap['sock'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'sockName' , showName:'名称：',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
-    { name: 'listened', showName:'是否监听：', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'sockName' , showName:'名称',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
+    { name: 'listened', showName:'是否监听', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'message', showName:'消息', isEvent: true, info:'data'},
-    { name: 'send', showName:'发送', isFunc: true, info:'(data)',
+    { name: 'send', showName:'发送消息', isFunc: true, info:'(data)',
         property:[
-            {'name':'value', showName:'内容', 'value':null, 'type':propertyType.String},
+            {'name':'value', showName:'内容', 'value':null, 'type':propertyType.FormulaInput},
         ]},
 ];
 propertyMap['strVar'] = [

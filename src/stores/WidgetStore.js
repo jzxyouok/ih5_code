@@ -400,7 +400,7 @@ function resolveEventTree(node, list) {
                                   (delete v.valueId);
                               }
                           });
-                      } else if(cmd.action.name==='changeValue') {
+                      } else if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
                           dealWithPropertyFormulaInput(cmd);
                       }
                       break;
@@ -557,7 +557,7 @@ function generateId(node) {
                       break;
                   default:
                       if(cmd.action.property){
-                          if(cmd.action.name==='changeValue') {
+                          if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
                               genPropertyFormulaInputId(cmd);
                           } else {
                               cmd.action.property.forEach(v=>{
@@ -674,7 +674,7 @@ function generateJsFunc(etree) {
       //console.log('conditions',conditions);
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
-          if (cmd.action.name === 'changeValue') {
+          if (cmd.action.name === 'changeValue'|| cmd.action.name === 'send') {
               lines = formulaGenLine(cmd, lines);
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
@@ -950,7 +950,8 @@ function saveTree(data, node, saveKey) {
                             }
                         });
                         c.action.property = property;
-                    } else if(cmd.action.name=='changeValue' || cmd.action.type===funcType.customize) {
+                    } else if(cmd.action.name=='changeValue' || cmd.action.type===funcType.customize ||
+                        cmd.action.name=='send') {
                             cmd.action.property.forEach(v => {
                                 if(v.value && v.value.type === 2) {
                                     let temp = {
