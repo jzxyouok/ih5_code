@@ -366,26 +366,28 @@ function resolveEventTree(node, list) {
         };
 
         let dealWithPropertyFormulaInput = (cmd)=>{
-            cmd.action.property.forEach(v=> {
-                if (v.value&&v.value.type === 2) {
-                    v.value.value.forEach((v1,i)=>{
-                        if(v1.objId) {
-                            v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
-                        } else {
-                            v1.objKey = null;
+            if(cmd.action.property) {
+                cmd.action.property.forEach(v=> {
+                    if (v.value&&v.value.type === 2) {
+                        v.value.value.forEach((v1,i)=>{
+                            if(v1.objId) {
+                                v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                            } else {
+                                v1.objKey = null;
+                            }
+                            (delete v1.objId);
+                            if(v1.objKey === null) {
+                                //如果不存在就直接删除
+                                v.value.value.splice(i, 1);
+                            }
+                        });
+                        if(v.value.value.length===0){
+                            v.value.type = 1;
+                            v.value.value = null;
                         }
-                        (delete v1.objId);
-                        if(v1.objKey === null) {
-                            //如果不存在就直接删除
-                            v.value.value.splice(i, 1);
-                        }
-                    });
-                    if(v.value.value.length===0){
-                        v.value.type = 1;
-                        v.value.value = null;
                     }
-                }
-            });
+                });
+            }
         };
 
       item.specificList.forEach(cmd => {
@@ -413,16 +415,18 @@ function resolveEventTree(node, list) {
                   default:
                       let o = keyMap[cmd.object];
                       if(o&&o.className === 'db') {
-                          cmd.action.property.forEach(v=> {
-                              if((v.name === 'data'||v.name=='option')) {
-                                  if(v.valueId){
-                                      v.value = idToObjectKey(list, v.valueId[0], v.valueId[1]);
-                                  } else {
-                                      v.value = null;
+                          if(cmd.action.property) {
+                              cmd.action.property.forEach(v=> {
+                                  if ((v.name === 'data' || v.name == 'option')) {
+                                      if (v.valueId) {
+                                          v.value = idToObjectKey(list, v.valueId[0], v.valueId[1]);
+                                      } else {
+                                          v.value = null;
+                                      }
+                                      (delete v.valueId);
                                   }
-                                  (delete v.valueId);
-                              }
-                          });
+                              });
+                          }
                       } else if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
                           dealWithPropertyFormulaInput(cmd);
                       }
