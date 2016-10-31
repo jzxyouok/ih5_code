@@ -692,7 +692,7 @@ class Event extends React.Component {
         let initFlag = this.state.curChild; //初始化
 
         if (flag == 'conFlag') {
-            value =this.getNameByCnName(flag,value)
+            value =this.getNameByCnName(flag,value);
             eventList[this.curEventIndex][flag] = value;
             //设置需要填入的值
             this.setNeedFill(value);
@@ -950,9 +950,10 @@ class Event extends React.Component {
             eventList[this.curEventIndex].needFill[index].default =value.target.value;
         }else if(type=='select'){
             eventList[this.curEventIndex].needFill[index].default =value;
+        } else if(type==='var'){
+            eventList[this.curEventIndex].needFill[index].default = parseFloat(value);
         }
         this.setState({eventList:eventList});
-
     }
 
     getAntdComponent(item,index,obj){
@@ -968,6 +969,29 @@ class Event extends React.Component {
                 optionArr.push(<Option  key={v}  className='dropDown-input-option'>{v}</Option>);
             });
             return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
+        }
+        if(item.type=='var'){
+            let optionArr=[];
+            let key = 0;
+            if(this.state.selectWidget.intVarList) {
+                this.state.selectWidget.intVarList.forEach((v,i)=>{
+                    optionArr.push(<Option key={key++} value={v.key+''} className='dropDown-input-option'>{v.props.name}</Option>);
+                });
+            }
+            if(this.state.selectWidget.strVarList) {
+                this.state.selectWidget.strVarList.forEach((v,i)=>{
+                    optionArr.push(<Option  key={key++} value={v.key+''} className='dropDown-input-option'>{v.props.name}</Option>);
+                });
+            }
+            let valueObj = WidgetStore.getWidgetByKey(item.default);
+            let value = null;
+            if(valueObj) {
+                value=valueObj.props.name;
+            }
+            return <Select disabled={!obj.enable} className='dropDown-input-content' value={value}
+                           placeholder="选择变量"
+                           getPopupContainer={() => document.getElementById('event-item-left-'+obj.eid)}
+                           onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
         }
     }
 
@@ -1013,7 +1037,7 @@ class Event extends React.Component {
                         <span className='close-line' onClick={this.delEvent.bind(this,i)} />
                         <div className='item-title flex-1 f--h'>
                             <div className='left'>
-                                <div className='left-layer  f--h'>
+                                <div className='left-layer  f--h' id={'event-item-left-'+v.eid}>
                                     <div className="enable-button-div">
                                         <button className={$class("title-icon")}
                                                 onClick={this.onEventEnable.bind(this, v)}/>

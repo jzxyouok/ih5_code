@@ -450,6 +450,18 @@
                             }
                         }
 
+                        .left-layer {
+                            .ant-select-dropdown {
+                                div {
+                                    width: 100%;
+                                }
+                                .ant-select-dropdown-menu-item {
+                                    padding: 2px 4px;
+                                    text-align: center;
+                                }
+                            }
+                        }
+
                         .dropDown-layer {
                             position: relative;
                             .title-gray{
@@ -716,6 +728,7 @@
                                     .ant-select-selection{
                                         height: 18px;
                                         background-color: #283549;
+                                        color:#b5b5b5;
                                         border: none;
                                         width: 100%;
                                         border-radius: 0;
@@ -723,10 +736,11 @@
                                             height: 18px;
                                             line-height: 18px;
                                         }
+                                        .ant-select-arrow {
+                                            right: 2px;
+                                        }
                                     }
                                 }
-
-
                             }
 
                             &.long {
