@@ -172,6 +172,11 @@ class Property extends React.Component {
             this.funcListLength = obj.funcList.length;
         }
 
+        if(className !== 'var' && className !== 'db') {
+            //设置属性
+            actionList.push(this.getSetPropsObj());
+        }
+
         if(className === 'var'){
             switch (obj.type) {
                 case varType.number:
@@ -198,7 +203,6 @@ class Property extends React.Component {
             });
         }
 
-        actionList.unshift(this.getSetPropsObj());
         this.setState({
             actionList: actionList
         })
@@ -224,7 +228,7 @@ class Property extends React.Component {
             name: 'setProps',
             showName: '设置属性',
             type: funcType.default
-        }
+        };
         let node =WidgetStore.getWidgetByKey(this.state.currentObject);
         let propertyList=[];
         if(node){
@@ -436,6 +440,18 @@ class Property extends React.Component {
         }
         let property = this.state.currentAction.property;
         property[index] = prop;
+        if(type === optionType.class && this.state.currentAction.name === 'create') {
+            let className = data;
+            //不需要替换1，2和最后1个
+            let newProperty = [property[0], property[1], property[property.length-1]];
+            propertyMap[className].map((v)=>{
+                if(v.isProperty&& v.name !='id'){
+                    v.isProp=true;
+                    newProperty.splice(newProperty.length-1, 0, v);
+                }
+            });
+            property = newProperty;
+        }
         let action = this.state.currentAction;
         action.property = property;
 
@@ -591,7 +607,7 @@ class Property extends React.Component {
                          {'hidden':v1.type===propertyType.Hidden},
                          {'db-cons-list':v1.type===propertyType.DBCons})}
                          key={i1}>
-                        <div className="pp--name">{ v1.showName }</div>
+                        <div className="pp--name">{ v1.showName?v1.showName:v1.name }</div>
                         {
                             v1.isProp===true
                             ?<PropertyViewSetUp
