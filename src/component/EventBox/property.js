@@ -612,6 +612,27 @@ class Property extends React.Component {
             </Dropdown>);
         };
 
+        let propertyObjDropDownMenu = (list, item, index, type)=>{
+            let itemObj = WidgetStore.getWidgetByKey(item.value);
+            return (<Dropdown overlay={propertySelectMenu(list, item, index, type)} trigger={['click']}
+                       getPopupContainer={() => document.getElementById(propertyId)}>
+                <div className={$class("p--dropDown short")}>
+                    <div className="title p--title f--hlc">
+                        <SelectTargetButton className={'p--icon'}
+                                            disabled={!this.state.currentEnable}
+                                            targetList={this.state.objectList}
+                                            onClick={this.onPropsObjButtonClick.bind(this, index)}
+                                            getResult={this.onPropsObjResultGet.bind(this, item, index)} />
+                        { !itemObj || !itemObj.props || !itemObj.props.name
+                            ?'选择对象'
+                            :itemObj.props.name
+                        }
+                        <span className="icon" />
+                    </div>
+                </div>
+            </Dropdown>);
+        };
+
         let type = (type, defaultProp, item, index)=>{
             switch (type) {
                 case propertyType.String:
@@ -670,26 +691,7 @@ class Property extends React.Component {
                     }
                     return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
                 case propertyType.Object:
-                    let objType = optionType.widget;
-                    let objList = this.state.objectList;
-                    let itemObj = WidgetStore.getWidgetByKey(item.value);
-                    return (<Dropdown overlay={propertySelectMenu(objList, item, index, objType)} trigger={['click']}
-                                      getPopupContainer={() => document.getElementById(propertyId)}>
-                        <div className={$class("p--dropDown short")}>
-                            <div className="title p--title f--hlc">
-                                <SelectTargetButton className={'p--icon'}
-                                                    disabled={!this.state.currentEnable}
-                                                    targetList={this.state.objectList}
-                                                    onClick={this.onPropsObjButtonClick.bind(this, index)}
-                                                    getResult={this.onPropsObjResultGet.bind(this, item, index)} />
-                                { !itemObj || !itemObj.props || !itemObj.props.name
-                                    ?'选择对象'
-                                    :itemObj.props.name
-                                }
-                                <span className="icon" />
-                            </div>
-                        </div>
-                    </Dropdown>);
+                    return propertyObjDropDownMenu(this.state.objectList, item, index, optionType.widget);
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 case propertyType.Hidden:
@@ -739,8 +741,6 @@ class Property extends React.Component {
                 }
             </Menu>
         );
-
-
 
         return (
             <div className={$class("Property f--h", {'Property-not-enable':!this.state.currentEnable})} id={propertyId}>
