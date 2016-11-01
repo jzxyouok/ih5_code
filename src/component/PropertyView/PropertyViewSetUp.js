@@ -22,9 +22,12 @@ class PropertyViewSetUp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            className:props.classType,
-            key:props.okey
+            key:props.okey,
+            action:props.action
         };
+        this.className=WidgetStore.getWidgetByKey(props.okey).className;
+
+        this.nodesObject={};
         this.getResult =props.getResult;
         this.getComponent=this.getComponent.bind(this);
         this.getDefaultProp=this.getDefaultProp.bind(this);
@@ -35,8 +38,8 @@ class PropertyViewSetUp extends React.Component {
     }
     componentWillReceiveProps(nextProps){
        this.setState({
-           className:nextProps.classType,
-           key:nextProps.okey
+           key:nextProps.okey,
+           action:nextProps.action
        })
     }
     componentWillUnmount() {
@@ -51,9 +54,16 @@ class PropertyViewSetUp extends React.Component {
             disabled: item.readOnly !== undefined,
             onChange:  this.onChangePropDom.bind(this, item)
         };
-        let className =this.state.className;
         let node = WidgetStore.getWidgetByKey(this.state.key);
-        let defaultValue=node.node[item.name];
+
+
+        let className =this.className;
+
+        if(!this.nodesObject[item.name]){
+            this.nodesObject[item.name] =node.node[item.name];
+        }
+
+        let defaultValue=this.nodesObject[item.name];
 
         //单独设置默认参数
         if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
@@ -164,11 +174,9 @@ class PropertyViewSetUp extends React.Component {
         return defaultProp;
     }
 
-    onChangeProp(item, value){
-        //不影响舞台,传值给外面
-        let node = WidgetStore.getWidgetByKey(this.state.key);
-        node.node[item.name]=value;
-        this.getResult(node.node);
+    onChangeProp(item, value) {
+        this.nodesObject[item.name] = value;
+        this.getResult(this.nodesObject);
     }
     onChangePropDom(item, value) {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
@@ -319,11 +327,10 @@ class PropertyViewSetUp extends React.Component {
     }
 
 
-
     render() {
         return  <div>
             {
-                propertyMap[this.state.className].map((v,i)=>{
+                propertyMap[this.className].map((v,i)=>{
                     if(v.isProperty&& v.name !='id'){
                         return <div className="pp--list f--hlc" key={i}>
                             <div className="pp--name">{ v.showName }</div>

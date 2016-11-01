@@ -202,26 +202,35 @@ class Property extends React.Component {
         })
     }
     getPropertyViewSetUpResult(node){
-        console.log('node',node);
+        //console.log('node',node);
+
+        let property=[];
+        for(let i in node){
+            property.push({
+                name: i,
+                showName:null,
+                type: null,
+                value: node[i]
+            });
+        }
+
+        let action = this.state.currentAction;
+
+        action.property = property;
+
+        this.setState({
+            currentAction: action,
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+        });
     }
     getSetPropsObj() {
-        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-        let className = widget.className;
         let obj = {
             name: 'setProps',
             showName: '设置属性',
             type: funcType.default,
-            className:className
+            property:[null]
         }
-        // let propertyList=[];
-        // propertyMap[className].map((v, i)=> {
-        //     if (v.isProperty && v.name != 'id') {
-        //         let o = v;
-        //         o.value =o.value ?o.value : null;
-        //         propertyList.push(o);
-        //     }
-        // });
-        // obj.property=propertyList;
         return obj;
     }
     onSTButtonClick(){
@@ -423,6 +432,7 @@ class Property extends React.Component {
         property[index] = prop;
         let action = this.state.currentAction;
         action.property = property;
+
         this.setState({
             currentAction: action,
         }, ()=>{
@@ -822,21 +832,17 @@ class Property extends React.Component {
                                         !w||!this.state.currentAction ||
                                         !this.state.currentAction.property ||
                                          this.state.currentAction.property.length === 0
-                                            ? <div   className={$class("pp--list-layer flex-1", {'hidden':!(this.state.currentAction&&this.state.currentAction.className)} )}>
-                                            {
-                                                this.state.currentAction&&this.state.currentAction.className
-                                                    ?<PropertyViewSetUp
-                                                     okey={this.state.currentObject}
-                                                     classType={this.state.currentAction.className}
-                                                     getResult={this.getPropertyViewSetUpResult}
-                                                />
-                                                    :null
-                                             }
-                                            </div>
+                                         ?null
                                             : <div className="pp--list-layer flex-1">
-                                            {
-                                                this.state.currentAction.property.map(propertyContent)
-                                            }
+                                        {
+                                            this.state.currentAction && this.state.currentAction.name == 'setProps'
+                                                ? <PropertyViewSetUp
+                                                okey={this.state.currentObject}
+                                                action={this.state.currentAction}
+                                                getResult={this.getPropertyViewSetUpResult}
+                                                 />
+                                                : this.state.currentAction.property.map(propertyContent)
+                                        }
                                         </div>
                                     }
                                 </div>
