@@ -237,7 +237,11 @@ class Property extends React.Component {
                     }else if(v.name=='scaleY') {
                         vObj.name = 'height';
                     }
-                    propertyList.push(vObj);
+                    if(v.name=='initVisible'){
+                        ;
+                    }else {
+                        propertyList.push(vObj);
+                    }
                 }
             })
         }

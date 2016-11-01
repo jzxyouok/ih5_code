@@ -72,9 +72,9 @@ class PropertyViewSetUp extends React.Component {
                 break;
             case propertyType.Dropdown:
                 //中心点
-                if(item.name=='originPos'){
+                if (item.name == 'originPos') {
                     defaultProp.item = item;
-                    defaultValue=item.default;
+                    defaultValue = item.default;
 
                     let arr = [];
                     for (var i in  item.options) {
@@ -86,11 +86,13 @@ class PropertyViewSetUp extends React.Component {
                 }
                 break;
             case propertyType.Percentage:
-                defaultValue=defaultValue*100;
+                defaultValue = defaultValue * 100;
                 break;
             default:
                 ;
         }
+
+
 
         if(item.value !==undefined){
             defaultValue =item.value;
@@ -104,7 +106,7 @@ class PropertyViewSetUp extends React.Component {
              }
         }
 
-       // console.log(item.name,defaultValue);
+
         defaultProp.value= defaultValue;
         return defaultProp;
     }
@@ -119,8 +121,16 @@ class PropertyViewSetUp extends React.Component {
                     runTag=false;
                 }
                 break;
+            case propertyType.Text:
+                if(item.name=='value'){
+                     if(value===undefined){
+                         value='';
+                     }
+                }
+                break;
             default:;
         }
+
         if(runTag){
             item.value=value;
             this.getResult(item);
