@@ -773,7 +773,6 @@ class PropertyView extends React.Component {
                 //设置中心点
                 defaultValue = item.default;
                 //当originY时才会激活,而不是originPos
-
                 if(node.props.originPosKey && (item.name== 'originX' || item.name== 'originY' || item.name== 'originPos')) {
                     defaultValue = node.props.originPosKey;
                 }

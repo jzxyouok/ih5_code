@@ -16,6 +16,8 @@ class DBConsComponent extends React.Component {
         this.operationList = ['=', '>', '<', '!=', '≥', '≤'];
         this.onGetDBFields = this.onGetDBFields.bind(this);
         this.onMenuSelect = this.onMenuSelect.bind(this);
+        this.onRemoveCon = this.onRemoveCon.bind(this);
+        this.onAddCon = this.onAddCon.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -70,6 +72,33 @@ class DBConsComponent extends React.Component {
         })
     }
 
+    onRemoveCon(item, index, e) {
+        e.stopPropagation();
+        let value = this.state.value;
+        if(value.length === 1) {
+            value = [];
+            value.push({field:null,operation:'=',compare:null});
+        } else {
+            value.splice(index, 1);
+        }
+        this.setState({
+            value: value
+        }, ()=>{
+            this.props.onChange(this.state.value);
+        })
+    }
+
+    onAddCon(e) {
+        e.stopPropagation();
+        let value = this.state.value;
+        value.push({field:null,operation:'=',compare:null});
+        this.setState({
+            value: value
+        }, ()=>{
+            this.props.onChange(this.state.value);
+        })
+    }
+
     render () {
         let menu = (value, index)=> {
             return (<Menu onClick={this.onMenuSelect.bind(this, value, index,'field')}>
@@ -96,43 +125,54 @@ class DBConsComponent extends React.Component {
         };
 
         let con = (v, i)=> {
-            return (<div className="condition  f--hlc" key={i}>
-                <Dropdown overlay={menu(v,i)} trigger={['click']}
-                          onClick={this.onGetDBFields}
-                          getPopupContainer={() => document.getElementById(this.props.pId)}>
-                    <div className={$class("p--dropDown short field-dropDown")}>
-                        <div className="title f--hlc">
-                            {
-                                v.field
-                                    ? v.field
-                                    : '选择字段'
-                            }
-                            <span className="icon" />
-                        </div>
+            return (
+                <div className="condition-wrap f--hlc" key={i}>
+                    <div className="condition  f--hlc">
+                        <Dropdown overlay={menu(v,i)} trigger={['click']}
+                                  onClick={this.onGetDBFields}
+                                  getPopupContainer={() => document.getElementById(this.props.pId)}>
+                            <div className={$class("p--dropDown short field-dropDown")}>
+                                <div className="title f--hlc">
+                                    {
+                                        v.field
+                                            ? v.field
+                                            : '选择字段'
+                                    }
+                                    <span className="icon" />
+                                </div>
+                            </div>
+                        </Dropdown>
+                        <Dropdown overlay={operation(v,i)} trigger={['click']}
+                                  getPopupContainer={() => document.getElementById(this.props.pId)}>
+                            <div className={$class("p--dropDown short operation-dropDown")}>
+                                <div className="title f--hlc">
+                                    {
+                                        v.operation
+                                            ? v.operation
+                                            : '操作'
+                                    }
+                                    <span className="icon" />
+                                </div>
+                            </div>
+                        </Dropdown>
+                        <FormulaInput containerId={this.props.pId}
+                                      disabled={this.props.disabled}
+                                      minWidth={'110px'}
+                                      value={v.compare}
+                                      placeholder={'对象／数值'}
+                                      objectList={this.props.objectList}
+                                      onFocus={this.props.onFocus}
+                                      onBlur={this.props.onBlur}
+                                      onChange={this.onMenuSelect.bind(this,v, i, 'obj')}/>
+                        <button className="close-btn" onClick={this.onRemoveCon.bind(this,v,i)}></button>
                     </div>
-                </Dropdown>
-                <Dropdown overlay={operation(v,i)} trigger={['click']}
-                          getPopupContainer={() => document.getElementById(this.props.pId)}>
-                    <div className={$class("p--dropDown short operation-dropDown")}>
-                        <div className="title f--hlc">
-                            {
-                                v.operation
-                                    ? v.operation
-                                    : '操作'
-                            }
-                            <span className="icon" />
+                    <button className={$class("plus-btn", {'hidden':i!==0})} onClick={this.onAddCon}>
+                        <div className="btn">
+                            <span className="heng"></span>
+                            <span className="shu"></span>
                         </div>
-                    </div>
-                </Dropdown>
-                <FormulaInput containerId={this.props.pId}
-                              disabled={this.props.disabled}
-                              minWidth={'115px'}
-                              value={v.compare}
-                              objectList={this.props.objectList}
-                              onFocus={this.props.onFocus}
-                              onBlur={this.props.onBlur}
-                              onChange={this.onMenuSelect.bind(this,v, i, 'obj')}/>
-            </div>)
+                    </button>
+                </div>)
         };
 
         return (<div className="db-cons">

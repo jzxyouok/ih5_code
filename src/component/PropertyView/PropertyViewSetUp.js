@@ -22,11 +22,9 @@ class PropertyViewSetUp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            key:props.okey,
+            oKey:props.oKey,
             object:props.object
         };
-        this.className=WidgetStore.getWidgetByKey(props.okey).className;
-
 
         this.getResult =props.getResult;
         this.getComponent=this.getComponent.bind(this);
@@ -38,7 +36,7 @@ class PropertyViewSetUp extends React.Component {
     }
     componentWillReceiveProps(nextProps){
        this.setState({
-           key:nextProps.okey,
+           oKey:nextProps.oKey,
            object:nextProps.object
        })
     }
@@ -54,77 +52,89 @@ class PropertyViewSetUp extends React.Component {
             disabled: item.readOnly !== undefined,
             onChange:  this.onChangePropDom.bind(this, item)
         };
-        let node = WidgetStore.getWidgetByKey(this.state.key);
-        let className =this.className;
+
+        let node = WidgetStore.getWidgetByKey(this.state.oKey);
+
+        let defaultValue=node?node.node[item.name]:'';
 
 
-        let defaultValue=node.node[item.name];
+
+        //初始化情况下,特殊性处理
+        switch(item.type) {
+            case propertyType.Select:
+                defaultProp.options = [];
+                //适配
+                if (item.name == 'scaleType') {
+                    for (var i in  item.options) {
+                        defaultProp.options.push(<Option key={item.options[i]}>{i}</Option>);
+                    }
+                }
+                break;
+            case propertyType.Dropdown:
+                //中心点
+                if (item.name == 'originPos') {
+                    defaultProp.item = item;
+                    defaultValue = item.default;
+
+                    let arr = [];
+                    for (var i in  item.options) {
+                        arr.push(<MenuItem key={item.options[i]}>
+                            <div className='originIcon'></div>
+                            {i}</MenuItem>);
+                    }
+                    defaultProp.overlay = <Menu className='dropDownMenu3' onClick={defaultProp.onChange}>{arr}</Menu>;
+                }
+                break;
+            case propertyType.Percentage:
+                defaultValue = defaultValue * 100;
+                break;
+            default:
+                ;
+        }
+
+
+
         if(item.value !==undefined){
             defaultValue =item.value;
+            //设置之后的特殊处理
+             switch (item.type){
+                 case  propertyType.Dropdown:
+                     defaultValue = this.getSelectDefault(item.value,item.options);
+                     break;
+                 default:
+                     ;
+             }
         }
 
-        //单独设置默认参数
-        if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
-            defaultProp.checked = defaultValue;
-            // if(className=='table' && item.name == "showHeader"){
-            //     if(!this.state.tbHeaderToggle !== defaultProp.checked){
-            //         this.setState({
-            //             tbHeaderToggle : !defaultProp.checked
-            //         })
-            //     }
-            // }
-        }else if(item.type ==propertyType.Dropdown ){
-            defaultProp.value = defaultValue;
-            defaultProp.item=item;
-            let arr=[];
-            for(var i in  item.options){
-                arr.push(<MenuItem  key={item.options[i]}><div className='originIcon'></div>{i}</MenuItem>);
-            }
-            defaultProp.overlay =  <Menu className='dropDownMenu2' onClick={defaultProp.onChange}>{arr}</Menu>;
 
-        }
-        else if(item.type ==propertyType.Select || item.type ==propertyType.TbSelect ){
-            let selectClassName='';
-            defaultProp.options=[];
-            defaultProp.value = defaultValue;
-            if(item.name=='originY' ||item.name=='originPos') {
-                selectClassName='originIcon';
-            }
-            else if(item.name=='fontFamily' || item.name=='headerFontFamily'){
-
-            }
-            else if(item.name=='font'){
-                defaultProp.name=item.name;
-                defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
-              }
-            else if(item.name=='type'){
-                for(let i in  item.options){
-                    selectClassName= (item.options[i]=='slideInUp' || item.options[i]== 'jello')? 'optionline':'';
-                    defaultProp.options.push(<Option  key={item.options[i]} className={selectClassName}>{i}</Option>);
-                }
-            }
-            if(defaultProp.options.length==0){
-                for(var i in  item.options){
-                    defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
-                }
-            }
-
-        }else if(item.type ==propertyType.Color||item.type ==propertyType.Color2){
-            defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
-            defaultProp.value = defaultValue;
-        }else if(item.type === propertyType.TbColor){
-            defaultProp.value = defaultValue;
-            defaultProp.tbHeight = node.props['headerHeight'] ?  node.props['headerHeight']  : "自动";
-        }else {
-            defaultProp.value = defaultValue;
-        }
+        defaultProp.value= defaultValue;
         return defaultProp;
     }
 
     onChangeProp(item, value) {
-       // this.getResult({'name':item.name, 'showName':item.showName, 'value':value, 'type':item.type,isProp:item.isProp});
-        item.value=value;
-        this.getResult(item);
+        let runTag=true;
+        switch(item.type){
+            case propertyType.Dropdown:
+                if(item.name=='originPos'){
+                    item.value=value.key;
+                    this.getResult(item);
+                    runTag=false;
+                }
+                break;
+            case propertyType.Text:
+                if(item.name=='value'){
+                     if(value===undefined){
+                         value='';
+                     }
+                }
+                break;
+            default:;
+        }
+
+        if(runTag){
+            item.value=value;
+            this.getResult(item);
+        }
     }
     onChangePropDom(item, value) {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
@@ -168,15 +178,15 @@ class PropertyViewSetUp extends React.Component {
                 }
             case propertyType.Percentage:
                 // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+                //  <Slider    step={1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
                 return  <div>
-                    <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
-                    <Slider    step={1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
-                </div>;
-
+                         <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+                        </div>;
             case propertyType.Text:
                 return <Input type="textarea" {...defaultProp} />;
 
             case propertyType.Color:
+                // <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
                 return <div>
                     <Input ref={(inputDom) => {
                         if (inputDom) {
@@ -187,7 +197,7 @@ class PropertyViewSetUp extends React.Component {
                             }
                         }
                     }} {...defaultProp}   className='color-input' />
-                    <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
+
                 </div>;
             case propertyType.Color2:
                 if(defaultProp.tbCome){
@@ -218,7 +228,7 @@ class PropertyViewSetUp extends React.Component {
                     </Select>
                 </div>;
             case propertyType.TbSelect:
-                //console.log(defaultProp.tbWidth,this.state.tbLineWidth);
+
                 return  <div className="f--hlc">
                     <div className="flex-1">
                         <Select {...defaultProp}>
@@ -275,6 +285,17 @@ class PropertyViewSetUp extends React.Component {
         }
     }
 
+    /********辅助方法区*********/
+    //获取中心点下拉框默认值
+    getSelectDefault(originPos,options){
+        let arr =originPos.split(',');
+        for(let i in options){
+            if(options[i][0]==arr[0] && options[i][1]==arr[1]  ){
+                return i;
+            }
+        }
+        return originPos.x+','+originPos.y;
+    }
 
     render() {
         return <div>{this.getComponent()}</div>
