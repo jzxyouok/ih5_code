@@ -203,27 +203,40 @@ class Property extends React.Component {
             actionList: actionList
         })
     }
-    getPropertyViewSetUpResult(node){
-        console.log('node',node);
+    getPropertyViewSetUpResult(index,prop){
+       // console.log('prop',prop);
+
+        let property = this.state.currentAction.property;
+        property[index] = prop;
+
+        let action = this.state.currentAction;
+
+        action.property = property;
+
+        this.setState({
+            currentAction: action,
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+        });
     }
     getSetPropsObj() {
-        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-        let className = widget.className;
         let obj = {
             name: 'setProps',
             showName: '设置属性',
-            type: funcType.default,
-            className:className
+            type: funcType.default
         }
-        // let propertyList=[];
-        // propertyMap[className].map((v, i)=> {
-        //     if (v.isProperty && v.name != 'id') {
-        //         let o = v;
-        //         o.value =o.value ?o.value : null;
-        //         propertyList.push(o);
-        //     }
-        // });
-        // obj.property=propertyList;
+        let node =WidgetStore.getWidgetByKey(this.state.currentObject);
+        let propertyList=[];
+        if(node){
+            let className=node.className;
+            propertyMap[className].map((v,i)=>{
+                if(v.isProperty&& v.name !='id'){
+                    v.isProp=true;
+                    propertyList.push(v);
+                }
+            })
+        }
+        obj.property= propertyList;
         return obj;
     }
     onSTButtonClick(){
@@ -425,6 +438,7 @@ class Property extends React.Component {
         property[index] = prop;
         let action = this.state.currentAction;
         action.property = property;
+
         this.setState({
             currentAction: action,
         }, ()=>{
@@ -578,7 +592,15 @@ class Property extends React.Component {
                          {'db-cons-list':v1.type===propertyType.DBCons})}
                          key={i1}>
                         <div className="pp--name">{ v1.showName }</div>
-                        { type(v1.type, this.getProps(v1, i1), v1, i1)}
+                        {
+                            v1.isProp===true
+                            ?<PropertyViewSetUp
+                                okey={this.state.currentObject}
+                                object={v1}
+                                getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
+                            />
+                            :type(v1.type, this.getProps(v1, i1), v1, i1)
+                        }
                     </div>
         };
 
@@ -849,21 +871,11 @@ class Property extends React.Component {
                                         !w||!this.state.currentAction ||
                                         !this.state.currentAction.property ||
                                          this.state.currentAction.property.length === 0
-                                            ? <div   className={$class("pp--list-layer flex-1", {'hidden':!(this.state.currentAction&&this.state.currentAction.className)} )}>
-                                            {
-                                                this.state.currentAction&&this.state.currentAction.className
-                                                    ?<PropertyViewSetUp
-                                                     okey={this.state.currentObject}
-                                                     classType={this.state.currentAction.className}
-                                                     getResult={this.getPropertyViewSetUpResult}
-                                                />
-                                                    :null
-                                             }
-                                            </div>
+                                         ?null
                                             : <div className="pp--list-layer flex-1">
                                             {
-                                                this.state.currentAction.property.map(propertyContent)
-                                            }
+                                            this.state.currentAction.property.map(propertyContent)
+                                             }
                                         </div>
                                     }
                                 </div>
