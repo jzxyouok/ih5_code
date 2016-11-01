@@ -83,7 +83,6 @@ propertyMap['root'] = [
         property:[
             {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.String},
-            {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true },
     { name: 'gotoPage', showName:'跳转到页面', info:'(page)',
@@ -308,7 +307,6 @@ propertyMap['container'] = [
         property:[
             {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
-            {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true }
 ];
@@ -675,7 +673,7 @@ propertyMap['db'] = [
         property:[
             // {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.Select},
             {'name':'type', showName:'普通', 'value':'normal', 'type':propertyType.Hidden},
-            {'name':'conditions', showName:'输出条件', 'value':[{field:null,operation:null,value:null}], 'type':propertyType.DBCons},
+            {'name':'conditions', showName:'输出条件', 'value':[{field:null,operation:'=',compare:null}], 'type':propertyType.DBCons},
             {'name':'order', showName:'排序方式', 'value':{field:null, asc:true}, 'type':propertyType.DBOrder},
             {'name':'lines', showName:'输出行数', 'value':{from:null, to:null}, 'type':propertyType.Range},
             {'name':'object', showName:'输出至对象', 'value':null, 'type':propertyType.Object},

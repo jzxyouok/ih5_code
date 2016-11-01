@@ -562,7 +562,7 @@ class FormulaInput extends React.Component {
         if(value){
             let sensor = $('<span>'+ value +'</span>').css({display: 'none'});
             $('body').append(sensor);
-            let width = sensor.width()+1;
+            let width = sensor.width()+2;
             sensor.remove();
             if(width>minInputWidth){
                 return width;

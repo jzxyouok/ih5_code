@@ -417,13 +417,33 @@ function resolveEventTree(node, list) {
                       if(o&&o.className === 'db') {
                           if(cmd.action.property) {
                               cmd.action.property.forEach(v=> {
-                                  if ((v.name === 'data' || v.name == 'option')) {
+                                  if ((v.name === 'data' || v.name == 'option'||
+                                      (cmd.action.name === 'find' && v.name === 'object'))) {
                                       if (v.valueId) {
                                           v.value = idToObjectKey(list, v.valueId[0], v.valueId[1]);
                                       } else {
                                           v.value = null;
                                       }
                                       (delete v.valueId);
+                                  } else if ((cmd.action.name === 'find' && v.name === 'conditions')) {
+                                      if (v.value.compare && v.value.compare.type === 2) {
+                                          v.value.compare.value.forEach((v1, i)=> {
+                                              if (v1.objId) {
+                                                  v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                                              } else {
+                                                  v1.objKey = null;
+                                              }
+                                              (delete v1.objId);
+                                              if (v1.objKey === null) {
+                                                  //如果不存在就直接删除
+                                                  v.value.compare.value.splice(i, 1);
+                                              }
+                                          });
+                                          if (v.value.compare.value.length === 0) {
+                                              v.value.compare.type = 1;
+                                              v.value.compare.value = null;
+                                          }
+                                      }
                                   }
                               });
                           }
@@ -589,8 +609,15 @@ function generateId(node) {
                           } else {
                               cmd.action.property.forEach(v=>{
                                   //看是否需要generateid
-                                  if (v.name ==='data'|| v.name ==='option') {
+                                  if (v.name ==='data'|| v.name ==='option'||
+                                      (cmd.action.name === 'find' && v.name === 'object')) {
                                       specGenIdsData(v.value);
+                                  } else if(v.name === 'condition') {
+                                      if (v.value.compare&&v.value.compare&&v.value.compare.type === 2) {
+                                          v.value.compare.value.forEach(v1=>{
+                                              specGenIdsData(v1.objKey);
+                                          });
+                                      }
                                   }
                               })
                           }
@@ -944,6 +971,23 @@ function saveTree(data, node, saveKey) {
                 judges.children.push(obj);
             });
 
+        let dealWithFormulaObj = (list, sk)=>{
+            let temp = [];
+            list.forEach(v1=>{
+                let tempV = {
+                    prePattern: v1.prePattern,
+                    objId: objectKeyToId(v1.objKey),
+                    property: v1.property,
+                    pattern: v1.pattern,
+                };
+                if(sk) {
+                    tempV.objKey = v1.objKey;
+                }
+                temp.push(tempV);
+            });
+            return temp;
+        };
+
         item.specificList.forEach(cmd => {
             let c = {};
             c.enable = cmd.enable;
@@ -986,7 +1030,8 @@ function saveTree(data, node, saveKey) {
                                 }
                                 property.push(temp);
 
-                            } else if (v.name === 'option'&& v.value) {
+                            } else if ((v.name === 'option'&& v.value) ||
+                                (cmd.action.name == 'find' && v.name === 'object'&& v.value)) {
                                 let temp = {
                                     name:v.name,
                                     showName: v.showName,
@@ -997,6 +1042,26 @@ function saveTree(data, node, saveKey) {
                                     temp.value = v.value;
                                 }
                                 property.push(temp);
+                            } else if (cmd.action.name == 'find' && v.name === 'conditions' && v.value) {
+                                if(v.value.compare && v.value.compare.type === 2) {
+                                    let temp = {
+                                        name:v.name,
+                                        showName: v.showName,
+                                        type: v.type,
+                                        value: {
+                                            field: v.value.field,
+                                            operation: v.value.operation,
+                                            compare: {
+                                                type: 2,
+                                                value: []
+                                            }
+                                        }
+                                    };
+                                    temp.value.compare.value = dealWithFormulaObj(v.value.compare.value, saveKey);
+                                    property.push(temp);
+                                } else {
+                                    property.push(v);
+                                }
                             } else {
                                 property.push(v);
                             }
@@ -1015,18 +1080,7 @@ function saveTree(data, node, saveKey) {
                                             value:[],
                                         }
                                     };
-                                    v.value.value.forEach(v1=>{
-                                        let tempV = {
-                                            prePattern: v1.prePattern,
-                                            objId: objectKeyToId(v1.objKey),
-                                            property: v1.property,
-                                            pattern: v1.pattern,
-                                        };
-                                        if(saveKey) {
-                                            tempV.objKey = v1.objKey;
-                                        }
-                                        temp.value.value.push(tempV);
-                                    });
+                                    temp.value.value = dealWithFormulaObj(v.value.value, saveKey);
                                     property.push(temp);
                                 } else {
                                     property.push(v);

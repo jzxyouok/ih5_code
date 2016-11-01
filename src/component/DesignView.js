@@ -163,9 +163,6 @@ class DesignView extends React.Component {
         if(event.target.nodeName==='INPUT' || event.target.nodeName==='TEXTAREA') {
             return;
         }
-        // event.preventDefault();
-        event.stopPropagation();
-
 
         if(!this.keyboard) {
 
@@ -174,6 +171,7 @@ class DesignView extends React.Component {
 
             // left or right
             if (isEvent(37) || isEvent(39)) {
+                event.stopPropagation();
                 let left = window.getComputedStyle(this.refs.view, null).getPropertyValue("left");
                 let l = parseFloat(left.replace(/(px)?/, ''));
                 l += STEP * (isEvent(37) ? -1 : 1);
@@ -188,6 +186,7 @@ class DesignView extends React.Component {
             }
             // up or down
             if (isEvent(38) || isEvent(40)) {
+                event.stopPropagation();
                 let top = window.getComputedStyle(this.refs.view, null).getPropertyValue("top");
                 let t = parseFloat(top.replace(/(px)?/, ''));
                 t += STEP * (isEvent(38) ? -1 : 1);

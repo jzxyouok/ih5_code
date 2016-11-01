@@ -1270,6 +1270,10 @@
                         margin-bottom: 2px;
                         padding-right: 25px;
 
+                        &.db-cons-list {
+                            padding-right: 10px;
+                        }
+
                         .pp--name {
                             width: 180px;
                             padding-left: 11px;
@@ -1442,6 +1446,41 @@
                                 .switchMore-ul-off{
                                     width: 50%;
                                 }
+                            }
+                        }
+                        .db-cons {
+                            .condition {
+                                height: 22px;
+                                background-color: #294140;
+                                padding: 0 2px;
+                            }
+                            .p--dropDown {
+                                height: 18px;
+                                .title {
+                                    background-color: #1c2f2e;
+                                    padding-left: 2px;
+                                }
+                                .icon {
+                                    height: 18px;
+                                    right: 4px;
+                                    top: -2px;
+                                }
+                            }
+                            .field-dropDown {
+                                width: 70px;
+                            }
+                            .operation-dropDown {
+                                width: 36px;
+                                margin-left: 2px;
+                                .title {
+                                    padding-left: 6px;
+                                }
+                            }
+                            .formulaInput {
+                                margin-left: 2px;
+                            }
+                            .formula-object-icon {
+                                margin: 0;
                             }
                         }
 

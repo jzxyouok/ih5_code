@@ -10,6 +10,7 @@ import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { RangeComponent } from '../PropertyView/RangeComponent';
 import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
+import { DBConsComponent } from '../PropertyView/DBConsComponent';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
 
@@ -171,6 +172,11 @@ class Property extends React.Component {
             this.funcListLength = obj.funcList.length;
         }
 
+        if(className !== 'var' && className !== 'db') {
+            //设置属性
+            actionList.push(this.getSetPropsObj());
+        }
+
         if(className === 'var'){
             switch (obj.type) {
                 case varType.number:
@@ -197,7 +203,6 @@ class Property extends React.Component {
             });
         }
 
-        actionList.unshift(this.getSetPropsObj());
         this.setState({
             actionList: actionList
         })
@@ -223,7 +228,7 @@ class Property extends React.Component {
             name: 'setProps',
             showName: '设置属性',
             type: funcType.default
-        }
+        };
         let node =WidgetStore.getWidgetByKey(this.state.currentObject);
         let propertyList=[];
         if(node){
@@ -445,6 +450,18 @@ class Property extends React.Component {
         }
         let property = this.state.currentAction.property;
         property[index] = prop;
+        if(type === optionType.class && this.state.currentAction.name === 'create') {
+            let className = data;
+            //不需要替换1，2和最后1个
+            let newProperty = [property[0], property[1], property[property.length-1]];
+            propertyMap[className].map((v)=>{
+                if(v.isProperty&& v.name !='id'){
+                    v.isProp=true;
+                    newProperty.splice(newProperty.length-1, 0, v);
+                }
+            });
+            property = newProperty;
+        }
         let action = this.state.currentAction;
         action.property = property;
 
@@ -505,6 +522,7 @@ class Property extends React.Component {
             case propertyType.FormulaInput:
             case propertyType.Range:
             case propertyType.DBOrder:
+            case propertyType.DBCons:
                 value = e;
                 break;
             case propertyType.Function:
@@ -554,6 +572,7 @@ class Property extends React.Component {
                 defaultProp.value = item.value;
                 break;
             case propertyType.DBOrder:
+            case propertyType.DBCons:
                 defaultProp.value = item.value;
             case propertyType.Function:
                 break;
@@ -582,6 +601,7 @@ class Property extends React.Component {
         }
         return defaultProp;
     }
+
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
 
@@ -593,8 +613,11 @@ class Property extends React.Component {
 
         let propertyContent = (v1,i1)=>{
             //设置通用默认参数和事件
-            return  <div className={$class("pp--list f--hlc", {'hidden':v1.type===propertyType.Hidden})} key={i1} >
-                        <div className="pp--name">{ v1.showName }</div>
+            return  <div className={$class("pp--list f--hlc",
+                         {'hidden':v1.type===propertyType.Hidden},
+                         {'db-cons-list':v1.type===propertyType.DBCons})}
+                         key={i1}>
+                        <div className="pp--name">{ v1.showName?v1.showName:v1.name }</div>
                         {
                             v1.isProp===true
                             ?<PropertyViewSetUp
@@ -743,7 +766,14 @@ class Property extends React.Component {
                 case propertyType.Range:
                     return <RangeComponent {...defaultProp}/>;
                 case propertyType.DBOrder:
-                    return <DBOrderComponent pId={propertyId} {...defaultProp} obj={w}/>;
+                    return <DBOrderComponent pId={propertyId} obj={w} {...defaultProp}/>;
+                case propertyType.DBCons:
+                    return <DBConsComponent pId={propertyId}
+                                            obj={w}
+                                            objectList={this.state.objectList}
+                                            onFocus={this.onFormulaInputFocus}
+                                            onBlur={this.onFormulaInputBlur}
+                                            {...defaultProp}/>;
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 case propertyType.Hidden:

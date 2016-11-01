@@ -1067,9 +1067,6 @@ class NavBar extends React.Component {
     }
 
     onKeyHistory(event) {
-        event.preventDefault();
-        event.stopPropagation();
-
         if(event.target.nodeName==='INPUT' || event.target.nodeName==='TEXTAREA') {
             window.macKeys.reset();
             return;
@@ -1080,12 +1077,14 @@ class NavBar extends React.Component {
 
         //Ctrl+Z
         if (didPressCtrl && event.keyCode == 90) {
+            event.stopPropagation();
           //console.log('Ctrl+Z');
             this.revokedHistory();
             window.macKeys.reset();
         }
         //Ctrl+y
         if (didPressCtrl && event.keyCode == 89) {
+            event.stopPropagation();
             //console.log('Ctrl+y');
             this.replyHistory();
             window.macKeys.reset();
