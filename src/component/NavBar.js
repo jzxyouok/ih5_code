@@ -1050,31 +1050,44 @@ class NavBar extends React.Component {
         })
     }
     onKeyDown(event){
+
+        if(event.target.nodeName==='INPUT' || event.target.nodeName==='TEXTAREA') {
+            window.macKeys.reset();
+            return;
+        }
+
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
         //Ctrl+s
         if (didPressCtrl && event.keyCode == 83) {
             event.preventDefault();
             this.onSave();
+            window.macKeys.reset();
         }
     }
 
     onKeyHistory(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if(event.target.nodeName==='INPUT' || event.target.nodeName==='TEXTAREA') {
+            window.macKeys.reset();
+            return;
+        }
 
         let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
         let didPressCtrl = (isMac && window.macKeys.cmdKey) || (!isMac && event.ctrlKey);
 
         //Ctrl+Z
         if (didPressCtrl && event.keyCode == 90) {
+            event.stopPropagation();
           //console.log('Ctrl+Z');
             this.revokedHistory();
+            window.macKeys.reset();
         }
         //Ctrl+y
         if (didPressCtrl && event.keyCode == 89) {
+            event.stopPropagation();
             //console.log('Ctrl+y');
             this.replyHistory();
+            window.macKeys.reset();
         }
     }
 

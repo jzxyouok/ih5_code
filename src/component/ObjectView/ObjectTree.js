@@ -443,7 +443,7 @@ class ObjectTree extends React.Component {
             this.setState({
                 multiSelectMode: false
             }, ()=>{
-                if(!this.state.selectTargetMode&&this.state.selectWidget) {
+                if(!this.state.selectTargetMode&&this.state.selectWidget&&this.state.nids.length>0) {
                     WidgetActions['selectWidget'](this.state.selectWidget, true);
                 }
             });
@@ -472,12 +472,14 @@ class ObjectTree extends React.Component {
                 });
             }
         } else {
-            this.setState({
-                nid : nid,
-                editMode: false
-            },()=>{
-                WidgetActions['selectWidget'](data, true);
-            });
+            if(this.state.nid !== nid) {
+                this.setState({
+                    nid : nid,
+                    editMode: false
+                },()=>{
+                    WidgetActions['selectWidget'](data, true);
+                });
+            }
         }
     }
 
@@ -590,8 +592,7 @@ class ObjectTree extends React.Component {
             };
             setTimeout(()=> {
                 temp();
-            }, 100);
-
+            }, 0);
         });
     }
 

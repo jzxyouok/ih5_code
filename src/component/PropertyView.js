@@ -64,10 +64,10 @@ class PropertyView extends React.Component {
         this.tbLineWidth = this.tbLineWidth.bind(this);
     }
 
-     //获取封装的form组件
-     getInputBox(type, defaultProp) {
-         let style = {};
-         let defaultData =  defaultProp;
+    //获取封装的form组件
+    getInputBox(type, defaultProp) {
+        let style = {};
+        let defaultData =  defaultProp;
         switch (type) {
             case propertyType.Integer:
                 if(defaultProp.tbCome == "tbS"){
@@ -120,13 +120,13 @@ class PropertyView extends React.Component {
                     delete defaultData.tbCome;
                 }
                 return  <Input ref={(inputDom) => {
-                if (inputDom) {
-                    var dom = ReactDOM.findDOMNode(inputDom).firstChild;
-                    if (!dom.jscolor) {
-                        dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
-                        dom.jscolor.onFineChange = defaultProp.onChange;
+                    if (inputDom) {
+                        var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                        if (!dom.jscolor) {
+                            dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                            dom.jscolor.onFineChange = defaultProp.onChange;
+                        }
                     }
-                }
                 }}  {...defaultData}   /> ;
 
             case propertyType.Boolean:
@@ -139,67 +139,67 @@ class PropertyView extends React.Component {
                     style['maxWidth'] = "125px";
                 }
                 return <div className={cls({"flex-1": defaultProp.tbCome == "tbF"})}>
-                            <Select {...defaultProp} style={style}>
-                                {defaultProp.options}
-                            </Select>
-                            <div id={cls({'ant-progress':defaultProp.name=='font'})}>
-                                <div className='ant-progress-bar'></div>
-                                <div className='ant-progress-txt'>上传 10%</div>
-                            </div>
-                        </div>;
+                    <Select {...defaultProp} style={style}>
+                        {defaultProp.options}
+                    </Select>
+                    <div id={cls({'ant-progress':defaultProp.name=='font'})}>
+                        <div className='ant-progress-bar'></div>
+                        <div className='ant-progress-txt'>上传 10%</div>
+                    </div>
+                </div>;
             case propertyType.TbSelect:
                 //console.log(defaultProp.tbWidth,this.state.tbLineWidth);
                 return  <div className="f--hlc">
-                            <div className="flex-1">
-                                <Select {...defaultProp}>
-                                    {defaultProp.options}
-                                </Select>
-                            </div>
+                    <div className="flex-1">
+                        <Select {...defaultProp}>
+                            {defaultProp.options}
+                        </Select>
+                    </div>
 
-                            <div style={{ width: "58px", marginLeft: "3px", position:"relative"}}>
-                                <Input value={ this.state.tbLineWidth }
-                                       onChange={ this.tbLineWidthInput.bind(this) }
-                                       onBlur={ this.tbLineWidth.bind(this) }
-                                       style={{height:"22px",padding:"0 7px"}} />
-                                <span className="TbSelect-icon" />
-                            </div>
-                        </div>;
+                    <div style={{ width: "58px", marginLeft: "3px", position:"relative"}}>
+                        <Input value={ this.state.tbLineWidth }
+                               onChange={ this.tbLineWidthInput.bind(this) }
+                               onBlur={ this.tbLineWidth.bind(this) }
+                               style={{height:"22px",padding:"0 7px"}} />
+                        <span className="TbSelect-icon" />
+                    </div>
+                </div>;
 
             case propertyType.TbColor :
                 return  <div className="f--hlc">
-                            <div className="flex-1">
-                                <Input
-                                    ref={(inputDom) => {
-                                        if (inputDom) {
-                                            var dom = ReactDOM.findDOMNode(inputDom).firstChild;
-                                            if (!dom.jscolor) {
-                                                dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
-                                                dom.jscolor.onFineChange = defaultProp.onChange;
-                                            }
-                                        }
-                                    }}
-                                    placeholder={defaultProp.placeholder}
-                                    style={{height:"22px",padding:"0 7px", position:"relative"}}
-                                    className='color-input' />
-                            </div>
+                    <div className="flex-1">
+                        <Input
+                            ref={(inputDom) => {
+                                if (inputDom) {
+                                    var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                                    if (!dom.jscolor) {
+                                        dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
+                                        dom.jscolor.onFineChange = defaultProp.onChange;
+                                    }
+                                }
+                            }}
+                            placeholder={defaultProp.placeholder}
+                            style={{height:"22px",padding:"0 7px", position:"relative"}}
+                            className='color-input' />
+                    </div>
 
-                            <div style={{ width: "58px", marginLeft: "3px",height:"22px" }}>
-                                <Input placeholder={ defaultProp.tbHeight }
-                                       onChange={ this.tbHeadHeightInput.bind(this) }
-                                       onBlur={ this.tbHeadHeight.bind(this) }
-                                       style={{height:"22px",padding:"0 7px"}} />
-                                <span className="TbColor-icon" />
-                            </div>
-                        </div>;
+                    <div style={{ width: "58px", marginLeft: "3px",height:"22px" }}>
+                        <Input placeholder={ defaultProp.tbHeight }
+                               onChange={ this.tbHeadHeightInput.bind(this) }
+                               onBlur={ this.tbHeadHeight.bind(this) }
+                               style={{height:"22px",padding:"0 7px"}} />
+                        <span className="TbColor-icon" />
+                    </div>
+                </div>;
             case propertyType.TdLayout :
                 return  <div className="f--hlc TdLayout">
-                            <span className={cls({"active": defaultProp.placeholder.indexOf(1) >=0 })} />
-                            <span className={cls({"active": defaultProp.placeholder.indexOf(2) >=0 })} />
-                            <span className={cls({"active": defaultProp.placeholder.indexOf(3) >=0 })} />
-                            <span className={cls({"active": defaultProp.placeholder.indexOf(4) >=0 })} />
-                        </div>;
+                    <span className={cls({"active": defaultProp.placeholder.indexOf(1) >=0 })} />
+                    <span className={cls({"active": defaultProp.placeholder.indexOf(2) >=0 })} />
+                    <span className={cls({"active": defaultProp.placeholder.indexOf(3) >=0 })} />
+                    <span className={cls({"active": defaultProp.placeholder.indexOf(4) >=0 })} />
+                </div>;
             case propertyType.Dropdown:
-                 return  <DropDownInput {...defaultProp} />;
+                return  <DropDownInput {...defaultProp} />;
             default:
                 return <Input {...defaultProp} />;
         }
@@ -358,8 +358,8 @@ class PropertyView extends React.Component {
                             positionX:posX,
                             positionY:posY
                         }, true, false);
-                       // WidgetActions['render']();
-                       // this.setState({fields: this.getFields()});
+                        // WidgetActions['render']();
+                        // this.setState({fields: this.getFields()});
 
                         bTag = false;
                     }
@@ -477,63 +477,63 @@ class PropertyView extends React.Component {
         }
 
 
-       if(bTag){
-           const obj = {};
-           if(this.selectNode.className == "table" && prop.name == "header"){
-               if(v <= 0 || v == null) return;
-               let header = this.selectNode.props.header;
-               if(header !== undefined){
-                   header = header.split(",");
-                   let b = v - header.length;
-                   if(b > 0){
-                       for(let a=1; a <= b ; a++){
-                           header.push("");
-                       }
-                   }
-                   else if(b < 0){
-                       for(let a = -b; a > 0 ; a--){
-                           header.splice(header.length-1, 1);
-                       }
-                   }
-               }
-               else {
-                   header = [""];
-                   for(let a=1; a < v ; a++){
-                       header.push("");
-                   }
-               }
-               obj[prop.name] = header.join(",");
-               this.selectNode.props.header = header.join(",");
-               this.selectNode.node.header = header.join(",");
-               this.onStatusChange({updateProperties: obj});
-               WidgetActions['updateProperties'](obj, false, true);
-               this.refs.TbCome.updateColumn(v,header);
-           }
-           else if(this.selectNode.className == "table" && prop.name == "head"){
-               obj['headerColor'] = v;
-               this.selectNode.props.headerColor = v;
-               this.selectNode.node.headerColor = v;
-               this.onStatusChange({updateProperties: obj});
-               WidgetActions['updateProperties'](obj, false, true);
-           }
-           else if(this.selectNode.className == "table" && prop.name == "showHeader"){
-               obj[prop.name] = v;
-               this.selectNode.props.showHeader = v;
-               this.selectNode.node.showHeader = v;
-               this.onStatusChange({updateProperties: obj});
-               WidgetActions['updateProperties'](obj, false, true);
-               this.setState({
-                   tbHeaderToggle : !v
-               },()=>{
-                   this.setState({fields: this.getFields()});
-               });
-           }
-           else {
-               obj[prop.name] = v;
-               this.onStatusChange({updateProperties: obj});
-               WidgetActions['updateProperties'](obj, false, true);
-           }
-       }
+        if(bTag){
+            const obj = {};
+            if(this.selectNode.className == "table" && prop.name == "header"){
+                if(v <= 0 || v == null) return;
+                let header = this.selectNode.props.header;
+                if(header !== undefined){
+                    header = header.split(",");
+                    let b = v - header.length;
+                    if(b > 0){
+                        for(let a=1; a <= b ; a++){
+                            header.push("");
+                        }
+                    }
+                    else if(b < 0){
+                        for(let a = -b; a > 0 ; a--){
+                            header.splice(header.length-1, 1);
+                        }
+                    }
+                }
+                else {
+                    header = [""];
+                    for(let a=1; a < v ; a++){
+                        header.push("");
+                    }
+                }
+                obj[prop.name] = header.join(",");
+                this.selectNode.props.header = header.join(",");
+                this.selectNode.node.header = header.join(",");
+                this.onStatusChange({updateProperties: obj});
+                WidgetActions['updateProperties'](obj, false, true);
+                this.refs.TbCome.updateColumn(v,header);
+            }
+            else if(this.selectNode.className == "table" && prop.name == "head"){
+                obj['headerColor'] = v;
+                this.selectNode.props.headerColor = v;
+                this.selectNode.node.headerColor = v;
+                this.onStatusChange({updateProperties: obj});
+                WidgetActions['updateProperties'](obj, false, true);
+            }
+            else if(this.selectNode.className == "table" && prop.name == "showHeader"){
+                obj[prop.name] = v;
+                this.selectNode.props.showHeader = v;
+                this.selectNode.node.showHeader = v;
+                this.onStatusChange({updateProperties: obj});
+                WidgetActions['updateProperties'](obj, false, true);
+                this.setState({
+                    tbHeaderToggle : !v
+                },()=>{
+                    this.setState({fields: this.getFields()});
+                });
+            }
+            else {
+                obj[prop.name] = v;
+                this.onStatusChange({updateProperties: obj});
+                WidgetActions['updateProperties'](obj, false, true);
+            }
+        }
 
     }
 
@@ -647,12 +647,12 @@ class PropertyView extends React.Component {
         }
     }
 
-   //获取中心点下拉框默认值
+    //获取中心点下拉框默认值
     getSelectDefault(originPos,options){
         for(let i in options){
-             if(options[i][0]==originPos.x && options[i][1]==originPos.y  ){
-                 return i;
-             }
+            if(options[i][0]==originPos.x && options[i][1]==originPos.y  ){
+                return i;
+            }
         }
         return originPos.x+','+originPos.y;
     }
@@ -693,10 +693,10 @@ class PropertyView extends React.Component {
 
         if( node.node.keepRatio ===undefined  && this.isCanKeepRatio){
             node.node.keepRatio = true;
-               let obj={};
-               obj.keepRatio =  node.node.keepRatio;
-               WidgetActions['updateProperties'](obj, false, true);
-               this.isCanKeepRatio = false;
+            let obj={};
+            obj.keepRatio =  node.node.keepRatio;
+            WidgetActions['updateProperties'](obj, false, true);
+            this.isCanKeepRatio = false;
         }
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
@@ -756,9 +756,9 @@ class PropertyView extends React.Component {
 
                 }
             }else if(item.type==propertyType.Color || item.type==propertyType.Color2 || item.type === propertyType.TbColor){
-               if( item.name == 'color' &&  !node.props.color){ //只执行一次
-                   node.props.color='#FFFFFF';
-               }
+                if( item.name == 'color' &&  !node.props.color){ //只执行一次
+                    node.props.color='#FFFFFF';
+                }
                 if(node.props[item.name+'_originColor']){  //舞台颜色隐藏后保存的颜色
                     defaultValue =node.props[item.name+'_originColor'];
                 }else{
@@ -782,7 +782,7 @@ class PropertyView extends React.Component {
             else if(item.type==propertyType.Select || item.type==propertyType.TbSelect ){
                 defaultValue = item.default;
                 //当originY时才会激活,而不是originPos
-               if(item.name=='scaleType' && node.props.scaleTypeKey){
+                if(item.name=='scaleType' && node.props.scaleTypeKey){
                     defaultValue = node.props.scaleTypeKey;
                 }else if( item.name=='font' && node.props.fontKey){
                     defaultValue = node.props.fontKey;
@@ -793,27 +793,27 @@ class PropertyView extends React.Component {
                 }else if( item.name=='type'  && node.props.type){
                     defaultValue = node.props.type;
                 }else if( item.name=='headerFontFamily'  && node.props.headerFontFamily){
-                   defaultValue = node.props.headerFontFamily;
+                    defaultValue = node.props.headerFontFamily;
                 }
                 else if(item.name=='chooseColumn'){
-                   defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn  + ' 列';
-                   //console.log(this.state.tbWhichColumn,defaultValue);
+                    defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn  + ' 列';
+                    //console.log(this.state.tbWhichColumn,defaultValue);
                 }
             } else if(item.type === propertyType.Boolean2 ){
                 if(node.props[item.name]===undefined){
                     defaultValue =item.default;
                 }else{
-                     if(node.props[item.name]==false){
-                         defaultValue=2;
-                     }else if(node.props[item.name]==true){
-                         defaultValue=0;
-                     }else{
-                         defaultValue=1;
-                     }
+                    if(node.props[item.name]==false){
+                        defaultValue=2;
+                    }else if(node.props[item.name]==true){
+                        defaultValue=0;
+                    }else{
+                        defaultValue=1;
+                    }
                 }
             }else if(item.type === propertyType.Percentage ){
                 defaultValue = item.default*100;
-                if(node.props[item.name] ) {
+                if(node.props[item.name]!==undefined) {
                     defaultValue =node.props[item.name]*100;
                 }
             }
@@ -865,7 +865,7 @@ class PropertyView extends React.Component {
             }
 
             //设置通用默认参数和事件
-            const defaultProp = {
+            let defaultProp = {
                 size: 'small',
                 placeholder: item.default,
                 disabled: item.readOnly !== undefined,
@@ -894,28 +894,28 @@ class PropertyView extends React.Component {
             }
             else if(item.type ==propertyType.Select || item.type ==propertyType.TbSelect ){
                 let selectClassName='';
-                    defaultProp.options=[];
-                    defaultProp.value = defaultValue;
+                defaultProp.options=[];
+                defaultProp.value = defaultValue;
                 if(item.name=='originY' ||item.name=='originPos') {
                     selectClassName='originIcon';
                 }
                 else if(item.name=='fontFamily' || item.name=='headerFontFamily'){
                     for(let i in this.fontList){
-                         defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                        defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
                     }
                 }
                 else if(item.name=='font'){
-                      defaultProp.name=item.name;
-                      defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
-                      for(let i in this.fontList){
-                          defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
-                      }
+                    defaultProp.name=item.name;
+                    defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
+                    for(let i in this.fontList){
+                        defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                    }
                 }
                 else if(item.name=='type'){
-                      for(let i in  item.options){
-                          selectClassName= (item.options[i]=='slideInUp' || item.options[i]== 'jello')? 'optionline':'';
-                          defaultProp.options.push(<Option  key={item.options[i]} className={selectClassName}>{i}</Option>);
-                      }
+                    for(let i in  item.options){
+                        selectClassName= (item.options[i]=='slideInUp' || item.options[i]== 'jello')? 'optionline':'';
+                        defaultProp.options.push(<Option  key={item.options[i]} className={selectClassName}>{i}</Option>);
+                    }
                 }
                 if(defaultProp.options.length==0){
                     for(var i in  item.options){
@@ -983,7 +983,7 @@ class PropertyView extends React.Component {
             if (groups[groupName] === undefined)   groups[groupName] = [];
 
             /******** 设置布局结构和图标 *************/
-            //左右结构显示
+                //左右结构显示
             let hasTwin;
             if( className == "table"){
                 hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','行数','列数','头部字体','图表字体大小','字体','网格颜色','网格大小'].indexOf(item.showName) >= 0;
@@ -996,7 +996,7 @@ class PropertyView extends React.Component {
             let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
             let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
 
-           if(!item.showName){item.showName=item.name;}//当showName不存在时,用name作为showName
+            if(!item.showName){item.showName=item.name;}//当showName不存在时,用name作为showName
 
             //拼接图标样式
             let htmlStr;
@@ -1005,9 +1005,9 @@ class PropertyView extends React.Component {
             }else{
                 htmlStr = hasLock
                     ? <label>
-                        <div className={cls('ant-lock',{'ant-lock-checked':node.node.keepRatio})} onClick={this.antLock.bind(this)}></div>
-                        {item.showName}
-                      </label>
+                    <div className={cls('ant-lock',{'ant-lock-checked':node.node.keepRatio})} onClick={this.antLock.bind(this)}></div>
+                    {item.showName}
+                </label>
                     : <label>{item.showName}</label>
             }
             let style = {};
@@ -1035,21 +1035,21 @@ class PropertyView extends React.Component {
 
             groups[groupName].push(
                 <div key={item.name}
-                    className={cls('f--hlc','ant-row','ant-form-item',
-                            {'ant-form-half': hasTwin},
-                            {'ant-form-full': !hasTwin},
-                            {'tdColorSwitch' : tdColorSwitch }
-                            //,{'hidden': this.state.tbHeaderToggle
-                            //                && (item.name =='head' || item.name =='headerFontFamily'
-                            //                || item.name =='headerFontSize' || item.name =='headerFontFill')
-                            //}
-                    )}
-                    style={style}>
+                     className={cls('f--hlc','ant-row','ant-form-item',
+                         {'ant-form-half': hasTwin},
+                         {'ant-form-full': !hasTwin},
+                         {'tdColorSwitch' : tdColorSwitch }
+                         //,{'hidden': this.state.tbHeaderToggle
+                         //                && (item.name =='head' || item.name =='headerFontFamily'
+                         //                || item.name =='headerFontSize' || item.name =='headerFontFill')
+                         //}
+                     )}
+                     style={style}>
 
                     <div className={cls('ant-col-l ant-form-item-label',{"hidden" : defaultProp.tbCome == "tbS"})}>{htmlStr}</div>
                     <div className={cls('ant-col-r',{"tbSSStyle" : defaultProp.tbCome == "tbS"},{"tbFSStyle" : defaultProp.tbCome == "tbF"})}>
                         <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
-                        {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
+                            {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
                         </div>
                     </div>
                 </div>
@@ -1077,25 +1077,25 @@ class PropertyView extends React.Component {
         });
 
         return Object.keys(groups).map((name,index) =>{
-                let insertClassName =  className + "-" + 'form_'+name;
-                return <Form horizontal
-                             className={cls('form_'+name,{"active" : !this.state.tbHeaderToggle })}
-                             key={index}>
-                            {groups[name].map((input, i) => input)}
-                            {
-                                insertClassName == "table-form_basic"
-                                    ?   <button className="btn-clear table-form_basic_btn" onClick={this.tbComeShow}>
-                                            表格数据来源
-                                        </button>
-                                    : null
-                            }
-                        </Form>
+            let insertClassName =  className + "-" + 'form_'+name;
+            return <Form horizontal
+                         className={cls('form_'+name,{"active" : !this.state.tbHeaderToggle })}
+                         key={index}>
+                {groups[name].map((input, i) => input)}
+                {
+                    insertClassName == "table-form_basic"
+                        ?   <button className="btn-clear table-form_basic_btn" onClick={this.tbComeShow}>
+                        表格数据来源
+                    </button>
+                        : null
+                }
+            </Form>
         });
     }
 
     onStatusChange(widget) {
         if(widget.fontListObj){
-           this.fontList =  widget.fontListObj.fontList;
+            this.fontList =  widget.fontListObj.fontList;
         }
 
         if(widget.selectWidget){
@@ -1107,7 +1107,7 @@ class PropertyView extends React.Component {
         }
 
         if(widget.imageTextSizeObj){
-           this.textSizeObj = widget.imageTextSizeObj;
+            this.textSizeObj = widget.imageTextSizeObj;
             WidgetActions['render']();
             this.setState({fields: this.getFields()});
         }
@@ -1176,7 +1176,7 @@ class PropertyView extends React.Component {
 
             if (needRender)
                 WidgetActions['render']();
-                this.setState({fields: this.getFields()});
+            this.setState({fields: this.getFields()});
         }
         if(widget.historyPropertiesUpdate){
             this.forceUpdate();
@@ -1189,9 +1189,9 @@ class PropertyView extends React.Component {
         document.addEventListener('mousemove', this.mouseMove.bind(this));
         document.addEventListener('mouseup', this.mouseUp.bind(this));
 
-         $('#PropertyView').on('focus','textarea,input',function () {
-               $(this).select();
-         });
+        $('#PropertyView').on('focus','textarea,input',function () {
+            $(this).select();
+        });
     }
     componentWillUnmount() {
         this.unsubscribe();
@@ -1263,7 +1263,7 @@ class PropertyView extends React.Component {
                      className={cls({'hidden':this.props.isHidden})}>
                     <h1 id='PropertyViewHeader'
                         onMouseDown={this.mouseDown.bind(this)}
-                        >{this.state.propertyName}的属性</h1>
+                    >{this.state.propertyName}的属性</h1>
                     <div id='PropertyViewBody'>
                         {this.state.fields}
                     </div>

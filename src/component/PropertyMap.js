@@ -19,7 +19,14 @@ const propertyType = {
     TbSelect : 14,
     TbColor : 15,
     TbFont : 16,
-    TdLayout : 17
+    TdLayout : 17,
+
+    DBCons: 18,
+    DBOrder: 19,
+    Range: 20,
+    Object:21,
+    Hidden: -1,
+    Boolean3:22,
 };
 
 var level;
@@ -76,7 +83,6 @@ propertyMap['root'] = [
         property:[
             {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.String},
-            {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true },
     { name: 'gotoPage', showName:'跳转到页面', info:'(page)',
@@ -301,7 +307,6 @@ propertyMap['container'] = [
         property:[
             {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
             {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
-            {'name':'props', showName:'属性', 'value':null, 'type':propertyType.String},
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true }
 ];
@@ -666,7 +671,13 @@ propertyMap['db'] = [
     { addRequires: widgetFlags.Root},
     { name: 'find', showName:'输出', isFunc: true, info:'(option, callback(err, result))',
         property:[
-            {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.Select},
+            // {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.Select},
+            {'name':'type', showName:'普通', 'value':'normal', 'type':propertyType.Hidden},
+            {'name':'conditions', showName:'输出条件', 'value':[{field:null,operation:'=',compare:null}], 'type':propertyType.DBCons},
+            {'name':'order', showName:'排序方式', 'value':{field:null, asc:true}, 'type':propertyType.DBOrder},
+            {'name':'lines', showName:'输出行数', 'value':{from:null, to:null}, 'type':propertyType.Range},
+            {'name':'object', showName:'输出至对象', 'value':null, 'type':propertyType.Object},
+            {'name':'onlyMe', showName:'仅当前用户', 'value':false, 'type':propertyType.Boolean3},
             // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',
@@ -683,12 +694,12 @@ propertyMap['db'] = [
 propertyMap['sock'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'sockName' , showName:'名称：',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
-    { name: 'listened', showName:'是否监听：', type: propertyType.Boolean, default: false, isProperty: true },
-    { name: 'message', showName:'消息', isEvent: true, info:'data'},
-    { name: 'send', showName:'发送', isFunc: true, info:'(data)',
+    { name: 'sockName' , showName:'名称',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
+    { name: 'listened', showName:'是否监听', type: propertyType.Boolean, default: false, isProperty: true },
+    { name: 'message', showName:'消息', isEvent: true, info:'data', needFill:[{showName:'值',type:'var',default:null, actionName:'message'}]},
+    { name: 'send', showName:'发送消息', isFunc: true, info:'(data)',
         property:[
-            {'name':'value', showName:'内容', 'value':null, 'type':propertyType.String},
+            {'name':'value', showName:'内容', 'value':null, 'type':propertyType.FormulaInput},
         ]},
 ];
 propertyMap['strVar'] = [

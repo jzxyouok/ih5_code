@@ -155,35 +155,56 @@
     }
     .formula-obj-arrType-dropDown {
       position: relative;
-      .arr-table {
+      outline: 0;
+      .dropDown-content {
         z-index: 10;
         position: absolute;
         top: 18px;
         background: #315654;
         border-radius: 2px;
         left: 0;
-        padding-right: 15px;
-        padding-bottom: 15px;
+      }
+      .arr-table {
+        padding-right: 10px;
+        padding-bottom: 10px;
         .data-column {
           text-align: center;
+          .data-empty {
+            min-width: 15px;
+            min-height: 15px;
+          }
+          .data-row-title {
+            min-height: 15px;
+            width: 20px;
+          }
+          .data-column-title {
+            min-width: 15px;
+            height: 20px;
+          }
+          .data-column-title,
+          .data-row-title {
+            @extend %font-omitted;
+          }
           .data {
-            min-width: 20px;
-            min-height: 20px;
             width: 20px;
             height: 20px;
             .data-btn {
-              min-width: 20px;
-              min-height: 20px;
-              width: 20px;
-              height: 20px;
-              &:hover {
-                background-color: #315654;
-              }
-              background-color: #1c2f2e;
-              border: 1px solid #162322;
+              width: 100%;
+              height: 100%;
             }
+            &:hover {
+              background-color: #315654;
+            }
+            background-color: #1c2f2e;
+            border: 1px solid #162322;
           }
         }
+      }
+      .arr-table-empty {
+        width: 100%;
+        text-align: center;
+        padding-right: 0;
+        padding-bottom: 0;
       }
     }
     .formula-obj-name,

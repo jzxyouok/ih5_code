@@ -450,6 +450,18 @@
                             }
                         }
 
+                        .left-layer {
+                            .ant-select-dropdown {
+                                div {
+                                    width: 100%;
+                                }
+                                .ant-select-dropdown-menu-item {
+                                    padding: 2px 4px;
+                                    text-align: center;
+                                }
+                            }
+                        }
+
                         .dropDown-layer {
                             position: relative;
                             .title-gray{
@@ -716,6 +728,7 @@
                                     .ant-select-selection{
                                         height: 18px;
                                         background-color: #283549;
+                                        color:#b5b5b5;
                                         border: none;
                                         width: 100%;
                                         border-radius: 0;
@@ -723,10 +736,11 @@
                                             height: 18px;
                                             line-height: 18px;
                                         }
+                                        .ant-select-arrow {
+                                            right: 2px;
+                                        }
                                     }
                                 }
-
-
                             }
 
                             &.long {
@@ -1256,13 +1270,29 @@
                         margin-bottom: 2px;
                         padding-right: 25px;
 
+                        &.db-cons-list {
+                            padding-right: 10px;
+                        }
+
                         .pp--name {
                             width: 180px;
                             padding-left: 11px;
                             font-size: 12px;
                             color: #b5b5b5;
                         }
-
+                        .ant-select-selection-selected-value{
+                            color: #ccc;
+                        }
+                        .ant-select{
+                            width: 140px;
+                            .ant-select-selection{
+                                background: #294140;
+                                border: none;
+                            }
+                        }
+                        .ant-input-sm{
+                            width: 142px;
+                        }
                         .p--dropDown {
                             background-color: #294140;
                             width: 142px;
@@ -1277,6 +1307,32 @@
                                     height: 22px;
                                     background: url("img/button-icon.svg") no-repeat -1680px -40px;
                                     display: block;
+                                }
+                                .p--icon {
+                                    cursor: pointer;
+                                    min-width: 22px;
+                                    width: 22px;
+                                    height: 22px;
+                                    outline: 0;
+                                    margin: 0 2px 0 2px;
+                                    border: 1px solid #294140;
+                                    border-radius: 2px;
+                                    //280 360
+                                    background: url('img/button-icon.svg') no-repeat -279px -359px;
+                                    &:hover {
+                                        background: url("img/button-icon.svg") no-repeat -279px -399px;
+                                    }
+                                    &:active {
+                                        background: url("img/button-icon.svg") no-repeat -279px -439px;
+                                    }
+                                    &.active {
+                                        border: 1px solid #7b5815;
+                                        background: url("img/button-icon.svg") no-repeat -279px -359px;
+                                    }
+                                    &:disabled {
+                                        cursor: not-allowed;
+                                        opacity: 0.4;
+                                    }
                                 }
                             }
                         }
@@ -1337,6 +1393,91 @@
                                         content: '\E611';
                                     }
                                 }
+                            }
+                        }
+
+                        // switch
+                        .ant-switch{
+                            border: 1px solid #162423;
+                            background-color: #162423;
+                            height: 18px !important;
+                            width: 42px !important;
+                            line-height: 16px;
+                        }
+                        .ant-switch-small:after{
+                            height: 16px !important;
+                            width: 16px !important;
+                            left: 2px !important;
+                        }
+                        .ant-switch:after{
+                            background-color: #858585;
+                        }
+                        .ant-switch-checked {
+                            border-color: #294140;
+                            background-color: #294140;
+                            .ant-switch-inner{
+                                left: 4px;
+                            }
+                            &:after{
+                                left: 22px !important;
+                            }
+                        }
+
+                        .range-inputs {
+                            .ant-input-number {
+                                width: 88px;
+                            }
+                        }
+
+                        .db-order {
+                            .db-order-dropDown {
+                                width: 114px;
+                            }
+                            .switchTwo {
+                                margin-left: 2px;
+                                width: 80px;
+                                .switchMore-ul {
+                                    width: 80px;
+                                }
+                                .switchMore-ul-on,
+                                .switchMore-ul-off{
+                                    width: 50%;
+                                }
+                            }
+                        }
+                        .db-cons {
+                            .condition {
+                                height: 22px;
+                                background-color: #294140;
+                                padding: 0 2px;
+                            }
+                            .p--dropDown {
+                                height: 18px;
+                                .title {
+                                    background-color: #1c2f2e;
+                                    padding-left: 2px;
+                                }
+                                .icon {
+                                    height: 18px;
+                                    right: 4px;
+                                    top: -2px;
+                                }
+                            }
+                            .field-dropDown {
+                                width: 70px;
+                            }
+                            .operation-dropDown {
+                                width: 36px;
+                                margin-left: 2px;
+                                .title {
+                                    padding-left: 6px;
+                                }
+                            }
+                            .formulaInput {
+                                margin-left: 2px;
+                            }
+                            .formula-object-icon {
+                                margin: 0;
                             }
                         }
 
