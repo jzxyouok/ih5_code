@@ -417,7 +417,8 @@ function resolveEventTree(node, list) {
                       if(o&&o.className === 'db') {
                           if(cmd.action.property) {
                               cmd.action.property.forEach(v=> {
-                                  if ((v.name === 'data' || v.name == 'option')) {
+                                  if ((v.name === 'data' || v.name == 'option'||
+                                      (cmd.action.name === 'find' && v.name === 'object'))) {
                                       if (v.valueId) {
                                           v.value = idToObjectKey(list, v.valueId[0], v.valueId[1]);
                                       } else {
@@ -608,7 +609,8 @@ function generateId(node) {
                           } else {
                               cmd.action.property.forEach(v=>{
                                   //看是否需要generateid
-                                  if (v.name ==='data'|| v.name ==='option') {
+                                  if (v.name ==='data'|| v.name ==='option'||
+                                      (cmd.action.name === 'find' && v.name === 'object')) {
                                       specGenIdsData(v.value);
                                   } else if(v.name === 'condition') {
                                       if (v.value.compare&&v.value.compare&&v.value.compare.type === 2) {
@@ -1020,7 +1022,8 @@ function saveTree(data, node, saveKey) {
                                 }
                                 property.push(temp);
 
-                            } else if (v.name === 'option'&& v.value) {
+                            } else if ((v.name === 'option'&& v.value) ||
+                                (cmd.action.name == 'find' && v.name === 'object'&& v.value)) {
                                 let temp = {
                                     name:v.name,
                                     showName: v.showName,

@@ -593,7 +593,6 @@ class ObjectTree extends React.Component {
             setTimeout(()=> {
                 temp();
             }, 0);
-
         });
     }
 
