@@ -2,6 +2,7 @@ import React from 'react';
 import $class from 'classnames';
 import {Dropdown,Menu} from 'antd';
 import {SwitchTwo} from '../PropertyView/PropertyViewComponet';
+import WidgetActions from '../../actions/WidgetActions'
 
 const MenuItem = Menu.Item;
 
@@ -9,10 +10,12 @@ class DBOrderComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            dbList: [],
             value: props.value || {field:null, asc:true}
         };
         this.onSwitchChange = this.onSwitchChange.bind(this);
         this.onMenuSelect = this.onMenuSelect.bind(this);
+        this.onGetDBFields = this.onGetDBFields.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -42,14 +45,34 @@ class DBOrderComponent extends React.Component {
         })
     }
 
+    onGetDBFields(e) {
+        if(this.props.obj) {
+            let obj = this.props.obj;
+            WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + obj.props.dbid, null, null, function(text) {
+                var result = JSON.parse(text);
+                //console.log(result);
+                let dbList = [];
+                if (result['header']) {
+                    let headerData = result['header'].split(",");
+                    dbList = headerData;
+                }
+                this.setState({
+                    dbList : dbList
+                })
+            }.bind(this));
+        } else {
+            this.setState({
+                dbList : []
+            })
+        }
+    }
 
     render () {
-
         let menu = (<Menu onClick={this.onMenuSelect}>
             {
-                !this.props.list||this.props.list.length==0
+                !this.state.dbList||this.state.dbList.length==0
                     ? null
-                    : this.props.list.map((v, i)=>{
+                    : this.state.dbList.map((v, i)=>{
                         return <MenuItem field={v} key={i}>{v}</MenuItem>;
                 })
             }
@@ -58,11 +81,14 @@ class DBOrderComponent extends React.Component {
 
         return (<div className="db-order f--hlc">
             <Dropdown overlay={menu} trigger={['click']}
+                      onClick={this.onGetDBFields}
                       getPopupContainer={() => document.getElementById(this.props.pId)}>
                 <div className={$class("p--dropDown short db-order-dropDown")}>
                     <div className="title f--hlc">
                         {
                             this.state.value.field
+                                ? this.state.value.field
+                                : '选择字段'
                         }
                         <span className="icon" />
                     </div>

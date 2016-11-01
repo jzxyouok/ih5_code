@@ -41,7 +41,6 @@ class Property extends React.Component {
             currentObject: this.props.specific.object,
             currentAction: this.props.specific.action,  //name&property
             currentEnable: this.props.specific.enable,  //是否enable
-            // didActiveSelectTargetMode: false  //是否激活了选择目标对象
         };
         this.expandBtn = this.expandBtn.bind(this);
 
@@ -712,7 +711,7 @@ class Property extends React.Component {
                 case propertyType.Range:
                     return <RangeComponent {...defaultProp}/>;
                 case propertyType.DBOrder:
-                    return <DBOrderComponent pId={propertyId} {...defaultProp}/>;
+                    return <DBOrderComponent pId={propertyId} {...defaultProp} obj={w}/>;
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 case propertyType.Hidden:
