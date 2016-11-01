@@ -426,23 +426,29 @@ function resolveEventTree(node, list) {
                                       }
                                       (delete v.valueId);
                                   } else if ((cmd.action.name === 'find' && v.name === 'conditions')) {
-                                      if (v.value.compare && v.value.compare.type === 2) {
-                                          v.value.compare.value.forEach((v1, i)=> {
-                                              if (v1.objId) {
-                                                  v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
-                                              } else {
-                                                  v1.objKey = null;
+                                      if(v.value) {
+                                          v.value.forEach(v1=> {
+                                              if(v1.compare && v1.compare.type === 2) {
+                                                  if(v1.compare.value) {
+                                                      v1.compare.value.forEach((v2, i)=>{
+                                                          if (v2.objId) {
+                                                              v2.objKey = idToObjectKey(list, v2.objId[0], v2.objId[1]);
+                                                          } else {
+                                                              v2.objKey = null;
+                                                          }
+                                                          (delete v2.objId);
+                                                          if (v2.objKey === null) {
+                                                              //如果不存在就直接删除
+                                                              v1.compare.value.splice(i, 1);
+                                                          }
+                                                      });
+                                                  }
+                                                  if (v1.compare.value.length === 0) {
+                                                      v1.compare.type = 1;
+                                                      v1.compare.value = null;
+                                                  }
                                               }
-                                              (delete v1.objId);
-                                              if (v1.objKey === null) {
-                                                  //如果不存在就直接删除
-                                                  v.value.compare.value.splice(i, 1);
-                                              }
-                                          });
-                                          if (v.value.compare.value.length === 0) {
-                                              v.value.compare.type = 1;
-                                              v.value.compare.value = null;
-                                          }
+                                          })
                                       }
                                   }
                               });
@@ -612,10 +618,16 @@ function generateId(node) {
                                   if (v.name ==='data'|| v.name ==='option'||
                                       (cmd.action.name === 'find' && v.name === 'object')) {
                                       specGenIdsData(v.value);
-                                  } else if(v.name === 'condition') {
-                                      if (v.value.compare&&v.value.compare&&v.value.compare.type === 2) {
-                                          v.value.compare.value.forEach(v1=>{
-                                              specGenIdsData(v1.objKey);
+                                  } else if(v.name === 'conditions') {
+                                      if(v.value) {
+                                          v.value.forEach(v1=>{
+                                            if(v1.compare&&v1.compare.type === 2) {
+                                                if(v1.compare.value) {
+                                                    v1.compare.value.forEach(v2=>{
+                                                        specGenIdsData(v2.objKey);
+                                                    });
+                                                }
+                                            }
                                           });
                                       }
                                   }
@@ -1035,21 +1047,29 @@ function saveTree(data, node, saveKey) {
                                 }
                                 property.push(temp);
                             } else if (cmd.action.name == 'find' && v.name === 'conditions' && v.value) {
-                                if(v.value.compare && v.value.compare.type === 2) {
+                                if(v.value) {
                                     let temp = {
                                         name:v.name,
                                         showName: v.showName,
                                         type: v.type,
-                                        value: {
-                                            field: v.value.field,
-                                            operation: v.value.operation,
-                                            compare: {
-                                                type: 2,
-                                                value: []
-                                            }
-                                        }
                                     };
-                                    temp.value.compare.value = dealWithFormulaObj(v.value.compare.value, saveKey);
+                                    temp.value = [];
+                                    v.value.forEach(v1=>{
+                                        if(v1.compare && v1.compare.type === 2) {
+                                            let temp2 = {
+                                                field: v1.field,
+                                                operation: v1.operation,
+                                                compare: {
+                                                    type: 2,
+                                                    value: []
+                                                }
+                                            };
+                                            temp2.compare.value = dealWithFormulaObj(v1.compare.value, saveKey);
+                                            temp.value.push(temp2);
+                                        } else {
+                                            temp.value.push(v1);
+                                        }
+                                    });
                                     property.push(temp);
                                 } else {
                                     property.push(v);
