@@ -203,18 +203,11 @@ class Property extends React.Component {
             actionList: actionList
         })
     }
-    getPropertyViewSetUpResult(node){
-        //console.log('node',node);
+    getPropertyViewSetUpResult(index,prop){
+       // console.log('prop',prop);
 
-        let property=[];
-        for(let i in node){
-            property.push({
-                name: i,
-                showName:null,
-                type: null,
-                value: node[i]
-            });
-        }
+        let property = this.state.currentAction.property;
+        property[index] = prop;
 
         let action = this.state.currentAction;
 
@@ -230,9 +223,20 @@ class Property extends React.Component {
         let obj = {
             name: 'setProps',
             showName: '设置属性',
-            type: funcType.default,
-            property:[null]
+            type: funcType.default
         }
+        let node =WidgetStore.getWidgetByKey(this.state.currentObject);
+        let propertyList=[];
+        if(node){
+            let className=node.className;
+            propertyMap[className].map((v,i)=>{
+                if(v.isProperty&& v.name !='id'){
+                    v.isProp=true;
+                    propertyList.push(v);
+                }
+            })
+        }
+        obj.property= propertyList;
         return obj;
     }
     onSTButtonClick(){
@@ -582,7 +586,15 @@ class Property extends React.Component {
             //设置通用默认参数和事件
             return  <div className={$class("pp--list f--hlc", {'hidden':v1.type===propertyType.Hidden})} key={i1} >
                         <div className="pp--name">{ v1.showName }</div>
-                        { type(v1.type, this.getProps(v1, i1), v1, i1)}
+                        {
+                            v1.isProp===true
+                            ?<PropertyViewSetUp
+                                okey={this.state.currentObject}
+                                object={v1}
+                                getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
+                            />
+                            :type(v1.type, this.getProps(v1, i1), v1, i1)
+                        }
                     </div>
         };
 
@@ -848,15 +860,9 @@ class Property extends React.Component {
                                          this.state.currentAction.property.length === 0
                                          ?null
                                             : <div className="pp--list-layer flex-1">
-                                        {
-                                            this.state.currentAction && this.state.currentAction.name == 'setProps'
-                                                ? <PropertyViewSetUp
-                                                okey={this.state.currentObject}
-                                                action={this.state.currentAction}
-                                                getResult={this.getPropertyViewSetUpResult}
-                                                 />
-                                                : this.state.currentAction.property.map(propertyContent)
-                                        }
+                                            {
+                                            this.state.currentAction.property.map(propertyContent)
+                                             }
                                         </div>
                                     }
                                 </div>

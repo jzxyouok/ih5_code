@@ -719,7 +719,13 @@ function generateJsFunc(etree) {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + 'Math.round(Math.random()*('
                   + max + '-'
                   + min + '+1)+' + min + ')');
-          } else {
+          }else if(cmd.action.name === 'setProps'){
+              for(let i in cmd.action.property) {
+                  if(cmd.action.property[i].value !==undefined){
+                      lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value));
+                  }
+              }
+          }else {
               //数据库
               var line = getIdsName(cmd.sObjId[0], cmd.sObjId[2], cmd.action.name) + '(';
               if (cmd.action.property) {
@@ -752,7 +758,10 @@ function generateJsFunc(etree) {
                   }).join(',');
               }
               lines.push(line + ')');
+
           }
+
+
         } else if (cmd.action&&cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
@@ -782,11 +791,12 @@ function generateJsFunc(etree) {
         if (output[item.judges.conFlag]) {
           output[item.judges.conFlag] += ';' + out;
         } else {
-          output[item.judges.conFlag] = out;
+            output[item.judges.conFlag] = out;
         }
       }
     }
   });
+    console.log(output);
   return output;
 }
 

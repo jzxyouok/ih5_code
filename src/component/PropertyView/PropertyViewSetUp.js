@@ -23,11 +23,11 @@ class PropertyViewSetUp extends React.Component {
         super(props);
         this.state = {
             key:props.okey,
-            action:props.action
+            object:props.object
         };
         this.className=WidgetStore.getWidgetByKey(props.okey).className;
 
-        this.nodesObject={};
+
         this.getResult =props.getResult;
         this.getComponent=this.getComponent.bind(this);
         this.getDefaultProp=this.getDefaultProp.bind(this);
@@ -39,7 +39,7 @@ class PropertyViewSetUp extends React.Component {
     componentWillReceiveProps(nextProps){
        this.setState({
            key:nextProps.okey,
-           action:nextProps.action
+           object:nextProps.object
        })
     }
     componentWillUnmount() {
@@ -55,15 +55,13 @@ class PropertyViewSetUp extends React.Component {
             onChange:  this.onChangePropDom.bind(this, item)
         };
         let node = WidgetStore.getWidgetByKey(this.state.key);
-
-
         let className =this.className;
 
-        if(!this.nodesObject[item.name]){
-            this.nodesObject[item.name] =node.node[item.name];
-        }
 
-        let defaultValue=this.nodesObject[item.name];
+        let defaultValue=node.node[item.name];
+        if(item.value !==undefined){
+            defaultValue =item.value;
+        }
 
         //单独设置默认参数
         if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
@@ -93,17 +91,12 @@ class PropertyViewSetUp extends React.Component {
                 selectClassName='originIcon';
             }
             else if(item.name=='fontFamily' || item.name=='headerFontFamily'){
-                // for(let i in this.fontList){
-                //     defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
-                // }
+
             }
             else if(item.name=='font'){
                 defaultProp.name=item.name;
                 defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
-                // for(let i in this.fontList){
-                //     defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
-                // }
-            }
+              }
             else if(item.name=='type'){
                 for(let i in  item.options){
                     selectClassName= (item.options[i]=='slideInUp' || item.options[i]== 'jello')? 'optionline':'';
@@ -115,53 +108,7 @@ class PropertyViewSetUp extends React.Component {
                     defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
                 }
             }
-            // if(item.name=='chooseColumn'){
-            //     defaultProp.options=[];
-            //     let tbWidth;
-            //     if(node.props['header'] == undefined) {
-            //         tbWidth = "自动";
-            //         defaultProp.options.push(<Option key={0}>全部</Option>);
-            //     }
-            //     else {
-            //         let header = node.props['header'].split(",");
-            //         let nodo = true;
-            //         if(this.state.tbWhichColumn == 0){
-            //             nodo = false
-            //         }
-            //         if(nodo){
-            //             let lineWidth = header[this.state.tbWhichColumn-1];
-            //             let index = lineWidth.indexOf(':');
-            //             if( index>=0){
-            //                 tbWidth = parseInt(lineWidth.substring(index + 1));
-            //             }
-            //             else {
-            //                 tbWidth = "自动";
-            //             }
-            //         }
-            //         else {
-            //             let lineWidth = header[0];
-            //             let index = lineWidth.indexOf(':');
-            //             if( index>=0){
-            //                 tbWidth = parseInt(lineWidth.substring(index + 1));
-            //             }
-            //             else {
-            //                 tbWidth = "自动";
-            //             }
-            //         }
-            //
-            //         for(let x =0; x<= header.length; x++){
-            //             let data;
-            //             if(x==0){
-            //                 data = "全部";
-            //             }
-            //             else {
-            //                 data = '第 ' + (x) + ' 列';
-            //             }
-            //             defaultProp.options.push(<Option key={x}>{ data } </Option>);
-            //         }
-            //     }
-            //     defaultProp.tbWidth = tbWidth;
-            // }
+
         }else if(item.type ==propertyType.Color||item.type ==propertyType.Color2){
             defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
             defaultProp.value = defaultValue;
@@ -175,8 +122,9 @@ class PropertyViewSetUp extends React.Component {
     }
 
     onChangeProp(item, value) {
-        this.nodesObject[item.name] = value;
-        this.getResult(this.nodesObject);
+       // this.getResult({'name':item.name, 'showName':item.showName, 'value':value, 'type':item.type,isProp:item.isProp});
+        item.value=value;
+        this.getResult(item);
     }
     onChangePropDom(item, value) {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
@@ -188,7 +136,8 @@ class PropertyViewSetUp extends React.Component {
         }
     }
 
-    getComponent(item){
+    getComponent(){
+        let item=this.state.object;
         let style = {};
         let type =item.type;
         let defaultProp =this.getDefaultProp(item);
@@ -328,18 +277,7 @@ class PropertyViewSetUp extends React.Component {
 
 
     render() {
-        return  <div>
-            {
-                propertyMap[this.className].map((v,i)=>{
-                    if(v.isProperty&& v.name !='id'){
-                        return <div className="pp--list f--hlc" key={i}>
-                            <div className="pp--name">{ v.showName }</div>
-                            {this.getComponent(v)}
-                        </div>
-                    }
-                })
-            }
-        </div>
+        return <div>{this.getComponent()}</div>
     }
 }
 
