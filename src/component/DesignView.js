@@ -134,8 +134,8 @@ class DesignView extends React.Component {
     }
 
     scroll(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        // event.preventDefault();
+        // event.stopPropagation();
 
         let y  = event.deltaY;
         //let x  = event.deltaX;
@@ -161,8 +161,8 @@ class DesignView extends React.Component {
         if(event.target.nodeName==='INPUT' || event.target.nodeName==='TEXTAREA') {
             return;
         }
-        event.preventDefault();
-        event.stopPropagation();
+        // event.preventDefault();
+        // event.stopPropagation();
 
         if(!this.keyboard) {
 

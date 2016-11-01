@@ -765,12 +765,12 @@ class Property extends React.Component {
                                         !w||!this.state.currentAction ||
                                         !this.state.currentAction.property ||
                                          this.state.currentAction.property.length === 0
-                                            ? <div>
+                                            ? <div   className={$class("pp--list-layer flex-1", {'hidden':!(this.state.currentAction&&this.state.currentAction.className)} )}>
                                             {
                                                 this.state.currentAction&&this.state.currentAction.className
-                                                    ?<PropertyViewSetUp  classType={this.state.currentAction.className}/>
+                                                    ?<PropertyViewSetUp  okey={this.state.currentObject} classType={this.state.currentAction.className}/>
                                                     :null
-                                            }    
+                                             }
                                             </div>
                                             : <div className="pp--list-layer flex-1">
                                             {

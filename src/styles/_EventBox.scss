@@ -1276,7 +1276,16 @@
                             font-size: 12px;
                             color: #b5b5b5;
                         }
-
+                        .ant-select{
+                            width: 140px;
+                            .ant-select-selection{
+                                background: #294140;
+                                border: none;
+                            }
+                        }
+                        .ant-input-sm{
+                            width: 142px;
+                        }
                         .p--dropDown {
                             background-color: #294140;
                             width: 142px;
