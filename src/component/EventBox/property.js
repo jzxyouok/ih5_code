@@ -230,8 +230,14 @@ class Property extends React.Component {
             let className=node.className;
             propertyMap[className].map((v,i)=>{
                 if(v.isProperty&& v.name !='id'){
-                    v.isProp=true;
-                    propertyList.push(v);
+                    let vObj=JSON.parse(JSON.stringify(v));
+                    vObj.isProp=true;
+                    if(vObj.name=='scaleX'){
+                        vObj.name='width';
+                    }else if(v.name=='scaleY') {
+                        vObj.name = 'height';
+                    }
+                    propertyList.push(vObj);
                 }
             })
         }
@@ -588,7 +594,7 @@ class Property extends React.Component {
                         {
                             v1.isProp===true
                             ?<PropertyViewSetUp
-                                okey={this.state.currentObject}
+                                oKey={this.state.currentObject}
                                 object={v1}
                                 getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
                             />

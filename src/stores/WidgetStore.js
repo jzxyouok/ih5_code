@@ -722,7 +722,15 @@ function generateJsFunc(etree) {
           }else if(cmd.action.name === 'setProps'){
               for(let i in cmd.action.property) {
                   if(cmd.action.property[i].value !==undefined){
-                      lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value));
+                      if(cmd.action.property[i].name=='originPos'){
+                          let arr =  cmd.action.property[i].value.split(',');
+                          lines.push(getIdsName(cmd.sObjId[0],null,'originX')+'='+ arr[0]);
+                          lines.push(getIdsName(cmd.sObjId[0],null,'originY')+'='+ arr[1]);
+                      }else if(cmd.action.property[i].name=='alpha'){
+                          lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value/100));
+                      }else {
+                          lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value));
+                      }
                   }
               }
           }else {
