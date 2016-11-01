@@ -774,7 +774,7 @@ class FormulaInput extends React.Component {
                                                 targetList={this.props.objectList}
                                                 onClick={this.onSelectTargetClick}
                                                 getResult={this.onGetObjectResult} />
-                            <Input placeholder="比较值／对象" ref={'valueInput'}
+                            <Input placeholder={this.props.placeholder?this.props.placeholder:"比较值／对象"} ref={'valueInput'}
                                    value={this.state.value}
                                    disabled={this.disabled}
                                    onChange={this.onInputTypeValueChange.bind(this)}/>
@@ -794,7 +794,7 @@ class FormulaInput extends React.Component {
                                                         targetList={this.props.objectList}
                                                         onClick={this.onSelectTargetClick}
                                                         getResult={this.onGetObjectResult} />
-                                    <Input placeholder="比较值／对象" ref={'valueInput'}
+                                    <Input placeholder={this.props.placeholder?this.props.placeholder:"比较值／对象"} ref={'valueInput'}
                                            value={this.state.value}
                                            disabled={this.disabled}
                                            onChange={this.onInputTypeValueChange.bind(this)}/>

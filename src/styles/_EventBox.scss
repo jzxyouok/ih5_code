@@ -1446,7 +1446,11 @@
                             }
                         }
                         .db-cons {
+                            .condition-wrap {
+                                margin-bottom: 2px;
+                            }
                             .condition {
+                                border-radius: 2px;
                                 height: 22px;
                                 background-color: #294140;
                                 padding: 0 2px;
@@ -1478,6 +1482,53 @@
                             }
                             .formula-object-icon {
                                 margin: 0;
+                            }
+                            .close-btn {
+                                cursor: pointer;
+                                width: 20px;
+                                height: 22px;
+                                background: url("img/button-icon.svg") no-repeat -1721px -2px;
+                                display: block;
+                                outline: 0;
+                                border: none;
+                                &:hover { background-position: -1721px -42px; }
+                                &:active { background-position: -1721px -82px; }
+                            }
+                            .plus-btn {
+                                cursor: pointer;
+                                padding-left: 2px;
+                                width: 22px;
+                                outline: 0;
+                                border: none;
+                                background: #1c2f2e;
+                                height: 22px;
+
+                                &:hover .btn span{ background: #b5b5b5;}
+                                &:active .btn span{ background: #fff;}
+
+                                .btn {
+                                    border-radius: 2px;
+                                    position: relative;
+                                    width: 22px;
+                                    height: 22px;
+                                    background: #294140;
+                                    .heng {
+                                        position: absolute;
+                                        background: #1c2f2e;
+                                        left: 5px;
+                                        top: 10px;
+                                        width: 12px;
+                                        height: 2px;
+                                    }
+                                    .shu {
+                                        position: absolute;
+                                        background: #1c2f2e;
+                                        left: 10px;
+                                        top: 5px;
+                                        width: 2px;
+                                        height: 12px;
+                                    }
+                                }
                             }
                         }
 
