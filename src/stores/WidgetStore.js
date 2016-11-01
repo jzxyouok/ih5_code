@@ -2015,13 +2015,14 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-       //console.log(obj);
+
         if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
                 obj.alpha = 1;
             }
         }
+
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2334,6 +2335,7 @@ export default Reflux.createStore({
         }
     },
     changeSpecific: function(specific, params){
+
         if(params){
             if(params.object){
                 specific.object = params.object;
@@ -2342,6 +2344,9 @@ export default Reflux.createStore({
                 specific.action = params.action;
             } else if(params.property){
                 specific.action.property = params.property;
+            }else  if(params.className){
+                specific.action={};
+                specific.action.className= params.className;
             }
             this.trigger({redrawEventTree: true});
             historyName = "修改目标对象" + this.currentWidget.node.name;

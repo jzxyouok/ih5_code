@@ -11,6 +11,8 @@ import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { RangeComponent } from '../PropertyView/RangeComponent';
 import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
+import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
+
 
 const Option = Select.Option;
 const Panel = Collapse.Panel;
@@ -68,6 +70,7 @@ class Property extends React.Component {
         this.onFormulaInputBlur = this.onFormulaInputBlur.bind(this);
 
         this.getSetPropsObj=this.getSetPropsObj.bind(this);
+        this.getPropertyViewSetUpResult=this.getPropertyViewSetUpResult.bind(this);
 
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
@@ -200,23 +203,27 @@ class Property extends React.Component {
             actionList: actionList
         })
     }
+    getPropertyViewSetUpResult(node){
+        console.log('node',node);
+    }
     getSetPropsObj() {
+        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
+        let className = widget.className;
         let obj = {
             name: 'setProps',
             showName: '设置属性',
-            type: funcType.default
+            type: funcType.default,
+            className:className
         }
-        let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-        let className = widget.className;
-        let propertyList=[];
-        propertyMap[className].map((v, i)=> {
-            if (v.isProperty && v.name != 'id') {
-                let o = v;
-                o.value =o.value ?o.value : null;
-                propertyList.push(o);
-            }
-        });
-        obj.property=propertyList;
+        // let propertyList=[];
+        // propertyMap[className].map((v, i)=> {
+        //     if (v.isProperty && v.name != 'id') {
+        //         let o = v;
+        //         o.value =o.value ?o.value : null;
+        //         propertyList.push(o);
+        //     }
+        // });
+        // obj.property=propertyList;
         return obj;
     }
     onSTButtonClick(){
@@ -829,7 +836,17 @@ class Property extends React.Component {
                                         !w||!this.state.currentAction ||
                                         !this.state.currentAction.property ||
                                          this.state.currentAction.property.length === 0
-                                            ? null
+                                            ? <div   className={$class("pp--list-layer flex-1", {'hidden':!(this.state.currentAction&&this.state.currentAction.className)} )}>
+                                            {
+                                                this.state.currentAction&&this.state.currentAction.className
+                                                    ?<PropertyViewSetUp
+                                                     okey={this.state.currentObject}
+                                                     classType={this.state.currentAction.className}
+                                                     getResult={this.getPropertyViewSetUpResult}
+                                                />
+                                                    :null
+                                             }
+                                            </div>
                                             : <div className="pp--list-layer flex-1">
                                             {
                                                 this.state.currentAction.property.map(propertyContent)

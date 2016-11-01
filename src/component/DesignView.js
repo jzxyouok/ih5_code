@@ -135,7 +135,9 @@ class DesignView extends React.Component {
 
     scroll(event) {
         // event.preventDefault();
+
         event.stopPropagation();
+
 
         let y  = event.deltaY;
         //let x  = event.deltaX;
@@ -163,6 +165,7 @@ class DesignView extends React.Component {
         }
         // event.preventDefault();
         event.stopPropagation();
+
 
         if(!this.keyboard) {
 
