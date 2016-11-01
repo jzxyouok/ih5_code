@@ -1301,6 +1301,32 @@
                                     background: url("img/button-icon.svg") no-repeat -1680px -40px;
                                     display: block;
                                 }
+                                .p--icon {
+                                    cursor: pointer;
+                                    min-width: 22px;
+                                    width: 22px;
+                                    height: 22px;
+                                    outline: 0;
+                                    margin: 0 2px 0 2px;
+                                    border: 1px solid #294140;
+                                    border-radius: 2px;
+                                    //280 360
+                                    background: url('img/button-icon.svg') no-repeat -279px -359px;
+                                    &:hover {
+                                        background: url("img/button-icon.svg") no-repeat -279px -399px;
+                                    }
+                                    &:active {
+                                        background: url("img/button-icon.svg") no-repeat -279px -439px;
+                                    }
+                                    &.active {
+                                        border: 1px solid #7b5815;
+                                        background: url("img/button-icon.svg") no-repeat -279px -359px;
+                                    }
+                                    &:disabled {
+                                        cursor: not-allowed;
+                                        opacity: 0.4;
+                                    }
+                                }
                             }
                         }
 
@@ -1360,6 +1386,33 @@
                                         content: '\E611';
                                     }
                                 }
+                            }
+                        }
+
+                        // switch
+                        .ant-switch{
+                            border: 1px solid #162423;
+                            background-color: #162423;
+                            height: 18px !important;
+                            width: 42px !important;
+                            line-height: 16px;
+                        }
+                        .ant-switch-small:after{
+                            height: 16px !important;
+                            width: 16px !important;
+                            left: 2px !important;
+                        }
+                        .ant-switch:after{
+                            background-color: #858585;
+                        }
+                        .ant-switch-checked {
+                            border-color: #294140;
+                            background-color: #294140;
+                            .ant-switch-inner{
+                                left: 4px;
+                            }
+                            &:after{
+                                left: 22px !important;
                             }
                         }
 

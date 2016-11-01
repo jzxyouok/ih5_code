@@ -22,7 +22,7 @@ const inputType = {
     formula: 2,
 };
 
-const minInputWidth = 10;
+const minInputWidth = 2;
 
 let initValue = (props) => {
     let value = null;
@@ -681,11 +681,11 @@ class FormulaInput extends React.Component {
                             <div className={$class('formula-obj-div f--hlc',
                                 {'complete': v.property},
                                 {'will-delete-obj':this.state.willDeleteObjIndex===i})}>
-                                <div className="formula-obj-name"
+                                <div className={$class("formula-obj-name")}
                                      onClick={this.onFocus.bind(this, i)}>
                                     <span>{obj.props.name}</span>
                                 </div>
-                                <div className="formula-obj-dot"></div>
+                                <div className={$class("formula-obj-dot",{'hidden':obj.className==='var'})}></div>
                                 {
                                     !v.property
                                         ? obj.className === 'data'
@@ -697,7 +697,7 @@ class FormulaInput extends React.Component {
                                         disable={this.disabled}
                                         column={obj.props.column}/>)
                                         : formulaPropertyDropdown(obj, v, i)
-                                        : (<div className="formula-obj-property"
+                                        : (<div className={$class("formula-obj-property",{'hidden':obj.className==='var'})}
                                                 onClick={this.onFocus.bind(this, i)}>
                                         {
                                             obj.className === 'data'
