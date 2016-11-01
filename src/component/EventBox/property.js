@@ -8,6 +8,8 @@ import { SwitchMore,DropDownInput ,ConInputNumber} from  '../PropertyView/Proper
 import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
+import { RangeComponent } from '../PropertyView/RangeComponent';
+import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 
 const Option = Select.Option;
@@ -466,14 +468,16 @@ class Property extends React.Component {
                 value = e.target.value;
                 break;
             case propertyType.Integer:
+            case propertyType.Number:
             case propertyType.Float:
             case propertyType.Boolean2:
-            case propertyType.Number:
+            case propertyType.Boolean3:
             case propertyType.FormulaInput:
+            case propertyType.Range:
+            case propertyType.DBOrder:
                 value = e;
                 break;
             case propertyType.Function:
-                break;
             default:
                 break;
         }
@@ -515,6 +519,12 @@ class Property extends React.Component {
             case propertyType.FormulaInput:
                 defaultProp.value = item.value;
                 break;
+            case propertyType.Range:
+                defaultProp.type="number";
+                defaultProp.value = item.value;
+                break;
+            case propertyType.DBOrder:
+                defaultProp.value = item.value;
             case propertyType.Function:
                 break;
             case propertyType.Select:
@@ -617,7 +627,7 @@ class Property extends React.Component {
             return (<Dropdown overlay={propertySelectMenu(list, item, index, type)} trigger={['click']}
                        getPopupContainer={() => document.getElementById(propertyId)}>
                 <div className={$class("p--dropDown short")}>
-                    <div className="title p--title f--hlc">
+                    <div className="title p--title f--hlc" style={{width: '196px'}}>
                         <SelectTargetButton className={'p--icon'}
                                             disabled={!this.state.currentEnable}
                                             targetList={this.state.objectList}
@@ -692,6 +702,10 @@ class Property extends React.Component {
                     return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
                 case propertyType.Object:
                     return propertyObjDropDownMenu(this.state.objectList, item, index, optionType.widget);
+                case propertyType.Range:
+                    return <RangeComponent {...defaultProp}/>;
+                case propertyType.DBOrder:
+                    return <DBOrderComponent pId={propertyId} {...defaultProp}/>;
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 case propertyType.Hidden:

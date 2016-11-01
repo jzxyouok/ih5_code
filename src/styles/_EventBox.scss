@@ -1407,6 +1407,29 @@
                             }
                         }
 
+                        .range-inputs {
+                            .ant-input-number {
+                                width: 88px;
+                            }
+                        }
+
+                        .db-order {
+                            .db-order-dropDown {
+                                width: 114px;
+                            }
+                            .switchTwo {
+                                margin-left: 2px;
+                                width: 80px;
+                                .switchMore-ul {
+                                    width: 80px;
+                                }
+                                .switchMore-ul-on,
+                                .switchMore-ul-off{
+                                    width: 50%;
+                                }
+                            }
+                        }
+
                         .on-off-btn {
                             @include border-radius(11px);
                             position: relative;
