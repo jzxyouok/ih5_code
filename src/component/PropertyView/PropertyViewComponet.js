@@ -87,6 +87,65 @@ class SwitchMore extends React.Component {
     }
 }
 
+class SwitchTwo extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+        this.status=props.checked;
+        this.onChange = props.onChange;
+    }
+
+    componentDidMount() {
+        switch (this.status){
+            case true:
+                this.on('init');
+                break;
+            case false:
+                this.off('init');
+                break;
+        }
+    }
+
+    componentWillReceiveProps(nextProps){
+        switch (nextProps.checked){
+            case true:
+                this.on('init');
+                break;
+            case false:
+                this.off('init');
+                break;
+        }
+    }
+
+    on(flag){
+        this.refs.on.classList.add('cur');
+        this.refs.off.classList.remove('cur');
+
+        if(flag !== 'init') {
+            this.onChange(true);
+        }
+    }
+
+    off(flag){
+        this.refs.on.classList.remove('cur');
+        this.refs.off.classList.add('cur');
+
+        if(flag !== 'init') {
+            this.onChange(false);
+        }
+    }
+    render() {
+        return (
+            <div className='switchMore switchTwo'>
+                <ul className='switchMore-ul' ref='switchMoreUl'>
+                    <li className='switchMore-ul-on'  ref='on' onClick={this.on.bind(this)}>{this.props.onName}</li>
+                    <li className='switchMore-ul-off'  ref='off' onClick={this.off.bind(this)}>{this.props.offName}</li>
+                </ul>
+            </div>
+        );
+    }
+}
+
 class DropDownInput extends React.Component {
     constructor(props) {
         super(props);
@@ -214,4 +273,4 @@ class ConInputNumber extends React.Component {
 
 
 
-export {SwitchMore,DropDownInput,ConInputNumber};
+export {SwitchMore,SwitchTwo,DropDownInput,ConInputNumber};
