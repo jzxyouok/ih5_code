@@ -10,7 +10,7 @@ class DBOrderComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dbList: [],
+            fieldList: [],
             value: props.value || {field:null, asc:true}
         };
         this.onSwitchChange = this.onSwitchChange.bind(this);
@@ -51,18 +51,18 @@ class DBOrderComponent extends React.Component {
             WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + obj.props.dbid, null, null, function(text) {
                 var result = JSON.parse(text);
                 //console.log(result);
-                let dbList = [];
+                let fieldList = [];
                 if (result['header']) {
                     let headerData = result['header'].split(",");
-                    dbList = headerData;
+                    fieldList = headerData;
                 }
                 this.setState({
-                    dbList : dbList
+                    fieldList : fieldList
                 })
             }.bind(this));
         } else {
             this.setState({
-                dbList : []
+                fieldList : []
             })
         }
     }
@@ -70,9 +70,9 @@ class DBOrderComponent extends React.Component {
     render () {
         let menu = (<Menu onClick={this.onMenuSelect}>
             {
-                !this.state.dbList||this.state.dbList.length==0
+                !this.state.fieldList||this.state.fieldList.length==0
                     ? null
-                    : this.state.dbList.map((v, i)=>{
+                    : this.state.fieldList.map((v, i)=>{
                         return <MenuItem field={v} key={i}>{v}</MenuItem>;
                 })
             }

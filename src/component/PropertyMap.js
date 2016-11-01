@@ -675,7 +675,7 @@ propertyMap['db'] = [
         property:[
             // {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.Select},
             {'name':'type', showName:'普通', 'value':'normal', 'type':propertyType.Hidden},
-            {'name':'conditions', showName:'输出条件', 'value':[{field:null,operation:null,value:null}], 'type':propertyType.DBCons},
+            {'name':'conditions', showName:'输出条件', 'value':[{field:null,operation:'=',compare:null}], 'type':propertyType.DBCons},
             {'name':'order', showName:'排序方式', 'value':{field:null, asc:true}, 'type':propertyType.DBOrder},
             {'name':'lines', showName:'输出行数', 'value':{from:null, to:null}, 'type':propertyType.Range},
             {'name':'object', showName:'输出至对象', 'value':null, 'type':propertyType.Object},

@@ -10,6 +10,7 @@ import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { RangeComponent } from '../PropertyView/RangeComponent';
 import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
+import { DBConsComponent } from '../PropertyView/DBConsComponent';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
 
@@ -481,6 +482,7 @@ class Property extends React.Component {
             case propertyType.FormulaInput:
             case propertyType.Range:
             case propertyType.DBOrder:
+            case propertyType.DBCons:
                 value = e;
                 break;
             case propertyType.Function:
@@ -530,6 +532,7 @@ class Property extends React.Component {
                 defaultProp.value = item.value;
                 break;
             case propertyType.DBOrder:
+            case propertyType.DBCons:
                 defaultProp.value = item.value;
             case propertyType.Function:
                 break;
@@ -558,6 +561,7 @@ class Property extends React.Component {
         }
         return defaultProp;
     }
+
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
 
@@ -569,7 +573,10 @@ class Property extends React.Component {
 
         let propertyContent = (v1,i1)=>{
             //设置通用默认参数和事件
-            return  <div className={$class("pp--list f--hlc", {'hidden':v1.type===propertyType.Hidden})} key={i1} >
+            return  <div className={$class("pp--list f--hlc",
+                         {'hidden':v1.type===propertyType.Hidden},
+                         {'db-cons-list':v1.type===propertyType.DBCons})}
+                         key={i1}>
                         <div className="pp--name">{ v1.showName }</div>
                         { type(v1.type, this.getProps(v1, i1), v1, i1)}
                     </div>
@@ -711,7 +718,14 @@ class Property extends React.Component {
                 case propertyType.Range:
                     return <RangeComponent {...defaultProp}/>;
                 case propertyType.DBOrder:
-                    return <DBOrderComponent pId={propertyId} {...defaultProp} obj={w}/>;
+                    return <DBOrderComponent pId={propertyId} obj={w} {...defaultProp}/>;
+                case propertyType.DBCons:
+                    return <DBConsComponent pId={propertyId}
+                                            obj={w}
+                                            objectList={this.state.objectList}
+                                            onFocus={this.onFormulaInputFocus}
+                                            onBlur={this.onFormulaInputBlur}
+                                            {...defaultProp}/>;
                 case propertyType.Function:
                     return <div>未定义类型</div>;
                 case propertyType.Hidden:
