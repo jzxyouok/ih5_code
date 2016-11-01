@@ -1379,6 +1379,7 @@ class NavBar extends React.Component {
                                                                             key={i}
                                                                             title={v.name}
                                                                             onClick={ this.onDrawRect.bind(this,v.path) }>
+                                                                    
                                                                             <svg id={v.name}
                                                                                  data-name={v.name}
                                                                                  xmlns="http://www.w3.org/2000/svg"
