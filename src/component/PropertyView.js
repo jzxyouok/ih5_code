@@ -813,7 +813,7 @@ class PropertyView extends React.Component {
                 }
             }else if(item.type === propertyType.Percentage ){
                 defaultValue = item.default*100;
-                if(node.props[item.name] ) {
+                if(node.props[item.name]!==undefined) {
                     defaultValue =node.props[item.name]*100;
                 }
             }

@@ -68,6 +68,7 @@ class Property extends React.Component {
         this.onFormulaInputBlur = this.onFormulaInputBlur.bind(this);
 
         this.getSetPropsObj=this.getSetPropsObj.bind(this);
+        this.getPropertyViewSetUpResult=this.getPropertyViewSetUpResult.bind(this);
 
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
@@ -199,6 +200,9 @@ class Property extends React.Component {
         this.setState({
             actionList: actionList
         })
+    }
+    getPropertyViewSetUpResult(node){
+        console.log('node',node);
     }
     getSetPropsObj() {
         let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
@@ -821,7 +825,11 @@ class Property extends React.Component {
                                             ? <div   className={$class("pp--list-layer flex-1", {'hidden':!(this.state.currentAction&&this.state.currentAction.className)} )}>
                                             {
                                                 this.state.currentAction&&this.state.currentAction.className
-                                                    ?<PropertyViewSetUp  okey={this.state.currentObject} classType={this.state.currentAction.className}/>
+                                                    ?<PropertyViewSetUp
+                                                     okey={this.state.currentObject}
+                                                     classType={this.state.currentAction.className}
+                                                     getResult={this.getPropertyViewSetUpResult}
+                                                />
                                                     :null
                                              }
                                             </div>

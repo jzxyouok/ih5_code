@@ -25,7 +25,7 @@ class PropertyViewSetUp extends React.Component {
             className:props.classType,
             key:props.okey
         };
-
+        this.getResult =props.getResult;
         this.getComponent=this.getComponent.bind(this);
         this.getDefaultProp=this.getDefaultProp.bind(this);
 
@@ -58,13 +58,13 @@ class PropertyViewSetUp extends React.Component {
         //单独设置默认参数
         if (item.type === propertyType.Boolean || item.type === propertyType.Boolean2) {
             defaultProp.checked = defaultValue;
-            if(className=='table' && item.name == "showHeader"){
-                if(!this.state.tbHeaderToggle !== defaultProp.checked){
-                    this.setState({
-                        tbHeaderToggle : !defaultProp.checked
-                    })
-                }
-            }
+            // if(className=='table' && item.name == "showHeader"){
+            //     if(!this.state.tbHeaderToggle !== defaultProp.checked){
+            //         this.setState({
+            //             tbHeaderToggle : !defaultProp.checked
+            //         })
+            //     }
+            // }
         }else if(item.type ==propertyType.Dropdown ){
             defaultProp.value = defaultValue;
             defaultProp.item=item;
@@ -83,16 +83,16 @@ class PropertyViewSetUp extends React.Component {
                 selectClassName='originIcon';
             }
             else if(item.name=='fontFamily' || item.name=='headerFontFamily'){
-                for(let i in this.fontList){
-                    defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
-                }
+                // for(let i in this.fontList){
+                //     defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                // }
             }
             else if(item.name=='font'){
                 defaultProp.name=item.name;
                 defaultProp.options.push(<Option  key={0}><div className={selectClassName}></div>上传字体</Option>);
-                for(let i in this.fontList){
-                    defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
-                }
+                // for(let i in this.fontList){
+                //     defaultProp.options.push(<Option  key={this.fontList[i].file}><div className={selectClassName}></div>{this.fontList[i].name}</Option>);
+                // }
             }
             else if(item.name=='type'){
                 for(let i in  item.options){
@@ -105,53 +105,53 @@ class PropertyViewSetUp extends React.Component {
                     defaultProp.options.push(<Option  key={item.options[i]}><div className={selectClassName}></div>{i}</Option>);
                 }
             }
-            if(item.name=='chooseColumn'){
-                defaultProp.options=[];
-                let tbWidth;
-                if(node.props['header'] == undefined) {
-                    tbWidth = "自动";
-                    defaultProp.options.push(<Option key={0}>全部</Option>);
-                }
-                else {
-                    let header = node.props['header'].split(",");
-                    let nodo = true;
-                    if(this.state.tbWhichColumn == 0){
-                        nodo = false
-                    }
-                    if(nodo){
-                        let lineWidth = header[this.state.tbWhichColumn-1];
-                        let index = lineWidth.indexOf(':');
-                        if( index>=0){
-                            tbWidth = parseInt(lineWidth.substring(index + 1));
-                        }
-                        else {
-                            tbWidth = "自动";
-                        }
-                    }
-                    else {
-                        let lineWidth = header[0];
-                        let index = lineWidth.indexOf(':');
-                        if( index>=0){
-                            tbWidth = parseInt(lineWidth.substring(index + 1));
-                        }
-                        else {
-                            tbWidth = "自动";
-                        }
-                    }
-
-                    for(let x =0; x<= header.length; x++){
-                        let data;
-                        if(x==0){
-                            data = "全部";
-                        }
-                        else {
-                            data = '第 ' + (x) + ' 列';
-                        }
-                        defaultProp.options.push(<Option key={x}>{ data } </Option>);
-                    }
-                }
-                defaultProp.tbWidth = tbWidth;
-            }
+            // if(item.name=='chooseColumn'){
+            //     defaultProp.options=[];
+            //     let tbWidth;
+            //     if(node.props['header'] == undefined) {
+            //         tbWidth = "自动";
+            //         defaultProp.options.push(<Option key={0}>全部</Option>);
+            //     }
+            //     else {
+            //         let header = node.props['header'].split(",");
+            //         let nodo = true;
+            //         if(this.state.tbWhichColumn == 0){
+            //             nodo = false
+            //         }
+            //         if(nodo){
+            //             let lineWidth = header[this.state.tbWhichColumn-1];
+            //             let index = lineWidth.indexOf(':');
+            //             if( index>=0){
+            //                 tbWidth = parseInt(lineWidth.substring(index + 1));
+            //             }
+            //             else {
+            //                 tbWidth = "自动";
+            //             }
+            //         }
+            //         else {
+            //             let lineWidth = header[0];
+            //             let index = lineWidth.indexOf(':');
+            //             if( index>=0){
+            //                 tbWidth = parseInt(lineWidth.substring(index + 1));
+            //             }
+            //             else {
+            //                 tbWidth = "自动";
+            //             }
+            //         }
+            //
+            //         for(let x =0; x<= header.length; x++){
+            //             let data;
+            //             if(x==0){
+            //                 data = "全部";
+            //             }
+            //             else {
+            //                 data = '第 ' + (x) + ' 列';
+            //             }
+            //             defaultProp.options.push(<Option key={x}>{ data } </Option>);
+            //         }
+            //     }
+            //     defaultProp.tbWidth = tbWidth;
+            // }
         }else if(item.type ==propertyType.Color||item.type ==propertyType.Color2){
             defaultProp.defaultChecked=node.props[item.name+'_originColor']?false:true;
             defaultProp.value = defaultValue;
@@ -165,32 +165,16 @@ class PropertyViewSetUp extends React.Component {
     }
 
     onChangeProp(item, value){
+        //不影响舞台,传值给外面
         let node = WidgetStore.getWidgetByKey(this.state.key);
-         node.node[item.name]=value;
-
+        node.node[item.name]=value;
+        this.getResult(node.node);
     }
     onChangePropDom(item, value) {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
             this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
         }else if(item.type === propertyType.Color || item.type === propertyType.TbColor){
-            if(typeof value == 'boolean'){
-                let colorStr;
-                if(value){
-                    colorStr =this.selectNode.props[item.name+'_originColor'];
-                    this.selectNode.props[item.name+'_originColor']=null;
-                }else{
-                    colorStr='transparent';
-                    this.selectNode.props[item.name+'_originColor'] = this.selectNode.props[item.name];
-                }
-                this.onChangeProp(item,colorStr);
-            }else{
-
-                if(this.selectNode.props[item.name+'_originColor']){
-                    this.selectNode.props[item.name+'_originColor']=value.target.value
-                }else{
-                    this.onChangeProp(item,value.target.value);
-                }
-            }
+            this.onChangeProp(item,value.target.value);
         } else{
             this.onChangeProp(item,value);
         }
