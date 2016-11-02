@@ -834,6 +834,7 @@ function generateJsFunc(etree) {
                               if(prop.valueId) {
                                   let arrValue = getIdsName(prop.valueId[0], prop.valueId[2], 'value');
                                   let method = "var arrValue = '';"+
+                                      "console.log("+arrValue+");"+
                                       "if(data.length>0){"+
                                       "var dataList = [];"+
                                       "data.forEach(function(v, i){"+
@@ -853,7 +854,7 @@ function generateJsFunc(etree) {
                                       "}"+
                                       "if(arrValue != ''){"+
                                         arrValue + "= arrValue;"+
-                                      "}";
+                                      "}"+"console.log("+'ids.'+prop.valueId[0]+");";
                                   callBack = ',function(err, data){'+'console.log(data);'+method+'}';
                               }
                               break;
