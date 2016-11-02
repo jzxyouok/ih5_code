@@ -127,8 +127,8 @@ var DEFAULT_TOOLBOX = {
         gid:4,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', drawRect:true, param: {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#EDEDED', 'lineColor': '#8F9191'}},
-            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', drawRect:true, param: {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#EDEDED', 'lineColor': '#8F9191'}},
+            {cid:TOOL_ID.RECT,name:'矩形',icon:rectIcon, className:'rect', drawRect:true, param: {'shapeWidth': 100, 'shapeHeight': 100,  'fillColor':'#3899ec', 'lineColor':'#FFFFFF',}},
+            {cid:TOOL_ID.ELLIPSE,name:'椭圆',icon:ellipseIcon, className:'ellipse', drawRect:true, param: {'shapeWidth': 100, 'shapeHeight': 100,  'fillColor':'#3899ec', 'lineColor':'#FFFFFF',}},
             {cid:TOOL_ID.PATH,name:'形状',icon:curveIcon, className:'path', drawRect:true, param: shapeParam}]
     },{
         name:'按钮',
@@ -137,9 +137,9 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.BUTTON,name:'按钮',icon:buttonIcon, className:'button', drawRect:true,
-                param: {'value': 'Text', 'fillColor':'#2187F3', 'lineColor':'#2187F3','fontFill':'#FFFFFF', 'radius':20}}, //, 'fontFill':'#000000', 'radius':'20'
+                param: {'value': 'Text', 'fillColor':'#3899ec', 'lineColor':'#FFFFFF','fontFill':'#FFFFFF', 'radius':20}}, //, 'fontFill':'#000000', 'radius':'20'
             {cid:TOOL_ID.TAPAREA,name:'透明按钮',icon:tapAreaIcon, className:'taparea', drawRect:true,
-                param: {'fillColor':'transparent', 'lineColor': 'transparent'}}]
+                param: { 'fillColor':'#3899ec', 'lineColor':'#FFFFFF',}}]
     },{
         name:'二维码',
         key:6,

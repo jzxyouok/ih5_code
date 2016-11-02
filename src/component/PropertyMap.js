@@ -68,7 +68,7 @@ propertyMap['root'] = [
     { addProvides: widgetFlags.Root | widgetFlags.Container},
     { name: 'width',showName:'W', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'H',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-    { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'适中':1,'居上':2,'居中':4,'居下':3,'满屏':5}, group:'tools', isProperty: true},
+    { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'居中',options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools', isProperty: true},
     { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
     { name: 'color',showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools', isProperty: true },
     { name: 'init', showName:'初始化', isEvent: true },
@@ -495,8 +495,8 @@ propertyMap['body'] = [
     { name: 'collisionResponse', type: propertyType.Boolean, default: true, isProperty: true },
     { name: 'detectionDepth', type: propertyType.Integer, default: 2, isProperty: true },
     //{ name: 'impact', info:'{target}', isEvent: true },
-    { name: 'beginContact', showName:'开始碰撞', info:'{target}', isEvent: true },
-    { name: 'endContact', showName:'结束碰撞', info:'{target}', isEvent: true }
+    { name: 'beginContact', showName:'开始碰撞', info:'{target}', isEvent: true ,needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
+    { name: 'endContact', showName:'结束碰撞', info:'{target}', isEvent: true, needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
 ];
 propertyMap['easing'] = [
     ...propertyMap['widget'],

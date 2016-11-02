@@ -1761,20 +1761,20 @@
 }
 //事件面板,适配
 .ant-select-dropdown{
-  background: #315654;
   box-shadow: none;
-  li{
-    color: white;
-    height: 22px;
-    line-height: 22px;
-    padding-top: 0;
-    padding-bottom: 0;
+  li.select-scaleType {
+      background: #315654;
+      color: white;
+      height: 22px;
+      line-height: 22px;
+      padding-top: 0;
+      padding-bottom: 0;
   }
-  li:hover{
+  li.select-scaleType:hover{
     background: #162322 !important;
 
   }
-  .ant-select-dropdown-menu-item-selected{
+  .ant-select-dropdown-menu-item-selected.select-scaleType{
     background: #162322;
   }
 }
