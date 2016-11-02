@@ -1300,6 +1300,11 @@
                             background-color: #294140;
                             width: 142px;
                             border-radius: 2px;
+
+                            &.p--obj-dropDown {
+                                width: 196px;
+                            }
+
                             .title {
                                 background-color: #294140;
                                 .icon {
