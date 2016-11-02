@@ -73,7 +73,7 @@ class DBOrderComponent extends React.Component {
                 !this.state.fieldList||this.state.fieldList.length==0
                     ? null
                     : this.state.fieldList.map((v, i)=>{
-                        return <MenuItem field={v} key={i}>{v}</MenuItem>;
+                        return <MenuItem field={v} key={i}>{v.substr(1)}</MenuItem>;
                 })
             }
         </Menu>);
@@ -87,7 +87,7 @@ class DBOrderComponent extends React.Component {
                     <div className="title f--hlc">
                         {
                             this.state.value.field
-                                ? this.state.value.field
+                                ? this.state.value.field.substr(1)
                                 : '选择字段'
                         }
                         <span className="icon" />
