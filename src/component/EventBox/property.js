@@ -510,8 +510,14 @@ class Property extends React.Component {
         if(this.state.event&&!this.state.event.enable) {
             return false;
         }
+        if(document.getElementById('EBContentLayer').scrollTop != 0) {
+            //为了滚动后不会跳
+            let top = document.getElementById('EBContentLayer').scrollTop;
+            document.getElementById('EventBox').style.top = -top+37+'px';
+        }
         this.refs.pProperty.style.overflow = 'visible';
         document.getElementById('EventBox').style.overflow = 'visible';
+        document.getElementById('EBContentLayer').style.overflow = 'visible';
         document.getElementById('EBContentLayer').style.overflow = 'visible';
         return true;
     }
@@ -520,6 +526,7 @@ class Property extends React.Component {
         this.refs.pProperty.style.overflow = 'hidden';
         document.getElementById('EventBox').style.overflow = 'hidden';
         document.getElementById('EBContentLayer').style.overflow = 'scroll';
+        document.getElementById('EventBox').style.top = '37px';
     }
 
     onChangePropDom(prop, index, e){
