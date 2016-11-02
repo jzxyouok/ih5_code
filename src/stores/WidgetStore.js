@@ -650,39 +650,30 @@ function generateJsFunc(etree) {
       return temp;
   };
 
-  let formulaGenLines = (cmd, lines)=>{
-      cmd.action.property.forEach(prop => {
-          if(prop.value){
-              if(prop.value.type === 1){
-                  if(cmd.action.type == funcType.default) {
-                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + JSON.stringify(prop.value.value));
-                  } else {
-                      lines.push(JSON.stringify(prop.value.value));
-                  }
-              } else if (prop.value.type === 2) {
-                  let subLine = '';
-                  prop.value.value.forEach((fV,i) =>{
-                      if(fV.objId&&fV.property){
-                          if(i===0&&fV.prePattern){
-                              subLine += replaceSymbolStr(fV.prePattern);
-                          }
-                          subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
-                          if(fV.pattern) {
-                              subLine += replaceSymbolStr(fV.pattern);
-                          }
+  let formulaGenLine = (fInput)=> {
+      let line = '';
+      if(fInput){
+          if(fInput.type === 1){
+              line = JSON.stringify(fInput.value);
+          } else if (fInput.type === 2) {
+              let subLine = '';
+              fInput.value.forEach((fV,i) =>{
+                  if(fV.objId&&fV.property){
+                      if(i===0&&fV.prePattern){
+                          subLine += replaceSymbolStr(fV.prePattern);
                       }
-                  });
-                  if(subLine!=='') {
-                      if(cmd.action.type == funcType.default) {
-                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + subLine);
-                      } else {
-                          lines.push(subLine);
+                      subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
+                      if(fV.pattern) {
+                          subLine += replaceSymbolStr(fV.pattern);
                       }
                   }
+              });
+              if(subLine!=='') {
+                  line = subLine;
               }
           }
-      });
-      return lines;
+      }
+      return line;
   };
 
   etree.forEach(function(item) {
@@ -719,8 +710,16 @@ function generateJsFunc(etree) {
       //console.log('conditions',conditions);
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
-          if (cmd.action.name === 'changeValue'|| cmd.action.name === 'send') {
-              lines = formulaGenLines(cmd, lines);
+          if (cmd.action.name === 'changeValue'||cmd.action.name === 'send') {
+              let type = cmd.action.name === 'changeValue'? 'value': cmd.action.name;
+              if(cmd.action.property&&cmd.action.property.length>0) {
+                  cmd.action.property.forEach(v=> {
+                      let fValue = formulaGenLine(v.value);
+                      if(fValue !== '') {
+                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], type) + '=' + fValue);
+                      }
+                  });
+              }
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -784,14 +783,17 @@ function generateJsFunc(etree) {
                   }).join(',');
               }
               lines.push(line + ')');
-
           }
 
 
         } else if (cmd.action&&cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
-              ps = formulaGenLines(cmd, ps);
+              cmd.action.property.forEach(prop => {
+                  if(formulaGenLine(prop.value) !== '') {
+                      ps.push(formulaGenLine(prop.value));
+                  }
+              });
           }
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
