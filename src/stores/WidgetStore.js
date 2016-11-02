@@ -843,7 +843,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-    console.log(output);
+    //console.log(output);
   return output;
 }
 
@@ -1717,8 +1717,8 @@ export default Reflux.createStore({
 
             this.trigger({redrawTree: true});
             // this.render();
-            historyName = "加锁" + this.currentWidget.node.name;
-            this.updateHistoryRecord(historyName);
+            //historyName = "加锁" + this.currentWidget.node.name;
+            //this.updateHistoryRecord(historyName);
         }
     },
 
@@ -2103,11 +2103,11 @@ export default Reflux.createStore({
         this.updateProperties({'name':this.currentWidget.props['name']});
         // this.render();
         this.trigger({redrawTree: true});
-        historyName = "重命名" + this.currentWidget.node.name;
-        this.updateHistoryRecord(historyName);
+        //historyName = "重命名" + this.currentWidget.node.name;
+        //this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-
+        let isHistoryRecord = true;
         if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
@@ -2115,6 +2115,12 @@ export default Reflux.createStore({
             }
         }
 
+        //如果是this.selectWidgets更新的坐标属性，如果没有发生位移的改变则不需要更新历史记录
+        if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
+            if(this.currentWidget.props.positionX == obj.positionX && this.currentWidget.props.positionY == obj.positionY){
+                isHistoryRecord = false;
+            }
+        }
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2126,8 +2132,10 @@ export default Reflux.createStore({
             bridge.updateSelector(this.currentWidget.node);
         }
         this.trigger(p);
-        historyName = "更改属性" + this.currentWidget.node.name;
-        this.updateHistoryRecord(historyName);
+        if(isHistoryRecord){
+            historyName = "更改属性" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
+        }
     },
     reorderEventTreeList: function () {
         if(this.currentWidget&&this.currentWidget.rootWidget) {
