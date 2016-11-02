@@ -362,6 +362,7 @@ function resolveEventTree(node, list) {
             (delete item.needFills);
         };
 
+        //loadTree时公式编辑器内容的处理
         let dealWithFormulaInput = (fInput)=> {
             if (fInput&&fInput.type === 2) {
                 fInput.value.forEach((v1,i)=>{
@@ -559,6 +560,7 @@ function generateId(node) {
         generateObjectId(data);
     };
 
+    //公式编辑器内容内对象的id生成
     let genFormulaInputId=(fInput)=>{
         if (fInput&&fInput.type === 2) {
             fInput.value.forEach(v1=>{
@@ -680,6 +682,7 @@ function generateJsFunc(etree) {
       return hasSymbol;
   };
 
+  //公式编辑器内容生成运行内容
   let formulaGenLine = (fInput)=> {
       let line = '';
       if(fInput){
@@ -1135,22 +1138,23 @@ function saveTree(data, node, saveKey) {
                 judges.children.push(obj);
             });
 
-        let dealWithFormulaObj = (list, sk)=>{
-            let temp = [];
-            list.forEach(v1=>{
-                let tempV = {
-                    prePattern: v1.prePattern,
-                    objId: objectKeyToId(v1.objKey),
-                    property: v1.property,
-                    pattern: v1.pattern,
-                };
-                if(sk) {
-                    tempV.objKey = v1.objKey;
-                }
-                temp.push(tempV);
-            });
-            return temp;
-        };
+            //保存时公式编辑器内容的处理
+            let dealWithFormulaObj = (list, sk)=>{
+                let temp = [];
+                list.forEach(v1=>{
+                    let tempV = {
+                        prePattern: v1.prePattern,
+                        objId: objectKeyToId(v1.objKey),
+                        property: v1.property,
+                        pattern: v1.pattern,
+                    };
+                    if(sk) {
+                        tempV.objKey = v1.objKey;
+                    }
+                    temp.push(tempV);
+                });
+                return temp;
+            };
 
         item.specificList.forEach(cmd => {
             let c = {};
