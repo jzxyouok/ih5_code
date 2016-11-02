@@ -420,9 +420,9 @@ class Property extends React.Component {
         return true;
     }
 
-    onPropsObjResultGet(prop, index, result){
+    onPropsObjResultGet(list, prop, index, result){
         let getTarget = false;
-        this.state.objectList.forEach((v)=>{
+        list.forEach((v)=>{
             if(result.key === v.key){
                 getTarget = true;
             }
@@ -503,22 +503,26 @@ class Property extends React.Component {
         }
     }
 
-    onFormulaInputFocus() {
+    onFormulaInputFocus(canChange) {
         if(this.state.activeKey !== this.state.wKey) {
             return false;
         }
         if(this.state.event&&!this.state.event.enable) {
             return false;
         }
-        if(document.getElementById('EBContentLayer').scrollTop != 0) {
-            //为了滚动后不会跳
-            let top = document.getElementById('EBContentLayer').scrollTop;
-            document.getElementById('EventBox').style.top = -top+37+'px';
+        if(canChange) {
+            console.log('lala');
+            if(document.getElementById('EBContentLayer').scrollTop != 0) {
+                //为了滚动后不会跳
+                let top = document.getElementById('EBContentLayer').scrollTop;
+                document.getElementById('EventBox').style.top = -top+37+'px';
+            }
+            this.refs.pProperty.style.overflow = 'visible';
+            document.getElementById('EventBox').style.overflow = 'visible';
+            document.getElementById('EventBox').style.zIndex = 51;
+            document.getElementById('EBContentLayer').style.overflow = 'visible';
+            document.getElementById('EBContentLayer').style.overflow = 'visible';
         }
-        this.refs.pProperty.style.overflow = 'visible';
-        document.getElementById('EventBox').style.overflow = 'visible';
-        document.getElementById('EBContentLayer').style.overflow = 'visible';
-        document.getElementById('EBContentLayer').style.overflow = 'visible';
         return true;
     }
 
@@ -696,7 +700,7 @@ class Property extends React.Component {
                                             disabled={!this.state.currentEnable}
                                             targetList={list}
                                             onClick={this.onPropsObjButtonClick.bind(this, index)}
-                                            getResult={this.onPropsObjResultGet.bind(this, item, index)} />
+                                            getResult={this.onPropsObjResultGet.bind(this, list, item, index)} />
                         { !itemObj || !itemObj.props || !itemObj.props.name
                             ?'选择对象'
                             :itemObj.props.name
@@ -845,7 +849,7 @@ class Property extends React.Component {
                                                 disabled={!this.state.currentEnable}
                                                 targetList={this.state.objectList}
                                                 onClick={this.onSTButtonClick}
-                                                getResult={this.onSTResultGet} />
+                                                getResult={this.onSTResultGet.bind(this)} />
                                             { !w || !w.props || !w.props.name
                                                 ?'目标对象'
                                                 :w.props.name
