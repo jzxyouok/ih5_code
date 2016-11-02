@@ -1465,9 +1465,14 @@ class NavBar extends React.Component {
                             </ul>
                         </div>
 
-                        <button className={$class('btn btn-clear hide-btn',{'active':this.state.isShowRulerLine})}  ref="isShowRulerLine"    title='隐藏参考线'  onClick={this.onHideRulerLine} />
+                        <button className={$class('btn btn-clear hide-btn',{'active':this.state.isShowRulerLine})}
+                                ref="isShowRulerLine"
+                                title='隐藏参考线'
+                                onClick={this.onHideRulerLine} />
 
-                        <button className='btn btn-clear history-btn' title='历史' onClick={ this.historyShow }  />
+                        <button className={$class('btn btn-clear history-btn',{"active" : this.state.historyShow})}
+                                title='历史'
+                                onClick={ this.historyShow }  />
 
                         <button className='btn-clear less-btn'  title='缩小' onClick={ this.props.stageZoomLess }>
                             <span className='heng' />
