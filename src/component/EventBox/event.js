@@ -960,17 +960,61 @@ class Event extends React.Component {
         if(item.type=='number'){
             return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
-        if(item.type=='string'){
+        else if(item.type=='string'){
             return <Input disabled={!obj.enable} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
-        if(item.type=='select'){
-           let optionArr=[];
-            item.option.map((v,i)=>{
-                optionArr.push(<Option  key={v}  className='dropDown-input-option'>{v}</Option>);
-            });
-            return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
+        else if(item.type=='select') {
+            let optionArr = [];
+            if (item.showName == '碰撞对象') {
+                //获取同一物理对象下的其他body
+                let keyList = [];
+
+                let curBodyKey = this.state.selectWidget.key;
+
+                let node = this.state.selectWidget;
+
+                while (node.className != 'world') {
+                    node = node.parent;
+                }
+
+                let findChildKey = (v, i)=> {
+                    if (v.className == 'body' && v.key != curBodyKey) {
+                        keyList.push(v.key);
+                    } else {
+                        v.children.map(findChildKey);
+                    }
+                }
+
+                node.children.map(findChildKey);
+
+                item.option = keyList;
+                let str=item.default;
+                let itemObj = WidgetStore.getWidgetByKey(item.default);
+
+                if (itemObj) {
+                    str= itemObj.props.name;
+                }
+                item.option.map((v, i)=> {
+                    optionArr.push(<Option key={i} value={v.toString()} className='dropDown-input-option'>{WidgetStore.getWidgetByKey(v).props.name}</Option>);
+                });
+
+                return <Select disabled={!obj.enable} className='dropDown-input-content' value={str}
+                               onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
+
+            }else {
+                item.option.map((v, i)=> {
+                    optionArr.push(<Option key={i} className='dropDown-input-option'>{v}</Option>);
+                });
+
+                return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default}
+                               onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
+
+            }
+
+
         }
-        if(item.type=='var'){
+
+        else if(item.type=='var'){
             let optionArr=[];
             let key = 0;
             if(this.state.selectWidget.intVarList) {
@@ -1063,7 +1107,7 @@ class Event extends React.Component {
                                                     ?''
                                                     :v.needFill.map((n,m)=>{
                                                     let content;
-                                                    if(n.type=='select'){
+                                                    if(n.type=='select' && n.showName ===undefined){
                                                         content =(<div key={m} className='dropDown-input2 dropDown-input-full '> {this.getAntdComponent(n,m,v)}</div>)
                                                     }else{
                                                         content= (<div key={m} className='dropDown-input2 dropDown-input-full '>
