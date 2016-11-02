@@ -902,7 +902,6 @@ class NavBar extends React.Component {
             viewBoxWidth : 100,
             viewBoxHeight : 100,
             'fillColor':'#3899ec',
-            'lineColor':'#FFFFFF',
             path : svgPath
         };
 
