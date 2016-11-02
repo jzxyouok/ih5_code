@@ -462,8 +462,16 @@ class Property extends React.Component {
             }
             propertyMap[className].map((v)=>{
                 if(v.isProperty&& v.name !='id'){
-                    v.isProp=true;
-                    newProperty.splice(newProperty.length-1, 0, v);
+                    let vObj=JSON.parse(JSON.stringify(v));
+                    vObj.isProp=true;
+                    if (vObj.name == 'scaleX') {
+                        vObj.name='width';
+                    } else if(v.name == 'scaleY') {
+                        vObj.name = 'height';
+                    }
+                    if(v.name !== 'initVisible'){
+                        newProperty.splice(newProperty.length-1, 0, vObj);
+                    }
                 }
             });
             property = newProperty;

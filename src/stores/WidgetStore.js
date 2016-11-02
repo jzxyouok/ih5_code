@@ -111,10 +111,6 @@ function loadTree(parent, node, idList) {
   current.props = node['props'] || {};
   current.events = node['events'] || {};
 
-
-
-
-
   if (current.props['key'] !== undefined) {
     current.key = current.props['key'];
     delete(current.props['key']);
@@ -365,27 +361,31 @@ function resolveEventTree(node, list) {
             (delete item.needFills);
         };
 
-        let dealWithPropertyFormulaInput = (cmd)=>{
+        let dealWithFormulaInput = (fInput)=> {
+            if (fInput&&fInput.type === 2) {
+                fInput.value.forEach((v1,i)=>{
+                    if(v1.objId) {
+                        v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                    } else {
+                        v1.objKey = null;
+                    }
+                    (delete v1.objId);
+                    if(v1.objKey === null) {
+                        //如果不存在就直接删除
+                        fInput.value.splice(i, 1);
+                    }
+                });
+                if(fInput.value.length===0){
+                    fInput.type = 1;
+                    fInput.value = null;
+                }
+            }
+        };
+
+        let dealWithPropertyFormulaInputs = (cmd)=>{
             if(cmd.action.property) {
                 cmd.action.property.forEach(v=> {
-                    if (v.value&&v.value.type === 2) {
-                        v.value.value.forEach((v1,i)=>{
-                            if(v1.objId) {
-                                v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
-                            } else {
-                                v1.objKey = null;
-                            }
-                            (delete v1.objId);
-                            if(v1.objKey === null) {
-                                //如果不存在就直接删除
-                                v.value.value.splice(i, 1);
-                            }
-                        });
-                        if(v.value.value.length===0){
-                            v.value.type = 1;
-                            v.value.value = null;
-                        }
-                    }
+                    dealWithFormulaInput(v.value);
                 });
             }
         };
@@ -410,7 +410,7 @@ function resolveEventTree(node, list) {
                           cmd.action = null;
                       }
                       (delete cmd.action.funcId);
-                      dealWithPropertyFormulaInput(cmd);
+                      dealWithPropertyFormulaInputs(cmd);
                       break;
                   default:
                       let o = keyMap[cmd.object];
@@ -428,33 +428,14 @@ function resolveEventTree(node, list) {
                                   } else if ((cmd.action.name === 'find' && v.name === 'conditions')) {
                                       if(v.value) {
                                           v.value.forEach(v1=> {
-                                              if(v1.compare && v1.compare.type === 2) {
-                                                  if(v1.compare.value) {
-                                                      v1.compare.value.forEach((v2, i)=>{
-                                                          if (v2.objId) {
-                                                              v2.objKey = idToObjectKey(list, v2.objId[0], v2.objId[1]);
-                                                          } else {
-                                                              v2.objKey = null;
-                                                          }
-                                                          (delete v2.objId);
-                                                          if (v2.objKey === null) {
-                                                              //如果不存在就直接删除
-                                                              v1.compare.value.splice(i, 1);
-                                                          }
-                                                      });
-                                                  }
-                                                  if (v1.compare.value.length === 0) {
-                                                      v1.compare.type = 1;
-                                                      v1.compare.value = null;
-                                                  }
-                                              }
+                                              dealWithFormulaInput(v1.compare);
                                           })
                                       }
                                   }
                               });
                           }
                       } else if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
-                          dealWithPropertyFormulaInput(cmd);
+                          dealWithPropertyFormulaInputs(cmd);
                       }
                       break;
               }
@@ -577,14 +558,18 @@ function generateId(node) {
         generateObjectId(data);
     };
 
-    let genPropertyFormulaInputId = (cmd) =>{
+    let genFormulaInputId=(fInput)=>{
+        if (fInput&&fInput.type === 2) {
+            fInput.value.forEach(v1=>{
+                specGenIdsData(v1.objKey);
+            });
+        }
+    };
+
+    let genPropertyFormulaInputIds = (cmd) =>{
         if(cmd.action.property) {
             cmd.action.property.forEach(v=>{
-                if (v.value&&v.value.type === 2) {
-                    v.value.value.forEach(v1=>{
-                        specGenIdsData(v1.objKey);
-                    });
-                }
+                genFormulaInputId(v.value);
             });
         }
     };
@@ -606,12 +591,12 @@ function generateId(node) {
               switch (cmd.action.type){
                   case funcType.customize:
                       specGenIdsData(cmd.action.func);
-                      genPropertyFormulaInputId(cmd);
+                      genPropertyFormulaInputIds(cmd);
                       break;
                   default:
                       if(cmd.action.property){
                           if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
-                              genPropertyFormulaInputId(cmd);
+                              genPropertyFormulaInputIds(cmd);
                           } else {
                               cmd.action.property.forEach(v=>{
                                   //看是否需要generateid
@@ -621,13 +606,7 @@ function generateId(node) {
                                   } else if(v.name === 'conditions') {
                                       if(v.value) {
                                           v.value.forEach(v1=>{
-                                            if(v1.compare&&v1.compare.type === 2) {
-                                                if(v1.compare.value) {
-                                                    v1.compare.value.forEach(v2=>{
-                                                        specGenIdsData(v2.objKey);
-                                                    });
-                                                }
-                                            }
+                                              genFormulaInputId(v1.compare);
                                           });
                                       }
                                   }
@@ -671,39 +650,30 @@ function generateJsFunc(etree) {
       return temp;
   };
 
-  let formulaGenLine = (cmd, lines)=>{
-      cmd.action.property.forEach(prop => {
-          if(prop.value){
-              if(prop.value.type === 1){
-                  if(cmd.action.type == funcType.default) {
-                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + JSON.stringify(prop.value.value));
-                  } else {
-                      lines.push(JSON.stringify(prop.value.value));
-                  }
-              } else if (prop.value.type === 2) {
-                  let subLine = '';
-                  prop.value.value.forEach((fV,i) =>{
-                      if(fV.objId&&fV.property){
-                          if(i===0&&fV.prePattern){
-                              subLine += replaceSymbolStr(fV.prePattern);
-                          }
-                          subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
-                          if(fV.pattern) {
-                              subLine += replaceSymbolStr(fV.pattern);
-                          }
+  let formulaGenLine = (fInput)=> {
+      let line = '';
+      if(fInput){
+          if(fInput.type === 1){
+              line = JSON.stringify(fInput.value);
+          } else if (fInput.type === 2) {
+              let subLine = '';
+              fInput.value.forEach((fV,i) =>{
+                  if(fV.objId&&fV.property){
+                      if(i===0&&fV.prePattern){
+                          subLine += replaceSymbolStr(fV.prePattern);
                       }
-                  });
-                  if(subLine!=='') {
-                      if(cmd.action.type == funcType.default) {
-                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + subLine);
-                      } else {
-                          lines.push(subLine);
+                      subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
+                      if(fV.pattern) {
+                          subLine += replaceSymbolStr(fV.pattern);
                       }
                   }
+              });
+              if(subLine!=='') {
+                  line = subLine;
               }
           }
-      });
-      return lines;
+      }
+      return line;
   };
 
   etree.forEach(function(item) {
@@ -740,8 +710,40 @@ function generateJsFunc(etree) {
       //console.log('conditions',conditions);
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
-          if (cmd.action.name === 'changeValue'|| cmd.action.name === 'send') {
-              lines = formulaGenLine(cmd, lines);
+          if (cmd.action.name === 'changeValue'||cmd.action.name === 'send') {
+              let type = cmd.action.name === 'changeValue' ? 'value' : cmd.action.name;
+              if (cmd.action.property && cmd.action.property.length > 0) {
+                  cmd.action.property.forEach(v=> {
+                      let fValue = formulaGenLine(v.value);
+                      if (fValue !== '') {
+                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], type) + '=' + fValue);
+                      }
+                  });
+              }
+          } else if (cmd.action.name === 'create') {
+              if(cmd.action.property.length>=3) {
+                  let cName = null;
+                  let cId = null;
+                  let props = {};
+                  let bottom = null;
+                  cmd.action.property.forEach((prop,i)=>{
+                      if (i === 0) {
+                          cName = prop.value;
+                      } else if (i === 1) {
+                          cId = prop.value;
+                      } else if (i === cmd.action.property.length-1) {
+                          bottom = prop.value;
+                      } else {
+                          //props 对象的属性 here
+                          if(prop.value) {
+                              props[prop.name] = prop.value;
+                          }
+                      }
+                  });
+                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create' + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + JSON.stringify(props) +',' + bottom +')'));
+              }
+          } else if (cmd.action.name === 'find') {
+              debugger;
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -805,14 +807,17 @@ function generateJsFunc(etree) {
                   }).join(',');
               }
               lines.push(line + ')');
-
           }
 
 
         } else if (cmd.action&&cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
-              ps = formulaGenLine(cmd, ps);
+              cmd.action.property.forEach(prop => {
+                  if(formulaGenLine(prop.value) !== '') {
+                      ps.push(formulaGenLine(prop.value));
+                  }
+              });
           }
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
@@ -1054,7 +1059,7 @@ function saveTree(data, node, saveKey) {
                                     temp.value = v.value;
                                 }
                                 property.push(temp);
-                            } else if (cmd.action.name == 'find' && v.name === 'conditions' && v.value) {
+                            } else if (cmd.action.name == 'find' && v.name === 'conditions') {
                                 if(v.value) {
                                     let temp = {
                                         name:v.name,
