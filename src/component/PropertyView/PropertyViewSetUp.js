@@ -66,7 +66,7 @@ class PropertyViewSetUp extends React.Component {
                 //适配
                 if (item.name == 'scaleType') {
                     for (var i in  item.options) {
-                        defaultProp.options.push(<Option key={item.options[i]}>{i}</Option>);
+                        defaultProp.options.push(<Option key={item.options[i]} className='select-scaleType'>{i}</Option>);
                     }
                 }
                 break;

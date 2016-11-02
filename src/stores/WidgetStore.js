@@ -220,7 +220,8 @@ function loadTree(parent, node, idList) {
                 obj.default = v.compareObjFlag;
                 obj.enable = v.enable;
                 needFill.push(obj);
-            }else{
+            }
+            else{
                 r.children.push(v);
             }
         });
@@ -593,6 +594,17 @@ function generateId(node) {
       generateObjectId(node);
 
       node.props['eventTree'].forEach(item => {
+        if(item.needFill){
+          item.needFill.map((v,i)=>{
+            if(v.showName=='碰撞对象'){
+                let bodyObj = keyMap[v.default];
+                let parentObj =bodyObj.parent;
+                generateObjectId(bodyObj);
+                generateObjectId(parentObj);
+            }
+          });
+       }
+
       item.children.forEach(judge => {
           judge.judgeObj = keyMap[judge.judgeObjKey];
           judge.compareObj = keyMap[judge.compareObjKey];
@@ -638,6 +650,7 @@ function generateId(node) {
               }
           }
       });
+
     });
   }
   if(node.dbItemList){
@@ -713,7 +726,11 @@ function generateJsFunc(etree) {
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
-          if (c.judgeObjId && c.judgeValFlag && c.enable) {
+         if( c.showName=='碰撞对象'){
+             let o='param.target.id=='+JSON.stringify(c.judgeObjId);
+             conditions.push('(' + o + ')');
+         }
+         else if (c.judgeObjId && c.judgeValFlag && c.enable) {
             var op = c.compareFlag;
             var jsop;
             if (op == '=')
@@ -737,7 +754,7 @@ function generateJsFunc(etree) {
           }
         });
       }
-      //console.log('conditions',conditions);
+     // console.log('conditions',conditions);
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue'|| cmd.action.name === 'send') {
@@ -770,6 +787,7 @@ function generateJsFunc(etree) {
                       }else {
                           lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value));
                       }
+                      lines.push('console.log(param)')
                   }
               }
           }else {
@@ -805,10 +823,7 @@ function generateJsFunc(etree) {
                   }).join(',');
               }
               lines.push(line + ')');
-
           }
-
-
         } else if (cmd.action&&cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
@@ -817,6 +832,7 @@ function generateJsFunc(etree) {
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
+
       if (lines.length) {
         var out;
         if (conditions.length == 1) {
@@ -843,7 +859,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-    console.log(output);
+  //  console.log(output);
   return output;
 }
 
@@ -867,6 +883,7 @@ function saveTree(data, node, saveKey) {
             if(item.needFill) {
                 judges.conFlag = 'change';//触发条件
                 judges.needFills = [];
+
                 item.needFill.map((v, i)=> {
                     if(judges.className == 'input' && v.type=='select'){
                         judges.conFlag =v.default;
@@ -876,7 +893,8 @@ function saveTree(data, node, saveKey) {
                             let o = objectToId(valueObj);
                             judges.needFills.push({showName: v.showName, type: v.type, default: v.default, valueIds:o, actionName:v.actionName});
                         }
-                    } else {
+                    }
+                    else {
                         let obj = {};
                         obj.enable=true;
                         obj.judgeObjKey =node.key;
@@ -897,6 +915,12 @@ function saveTree(data, node, saveKey) {
                             obj.compareFlag = obj.compareFlag == 'isMatch'?'=':'!=';
                         }else if(judges.className=='counter' && ( obj.compareFlag=='valRange') ){
                             obj.compareFlag = v.showName == '最大值'?'<':'>';
+                        }else if(v.showName=='碰撞对象'){
+                            judges.conFlag= item.conFlag;
+                            let bodyObj= keyMap[v.default];
+                            if(bodyObj){
+                                obj.judgeObjId=bodyObj.parent.props.id;
+                            }
                         }
 
                         obj.showName=v.showName;
@@ -1117,8 +1141,6 @@ function saveTree(data, node, saveKey) {
             cmds.push(c);
         });
 
-
-        //console.log('judges',judges);
         etree.push({cmds:cmds,judges:judges, enable:eventEnable});
 
 
