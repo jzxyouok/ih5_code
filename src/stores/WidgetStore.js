@@ -650,21 +650,50 @@ function generateJsFunc(etree) {
       return temp;
   };
 
+  let checkHasSymbol = (str)=> {
+      let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’"];
+      let englishSymbol = ["+","-","*","/","(",")","?",":","'","'"];
+      let hasSymbol = false;
+      chineseSymbol.forEach(v=>{
+          if(str.indexOf(v)>=0){
+              hasSymbol = true;
+          }
+      });
+      englishSymbol.forEach(v=>{
+          if(str.indexOf(v)>=0){
+              hasSymbol = true;
+          }
+      });
+      return hasSymbol;
+  };
+
   let formulaGenLine = (fInput)=> {
       let line = '';
       if(fInput){
           if(fInput.type === 1){
-              line = JSON.stringify(fInput.value);
+              if(isNaN(fInput.value)&&!checkHasSymbol(fInput.value)) {
+                  line = JSON.stringify(fInput.value);
+              } else {
+                  line = fInput.value;
+              }
           } else if (fInput.type === 2) {
               let subLine = '';
               fInput.value.forEach((fV,i) =>{
                   if(fV.objId&&fV.property){
                       if(i===0&&fV.prePattern){
-                          subLine += replaceSymbolStr(fV.prePattern);
+                          let pp = fV.prePattern;
+                          if(isNaN(pp)&&!checkHasSymbol(pp)) {
+                              pp = JSON.stringify(fV.prePattern);
+                          }
+                          subLine += replaceSymbolStr(pp);
                       }
                       subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
                       if(fV.pattern) {
-                          subLine += replaceSymbolStr(fV.pattern);
+                          let pa = fV.pattern;
+                          if(isNaN(pa)&&!checkHasSymbol(pa)) {
+                              pa = JSON.stringify(fV.pattern);
+                          }
+                          subLine += replaceSymbolStr(pa);
                       }
                   }
               });
@@ -676,9 +705,19 @@ function generateJsFunc(etree) {
       return line;
   };
 
+  let operationTranslate = (item)=> {
+      let operation = ['=', '>', '<', '!=', '≥', '≤'];
+      let trans = ['$e', '$gt', '$lt', '$ne', '$gte', '$lte'];
+      let index = operation.indexOf(item);
+      if(index>=0) {
+          return trans[index];
+      }
+      return null;
+  };
+
   etree.forEach(function(item) {
     if (item.judges.conFlag && item.enable) {
-      var out = '';
+      // var out = '';
       var lines = [];
       var conditions = [];
       if (item.judges.children.length) {
@@ -740,10 +779,92 @@ function generateJsFunc(etree) {
                           }
                       }
                   });
-                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create' + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + JSON.stringify(props) +',' + bottom +')'));
+                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create') + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + JSON.stringify(props) +',' + bottom +')');
               }
           } else if (cmd.action.name === 'find') {
-              debugger;
+              let propsList = [];
+              let callBack = '';
+              if(cmd.action.property) {
+                  cmd.action.property.forEach((prop,i)=>{
+                      switch (prop.name) {
+                          case 'order':
+                              break;
+                          case 'lines':
+                              let skip = 0;
+                              let limit = 0;
+                              if(prop.value.from) {
+                                  skip = prop.value.from;
+                              }
+                              if(prop.value.to) {
+                                  limit = prop.value.to - skip;
+                              }
+                              if(skip>0) {
+                                  propsList.push('\''+'$skip'+'\':'+skip);
+                              }
+                              if(limit>0) {
+                                  propsList.push('\''+'$limit'+'\':'+limit);
+                              }
+                              break;
+                          case 'conditions':
+                              if (prop.value) {
+                                  let conList = [];
+                                  prop.value.forEach((v,i)=>{
+                                      let fValue = formulaGenLine(v.compare);
+                                      if(v.field&&v.operation&&(fValue!=='')){
+                                          let op = operationTranslate(v.operation);
+                                          let field = v.field;
+                                          if (v.field.substr(0, 1) == 'i'||v.field.substr(0, 1) == 's') {
+                                              field = v.field.substr(1);
+                                          }
+                                          if(op) {
+                                              if(op==='$e') {
+                                                  conList.push('{'+'\''+field+'\''+':'+fValue+'}');
+                                              } else {
+                                                  conList.push('{'+'\''+field+'\''+':'+'{'+'\''+op+'\''+':'+fValue+'}}');
+                                              }
+                                          }
+                                      }
+                                  });
+                                  if(conList.length>0) {
+                                      propsList.push('\''+'$and'+'\''+':['+conList.join(',')+']');
+                                  }
+                              }
+                              break;
+                          case 'object':
+                              if(prop.valueId) {
+                                  let arrValue = getIdsName(prop.valueId[0], prop.valueId[2], 'value');
+                                  let method = "var arrValue = '';"+
+                                      "if(data.length>0){"+
+                                      "var dataList = [];"+
+                                      "data.forEach(function(v, i){"+
+                                      "var temp = [];"+
+                                      "for (var prop in v) {"+
+                                      "if(prop.substr(0,1)!=='_'){"+
+                                      "temp.push(v[prop]);"+
+                                      "}"+
+                                      "}"+
+                                      "if(temp.length>0) {"+
+                                      "dataList.push(temp.join(','));"+
+                                      "}"+
+                                      "});"+
+                                      "if(dataList.length>0){"+
+                                      "arrValue = dataList.join(';');"+
+                                      "}"+
+                                      "}"+
+                                      "if(arrValue != ''){"+
+                                        arrValue + "= arrValue;"+
+                                      "}";
+                                  callBack = ',function(err, data){'+'console.log(data);'+method+'}';
+                              }
+                              break;
+                          default:
+                              break;
+                      }
+                  })
+              }
+              // let props = propsList.length>0 ? ('{'+ propsList.join(',') +'}') : null;
+              let props = ('{'+ propsList.join(',') +'}');
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'find') + '('+props+callBack+')');
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -823,7 +944,7 @@ function generateJsFunc(etree) {
         }
       });
       if (lines.length) {
-        var out;
+        var out = '';
         if (conditions.length == 1) {
           out = 'if' + conditions[0];
         } else if (conditions.length) {
@@ -848,7 +969,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-    //console.log(output);
+    console.log(output);
   return output;
 }
 
