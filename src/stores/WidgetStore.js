@@ -3357,63 +3357,21 @@ export default Reflux.createStore({
         this.trigger({hasHandle: status});
     },
     updateHistoryRecord: function(historyName) {
-        let getImageList = function(array, list) {
-            var result = [];
-            var count = 0;
-            for (var i = 0; i < list.length; i++) {
-                var item = list[i];
-                if (typeof item == 'string') {
-                    if (item.substr(0, 5) == 'data:') {
-                        count++;
-                        array.push(item);
-                    } else {
-                        if (count) {
-                            result.push(count);
-                            count = 0;
-                        }
-                        result.push(item);
-                    }
-                } else {
-                    var n = item.length;
-                    if (count) {
-                        result.push(count);
-                        count = 0;
-                    }
-                    if (n == 0 || item[0].substr(0, 5) == 'data:') {
-                        result.push(-n);
-                        for (var j = 0; j < n; j++) {
-                            array.push(item[j]);
-                        }
-                    } else {
-                        result.push(item);
-                    }
-                }
-            }
-            if (result.length) {
-                if (count)
-                    result.push(count);
-                return result;
-            } else {
-                return count;
-            }
-        };
         let data = {};
-        let images = [];
         data['stage'] = {};
-        trimTree(stageTree[0].tree);
+
         saveTree(data['stage'], stageTree[0].tree,true);
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
-        data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
+        data['stage']['links'] = stageTree[0].tree.imageList;
 
         if (stageTree.length > 1) {
             data['defs'] = {};
             for (let i = 1; i < stageTree.length; i++) {
                 let name = stageTree[i].name;
                 data['defs'][name] = {};
-                trimTree(stageTree[i].tree);
                 saveTree(data['defs'][name], stageTree[i].tree,true);
                 data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
-                data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
+                data['defs'][name]['links'] = stageTree[i].tree.imageList;
             }
         }
 
