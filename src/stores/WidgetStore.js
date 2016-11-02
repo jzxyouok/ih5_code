@@ -901,7 +901,7 @@ function generateJsFunc(etree) {
               let min = JSON.stringify(cmd.action.property[0]['value']);
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + 'Math.round(Math.random()*('
                   + max + '-'
-                  + min + '+1)+' + min + ')');
+                  + min + ')+' + min + ')');
           }else if(cmd.action.name === 'setProps'){
               for(let i in cmd.action.property) {
                   if(cmd.action.property[i].value !==undefined){
