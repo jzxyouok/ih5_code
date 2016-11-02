@@ -722,6 +722,7 @@ class TimelineView extends React.Component {
                         percentage = { this.state.percentage}
                         multiple = { this.state.multiple}
                         changSwitchState={ this.changSwitchState }
+                        propsNowLayerId = { this.state.nowLayerId }
                         isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));

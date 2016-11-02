@@ -697,7 +697,7 @@ class VxRcSlider extends RcSlider {
                                     <span className="drag-left" />
                                     <span className="flex-1"  onClick={ this.selectTrack.bind(this) } />
                                     <span className="drag-right" />
-                                    <spam className="mark-line" />
+                                    <spam className={cls("mark-line",{"hidden": this.props.myID !== this.props.propsNowLayerId })} />
                                 </div>
 
                                 <div onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
