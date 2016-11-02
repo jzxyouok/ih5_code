@@ -976,7 +976,6 @@ class Event extends React.Component {
                 while (node.className != 'world') {
                     node = node.parent;
                 }
-
                 let findChildKey = (v, i)=> {
                     if (v.className == 'body' && v.key != curBodyKey) {
                         keyList.push(v.key);
@@ -984,36 +983,27 @@ class Event extends React.Component {
                         v.children.map(findChildKey);
                     }
                 }
-
                 node.children.map(findChildKey);
-
                 item.option = keyList;
-                let str=item.default;
+                let str = item.default;
                 let itemObj = WidgetStore.getWidgetByKey(item.default);
-
                 if (itemObj) {
-                    str= itemObj.props.name;
+                    str = itemObj.props.name;
                 }
                 item.option.map((v, i)=> {
-                    optionArr.push(<Option key={i} value={v.toString()} className='dropDown-input-option'>{WidgetStore.getWidgetByKey(v).props.name}</Option>);
+                    optionArr.push(<Option key={i} value={v.toString()}
+                                           className='dropDown-input-option'>{WidgetStore.getWidgetByKey(v).props.name}</Option>);
                 });
-
                 return <Select disabled={!obj.enable} className='dropDown-input-content' value={str}
                                onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
-
-            }else {
+            } else {
                 item.option.map((v, i)=> {
                     optionArr.push(<Option key={i} className='dropDown-input-option'>{v}</Option>);
                 });
-
                 return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default}
                                onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
-
             }
-
-
         }
-
         else if(item.type=='var'){
             let optionArr=[];
             let key = 0;

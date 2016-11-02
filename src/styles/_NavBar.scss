@@ -898,12 +898,18 @@
                 background-position: -120px 0 ;
                 &:hover{ background-position: -120px -40px; }
                 &:active{ background-position: -120px -80px; }
+                &.active{ background-position: -120px -80px; }
             }
             &.hide-btn {
-                background-position: -160px 0 ;
-                &:hover{ background-position: -160px -40px; }
-                &:active{ background-position: -160px -80px; }
-                &.active{ background-position: -160px -80px; }
+                background-position: -280px 0;
+                &:hover{ background-position: -280px -40px; }
+                &:active{ background-position: -280px -80px; }
+                
+                &.active{
+                    background-position: -160px 0 ;
+                    &:hover{ background-position: -160px -40px; }
+                    &:active{ background-position: -160px -80px; }
+                }
             }
             &.align-btn {
                 background-position: -200px 0 ;
