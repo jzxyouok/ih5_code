@@ -682,6 +682,17 @@ function generateJsFunc(etree) {
       return hasSymbol;
   };
 
+  let replaceMathOp = (value)=> {
+      let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
+      'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan'];
+      array.forEach(s=>{
+          let reg = new RegExp('^' + s + '\\b|([^.])\\b' + s + '\\b', 'g');
+          value = value.replace(reg, '$1Math.' + s);
+      });
+      console.log(value);
+      return value;
+  };
+
   //公式编辑器内容生成运行内容
   let formulaGenLine = (fInput)=> {
       let line = '';
@@ -690,26 +701,26 @@ function generateJsFunc(etree) {
               if(isNaN(fInput.value)&&!checkHasSymbol(fInput.value)) {
                   line = JSON.stringify(fInput.value);
               } else {
-                  line = fInput.value;
+                  line = replaceMathOp(replaceSymbolStr(fInput.value));
               }
           } else if (fInput.type === 2) {
               let subLine = '';
               fInput.value.forEach((fV,i) =>{
                   if(fV.objId&&fV.property){
                       if(i===0&&fV.prePattern){
-                          let pp = fV.prePattern;
-                          if(isNaN(pp)&&!checkHasSymbol(pp)) {
-                              pp = JSON.stringify(fV.prePattern);
+                          if(isNaN(fV.prePattern)&&!checkHasSymbol(fV.prePattern)) {
+                              subLine += JSON.stringify(fV.prePattern);
+                          } else {
+                              subLine += replaceMathOp(replaceSymbolStr(fV.prePattern));
                           }
-                          subLine += replaceSymbolStr(pp);
                       }
                       subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
                       if(fV.pattern) {
-                          let pa = fV.pattern;
-                          if(isNaN(pa)&&!checkHasSymbol(pa)) {
-                              pa = JSON.stringify(fV.pattern);
+                          if(isNaN(fV.pattern)&&!checkHasSymbol(fV.pattern)) {
+                              subLine += JSON.stringify(fV.pattern);
+                          } else {
+                              subLine += replaceMathOp(replaceSymbolStr(fV.pattern));
                           }
-                          subLine += replaceSymbolStr(pa);
                       }
                   }
               });
