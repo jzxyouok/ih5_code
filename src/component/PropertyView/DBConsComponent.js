@@ -106,7 +106,7 @@ class DBConsComponent extends React.Component {
                     !this.state.fieldList||this.state.fieldList.length==0
                         ? null
                         : this.state.fieldList.map((v, i)=>{
-                        return <MenuItem data={v} key={i}>{v}</MenuItem>;
+                        return <MenuItem data={v} key={i}>{v.substr(1)}</MenuItem>;
                     })
                 }
             </Menu>);
@@ -135,7 +135,7 @@ class DBConsComponent extends React.Component {
                                 <div className="title f--hlc">
                                     {
                                         v.field
-                                            ? v.field
+                                            ? v.field.substr(1)
                                             : '选择字段'
                                     }
                                     <span className="icon" />

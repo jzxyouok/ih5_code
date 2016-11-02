@@ -2,10 +2,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $class from 'classnames'
-import WidgetStore, {varType, funcType, nodeType, nodeAction, classList} from '../../stores/WidgetStore'
+import WidgetStore, {varType, funcType, isCustomizeWidget} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-import { SwitchMore,DropDownInput ,ConInputNumber} from  '../PropertyView/PropertyViewComponet';
-import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
+import { SwitchMore } from  '../PropertyView/PropertyViewComponet';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu } from 'antd';
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { RangeComponent } from '../PropertyView/RangeComponent';
@@ -35,8 +35,8 @@ class Property extends React.Component {
             wKey: this.props.wKey,      //specfic所在的widgetkey
             event: this.props.event,        //对应的事件
             specific: this.props.specific,  //specific
-            objectList: null,    //目标对象的列表
-            actionList: null,    //对象动作列表
+            objectList: [],    //目标对象的列表
+            actionList: [],    //对象动作列表
             objectDropdownVisible: false, //是否显示对象的下拉框
             actionDropdownVisible: false, //是否显示动作的下拉框
             currentObject: this.props.specific.object,
@@ -101,6 +101,7 @@ class Property extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.onStatusChange(WidgetStore.getStore());
         this.onStatusChange(WidgetStore.getAllWidgets());
     }
 
@@ -207,6 +208,7 @@ class Property extends React.Component {
             actionList: actionList
         })
     }
+
     getPropertyViewSetUpResult(index,prop){
        // console.log('prop',prop);
 
@@ -223,6 +225,7 @@ class Property extends React.Component {
             WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
         });
     }
+
     getSetPropsObj() {
         let obj = {
             name: 'setProps',
@@ -243,7 +246,6 @@ class Property extends React.Component {
                         vObj.name = 'height';
                     }
                     if(v.name=='initVisible'){
-                        ;
                     }else {
                         propertyList.push(vObj);
                     }
@@ -253,6 +255,7 @@ class Property extends React.Component {
         obj.property= propertyList;
         return obj;
     }
+
     onSTButtonClick(){
         if(this.state.activeKey !== this.state.wKey) {
             return false;
@@ -454,10 +457,21 @@ class Property extends React.Component {
             let className = data;
             //不需要替换1，2和最后1个
             let newProperty = [property[0], property[1], property[property.length-1]];
+            if (isCustomizeWidget(className)) {
+                className = 'root';
+            }
             propertyMap[className].map((v)=>{
                 if(v.isProperty&& v.name !='id'){
-                    v.isProp=true;
-                    newProperty.splice(newProperty.length-1, 0, v);
+                    let vObj=JSON.parse(JSON.stringify(v));
+                    vObj.isProp=true;
+                    if (vObj.name == 'scaleX') {
+                        vObj.name='width';
+                    } else if(v.name == 'scaleY') {
+                        vObj.name = 'height';
+                    }
+                    if(v.name !== 'initVisible'){
+                        newProperty.splice(newProperty.length-1, 0, vObj);
+                    }
                 }
             });
             property = newProperty;
@@ -471,14 +485,14 @@ class Property extends React.Component {
             WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
         });
     }
+
     onGetClassListByKey(key) {
         this.classNameList = [];
         let widget = WidgetStore.getWidgetByKey(key);
         if(widget) {
             if(widget.className === 'root' || widget.className === 'container') {
-                this.customClassList = classList;
                 this.customClassList.forEach(v=>{
-                    this.classNameList.push(v)
+                    this.classNameList.push('_'+v);
                 });
             }
             for (let cls in propertyMap) {
@@ -507,6 +521,7 @@ class Property extends React.Component {
         document.getElementById('EventBox').style.overflow = 'hidden';
         document.getElementById('EBContentLayer').style.overflow = 'scroll';
     }
+
     onChangePropDom(prop, index, e){
         var value = null;
         switch (prop.type) {
@@ -541,11 +556,12 @@ class Property extends React.Component {
             WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
         });
     }
+
     getProps(item, index) {
         var defaultProp = {
             size: 'small',
             placeholder:item.default,
-            disabled: item.readOnly !== undefined,
+            disabled: !this.state.currentEnable,
             onChange:  this.onChangePropDom.bind(this, item, index)
         };
         switch (item.type) {
@@ -576,28 +592,8 @@ class Property extends React.Component {
                 defaultProp.value = item.value;
             case propertyType.Function:
                 break;
-            case propertyType.Select:
-                if(item.name=='scaleType'){
-                    defaultProp.options=[];
-                    for(var i in  item.options){
-                        defaultProp.options.push(i);
-                    }
-                }
-                break;
-            case propertyType.Color2:
-                break;
             default:
                 break;
-        }
-
-        //设置值
-
-        if(item.type !== propertyType.FormulaInput) {
-            let widget = WidgetStore.getWidgetByKey(this.state.currentObject);
-            if(widget.node[item.name] &&  !defaultProp.value){
-                defaultProp.value =widget.node[item.name];
-            }
-
         }
         return defaultProp;
     }
@@ -687,11 +683,11 @@ class Property extends React.Component {
             let itemObj = WidgetStore.getWidgetByKey(item.value);
             return (<Dropdown overlay={propertySelectMenu(list, item, index, type)} trigger={['click']}
                        getPopupContainer={() => document.getElementById(propertyId)}>
-                <div className={$class("p--dropDown short")}>
-                    <div className="title p--title f--hlc" style={{width: '196px'}}>
+                <div className={$class("p--dropDown p--obj-dropDown")}>
+                    <div className="title p--title f--hlc">
                         <SelectTargetButton className={'p--icon'}
                                             disabled={!this.state.currentEnable}
-                                            targetList={this.state.objectList}
+                                            targetList={list}
                                             onClick={this.onPropsObjButtonClick.bind(this, index)}
                                             getResult={this.onPropsObjResultGet.bind(this, item, index)} />
                         { !itemObj || !itemObj.props || !itemObj.props.name
@@ -710,27 +706,17 @@ class Property extends React.Component {
                     return <Input {...defaultProp}/>;
                 {/*return <input {...defaultProp} className="flex-1" type="text" placeholder={value}/>;*/}
                 case propertyType.Integer:
-                    return <ConInputNumber {...defaultProp}/>;
+                    return <InputNumber {...defaultProp}/>;
                 // return <input className="flex-1" type="text" placeholder={value}/>;
                 case propertyType.Float:
                 case propertyType.Number:
-                    return <ConInputNumber step={0.1} {...defaultProp}/>;
+                    return <InputNumber step={0.1} {...defaultProp}/>;
                 case propertyType.Boolean3:
                     return <Switch checkedChildren={'开'} unCheckedChildren={'关'} {...defaultProp}/>
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Boolean:
                     return <Switch   {...defaultProp} />;
-                case propertyType.Color2:
-                    return  <Input ref={(inputDom) => {
-                        if (inputDom) {
-                            var dom = ReactDOM.findDOMNode(inputDom).firstChild;
-                            if (!dom.jscolor) {
-                                dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
-                                dom.jscolor.onFineChange = defaultProp.onChange;
-                            }
-                        }
-                    }}  {...defaultProp}  /> ;
                 case propertyType.FormulaInput:
                     return <FormulaInput containerId={propertyId}
                                          disabled={!this.state.currentEnable}
@@ -752,17 +738,21 @@ class Property extends React.Component {
                         titleTemp = '类别';
                         oType = optionType.class;
                         list = this.classNameList;
-                    } else if(item.name=='scaleType'){
-
-                        titleTemp =defaultProp.placeholder ;
-                        oType = optionType.class;
-                        list = defaultProp.options;
-                    }else {
+                    } else {
                         return <div>未定义类型</div>;
                     }
                     return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
                 case propertyType.Object:
-                    return propertyObjDropDownMenu(this.state.objectList, item, index, optionType.widget);
+                    let oList = this.state.objectList;
+                    if(w&&w.className === 'db' && item.name === 'object') {
+                        oList = [];
+                        this.state.objectList.forEach(v=>{
+                            if (v.className === 'data') {
+                                oList.push(v);
+                            }
+                        });
+                    }
+                    return propertyObjDropDownMenu(oList, item, index, optionType.widget);
                 case propertyType.Range:
                     return <RangeComponent {...defaultProp}/>;
                 case propertyType.DBOrder:

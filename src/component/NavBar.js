@@ -901,7 +901,8 @@ class NavBar extends React.Component {
             shapeHeight : undefined,
             viewBoxWidth : 100,
             viewBoxHeight : 100,
-            fillColor : "#8F8F8F",
+            'fillColor':'#3899ec',
+            'lineColor':'#FFFFFF',
             path : svgPath
         };
 
@@ -1379,7 +1380,7 @@ class NavBar extends React.Component {
                                                                             key={i}
                                                                             title={v.name}
                                                                             onClick={ this.onDrawRect.bind(this,v.path) }>
-                                                                    
+
                                                                             <svg id={v.name}
                                                                                  data-name={v.name}
                                                                                  xmlns="http://www.w3.org/2000/svg"

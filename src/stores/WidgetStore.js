@@ -111,10 +111,6 @@ function loadTree(parent, node, idList) {
   current.props = node['props'] || {};
   current.events = node['events'] || {};
 
-
-
-
-
   if (current.props['key'] !== undefined) {
     current.key = current.props['key'];
     delete(current.props['key']);
@@ -366,27 +362,31 @@ function resolveEventTree(node, list) {
             (delete item.needFills);
         };
 
-        let dealWithPropertyFormulaInput = (cmd)=>{
+        let dealWithFormulaInput = (fInput)=> {
+            if (fInput&&fInput.type === 2) {
+                fInput.value.forEach((v1,i)=>{
+                    if(v1.objId) {
+                        v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                    } else {
+                        v1.objKey = null;
+                    }
+                    (delete v1.objId);
+                    if(v1.objKey === null) {
+                        //如果不存在就直接删除
+                        fInput.value.splice(i, 1);
+                    }
+                });
+                if(fInput.value.length===0){
+                    fInput.type = 1;
+                    fInput.value = null;
+                }
+            }
+        };
+
+        let dealWithPropertyFormulaInputs = (cmd)=>{
             if(cmd.action.property) {
                 cmd.action.property.forEach(v=> {
-                    if (v.value&&v.value.type === 2) {
-                        v.value.value.forEach((v1,i)=>{
-                            if(v1.objId) {
-                                v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
-                            } else {
-                                v1.objKey = null;
-                            }
-                            (delete v1.objId);
-                            if(v1.objKey === null) {
-                                //如果不存在就直接删除
-                                v.value.value.splice(i, 1);
-                            }
-                        });
-                        if(v.value.value.length===0){
-                            v.value.type = 1;
-                            v.value.value = null;
-                        }
-                    }
+                    dealWithFormulaInput(v.value);
                 });
             }
         };
@@ -411,7 +411,7 @@ function resolveEventTree(node, list) {
                           cmd.action = null;
                       }
                       (delete cmd.action.funcId);
-                      dealWithPropertyFormulaInput(cmd);
+                      dealWithPropertyFormulaInputs(cmd);
                       break;
                   default:
                       let o = keyMap[cmd.object];
@@ -429,33 +429,14 @@ function resolveEventTree(node, list) {
                                   } else if ((cmd.action.name === 'find' && v.name === 'conditions')) {
                                       if(v.value) {
                                           v.value.forEach(v1=> {
-                                              if(v1.compare && v1.compare.type === 2) {
-                                                  if(v1.compare.value) {
-                                                      v1.compare.value.forEach((v2, i)=>{
-                                                          if (v2.objId) {
-                                                              v2.objKey = idToObjectKey(list, v2.objId[0], v2.objId[1]);
-                                                          } else {
-                                                              v2.objKey = null;
-                                                          }
-                                                          (delete v2.objId);
-                                                          if (v2.objKey === null) {
-                                                              //如果不存在就直接删除
-                                                              v1.compare.value.splice(i, 1);
-                                                          }
-                                                      });
-                                                  }
-                                                  if (v1.compare.value.length === 0) {
-                                                      v1.compare.type = 1;
-                                                      v1.compare.value = null;
-                                                  }
-                                              }
+                                              dealWithFormulaInput(v1.compare);
                                           })
                                       }
                                   }
                               });
                           }
                       } else if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
-                          dealWithPropertyFormulaInput(cmd);
+                          dealWithPropertyFormulaInputs(cmd);
                       }
                       break;
               }
@@ -578,14 +559,18 @@ function generateId(node) {
         generateObjectId(data);
     };
 
-    let genPropertyFormulaInputId = (cmd) =>{
+    let genFormulaInputId=(fInput)=>{
+        if (fInput&&fInput.type === 2) {
+            fInput.value.forEach(v1=>{
+                specGenIdsData(v1.objKey);
+            });
+        }
+    };
+
+    let genPropertyFormulaInputIds = (cmd) =>{
         if(cmd.action.property) {
             cmd.action.property.forEach(v=>{
-                if (v.value&&v.value.type === 2) {
-                    v.value.value.forEach(v1=>{
-                        specGenIdsData(v1.objKey);
-                    });
-                }
+                genFormulaInputId(v.value);
             });
         }
     };
@@ -618,12 +603,12 @@ function generateId(node) {
               switch (cmd.action.type){
                   case funcType.customize:
                       specGenIdsData(cmd.action.func);
-                      genPropertyFormulaInputId(cmd);
+                      genPropertyFormulaInputIds(cmd);
                       break;
                   default:
                       if(cmd.action.property){
                           if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
-                              genPropertyFormulaInputId(cmd);
+                              genPropertyFormulaInputIds(cmd);
                           } else {
                               cmd.action.property.forEach(v=>{
                                   //看是否需要generateid
@@ -633,13 +618,7 @@ function generateId(node) {
                                   } else if(v.name === 'conditions') {
                                       if(v.value) {
                                           v.value.forEach(v1=>{
-                                            if(v1.compare&&v1.compare.type === 2) {
-                                                if(v1.compare.value) {
-                                                    v1.compare.value.forEach(v2=>{
-                                                        specGenIdsData(v2.objKey);
-                                                    });
-                                                }
-                                            }
+                                              genFormulaInputId(v1.compare);
                                           });
                                       }
                                   }
@@ -684,44 +663,74 @@ function generateJsFunc(etree) {
       return temp;
   };
 
-  let formulaGenLine = (cmd, lines)=>{
-      cmd.action.property.forEach(prop => {
-          if(prop.value){
-              if(prop.value.type === 1){
-                  if(cmd.action.type == funcType.default) {
-                      lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + JSON.stringify(prop.value.value));
-                  } else {
-                      lines.push(JSON.stringify(prop.value.value));
-                  }
-              } else if (prop.value.type === 2) {
-                  let subLine = '';
-                  prop.value.value.forEach((fV,i) =>{
-                      if(fV.objId&&fV.property){
-                          if(i===0&&fV.prePattern){
-                              subLine += replaceSymbolStr(fV.prePattern);
-                          }
-                          subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
-                          if(fV.pattern) {
-                              subLine += replaceSymbolStr(fV.pattern);
-                          }
-                      }
-                  });
-                  if(subLine!=='') {
-                      if(cmd.action.type == funcType.default) {
-                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + subLine);
-                      } else {
-                          lines.push(subLine);
-                      }
-                  }
-              }
+  let checkHasSymbol = (str)=> {
+      let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’"];
+      let englishSymbol = ["+","-","*","/","(",")","?",":","'","'"];
+      let hasSymbol = false;
+      chineseSymbol.forEach(v=>{
+          if(str.indexOf(v)>=0){
+              hasSymbol = true;
           }
       });
-      return lines;
+      englishSymbol.forEach(v=>{
+          if(str.indexOf(v)>=0){
+              hasSymbol = true;
+          }
+      });
+      return hasSymbol;
+  };
+
+  let formulaGenLine = (fInput)=> {
+      let line = '';
+      if(fInput){
+          if(fInput.type === 1){
+              if(isNaN(fInput.value)&&!checkHasSymbol(fInput.value)) {
+                  line = JSON.stringify(fInput.value);
+              } else {
+                  line = fInput.value;
+              }
+          } else if (fInput.type === 2) {
+              let subLine = '';
+              fInput.value.forEach((fV,i) =>{
+                  if(fV.objId&&fV.property){
+                      if(i===0&&fV.prePattern){
+                          let pp = fV.prePattern;
+                          if(isNaN(pp)&&!checkHasSymbol(pp)) {
+                              pp = JSON.stringify(fV.prePattern);
+                          }
+                          subLine += replaceSymbolStr(pp);
+                      }
+                      subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
+                      if(fV.pattern) {
+                          let pa = fV.pattern;
+                          if(isNaN(pa)&&!checkHasSymbol(pa)) {
+                              pa = JSON.stringify(fV.pattern);
+                          }
+                          subLine += replaceSymbolStr(pa);
+                      }
+                  }
+              });
+              if(subLine!=='') {
+                  line = subLine;
+              }
+          }
+      }
+      return line;
+  };
+
+  let operationTranslate = (item)=> {
+      let operation = ['=', '>', '<', '!=', '≥', '≤'];
+      let trans = ['$e', '$gt', '$lt', '$ne', '$gte', '$lte'];
+      let index = operation.indexOf(item);
+      if(index>=0) {
+          return trans[index];
+      }
+      return null;
   };
 
   etree.forEach(function(item) {
     if (item.judges.conFlag && item.enable) {
-      var out = '';
+      // var out = '';
       var lines = [];
       var conditions = [];
       if (item.judges.children.length) {
@@ -757,8 +766,123 @@ function generateJsFunc(etree) {
      // console.log('conditions',conditions);
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
-          if (cmd.action.name === 'changeValue'|| cmd.action.name === 'send') {
-              lines = formulaGenLine(cmd, lines);
+          if (cmd.action.name === 'changeValue'||cmd.action.name === 'send') {
+              let type = cmd.action.name === 'changeValue' ? 'value' : cmd.action.name;
+              if (cmd.action.property && cmd.action.property.length > 0) {
+                  cmd.action.property.forEach(v=> {
+                      let fValue = formulaGenLine(v.value);
+                      if (fValue !== '') {
+                          lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], type) + '=' + fValue);
+                      }
+                  });
+              }
+          } else if (cmd.action.name === 'create') {
+              if(cmd.action.property.length>=3) {
+                  let cName = null;
+                  let cId = null;
+                  let props = {};
+                  let bottom = null;
+                  cmd.action.property.forEach((prop,i)=>{
+                      if (i === 0) {
+                          cName = prop.value;
+                      } else if (i === 1) {
+                          cId = prop.value;
+                      } else if (i === cmd.action.property.length-1) {
+                          bottom = prop.value;
+                      } else {
+                          //props 对象的属性 here
+                          if(prop.value) {
+                              props[prop.name] = prop.value;
+                          }
+                      }
+                  });
+                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create') + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + JSON.stringify(props) +',' + bottom +')');
+              }
+          } else if (cmd.action.name === 'find') {
+              let propsList = [];
+              let callBack = '';
+              if(cmd.action.property) {
+                  cmd.action.property.forEach((prop,i)=>{
+                      switch (prop.name) {
+                          case 'order':
+                              break;
+                          case 'lines':
+                              let skip = 0;
+                              let limit = 0;
+                              if(prop.value.from) {
+                                  skip = prop.value.from;
+                              }
+                              if(prop.value.to) {
+                                  limit = prop.value.to - skip;
+                              }
+                              if(skip>0) {
+                                  propsList.push('\''+'$skip'+'\':'+skip);
+                              }
+                              if(limit>0) {
+                                  propsList.push('\''+'$limit'+'\':'+limit);
+                              }
+                              break;
+                          case 'conditions':
+                              if (prop.value) {
+                                  let conList = [];
+                                  prop.value.forEach((v,i)=>{
+                                      let fValue = formulaGenLine(v.compare);
+                                      if(v.field&&v.operation&&(fValue!=='')){
+                                          let op = operationTranslate(v.operation);
+                                          let field = v.field;
+                                          if (v.field.substr(0, 1) == 'i'||v.field.substr(0, 1) == 's') {
+                                              field = v.field.substr(1);
+                                          }
+                                          if(op) {
+                                              if(op==='$e') {
+                                                  conList.push('{'+'\''+field+'\''+':'+fValue+'}');
+                                              } else {
+                                                  conList.push('{'+'\''+field+'\''+':'+'{'+'\''+op+'\''+':'+fValue+'}}');
+                                              }
+                                          }
+                                      }
+                                  });
+                                  if(conList.length>0) {
+                                      propsList.push('\''+'$and'+'\''+':['+conList.join(',')+']');
+                                  }
+                              }
+                              break;
+                          case 'object':
+                              if(prop.valueId) {
+                                  let arrValue = getIdsName(prop.valueId[0], prop.valueId[2], 'value');
+                                  let method = "var arrValue = '';"+
+                                      "console.log("+arrValue+");"+
+                                      "if(data.length>0){"+
+                                      "var dataList = [];"+
+                                      "data.forEach(function(v, i){"+
+                                      "var temp = [];"+
+                                      "for (var prop in v) {"+
+                                      "if(prop.substr(0,1)!=='_'){"+
+                                      "temp.push(v[prop]);"+
+                                      "}"+
+                                      "}"+
+                                      "if(temp.length>0) {"+
+                                      "dataList.push(temp.join(','));"+
+                                      "}"+
+                                      "});"+
+                                      "if(dataList.length>0){"+
+                                      "arrValue = dataList.join(';');"+
+                                      "}"+
+                                      "}"+
+                                      "if(arrValue != ''){"+
+                                        arrValue + "= arrValue;"+
+                                      "}"+"console.log("+'ids.'+prop.valueId[0]+");";
+                                  callBack = ',function(err, data){'+'console.log(data);'+method+'}';
+                              }
+                              break;
+                          default:
+                              break;
+                      }
+                  })
+              }
+              // let props = propsList.length>0 ? ('{'+ propsList.join(',') +'}') : null;
+              let props = ('{'+ propsList.join(',') +'}');
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'find') + '('+props+callBack+')');
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -827,14 +951,18 @@ function generateJsFunc(etree) {
         } else if (cmd.action&&cmd.action.type == 'customize' && cmd.enable) {
           var ps = ['ids'];
           if (cmd.action.property) {
-              ps = formulaGenLine(cmd, ps);
+              cmd.action.property.forEach(prop => {
+                  if(formulaGenLine(prop.value) !== '') {
+                      ps.push(formulaGenLine(prop.value));
+                  }
+              });
           }
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
 
       if (lines.length) {
-        var out;
+        var out = '';
         if (conditions.length == 1) {
           out = 'if' + conditions[0];
         } else if (conditions.length) {
@@ -1078,7 +1206,7 @@ function saveTree(data, node, saveKey) {
                                     temp.value = v.value;
                                 }
                                 property.push(temp);
-                            } else if (cmd.action.name == 'find' && v.name === 'conditions' && v.value) {
+                            } else if (cmd.action.name == 'find' && v.name === 'conditions') {
                                 if(v.value) {
                                     let temp = {
                                         name:v.name,
@@ -1739,8 +1867,8 @@ export default Reflux.createStore({
 
             this.trigger({redrawTree: true});
             // this.render();
-            historyName = "加锁" + this.currentWidget.node.name;
-            this.updateHistoryRecord(historyName);
+            //historyName = "加锁" + this.currentWidget.node.name;
+            //this.updateHistoryRecord(historyName);
         }
     },
 
@@ -2125,11 +2253,11 @@ export default Reflux.createStore({
         this.updateProperties({'name':this.currentWidget.props['name']});
         // this.render();
         this.trigger({redrawTree: true});
-        historyName = "重命名" + this.currentWidget.node.name;
-        this.updateHistoryRecord(historyName);
+        //historyName = "重命名" + this.currentWidget.node.name;
+        //this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty) {
-
+        let isHistoryRecord = true;
         if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
@@ -2137,6 +2265,12 @@ export default Reflux.createStore({
             }
         }
 
+        //如果是this.selectWidgets更新的坐标属性，如果没有发生位移的改变则不需要更新历史记录
+        if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
+            if(this.currentWidget.props.positionX == obj.positionX && this.currentWidget.props.positionY == obj.positionY){
+                isHistoryRecord = false;
+            }
+        }
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2148,8 +2282,10 @@ export default Reflux.createStore({
             bridge.updateSelector(this.currentWidget.node);
         }
         this.trigger(p);
-        historyName = "更改属性" + this.currentWidget.node.name;
-        this.updateHistoryRecord(historyName);
+        if(isHistoryRecord){
+            historyName = "更改属性" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
+        }
     },
     reorderEventTreeList: function () {
         if(this.currentWidget&&this.currentWidget.rootWidget) {
@@ -3244,63 +3380,21 @@ export default Reflux.createStore({
         this.trigger({hasHandle: status});
     },
     updateHistoryRecord: function(historyName) {
-        let getImageList = function(array, list) {
-            var result = [];
-            var count = 0;
-            for (var i = 0; i < list.length; i++) {
-                var item = list[i];
-                if (typeof item == 'string') {
-                    if (item.substr(0, 5) == 'data:') {
-                        count++;
-                        array.push(item);
-                    } else {
-                        if (count) {
-                            result.push(count);
-                            count = 0;
-                        }
-                        result.push(item);
-                    }
-                } else {
-                    var n = item.length;
-                    if (count) {
-                        result.push(count);
-                        count = 0;
-                    }
-                    if (n == 0 || item[0].substr(0, 5) == 'data:') {
-                        result.push(-n);
-                        for (var j = 0; j < n; j++) {
-                            array.push(item[j]);
-                        }
-                    } else {
-                        result.push(item);
-                    }
-                }
-            }
-            if (result.length) {
-                if (count)
-                    result.push(count);
-                return result;
-            } else {
-                return count;
-            }
-        };
         let data = {};
-        let images = [];
         data['stage'] = {};
-        trimTree(stageTree[0].tree);
+
         saveTree(data['stage'], stageTree[0].tree,true);
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
-        data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
+        data['stage']['links'] = stageTree[0].tree.imageList;
 
         if (stageTree.length > 1) {
             data['defs'] = {};
             for (let i = 1; i < stageTree.length; i++) {
                 let name = stageTree[i].name;
                 data['defs'][name] = {};
-                trimTree(stageTree[i].tree);
                 saveTree(data['defs'][name], stageTree[i].tree,true);
                 data['defs'][name]['type'] = bridge.getRendererType(stageTree[i].tree.node);
-                data['defs'][name]['links'] = getImageList(images, stageTree[i].tree.imageList);
+                data['defs'][name]['links'] = stageTree[i].tree.imageList;
             }
         }
 

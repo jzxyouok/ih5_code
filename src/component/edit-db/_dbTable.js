@@ -576,10 +576,10 @@ class DbTable extends React.Component {
                     header.splice(addColumnValue+1, 0, value);
                 }
                 list.map((v,i)=>{
-                    list[i][value] = "";
+                    list[i][inputText] = "";
                 });
                 fkList.map((v,i)=>{
-                    fkList[i][value] = "";
+                    fkList[i][inputText] = "";
                 });
                 //console.log(list);
                 this.setState({
@@ -623,10 +623,10 @@ class DbTable extends React.Component {
                 }
                 else {
                     list.map((v,i)=>{
-                        list[i][value] = "";
+                        list[i][inputText] = "";
                     });
                     fkList.map((v,i)=>{
-                        fkList[i][value] = "";
+                        fkList[i][inputText] = "";
                     });
                     //console.log(list);
                     this.setState({
