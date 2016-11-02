@@ -158,11 +158,11 @@ class FormulaInput extends React.Component {
     }
 
     onFocus(activePatternIndex, e) {
-        if(!this.disabled&&((this.onChangeFocus!=undefined&&this.onChangeFocus()!==false) || this.onChangeFocus===undefined)) {
+        if(!this.disabled&&((this.onChangeFocus!=undefined&&this.onChangeFocus(false)!==false) || this.onChangeFocus===undefined)) {
             if(e){
                 e.stopPropagation();
             }
-            if(this.refs.formulaMode) {
+            if(this.refs.formulaMode&&!this.state.on) {
                 this.setState({
                     on: true
                 }, ()=>{
@@ -171,17 +171,17 @@ class FormulaInput extends React.Component {
                         this.refs.formulaMode.style.width = 'auto';
                         this.refs.formulaMode.style.minWidth = this.minWidth;
                         this.refs.formulaMode.style.overflow = 'visible';
-                        this.onChangeFocus();
+                        this.onChangeFocus(true);
+                        if(activePatternIndex!==undefined&&
+                            activePatternIndex!=null&&
+                            activePatternIndex>=0) {
+                            let focus = 'pattern'+activePatternIndex;
+                            if(this.refs[focus]) {
+                                this.refs[focus].refs.input.focus();
+                            }
+                        }
                     }
                 })
-            }
-            if(activePatternIndex!==undefined&&
-                activePatternIndex!=null&&
-                activePatternIndex>=0) {
-                let focus = 'pattern'+activePatternIndex;
-                if(this.refs[focus]) {
-                    this.refs[focus].refs.input.focus();
-                }
             }
             return true;
         } else {
@@ -198,6 +198,8 @@ class FormulaInput extends React.Component {
                     this.refs.formulaMode.style.cursor = 'pointer';
                     this.refs.formulaMode.style.width = this.minWidth;
                     this.refs.formulaMode.style.overflow = 'hidden';
+                    this.onChangeBlur();
+                } else if (this.refs['valueInput']) {
                     this.onChangeBlur();
                 }
             })
@@ -797,6 +799,7 @@ class FormulaInput extends React.Component {
                                     <Input placeholder={this.props.placeholder?this.props.placeholder:"比较值／对象"} ref={'valueInput'}
                                            value={this.state.value}
                                            disabled={this.disabled}
+                                           onFocus={this.onBlur}
                                            onChange={this.onInputTypeValueChange.bind(this)}/>
                                     <span className="right-icon" />
                                 </div>
