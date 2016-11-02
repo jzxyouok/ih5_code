@@ -742,6 +742,7 @@ function generateJsFunc(etree) {
                   });
                   lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create' + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + JSON.stringify(props) +',' + bottom +')'));
               }
+          } else if (cmd.action.name === 'find') {
               debugger;
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
