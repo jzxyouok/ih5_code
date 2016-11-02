@@ -711,15 +711,38 @@ function generateJsFunc(etree) {
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
           if (cmd.action.name === 'changeValue'||cmd.action.name === 'send') {
-              let type = cmd.action.name === 'changeValue'? 'value': cmd.action.name;
-              if(cmd.action.property&&cmd.action.property.length>0) {
+              let type = cmd.action.name === 'changeValue' ? 'value' : cmd.action.name;
+              if (cmd.action.property && cmd.action.property.length > 0) {
                   cmd.action.property.forEach(v=> {
                       let fValue = formulaGenLine(v.value);
-                      if(fValue !== '') {
+                      if (fValue !== '') {
                           lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], type) + '=' + fValue);
                       }
                   });
               }
+          } else if (cmd.action.name === 'create') {
+              if(cmd.action.property.length>=3) {
+                  let cName = null;
+                  let cId = null;
+                  let props = {};
+                  let bottom = null;
+                  cmd.action.property.forEach((prop,i)=>{
+                      if (i === 0) {
+                          cName = prop.value;
+                      } else if (i === 1) {
+                          cId = prop.value;
+                      } else if (i === cmd.action.property.length-1) {
+                          bottom = prop.value;
+                      } else {
+                          //props 对象的属性 here
+                          if(prop.value) {
+                              props[prop.name] = prop.value;
+                          }
+                      }
+                  });
+                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create' + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + JSON.stringify(props) +',' + bottom +')'));
+              }
+              debugger;
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
