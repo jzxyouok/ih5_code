@@ -20,7 +20,6 @@ const propertyType = {
     TbColor : 15,
     TbFont : 16,
     TdLayout : 17,
-
     DBCons: 18,
     DBOrder: 19,
     Range: 20,
