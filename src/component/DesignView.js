@@ -475,6 +475,7 @@ class DesignView extends React.Component {
                  id='DesignView-Container'
                  ref='container'
                  onWheel={this.scroll}
+                 className={cls({'moveTag':this.state.space})}
             >
                 <div  ref='line_top' id='line_top'></div>
                 <div ref='canvasWraper' className='canvas-wraper' id="canvas-wraper" >

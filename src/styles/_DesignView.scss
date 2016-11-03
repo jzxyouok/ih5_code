@@ -10,6 +10,9 @@ $lineColor:#4AFFFF;
         left: 50%;
         margin-left: -320px;
     }
+  &.moveTag{
+    cursor: move;
+  }
     #line_top{
         width: 100%;
         height: 0;
