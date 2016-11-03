@@ -23,7 +23,7 @@ class PropertyViewSetUp extends React.Component {
         super(props);
         this.state = {
             oKey:props.oKey,
-            object:props.object
+            property:props.property
         };
 
         this.getResult =props.getResult;
@@ -37,7 +37,7 @@ class PropertyViewSetUp extends React.Component {
     componentWillReceiveProps(nextProps){
        this.setState({
            oKey:nextProps.oKey,
-           object:nextProps.object
+           property:nextProps.property
        })
     }
     componentWillUnmount() {
@@ -143,7 +143,7 @@ class PropertyViewSetUp extends React.Component {
     }
 
     getComponent(){
-        let item=this.state.object;
+        let item=this.state.property;
         let style = {};
         let type =item.type;
         let defaultProp =this.getDefaultProp(item);

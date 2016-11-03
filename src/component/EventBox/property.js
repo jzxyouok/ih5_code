@@ -626,7 +626,7 @@ class Property extends React.Component {
                             v1.isProp===true
                             ?<PropertyViewSetUp
                                 oKey={this.state.currentAction.name==='setProps'?this.state.currentObject:null}
-                                object={v1}
+                                property={v1}
                                 getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
                             />
                             :typeComponent(v1.type, this.getProps(v1, i1), v1, i1)
