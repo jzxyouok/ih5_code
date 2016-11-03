@@ -52,20 +52,16 @@ class PropertyViewSetUp extends React.Component {
             disabled: item.readOnly !== undefined,
             onChange:  this.onChangePropDom.bind(this, item)
         };
-
         let node = WidgetStore.getWidgetByKey(this.state.oKey);
-
-        console.log(node,'node');
-
+        //console.log(node,'node');
         let defaultValue=node?node.node[item.name]:'';
-
-
-        //初始化情况下,特殊性处理
+        //defaultProp特殊性处理
         switch(item.type) {
             case propertyType.Select:
                 defaultProp.options = [];
                 //适配
                 if (item.name == 'scaleType') {
+                    defaultValue=item.default;
                     for (var i in  item.options) {
                         defaultProp.options.push(<Option key={item.options[i]} className='select-scaleType'>{i}</Option>);
                     }
@@ -76,7 +72,6 @@ class PropertyViewSetUp extends React.Component {
                 if (item.name == 'originPos') {
                     defaultProp.item = item;
                     defaultValue = item.default;
-
                     let arr = [];
                     for (var i in  item.options) {
                         arr.push(<MenuItem key={item.options[i]}>
@@ -92,9 +87,7 @@ class PropertyViewSetUp extends React.Component {
             default:
                 ;
         }
-
-
-
+        //defaultValue处理
         if(item.value !==undefined){
             defaultValue =item.value;
             //设置之后的特殊处理
@@ -106,8 +99,6 @@ class PropertyViewSetUp extends React.Component {
                      ;
              }
         }
-
-
         defaultProp.value= defaultValue;
         return defaultProp;
     }
@@ -239,10 +230,7 @@ class PropertyViewSetUp extends React.Component {
                     </div>
 
                     <div style={{ width: "58px", marginLeft: "3px", position:"relative"}}>
-                        <Input value={ this.state.tbLineWidth }
-                               onChange={ this.tbLineWidthInput.bind(this) }
-                               onBlur={ this.tbLineWidth.bind(this) }
-                               style={{height:"22px",padding:"0 7px"}} />
+                        <Input style={{height:"22px",padding:"0 7px"}} />
                         <span className="TbSelect-icon" />
                     </div>
                 </div>;
@@ -267,8 +255,6 @@ class PropertyViewSetUp extends React.Component {
 
                     <div style={{ width: "58px", marginLeft: "3px",height:"22px" }}>
                         <Input placeholder={ defaultProp.tbHeight }
-                               onChange={ this.tbHeadHeightInput.bind(this) }
-                               onBlur={ this.tbHeadHeight.bind(this) }
                                style={{height:"22px",padding:"0 7px"}} />
                         <span className="TbColor-icon" />
                     </div>

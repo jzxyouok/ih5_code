@@ -747,9 +747,6 @@ propertyMap['table'] = [
 
     {'name':'rowNum', showName:'行数', default : 0, 'type':propertyType.Integer , group:"tableP", isProperty: true},
     {'name':'header', showName:'列数', default : 0, 'type':propertyType.Integer , group:"tableP", isProperty: true},
-    //{'name':'chooseColumn', showName:'列', type: propertyType.TbSelect , group:"tableP", isProperty: true, default:'全部', tbWidth:'自动',
-    //    options:{'全部': 0}
-    //},
 
     { name: 'showHeader',showName:'表格头部', type: propertyType.Boolean, default: false, group:'tableH', isProperty: true },
     {'name':'head', showName:'头部', default : "", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:"自动" },

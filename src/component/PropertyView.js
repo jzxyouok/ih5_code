@@ -81,7 +81,6 @@ class PropertyView extends React.Component {
                 return <ConInputNumber {...defaultProp}  />;
 
             case propertyType.Number:
-
                 let step=1;
                 if(defaultProp.name=='totalTime'){
                     step=0.1;
@@ -839,7 +838,8 @@ class PropertyView extends React.Component {
                     obj['fontSize'] = 26;
                     WidgetActions['updateProperties'](obj, false, true);
                 }else{
-                    defaultValue='';
+                   // defaultValue='';
+                    defaultValue = node.node[item.name];
                 }
             }
 
@@ -863,7 +863,7 @@ class PropertyView extends React.Component {
                     }
                 }
                 else {
-                    defaultValue = node.props[item.name];
+                     defaultValue = node.props[item.name];
                 }
                 if (item.name == 'alpha') {
                     defaultValue = defaultValue * 100;
@@ -889,7 +889,11 @@ class PropertyView extends React.Component {
                     }
                 }
             } else if( item.type === propertyType.Number){
-                if(item.name=='totalTime'){defaultProp.name=item.name;}
+                if(item.name=='totalTime'){
+                    defaultProp.name=item.name;
+                }else{
+                    defaultProp.value = defaultValue;
+                }
             }else if(item.type ==propertyType.Dropdown ){
                 defaultProp.value = defaultValue;
                 defaultProp.item=item;
