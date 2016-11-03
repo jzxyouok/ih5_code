@@ -923,7 +923,6 @@ function generateJsFunc(etree) {
                       }else {
                           lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value));
                       }
-                      lines.push('console.log(param)')
                   }
               }
           } else if (cmd.action.name === 'insert' || cmd.action.name === 'update') {
@@ -1006,7 +1005,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-  //  console.log(output);
+  console.log(output);
   return output;
 }
 
