@@ -295,6 +295,9 @@ class TimelineView extends React.Component {
 			this.state.currentTrack.node['data'] = data;
 			this.forceUpdate();
             TimelineAction['ChangeKeyframe'](false);
+
+            let historyName = "添加关键帧" + this.state.currentTrack.parent.props.name;
+            WidgetActions['updateHistoryRecord'](historyName);
 		}
 	}
 
@@ -722,7 +725,7 @@ class TimelineView extends React.Component {
                         percentage = { this.state.percentage}
                         multiple = { this.state.multiple}
                         changSwitchState={ this.changSwitchState }
-                        propsNowLayerId = { this.state.nowLayerId }
+                        propsNowLayerId = { this.state.currentTrack !== null ? this.state.currentTrack.parent.key : null }
                         isCurrent={node === this.state.currentTrack} />);
             }
             node.children.map(item => getTracks(item));
