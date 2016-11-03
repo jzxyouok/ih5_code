@@ -1540,6 +1540,18 @@
                             }
                         }
 
+                        .switchMore {
+                            background: #294140;
+                            .cur {
+                                background: #162423;
+                                color: #b5b5b5;
+                            }
+                            li:hover{
+                                color: white;
+                                background: #2e4d4b;
+                            }
+                        }
+
                         .on-off-btn {
                             @include border-radius(11px);
                             position: relative;
