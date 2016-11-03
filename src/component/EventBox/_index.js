@@ -8,6 +8,8 @@ import WidgetStore, {keepType, isCustomizeWidget, dataType}  from '../../stores/
 import WidgetActions from '../../actions/WidgetActions'
 import ComponentPanel from '../ComponentPanel';
 
+import $ from 'jquery';
+
 const objListType = {
     default: 0,
     noEvent: 1,
@@ -29,6 +31,7 @@ class EventBox extends React.Component {
             objListType: objListType.default, //default的时候不显示
         };
         this.eventData = eventTempData;
+        this.totalWidth = 0;
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.keepBtn = this.keepBtn.bind(this);
@@ -43,7 +46,7 @@ class EventBox extends React.Component {
         this.onBlur = this.onBlur.bind(this);
 
         this.getObjIcon = this.getObjIcon.bind(this);
-        // this.getTitleMaxWidth = this.getTitleMaxWidth.bind(this);
+        this.setTitleMaxWidth = this.setTitleMaxWidth.bind(this);
     }
 
     componentDidMount() {
@@ -64,6 +67,13 @@ class EventBox extends React.Component {
         if(widget.initTree){
             this.setState({
                 treeList: widget.initTree
+            }, ()=>{
+                if(this.state.treeList&&this.state.treeList.length>0) {
+                    this.totalWidth = 0;
+                    this.state.treeList.forEach((v,i)=>{
+                        this.setTitleMaxWidth(v,i);
+                    });
+                }
             });
         }
         if(widget.redrawEventTreeList) {
@@ -247,15 +257,26 @@ class EventBox extends React.Component {
         return {picIsImage:picIsImage, pic:pic};
     }
 
-    // getTitleMaxWidth () {
-    //     let maxWidth = 0;
-    //     if(this.refs['eventBox']&&this.refs['eventBox'].style.width === '740px') {
-    //         maxWidth = 572/this.state.treeList.length;
-    //     } else if (this.refs['eventBox']&&this.refs['eventBox'].style.width === '820px') {
-    //         maxWidth = 572/this.state.treeList.length;
-    //     }
-    //     return maxWidth;
-    // }
+    setTitleMaxWidth (v,i) {
+        let name = v.tree.props.name+'事件';
+        let sensor = $('<span style="font-size: 14px;">'+ name +'</span>').css({display: 'none'});
+        $('body').append(sensor);
+        let width = sensor.width();
+        sensor.remove();
+        if(i!==0) {
+            this.totalWidth += width+25;
+        } else {
+            this.totalWidth += width+24;
+        }
+        if(i===this.state.treeList.length-1) {
+            if(this.totalWidth>=572) {
+                let avg = 572/this.state.treeList.length;
+                this.state.treeList.forEach((v1,i1)=>{
+                    this.refs['EBTitle'+i1].style.maxWidth = avg+'px';
+                });
+            }
+        }
+    }
 
     render() {
         let currentObj = WidgetStore.getWidgetByKey(this.state.activeKey);
@@ -274,6 +295,7 @@ class EventBox extends React.Component {
                                 return (<div className={$class('EB--title-name',
                                         {'active':currentObj&&currentObj.rootWidget&&currentObj.rootWidget.key === v.tree.key})}
                                               onClick={this.chooseEventBtn.bind(this, v.tree.key, v.tree)}
+                                              ref={'EBTitle'+i}
                                               key={i}>
                                               <div className={$class("name-wrap", {'name-wrap-border':i!==0})}>
                                                   <span className="name">{name}</span>

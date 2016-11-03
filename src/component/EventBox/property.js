@@ -510,7 +510,7 @@ class Property extends React.Component {
                 let top = document.getElementById('EBContentLayer').scrollTop;
                 document.getElementById('EventBox').style.top = -top+37+'px';
             }
-            this.refs.pProperty.style.overflow = 'visible';
+            this.refs['pProperty'].style.overflow = 'visible';
             document.getElementById('EventBox').style.overflow = 'visible';
             document.getElementById('EventBox').style.zIndex = 51;
             document.getElementById('EBContentLayer').style.overflow = 'visible';
@@ -520,7 +520,7 @@ class Property extends React.Component {
     }
 
     onFormulaInputBlur() {
-        this.refs.pProperty.style.overflow = 'hidden';
+        this.refs['pProperty'].style.overflow = 'hidden';
         document.getElementById('EventBox').style.overflow = 'hidden';
         document.getElementById('EBContentLayer').style.overflow = 'scroll';
         document.getElementById('EventBox').style.top = '37px';
