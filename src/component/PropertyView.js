@@ -81,6 +81,11 @@ class PropertyView extends React.Component {
                 return <ConInputNumber {...defaultProp}  />;
 
             case propertyType.Number:
+
+                let step=1;
+                if(defaultProp.name=='totalTime'){
+                    step=0.1;
+                }
                 if(defaultProp.tbCome == "tbS"){
                     style['width'] = "58px";
                     style['height'] = "22px";
@@ -90,7 +95,7 @@ class PropertyView extends React.Component {
                     return <ConInputNumber  {...defaultData} style={style} />;
                 }
                 else {
-                    return <ConInputNumber  step={0.1} {...defaultProp}  />;
+                    return <ConInputNumber  step={step} {...defaultProp}  />;
                 }
             case propertyType.Percentage:
                 // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
@@ -683,7 +688,7 @@ class PropertyView extends React.Component {
     getFields() {
         let node = this.selectNode;
 
-        // console.log(node);
+         //console.log(node);
 
         if (!node)  return null;
 
@@ -836,7 +841,9 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue='';
                 }
-            } else {
+            }
+
+            else {
                 if(className == "table"){
                     if(item.name == "rowNum"){
                         defaultValue = node.props[item.name] ? node.props[item.name] : 0;
@@ -881,6 +888,8 @@ class PropertyView extends React.Component {
                         })
                     }
                 }
+            } else if( item.type === propertyType.Number){
+                if(item.name=='totalTime'){defaultProp.name=item.name;}
             }else if(item.type ==propertyType.Dropdown ){
                 defaultProp.value = defaultValue;
                 defaultProp.item=item;
