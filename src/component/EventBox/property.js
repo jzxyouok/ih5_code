@@ -13,6 +13,7 @@ import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
 import { DBConsComponent } from '../PropertyView/DBConsComponent';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
+import  $ from 'jquery';
 
 
 const Option = Select.Option;
@@ -105,6 +106,9 @@ class Property extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         this.onStatusChange(WidgetStore.getAllWidgets());
+        $('.pp--list input,.pp--list textarea').focus(function () {
+             $(this).select();
+        });
     }
 
     componentWillUnmount() {
@@ -212,6 +216,9 @@ class Property extends React.Component {
     }
 
     setDefaultMappingProps(className, list, type) {
+        if(className=='table'){
+            className='tableForSet';
+        }
         let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
         propertyMap[className].map((v,i)=>{
             if(v.isProperty&& v.name !='id'){
