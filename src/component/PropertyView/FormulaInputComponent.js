@@ -54,6 +54,7 @@ class FormulaInput extends React.Component {
         this.onChangeBlur = props.onBlur;
 
         this.allowChange = true;
+        this.objCanDropDown = true;
 
         this.onStatusChange = this.onStatusChange.bind(this);
 
@@ -88,6 +89,10 @@ class FormulaInput extends React.Component {
         this.onLeftKeyAction = this.onLeftKeyAction.bind(this);
         this.onRightKeyAction = this.onRightKeyAction.bind(this);
         this.onDeleteKeyDownAction = this.onDeleteKeyDownAction.bind(this);
+
+        this.onValueWidgetInputFocus = this.onValueWidgetInputFocus.bind(this);
+        this.onValueWidgetInputBlur = this.onValueWidgetInputBlur.bind(this);
+        this.onValueWidgetInputEnter = this.onValueWidgetInputEnter.bind(this);
     }
 
     componentDidMount() {
@@ -157,6 +162,7 @@ class FormulaInput extends React.Component {
         }
     }
 
+    // formula mode
     onFocus(activePatternIndex, e) {
         if(!this.disabled&&((this.onChangeFocus!=undefined&&this.onChangeFocus(false)!==false) || this.onChangeFocus===undefined)) {
             if(e){
@@ -206,11 +212,17 @@ class FormulaInput extends React.Component {
         }
     }
 
-    // formula mode
+
     onObjectVisibleChange(flag){
-        this.setState({
-            objectDropDownVisible: flag
-        })
+        if(!this.objCanDropDown) {
+            this.setState({
+                objectDropDownVisible: false
+            })
+        } else {
+            this.setState({
+                objectDropDownVisible: flag
+            })
+        }
     }
 
     onObjectSelect(target, e){
@@ -588,6 +600,24 @@ class FormulaInput extends React.Component {
         });
     }
 
+    onValueWidgetInputFocus(e) {
+        this.objCanDropDown = false;
+        this.onBlur();
+        if(this.state.objectDropDownVisible) {
+            this.setState({
+                objectDropDownVisible: false
+            })
+        }
+    }
+
+    onValueWidgetInputBlur(e){
+        this.objCanDropDown = true;
+    }
+
+    onValueWidgetInputEnter(e) {
+        this.refs['valueInput'].refs.input.blur();
+    }
+
     render() {
         let objectMenuItem = (v1,i1)=>{
             return  <MenuItem key={i1} object={v1}>{v1.props.name}</MenuItem>
@@ -799,7 +829,9 @@ class FormulaInput extends React.Component {
                                     <Input placeholder={this.props.placeholder?this.props.placeholder:"比较值／对象"} ref={'valueInput'}
                                            value={this.state.value}
                                            disabled={this.disabled}
-                                           onFocus={this.onBlur}
+                                           onFocus={this.onValueWidgetInputFocus}
+                                           onBlur={this.onValueWidgetInputBlur}
+                                           onPressEnter={this.onValueWidgetInputEnter}
                                            onChange={this.onInputTypeValueChange.bind(this)}/>
                                     <span className="right-icon" />
                                 </div>

@@ -13,6 +13,7 @@ import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
 import { DBConsComponent } from '../PropertyView/DBConsComponent';
 import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
 import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
+import  $ from 'jquery';
 
 
 const Option = Select.Option;
@@ -105,6 +106,9 @@ class Property extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         this.onStatusChange(WidgetStore.getAllWidgets());
+        $('.pp--list input,.pp--list textarea').focus(function () {
+             $(this).select();
+        });
     }
 
     componentWillUnmount() {
@@ -212,6 +216,10 @@ class Property extends React.Component {
     }
 
     setDefaultMappingProps(className, list, type) {
+        if(className=='table'){
+            className='tableForSet';
+        }
+        let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
         propertyMap[className].map((v,i)=>{
             if(v.isProperty&& v.name !='id'){
                 let vObj=JSON.parse(JSON.stringify(v));
@@ -221,6 +229,9 @@ class Property extends React.Component {
                     vObj.name='width';
                 }else if(v.name=='scaleY') {
                     vObj.name = 'height';
+                }
+                if(formulaInputType.indexOf(vObj.name)>=0) {
+                    vObj.type = propertyType.FormulaInput;
                 }
                 if(v.name!='initVisible') {
                     switch (type) {
@@ -499,7 +510,7 @@ class Property extends React.Component {
                 let top = document.getElementById('EBContentLayer').scrollTop;
                 document.getElementById('EventBox').style.top = -top+37+'px';
             }
-            this.refs.pProperty.style.overflow = 'visible';
+            this.refs['pProperty'].style.overflow = 'visible';
             document.getElementById('EventBox').style.overflow = 'visible';
             document.getElementById('EventBox').style.zIndex = 51;
             document.getElementById('EBContentLayer').style.overflow = 'visible';
@@ -509,7 +520,7 @@ class Property extends React.Component {
     }
 
     onFormulaInputBlur() {
-        this.refs.pProperty.style.overflow = 'hidden';
+        this.refs['pProperty'].style.overflow = 'hidden';
         document.getElementById('EventBox').style.overflow = 'hidden';
         document.getElementById('EBContentLayer').style.overflow = 'scroll';
         document.getElementById('EventBox').style.top = '37px';

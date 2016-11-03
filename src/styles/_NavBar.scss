@@ -904,9 +904,8 @@
                 background-position: -280px 0;
                 &:hover{ background-position: -280px -40px; }
                 &:active{ background-position: -280px -80px; }
-                
                 &.active{
-                    background-position: -160px 0 ;
+                    background-position: -160px -40px;
                     &:hover{ background-position: -160px -40px; }
                     &:active{ background-position: -160px -80px; }
                 }

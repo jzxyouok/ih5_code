@@ -251,10 +251,12 @@ propertyMap['slidetimer'] = [
     ...propertyMap['box'],
     { addProvidesRecursive: widgetFlags.Timer, addProvides: widgetFlags.Container},
     { name: 'fillColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
-    { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
-    { name: 'vertical', type: propertyType.Boolean,group:'tools', default: false, isProperty: true },
-    { name: 'sliderScale', type: propertyType.Number,group:'tools', default: 1, isProperty: true},
-    { name: 'totalTime',showName:'总时长', type: propertyType.Number, group:'tools',default: 10, isProperty: true}
+
+    { name: 'totalTime',showName:'总时长', type: propertyType.Number, group:'tools',default: 10, isProperty: true},
+    { name: 'vertical',showName:'滑动方向', type: propertyType.Select,group:'tools', default: '垂直',options:{'垂直':true,'水平':false}, isProperty: true },
+    { name: 'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1, isProperty: true},
+    { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true}
+
 ];
 propertyMap['html'] = [
     ...propertyMap['box'],
@@ -302,7 +304,30 @@ propertyMap['path'] = [
     { name: 'path',showName:'路径', type: propertyType.String, default: '', isProperty: false }
 ];
 propertyMap['container'] = [
-    ...propertyMap['box'],
+    ...propertyMap['widget'],
+    { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
+    { name: 'positionX',showName:'X', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'positionY',showName:'Y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position', isProperty: true },
+    { name: 'scaleY',showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
+    { name: 'keepRatio',showName:'等比缩放', type: propertyType.Boolean, default:false, isProperty: false },
+ //   { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
+    { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
+    { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
+    { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
+    { name: 'click', showName:'点击', isEvent: true, info:'{globalX, globalY}'},
+    { name: 'touchDown', showName:'手指按下', isEvent: true, info:['globalX','globalY']},
+    { name: 'touchUp', showName:'手指松开', isEvent: true, info:['globalX','globalY']},
+    { name: 'swipeLeft', showName:'向左滑动', isEvent: true },
+    { name: 'swipeRight', showName:'向右滑动', isEvent: true },
+    { name: 'swipeUp',  showName:'向上滑动', isEvent: true },
+    { name: 'swipeDown', showName:'向下滑动', isEvent: true },
+    { name: 'show', showName:'显示', isEvent: true },
+    { name: 'hide', showName:'隐藏', isEvent: true },
+    { name: 'toggleVisible', showName:'交替显示', isFunc: true },
+    { name: 'hideSibling', showName:'隐藏同层控件', isFunc: true },
+    { name: 'show', showName:'显示', isFunc: true },
+    { name: 'hide', showName:'隐藏', isFunc: true },
     { addProvides: widgetFlags.Container},
     { name: 'create', showName:'创建对象', info:'(class,id,props,bottom)',
         property:[
@@ -311,6 +336,9 @@ propertyMap['container'] = [
             {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
         ], isFunc: true }
 ];
+
+
+
 propertyMap['canvas'] = [
     ...propertyMap['container'],
     { addRequires: widgetFlags.Root | widgetFlags.DomOnly},
@@ -745,14 +773,11 @@ propertyMap['table'] = [
     { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
 
 
-    {'name':'rowNum', showName:'行数', default : 0, 'type':propertyType.Integer , group:"tableP", isProperty: true},
-    {'name':'header', showName:'列数', default : 0, 'type':propertyType.Integer , group:"tableP", isProperty: true},
-    //{'name':'chooseColumn', showName:'列', type: propertyType.TbSelect , group:"tableP", isProperty: true, default:'全部', tbWidth:'自动',
-    //    options:{'全部': 0}
-    //},
+    {name:'rowNum', showName:'行数', default : 0, type:propertyType.Integer , group:"tableP", isProperty: true},
+    {name:'header', showName:'列数', default : 0, type:propertyType.Integer , group:"tableP", isProperty: true},
 
     { name: 'showHeader',showName:'表格头部', type: propertyType.Boolean, default: false, group:'tableH', isProperty: true },
-    {'name':'head', showName:'头部', default : "", 'type':propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:"自动" },
+    { name:'head', showName:'头部', default : "", type:propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:"自动" },
     { name: 'headerFontFamily',showName:'头部字体', type: propertyType.Select,group:'tableH', default: '选择字体', isProperty: true, tbCome:"tbF" },
     { name: 'headerFontSize',showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
     { name: 'headerFontFill',showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
@@ -761,7 +786,7 @@ propertyMap['table'] = [
     { name: 'fillColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '', isProperty: true },
     { name: 'altColor',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '', isProperty: true },
 
-    //{ name: 'tdLayout',showName:'网格布局', type: propertyType.TdLayout,group:'tableW', default: [], isProperty: true },
+
     { name: 'lineColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', isProperty: true , tbCome:"tbF"},
     { name: 'lineWidth',showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', isProperty: true , tbCome:"tbS"},
 
@@ -770,10 +795,12 @@ propertyMap['table'] = [
     { name: 'fontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
 
-    { name: 'getResult', showName:'获取表格数据', isFunc: true, info:'(pageNum)',
-        property:[
-            {'name':'pageNum', showName:'页数', 'value':null, 'type':propertyType.Integer},
-        ]},
+    {
+        name: 'getResult', showName: '获取表格数据', isFunc: true, info: '(pageNum)',
+        property: [
+            {'name': 'pageNum', showName: '页数', 'value': null, 'type': propertyType.Integer},
+        ]
+    },
     { name: 'nextResult', showName:'获取下一页数据', isFunc: true},
     { name: 'prevResult', showName:'获取上一页数据', isFunc: true},
 
@@ -791,6 +818,51 @@ propertyMap['table'] = [
     //{ name: 'fontFamily', type: propertyType.String, default: '', group:'cell', isProperty: true },
     //{ name: 'fontFill', type: propertyType.Color, default: '#000000', group:'cell', isProperty: true },
     //{ name: 'altColor', type: propertyType.Color, default: '', group:'display', group:'cell', isProperty: true },
+];
+
+
+propertyMap['tableForSet'] = [
+    ...propertyMap['widget'],
+    { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
+    { name: 'positionX',showName:'X', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
+    { name: 'positionY',showName:'Y', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
+    { name: 'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position', isProperty: true },
+    { name: 'scaleY',showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
+    { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
+    { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
+
+
+    {name:'rowNum', showName:'行数', default : 0, type:propertyType.Integer , group:"tableP", isProperty: true},
+    {name:'header', showName:'列数', default : 0, type:propertyType.Integer , group:"tableP", isProperty: true},
+
+    // { name: 'showHeader',showName:'表格头部', type: propertyType.Boolean, default: false, group:'tableH', isProperty: true },
+
+    { name:'head', showName:'头部颜色', default : "", type:propertyType.TbColor , group:"tableH", isProperty: true, tbHeight:"自动" },
+    { name: 'headerFontFamily',showName:'头部字体', type: propertyType.Select,group:'tableH', default: '选择字体', isProperty: true, tbCome:"tbF" },
+    { name: 'headerFontSize',showName:'头部字体大小', type: propertyType.Number,group:'tableH', default: 24, isProperty: true, tbCome:"tbS" },
+    { name: 'headerFontFill',showName:'头部文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800', isProperty: true },
+
+    { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
+    { name: 'fillColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '', isProperty: true },
+    { name: 'altColor',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '', isProperty: true },
+
+
+    { name: 'lineColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', isProperty: true , tbCome:"tbF"},
+    { name: 'lineWidth',showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', isProperty: true , tbCome:"tbS"},
+
+    { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true, tbCome:"tbF" },
+    { name: 'fontSize',showName:'字体大小', type: propertyType.Number,group:'tools', default: 24, isProperty: true, tbCome:"tbS" },
+    { name: 'fontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '', isProperty: true },
+    { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
+
+    {
+        name: 'getResult', showName: '获取表格数据', isFunc: true, info: '(pageNum)',
+        property: [
+            {'name': 'pageNum', showName: '页数', 'value': null, 'type': propertyType.Integer},
+        ]
+    },
+    { name: 'nextResult', showName:'获取下一页数据', isFunc: true},
+    { name: 'prevResult', showName:'获取上一页数据', isFunc: true}
 ];
 
 for (var n in propertyMap) {

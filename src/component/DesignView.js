@@ -1,5 +1,5 @@
 import React from 'react';
-
+import cls from 'classnames';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 
@@ -8,7 +8,8 @@ class DesignView extends React.Component {
     constructor(props) {
         super(props);
         this.state={
-
+            space:false,
+            isDown:false
         };
 
         this.count=0;
@@ -23,9 +24,17 @@ class DesignView extends React.Component {
         this.stageZoomTop=0;
         this.stageZoomLeft=0;
         this.keyboard=false;
-
+      
+        this.canvasObj={
+            subW:null,
+            subH:null,
+            canvasWraper:null,
+            oCanvasDom:null
+        };
+        
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
         this.onresize=this.onresize.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
@@ -34,6 +43,9 @@ class DesignView extends React.Component {
         this.mouseDown_left = this.mouseDown_left.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
+        this.canvasMousedown = this.canvasMousedown.bind(this);
+        this.canvasMouseMove = this.canvasMouseMove.bind(this);
+        this.canvasMouseUp = this.canvasMouseUp.bind(this);
     }
 
     componentDidMount() {
@@ -42,21 +54,28 @@ class DesignView extends React.Component {
         window.onresize=this.onresize;
         this.setRuler(6,10);  //设置基准线
         document.body.addEventListener('keydown', this.onKeyScroll);
+        document.body.addEventListener('keyup', this.onKeyUp);
         document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown_top);
         document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);
         document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
         document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
+        document.getElementById('canvas-wraper').addEventListener('mousedown',this.canvasMousedown);
+        document.getElementById('canvas-wraper').addEventListener('mousemove',this.canvasMouseMove);
+        document.getElementById('canvas-wraper').addEventListener('mouseup',this.canvasMouseUp);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
         window.onresize = null;
         document.body.removeEventListener('keydown', this.onKeyScroll);
+        document.body.removeEventListener('keyup', this.onKeyUp);
         document.getElementById('h_ruler').removeEventListener('mousedown', this.mouseDown_top);
         document.getElementById('v_ruler').removeEventListener('mousedown', this.mouseDown_left);
         document.getElementById('DesignView-Container').removeEventListener('mousemove', this.mouseMove);
         document.getElementById('DesignView-Container').removeEventListener('mouseup', this.mouseUp);
-
+        document.getElementById('canvas-wraper').removeEventListener('mousedown',this.canvasMousedown);
+        document.getElementById('canvas-wraper').removeEventListener('mousemove',this.canvasMouseMove);
+        document.getElementById('canvas-wraper').removeEventListener('mouseup',this.canvasMouseUp);
     }
 
     onStatusChange(widget) {
@@ -66,8 +85,13 @@ class DesignView extends React.Component {
             if(widget.selectWidget.className == "root" && widget.selectWidget.props.name == "stage") {
                 this.rootWidget = widget.selectWidget;
             }
-            if(widget.selectWidget.props.rulerArr &&( this.selectNode.props.isShow ||  this.selectNode.props.isShow===undefined)){  //isShow没有定义时和确定显示的时候才执行
+            //isShow没有定义时和确定显示的时候才执行
+
+
+            if(widget.selectWidget.props.rulerArr &&( this.selectNode.props.isShow ||  this.selectNode.props.isShow===undefined)){
                 this.drawLine(widget.selectWidget.props.rulerArr);
+            }else if(widget.selectWidget.props.rulerArr === undefined){
+                this.drawLine([]);
             }
             setTimeout(function () {
                 //点击舞台后,整个页面会渲染一遍,导致浏览器失焦,导致ctrl+s的时候不能阻止默认的保存事件,导致要写下面无奈的代码
@@ -156,6 +180,16 @@ class DesignView extends React.Component {
         });
     }
 
+    onKeyUp(event){
+        //空格键
+        if( event.keyCode == 32){
+
+            this.setState({
+                space:false
+            });
+        }
+    }
+
     onKeyScroll(event) {
         if(this.rootWidget.className !=='root') {
             return;
@@ -175,7 +209,9 @@ class DesignView extends React.Component {
                 let left = window.getComputedStyle(this.refs.view, null).getPropertyValue("left");
                 let l = parseFloat(left.replace(/(px)?/, ''));
                 l += STEP * (isEvent(37) ? -1 : 1);
-                this.refs.canvasWraper.style.left = l + 'px';
+                let subLeft =this.refs.canvasWraper.offsetLeft;
+
+                this.refs.canvasWraper.style.left =subLeft + l + 'px';
 
                 this.aODiv.map(item => {
                     if (item.oDiv.whichDrag == 'left') {
@@ -204,6 +240,13 @@ class DesignView extends React.Component {
 
                 return;
             }
+        }
+
+        //空格键
+        if( event.keyCode == 32){
+            this.setState({
+                space:true
+            });
         }
     }
 
@@ -243,7 +286,6 @@ class DesignView extends React.Component {
         //设置主对齐线
         this.refs.line_top.style.top=(offsetTop)+'px';
         this.refs.line_left.style.left=this.stageZoomLeft+'px';
-
 
         this.aODiv=[];
 
@@ -295,6 +337,50 @@ class DesignView extends React.Component {
         });
 
     }
+
+
+    canvasMousedown(e){
+        if(this.state.space){
+            event.preventDefault();
+            let oCanvasWraper = this.refs.canvasWraper;
+            let oCanvasDom =this.refs.view;
+            this.canvasObj.canvasWraper = oCanvasWraper;
+            this.canvasObj.oCanvasDom = oCanvasDom;
+
+
+            this.setState({
+                isDown:true
+            });
+            this.canvasObj.subW =e.pageX-oCanvasWraper.offsetLeft;
+            this.canvasObj.subH =e.pageY-oCanvasDom.offsetTop;
+
+        }
+    }
+
+    canvasMouseMove(e){
+        if(this.state.space && this.state.isDown){
+            event.preventDefault();
+
+              this.canvasObj.canvasWraper.style.left =(e.pageX-this.canvasObj.subW+320)+'px';
+             this.canvasObj.oCanvasDom.style.top =(e.pageY-this.canvasObj.subH)+'px';
+
+             this.drawLine(this.aODiv);
+        }
+    }
+
+   canvasMouseUp(e){
+           event.preventDefault();
+           if (this.state.isDown) {
+               this.setState({
+                   isDown:false
+               });
+               this.canvasObj.canvasWraper = null;
+               this.canvasObj.oCanvasDom = null;
+           }
+       //参考线
+      // WidgetActions['setRulerLineBtn'](false);
+    }
+    
 
     mouseDown_top(event){
             event.stopPropagation();
@@ -385,12 +471,13 @@ class DesignView extends React.Component {
         this.stageZoomChange();
 
         return (
-            <div className='f--hlt'
+            <div
                  id='DesignView-Container'
                  ref='container'
-                 onWheel={this.scroll}>
+                 onWheel={this.scroll}
+            >
                 <div  ref='line_top' id='line_top'></div>
-                <div ref='canvasWraper' className='canvas-wraper' >
+                <div ref='canvasWraper' className='canvas-wraper' id="canvas-wraper" >
                     <div  ref='line_left'  id='line_left'></div>
                     <div id='canvas-dom'
                          className="DesignView"

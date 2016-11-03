@@ -81,7 +81,6 @@ class PropertyView extends React.Component {
                 return <ConInputNumber {...defaultProp}  />;
 
             case propertyType.Number:
-
                 let step=1;
                 if(defaultProp.name=='totalTime'){
                     step=0.1;
@@ -379,7 +378,12 @@ class PropertyView extends React.Component {
                     } else if (prop.name == 'headerFontFamily') {
                         this.selectNode.props.headerFontFamily = this.getFontDefault(value);
                         v = value;
-                    } else if (prop.name == 'type') {
+                    }
+                    else  if(prop.name=='vertical') {
+                        this.selectNode.props[prop.name] = value=='true'?'垂直':'水平';
+                        v = value;
+                    }
+                    else if (prop.name == 'type') {
                         this.selectNode.props.type = this.getScaleTypeDefault(value, prop.options);
                         //属于第一组则设置初始隐藏,否则设置隐藏
                         this.selectNode.props.initHide = false;
@@ -425,6 +429,7 @@ class PropertyView extends React.Component {
                             v = value;
                         }
                     }
+
                     else {
                         v = parseInt(value);
                     }
@@ -799,9 +804,11 @@ class PropertyView extends React.Component {
                 }else if( item.name=='headerFontFamily'  && node.props.headerFontFamily){
                     defaultValue = node.props.headerFontFamily;
                 }
+                else if(item.name=='vertical' && node.props[item.name] ){
+                    defaultValue = node.props[item.name];
+                }
                 else if(item.name=='chooseColumn'){
                     defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn  + ' 列';
-                    //console.log(this.state.tbWhichColumn,defaultValue);
                 }
             } else if(item.type === propertyType.Boolean2 ){
                 if(node.props[item.name]===undefined){
@@ -839,7 +846,8 @@ class PropertyView extends React.Component {
                     obj['fontSize'] = 26;
                     WidgetActions['updateProperties'](obj, false, true);
                 }else{
-                    defaultValue='';
+                   // defaultValue='';
+                    defaultValue = node.node[item.name];
                 }
             }
 
@@ -863,7 +871,7 @@ class PropertyView extends React.Component {
                     }
                 }
                 else {
-                    defaultValue = node.props[item.name];
+                     defaultValue = node.props[item.name];
                 }
                 if (item.name == 'alpha') {
                     defaultValue = defaultValue * 100;
@@ -889,7 +897,11 @@ class PropertyView extends React.Component {
                     }
                 }
             } else if( item.type === propertyType.Number){
-                if(item.name=='totalTime'){defaultProp.name=item.name;}
+                if(item.name=='totalTime'){
+                    defaultProp.name=item.name;
+                }else{
+                    defaultProp.value = defaultValue;
+                }
             }else if(item.type ==propertyType.Dropdown ){
                 defaultProp.value = defaultValue;
                 defaultProp.item=item;
@@ -997,7 +1009,10 @@ class PropertyView extends React.Component {
                 hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','行数','列数','头部字体','图表字体大小','字体','网格颜色','网格大小'].indexOf(item.showName) >= 0;
             }
             else if(className == "timer"){
-                hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','自动播放','循环播放'].indexOf(item.showName) >= 0;
+                hasTwin = ['X','Y','W','H','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','自动播放','循环播放'].indexOf(item.showName) >= 0;
+            }
+            else if(className == "container" || className == "canvas"){
+                hasTwin = ['X','Y','W','H','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;
             }
             else {
                 hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;

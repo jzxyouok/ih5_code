@@ -53,17 +53,17 @@ class PropertyViewSetUp extends React.Component {
             disabled: item.readOnly !== undefined,
             onChange:  this.onChangePropDom.bind(this, item)
         };
-
         let node = WidgetStore.getWidgetByKey(this.state.oKey);
 
+        //console.log(node,'node');
         let defaultValue=node?node.node[item.name]:'';
-
-        //初始化情况下,特殊性处理
+        //defaultProp特殊性处理
         switch(item.type) {
             case propertyType.Select:
                 defaultProp.options = [];
                 //适配
                 if (item.name == 'scaleType') {
+                    defaultValue=item.default;
                     for (var i in  item.options) {
                         defaultProp.options.push(<Option key={item.options[i]} className='select-scaleType'>{i}</Option>);
                     }
@@ -74,7 +74,6 @@ class PropertyViewSetUp extends React.Component {
                 if (item.name == 'originPos') {
                     defaultProp.item = item;
                     defaultValue = item.default;
-
                     let arr = [];
                     for (var i in  item.options) {
                         arr.push(<MenuItem key={item.options[i]}>
@@ -86,6 +85,12 @@ class PropertyViewSetUp extends React.Component {
                 break;
             case propertyType.Percentage:
                 defaultValue = defaultValue * 100;
+                break;
+            case propertyType.Integer:
+                if(item.name=='header') {
+                   let arr = defaultValue.split(',');
+                    defaultValue =arr.length;
+                }
                 break;
             case propertyType.FormulaInput:
                 defaultValue = {type: 1, value: defaultValue};
@@ -110,7 +115,6 @@ class PropertyViewSetUp extends React.Component {
                      break;
              }
         }
-
         defaultProp.value= defaultValue;
         return defaultProp;
     }
@@ -199,6 +203,8 @@ class PropertyViewSetUp extends React.Component {
                             if (!dom.jscolor) {
                                 dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                 dom.jscolor.onFineChange = defaultProp.onChange;
+                                dom.jscolor.backgroundColor='#234e4b';
+
                             }
                         }
                     }} {...defaultProp}   className='color-input' />
@@ -214,6 +220,8 @@ class PropertyViewSetUp extends React.Component {
                         if (!dom.jscolor) {
                             dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                             dom.jscolor.onFineChange = defaultProp.onChange;
+                            dom.jscolor.backgroundColor='#234e4b';
+
                         }
                     }
                 }}  {...defaultData}   /> ;
@@ -242,17 +250,13 @@ class PropertyViewSetUp extends React.Component {
                     </div>
 
                     <div style={{ width: "58px", marginLeft: "3px", position:"relative"}}>
-                        <Input value={ this.state.tbLineWidth }
-                               onChange={ this.tbLineWidthInput.bind(this) }
-                               onBlur={ this.tbLineWidth.bind(this) }
-                               style={{height:"22px",padding:"0 7px"}} />
+                        <Input style={{height:"22px",padding:"0 7px"}} />
                         <span className="TbSelect-icon" />
                     </div>
                 </div>;
 
             case propertyType.TbColor :
-                return  <div className="f--hlc">
-                    <div className="flex-1">
+                return
                         <Input
                             ref={(inputDom) => {
                                 if (inputDom) {
@@ -260,22 +264,14 @@ class PropertyViewSetUp extends React.Component {
                                     if (!dom.jscolor) {
                                         dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                         dom.jscolor.onFineChange = defaultProp.onChange;
+                                        dom.jscolor.backgroundColor='#234e4b';
                                     }
                                 }
                             }}
                             placeholder={defaultProp.placeholder}
-                            style={{height:"22px",padding:"0 7px", position:"relative"}}
+                            style={{height:"22px",width:'142px',padding:"0 7px", position:"relative"}}
                             className='color-input' />
-                    </div>
 
-                    <div style={{ width: "58px", marginLeft: "3px",height:"22px" }}>
-                        <Input placeholder={ defaultProp.tbHeight }
-                               onChange={ this.tbHeadHeightInput.bind(this) }
-                               onBlur={ this.tbHeadHeight.bind(this) }
-                               style={{height:"22px",padding:"0 7px"}} />
-                        <span className="TbColor-icon" />
-                    </div>
-                </div>;
             case propertyType.TdLayout :
                 return  <div className="f--hlc TdLayout">
                     <span className={cls({"active": defaultProp.placeholder.indexOf(1) >=0 })} />
@@ -288,6 +284,7 @@ class PropertyViewSetUp extends React.Component {
             case propertyType.FormulaInput:
                 return <FormulaInput containerId={this.props.propertyId}
                                      disabled={!this.props.enable}
+                                     minWidth="142px"
                                      objectList={this.props.objectList}
                                      onFocus={this.props.onFInputFocus}
                                      onBlur={this.props.onFInputBlur}
