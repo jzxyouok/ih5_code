@@ -1246,6 +1246,9 @@ function saveTree(data, node, saveKey) {
                                             value: [],
                                         }
                                     };
+                                    if(v.isProp) {
+                                        temp.isProp = v.isProp;
+                                    }
                                     temp.value.value = dealWithFormulaObj(v.value.value, saveKey);
                                     property.push(temp);
                                 } else {

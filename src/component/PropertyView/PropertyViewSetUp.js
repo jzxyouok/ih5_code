@@ -310,7 +310,7 @@ class PropertyViewSetUp extends React.Component {
     }
 
     render() {
-        return <div>{this.getComponent()}</div>
+        return <div className='propertySet'>{this.getComponent()}</div>
     }
 }
 
