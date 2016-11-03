@@ -687,7 +687,6 @@ function generateJsFunc(etree) {
           let reg = new RegExp('^' + s + '\\b|([^.])\\b' + s + '\\b', 'g');
           value = value.replace(reg, '$1Math.' + s);
       });
-      console.log(value);
       return value;
   };
 
