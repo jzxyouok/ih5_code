@@ -219,15 +219,19 @@ class Property extends React.Component {
         if(className=='table'){
             className='tableForSet';
         }
+        let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
         propertyMap[className].map((v,i)=>{
             if(v.isProperty&& v.name !='id'){
                 let vObj=JSON.parse(JSON.stringify(v));
+                (delete vObj.isProperty);
                 vObj.isProp=true;
                 if(vObj.name=='scaleX'){
                     vObj.name='width';
                 }else if(v.name=='scaleY') {
                     vObj.name = 'height';
-                    // vObj.type = propertyType.FormulaInput;
+                }
+                if(formulaInputType.indexOf(vObj.name)>=0) {
+                    vObj.type = propertyType.FormulaInput;
                 }
                 if(v.name!='initVisible') {
                     switch (type) {

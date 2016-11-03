@@ -104,7 +104,7 @@ const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse
     'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas', 'table'];
 var currentLoading;
 
-function loadTree(parent, node, idList) {
+function loadTree(parent, node, idList, noDeleteKey) {
   let current = {};
   current.parent = parent;
   current.className = node['cls'];
@@ -112,8 +112,10 @@ function loadTree(parent, node, idList) {
   current.events = node['events'] || {};
 
   if (current.props['key'] !== undefined) {
-    current.key = current.props['key'];
-    delete(current.props['key']);
+      current.key = current.props['key'];
+      if(noDeleteKey == undefined){
+          delete(current.props['key']);
+      }
   } else {
     current.key = _keyCount++;
   }
@@ -294,7 +296,12 @@ function loadTree(parent, node, idList) {
   let children = node['children'];
   if (children) {
     for (let i = 0; i < children.length; i++) {
-      loadTree(current, children[i], idList);
+        if(noDeleteKey == undefined){
+            loadTree(current, children[i], idList);
+        }
+        else {
+            loadTree(current, children[i], idList, true);
+        }
     }
   }
   return current;
@@ -664,8 +671,8 @@ function generateJsFunc(etree) {
   };
 
   let checkHasSymbol = (str)=> {
-      let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’"];
-      let englishSymbol = ["+","-","*","/","(",")","?",":","'","'"];
+      let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
+      let englishSymbol = ["+","-","*","/","(",")","?",":","'","'","."];
       let hasSymbol = false;
       chineseSymbol.forEach(v=>{
           if(str.indexOf(v)>=0){
@@ -1246,6 +1253,9 @@ function saveTree(data, node, saveKey) {
                                             value: [],
                                         }
                                     };
+                                    if(v.isProp) {
+                                        temp.isProp = v.isProp;
+                                    }
                                     temp.value.value = dealWithFormulaObj(v.value.value, saveKey);
                                     property.push(temp);
                                 } else {
@@ -2281,7 +2291,7 @@ export default Reflux.createStore({
         //historyName = "重命名" + this.currentWidget.node.name;
         //this.updateHistoryRecord(historyName);
     },
-    updateProperties: function(obj, skipRender, skipProperty) {
+    updateProperties: function(obj, skipRender, skipProperty, special) {
         let isHistoryRecord = true;
         if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
@@ -2307,7 +2317,8 @@ export default Reflux.createStore({
             bridge.updateSelector(this.currentWidget.node);
         }
         this.trigger(p);
-        if(isHistoryRecord){
+
+        if(isHistoryRecord && special == undefined){
             historyName = "更改属性" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);
         }
@@ -3431,7 +3442,9 @@ export default Reflux.createStore({
             historyRecord.splice(0,1);
             historyNameList.splice(0,1);
         }
-        historyRecord.push(data);
+
+        let deepCody = JSON.parse( JSON.stringify(data) );
+        historyRecord.push(deepCody);
         historyNameList.push(historyName);
         historyRW = historyRecord.length;
 
@@ -3477,11 +3490,11 @@ export default Reflux.createStore({
             for (let n in data['defs']) {
                 bridge.addClass(n);
                 classList.push(n);
-                tree = loadTree(null, data['defs'][n]);
+                tree = loadTree(null, data['defs'][n], null, true);
                 stageTree.push({name: n, tree: tree});
             }
         }
-        tree = loadTree(null, data['stage']);
+        tree = loadTree(null, data['stage'], null, true);
         stageTree.unshift({name: 'stage', tree: tree});
         let bool = true;
         let selectOther = (selectdata)=>{
