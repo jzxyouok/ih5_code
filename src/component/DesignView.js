@@ -209,7 +209,7 @@ class DesignView extends React.Component {
                 let left = window.getComputedStyle(this.refs.view, null).getPropertyValue("left");
                 let l = parseFloat(left.replace(/(px)?/, ''));
                 l += STEP * (isEvent(37) ? -1 : 1);
-                let subLeft =this.refs.canvasWraper.offsetLeft;
+                let subLeft =this.refs.canvasWraper.offsetLeft+320;
 
                 this.refs.canvasWraper.style.left =subLeft + l + 'px';
 
