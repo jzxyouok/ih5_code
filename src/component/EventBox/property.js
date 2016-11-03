@@ -580,6 +580,13 @@ class Property extends React.Component {
             case propertyType.Integer:
             case propertyType.Float:
             case propertyType.Number:
+            case propertyType.FormulaInput:
+            case propertyType.DBOrder:
+            case propertyType.DBCons:
+                defaultProp.value = item.value;
+                break;
+            case propertyType.Range:
+                defaultProp.type="number";
                 defaultProp.value = item.value;
                 break;
             case propertyType.Boolean2:
@@ -591,16 +598,6 @@ class Property extends React.Component {
                     defaultProp.checked = 1;
                 }
                 break;
-            case propertyType.FormulaInput:
-                defaultProp.value = item.value;
-                break;
-            case propertyType.Range:
-                defaultProp.type="number";
-                defaultProp.value = item.value;
-                break;
-            case propertyType.DBOrder:
-            case propertyType.DBCons:
-                defaultProp.value = item.value;
             case propertyType.Function:
                 break;
             default:
@@ -736,23 +733,29 @@ class Property extends React.Component {
                                          onBlur={this.onFormulaInputBlur}
                                          {...defaultProp}/>;
                 case propertyType.Select:
-                    let titleTemp = '';
-                    let oType = optionType.normal;
-                    let list = [];
-                    if(w&&w.className === 'db'){
-                        if(item.name ==='data') {
-                            titleTemp = '来源';
-                            oType = optionType.widget;
-                            list = w.dbItemList;
-                        }
-                    } else if(item.name === 'class'){
-                        titleTemp = '类别';
-                        oType = optionType.class;
-                        list = this.classNameList;
+                    let sTitleTemp = '';
+                    let sType = optionType.normal;
+                    let sList = [];
+                    if(item.name === 'class'){
+                        sTitleTemp = '类别';
+                        sType = optionType.class;
+                        sList = this.classNameList;
                     } else {
                         return <div>未定义类型</div>;
                     }
-                    return propertyDropDownMenu(list, item, index, titleTemp, propertyId, oType);
+                    return propertyDropDownMenu(sList, item, index, sTitleTemp, propertyId, sType);
+                case propertyType.ObjectSelect:
+                    let objTitleTemp = '';
+                    let objType = optionType.normal;
+                    let objList = [];
+                    if(w&&w.className === 'db'&&item.name ==='data'){
+                        objTitleTemp = '来源';
+                        objType = optionType.widget;
+                        objList = w.dbItemList;
+                    } else {
+                        return <div>未定义类型</div>;
+                    }
+                    return propertyDropDownMenu(objList, item, index, objTitleTemp, propertyId, objType);
                 case propertyType.Object:
                     let oList = this.state.objectList;
                     if(w&&w.className === 'db' && item.name === 'object') {
