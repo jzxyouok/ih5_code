@@ -86,6 +86,12 @@ class PropertyViewSetUp extends React.Component {
             case propertyType.Percentage:
                 defaultValue = defaultValue * 100;
                 break;
+            case propertyType.Integer:
+                if(item.name=='header') {
+                   let arr = defaultValue.split(',');
+                    defaultValue =arr.length;
+                }
+                break;
             case propertyType.FormulaInput:
                 defaultValue = {type: 1, value: defaultValue};
                 break;
@@ -246,8 +252,7 @@ class PropertyViewSetUp extends React.Component {
                 </div>;
 
             case propertyType.TbColor :
-                return  <div className="f--hlc">
-                    <div className="flex-1">
+                return
                         <Input
                             ref={(inputDom) => {
                                 if (inputDom) {
@@ -259,16 +264,9 @@ class PropertyViewSetUp extends React.Component {
                                 }
                             }}
                             placeholder={defaultProp.placeholder}
-                            style={{height:"22px",padding:"0 7px", position:"relative"}}
+                            style={{height:"22px",width:'142px',padding:"0 7px", position:"relative"}}
                             className='color-input' />
-                    </div>
 
-                    <div style={{ width: "58px", marginLeft: "3px",height:"22px" }}>
-                        <Input placeholder={ defaultProp.tbHeight }
-                               style={{height:"22px",padding:"0 7px"}} />
-                        <span className="TbColor-icon" />
-                    </div>
-                </div>;
             case propertyType.TdLayout :
                 return  <div className="f--hlc TdLayout">
                     <span className={cls({"active": defaultProp.placeholder.indexOf(1) >=0 })} />
