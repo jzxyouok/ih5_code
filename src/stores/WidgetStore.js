@@ -664,8 +664,8 @@ function generateJsFunc(etree) {
   };
 
   let checkHasSymbol = (str)=> {
-      let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’"];
-      let englishSymbol = ["+","-","*","/","(",")","?",":","'","'"];
+      let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
+      let englishSymbol = ["+","-","*","/","(",")","?",":","'","'","."];
       let hasSymbol = false;
       chineseSymbol.forEach(v=>{
           if(str.indexOf(v)>=0){

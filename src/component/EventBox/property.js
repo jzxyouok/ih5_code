@@ -212,6 +212,7 @@ class Property extends React.Component {
     }
 
     setDefaultMappingProps(className, list, type) {
+        let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
         propertyMap[className].map((v,i)=>{
             if(v.isProperty&& v.name !='id'){
                 let vObj=JSON.parse(JSON.stringify(v));
@@ -221,6 +222,9 @@ class Property extends React.Component {
                     vObj.name='width';
                 }else if(v.name=='scaleY') {
                     vObj.name = 'height';
+                }
+                if(formulaInputType.indexOf(vObj.name)>=0) {
+                    vObj.type = propertyType.FormulaInput;
                 }
                 if(v.name!='initVisible') {
                     switch (type) {

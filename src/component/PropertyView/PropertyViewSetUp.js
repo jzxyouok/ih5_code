@@ -288,6 +288,7 @@ class PropertyViewSetUp extends React.Component {
             case propertyType.FormulaInput:
                 return <FormulaInput containerId={this.props.propertyId}
                                      disabled={!this.props.enable}
+                                     minWidth="142px"
                                      objectList={this.props.objectList}
                                      onFocus={this.props.onFInputFocus}
                                      onBlur={this.props.onFInputBlur}
