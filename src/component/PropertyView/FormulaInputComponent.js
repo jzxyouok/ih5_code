@@ -214,7 +214,7 @@ class FormulaInput extends React.Component {
 
 
     onObjectVisibleChange(flag){
-        if(this.objCanDropDown) {
+        if(!this.objCanDropDown) {
             this.setState({
                 objectDropDownVisible: false
             })
@@ -601,7 +601,7 @@ class FormulaInput extends React.Component {
     }
 
     onValueWidgetInputFocus(e) {
-        this.objCanDropDown = true;
+        this.objCanDropDown = false;
         this.onBlur();
         if(this.state.objectDropDownVisible) {
             this.setState({
@@ -611,7 +611,7 @@ class FormulaInput extends React.Component {
     }
 
     onValueWidgetInputBlur(e){
-        this.objCanDropDown = false;
+        this.objCanDropDown = true;
     }
 
     onValueWidgetInputEnter(e) {
