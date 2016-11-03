@@ -10,6 +10,7 @@ const Option = Select.Option;
 const Panel = Collapse.Panel;
 const MenuItem = Menu.Item;
 import { SwitchMore,DropDownInput ,ConInputNumber} from  './PropertyViewComponet';
+import { FormulaInput } from './FormulaInputComponent';
 
 import WidgetStore, {dataType} from '../../stores/WidgetStore';
 import WidgetActions from '../../actions/WidgetActions';
@@ -23,7 +24,7 @@ class PropertyViewSetUp extends React.Component {
         super(props);
         this.state = {
             oKey:props.oKey,
-            object:props.object
+            property:props.property
         };
 
         this.getResult =props.getResult;
@@ -37,7 +38,7 @@ class PropertyViewSetUp extends React.Component {
     componentWillReceiveProps(nextProps){
        this.setState({
            oKey:nextProps.oKey,
-           object:nextProps.object
+           property:nextProps.property
        })
     }
     componentWillUnmount() {
@@ -53,6 +54,7 @@ class PropertyViewSetUp extends React.Component {
             onChange:  this.onChangePropDom.bind(this, item)
         };
         let node = WidgetStore.getWidgetByKey(this.state.oKey);
+
         //console.log(node,'node');
         let defaultValue=node?node.node[item.name]:'';
         //defaultProp特殊性处理
@@ -84,10 +86,13 @@ class PropertyViewSetUp extends React.Component {
             case propertyType.Percentage:
                 defaultValue = defaultValue * 100;
                 break;
+            case propertyType.FormulaInput:
+                defaultValue = {type: 1, value: defaultValue};
+                break;
             default:
-                ;
+                break;
         }
-        //defaultValue处理
+
         if(item.value !==undefined){
             defaultValue =item.value;
             //设置之后的特殊处理
@@ -95,8 +100,13 @@ class PropertyViewSetUp extends React.Component {
                  case  propertyType.Dropdown:
                      defaultValue = this.getSelectDefault(item.value,item.options);
                      break;
+                 case propertyType.FormulaInput:
+                     if((defaultValue&&!defaultValue.type) || !defaultValue) {
+                         defaultValue = {type: 1, value: defaultValue};
+                     }
+                     break;
                  default:
-                     ;
+                     break;
              }
         }
         defaultProp.value= defaultValue;
@@ -140,7 +150,7 @@ class PropertyViewSetUp extends React.Component {
     }
 
     getComponent(){
-        let item=this.state.object;
+        let item=this.state.property;
         let style = {};
         let type =item.type;
         let defaultProp =this.getDefaultProp(item);
@@ -268,6 +278,13 @@ class PropertyViewSetUp extends React.Component {
                 </div>;
             case propertyType.Dropdown:
                 return  <DropDownInput {...defaultProp} />;
+            case propertyType.FormulaInput:
+                return <FormulaInput containerId={this.props.propertyId}
+                                     disabled={!this.props.enable}
+                                     objectList={this.props.objectList}
+                                     onFocus={this.props.onFInputFocus}
+                                     onBlur={this.props.onFInputBlur}
+                                     {...defaultProp}/>;
             default:
                 return <Input {...defaultProp} />;
         }

@@ -72,6 +72,8 @@ class Property extends React.Component {
         this.getSetPropsObj=this.getSetPropsObj.bind(this);
         this.getPropertyViewSetUpResult=this.getPropertyViewSetUpResult.bind(this);
 
+        this.setDefaultMappingProps = this.setDefaultMappingProps.bind(this);
+
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
         this.customClassList = [];
@@ -209,20 +211,28 @@ class Property extends React.Component {
         })
     }
 
-    getPropertyViewSetUpResult(index,prop){
-       // console.log('prop',prop);
-
-        let property = this.state.currentAction.property;
-        property[index] = prop;
-
-        let action = this.state.currentAction;
-
-        action.property = property;
-
-        this.setState({
-            currentAction: action,
-        }, ()=>{
-            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+    setDefaultMappingProps(className, list, type) {
+        propertyMap[className].map((v,i)=>{
+            if(v.isProperty&& v.name !='id'){
+                let vObj=JSON.parse(JSON.stringify(v));
+                vObj.isProp=true;
+                if(vObj.name=='scaleX'){
+                    vObj.name='width';
+                }else if(v.name=='scaleY') {
+                    vObj.name = 'height';
+                    // vObj.type = propertyType.FormulaInput;
+                }
+                if(v.name!='initVisible') {
+                    switch (type) {
+                        case 'change':
+                            list.splice(list.length - 1, 0, vObj);
+                            break;
+                        default:
+                            list.push(vObj);
+                            break;
+                    }
+                }
+            }
         });
     }
 
@@ -236,21 +246,7 @@ class Property extends React.Component {
         let propertyList=[];
         if(node){
             let className=node.className;
-            propertyMap[className].map((v,i)=>{
-                if(v.isProperty&& v.name !='id'){
-                    let vObj=JSON.parse(JSON.stringify(v));
-                    vObj.isProp=true;
-                    if(vObj.name=='scaleX'){
-                        vObj.name='width';
-                    }else if(v.name=='scaleY') {
-                        vObj.name = 'height';
-                    }
-                    if(v.name=='initVisible'){
-                    }else {
-                        propertyList.push(vObj);
-                    }
-                }
-            })
+            this.setDefaultMappingProps(className, propertyList, 'add');
         }
         obj.property= propertyList;
         return obj;
@@ -460,20 +456,7 @@ class Property extends React.Component {
             if (isCustomizeWidget(className)) {
                 className = 'root';
             }
-            propertyMap[className].map((v)=>{
-                if(v.isProperty&& v.name !='id'){
-                    let vObj=JSON.parse(JSON.stringify(v));
-                    vObj.isProp=true;
-                    if (vObj.name == 'scaleX') {
-                        vObj.name='width';
-                    } else if(v.name == 'scaleY') {
-                        vObj.name = 'height';
-                    }
-                    if(v.name !== 'initVisible'){
-                        newProperty.splice(newProperty.length-1, 0, vObj);
-                    }
-                }
-            });
+            this.setDefaultMappingProps(className, newProperty, 'change');
             property = newProperty;
         }
         let action = this.state.currentAction;
@@ -511,7 +494,6 @@ class Property extends React.Component {
             return false;
         }
         if(canChange) {
-            console.log('lala');
             if(document.getElementById('EBContentLayer').scrollTop != 0) {
                 //为了滚动后不会跳
                 let top = document.getElementById('EBContentLayer').scrollTop;
@@ -531,10 +513,25 @@ class Property extends React.Component {
         document.getElementById('EventBox').style.overflow = 'hidden';
         document.getElementById('EBContentLayer').style.overflow = 'scroll';
         document.getElementById('EventBox').style.top = '37px';
+        document.getElementById('EventBox').style.zIndex = 50;
+    }
+
+    getPropertyViewSetUpResult(index, prop){
+        let property = this.state.currentAction.property;
+        property[index] = prop;
+
+        let action = this.state.currentAction;
+        action.property = property;
+
+        this.setState({
+            currentAction: action,
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+        });
     }
 
     onChangePropDom(prop, index, e){
-        var value = null;
+        let value = null;
         switch (prop.type) {
             case propertyType.String:
             case propertyType.color2:
@@ -625,11 +622,15 @@ class Property extends React.Component {
                         {
                             v1.isProp===true
                             ?<PropertyViewSetUp
-                                oKey={this.state.currentObject}
-                                object={v1}
+                                oKey={this.state.currentAction.name==='setProps'?this.state.currentObject:null}
+                                property={v1}
+                                propertyId={propertyId}
+                                objectList={this.state.objectList}
+                                onFInputFocus={this.onFormulaInputFocus}
+                                onFInputBlur={this.onFormulaInputBlur}
                                 getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
                             />
-                            :type(v1.type, this.getProps(v1, i1), v1, i1)
+                            :typeComponent(v1.type, this.getProps(v1, i1), v1, i1)
                         }
                     </div>
         };
@@ -708,7 +709,7 @@ class Property extends React.Component {
             </Dropdown>);
         };
 
-        let type = (type, defaultProp, item, index)=>{
+        let typeComponent = (type, defaultProp, item, index)=>{
             switch (type) {
                 case propertyType.String:
                     return <Input {...defaultProp}/>;

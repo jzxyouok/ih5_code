@@ -687,7 +687,6 @@ function generateJsFunc(etree) {
           let reg = new RegExp('^' + s + '\\b|([^.])\\b' + s + '\\b', 'g');
           value = value.replace(reg, '$1Math.' + s);
       });
-      console.log(value);
       return value;
   };
 
@@ -793,7 +792,7 @@ function generateJsFunc(etree) {
               if(cmd.action.property.length>=3) {
                   let cName = null;
                   let cId = null;
-                  let props = {};
+                  let props = [];
                   let bottom = null;
                   cmd.action.property.forEach((prop,i)=>{
                       if (i === 0) {
@@ -803,13 +802,20 @@ function generateJsFunc(etree) {
                       } else if (i === cmd.action.property.length-1) {
                           bottom = prop.value;
                       } else {
-                          //props 对象的属性 here
+                          //props 对象的属性
                           if(prop.value) {
-                              props[prop.name] = prop.value;
+                              switch (prop.type) {
+                                  case 12:
+                                      props.push('\''+prop.name+'\''+':'+formulaGenLine(prop.value));
+                                      break;
+                                  default:
+                                      props.push('\''+prop.name+'\''+':'+JSON.stringify(prop.value));
+                                      break;
+                              }
                           }
                       }
                   });
-                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create') + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + JSON.stringify(props) +',' + bottom +')');
+                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create') + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + '{'+ props.join(',') +'}' +',' + bottom +')');
               }
           } else if (cmd.action.name === 'find') {
               let propsList = [];
@@ -913,18 +919,27 @@ function generateJsFunc(etree) {
                   + max + '-'
                   + min + ')+' + min + ')');
           } else if(cmd.action.name === 'setProps') {
-              for(let i in cmd.action.property) {
-                  if(cmd.action.property[i].value !==undefined){
-                      if(cmd.action.property[i].name=='originPos'){
-                          let arr =  cmd.action.property[i].value.split(',');
-                          lines.push(getIdsName(cmd.sObjId[0],null,'originX')+'='+ arr[0]);
-                          lines.push(getIdsName(cmd.sObjId[0],null,'originY')+'='+ arr[1]);
-                      }else if(cmd.action.property[i].name=='alpha'){
-                          lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value/100));
-                      }else {
-                          lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value));
+              if(cmd.action.property) {
+                  cmd.action.property.forEach((prop)=>{
+                      if(prop.value) {
+                          if(prop.name === 'originPos') {
+                              let arr = prop.value.split(',');
+                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originX')+'='+ arr[0]);
+                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originY')+'='+ arr[1]);
+                          } else if(prop.name === 'alpha') {
+                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value/100));
+                          } else {
+                              switch (prop.type) {
+                                  case 12:
+                                      lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                      break;
+                                  default:
+                                      lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value));
+                                      break;
+                              }
+                          }
                       }
-                  }
+                  });
               }
           } else if (cmd.action.name === 'insert' || cmd.action.name === 'update') {
               let line = getIdsName(cmd.sObjId[0], cmd.sObjId[2], cmd.action.name) + '(';
