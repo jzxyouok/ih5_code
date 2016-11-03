@@ -209,23 +209,6 @@ class Property extends React.Component {
         })
     }
 
-    getPropertyViewSetUpResult(index,prop){
-       // console.log('prop',prop);
-
-        let property = this.state.currentAction.property;
-        property[index] = prop;
-
-        let action = this.state.currentAction;
-
-        action.property = property;
-
-        this.setState({
-            currentAction: action,
-        }, ()=>{
-            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
-        });
-    }
-
     getSetPropsObj() {
         let obj = {
             name: 'setProps',
@@ -533,8 +516,22 @@ class Property extends React.Component {
         document.getElementById('EventBox').style.top = '37px';
     }
 
+    getPropertyViewSetUpResult(index, prop){
+        let property = this.state.currentAction.property;
+        property[index] = prop;
+
+        let action = this.state.currentAction;
+        action.property = property;
+
+        this.setState({
+            currentAction: action,
+        }, ()=>{
+            WidgetActions['changeSpecific'](this.state.specific, {property:this.state.currentAction.property});
+        });
+    }
+
     onChangePropDom(prop, index, e){
-        var value = null;
+        let value = null;
         switch (prop.type) {
             case propertyType.String:
             case propertyType.color2:
