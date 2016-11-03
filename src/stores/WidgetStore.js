@@ -338,6 +338,28 @@ function idToObjectKey(list, idName, varName) {
 
 function resolveEventTree(node, list) {
   if (node.props['eventTree']) {
+      //loadTree时公式编辑器内容的处理
+      let dealWithFormulaInput = (fInput)=> {
+          if (fInput&&fInput.type === 2) {
+              fInput.value.forEach((v1,i)=>{
+                  if(v1.objId) {
+                      v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
+                  } else {
+                      v1.objKey = null;
+                  }
+                  (delete v1.objId);
+                  if(v1.objKey === null) {
+                      //如果不存在就直接删除
+                      fInput.value.splice(i, 1);
+                  }
+              });
+              if(fInput.value.length===0){
+                  fInput.type = 1;
+                  fInput.value = null;
+              }
+          }
+      };
+
     node.props['eventTree'].forEach(item => {
       item.children.forEach(judge => {
         judge.judgeObj = idToObject(list, judge.judgeObjId, judge.judgeVarId);
@@ -369,36 +391,6 @@ function resolveEventTree(node, list) {
             (delete item.needFills);
         };
 
-        //loadTree时公式编辑器内容的处理
-        let dealWithFormulaInput = (fInput)=> {
-            if (fInput&&fInput.type === 2) {
-                fInput.value.forEach((v1,i)=>{
-                    if(v1.objId) {
-                        v1.objKey = idToObjectKey(list, v1.objId[0], v1.objId[1]);
-                    } else {
-                        v1.objKey = null;
-                    }
-                    (delete v1.objId);
-                    if(v1.objKey === null) {
-                        //如果不存在就直接删除
-                        fInput.value.splice(i, 1);
-                    }
-                });
-                if(fInput.value.length===0){
-                    fInput.type = 1;
-                    fInput.value = null;
-                }
-            }
-        };
-
-        let dealWithPropertyFormulaInputs = (cmd)=>{
-            if(cmd.action.property) {
-                cmd.action.property.forEach(v=> {
-                    dealWithFormulaInput(v.value);
-                });
-            }
-        };
-
       item.specificList.forEach(cmd => {
           if(cmd.sObjId){
               cmd.object = idToObjectKey(list, cmd.sObjId[0], cmd.sObjId[1]);
@@ -419,32 +411,39 @@ function resolveEventTree(node, list) {
                           cmd.action = null;
                       }
                       (delete cmd.action.funcId);
-                      dealWithPropertyFormulaInputs(cmd);
+                      if(cmd.action.property) {
+                          cmd.action.property.forEach(v=> {
+                              dealWithFormulaInput(v.value);
+                          });
+                      }
                       break;
                   default:
-                      let o = keyMap[cmd.object];
-                      if(o&&o.className === 'db') {
-                          if(cmd.action.property) {
-                              cmd.action.property.forEach(v=> {
-                                  if ((v.name === 'data' || v.name == 'option'||
-                                      (cmd.action.name === 'find' && v.name === 'object'))) {
+                      if(cmd.action.property) {
+                          cmd.action.property.forEach(v=> {
+                              switch (v.type){
+                                  case 21: //ObjectSelect
+                                  case 23: //Object
                                       if (v.valueId) {
                                           v.value = idToObjectKey(list, v.valueId[0], v.valueId[1]);
                                       } else {
                                           v.value = null;
                                       }
                                       (delete v.valueId);
-                                  } else if ((cmd.action.name === 'find' && v.name === 'conditions')) {
+                                      break;
+                                  case 12: //FormulaInput
+                                      dealWithFormulaInput(v.value);
+                                      break;
+                                  case 18: //DBCons
                                       if(v.value) {
                                           v.value.forEach(v1=> {
                                               dealWithFormulaInput(v1.compare);
                                           })
                                       }
-                                  }
-                              });
-                          }
-                      } else if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
-                          dealWithPropertyFormulaInputs(cmd);
+                                      break;
+                                  default:
+                                      break;
+                              }
+                          });
                       }
                       break;
               }
@@ -576,14 +575,6 @@ function generateId(node) {
         }
     };
 
-    let genPropertyFormulaInputIds = (cmd) =>{
-        if(cmd.action.property) {
-            cmd.action.property.forEach(v=>{
-                genFormulaInputId(v.value);
-            });
-        }
-    };
-
   if (node.props['eventTree']) {
       generateObjectId(node);
 
@@ -612,27 +603,34 @@ function generateId(node) {
               switch (cmd.action.type){
                   case funcType.customize:
                       specGenIdsData(cmd.action.func);
-                      genPropertyFormulaInputIds(cmd);
+                      if(cmd.action.property) {
+                          cmd.action.property.forEach(v=>{
+                              genFormulaInputId(v.value);
+                          });
+                      }
                       break;
                   default:
                       if(cmd.action.property){
-                          if(cmd.action.name==='changeValue'||cmd.action.name==='send') {
-                              genPropertyFormulaInputIds(cmd);
-                          } else {
-                              cmd.action.property.forEach(v=>{
-                                  //看是否需要generateid
-                                  if (v.name ==='data'|| v.name ==='option'||
-                                      (cmd.action.name === 'find' && v.name === 'object')) {
+                          cmd.action.property.forEach(v=> {
+                              switch (v.type) {
+                                  case 21: //Object
+                                  case 23: //ObjectSelect
                                       specGenIdsData(v.value);
-                                  } else if(v.name === 'conditions') {
-                                      if(v.value) {
-                                          v.value.forEach(v1=>{
+                                      break;
+                                  case 12: //FormulaInput
+                                      genFormulaInputId(v.value);
+                                      break;
+                                  case 18: //DBCcons
+                                      if (v.value) {
+                                          v.value.forEach(v1=> {
                                               genFormulaInputId(v1.compare);
                                           });
                                       }
-                                  }
-                              })
-                          }
+                                      break;
+                                  default:
+                                      break;
+                              }
+                          });
                       }
                       break;
               }
@@ -689,6 +687,16 @@ function generateJsFunc(etree) {
       return hasSymbol;
   };
 
+  let replaceMathOp = (value)=> {
+      let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
+      'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan'];
+      array.forEach(s=>{
+          let reg = new RegExp('^' + s + '\\b|([^.])\\b' + s + '\\b', 'g');
+          value = value.replace(reg, '$1Math.' + s);
+      });
+      return value;
+  };
+
   //公式编辑器内容生成运行内容
   let formulaGenLine = (fInput)=> {
       let line = '';
@@ -697,26 +705,26 @@ function generateJsFunc(etree) {
               if(isNaN(fInput.value)&&!checkHasSymbol(fInput.value)) {
                   line = JSON.stringify(fInput.value);
               } else {
-                  line = fInput.value;
+                  line = replaceMathOp(replaceSymbolStr(fInput.value));
               }
           } else if (fInput.type === 2) {
               let subLine = '';
               fInput.value.forEach((fV,i) =>{
                   if(fV.objId&&fV.property){
                       if(i===0&&fV.prePattern){
-                          let pp = fV.prePattern;
-                          if(isNaN(pp)&&!checkHasSymbol(pp)) {
-                              pp = JSON.stringify(fV.prePattern);
+                          if(isNaN(fV.prePattern)&&!checkHasSymbol(fV.prePattern)) {
+                              subLine += JSON.stringify(fV.prePattern);
+                          } else {
+                              subLine += replaceMathOp(replaceSymbolStr(fV.prePattern));
                           }
-                          subLine += replaceSymbolStr(pp);
                       }
                       subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
                       if(fV.pattern) {
-                          let pa = fV.pattern;
-                          if(isNaN(pa)&&!checkHasSymbol(pa)) {
-                              pa = JSON.stringify(fV.pattern);
+                          if(isNaN(fV.pattern)&&!checkHasSymbol(fV.pattern)) {
+                              subLine += JSON.stringify(fV.pattern);
+                          } else {
+                              subLine += replaceMathOp(replaceSymbolStr(fV.pattern));
                           }
-                          subLine += replaceSymbolStr(pa);
                       }
                   }
               });
@@ -776,6 +784,7 @@ function generateJsFunc(etree) {
      // console.log('conditions',conditions);
       item.cmds.forEach(cmd => {
         if (cmd.sObjId && cmd.action && cmd.enable && cmd.action.type == 'default') {
+
           if (cmd.action.name === 'changeValue'||cmd.action.name === 'send') {
               let type = cmd.action.name === 'changeValue' ? 'value' : cmd.action.name;
               if (cmd.action.property && cmd.action.property.length > 0) {
@@ -790,7 +799,7 @@ function generateJsFunc(etree) {
               if(cmd.action.property.length>=3) {
                   let cName = null;
                   let cId = null;
-                  let props = {};
+                  let props = [];
                   let bottom = null;
                   cmd.action.property.forEach((prop,i)=>{
                       if (i === 0) {
@@ -800,13 +809,20 @@ function generateJsFunc(etree) {
                       } else if (i === cmd.action.property.length-1) {
                           bottom = prop.value;
                       } else {
-                          //props 对象的属性 here
+                          //props 对象的属性
                           if(prop.value) {
-                              props[prop.name] = prop.value;
+                              switch (prop.type) {
+                                  case 12:
+                                      props.push('\''+prop.name+'\''+':'+formulaGenLine(prop.value));
+                                      break;
+                                  default:
+                                      props.push('\''+prop.name+'\''+':'+JSON.stringify(prop.value));
+                                      break;
+                              }
                           }
                       }
                   });
-                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create') + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + JSON.stringify(props) +',' + bottom +')');
+                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create') + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + '{'+ props.join(',') +'}' +',' + bottom +')');
               }
           } else if (cmd.action.name === 'find') {
               let propsList = [];
@@ -908,29 +924,36 @@ function generateJsFunc(etree) {
               let min = JSON.stringify(cmd.action.property[0]['value']);
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '=' + 'Math.round(Math.random()*('
                   + max + '-'
-                  + min + '+1)+' + min + ')');
-          }else if(cmd.action.name === 'setProps'){
-              for(let i in cmd.action.property) {
-                  if(cmd.action.property[i].value !==undefined){
-                      if(cmd.action.property[i].name=='originPos'){
-                          let arr =  cmd.action.property[i].value.split(',');
-                          lines.push(getIdsName(cmd.sObjId[0],null,'originX')+'='+ arr[0]);
-                          lines.push(getIdsName(cmd.sObjId[0],null,'originY')+'='+ arr[1]);
-                      }else if(cmd.action.property[i].name=='alpha'){
-                          lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value/100));
-                      }else {
-                          lines.push(getIdsName(cmd.sObjId[0],null,cmd.action.property[i].name)+'='+ JSON.stringify(cmd.action.property[i].value));
+                  + min + ')+' + min + ')');
+          } else if(cmd.action.name === 'setProps') {
+              if(cmd.action.property) {
+                  cmd.action.property.forEach((prop)=>{
+                      if(prop.value) {
+                          if(prop.name === 'originPos') {
+                              let arr = prop.value.split(',');
+                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originX')+'='+ arr[0]);
+                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originY')+'='+ arr[1]);
+                          } else if(prop.name === 'alpha') {
+                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value/100));
+                          } else {
+                              switch (prop.type) {
+                                  case 12:
+                                      lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                      break;
+                                  default:
+                                      lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value));
+                                      break;
+                              }
+                          }
                       }
-                      lines.push('console.log(param)')
-                  }
+                  });
               }
-          }else {
-              //数据库
-              var line = getIdsName(cmd.sObjId[0], cmd.sObjId[2], cmd.action.name) + '(';
+          } else if (cmd.action.name === 'insert' || cmd.action.name === 'update') {
+              let line = getIdsName(cmd.sObjId[0], cmd.sObjId[2], cmd.action.name) + '(';
               if (cmd.action.property) {
                   line += cmd.action.property.map(function(p) {
                       let va = null;
-                      if(p['vKey'] !== undefined) {
+                      if(p['vKey'] !== undefined && p.name == 'data') {
                           va = keyMap[p['vKey']];
                           if (va) {
                               var list = [];
@@ -953,6 +976,14 @@ function generateJsFunc(etree) {
                               return '';
                           }
                       }
+                      return JSON.stringify(p['value']);
+                  }).join(',');
+              }
+              lines.push(line + ')');
+          } else {
+              let line = getIdsName(cmd.sObjId[0], cmd.sObjId[2], cmd.action.name) + '(';
+              if (cmd.action.property) {
+                  line += cmd.action.property.map(function(p) {
                       return JSON.stringify(p['value']);
                   }).join(',');
               }
@@ -997,7 +1028,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-  //  console.log(output);
+  console.log(output);
   return output;
 }
 
@@ -1009,6 +1040,24 @@ function saveTree(data, node, saveKey) {
       data['id'] = node.props['id'];
     else if (name == 'eventTree') {
       var etree = [];
+
+        //保存时公式编辑器内容的处理
+        let dealWithFormulaObj = (list, sk)=>{
+            let temp = [];
+            list.forEach(v1=>{
+                let tempV = {
+                    prePattern: v1.prePattern,
+                    objId: objectKeyToId(v1.objKey),
+                    property: v1.property,
+                    pattern: v1.pattern,
+                };
+                if(sk) {
+                    tempV.objKey = v1.objKey;
+                }
+                temp.push(tempV);
+            });
+            return temp;
+        };
 
         node.props['eventTree'].forEach(item => {
         var cmds = [];
@@ -1145,24 +1194,6 @@ function saveTree(data, node, saveKey) {
                 judges.children.push(obj);
             });
 
-            //保存时公式编辑器内容的处理
-            let dealWithFormulaObj = (list, sk)=>{
-                let temp = [];
-                list.forEach(v1=>{
-                    let tempV = {
-                        prePattern: v1.prePattern,
-                        objId: objectKeyToId(v1.objKey),
-                        property: v1.property,
-                        pattern: v1.pattern,
-                    };
-                    if(sk) {
-                        tempV.objKey = v1.objKey;
-                    }
-                    temp.push(tempV);
-                });
-                return temp;
-            };
-
         item.specificList.forEach(cmd => {
             let c = {};
             c.enable = cmd.enable;
@@ -1189,44 +1220,58 @@ function saveTree(data, node, saveKey) {
                 }
                 if (cmd.action.property) {
                     let property = [];
-                    let o = keyMap[cmd.object];
-                    if(o&&o.className === 'db') {
-                        cmd.action.property.forEach(v=> {
-                            if(v.name === 'data' && v.value) {
-                                let temp = {
-                                    name:v.name,
-                                    showName: v.showName,
-                                    type: v.type,
-                                    valueId: objectKeyToId(v.value),
-                                    vKey: v.value
-                                };
-                                if(saveKey) {
-                                    temp.value = v.value;
-                                }
-                                property.push(temp);
-
-                            } else if ((v.name === 'option'&& v.value) ||
-                                (cmd.action.name == 'find' && v.name === 'object'&& v.value)) {
-                                let temp = {
-                                    name:v.name,
-                                    showName: v.showName,
-                                    type: v.type,
-                                    valueId: objectKeyToId(v.value)
-                                };
-                                if(saveKey) {
-                                    temp.value = v.value;
-                                }
-                                property.push(temp);
-                            } else if (cmd.action.name == 'find' && v.name === 'conditions') {
-                                if(v.value) {
+                    cmd.action.property.forEach(v=> {
+                        switch (v.type) {
+                            case 21:  // Object
+                            case 23:  // ObjectSelect
+                                if (v.value) {
                                     let temp = {
-                                        name:v.name,
+                                        name: v.name,
+                                        showName: v.showName,
+                                        type: v.type,
+                                        valueId: objectKeyToId(v.value)
+                                    };
+                                    if(v.name === 'data') {
+                                        temp.vKey = v.value;
+                                    }
+                                    if (saveKey) {
+                                        temp.value = v.value;
+                                    }
+                                    property.push(temp);
+                                } else {
+                                    property.push(v);
+                                }
+                                break;
+                            case 12:  // FormularInput
+                                if (v.value && v.value.type === 2) {
+                                    let temp = {
+                                        name: v.name,
+                                        showName: v.showName,
+                                        type: v.type,
+                                        value: {
+                                            type: 2,
+                                            value: [],
+                                        }
+                                    };
+                                    if(v.isProp) {
+                                        temp.isProp = v.isProp;
+                                    }
+                                    temp.value.value = dealWithFormulaObj(v.value.value, saveKey);
+                                    property.push(temp);
+                                } else {
+                                    property.push(v);
+                                }
+                                break;
+                            case 18:  // DBCons
+                                if (v.value) {
+                                    let temp = {
+                                        name: v.name,
                                         showName: v.showName,
                                         type: v.type,
                                     };
                                     temp.value = [];
-                                    v.value.forEach(v1=>{
-                                        if(v1.compare && v1.compare.type === 2) {
+                                    v.value.forEach(v1=> {
+                                        if (v1.compare && v1.compare.type === 2) {
                                             let temp2 = {
                                                 field: v1.field,
                                                 operation: v1.operation,
@@ -1245,34 +1290,13 @@ function saveTree(data, node, saveKey) {
                                 } else {
                                     property.push(v);
                                 }
-                            } else {
+                                break;
+                            default:
                                 property.push(v);
-                            }
-                        });
-                        c.action.property = property;
-                    } else if(cmd.action.name=='changeValue' || cmd.action.type===funcType.customize ||
-                        cmd.action.name=='send') {
-                            cmd.action.property.forEach(v => {
-                                if(v.value && v.value.type === 2) {
-                                    let temp = {
-                                        name: v.name,
-                                        showName: v.showName,
-                                        type:v.type,
-                                        value:{
-                                            type:2,
-                                            value:[],
-                                        }
-                                    };
-                                    temp.value.value = dealWithFormulaObj(v.value.value, saveKey);
-                                    property.push(temp);
-                                } else {
-                                    property.push(v);
-                                }
-                            });
-                            c.action.property = property;
-                    } else {
-                        c.action.property = cmd.action.property;
-                    }
+                                break;
+                        }
+                    });
+                    c.action.property = property;
                 }
             } else {
                 c.action = null;

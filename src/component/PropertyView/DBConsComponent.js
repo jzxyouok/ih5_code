@@ -1,7 +1,7 @@
 import React from 'react';
 import $class from 'classnames';
 import { Dropdown, Menu } from 'antd';
-import { FormulaInput } from '../PropertyView/FormulaInputComponent';
+import { FormulaInput } from './FormulaInputComponent';
 import WidgetActions from '../../actions/WidgetActions';
 
 const MenuItem = Menu.Item;

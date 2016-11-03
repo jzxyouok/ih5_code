@@ -26,6 +26,7 @@ const propertyType = {
     Object:21,
     Hidden: -1,
     Boolean3:22,
+    ObjectSelect:23,
 };
 
 var level;
@@ -671,7 +672,7 @@ propertyMap['db'] = [
     { addRequires: widgetFlags.Root},
     { name: 'find', showName:'输出', isFunc: true, info:'(option, callback(err, result))',
         property:[
-            // {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.Select},
+            // {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.ObjectSelect},
             {'name':'type', showName:'普通', 'value':'normal', 'type':propertyType.Hidden},
             {'name':'conditions', showName:'输出条件', 'value':[{field:null,operation:'=',compare:null}], 'type':propertyType.DBCons},
             {'name':'order', showName:'排序方式', 'value':{field:null, asc:true}, 'type':propertyType.DBOrder},
@@ -682,12 +683,12 @@ propertyMap['db'] = [
         ]},
     { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',
         property:[
-            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.Select},
+            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect},
             // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]},
     { name: 'update', showName:'更新', isFunc: true, info:'(data, callback(err, result))',
         property:[
-            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.Select},
+            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect},
             // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
         ]}
 ];
