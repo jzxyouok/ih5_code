@@ -5,7 +5,11 @@ $lineColor:#4AFFFF;
     top:-17px;
 }
 #DesignView-Container{
-    .canvas-wraper{position: relative; }
+    .canvas-wraper{
+        position: absolute;
+        left: 50%;
+        margin-left: -320px;
+    }
     #line_top{
         width: 100%;
         height: 0;

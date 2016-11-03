@@ -251,10 +251,12 @@ propertyMap['slidetimer'] = [
     ...propertyMap['box'],
     { addProvidesRecursive: widgetFlags.Timer, addProvides: widgetFlags.Container},
     { name: 'fillColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
-    { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true},
-    { name: 'vertical', type: propertyType.Boolean,group:'tools', default: false, isProperty: true },
-    { name: 'sliderScale', type: propertyType.Number,group:'tools', default: 1, isProperty: true},
-    { name: 'totalTime',showName:'总时长', type: propertyType.Number, group:'tools',default: 10, isProperty: true}
+
+    { name: 'totalTime',showName:'总时长', type: propertyType.Number, group:'tools',default: 10, isProperty: true},
+    { name: 'vertical',showName:'滑动方向', type: propertyType.Select,group:'tools', default: '垂直',options:{'垂直':true,'水平':false}, isProperty: true },
+    { name: 'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1, isProperty: true},
+    { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true}
+
 ];
 propertyMap['html'] = [
     ...propertyMap['box'],

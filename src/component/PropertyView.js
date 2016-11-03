@@ -378,7 +378,12 @@ class PropertyView extends React.Component {
                     } else if (prop.name == 'headerFontFamily') {
                         this.selectNode.props.headerFontFamily = this.getFontDefault(value);
                         v = value;
-                    } else if (prop.name == 'type') {
+                    }
+                    else  if(prop.name=='vertical') {
+                        this.selectNode.props[prop.name] = value=='true'?'垂直':'水平';
+                        v = value;
+                    }
+                    else if (prop.name == 'type') {
                         this.selectNode.props.type = this.getScaleTypeDefault(value, prop.options);
                         //属于第一组则设置初始隐藏,否则设置隐藏
                         this.selectNode.props.initHide = false;
@@ -424,6 +429,7 @@ class PropertyView extends React.Component {
                             v = value;
                         }
                     }
+
                     else {
                         v = parseInt(value);
                     }
@@ -798,9 +804,11 @@ class PropertyView extends React.Component {
                 }else if( item.name=='headerFontFamily'  && node.props.headerFontFamily){
                     defaultValue = node.props.headerFontFamily;
                 }
+                else if(item.name=='vertical' && node.props[item.name] ){
+                    defaultValue = node.props[item.name];
+                }
                 else if(item.name=='chooseColumn'){
                     defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn  + ' 列';
-                    //console.log(this.state.tbWhichColumn,defaultValue);
                 }
             } else if(item.type === propertyType.Boolean2 ){
                 if(node.props[item.name]===undefined){

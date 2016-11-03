@@ -154,6 +154,7 @@ class NavBar extends React.Component {
         this.onKeyHistory = this.onKeyHistory.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
 
+
         this.onClickAlignWidgets = this.onClickAlignWidgets.bind(this);
         this.onClickDistributeWidgets = this.onClickDistributeWidgets.bind(this);
 
@@ -161,6 +162,7 @@ class NavBar extends React.Component {
         this.playUrl = null;
         this.fileUrl = null;
         this.isPlay = null;
+
         var name = Cookies.get('ih5token');
         //console.log(name);
         if (name) {
@@ -1064,7 +1066,9 @@ class NavBar extends React.Component {
             this.onSave();
             window.macKeys.reset();
         }
+
     }
+
 
     onKeyHistory(event) {
         if(event.target.nodeName==='INPUT' || event.target.nodeName==='TEXTAREA') {
@@ -1089,6 +1093,7 @@ class NavBar extends React.Component {
             this.replyHistory();
             window.macKeys.reset();
         }
+
     }
 
     onClickAlignWidgets(type, e) {
