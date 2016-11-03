@@ -104,7 +104,7 @@ const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse
     'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas', 'table'];
 var currentLoading;
 
-function loadTree(parent, node, idList, noDeleteKey) {
+function loadTree(parent, node, idList) {
   let current = {};
   current.parent = parent;
   current.className = node['cls'];
@@ -113,9 +113,7 @@ function loadTree(parent, node, idList, noDeleteKey) {
 
   if (current.props['key'] !== undefined) {
       current.key = current.props['key'];
-      if(noDeleteKey == undefined){
-          delete(current.props['key']);
-      }
+      delete(current.props['key']);
   } else {
     current.key = _keyCount++;
   }
@@ -296,12 +294,7 @@ function loadTree(parent, node, idList, noDeleteKey) {
   let children = node['children'];
   if (children) {
     for (let i = 0; i < children.length; i++) {
-        if(noDeleteKey == undefined){
-            loadTree(current, children[i], idList);
-        }
-        else {
-            loadTree(current, children[i], idList, true);
-        }
+        loadTree(current, children[i], idList);
     }
   }
   return current;
@@ -3091,7 +3084,6 @@ export default Reflux.createStore({
     deletePoint: function() {
         //debugger;
         this.trigger({deletePoint: true});
-        this.updateHistoryRecord();
     },
     initTree: function(data) {
         classList = [];
@@ -3482,6 +3474,8 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     historyRoad: function() {
+        _keyCount = 1;
+        keyMap = [];
         classList = [];
         stageTree = [];
         let tree;
@@ -3491,11 +3485,11 @@ export default Reflux.createStore({
             for (let n in data['defs']) {
                 bridge.addClass(n);
                 classList.push(n);
-                tree = loadTree(null, data['defs'][n], null, true);
+                tree = loadTree(null, data['defs'][n], null);
                 stageTree.push({name: n, tree: tree});
             }
         }
-        tree = loadTree(null, data['stage'], null, true);
+        tree = loadTree(null, data['stage'], null);
         stageTree.unshift({name: 'stage', tree: tree});
         let bool = true;
         let selectOther = (selectdata)=>{

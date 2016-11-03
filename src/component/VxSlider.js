@@ -18,6 +18,8 @@ import changeKeyAction from '../actions/changeKeyAction';
 function noop() {
 }
 
+let isCleanKeyValue = false;
+
 class VxHandle extends React.Component {
     constructor(props) {
         super(props);
@@ -62,8 +64,8 @@ class VxHandle extends React.Component {
                       onMouseUp={this.showTooltip.bind(this)}
                       onMouseEnter={this.showTooltip.bind(this)}
                       onMouseLeave={this.hideTooltip.bind(this)}
-                      onMouseDown={this.onHandleClick.bind(this)} />);
-
+                      onMouseDown={this.onHandleClick.bind(this)}>
+                    </div>);
     if (noTip) {
       return handle;
     }
@@ -150,13 +152,16 @@ class VxRcSlider extends RcSlider {
     }
 
     ChangeKeyframe(bool,value){
-        //console.log('key',bool,value);
+        //console.log('key',bool,value,which);
         if(bool){
-            if(value || value==0){
-                this.setState({
-                    changeKeyBool : bool,
-                    changeKeyValue : value
-                });
+            if(value !== undefined){
+                if(value || value==0){
+                    isCleanKeyValue = true;
+                    this.setState({
+                        changeKeyBool : bool,
+                        changeKeyValue : value
+                    });
+                }
             }
         }
     }
@@ -274,14 +279,14 @@ class VxRcSlider extends RcSlider {
             WidgetActions['syncTrack']();
             this.isHaveTrunBtn(true,this.props.refTrack.props.data.length -1);
             //console.log(3,true);
-            TimelineAction['ChangeKeyframe'](true);
+            TimelineAction['ChangeKeyframe'](true,undefined,handle.props.handleIndex);
             this.forceUpdate();
         });
     }
 
     onMove(e, position) {
         //console.log(4,false);
-        TimelineAction['ChangeKeyframe'](false);
+        //TimelineAction['ChangeKeyframe'](false);
         //this.setState({
         //    changeKeyBool : false
         //});
@@ -317,7 +322,7 @@ class VxRcSlider extends RcSlider {
         //this.setState({
         //    changeKeyBool : true
         //});
-        TimelineAction['ChangeKeyframe'](true);
+        //TimelineAction['ChangeKeyframe'](true);
     }
 
     onStatusChange(widget) {
@@ -360,6 +365,9 @@ class VxRcSlider extends RcSlider {
             this.props.refTrack.props['data'] = points;
             this.props.refTrack.node['data'] = points;
             this.setState({currentHandle: -1});
+
+            let historyName = "删除关键帧" + this.props.refTrack.parent.props.name;
+            WidgetActions['updateHistoryRecord'](historyName);
         }
         if(widget.selectWidget){
             //console.log(widget.selectWidget);
@@ -557,12 +565,13 @@ class VxRcSlider extends RcSlider {
             let which = this.state.changeKey;
             let isCurrentBool = false;
             if(this.props.myID === this.state.nowLayer ){
-                if(this.state.changeKeyBool){
+                if(this.state.changeKeyBool && isCleanKeyValue){
                     if(this.state.changeKeyValue || this.state.changeKeyValue == 0){
                         if(which === i) {
                             points[which][0] = this.state.changeKeyValue;
                             let position = points[which][0];
                             offset = this.calcOffset(position);
+                            isCleanKeyValue = false;
                         }
                         else {
                             offset = this.calcOffset(points[i][0])

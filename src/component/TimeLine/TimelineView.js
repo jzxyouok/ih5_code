@@ -51,7 +51,10 @@ class TimelineView extends React.Component {
             dragTimelineLeft : 37,
             dragTimelineRight : 281,
             dragTimelineBottom : 0,
-            leftAddRight:37 + 281
+            leftAddRight:37 + 281,
+            whichKey : null,
+            startKey : 0,
+            isInput : false
 		};
 
         this.flag = 0;
@@ -74,6 +77,8 @@ class TimelineView extends React.Component {
         this.dragZoom = this.dragZoom.bind(this);
         //this.changeIsCanAdd = this.changeIsCanAdd.bind(this);
         this.dragTimeline = this.dragTimeline.bind(this);
+        this.timeKeyUp = this.timeKeyUp.bind(this);
+        this.inputOnFocus = this.inputOnFocus.bind(this);
 	}
 
 	componentDidMount() {
@@ -212,6 +217,18 @@ class TimelineView extends React.Component {
         }
 	}
 
+    timeKeyUp(){
+        if(this.state.isChangeKey && this.state.isInput == false){
+            if(this.state.startKey !== this.state.currentTime){
+                let historyName = "移动关键帧" + this.state.currentTrack.parent.props.name;
+                WidgetActions['updateHistoryRecord'](historyName);
+                this.setState({
+                    startKey : this.state.currentTime
+                })
+            }
+        }
+    }
+
 	onTimer(p) {
 		this.setState({currentTime:p});
 		WidgetActions['syncTrack']();
@@ -262,11 +279,25 @@ class TimelineView extends React.Component {
         this.changSwitchState(0);
     }
 
-    ChangeKeyframe(data){
-        //console.log(data);
+    ChangeKeyframe(data,value,which){
        this.setState({
-           isChangeKey : data
-       })
+           isChangeKey : data,
+           whichKey : which ? which : null
+       });
+        if(data){
+            if(which !== undefined && this.state.currentTrack !== null){
+                this.setState({
+                    isInput : false,
+                    whichKey : which,
+                    startKey : this.state.currentTrack.props.data[which][0]
+                })
+            }
+        }
+        else {
+            this.setState({
+                whichKey : null
+            })
+        }
     }
 
 	// 添加时间断点
@@ -369,6 +400,11 @@ class TimelineView extends React.Component {
                 //    this.state.currentTrack.node['endTime'] = data;
                 //}
                 TimelineAction['ChangeKeyframe'](true,parseFloat(data));
+                this.setState({
+                    isInput : false
+                },()=>{
+                    this.timeKeyUp();
+                });
             }
         }
         else if(event.key == "ArrowUp"){
@@ -413,7 +449,18 @@ class TimelineView extends React.Component {
             //    this.state.currentTrack.node['endTime'] = data;
             //}
             TimelineAction['ChangeKeyframe'](true,parseFloat(data));
+            this.setState({
+                isInput : false
+            },()=>{
+                this.timeKeyUp();
+            });
         }
+    }
+
+    inputOnFocus(){
+        this.setState({
+            isInput : true
+        })
     }
 
 	selectNextBreakpoint() {
@@ -785,7 +832,11 @@ class TimelineView extends React.Component {
         TimelineViewStyle['bottom'] = this.state.dragTimelineBottom;
 
         return (
-            <div id='TimelineView' className={ cls({"hidden":!this.state.timerNode||this.props.isHidden })} style={TimelineViewStyle}>
+            <div id='TimelineView'
+                 className={ cls({"hidden":!this.state.timerNode||this.props.isHidden })}
+                 onMouseUp={ this.timeKeyUp }
+                 style={TimelineViewStyle}>
+
                 <div className="hidden">
                     <ComponentPanel ref="ComponentPanel" />
                 </div>
@@ -805,6 +856,7 @@ class TimelineView extends React.Component {
                                    value={ this.state.inputState ?  this.state.inputTime :this.state.currentTime.toFixed(2) }
                                    onChange={ this.timeInput.bind(this) }
                                    onKeyDown = { this.timeInputSure.bind(this)}
+                                   onFocus = { this.inputOnFocus.bind(this)}
                                    onBlur={ this.inputOnBlur.bind(this) }
                                    data-max = {totalTime}
                                    ref="TimeInput"/>

@@ -8,8 +8,8 @@ var TimelineStores = Reflux.createStore({
             this.listenTo(TimelineAction.ChangeKeyframe,this.ChangeKeyframe);
         },
 
-        ChangeKeyframe: function(bool,value) {
-            this.trigger(bool,value);
+        ChangeKeyframe: function(bool,value,which) {
+            this.trigger(bool,value,which);
         }
     }
 );
