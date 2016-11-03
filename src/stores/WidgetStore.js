@@ -670,7 +670,17 @@ function generateJsFunc(etree) {
       return temp;
   };
 
-  let checkHasSymbol = (str)=> {
+    let replaceMathOp = (value)=> {
+        let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
+            'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan'];
+        array.forEach(s=>{
+            let reg = new RegExp('^' + s + '\\b|([^.])\\b' + s + '\\b', 'g');
+            value = value.replace(reg, '$1Math.' + s);
+        });
+        return value;
+    };
+
+  let hasSymbol = (str)=> {
       let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
       let englishSymbol = ["+","-","*","/","(",")","?",":","'","'","."];
       let hasSymbol = false;
@@ -687,22 +697,22 @@ function generateJsFunc(etree) {
       return hasSymbol;
   };
 
-  let replaceMathOp = (value)=> {
-      let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
-      'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan'];
-      array.forEach(s=>{
-          let reg = new RegExp('^' + s + '\\b|([^.])\\b' + s + '\\b', 'g');
-          value = value.replace(reg, '$1Math.' + s);
-      });
-      return value;
-  };
+    let operationTranslate = (item)=> {
+        let operation = ['=', '>', '<', '!=', '≥', '≤'];
+        let trans = ['$e', '$gt', '$lt', '$ne', '$gte', '$lte'];
+        let index = operation.indexOf(item);
+        if(index>=0) {
+            return trans[index];
+        }
+        return null;
+    };
 
   //公式编辑器内容生成运行内容
   let formulaGenLine = (fInput)=> {
       let line = '';
       if(fInput){
           if(fInput.type === 1){
-              if(isNaN(fInput.value)&&!checkHasSymbol(fInput.value)) {
+              if(isNaN(fInput.value)&&!hasSymbol(fInput.value)) {
                   line = JSON.stringify(fInput.value);
               } else {
                   line = replaceMathOp(replaceSymbolStr(fInput.value));
@@ -712,7 +722,7 @@ function generateJsFunc(etree) {
               fInput.value.forEach((fV,i) =>{
                   if(fV.objId&&fV.property){
                       if(i===0&&fV.prePattern){
-                          if(isNaN(fV.prePattern)&&!checkHasSymbol(fV.prePattern)) {
+                          if(isNaN(fV.prePattern)&&!hasSymbol(fV.prePattern)) {
                               subLine += JSON.stringify(fV.prePattern);
                           } else {
                               subLine += replaceMathOp(replaceSymbolStr(fV.prePattern));
@@ -720,7 +730,7 @@ function generateJsFunc(etree) {
                       }
                       subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
                       if(fV.pattern) {
-                          if(isNaN(fV.pattern)&&!checkHasSymbol(fV.pattern)) {
+                          if(isNaN(fV.pattern)&&!hasSymbol(fV.pattern)) {
                               subLine += JSON.stringify(fV.pattern);
                           } else {
                               subLine += replaceMathOp(replaceSymbolStr(fV.pattern));
@@ -734,16 +744,6 @@ function generateJsFunc(etree) {
           }
       }
       return line;
-  };
-
-  let operationTranslate = (item)=> {
-      let operation = ['=', '>', '<', '!=', '≥', '≤'];
-      let trans = ['$e', '$gt', '$lt', '$ne', '$gte', '$lte'];
-      let index = operation.indexOf(item);
-      if(index>=0) {
-          return trans[index];
-      }
-      return null;
   };
 
   etree.forEach(function(item) {
@@ -812,7 +812,7 @@ function generateJsFunc(etree) {
                           //props 对象的属性
                           if(prop.value) {
                               switch (prop.type) {
-                                  case 12:
+                                  case 12: //FormulaInput
                                       props.push('\''+prop.name+'\''+':'+formulaGenLine(prop.value));
                                       break;
                                   default:
@@ -934,10 +934,11 @@ function generateJsFunc(etree) {
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originX')+'='+ arr[0]);
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originY')+'='+ arr[1]);
                           } else if(prop.name === 'alpha') {
-                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value/100));
+                              //FormulaInput
+                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ '('+formulaGenLine(prop.value)+')'+'/100');
                           } else {
                               switch (prop.type) {
-                                  case 12:
+                                  case 12: //FormulaInput
                                       lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
                                       break;
                                   default:
