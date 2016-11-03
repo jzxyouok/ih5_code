@@ -352,7 +352,7 @@ class VxRcSlider extends RcSlider {
             for (let i = 0; i < props.length; i++) {
                 obj[props[i]] = this.props.refTrack.parent.node[props[i]];
             }
-            WidgetActions['updateProperties'](obj, true);
+            WidgetActions['updateProperties'](obj, true, false, false);
         }
         if (widget.deletePoint !== undefined && this.props.isCurrent && this.state.currentHandle >= 0 && this.props.points.length >= 1) {
             let points = this.props.points;
