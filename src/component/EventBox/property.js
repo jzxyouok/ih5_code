@@ -625,11 +625,11 @@ class Property extends React.Component {
                         {
                             v1.isProp===true
                             ?<PropertyViewSetUp
-                                oKey={this.state.currentObject}
+                                oKey={this.state.currentAction.name==='setProps'?this.state.currentObject:null}
                                 object={v1}
                                 getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
                             />
-                            :type(v1.type, this.getProps(v1, i1), v1, i1)
+                            :typeComponent(v1.type, this.getProps(v1, i1), v1, i1)
                         }
                     </div>
         };
@@ -708,7 +708,7 @@ class Property extends React.Component {
             </Dropdown>);
         };
 
-        let type = (type, defaultProp, item, index)=>{
+        let typeComponent = (type, defaultProp, item, index)=>{
             switch (type) {
                 case propertyType.String:
                     return <Input {...defaultProp}/>;

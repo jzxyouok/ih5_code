@@ -55,10 +55,7 @@ class PropertyViewSetUp extends React.Component {
 
         let node = WidgetStore.getWidgetByKey(this.state.oKey);
 
-        console.log(node,'node');
-
         let defaultValue=node?node.node[item.name]:'';
-
 
         //初始化情况下,特殊性处理
         switch(item.type) {
@@ -93,8 +90,6 @@ class PropertyViewSetUp extends React.Component {
                 ;
         }
 
-
-
         if(item.value !==undefined){
             defaultValue =item.value;
             //设置之后的特殊处理
@@ -106,7 +101,6 @@ class PropertyViewSetUp extends React.Component {
                      ;
              }
         }
-
 
         defaultProp.value= defaultValue;
         return defaultProp;
