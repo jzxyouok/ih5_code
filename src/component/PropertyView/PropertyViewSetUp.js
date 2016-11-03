@@ -203,6 +203,8 @@ class PropertyViewSetUp extends React.Component {
                             if (!dom.jscolor) {
                                 dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                 dom.jscolor.onFineChange = defaultProp.onChange;
+                                dom.jscolor.backgroundColor='#234e4b';
+
                             }
                         }
                     }} {...defaultProp}   className='color-input' />
@@ -218,6 +220,8 @@ class PropertyViewSetUp extends React.Component {
                         if (!dom.jscolor) {
                             dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                             dom.jscolor.onFineChange = defaultProp.onChange;
+                            dom.jscolor.backgroundColor='#234e4b';
+
                         }
                     }
                 }}  {...defaultData}   /> ;
@@ -260,6 +264,7 @@ class PropertyViewSetUp extends React.Component {
                                     if (!dom.jscolor) {
                                         dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                         dom.jscolor.onFineChange = defaultProp.onChange;
+                                        dom.jscolor.backgroundColor='#234e4b';
                                     }
                                 }
                             }}
