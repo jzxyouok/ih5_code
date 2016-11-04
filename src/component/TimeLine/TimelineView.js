@@ -234,6 +234,44 @@ class TimelineView extends React.Component {
 		WidgetActions['syncTrack']();
         if(this.state.isPlaying && p === this.state.timerNode.node['totalTime'] ){
             this.onPause(true);
+            this.setState({
+                marginLeft :  0
+            })
+        }
+
+        if(this.state.isPlaying){
+            let movableDistance = this.state.movableDistance;
+            let marginLeft = this.state.marginLeft;
+            let maxWidth  =  window.innerWidth-this.state.leftAddRight-170;
+            let multiple = this.state.multiple;
+            let percentage = this.state.percentage;
+            if(movableDistance > 0){
+                let timeLength;
+                if(multiple > 0){
+                    timeLength = maxWidth / 61 /multiple;
+                }
+                else {
+                    timeLength = maxWidth / 61 * (- multiple);
+                }
+
+                let index = parseInt(p / timeLength) == 0 ? 1 : parseInt(p / timeLength);
+                if(p >= timeLength * index){
+                    if( movableDistance - marginLeft > maxWidth / percentage){
+                        this.setState({
+                            marginLeft : (maxWidth / percentage) * index
+                        },()=>{
+                            index++;
+                        })
+                    }
+                    else {
+                        this.setState({
+                            marginLeft :  movableDistance
+                        },()=>{
+                            index++;
+                        })
+                    }
+                }
+            }
         }
 	}
 
@@ -241,6 +279,32 @@ class TimelineView extends React.Component {
 		WidgetActions['resetTrack']();
 		this.state.timerNode.node['play']();
 		this.setState({isPlaying:true});
+
+        let movableDistance = this.state.movableDistance;
+        let marginLeft = this.state.marginLeft;
+        let maxWidth  =  window.innerWidth-this.state.leftAddRight-170;
+        let multiple = this.state.multiple;
+        let percentage = this.state.percentage;
+        let p = this.state.currentTime;
+        if(movableDistance > 0){
+            let timeLength;
+            if(multiple > 0){
+                timeLength = maxWidth / 61 /multiple;
+            }
+            else {
+                timeLength = maxWidth / 61 * (- multiple);
+            }
+            if(p>=timeLength){
+                this.setState({
+                    marginLeft : p * 61 / this.state.percentage
+                })
+            }
+            else {
+                this.setState({
+                    marginLeft : 0
+                })
+            }
+        }
 	}
 
 	onPause(bool) {
@@ -248,6 +312,7 @@ class TimelineView extends React.Component {
 		this.setState({
             isPlaying:false
         });
+
         if(bool){
             WidgetActions['resetTrack']();
             this.state.timerNode.node['seek'](0);
@@ -259,7 +324,7 @@ class TimelineView extends React.Component {
 	}
 
 	onPlayOrPause() {
-		this.state.isPlaying?this.onPause():this.onPlay();
+        this.state.isPlaying ? this.onPause() : this.onPlay();
 	}
 
 	onTimerChange(value) {
@@ -494,6 +559,8 @@ class TimelineView extends React.Component {
             $(".overall-zoom .overall span").mousedown(function(e){
                 move=true;
                 _x=e.pageX;
+                initialmarginLeft = self.state.marginLeft;
+                movableDistance = self.state.movableDistance;
 
                 $(document).bind('mousemove',(function(e){
                     if(move && self.state.percentage !== null){
@@ -927,7 +994,6 @@ class TimelineView extends React.Component {
                                                     < this.state.marginLeft* this.state.percentage
                                                     && !this.state.isScroll)
                                             )
-
                                         })}>
 
                             <div style={{ width : this.state.allWidth + 20 +"px",
