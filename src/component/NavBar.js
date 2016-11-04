@@ -173,7 +173,7 @@ class NavBar extends React.Component {
         }
         this.newWork();
         this.workid = null;
-
+        this.workNid = null;
         this.drawRect = null;
         this.closeTimeFuc = null;
     }
@@ -216,12 +216,15 @@ class NavBar extends React.Component {
                 nid = pathName.substr(5,index.index);
             }
             //console.log(nid);
-            this.onImportUrl(PREFIX + 'work/' + nid, nid);
+            this.workNid = nid;
+            this.onImportUrl(PREFIX + 'work/', nid);
         }
         else{
             let id = localStorage.getItem("workID");
             if(id !== null){
                 this.onImportUrl(PREFIX + 'work/' + id, id);
+                this.workid = id;
+                localStorage.setItem("workID", id );
             }
         }
         WidgetActions['cleanHistory']();
@@ -352,6 +355,13 @@ class NavBar extends React.Component {
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
                 getSockListAction['getSockList'](result['sock']);
+
+                result['list'].map((v,i)=>{
+                    if(v.nid = this.workNid){
+                        this.workid = v.id ;
+                        localStorage.setItem("workID", v.id );
+                    }
+                });
             } else {
                 this.setState({loginVisible: true});
             }
@@ -603,13 +613,11 @@ class NavBar extends React.Component {
     }
 
     onImportUrl(url, id) {
-        WidgetActions['ajaxSend'](null, 'GET', url + '?raw=1&nid=' + id, null, null, function(text) {
+        WidgetActions['ajaxSend'](null, 'GET', url + 'iH5Tool?raw=1&nid=' + id, null, null, function(text) {
             bridge.decryptData(text, function(result) {
                 if (result && result['stage']) {
-                    this.workid = id;
                     WidgetActions['initTree'](result);
                     WidgetActions['cleanHistory']();
-                    localStorage.setItem("workID", id);
                 }
             }.bind(this));
         }.bind(this), true);
