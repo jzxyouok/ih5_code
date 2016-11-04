@@ -357,7 +357,7 @@ class NavBar extends React.Component {
                 getSockListAction['getSockList'](result['sock']);
 
                 result['list'].map((v,i)=>{
-                    if(v.nid = this.workNid){
+                    if(v.nid == this.workNid){
                         this.workid = v.id ;
                         localStorage.setItem("workID", v.id );
                     }
@@ -604,6 +604,7 @@ class NavBar extends React.Component {
             href = href.substring(0,index);
         }
         window.open(href + nid, "_self");
+
         //this.onImportUrl(PREFIX + 'work/' + id, id);
         //this.setState({
         //    specialLayer : false,
