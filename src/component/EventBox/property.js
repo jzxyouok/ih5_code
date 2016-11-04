@@ -78,6 +78,7 @@ class Property extends React.Component {
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
         this.customClassList = [];
+        this.customList = [];
         this.funcListLength = 0;
     }
 
@@ -482,12 +483,15 @@ class Property extends React.Component {
 
     onGetClassListByKey(key) {
         this.classNameList = [];
+        this.customList = [];
         let widget = WidgetStore.getWidgetByKey(key);
         if(widget) {
-            if(widget.className === 'root' || widget.className === 'container') {
+            if(widget.className === 'root' || widget.className === 'container' || widget.className === 'timer'
+                || widget.className === 'slidetimer' || widget.className === 'world') {
                 this.customClassList.forEach(v=>{
                     this.classNameList.push('_'+v);
                 });
+                this.customList = this.customClassList;
             }
             for (let cls in propertyMap) {
                 if(checkChildClass(widget, cls)&&checkIsClassType(cls)){
@@ -654,7 +658,12 @@ class Property extends React.Component {
         };
         let menuClassList = (v3, i3)=> {
             return <MenuItem data={v3} key={i3}
-                             className={$class({'customize-last':i3===this.customClassList.length-1})}>{v3}
+                             className={$class({'customize-last':i3===this.customList.length-1})}>
+                                {
+                                    v3&&v3.substr(0,1) === "_"
+                                    ?v3.substr(1)
+                                    :v3
+                                }
                              </MenuItem>;
         };
 
@@ -681,9 +690,12 @@ class Property extends React.Component {
                     selectedValue = WidgetStore.getWidgetByKey(item.value);
                     showValue = (!selectedValue || !selectedValue.props || !selectedValue.props.name)?title:selectedValue.props.name;
                     break;
-                default:
+                case optionType.class:
                     selectedValue = item.value;
                     showValue = !selectedValue?title:selectedValue;
+                default:
+                    selectedValue = item.value;
+                    showValue = !selectedValue?title:selectedValue.substr(0,1) === "_"?selectedValue.substr(1):selectedValue;
                     break;
             }
             return (<Dropdown overlay={menu} trigger={['click']}
