@@ -693,7 +693,7 @@ class PropertyView extends React.Component {
     getFields() {
         let node = this.selectNode;
 
-         //console.log(node);
+          console.log(node);
 
         if (!node)  return null;
 
@@ -762,7 +762,13 @@ class PropertyView extends React.Component {
 
                     if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={}; }//只执行一次
 
-                    if(!this.selectNode.node.defaultData[str]) {     this.selectNode.node.defaultData[str] = defaultValue   }//设置初始宽高,便于计算放大缩小的系数
+                    //设置初始宽高,便于计算放大缩小的系数
+                    if(this.selectNode.node.scaleX=='1' &&this.selectNode.node.scaleY=='1') {
+
+                        this.selectNode.node.defaultData[str] = defaultValue
+
+
+                    }
 
                 }
             }else if(item.type==propertyType.Color || item.type==propertyType.Color2 || item.type === propertyType.TbColor){
