@@ -137,6 +137,13 @@ class Event extends React.Component {
             }
             this.setEventBoxWidth();
         }
+        console.log('widget',widget)
+        if(widget.initTree){
+            this.setState({
+                initTree:widget.initTree
+            });
+            console.log('initTree',widget.initTree);
+        }
 
         if (widget.allWidgets) {
             let arr = [];
@@ -966,16 +973,18 @@ class Event extends React.Component {
         else if(item.type=='select') {
             let optionArr = [];
             if (item.showName == '碰撞对象') {
-                //获取同一物理对象下的其他body
+                //获取的其他body
                 let keyList = [];
 
                 let curBodyKey = this.state.selectWidget.key;
 
-                let node = this.state.selectWidget;
 
+                let node = this.state.selectWidget;
                 while (node.className != 'world') {
                     node = node.parent;
                 }
+
+
                 let findChildKey = (v, i)=> {
                     if (v.className == 'body' && v.key != curBodyKey) {
                         keyList.push(v.key);
