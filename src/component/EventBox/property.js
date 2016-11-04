@@ -147,7 +147,9 @@ class Property extends React.Component {
 
     onGetActionList(key){
         let obj = WidgetStore.getWidgetByKey(key);
-
+        if(key === 'this') {
+            obj = WidgetStore.getWidgetByKey(this.state.wKey);
+        }
         if(!obj||!obj.className) {
             this.setState({
                 actionList: []
@@ -254,7 +256,10 @@ class Property extends React.Component {
             showName: '设置属性',
             type: funcType.default
         };
-        let node =WidgetStore.getWidgetByKey(this.state.currentObject);
+        let node = WidgetStore.getWidgetByKey(this.state.currentObject);
+        if(this.state.currentObject === 'this') {
+            node = WidgetStore.getWidgetByKey(this.state.wKey);
+        }
         let propertyList=[];
         if(node){
             let className=node.className;
@@ -343,14 +348,20 @@ class Property extends React.Component {
     onObjectSelect(e){
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
-        if(this.state.currentObject === object.key) {
+        let key = null;
+        if(object === 'this') {
+            key = object;
+        } else {
+            key = object.key;
+        }
+        if(this.state.currentObject === key) {
             this.setState({
                 objectDropdownVisible: false
             });
             return;
         }
         this.setState({
-            currentObject: object.key,
+            currentObject: key,
             objectDropdownVisible: false
         }, ()=> {
            WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
@@ -486,6 +497,9 @@ class Property extends React.Component {
         this.classNameList = [];
         this.customList = [];
         let widget = WidgetStore.getWidgetByKey(key);
+        if(key === 'this') {
+            widget = WidgetStore.getWidgetByKey(this.state.wKey);
+        }
         if(widget) {
             if(widget.className === 'root' || widget.className === 'container' || widget.className === 'timer'
                 || widget.className === 'slidetimer' || widget.className === 'world') {
@@ -622,7 +636,12 @@ class Property extends React.Component {
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
 
-        let w = WidgetStore.getWidgetByKey(this.state.currentObject);
+        let w = null;
+        if(this.state.currentObject === 'this') {
+            w = WidgetStore.getWidgetByKey(this.state.wKey);
+        } else {
+            w = WidgetStore.getWidgetByKey(this.state.currentObject);
+        }
         let f = null;
         if (this.state.currentAction&&this.state.currentAction.type === funcType.customize) {
             f = WidgetStore.getWidgetByKey(this.state.currentAction.func);
@@ -638,7 +657,7 @@ class Property extends React.Component {
                         {
                             v1.isProp===true
                             ?<PropertyViewSetUp
-                                oKey={this.state.currentAction.name==='setProps'?this.state.currentObject:null}
+                                oKey={this.state.currentAction.name==='setProps'?this.state.currentObject==='this'?this.state.wKey:this.state.currentObject:null}
                                 property={v1}
                                 propertyId={propertyId}
                                 objectList={this.state.objectList}
@@ -819,6 +838,7 @@ class Property extends React.Component {
 
         let objectMenu = (
             <Menu onClick={this.onObjectSelect}>
+                <MenuItem key={'this'} object={'this'}>当前对象</MenuItem>
                 {
                     !this.state.objectList||this.state.objectList.length==0
                         ? null
@@ -878,9 +898,12 @@ class Property extends React.Component {
                                                 targetList={this.state.objectList}
                                                 onClick={this.onSTButtonClick}
                                                 getResult={this.onSTResultGet.bind(this)} />
-                                            { !w || !w.props || !w.props.name
-                                                ?'目标对象'
-                                                :w.props.name
+                                            {
+                                                this.state.currentObject === 'this'
+                                                    ? '当前对象'
+                                                    : !w || !w.props || !w.props.name
+                                                    ?'目标对象'
+                                                    : w.props.name
                                             }
                                             <span className="icon" />
                                         </div>

@@ -303,6 +303,9 @@ function loadTree(parent, node, idList) {
 function idToObject(list, idName, varName) {
   if (!idName)
     return null;
+  if(idName === 'this') {
+      return {key:'this'};
+  }
   var obj = list[idName];
   if (obj && varName) {
       if(varName.substr(0, 1) == 'f'){
@@ -521,6 +524,9 @@ function generateObjectId(object) {
 
 function objectToId(object) {
   let idName, varKey, varName;
+    if(object === 'this') {
+        return ['this', undefined, undefined];
+    }
   if (object.className == 'var') {
     idName = object.widget.props['id'];
     varName = object.name;
@@ -548,6 +554,8 @@ function objectKeyToId(key) {
         let obj = keyMap[key];
         if(obj){
             return objectToId(obj);
+        } else if (key === 'this') {
+            return objectToId(key);
         }
     }
     return null;
@@ -652,6 +660,9 @@ function generateId(node) {
 }
 
 function getIdsName(idName, varName, propName) {
+    if(idName === 'this') {
+        return 'this.' + propName;
+    }
   return 'ids.' + idName + '.' + ((varName) ? '__' + varName : propName);
 }
 
@@ -774,7 +785,7 @@ function generateJsFunc(etree) {
             } else {
                 //用户填写
                 if(c.compareObjFlag&&c.compareObjFlag.type) {
-                    o += formulaGenLine(c.compareObjFlag);
+                    o += '('+formulaGenLine(c.compareObjFlag)+')';
                 } else  {
                     o += JSON.stringify(c.compareObjFlag);
                 }
