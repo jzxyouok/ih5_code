@@ -258,7 +258,7 @@ class FormulaInput extends React.Component {
             let value = this.state.value;
             let item = {objKey:object.key, property:null, pattern:null, prePattern:null};
             //特殊处理
-            if(object.className === 'var') {
+            if(object.className === 'var'||object.className === 'counter') {
                 item.property = {name:'value', showName:'内容'};
             }
             if(type === inputType.value) {
@@ -275,7 +275,7 @@ class FormulaInput extends React.Component {
                 value: value,
                 currentType:type,
             }, ()=>{
-                if(object.className === 'var'&&this.state.value.length>0){
+                if((object.className === 'var'||object.className === 'counter')&&this.state.value.length>0){
                     let focus = 'pattern'+(this.state.value.length-1);
                     if(this.refs[focus]) {
                         this.refs[focus].refs.input.focus();
@@ -562,11 +562,11 @@ class FormulaInput extends React.Component {
 
     doGetCaretPosition(oField) {
         // Initialize
-        var iCaretPos = 0;
+        let iCaretPos = 0;
         // IE Support
         if (document.selection) {
             oField.focus();
-            var oSel = document.selection.createRange();
+            let oSel = document.selection.createRange();
             oSel.moveStart('character', -oField.value.length);
             iCaretPos = oSel.text.length;
         } else if (oField.selectionStart || oField.selectionStart == '0')
@@ -719,7 +719,7 @@ class FormulaInput extends React.Component {
                                      onClick={this.onFocus.bind(this, i)}>
                                     <span>{obj.props.name}</span>
                                 </div>
-                                <div className={$class("formula-obj-dot",{'hidden':obj.className==='var'})}></div>
+                                <div className={$class("formula-obj-dot",{'hidden':obj.className==='var'||obj.className === 'counter'})}></div>
                                 {
                                     !v.property
                                         ? obj.className === 'data'
@@ -731,7 +731,7 @@ class FormulaInput extends React.Component {
                                         disable={this.disabled}
                                         column={obj.props.column}/>)
                                         : formulaPropertyDropdown(obj, v, i)
-                                        : (<div className={$class("formula-obj-property",{'hidden':obj.className==='var'})}
+                                        : (<div className={$class("formula-obj-property",{'hidden':obj.className==='var'||obj.className === 'counter'})}
                                                 onClick={this.onFocus.bind(this, i)}>
                                         {
                                             obj.className === 'data'

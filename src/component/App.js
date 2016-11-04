@@ -215,7 +215,8 @@ class App extends React.Component {
 
                 <TimelineView isHidden={this.state.activeFunc != null
                               || this.state.activeVar != null
-                              || this.state.activeDBItem != null }/>
+                              || this.state.activeDBItem != null
+                              || this.state.activeEventKey != null}/>
 
                 <div className={$class({"hidden": !this.state.editDb})}>
                     <EditDb />

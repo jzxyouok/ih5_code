@@ -179,6 +179,9 @@ $size: 25px;
             position: relative;
 			display: flex;
 			justify-content: space-around;
+            z-index: 99;
+            //border-bottom: 1px solid #151515;
+            //background: #232323;
             //border-right: 1px solid #151515;
 
             .line {
@@ -531,8 +534,12 @@ $size: 25px;
                     top: 12px;
                     z-index: 0;
                     height: 1px;
-                    background: #151515;
-                    opacity: 0.5;
+                    background: #000;
+                    opacity: 0.6;
+
+                    &.active{
+                        opacity: 0.18;
+                    }
                 }
             }
 
