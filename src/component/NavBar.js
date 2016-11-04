@@ -202,10 +202,19 @@ class NavBar extends React.Component {
             }
         };
 
-        let id = localStorage.getItem("workID");
-        if(id !== null){
-            this.onImportUrl(PREFIX + 'work/' + id, id);
+
+        let pathName = window.location.search;
+        if(pathName.substr(0,5)== "?nid="){
+            let reg = /\D/;
+            let str= pathName.substr(5,pathName.length);
+            let index = reg.exec(str);
+            let nid = pathName.substr(5,index.index);
+            this.onImportUrl(PREFIX + 'work/' + nid, nid);
         }
+        //let id = localStorage.getItem("workID");
+        //if(id !== null){
+        //    this.onImportUrl(PREFIX + 'work/' + id, id);
+        //}
         WidgetActions['cleanHistory']();
     }
 
@@ -569,12 +578,14 @@ class NavBar extends React.Component {
     }
 
     onOpen(id) {
-        this.onImportUrl(PREFIX + 'work/' + id, id);
-        this.setState({
-            specialLayer : false,
-            reAddDbId : [],
-            reAddSockId : []
-        })
+        let nid = "?nid=" + id;
+        window.open(href + nid, "_self");
+        //this.onImportUrl(PREFIX + 'work/' + id, id);
+        //this.setState({
+        //    specialLayer : false,
+        //    reAddDbId : [],
+        //    reAddSockId : []
+        //})
     }
 
     onImportUrl(url, id) {
