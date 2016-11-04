@@ -303,6 +303,9 @@ function loadTree(parent, node, idList) {
 function idToObject(list, idName, varName) {
   if (!idName)
     return null;
+  if(idName === 'this' || idName === 'param.target') {
+      return {key:idName};
+  }
   var obj = list[idName];
   if (obj && varName) {
       if(varName.substr(0, 1) == 'f'){
@@ -521,6 +524,9 @@ function generateObjectId(object) {
 
 function objectToId(object) {
   let idName, varKey, varName;
+    if(object === 'this' || object === 'param.target') {
+        return [object, undefined, undefined];
+    }
   if (object.className == 'var') {
     idName = object.widget.props['id'];
     varName = object.name;
@@ -548,6 +554,8 @@ function objectKeyToId(key) {
         let obj = keyMap[key];
         if(obj){
             return objectToId(obj);
+        } else if (key === 'this'|| key === 'param.target') {
+            return objectToId(key);
         }
     }
     return null;
@@ -652,6 +660,9 @@ function generateId(node) {
 }
 
 function getIdsName(idName, varName, propName) {
+    if(idName === 'this' || idName === 'param.target') {
+        return idName+ '.' + propName;
+    }
   return 'ids.' + idName + '.' + ((varName) ? '__' + varName : propName);
 }
 
@@ -771,7 +782,7 @@ function generateJsFunc(etree) {
 
              //用户填写
              if (c.compareObjFlag && c.compareObjFlag.type) {
-                 o += formulaGenLine(c.compareObjFlag);
+                 o += '('+formulaGenLine(c.compareObjFlag)+')';
              } else {
                  o += JSON.stringify(c.compareObjFlag);
              }
@@ -793,6 +804,8 @@ function generateJsFunc(etree) {
                       }
                   });
               }
+          } else if (cmd.action.name === 'deleteRootComponent') {
+              lines.push('param.target.getRoot().delete()');
           } else if (cmd.action.name === 'create') {
               if(cmd.action.property.length>=3) {
                   let cName = null;
@@ -3116,6 +3129,9 @@ export default Reflux.createStore({
         //起个名字给舞台
         if (data['stage']){
             data['stage']['props']['name'] = 'stage';
+        }
+        if(data['stage']&&data['stage']['props']['isStage'] === undefined) {
+            data['stage']['props']['isStage'] = true;
         }
         idList = [];
         tree = loadTree(null, data['stage'], idList);

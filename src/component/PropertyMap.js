@@ -740,11 +740,26 @@ propertyMap['strVar'] = [
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
 propertyMap['intVar'] = [
-       { name: 'changeValue', showName:'赋值', info:'(value)',
+    { name: 'changeValue', showName:'赋值', info:'(value)',
         property:[
             {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
-        ],
-           isFunc: true },
+        ], isFunc: true },
+    { name: 'add1', showName:'加1', isFunc: true },
+    { name: 'minus1', showName:'减1', isFunc: true },
+    { name: 'addN', showName:'加N',
+        property:[
+            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'minusN', showName:'减N',
+        property:[
+            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
+    { name: 'getInt', showName:'取整', isFunc: true },
+    { name: 'randomValue', showName:'生成随机数',
+        property:[
+            {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
+            {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer},
+        ], isFunc: true },
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
 propertyMap[dataType.oneDArr] = [

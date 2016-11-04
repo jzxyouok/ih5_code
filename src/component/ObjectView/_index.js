@@ -147,7 +147,7 @@ class ObjectView extends React.Component {
 
     onInitDelete(selectWidget) {
         let canDelete = false;
-        if(selectWidget.className === 'root') {
+        if(selectWidget.className === 'root'&&selectWidget.props.isStage) {
             canDelete = false;
         } else {
             canDelete = true;
