@@ -603,7 +603,7 @@ class NavBar extends React.Component {
     }
 
     onImportUrl(url, id) {
-        WidgetActions['ajaxSend'](null, 'GET', url + '?raw=1', null, null, function(text) {
+        WidgetActions['ajaxSend'](null, 'GET', url + '?raw=1&nid=' + id, null, null, function(text) {
             bridge.decryptData(text, function(result) {
                 if (result && result['stage']) {
                     this.workid = id;
