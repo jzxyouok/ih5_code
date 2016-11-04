@@ -450,6 +450,7 @@ class TimelineView extends React.Component {
             },()=>{
                 //this.changeIsCanAdd();
             });
+            this.state.timerNode.node['seek'](parseFloat(data));
             //console.log(5446,this.state.isChangeKey);
             if(this.state.isChangeKey){
                 //console.log(this.state.startTime,this.state.endTime);
@@ -501,6 +502,7 @@ class TimelineView extends React.Component {
         },()=>{
             //this.changeIsCanAdd();
         });
+        this.state.timerNode.node['seek'](parseFloat(data));
         if(this.state.isChangeKey){
             //console.log(this.state.startTime,this.state.endTime);
             //if(data < this.state.startTime){
