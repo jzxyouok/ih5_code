@@ -1868,9 +1868,6 @@ export default Reflux.createStore({
           }
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
-          // if(copyObj.props&&copyObj.props.key) {
-          //     (delete copyObj.props.key);
-          // }
         loadTree(this.currentWidget, copyObj);
         if(copyObj.props.eventTree){
           this.reorderEventTreeList();
