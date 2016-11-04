@@ -362,6 +362,11 @@ function resolveEventTree(node, list) {
         judge.compareObj = idToObject(list, judge.compareObjId, judge.compareVarId);
         delete(judge.compareObjId);
         delete(judge.compareVarId);
+
+          //公式编辑器
+          if(judge.compareObjFlag&&judge.compareObjFlag.type) {
+              dealWithFormulaInput(judge.compareObjFlag);
+          }
       });
         if(item.needFills) {
             if(!item.needFill) {
@@ -588,6 +593,11 @@ function generateId(node) {
           judge.compareObj = keyMap[judge.compareObjKey];
           generateObjectId(judge.judgeObj);
           generateObjectId(judge.compareObj);
+
+          //公式编辑器处理
+          if(judge.compareObjFlag&&judge.compareObjFlag.type) {
+              genFormulaInputId(judge.compareObjFlag);
+          }
       });
 
       item.specificList.forEach(cmd => {
@@ -768,7 +778,12 @@ function generateJsFunc(etree) {
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
                 //用户填写
-                o += JSON.stringify(c.compareObjFlag);
+                if(c.compareObjFlag&&c.compareObjFlag.type) {
+                    o += formulaGenLine(c.compareObjFlag);
+                } else  {
+                    o += JSON.stringify(c.compareObjFlag);
+                }
+                // o += JSON.stringify(c.compareObjFlag);
             }
             conditions.push('(' + o + ')');
           }
@@ -1158,12 +1173,17 @@ function saveTree(data, node, saveKey) {
                     obj.judgeValFlag = v.judgeValFlag;//判断对象的属性
                 }
 
-
                 obj.compareFlag = v.compareFlag;//比较运算符
 
-
-                obj.compareObjFlag = v.compareObjFlag;
-                 //todo:删除
+                if(v.compareObjFlag&&v.compareObjFlag.type&&v.compareObjFlag.type===2) {
+                    //公式编辑器的对象处理
+                    obj.compareObjFlag = {
+                        type: 2,
+                        value: dealWithFormulaObj(v.compareObjFlag.value, saveKey)
+                    };
+                } else {
+                    obj.compareObjFlag = v.compareObjFlag;
+                }
 
                 // obj.compareObjKey = v.compareObjKey;
                 // if (v.compareObj) {
