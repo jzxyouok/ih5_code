@@ -12,6 +12,7 @@ import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { ArrTableDropDown } from '../PropertyView/ArrTableDropDown';
 import { propertyMap } from '../PropertyMap'
+import SelectTargetAction from '../../actions/SelectTargetAction';
 
 import $ from 'jquery';
 
@@ -163,10 +164,11 @@ class FormulaInput extends React.Component {
     }
 
     // formula mode
-    onFocus(activePatternIndex, e) {
+    onFocus(activePatternIndex, stopPropagation, e) {
         if(!this.disabled&&((this.onChangeFocus!=undefined&&this.onChangeFocus(false)!==false) || this.onChangeFocus===undefined)) {
-            if(e){
+            if(e&&stopPropagation){
                 e.stopPropagation();
+                SelectTargetAction['selectBtnClick'](null, false, []);
             }
             if(this.refs.formulaMode&&!this.state.on) {
                 this.setState({
@@ -624,7 +626,7 @@ class FormulaInput extends React.Component {
         };
 
         let objectMenu = (
-            <Menu onClick={this.onObjectSelect}>
+            <Menu className='fi-object-dropdown-menu' onClick={this.onObjectSelect}>
                 {
                     !this.props.objectList||this.props.objectList.length==0
                         ? null
@@ -639,7 +641,7 @@ class FormulaInput extends React.Component {
 
         let getPropertyMenu = (list, v, i)=>{
             return(
-                <Menu onClick={this.onPropertySelect.bind(this, v, i)}>
+                <Menu className='fi-property-dropdown-menu' onClick={this.onPropertySelect.bind(this, v, i)}>
                     {
                         !list||list.length==0
                             ? null
@@ -678,7 +680,7 @@ class FormulaInput extends React.Component {
                 return (
                     <Dropdown overlay={getPropertyMenu(this.onGetPropertyList(obj),v,i)} trigger={['click']}
                               getPopupContainer={() => document.getElementById(this.containerId)}
-                              onClick={this.onFocus.bind(this,null)}
+                              onClick={this.onFocus.bind(this,null,true)}
                               onVisibleChange={this.onPropertyVisibleChange}>
                         <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
                             <div className="dropDown-title">选择属性</div>

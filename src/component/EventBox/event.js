@@ -810,12 +810,14 @@ class Event extends React.Component {
     }
 
     inputChange(val,event) {
-        if(val === 'compare') {
-            this.temp = event;
-            return;
+        let value = null;
+        if(val === 'compareObjFlag') {
+            value = event;
+        } else {
+            value = event.target.value;
         }
         let eventList = this.state.eventList;
-        eventList[this.curEventIndex].children[this.curChildrenIndex][val] = event.target.value;
+        eventList[this.curEventIndex].children[this.curChildrenIndex][val] = value;
         this.setState({
             eventList: eventList
         });
@@ -1078,7 +1080,10 @@ class Event extends React.Component {
         }
     }
 
-    onFormulaInputFocus(value, index, canChange) {
+    onFormulaInputFocus(value, index, topIndex, canChange) {
+        //选中
+        this.setCurOption(index,topIndex,'compareObjFlag',false);
+
         if(this.state.activeKey !== this.state.wKey) {
             return false;
         }
@@ -1179,8 +1184,8 @@ class Event extends React.Component {
                                         v.children.map((v1,i1)=>{
                                             let judgeObjName = this.getObjNameByKey(v1.judgeObjKey,'判断对象',v1.judgeObjFlag);
                                             let judgeValName = this.getShowNameByName('judgeValFlag',v1.judgeValFlag,i1,i);
-                                            let compareObjName = this.getObjNameByKey(v1.compareObjKey,'比较值/对象',v1.compareObjFlag);
-                                            let compareValName = this.getShowNameByName('compareValFlag',v1.compareValFlag ,i1,i);
+                                            {/*let compareObjName = this.getObjNameByKey(v1.compareObjKey,'比较值/对象',v1.compareObjFlag);*/}
+                                            {/*let compareValName = this.getShowNameByName('compareValFlag',v1.compareValFlag ,i1,i);*/}
                                             return  <div className={$class("list f--hlc", {'list-not-enable': !v1.enable}, {'list-first': i1===0})}
                                                          key={i1}
                                                          ref={'list-item-'+i1}>
@@ -1257,7 +1262,7 @@ class Event extends React.Component {
                                                             </Dropdown>
                                                     }
                                                 </div>
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})}>
                                                     {
                                                         !v1.enable
                                                             ? <div className='title f--hlc'>
@@ -1275,7 +1280,7 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4],'com120':v1.compareObjFlag=='比较值/对象'})} >
+                                                <div className={$class('dropDown-layer middle compare-layer',{'hidden':v1.arrHidden[4]})} >
                                                     {/*  <SelectTargetButton
                                                         className={'p--icon'}
                                                         disabled={!v.enable || !v1.enable}
@@ -1284,11 +1289,16 @@ class Event extends React.Component {
                                                         getResult={this.onSTResultGet.bind(this,'compareObjFlag')}
                                                     /> */}
                                                     {
-                                                        !v1.enable
-                                                            ? <div className={$class('title f--hlc pl25',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
-                                                                {compareObjName}
-                                                                <span className='icon'/></div>
-                                                            : <input  defaultValue="todo" />
+                                                        <div className={$class("compare f--hlc", {'compare-first':i1===0})}>
+                                                            <FormulaInput containerId={'event-item-header-'+v.eid}
+                                                                          disabled={!v1.enable}
+                                                                          objectList={this.state.allWidgetsList}
+                                                                          onFocus={this.onFormulaInputFocus.bind(this, v1, i1, i)}
+                                                                          onBlur={this.onFormulaInputBlur.bind(this, i1)}
+                                                                          value={v1.compareObjFlag&&v1.compareObjFlag.type!==undefined?v1.compareObjFlag:null}
+                                                                          minWidth="160px"
+                                                                          onChange={this.inputChange.bind(this,'compareObjFlag')}/>
+                                                        </div>
                                                     }
                                                     {/* <Dropdown
                                                      overlay={this.menuList('compareObjFlag')}
@@ -1306,36 +1316,27 @@ class Event extends React.Component {
                                                      <span className='icon' onClick={this.showCompareDropDown.bind(this,'compareObjFlag'+i+i1,i,i1)} /></div>
                                                      </Dropdown>    */}
                                                 </div>
-                                                <div className={$class('dropDown-layer mr20 middle',{'hidden':v1.arrHidden[5]})} >
-                                                    {
-                                                        !v1.enable
-                                                            ? <div className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >
-                                                                {compareValName}
-                                                                <span className='icon'/></div>
-                                                            : <Dropdown
-                                                                overlay={this.menuList('compareValFlag')}
-                                                                onClick={this.setCurOption.bind(this,i1,i,'compareValFlag',true)}
-                                                                getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-                                                                trigger={['click']}>
-                                                                <div className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >
-                                                                    <input value= {compareValName}
-                                                                        onChange={this.inputChange.bind(this,'compareValFlag')}
-                                                                        onFocus={this.saveOldVal.bind(this,'compareValFlag',i1,i)}
-                                                                        onBlur={this.setInputValAuto.bind(this,'compareValFlag')}
-                                                                        className='compareValFlag-input'/>
-                                                                    <span className='icon'/></div>
-                                                            </Dropdown>
-                                                    }
-                                                </div>
-                                                <div className={$class("compare f--hlc", {'compare-first':i===0})}>
-                                                    <FormulaInput containerId={'event-item-header-'+v.eid}
-                                                                  disabled={!v1.enable}
-                                                                  objectList={this.state.allWidgetsList}
-                                                                  onFocus={this.onFormulaInputFocus.bind(this, v1, i1)}
-                                                                  onBlur={this.onFormulaInputBlur.bind(this, i1)}
-                                                                  value={this.temp}
-                                                                  onChange={this.inputChange.bind(this,'compare')}/>
-                                                </div>
+                                                {/*<div className={$class('dropDown-layer mr20 middle',{'hidden':v1.arrHidden[5]})} >*/}
+                                                    {/*{*/}
+                                                        {/*!v1.enable*/}
+                                                            {/*? <div className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >*/}
+                                                                {/*{compareValName}*/}
+                                                                {/*<span className='icon'/></div>*/}
+                                                            {/*: <Dropdown*/}
+                                                                {/*overlay={this.menuList('compareValFlag')}*/}
+                                                                {/*onClick={this.setCurOption.bind(this,i1,i,'compareValFlag',true)}*/}
+                                                                {/*getPopupContainer={() => document.getElementById('event-item-'+v.eid)}*/}
+                                                                {/*trigger={['click']}>*/}
+                                                                {/*<div className={$class('title f--hlc',{'title-gray':v1.compareValFlag=='比较值'})} >*/}
+                                                                    {/*<input value= {compareValName}*/}
+                                                                        {/*onChange={this.inputChange.bind(this,'compareValFlag')}*/}
+                                                                        {/*onFocus={this.saveOldVal.bind(this,'compareValFlag',i1,i)}*/}
+                                                                        {/*onBlur={this.setInputValAuto.bind(this,'compareValFlag')}*/}
+                                                                        {/*className='compareValFlag-input'/>*/}
+                                                                    {/*<span className='icon'/></div>*/}
+                                                            {/*</Dropdown>*/}
+                                                    {/*}*/}
+                                                {/*</div>*/}
                                                 <button className={$class('close-btn', {'close-btn-first':i1===0})}
                                                         disabled={!v.enable}
                                                         onClick={this.deleteOperation.bind(this,i1,i)} />

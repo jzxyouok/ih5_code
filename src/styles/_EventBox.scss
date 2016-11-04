@@ -347,6 +347,30 @@
                 .item-header {
                     //height: 28px;
 
+                    .fi-object-dropdown-menu,
+                    .fi-property-dropdown-menu{
+                        &.ant-dropdown-menu    {
+                            background: #3c516f;
+                            border: none;
+                            box-shadow: none;
+                            margin-top: -4px;
+                            border-radius: 0 0 2px 2px;
+                        }
+                        .ant-dropdown-menu-item {
+                            color: white;
+                            padding: 2px 10px;
+                        }
+                        .ant-dropdown-menu-item-active {
+                            background: #19222e;
+                        }
+                        .ant-dropdown-menu-item:first-child {
+                            border-radius: 0;
+                        }
+                        .ant-dropdown-menu-item:last-child {
+                            border-radius: 0 0 2px 2px;
+                        }
+                    }
+
                     .close-line {
                         width: 20px;
                         padding: 0 10px;
@@ -364,9 +388,9 @@
                         //height: 26px;
                         margin: 1px 0 0 0;
 
-                        .zhongToLong{
-                            width: 573px !important;
-                        }
+                        //.zhongToLong{
+                        //    width: 573px !important;
+                        //}
                         .left {
                             width: 169px;
                             border-right: 1px solid #232323;
@@ -417,6 +441,8 @@
                                     background: url("img/button-icon.svg") no-repeat -1481px  -81px;
                                 }
                             }
+
+
                         }
 
                         .left-layer ,
@@ -753,6 +779,9 @@
                                    width:120px;
                                    .compareObjFlag-input{width: 100%;}
                                }
+                                &.compare-layer {
+                                    width: auto;
+                                }
                             }
 
                             &.short {
@@ -769,8 +798,9 @@
                             margin-bottom: 1px;
 
                             width:493px;
-
+                            margin-right: 26px;
                             &.list-first {
+                                margin-right: 0;
                                 width: 519px;
                             }
 
@@ -847,6 +877,56 @@
                                     margin-right: 46px;
                                 }
                                 margin-right: 20px;
+
+                                .formulaInput {
+                                    .formula-object-icon {
+                                        margin: 0 1px 0 0;
+                                        border: 1px solid #1d2736;
+                                        background: url("img/button-icon.svg") no-repeat -1479px 1px;
+                                        &:hover {
+                                            background: url("img/button-icon.svg") no-repeat -1479px  -39px;
+                                        }
+                                        &:active {
+                                            background: url("img/button-icon.svg") no-repeat -1479px  -79px;
+                                            border:1px solid #0f1620;
+                                        }
+                                        &:disabled{
+                                            filter: alpha(opacity=60);
+                                            opacity: 0.6;
+                                            cursor: not-allowed !important;
+                                        }
+                                        &.active {
+                                            border: 1px solid #7b5815;
+                                            background: url("img/button-icon.svg") no-repeat -1479px  -79px;
+                                        }
+                                    }
+                                    .value-mode,
+                                    .formula-mode{
+                                        .formula-title {
+                                            background: #1d2736;
+                                        }
+                                        .ant-input-wrapper {
+                                            input {
+                                                background: #1d2736;
+                                            }
+                                        }
+                                        .right-icon {
+                                            background: url("img/button-icon.svg") no-repeat -1678px 0;
+                                        }
+                                    }
+                                    .formula-mode {
+                                        background: #1d2736;
+                                        .formula-obj-property-dropDown {
+                                            background-color: #303f54;
+                                        }
+                                        .formula-obj-div {
+                                            &.complete {
+                                                background-color: #303f54;
+                                            }
+                                        }
+                                    }
+                                }
+
                             }
 
                             .plus-btn {
