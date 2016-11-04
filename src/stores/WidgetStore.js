@@ -1162,6 +1162,8 @@ function saveTree(data, node, saveKey) {
 
 
                 obj.compareObjFlag = v.compareObjFlag;
+                 //todo
+
                 obj.compareObjKey = v.compareObjKey;
                 if (v.compareObj) {
                     var o = objectToId(v.compareObj);
@@ -1170,18 +1172,8 @@ function saveTree(data, node, saveKey) {
                         obj.compareVarId = o[1];
                         obj.compareVarName = o[2];
                     }
-                    isSpecial2 = specialObject.indexOf(v.compareObj.className) >= 0;
                 }
-                if (isSpecial2) {
-                 //   obj.compareValFlag = v.compareObj.props.value;
-                    obj.compareValFlag ='value';
-                } else if (v.compareValFlag == '比较值') {
-                    //用户填的值
-                    obj.compareObjFlag = v.compareObjFlag;
-                } else {
-                    //非五类
-                    obj.compareValFlag = v.compareValFlag;
-                }
+
 
                 obj.arrHidden = v.arrHidden;
 
@@ -1605,7 +1597,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['replyHistory'], this.replyHistory);
         this.listenTo(WidgetActions['chooseHistory'], this.chooseHistory);
         this.listenTo(WidgetActions['cleanHistory'], this.cleanHistory);
+
+        this.listenTo(WidgetActions['changeContactObj'], this.changeContactObj);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
+
+
 
 
         this.listenTo(WidgetActions['closeKeyboardMove'], this.closeKeyboardMove);
@@ -3543,7 +3539,11 @@ export default Reflux.createStore({
             classList: classList,
             historyPropertiesUpdate : true
         });
-    }
+    },
+    changeContactObj:function (key) {
+
+        this.trigger({contactObj:key});
+    },
 });
 
 export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType, classList, selectableClass}
