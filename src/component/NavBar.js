@@ -169,7 +169,8 @@ class NavBar extends React.Component {
             this.state.loginVisible = false;
             this.getWorks(name);
         } else {
-            this.state.loginVisible = true;
+            //this.state.loginVisible = true;
+            window.open("http://test-beta.ih5.cn", "_self")
         }
         this.newWork();
         this.workid = null;
@@ -219,14 +220,14 @@ class NavBar extends React.Component {
             this.workNid = nid;
             this.onImportUrl(PREFIX + 'work/', nid);
         }
-        else{
-            let id = localStorage.getItem("workID");
-            if(id !== null){
-                this.onImportUrl(PREFIX + 'work/' + id, id);
-                this.workid = id;
-                localStorage.setItem("workID", id );
-            }
-        }
+        //else{
+        //    let id = localStorage.getItem("workID");
+        //    if(id !== null){
+        //        this.onImportUrl(PREFIX + 'work/' + id, id);
+        //        this.workid = id;
+        //        localStorage.setItem("workID", id );
+        //    }
+        //}
         WidgetActions['cleanHistory']();
     }
 
