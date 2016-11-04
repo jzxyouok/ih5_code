@@ -3128,6 +3128,9 @@ export default Reflux.createStore({
         if (data['stage']){
             data['stage']['props']['name'] = 'stage';
         }
+        if(data['stage']&&data['stage']['props']['isStage'] === undefined) {
+            data['stage']['props']['isStage'] = true;
+        }
         idList = [];
         tree = loadTree(null, data['stage'], idList);
         resolveEventTree(tree, idList);
