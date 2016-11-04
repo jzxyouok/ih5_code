@@ -635,7 +635,15 @@ class Event extends React.Component {
         this.setState({eventList:eventList});
     }
 
-    getAntdComponent(item,index,obj){
+    getAntdComponent(index,obj){
+
+        let eventList =this.state.eventList;
+        if(!eventList[this.curEventIndex].needFill){
+            eventList[this.curEventIndex].needFill =obj.needFill;
+        }
+        let item =eventList[this.curEventIndex].needFill[index];
+
+
         if(item.type=='number'){
             return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
@@ -831,12 +839,12 @@ class Event extends React.Component {
                                                     :v.needFill.map((n,m)=>{
                                                     let content;
                                                     if(n.type=='select' && n.showName ===undefined){
-                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '    onClick={this.setCurOption.bind(this,0,i,null,false)}> {this.getAntdComponent(n,m,v)}</div>)
+                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '    onClick={this.setCurOption.bind(this,0,i,null,false)}> {this.getAntdComponent(m,v)}</div>)
                                                     }else{
                                                         content= (<div key={m} className='dropDown-input2 dropDown-input-full '>
                                                             <div className='dropDown-input-txt-half'>{n.showName}</div>
                                                             <div className='dropDown-input-half'    onClick={this.setCurOption.bind(this,0,i,null,false)}>
-                                                                {this.getAntdComponent(n,m,v)}
+                                                                {this.getAntdComponent(m,v)}
                                                             </div>
                                                         </div>)
                                                     }

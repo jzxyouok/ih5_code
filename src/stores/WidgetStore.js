@@ -585,9 +585,13 @@ function generateId(node) {
           item.needFill.map((v,i)=>{
             if(v.showName=='碰撞对象'){
                 let bodyObj = keyMap[v.default];
-                let parentObj =bodyObj.parent;
-                generateObjectId(bodyObj);
-                generateObjectId(parentObj);
+                if(bodyObj){
+                    generateObjectId(bodyObj);
+                    let parentObj =bodyObj.parent;
+                    if(parentObj){
+                        generateObjectId(parentObj);
+                    }
+                }
             }
           });
        }
@@ -1146,6 +1150,7 @@ function saveTree(data, node, saveKey) {
                 obj.judgeValFlag = 'value';
                 obj.compareFlag = judges.conFlag == 'positive'?'>':'<';
                 obj.compareObjFlag =0;
+                judges.conFlag = 'change'
                 judges.children.push(obj);
             }
 
