@@ -56,6 +56,7 @@ var propertyFlags = {};
 propertyMap['widget'] = [
     { name: 'id',showName:'ID', type: propertyType.String, default: '', isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
+    { name: 'delete', showName: '删除对象', isFunc:true }
 ];
 
 propertyMap['data'] = [
