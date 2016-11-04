@@ -979,7 +979,6 @@ class Event extends React.Component {
 
                 let curBodyKey = this.state.selectWidget.key;
 
-
                 let findChildKey = (v, i)=> {
                     if (v.className == 'body' && v.key != curBodyKey) {
                         keyList.push(v.key);
@@ -1005,6 +1004,7 @@ class Event extends React.Component {
                     optionArr.push(<Option key={i} value={v.toString()}
                                            className='dropDown-input-option'>{WidgetStore.getWidgetByKey(v).props.name}</Option>);
                 });
+
                 return <Select disabled={!obj.enable} className='dropDown-input-content' value={str}
                                onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
             } else {
