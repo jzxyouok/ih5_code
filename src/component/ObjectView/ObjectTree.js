@@ -472,7 +472,7 @@ class ObjectTree extends React.Component {
                 });
             }
         } else {
-            if(this.state.nid !== nid) {
+            if(this.state.nid !== nid || this.state.activeEventTreeKey) {
                 this.setState({
                     nid : nid,
                     editMode: false

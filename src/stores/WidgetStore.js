@@ -804,6 +804,8 @@ function generateJsFunc(etree) {
                       }
                   });
               }
+          } else if (cmd.action.name === 'deleteRootComponent') {
+              lines.push('param.target.getRoot().delete()');
           } else if (cmd.action.name === 'create') {
               if(cmd.action.property.length>=3) {
                   let cName = null;

@@ -223,6 +223,19 @@ class Property extends React.Component {
                 }
             });
         }
+        let objRoot = null;
+        if(obj.className === 'var'|| obj.className === 'dbItem' || obj.className === 'func') {
+            objRoot = obj.widget.rootWidget;
+        } else {
+            objRoot = obj.rootWidget;
+        }
+        if(objRoot.className==='root'&&objRoot.props.isStage) {
+            actionList.push({
+                name: 'deleteRootComponent',
+                showName: '删除组件',
+                type: funcType.default
+            });
+        }
 
         this.setState({
             actionList: actionList
