@@ -23,6 +23,7 @@ class Event extends React.Component {
             toLong: false,
             eventList: this.props.eventList,
             selectWidget: this.props.widget,
+            initTree:[],
             allWidgetsList: null,
             curChild: null,
             activeKey: this.props.activeKey,  //当前激活事件的key
@@ -137,12 +138,11 @@ class Event extends React.Component {
             }
             this.setEventBoxWidth();
         }
-        console.log('widget',widget)
+
         if(widget.initTree){
             this.setState({
                 initTree:widget.initTree
             });
-            console.log('initTree',widget.initTree);
         }
 
         if (widget.allWidgets) {
@@ -979,10 +979,10 @@ class Event extends React.Component {
                 let curBodyKey = this.state.selectWidget.key;
 
 
-                let node = this.state.selectWidget;
-                while (node.className != 'world') {
-                    node = node.parent;
-                }
+                // let node = this.state.selectWidget;
+                // while (node.className != 'world') {
+                //     node = node.parent;
+                // }
 
 
                 let findChildKey = (v, i)=> {
@@ -992,7 +992,14 @@ class Event extends React.Component {
                         v.children.map(findChildKey);
                     }
                 }
-                node.children.map(findChildKey);
+
+                this.state.initTree.map((v,i)=>{
+                    let node =v.tree;
+                    if(node.children.length){
+                        node.children.map(findChildKey);
+                    }
+                });
+
                 item.option = keyList;
                 let str = item.default;
                 let itemObj = WidgetStore.getWidgetByKey(item.default);
