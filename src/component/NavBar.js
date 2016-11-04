@@ -173,7 +173,7 @@ class NavBar extends React.Component {
         }
         this.newWork();
         this.workid = null;
-
+        this.workNid = null;
         this.drawRect = null;
         this.closeTimeFuc = null;
     }
@@ -202,9 +202,30 @@ class NavBar extends React.Component {
             }
         };
 
-        let id = localStorage.getItem("workID");
-        if(id !== null){
-            this.onImportUrl(PREFIX + 'work/' + id, id);
+
+        let pathName = window.location.search;
+        if(pathName.substr(0,5) == "?nid="){
+            let reg = /\D/;
+            let str= pathName.substr(5,pathName.length);
+            let index = reg.exec(str);
+            let nid;
+            if(index == null){
+                nid = str;
+            }
+            else {
+                nid = pathName.substr(5,index.index);
+            }
+            //console.log(nid);
+            this.workNid = nid;
+            this.onImportUrl(PREFIX + 'work/', nid);
+        }
+        else{
+            let id = localStorage.getItem("workID");
+            if(id !== null){
+                this.onImportUrl(PREFIX + 'work/' + id, id);
+                this.workid = id;
+                localStorage.setItem("workID", id );
+            }
         }
         WidgetActions['cleanHistory']();
     }
@@ -334,6 +355,13 @@ class NavBar extends React.Component {
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
                 getSockListAction['getSockList'](result['sock']);
+
+                result['list'].map((v,i)=>{
+                    if(v.nid == this.workNid){
+                        this.workid = v.id ;
+                        localStorage.setItem("workID", v.id );
+                    }
+                });
             } else {
                 this.setState({loginVisible: true});
             }
@@ -569,22 +597,28 @@ class NavBar extends React.Component {
     }
 
     onOpen(id) {
-        this.onImportUrl(PREFIX + 'work/' + id, id);
-        this.setState({
-            specialLayer : false,
-            reAddDbId : [],
-            reAddSockId : []
-        })
+        let nid = "?nid=" + id;
+        let href = window.location.href;
+        let index = href.indexOf('?');
+        if(index>=0){
+            href = href.substring(0,index);
+        }
+        window.open(href + nid, "_self");
+
+        //this.onImportUrl(PREFIX + 'work/' + id, id);
+        //this.setState({
+        //    specialLayer : false,
+        //    reAddDbId : [],
+        //    reAddSockId : []
+        //})
     }
 
     onImportUrl(url, id) {
-        WidgetActions['ajaxSend'](null, 'GET', url + '?raw=1', null, null, function(text) {
+        WidgetActions['ajaxSend'](null, 'GET', url + 'iH5Tool?raw=1&nid=' + id, null, null, function(text) {
             bridge.decryptData(text, function(result) {
                 if (result && result['stage']) {
-                    this.workid = id;
                     WidgetActions['initTree'](result);
                     WidgetActions['cleanHistory']();
-                    localStorage.setItem("workID", id);
                 }
             }.bind(this));
         }.bind(this), true);
@@ -1186,7 +1220,7 @@ class NavBar extends React.Component {
                                             : this.state.workList.map((v,i)=>{
                                             return  <li key={i}
                                                         className={$class({'hidden': i >= 10})}
-                                                        onClick={ this.onOpen.bind(this, v.id)}>
+                                                        onClick={ this.onOpen.bind(this, v.nid)}>
                                                 { i >= 10 ? null : v.name}
                                             </li>
                                         })

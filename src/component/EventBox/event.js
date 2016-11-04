@@ -23,6 +23,7 @@ class Event extends React.Component {
             toLong: false,
             eventList: this.props.eventList,
             selectWidget: this.props.widget,
+            initTree:[],
             allWidgetsList: null,
             curChild: null,
             activeKey: this.props.activeKey,  //当前激活事件的key
@@ -137,6 +138,12 @@ class Event extends React.Component {
                 this.forceUpdate();
             }
             this.setEventBoxWidth();
+        }
+
+        if(widget.initTree){
+            this.setState({
+                initTree:widget.initTree
+            });
         }
 
         if (widget.allWidgets) {
@@ -970,16 +977,12 @@ class Event extends React.Component {
         else if(item.type=='select') {
             let optionArr = [];
             if (item.showName == '碰撞对象') {
-                //获取同一物理对象下的其他body
+                //获取的其他body
                 let keyList = [];
 
                 let curBodyKey = this.state.selectWidget.key;
 
-                let node = this.state.selectWidget;
 
-                while (node.className != 'world') {
-                    node = node.parent;
-                }
                 let findChildKey = (v, i)=> {
                     if (v.className == 'body' && v.key != curBodyKey) {
                         keyList.push(v.key);
@@ -987,7 +990,14 @@ class Event extends React.Component {
                         v.children.map(findChildKey);
                     }
                 }
-                node.children.map(findChildKey);
+
+                this.state.initTree.map((v,i)=>{
+                    let node =v.tree;
+                    if(node.children.length){
+                        node.children.map(findChildKey);
+                    }
+                });
+
                 item.option = keyList;
                 let str = item.default;
                 let itemObj = WidgetStore.getWidgetByKey(item.default);
@@ -1266,34 +1276,35 @@ class Event extends React.Component {
                                                 </div>
 
                                                 <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4],'com120':v1.compareObjFlag=='比较值/对象'})} >
-                                                    <SelectTargetButton
+                                                    {/*  <SelectTargetButton
                                                         className={'p--icon'}
                                                         disabled={!v.enable || !v1.enable}
                                                         targetList={this.state.allWidgetsList}
                                                         onClick={this.onSTButtonClick.bind(this,i1,i)}
                                                         getResult={this.onSTResultGet.bind(this,'compareObjFlag')}
-                                                    />
+                                                    /> */}
                                                     {
                                                         !v1.enable
                                                             ? <div className={$class('title f--hlc pl25',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
                                                                 {compareObjName}
                                                                 <span className='icon'/></div>
-                                                            : <Dropdown
-                                                                overlay={this.menuList('compareObjFlag')}
-                                                                onClick={this.setCurOption.bind(this,i1,i,'compareObjFlag',false)}
-                                                                visible={v1.showDropdown}
-                                                                getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-                                                                trigger={['click']}>
-                                                                <div className={$class('title f--hlc pl25',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
-                                                                    <input value= {compareObjName}
-                                                                        onChange={this.inputChange.bind(this,'compareObjFlag')}
-                                                                        onFocus={this.saveOldVal.bind(this,'compareObjFlag',i1,i)}
-                                                                        onBlur={this.setInputValAuto.bind(this,'compareObjFlag')}
-                                                                        ref={'compareObjFlag'+i+i1}
-                                                                        className='compareObjFlag-input'/>
-                                                                    <span className='icon' onClick={this.showCompareDropDown.bind(this,'compareObjFlag'+i+i1,i,i1)} /></div>
-                                                            </Dropdown>
+                                                            : <input  defaultValue="todo" />
                                                     }
+                                                    {/* <Dropdown
+                                                     overlay={this.menuList('compareObjFlag')}
+                                                     onClick={this.setCurOption.bind(this,i1,i,'compareObjFlag',false)}
+                                                     visible={v1.showDropdown}
+                                                     getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
+                                                     trigger={['click']}>
+                                                     <div className={$class('title f--hlc pl25',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
+                                                     <input value= {compareObjName}
+                                                     onChange={this.inputChange.bind(this,'compareObjFlag')}
+                                                     onFocus={this.saveOldVal.bind(this,'compareObjFlag',i1,i)}
+                                                     onBlur={this.setInputValAuto.bind(this,'compareObjFlag')}
+                                                     ref={'compareObjFlag'+i+i1}
+                                                     className='compareObjFlag-input'/>
+                                                     <span className='icon' onClick={this.showCompareDropDown.bind(this,'compareObjFlag'+i+i1,i,i1)} /></div>
+                                                     </Dropdown>    */}
                                                 </div>
                                                 <div className={$class('dropDown-layer mr20 middle',{'hidden':v1.arrHidden[5]})} >
                                                     {
