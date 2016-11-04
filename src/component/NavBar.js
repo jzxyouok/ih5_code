@@ -220,14 +220,18 @@ class NavBar extends React.Component {
             this.workNid = nid;
             this.onImportUrl(PREFIX + 'work/', nid);
         }
-        //else{
-        //    let id = localStorage.getItem("workID");
-        //    if(id !== null){
-        //        this.onImportUrl(PREFIX + 'work/' + id, id);
-        //        this.workid = id;
-        //        localStorage.setItem("workID", id );
-        //    }
-        //}
+        else{
+            this.workid = null;
+            this.workNid = null;
+            localStorage.setItem("workID", null );
+            this.onSave();
+            //let id = localStorage.getItem("workID");
+            //if(id !== null){
+            //    this.onImportUrl(PREFIX + 'work/' + id, id);
+            //    this.workid = id;
+            //    localStorage.setItem("workID", id );
+            //}
+        }
         WidgetActions['cleanHistory']();
     }
 
@@ -394,13 +398,29 @@ class NavBar extends React.Component {
             }.bind(this));
     }
 
-    saveCallback(id, wname, wdescribe) {
+    saveCallback(id, wname, wdescribe,nid) {
         if (wname != null) {
             let result = [{'id': id, 'name': wname , 'describe':wdescribe}, ...this.state.workList];
             this.setState({
                 workList: result
             });
         }
+        let pathName = window.location.search;
+        if(this.workid == null && pathName.substr(0,5) != "?nid="){
+            let workNid = "?nid=" + nid;
+            let href = window.location.href;
+            let index = href.indexOf('?');
+            if(index>=0){
+                href = href.substring(0,index);
+            }
+            if(pathName.substr(0,6) == '?dom=1'){
+                window.open(href + workNid + '?dom=1', "_self");
+            }
+            else {
+                window.open(href + workNid, "_self");
+            }
+        }
+
         this.workid = id;
         localStorage.setItem("workID", id);
 
@@ -468,9 +488,9 @@ class NavBar extends React.Component {
             if(index>=0){
                 href = href.substring(0,index);
             }
+            window.open(href + "?dom=1", "_self");
             this.workid = null;
             localStorage.setItem("workID", null);
-            window.open(href + "?dom=1", "_self");
         }
         else{
             let href = window.location.href;
@@ -634,7 +654,7 @@ class NavBar extends React.Component {
 
     onSaveDone() {
         let name = this.refs.saveWorkName.value;
-        let describe = this.refs.saveWorkDescribe.value;
+        let describe = this.refs.saveWorkDescribe.value.length >0 ? this.refs.saveWorkDescribe.value : "ih5测试案例";
         //console.log(name,describe);
         if(name.length == 0){
             this.setState({

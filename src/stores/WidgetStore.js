@@ -3332,8 +3332,9 @@ export default Reflux.createStore({
 
         var cb = function(text) {
             var result = JSON.parse(text);
+            //console.log(result);
             if(result['id']){
-                callback(result['id'], wname, wdescribe);
+                callback(result['id'], wname, wdescribe,result['nid']);
             }
             historyRecord = [];
             historyRW = historyRecord.length;
