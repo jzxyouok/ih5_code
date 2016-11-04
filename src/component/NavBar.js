@@ -589,6 +589,10 @@ class NavBar extends React.Component {
     onOpen(id) {
         let nid = "?nid=" + id;
         let href = window.location.href;
+        let index = href.indexOf('?');
+        if(index>=0){
+            href = href.substring(0,index);
+        }
         window.open(href + nid, "_self");
         //this.onImportUrl(PREFIX + 'work/' + id, id);
         //this.setState({
@@ -1207,7 +1211,7 @@ class NavBar extends React.Component {
                                             : this.state.workList.map((v,i)=>{
                                             return  <li key={i}
                                                         className={$class({'hidden': i >= 10})}
-                                                        onClick={ this.onOpen.bind(this, v.id)}>
+                                                        onClick={ this.onOpen.bind(this, v.nid)}>
                                                 { i >= 10 ? null : v.name}
                                             </li>
                                         })
