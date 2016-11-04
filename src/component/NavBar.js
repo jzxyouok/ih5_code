@@ -588,6 +588,7 @@ class NavBar extends React.Component {
 
     onOpen(id) {
         let nid = "?nid=" + id;
+        let href = window.location.href;
         window.open(href + nid, "_self");
         //this.onImportUrl(PREFIX + 'work/' + id, id);
         //this.setState({
