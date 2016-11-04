@@ -1851,10 +1851,14 @@ export default Reflux.createStore({
         };
         loopDelete(w);
     },
-    copyWidget: function() {
+    copyWidget: function(shouldCut) {
       if (this.currentWidget && this.currentWidget.parent) {
         copyObj = {};
-        saveTree(copyObj, this.currentWidget, true);
+        if(shouldCut) {
+            saveTree(copyObj, this.currentWidget, true);
+        } else {
+            saveTree(copyObj, this.currentWidget);
+        }
       }
     },
     pasteWidget: function() {
@@ -1862,12 +1866,11 @@ export default Reflux.createStore({
           if (!copyObj.className&&!copyObj.cls) {
               return;
           }
-
         // 重命名要黏贴的widget
         copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
-          if(copyObj.props&&copyObj.props.key) {
-              (delete copyObj.props.key);
-          }
+          // if(copyObj.props&&copyObj.props.key) {
+          //     (delete copyObj.props.key);
+          // }
         loadTree(this.currentWidget, copyObj);
         if(copyObj.props.eventTree){
           this.reorderEventTreeList();
@@ -1879,7 +1882,7 @@ export default Reflux.createStore({
       }
     },
     cutWidget: function() {
-        this.copyWidget();
+        this.copyWidget(true);
         this.removeWidget(true);
     },
     lockWidget: function () {
