@@ -693,8 +693,6 @@ class PropertyView extends React.Component {
     getFields() {
         let node = this.selectNode;
 
-          console.log(node);
-
         if (!node)  return null;
 
         if( node.node.keepRatio ===undefined && ( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist')){

@@ -871,13 +871,13 @@ class Event extends React.Component {
                                                     <button className={$class("title-icon")}
                                                             onClick={this.onChildEnable.bind(this, v, v1)}/>
                                                 </div>
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[0]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[0]})} >
                                                     <div className="title f--hlc cursor_default">
                                                         且
                                                     </div>
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[1]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[1]})} >
                                                     <SelectTargetButton
                                                                         className={'p--icon'}
                                                                         disabled={!v.enable || !v1.enable}
@@ -906,7 +906,7 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[2]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[2]})} >
                                                     {
                                                         !v1.enable
                                                             ?  <div className={$class('title f--hlc',{'title-gray':v1.judgeValFlag=='判断值'})}>
@@ -927,7 +927,7 @@ class Event extends React.Component {
                                                             </Dropdown>
                                                     }
                                                 </div>
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})}>
+                                                <div className={$class('dropDown-layer short',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[3]})}>
                                                     {
                                                         !v1.enable
                                                             ? <div className='title f--hlc'>
@@ -945,7 +945,7 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle compare-layer',{'hidden':v1.arrHidden[4]})} >
+                                                <div className={$class('dropDown-layer middle compare-layer',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[4]})} >
                                                     {
                                                         <div className={$class("compare f--hlc", {'compare-first':i1===0})}>
                                                             <FormulaInput containerId={'event-item-header-'+v.eid}
