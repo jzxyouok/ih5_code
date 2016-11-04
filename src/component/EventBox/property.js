@@ -43,6 +43,7 @@ class Property extends React.Component {
             currentObject: this.props.specific.object,
             currentAction: this.props.specific.action,  //name&property
             currentEnable: this.props.specific.enable,  //是否enable
+            contactObj: null,
         };
         this.expandBtn = this.expandBtn.bind(this);
 
@@ -139,6 +140,14 @@ class Property extends React.Component {
                     }
                 });
             });
+        } else if (widget.contactObj!==undefined) {
+            this.setState({
+                contactObj: widget.contactObj
+            }, ()=>{
+                if(this.state.contactObj === null && this.state.currentObject === 'param.target') {
+                    WidgetActions['changeSpecific'](this.state.specific, {'object':'this'});
+                }
+            });
         }
         if(widget.historyPropertiesUpdate){
             this.forceUpdate();
@@ -149,6 +158,8 @@ class Property extends React.Component {
         let obj = WidgetStore.getWidgetByKey(key);
         if(key === 'this') {
             obj = WidgetStore.getWidgetByKey(this.state.wKey);
+        } else if (key === 'param.target'&&this.state.contactObj) {
+            obj = WidgetStore.getWidgetByKey(this.state.contactObj);
         }
         if(!obj||!obj.className) {
             this.setState({
@@ -259,6 +270,8 @@ class Property extends React.Component {
         let node = WidgetStore.getWidgetByKey(this.state.currentObject);
         if(this.state.currentObject === 'this') {
             node = WidgetStore.getWidgetByKey(this.state.wKey);
+        } else if (this.state.currentObject === 'param.target'&&this.state.contactObj) {
+            node = WidgetStore.getWidgetByKey(this.state.contactObj);
         }
         let propertyList=[];
         if(node){
@@ -349,7 +362,7 @@ class Property extends React.Component {
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
         let key = null;
-        if(object === 'this') {
+        if(object === 'this' || (object === 'param.target'&&this.state.contactObj)) {
             key = object;
         } else {
             key = object.key;
@@ -499,6 +512,8 @@ class Property extends React.Component {
         let widget = WidgetStore.getWidgetByKey(key);
         if(key === 'this') {
             widget = WidgetStore.getWidgetByKey(this.state.wKey);
+        } else if (key === 'param.target'&&this.state.contactObj) {
+            widget = WidgetStore.getWidgetByKey(this.state.contactObj);
         }
         if(widget) {
             if(widget.className === 'root' || widget.className === 'container' || widget.className === 'timer'
@@ -639,6 +654,8 @@ class Property extends React.Component {
         let w = null;
         if(this.state.currentObject === 'this') {
             w = WidgetStore.getWidgetByKey(this.state.wKey);
+        } else if (this.state.currentObject === 'param.target'&&this.state.contactObj) {
+            w = WidgetStore.getWidgetByKey(this.state.contactObj)
         } else {
             w = WidgetStore.getWidgetByKey(this.state.currentObject);
         }
@@ -657,7 +674,14 @@ class Property extends React.Component {
                         {
                             v1.isProp===true
                             ?<PropertyViewSetUp
-                                oKey={this.state.currentAction.name==='setProps'?this.state.currentObject==='this'?this.state.wKey:this.state.currentObject:null}
+                                oKey={
+                                    this.state.currentAction.name==='setProps'
+                                        ? this.state.currentObject==='this'
+                                            ? this.state.wKey
+                                            : this.state.currentObject==='param.target'
+                                                ? this.state.contactObj
+                                                : this.state.currentObject
+                                        : null}
                                 property={v1}
                                 propertyId={propertyId}
                                 objectList={this.state.objectList}
@@ -839,6 +863,7 @@ class Property extends React.Component {
         let objectMenu = (
             <Menu onClick={this.onObjectSelect}>
                 <MenuItem key={'this'} object={'this'}>当前对象</MenuItem>
+                <MenuItem key={'param.target'} className={$class({'hidden':!this.state.contactObj})} object={'param.target'}>碰撞目标对象</MenuItem>
                 {
                     !this.state.objectList||this.state.objectList.length==0
                         ? null
@@ -901,6 +926,8 @@ class Property extends React.Component {
                                             {
                                                 this.state.currentObject === 'this'
                                                     ? '当前对象'
+                                                    : this.state.currentObject === 'param.target'
+                                                    ? '碰撞目标对象'
                                                     : !w || !w.props || !w.props.name
                                                     ?'目标对象'
                                                     : w.props.name

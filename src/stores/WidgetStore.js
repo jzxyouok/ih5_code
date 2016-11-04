@@ -303,8 +303,8 @@ function loadTree(parent, node, idList) {
 function idToObject(list, idName, varName) {
   if (!idName)
     return null;
-  if(idName === 'this') {
-      return {key:'this'};
+  if(idName === 'this' || idName === 'param.target') {
+      return {key:idName};
   }
   var obj = list[idName];
   if (obj && varName) {
@@ -524,8 +524,8 @@ function generateObjectId(object) {
 
 function objectToId(object) {
   let idName, varKey, varName;
-    if(object === 'this') {
-        return ['this', undefined, undefined];
+    if(object === 'this' || object === 'param.target') {
+        return [object, undefined, undefined];
     }
   if (object.className == 'var') {
     idName = object.widget.props['id'];
@@ -554,7 +554,7 @@ function objectKeyToId(key) {
         let obj = keyMap[key];
         if(obj){
             return objectToId(obj);
-        } else if (key === 'this') {
+        } else if (key === 'this'|| key === 'param.target') {
             return objectToId(key);
         }
     }
@@ -660,8 +660,8 @@ function generateId(node) {
 }
 
 function getIdsName(idName, varName, propName) {
-    if(idName === 'this') {
-        return 'this.' + propName;
+    if(idName === 'this' || idName === 'param.target') {
+        return idName+ '.' + propName;
     }
   return 'ids.' + idName + '.' + ((varName) ? '__' + varName : propName);
 }
