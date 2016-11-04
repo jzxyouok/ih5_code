@@ -204,11 +204,18 @@ class NavBar extends React.Component {
 
 
         let pathName = window.location.search;
-        if(pathName.substr(0,5)== "?nid="){
+        if(pathName.substr(0,5) == "?nid="){
             let reg = /\D/;
             let str= pathName.substr(5,pathName.length);
             let index = reg.exec(str);
-            let nid = pathName.substr(5,index.index);
+            let nid;
+            if(index == null){
+                nid = str;
+            }
+            else {
+                nid = pathName.substr(5,index.index);
+            }
+            //console.log(nid);
             this.onImportUrl(PREFIX + 'work/' + nid, nid);
         }
         //let id = localStorage.getItem("workID");
