@@ -33,11 +33,8 @@ class Event extends React.Component {
             conOption: [],//每次点击后赋值
             logicalOption: ['and', 'or', 'not'],  //下拉选项
             judgeObjOption: [],
-
             judgeValOption: [],
             compareOption: ['=', '>', '<', '!=', '≥', '≤'],
-            compareObjOption: [],  //作废
-            compareValOption: []  //作废
         };
 
 
@@ -57,12 +54,6 @@ class Event extends React.Component {
         this.getJudgeObjOption = this.getJudgeObjOption.bind(this);
         this.getJudgeValOption = this.getJudgeValOption.bind(this);
 
-        // this.getCompareObjOption = this.getCompareObjOption.bind(this);
-        // this.getCompareValOption = this.getCompareValOption.bind(this);
-
-
-        this.getJudgeValType = this.getJudgeValType.bind(this);
-        this.getSpacJudgeValType = this.getSpacJudgeValType.bind(this);
 
         this.onEventEnable = this.onEventEnable.bind(this);
         this.onChildEnable = this.onChildEnable.bind(this);
@@ -95,17 +86,8 @@ class Event extends React.Component {
                         item.judgeObjFlag = obj1.props.name;
                     }
                 }
-                if (item.compareObjKey) {
-                    let obj2 = WidgetStore.getWidgetByKey(item.compareObjKey);
-                    if (obj2) {
-                        item.compareObjFlag = obj2.props.name;
-                    }
-                }
                 if (!item.judgeValFlag) {
                     item.judgeValFlag = '判断值';
-                }
-                if (!item.compareValFlag) {
-                    item.compareValFlag = '比较值';
                 }
             });
         });
@@ -231,35 +213,8 @@ class Event extends React.Component {
         return newProperty;
     }
 
-    getJudgeValType(val) {
-        let propArr = this.state.curChild.propArr;
-        let saveVal = null;
-        propArr.map((v, i)=> {
-            if (v.name == val) {
-                saveVal = v.type;
-            }
-        });
-        return saveVal;
-    }
 
-    getSpacJudgeValType(val) {
-        let saveVal = null;
-        this.state.objName.map((v, i)=> {
-            if (v[1] == val) {
-                saveVal = v[2] ? v[2] : v[0];
-            }
-        });
-        if (saveVal == 'number') {
-            saveVal = 0;
-        } else if (saveVal == 'string') {
-            saveVal = 2;
-        } else if (saveVal == 'text') {
-            saveVal = 3;
-        } else if (saveVal == 'counter') {
-            saveVal = 0;
-        }
-        return saveVal;
-    }
+
 
     chooseEventBtn(nid) {
         this.props.chooseEventBtn(nid);
@@ -365,160 +320,6 @@ class Event extends React.Component {
         return obj;
     }
 
-    // //获取比较对象
-    // getCompareObjOption(optionName, oCurChild) {
-    //     let aProps = [];
-    //     let obj = {};
-    //     let curChild = oCurChild;
-    //     let judgeObjFlag = curChild.judgeObjFlag;
-    //     let judgeObjVal = curChild.judgeValFlag;
-    //     let allWidgetsList = this.state.allWidgetsList;
-    //     let className = null;
-    //     let type = null;
-    //
-    //     allWidgetsList.map((v, i)=> {
-    //         if (v.props.name == judgeObjFlag) {
-    //             className = v.className;
-    //             if (className == 'var') {
-    //                 if (v.type == 'number') {
-    //                     type = 0;
-    //                 } else if (v.type == 'string') {
-    //                     type = 2;
-    //                 }
-    //             } else if (className == 'text') {
-    //                 type = 2;
-    //             } else if (className == 'counter') {
-    //                 type = 0;
-    //             } else if (className == 'input') {
-    //                 type = 2;
-    //             }
-    //         }
-    //     });
-    //
-    //     if (className && propertyMap[className]) {
-    //         propertyMap[className].map((v, i)=> {
-    //             if (v.isProperty && v.name == judgeObjVal) {
-    //                 type = v.type;
-    //             }
-    //         });
-    //         if(judgeObjVal=='width'||judgeObjVal=='height'){
-    //             type =0;
-    //         }
-    //     }
-    //
-    //     allWidgetsList.map((v, i)=> {
-    //         let tag = true;
-    //         let classname = v.className;
-    //         //特殊五类
-    //         if (classname == 'var') {
-    //             let typeNew = [];
-    //             if (v.type == 'number') {
-    //                 typeNew = [0, 1, 5];
-    //             } else if (v.type == 'string') {
-    //                 typeNew = [2, 3];
-    //             }
-    //             if (typeNew.indexOf(type) >= 0) {
-    //                 aProps.push({showName: v.props.name, key: v.key});
-    //             }
-    //         } else if (classname == 'text') {
-    //             if ([2, 3].indexOf(type) >= 0) {
-    //                 aProps.push({showName: v.props.name, key: v.key});
-    //             }
-    //         } else if (classname == 'counter') {
-    //             if ([0, 1].indexOf(type) >= 0) {
-    //                 aProps.push({showName: v.props.name, key: v.key});
-    //             }
-    //         } else if (classname == 'input') {
-    //             if ([2, 3].indexOf(type) >= 0) {
-    //                 aProps.push({showName: v.props.name, key: v.key});
-    //             }
-    //         } else {
-    //             propertyMap[classname].map((v1, i1)=> {
-    //                 let typeArr = this.getTypeArr(v1.type);
-    //                 if (tag && v1.isProperty && v1.name != 'id' && typeArr.indexOf(type) >= 0) {  //需要兼容判断
-    //                     aProps.push({showName: v.props.name, key: v.key});
-    //                     tag = false;
-    //                 }
-    //             });
-    //         }
-    //     });
-    //
-    //     obj[optionName] = aProps;
-    //     return obj;
-    //
-    // }
-    //
-    // //获取比较对象的属性
-    // getCompareValOption(optionName, oCurChild) {
-    //     let aProps = [];
-    //     let obj = {};
-    //     let curChild = oCurChild;
-    //
-    //     if (curChild) {
-    //
-    //         let judgeObjFlag = curChild.judgeObjFlag;
-    //         let judgeObjVal = curChild.judgeValFlag;
-    //         let judgeObjClassName = null;
-    //         let allWidgetsList = this.state.allWidgetsList;
-    //         let type = null;
-    //         let compareObjFlag = curChild.compareObjFlag;
-    //         let compareObjClassName = null;
-    //
-    //         allWidgetsList.map((v, i)=> {
-    //             if (v.props.name == judgeObjFlag) {
-    //                 judgeObjClassName = v.className;
-    //                 if (judgeObjClassName == 'var') {
-    //                     if (v.type == 'number') {
-    //                         type = 0;
-    //                     } else if (v.type == 'string') {
-    //                         type = 2;
-    //                     }
-    //                 } else if (judgeObjClassName == 'text') {
-    //                     type = 2;
-    //                 } else if (judgeObjClassName == 'counter') {
-    //                     type = 0;
-    //                 }
-    //             }
-    //         });
-    //         if (propertyMap[judgeObjClassName]) {
-    //             propertyMap[judgeObjClassName].map((v, i)=> {
-    //                 if (v.isProperty && v.name == judgeObjVal) {
-    //                     type = v.type;
-    //                 }
-    //             });
-    //             if(judgeObjVal=='width'||judgeObjVal=='height'){
-    //                 type =0;
-    //             }
-    //         }
-    //
-    //         allWidgetsList.map((v, i)=> {
-    //             if (v.props.name == compareObjFlag) {
-    //                 compareObjClassName = v.className;
-    //             }
-    //         });
-    //
-    //         propertyMap[compareObjClassName].map((v, i)=> {
-    //             if (v.isProperty && v.name != 'id' && this.getTypeArr(v.type).indexOf(type) >= 0) {
-    //                 if (v.showName == 'W') {
-    //                     aProps.push('宽度');
-    //                 } else if (v.showName == 'H') {
-    //                     aProps.push('高度');
-    //                 } else if (v.showName == '中心点') {
-    //                     ;
-    //                 } else {
-    //                     aProps.push(v.showName);
-    //                     if (!v.showName) {
-    //                         alert('找到一个bug,通知下程序猿吧!');
-    //                     }
-    //                 }
-    //             }
-    //         });
-    //     }
-    //     obj[optionName] = aProps;
-    //     return obj;
-    // }
-
-
     plusOperation(eventIndex) {
         if (this.state.eventList[eventIndex] && !this.state.eventList[eventIndex].enable) {
             return;
@@ -526,7 +327,7 @@ class Event extends React.Component {
         this.curEventIndex = eventIndex;
         let eventList = this.state.eventList;
         if (eventList[this.curEventIndex].zhongHidden) {
-            let arrHidden = [false, false, true, true, true, true];
+            let arrHidden = [false, false, true, true, true];
             eventList[this.curEventIndex].zhongHidden = false;
             eventList[this.curEventIndex].children[0].arrHidden = arrHidden;
             this.setState({eventList: eventList});
@@ -593,31 +394,6 @@ class Event extends React.Component {
                 });
             }
 
-        } else if (type == 'compareValFlag' && curChild) {
-            let compareObjFlag = curChild.saveCompareObjFlag ? curChild.saveCompareObjFlag : curChild.compareObjFlag;
-
-            if (compareObjFlag) {
-                let compareObjClassName = null;
-                allWidgetsList.map((v, i)=> {
-                    if (v.props.name == compareObjFlag) {
-                        compareObjClassName = v.className;
-                    }
-                });
-
-                if (compareObjClassName && propertyMap[compareObjClassName]) {
-                    propertyMap[compareObjClassName].map((v, i)=> {
-                        if (name == 'width' || name == 'W') {
-                            showName = '宽度';
-                        } else if (name == 'height' || name == 'H') {
-                            showName = '高度';
-                        }
-                        if (v.name == name) {
-                            showName = v.showName;
-                        }
-                    });
-
-                }
-            }
         }
     }
 
@@ -645,24 +421,6 @@ class Event extends React.Component {
            });
 
            propertyMap[judgeObjClassName].map((v, i)=> {
-               if (value == '宽度') {
-                   name = 'width';
-               } else if (value == '高度') {
-                   name = 'height';
-               }
-               if (v.showName == value) {
-                   name = v.name;
-               }
-           });
-       } else if (type == 'compareValFlag') {
-           let compareObjFlag = curChild.compareObjFlag;
-           let compareObjClassName = null;
-           allWidgetsList.map((v, i)=> {
-               if (v.props.name == compareObjFlag) {
-                   compareObjClassName = v.className;
-               }
-           });
-           propertyMap[compareObjClassName].map((v, i)=> {
                if (value == '宽度') {
                    name = 'width';
                } else if (value == '高度') {
@@ -709,15 +467,10 @@ class Event extends React.Component {
         }else if(flag == 'judgeValFlag'){
             value =this.getNameByCnName(flag,value)
             eventList[this.curEventIndex].children[key][flag]=value;
-        }else if(flag == 'compareValFlag'){
-            value =this.getNameByCnName(flag,value)
-            eventList[this.curEventIndex].children[key][flag]=value;
         }else {
             eventList[this.curEventIndex].children[key][flag] = value;
         }
-        if(flag == 'compareObjFlag'){
-            eventList[this.curEventIndex].children[key].showDropdown=false;
-        }
+
         this.setState({eventList: eventList});
         let chooseEventClassName = this.getClassNameByobjName(value);
 
@@ -726,39 +479,24 @@ class Event extends React.Component {
 
                 initFlag.judgeObjKey= newKey?newKey:e.item.props.keyVal;
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
-                    arrHidden = [false, false, true, false, false, true];
+                    arrHidden = [false, false, true, false, false];
                 } else {
-                    arrHidden = [false, false, false, true, true, true];
+                    arrHidden = [false, false, false, true, true];
                 }
                 //初始化后四个
                 initFlag.judgeValFlag = '判断值';
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较值/对象';
                 initFlag.compareObjKey=null;
-                initFlag.compareValFlag = '比较值';
                 initFlag.arrHidden=arrHidden;
                 break;
             case 'judgeValFlag':
-                arrHidden = [false, false, false, false, false, true];
+                arrHidden = [false, false, false, false, false];
                 //初始化后三个
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较值/对象';
                 initFlag.compareObjKey=null;
-                initFlag.compareValFlag = '比较值';
                 initFlag.arrHidden=arrHidden;
-                break;
-            case 'compareObjFlag':
-                initFlag.compareObjKey= newKey?newKey:e.item.props.keyVal;
-                arrHidden = this.state.curChild.arrHidden;
-                if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
-                    arrHidden[5] = true;
-                    initFlag.compareValFlag = '比较值';
-                    initFlag.arrHidden= arrHidden;
-                } else {
-                    arrHidden[5] = false;
-                    initFlag.compareValFlag = '比较值';
-                    initFlag.arrHidden=arrHidden;
-                }
                 break;
             default :
                 isRun = false;
@@ -791,12 +529,6 @@ class Event extends React.Component {
             case 'judgeValFlag':
                 obj = this.getJudgeValOption(option, curChild);
                 break;
-            // case 'compareObjFlag':
-            //     obj= this.getCompareObjOption(option,curChild);
-            //     break;
-            // case 'compareValFlag':
-            //     obj= this.getCompareValOption(option,curChild);
-            //     break;
             default:
                 ;
         }
@@ -824,9 +556,6 @@ class Event extends React.Component {
         let eventList =this.state.eventList;
         if(type == 'judgeObjFlag'){
           eventList[curEventIndex].children[curChildIndex].saveJudgeObjFlag =event.target.value;
-        }else if(type=='compareObjFlag'){
-          eventList[curEventIndex].children[curChildIndex].saveCompareObjFlag =event.target.value;
-            event.target.select()
         }
         this.setState({eventList:eventList});
     }
@@ -840,9 +569,7 @@ class Event extends React.Component {
         let arr=this.state[option];
         let key =null;
 
-        if(type=='compareObjFlag'){
-            curChild.showDropdown=false;
-         }
+
         arr.map((v,i)=>{
             if(v.showName && v.showName==newVal){
                 tag=false;//包含
@@ -853,20 +580,7 @@ class Event extends React.Component {
         });
 
             if (tag) {
-                //不包含时
-                if (type == 'compareObjFlag') {
-                    let arrHidden = curChild.arrHidden;
-                    arrHidden[5] = true;
-                    if(!newVal || /^\s+$/.test(newVal) ){  //空值
-                        curChild.compareObjFlag='比较值/对象';
-                    }
-                    curChild.compareObj=null;
-                    curChild.compareValFlag='比较值';
-                    curChild.compareObjKey=null;
-                    this.setEventBoxWidth(eventList);
-                } else {
                     curChild[type] = this.oldVal;
-                }
             } else {
                 //触发下一个下拉框
                 if (newVal != this.oldVal) {
@@ -875,7 +589,6 @@ class Event extends React.Component {
             }
         this.oldVal=null;
         curChild.saveJudgeObjFlag=null;
-        curChild.saveCompareObjFlag=null;
         this.setState({eventList: eventList});
     }
 
@@ -914,20 +627,7 @@ class Event extends React.Component {
         this.setState({toLong:tag});
     }
 
-    getTypeArr(type){
-        if(type==0||type==1||type==5||type == 8){
-            //Integer,Number,Percentage,Float
-            return [0,1,5,8];
-        }else if(type==2||type==3){
-            //String,Text
-            return [2,3];
-        }else if(type==6||type ==9){
-            //Color ,Color2
-            return [6,9];
-        }else{
-            return [type];
-        }
-    }
+
 
 
     //设置触发条件的填入值
@@ -1139,7 +839,7 @@ class Event extends React.Component {
                                             let judgeObjName = this.getObjNameByKey(v1.judgeObjKey,'判断对象',v1.judgeObjFlag);
                                             let judgeValName = this.getShowNameByName('judgeValFlag',v1.judgeValFlag,i1,i);
                                             let compareObjName = this.getObjNameByKey(v1.compareObjKey,'比较值/对象',v1.compareObjFlag);
-                                            let compareValName = this.getShowNameByName('compareValFlag',v1.compareValFlag ,i1,i);
+
                                             return  <div className={$class("list f--hlc", {'list-not-enable': !v1.enable})} key={i1}>
                                                 <span className="supplement-line" />
                                                 <div className="enable-button-div">

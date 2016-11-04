@@ -359,9 +359,7 @@ function resolveEventTree(node, list) {
         delete(judge.judgeObjId);
         delete(judge.judgeVarId);
 
-        judge.compareObj = idToObject(list, judge.compareObjId, judge.compareVarId);
-        delete(judge.compareObjId);
-        delete(judge.compareVarId);
+
       });
         if(item.needFills) {
             if(!item.needFill) {
@@ -585,9 +583,9 @@ function generateId(node) {
 
       item.children.forEach(judge => {
           judge.judgeObj = keyMap[judge.judgeObjKey];
-          judge.compareObj = keyMap[judge.compareObjKey];
+
           generateObjectId(judge.judgeObj);
-          generateObjectId(judge.compareObj);
+
       });
 
       item.specificList.forEach(cmd => {
@@ -764,7 +762,7 @@ function generateJsFunc(etree) {
 
             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
             if (c.compareObjId) {
-                //非特殊五类和特殊五类
+                //非特殊五类和特殊五类,更新晓斌的代码后,删除这段
               o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
             } else {
                 //用户填写
@@ -1165,15 +1163,7 @@ function saveTree(data, node, saveKey) {
                 obj.compareObjFlag = v.compareObjFlag;
                  //todo:删除
 
-                // obj.compareObjKey = v.compareObjKey;
-                // if (v.compareObj) {
-                //     var o = objectToId(v.compareObj);
-                //     obj.compareObjId = o[0];
-                //     if (o[1]) {
-                //         obj.compareVarId = o[1];
-                //         obj.compareVarName = o[2];
-                //     }
-                // }
+
 
                 obj.arrHidden = v.arrHidden;
 
@@ -2347,8 +2337,7 @@ export default Reflux.createStore({
                 'judgeValFlag':'判断值',
                 'compareFlag':'=',
                 'compareObjFlag':'比较值/对象',
-                'compareValFlag':'比较值',
-                'arrHidden': [true,true,true,true,true,true],  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                'arrHidden': [true,true,true,true,true],  //逻辑运算符,判断对象,判断值,比较运算符,比较对象
                 'enable': true,
             }],
             'zhongHidden':true,
@@ -2552,7 +2541,6 @@ export default Reflux.createStore({
                 judgeValFlag:'判断值',
                 compareFlag:'=',
                 compareObjFlag:'比较值/对象',
-                compareValFlag:'比较值',
                 enable: true,
                 arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
             });
@@ -3383,8 +3371,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        //xhr.open(method, url);
+         xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        // xhr.open(method, url);  //上传到服务器时,去掉这个注释
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
