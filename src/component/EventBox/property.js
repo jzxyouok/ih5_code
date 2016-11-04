@@ -77,8 +77,8 @@ class Property extends React.Component {
 
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
-        this.customClassList = [];
-        this.customList = [];
+        this.customClassList = []; //用于保存自定义类
+        this.customList = []; //用于loop自定义类
         this.funcListLength = 0;
     }
 
@@ -400,7 +400,8 @@ class Property extends React.Component {
         }
         this.setState({
             currentAction: action,
-            actionDropdownVisible: false
+            actionDropdownVisible: false,
+            expanded: true, //选择后默认打开
         }, ()=> {
             WidgetActions['changeSpecific'](this.state.specific, {action:this.state.currentAction});
         });
@@ -898,7 +899,7 @@ class Property extends React.Component {
                         </div>
 
                         <div className="p--right flex-1">
-                            <div className="p--property" ref='pProperty' style={{width:this.state.isLarge?'554px':'475px'}}>
+                            <div className="p--property" ref='pProperty' style={{width:'475px'}}>
                                 <Dropdown overlay={actionMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
                                           onVisibleChange={this.onActionVisibleChange}

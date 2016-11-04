@@ -33,11 +33,8 @@ class Event extends React.Component {
             conOption: [],//每次点击后赋值
             logicalOption: ['and', 'or', 'not'],  //下拉选项
             judgeObjOption: [],
-
             judgeValOption: [],
             compareOption: ['=', '>', '<', '!=', '≥', '≤'],
-            compareObjOption: [],  //作废
-            compareValOption: []  //作废
         };
 
 
@@ -45,8 +42,6 @@ class Event extends React.Component {
         this.curChildrenIndex = 0;
 
         this.oldVal = null;
-
-        this.eventBoxWidthIsLarge = false; //是否大框
 
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
@@ -57,18 +52,12 @@ class Event extends React.Component {
         this.getJudgeObjOption = this.getJudgeObjOption.bind(this);
         this.getJudgeValOption = this.getJudgeValOption.bind(this);
 
-        // this.getCompareObjOption = this.getCompareObjOption.bind(this);
-        // this.getCompareValOption = this.getCompareValOption.bind(this);
-
-
-        this.getJudgeValType = this.getJudgeValType.bind(this);
-        this.getSpacJudgeValType = this.getSpacJudgeValType.bind(this);
 
         this.onEventEnable = this.onEventEnable.bind(this);
         this.onChildEnable = this.onChildEnable.bind(this);
 
         this.menuList = this.menuList.bind(this);
-        this.setEventBoxWidth = this.setEventBoxWidth.bind(this);
+
 
 
         this.onSetFuncSpecificListProperty = this.onSetFuncSpecificListProperty.bind(this);
@@ -78,7 +67,8 @@ class Event extends React.Component {
         this.getObjNameByKey = this.getObjNameByKey.bind(this);
         this.content = this.content.bind(this);
 
-
+        this.onFormulaInputFocus = this.onFormulaInputFocus.bind(this);
+        this.onFormulaInputBlur = this.onFormulaInputBlur.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -95,17 +85,8 @@ class Event extends React.Component {
                         item.judgeObjFlag = obj1.props.name;
                     }
                 }
-                if (item.compareObjKey) {
-                    let obj2 = WidgetStore.getWidgetByKey(item.compareObjKey);
-                    if (obj2) {
-                        item.compareObjFlag = obj2.props.name;
-                    }
-                }
                 if (!item.judgeValFlag) {
                     item.judgeValFlag = '判断值';
-                }
-                if (!item.compareValFlag) {
-                    item.compareValFlag = '比较值';
                 }
             });
         });
@@ -114,17 +95,12 @@ class Event extends React.Component {
             activeKey: nextProps.activeKey,
             wKey: nextProps.wKey,
             eventList: nextProps.eventList
-        }, ()=> {
-            this.setEventBoxWidth();
         })
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
-
-        //获取当前事件对象的触发条件
-        this.setEventBoxWidth();
     }
 
     componentWillUnmount() {
@@ -137,7 +113,6 @@ class Event extends React.Component {
             if (this.props.wKey === this.props.activeKey) {
                 this.forceUpdate();
             }
-            this.setEventBoxWidth();
         }
 
         if(widget.initTree){
@@ -231,35 +206,8 @@ class Event extends React.Component {
         return newProperty;
     }
 
-    getJudgeValType(val) {
-        let propArr = this.state.curChild.propArr;
-        let saveVal = null;
-        propArr.map((v, i)=> {
-            if (v.name == val) {
-                saveVal = v.type;
-            }
-        });
-        return saveVal;
-    }
 
-    getSpacJudgeValType(val) {
-        let saveVal = null;
-        this.state.objName.map((v, i)=> {
-            if (v[1] == val) {
-                saveVal = v[2] ? v[2] : v[0];
-            }
-        });
-        if (saveVal == 'number') {
-            saveVal = 0;
-        } else if (saveVal == 'string') {
-            saveVal = 2;
-        } else if (saveVal == 'text') {
-            saveVal = 3;
-        } else if (saveVal == 'counter') {
-            saveVal = 0;
-        }
-        return saveVal;
-    }
+
 
     chooseEventBtn(nid) {
         this.props.chooseEventBtn(nid);
@@ -365,160 +313,6 @@ class Event extends React.Component {
         return obj;
     }
 
-    // //获取比较对象
-    // getCompareObjOption(optionName, oCurChild) {
-    //     let aProps = [];
-    //     let obj = {};
-    //     let curChild = oCurChild;
-    //     let judgeObjFlag = curChild.judgeObjFlag;
-    //     let judgeObjVal = curChild.judgeValFlag;
-    //     let allWidgetsList = this.state.allWidgetsList;
-    //     let className = null;
-    //     let type = null;
-    //
-    //     allWidgetsList.map((v, i)=> {
-    //         if (v.props.name == judgeObjFlag) {
-    //             className = v.className;
-    //             if (className == 'var') {
-    //                 if (v.type == 'number') {
-    //                     type = 0;
-    //                 } else if (v.type == 'string') {
-    //                     type = 2;
-    //                 }
-    //             } else if (className == 'text') {
-    //                 type = 2;
-    //             } else if (className == 'counter') {
-    //                 type = 0;
-    //             } else if (className == 'input') {
-    //                 type = 2;
-    //             }
-    //         }
-    //     });
-    //
-    //     if (className && propertyMap[className]) {
-    //         propertyMap[className].map((v, i)=> {
-    //             if (v.isProperty && v.name == judgeObjVal) {
-    //                 type = v.type;
-    //             }
-    //         });
-    //         if(judgeObjVal=='width'||judgeObjVal=='height'){
-    //             type =0;
-    //         }
-    //     }
-    //
-    //     allWidgetsList.map((v, i)=> {
-    //         let tag = true;
-    //         let classname = v.className;
-    //         //特殊五类
-    //         if (classname == 'var') {
-    //             let typeNew = [];
-    //             if (v.type == 'number') {
-    //                 typeNew = [0, 1, 5];
-    //             } else if (v.type == 'string') {
-    //                 typeNew = [2, 3];
-    //             }
-    //             if (typeNew.indexOf(type) >= 0) {
-    //                 aProps.push({showName: v.props.name, key: v.key});
-    //             }
-    //         } else if (classname == 'text') {
-    //             if ([2, 3].indexOf(type) >= 0) {
-    //                 aProps.push({showName: v.props.name, key: v.key});
-    //             }
-    //         } else if (classname == 'counter') {
-    //             if ([0, 1].indexOf(type) >= 0) {
-    //                 aProps.push({showName: v.props.name, key: v.key});
-    //             }
-    //         } else if (classname == 'input') {
-    //             if ([2, 3].indexOf(type) >= 0) {
-    //                 aProps.push({showName: v.props.name, key: v.key});
-    //             }
-    //         } else {
-    //             propertyMap[classname].map((v1, i1)=> {
-    //                 let typeArr = this.getTypeArr(v1.type);
-    //                 if (tag && v1.isProperty && v1.name != 'id' && typeArr.indexOf(type) >= 0) {  //需要兼容判断
-    //                     aProps.push({showName: v.props.name, key: v.key});
-    //                     tag = false;
-    //                 }
-    //             });
-    //         }
-    //     });
-    //
-    //     obj[optionName] = aProps;
-    //     return obj;
-    //
-    // }
-    //
-    // //获取比较对象的属性
-    // getCompareValOption(optionName, oCurChild) {
-    //     let aProps = [];
-    //     let obj = {};
-    //     let curChild = oCurChild;
-    //
-    //     if (curChild) {
-    //
-    //         let judgeObjFlag = curChild.judgeObjFlag;
-    //         let judgeObjVal = curChild.judgeValFlag;
-    //         let judgeObjClassName = null;
-    //         let allWidgetsList = this.state.allWidgetsList;
-    //         let type = null;
-    //         let compareObjFlag = curChild.compareObjFlag;
-    //         let compareObjClassName = null;
-    //
-    //         allWidgetsList.map((v, i)=> {
-    //             if (v.props.name == judgeObjFlag) {
-    //                 judgeObjClassName = v.className;
-    //                 if (judgeObjClassName == 'var') {
-    //                     if (v.type == 'number') {
-    //                         type = 0;
-    //                     } else if (v.type == 'string') {
-    //                         type = 2;
-    //                     }
-    //                 } else if (judgeObjClassName == 'text') {
-    //                     type = 2;
-    //                 } else if (judgeObjClassName == 'counter') {
-    //                     type = 0;
-    //                 }
-    //             }
-    //         });
-    //         if (propertyMap[judgeObjClassName]) {
-    //             propertyMap[judgeObjClassName].map((v, i)=> {
-    //                 if (v.isProperty && v.name == judgeObjVal) {
-    //                     type = v.type;
-    //                 }
-    //             });
-    //             if(judgeObjVal=='width'||judgeObjVal=='height'){
-    //                 type =0;
-    //             }
-    //         }
-    //
-    //         allWidgetsList.map((v, i)=> {
-    //             if (v.props.name == compareObjFlag) {
-    //                 compareObjClassName = v.className;
-    //             }
-    //         });
-    //
-    //         propertyMap[compareObjClassName].map((v, i)=> {
-    //             if (v.isProperty && v.name != 'id' && this.getTypeArr(v.type).indexOf(type) >= 0) {
-    //                 if (v.showName == 'W') {
-    //                     aProps.push('宽度');
-    //                 } else if (v.showName == 'H') {
-    //                     aProps.push('高度');
-    //                 } else if (v.showName == '中心点') {
-    //                     ;
-    //                 } else {
-    //                     aProps.push(v.showName);
-    //                     if (!v.showName) {
-    //                         alert('找到一个bug,通知下程序猿吧!');
-    //                     }
-    //                 }
-    //             }
-    //         });
-    //     }
-    //     obj[optionName] = aProps;
-    //     return obj;
-    // }
-
-
     plusOperation(eventIndex) {
         if (this.state.eventList[eventIndex] && !this.state.eventList[eventIndex].enable) {
             return;
@@ -526,7 +320,7 @@ class Event extends React.Component {
         this.curEventIndex = eventIndex;
         let eventList = this.state.eventList;
         if (eventList[this.curEventIndex].zhongHidden) {
-            let arrHidden = [false, false, true, true, true, true];
+            let arrHidden = [false, false, true, true, true];
             eventList[this.curEventIndex].zhongHidden = false;
             eventList[this.curEventIndex].children[0].arrHidden = arrHidden;
             this.setState({eventList: eventList});
@@ -593,31 +387,6 @@ class Event extends React.Component {
                 });
             }
 
-        } else if (type == 'compareValFlag' && curChild) {
-            let compareObjFlag = curChild.saveCompareObjFlag ? curChild.saveCompareObjFlag : curChild.compareObjFlag;
-
-            if (compareObjFlag) {
-                let compareObjClassName = null;
-                allWidgetsList.map((v, i)=> {
-                    if (v.props.name == compareObjFlag) {
-                        compareObjClassName = v.className;
-                    }
-                });
-
-                if (compareObjClassName && propertyMap[compareObjClassName]) {
-                    propertyMap[compareObjClassName].map((v, i)=> {
-                        if (name == 'width' || name == 'W') {
-                            showName = '宽度';
-                        } else if (name == 'height' || name == 'H') {
-                            showName = '高度';
-                        }
-                        if (v.name == name) {
-                            showName = v.showName;
-                        }
-                    });
-
-                }
-            }
         }
     }
 
@@ -645,24 +414,6 @@ class Event extends React.Component {
            });
 
            propertyMap[judgeObjClassName].map((v, i)=> {
-               if (value == '宽度') {
-                   name = 'width';
-               } else if (value == '高度') {
-                   name = 'height';
-               }
-               if (v.showName == value) {
-                   name = v.name;
-               }
-           });
-       } else if (type == 'compareValFlag') {
-           let compareObjFlag = curChild.compareObjFlag;
-           let compareObjClassName = null;
-           allWidgetsList.map((v, i)=> {
-               if (v.props.name == compareObjFlag) {
-                   compareObjClassName = v.className;
-               }
-           });
-           propertyMap[compareObjClassName].map((v, i)=> {
                if (value == '宽度') {
                    name = 'width';
                } else if (value == '高度') {
@@ -709,15 +460,10 @@ class Event extends React.Component {
         }else if(flag == 'judgeValFlag'){
             value =this.getNameByCnName(flag,value)
             eventList[this.curEventIndex].children[key][flag]=value;
-        }else if(flag == 'compareValFlag'){
-            value =this.getNameByCnName(flag,value)
-            eventList[this.curEventIndex].children[key][flag]=value;
         }else {
             eventList[this.curEventIndex].children[key][flag] = value;
         }
-        if(flag == 'compareObjFlag'){
-            eventList[this.curEventIndex].children[key].showDropdown=false;
-        }
+
         this.setState({eventList: eventList});
         let chooseEventClassName = this.getClassNameByobjName(value);
 
@@ -726,39 +472,24 @@ class Event extends React.Component {
 
                 initFlag.judgeObjKey= newKey?newKey:e.item.props.keyVal;
                 if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
-                    arrHidden = [false, false, true, false, false, true];
+                    arrHidden = [false, false, true, false, false];
                 } else {
-                    arrHidden = [false, false, false, true, true, true];
+                    arrHidden = [false, false, false, true, true];
                 }
                 //初始化后四个
                 initFlag.judgeValFlag = '判断值';
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较值/对象';
                 initFlag.compareObjKey=null;
-                initFlag.compareValFlag = '比较值';
                 initFlag.arrHidden=arrHidden;
                 break;
             case 'judgeValFlag':
-                arrHidden = [false, false, false, false, false, true];
+                arrHidden = [false, false, false, false, false];
                 //初始化后三个
                 initFlag.compareFlag = '=';
                 initFlag.compareObjFlag = '比较值/对象';
                 initFlag.compareObjKey=null;
-                initFlag.compareValFlag = '比较值';
                 initFlag.arrHidden=arrHidden;
-                break;
-            case 'compareObjFlag':
-                initFlag.compareObjKey= newKey?newKey:e.item.props.keyVal;
-                arrHidden = this.state.curChild.arrHidden;
-                if (this.state.specialObject.indexOf(chooseEventClassName) >= 0) {
-                    arrHidden[5] = true;
-                    initFlag.compareValFlag = '比较值';
-                    initFlag.arrHidden= arrHidden;
-                } else {
-                    arrHidden[5] = false;
-                    initFlag.compareValFlag = '比较值';
-                    initFlag.arrHidden=arrHidden;
-                }
                 break;
             default :
                 isRun = false;
@@ -766,7 +497,6 @@ class Event extends React.Component {
 
         if (isRun) {
             let eventList = this.state.eventList;
-            this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
         }
         WidgetActions['recordEventTreeList']();
@@ -776,7 +506,7 @@ class Event extends React.Component {
     setCurOption(curChildrenIndex,curEventIndex,type,isUpdate,e){
         this.curChildrenIndex =curChildrenIndex;
         this.curEventIndex=curEventIndex;
-        let option = type.replace('Flag', 'Option');
+        let option = type?type.replace('Flag', 'Option'):'';
         let obj={};
         let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
 
@@ -791,12 +521,6 @@ class Event extends React.Component {
             case 'judgeValFlag':
                 obj = this.getJudgeValOption(option, curChild);
                 break;
-            // case 'compareObjFlag':
-            //     obj= this.getCompareObjOption(option,curChild);
-            //     break;
-            // case 'compareValFlag':
-            //     obj= this.getCompareValOption(option,curChild);
-            //     break;
             default:
                 ;
         }
@@ -810,9 +534,14 @@ class Event extends React.Component {
     }
 
     inputChange(val,event) {
-
+        let value = null;
+        if(val === 'compareObjFlag') {
+            value = event;
+        } else {
+            value = event.target.value;
+        }
         let eventList = this.state.eventList;
-        eventList[this.curEventIndex].children[this.curChildrenIndex][val] = event.target.value;
+        eventList[this.curEventIndex].children[this.curChildrenIndex][val] = value;
         this.setState({
             eventList: eventList
         });
@@ -824,9 +553,6 @@ class Event extends React.Component {
         let eventList =this.state.eventList;
         if(type == 'judgeObjFlag'){
           eventList[curEventIndex].children[curChildIndex].saveJudgeObjFlag =event.target.value;
-        }else if(type=='compareObjFlag'){
-          eventList[curEventIndex].children[curChildIndex].saveCompareObjFlag =event.target.value;
-            event.target.select()
         }
         this.setState({eventList:eventList});
     }
@@ -840,9 +566,7 @@ class Event extends React.Component {
         let arr=this.state[option];
         let key =null;
 
-        if(type=='compareObjFlag'){
-            curChild.showDropdown=false;
-         }
+
         arr.map((v,i)=>{
             if(v.showName && v.showName==newVal){
                 tag=false;//包含
@@ -853,20 +577,7 @@ class Event extends React.Component {
         });
 
             if (tag) {
-                //不包含时
-                if (type == 'compareObjFlag') {
-                    let arrHidden = curChild.arrHidden;
-                    arrHidden[5] = true;
-                    if(!newVal || /^\s+$/.test(newVal) ){  //空值
-                        curChild.compareObjFlag='比较值/对象';
-                    }
-                    curChild.compareObj=null;
-                    curChild.compareValFlag='比较值';
-                    curChild.compareObjKey=null;
-                    this.setEventBoxWidth(eventList);
-                } else {
                     curChild[type] = this.oldVal;
-                }
             } else {
                 //触发下一个下拉框
                 if (newVal != this.oldVal) {
@@ -875,7 +586,6 @@ class Event extends React.Component {
             }
         this.oldVal=null;
         curChild.saveJudgeObjFlag=null;
-        curChild.saveCompareObjFlag=null;
         this.setState({eventList: eventList});
     }
 
@@ -886,50 +596,11 @@ class Event extends React.Component {
         return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag,null,null)}>
             {
                 this.state[option].map((v, i)=> {
-
                         return <MenuItem key={i} index={i} object={v.showName?v.showName:v} keyVal={v.showName?v.key:null}>{v.showName?v.showName:v}</MenuItem>;
-
                 })
             }
         </Menu>)
     }
-
-    setEventBoxWidth(eventList){
-        let tag=false;
-        let oEventBox=document.getElementsByClassName('EventBox')[0];
-
-        let elist=eventList?eventList:this.state.eventList;
-            elist.map((v,i)=>{
-                if(v.children){
-                    v.children.map((item,index)=>{
-                        if( !item.arrHidden[2] && !item.arrHidden[5]){
-                            tag=true;
-                        }
-                    });
-                }
-        });
-        oEventBox.style.width=tag?'820px':'740px';
-        this.eventBoxWidthIsLarge = tag;
-
-        this.setState({toLong:tag});
-    }
-
-    getTypeArr(type){
-        if(type==0||type==1||type==5||type == 8){
-            //Integer,Number,Percentage,Float
-            return [0,1,5,8];
-        }else if(type==2||type==3){
-            //String,Text
-            return [2,3];
-        }else if(type==6||type ==9){
-            //Color ,Color2
-            return [6,9];
-        }else{
-            return [type];
-        }
-    }
-
-
     //设置触发条件的填入值
     setNeedFill(value){
         //判定是否需要显示填入值的样式
@@ -1007,7 +678,10 @@ class Event extends React.Component {
 
                 WidgetActions['changeContactObj'](item.default=='请选择'?null:item.default);
 
-                return <Select disabled={!obj.enable} className='dropDown-input-content' value={str}
+                return <Select disabled={!obj.enable}
+                               className='dropDown-input-content'
+                               value={str}
+
                                onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
             } else {
                 item.option.map((v, i)=> {
@@ -1077,15 +751,58 @@ class Event extends React.Component {
         }
     }
 
+    onFormulaInputFocus(value, index, topIndex, canChange) {
+        //选中
+        this.setCurOption(index,topIndex,'compareObjFlag',false);
 
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
+        if(value&&!value.enable) {
+            return false;
+        }
+        if(canChange) {
+            if(document.getElementById('EBContentLayer').scrollTop != 0) {
+                //为了滚动后不会跳
+                let top = document.getElementById('EBContentLayer').scrollTop;
+                document.getElementById('EventBox').style.top = -top+37+'px';
+            }
+            this.refs['itemTitle'].style.overflow = 'visible';
+            this.refs['list-item-'+index].style.width = 'auto';
+            if(index === 0) {
+                this.refs['list-item-'+index].style.minWidth = '519px';
+            } else {
+                this.refs['list-item-'+index].style.minWidth = '493px';
+            }
+            document.getElementById('EventBox').style.overflow = 'visible';
+            document.getElementById('EventBox').style.zIndex = 51;
+            document.getElementById('EBContentLayer').style.overflow = 'visible';
+            document.getElementById('EBContentLayer').style.overflow = 'visible';
+        }
+        return true;
+    }
+
+    onFormulaInputBlur(index) {
+        this.refs['itemTitle'].style.overflow = 'hidden';
+        this.refs['list-item-'+index].style.minWidth = 'none';
+        if(index === 0) {
+            this.refs['list-item-'+index].style.width = '519px';
+        } else {
+            this.refs['list-item-'+index].style.width = '493px';
+        }
+        document.getElementById('EventBox').style.overflow = 'hidden';
+        document.getElementById('EBContentLayer').style.overflow = 'scroll';
+        document.getElementById('EventBox').style.top = '37px';
+        document.getElementById('EventBox').style.zIndex = 50;
+    }
 
     content(v,i){
             return  <div className={$class('item f--h', {'item-not-enable': !v.enable})} key={i} id={'event-item-'+v.eid} >
                 <span className='left-line' />
-                <div className='item-main flex-1' style={{width:this.eventBoxWidthIsLarge?'788px':'703.5px'}}>
-                    <div className='item-header f--h'>
+                <div className='item-main flex-1'>
+                    <div className='item-header f--h' id={'event-item-header-'+v.eid}>
                         <span className='close-line' onClick={this.delEvent.bind(this,i)} />
-                        <div className='item-title flex-1 f--h'>
+                        <div className='item-title flex-1 f--h' ref="itemTitle">
                             <div className='left'>
                                 <div className='left-layer  f--h' id={'event-item-left-'+v.eid}>
                                     <div className="enable-button-div">
@@ -1114,11 +831,11 @@ class Event extends React.Component {
                                                     :v.needFill.map((n,m)=>{
                                                     let content;
                                                     if(n.type=='select' && n.showName ===undefined){
-                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '> {this.getAntdComponent(n,m,v)}</div>)
+                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '    onClick={this.setCurOption.bind(this,0,i,null,false)}> {this.getAntdComponent(n,m,v)}</div>)
                                                     }else{
                                                         content= (<div key={m} className='dropDown-input2 dropDown-input-full '>
                                                             <div className='dropDown-input-txt-half'>{n.showName}</div>
-                                                            <div className='dropDown-input-half'>
+                                                            <div className='dropDown-input-half'    onClick={this.setCurOption.bind(this,0,i,null,false)}>
                                                                 {this.getAntdComponent(n,m,v)}
                                                             </div>
                                                         </div>)
@@ -1133,14 +850,14 @@ class Event extends React.Component {
                             {
                                 !v.children || v.children.length === 0
                                     ? null
-                                    :   <div className={$class('zhong',{'hidden':v.zhongHidden,'zhongToLong':this.state.toLong})}>
+                                    :   <div className={$class('zhong',{'hidden':v.zhongHidden})}>
                                     {
                                         v.children.map((v1,i1)=>{
                                             let judgeObjName = this.getObjNameByKey(v1.judgeObjKey,'判断对象',v1.judgeObjFlag);
                                             let judgeValName = this.getShowNameByName('judgeValFlag',v1.judgeValFlag,i1,i);
-                                            let compareObjName = this.getObjNameByKey(v1.compareObjKey,'比较值/对象',v1.compareObjFlag);
-                                            let compareValName = this.getShowNameByName('compareValFlag',v1.compareValFlag ,i1,i);
-                                            return  <div className={$class("list f--hlc", {'list-not-enable': !v1.enable})} key={i1}>
+                                            return  <div className={$class("list f--hlc", {'list-not-enable': !v1.enable}, {'list-first': i1===0})}
+                                                         key={i1}
+                                                         ref={'list-item-'+i1}>
                                                 <span className="supplement-line" />
                                                 <div className="enable-button-div">
                                                     <button className={$class("title-icon")}
@@ -1202,7 +919,7 @@ class Event extends React.Component {
                                                             </Dropdown>
                                                     }
                                                 </div>
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})}>
                                                     {
                                                         !v1.enable
                                                             ? <div className='title f--hlc'>
@@ -1220,36 +937,60 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4],'com120':v1.compareObjFlag=='比较值/对象'})} >
+                                                <div className={$class('dropDown-layer middle compare-layer',{'hidden':v1.arrHidden[4]})} >
                                                     {
-                                                        !v1.enable
-                                                            ? <div className={$class('title f--hlc pl25',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
-                                                                {compareObjName}
-                                                                <span className='icon'/></div>
-                                                            : <input  value={v1.compareObjFlag}    onClick={this.setCurOption.bind(this,i1,i,'compareObjFlag',false)}   onChange={this.inputChange.bind(this,'compareObjFlag')}  />
+                                                        <div className={$class("compare f--hlc", {'compare-first':i1===0})}>
+                                                            <FormulaInput containerId={'event-item-header-'+v.eid}
+                                                                          disabled={!v1.enable}
+                                                                          objectList={this.state.allWidgetsList}
+                                                                          onFocus={this.onFormulaInputFocus.bind(this, v1, i1, i)}
+                                                                          onBlur={this.onFormulaInputBlur.bind(this, i1)}
+                                                                          value={v1.compareObjFlag&&v1.compareObjFlag.type!==undefined?v1.compareObjFlag:null}
+                                                                          minWidth="160px"
+                                                                          onChange={this.inputChange.bind(this,'compareObjFlag')}/>
+                                                        </div>
                                                     }
                                                 </div>
-
-                                                <button className={$class('close-btn')}
+                                                <button className={$class('close-btn', {'close-btn-first':i1===0})}
                                                         disabled={!v.enable}
                                                         onClick={this.deleteOperation.bind(this,i1,i)} />
+                                                {
+                                                    i1!==0
+                                                    ? null
+                                                    : <div className='right flex-1'>
+                                                        <div className='right-layer'>
+                                                            <button className={$class('plus-btn')}
+                                                                    disabled={!v.enable}
+                                                                    onClick={this.plusOperation.bind(this,i)}>
+                                                                <div className='btn'>
+                                                                    <span className='heng' />
+                                                                    <span className='shu' />
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                }
                                             </div>
                                         })
                                     }
                                 </div>
                             }
-                            <div className='right flex-1'>
-                                <div className='right-layer'>
-                                    <button className={$class('plus-btn')}
-                                            disabled={!v.enable}
-                                            onClick={this.plusOperation.bind(this,i)}>
-                                        <div className='btn'>
-                                            <span className='heng' />
-                                            <span className='shu' />
-                                        </div>
-                                    </button>
+                            {
+                                !v.zhongHidden
+                                ? null
+                                : <div className='right flex-1'>
+                                    <div className='right-layer'>
+                                        <button className={$class('plus-btn')}
+                                                disabled={!v.enable}
+                                                onClick={this.plusOperation.bind(this,i)}>
+                                            <div className='btn'>
+                                                <span className='heng' />
+                                                <span className='shu' />
+                                            </div>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
                     </div>
                     <div className='item-content'>
@@ -1261,7 +1002,6 @@ class Event extends React.Component {
                                                  specific={v2}
                                                  event={v}
                                                  wKey={this.props.wKey}
-                                                 isLarge={this.eventBoxWidthIsLarge}
                                                  activeKey={this.props.activeKey}/>
                             })
                         }

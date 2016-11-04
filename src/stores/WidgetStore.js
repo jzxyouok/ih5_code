@@ -359,9 +359,10 @@ function resolveEventTree(node, list) {
         delete(judge.judgeObjId);
         delete(judge.judgeVarId);
 
-        judge.compareObj = idToObject(list, judge.compareObjId, judge.compareVarId);
-        delete(judge.compareObjId);
-        delete(judge.compareVarId);
+          //公式编辑器
+          if(judge.compareObjFlag&&judge.compareObjFlag.type) {
+              dealWithFormulaInput(judge.compareObjFlag);
+          }
       });
         if(item.needFills) {
             if(!item.needFill) {
@@ -585,9 +586,13 @@ function generateId(node) {
 
       item.children.forEach(judge => {
           judge.judgeObj = keyMap[judge.judgeObjKey];
-          judge.compareObj = keyMap[judge.compareObjKey];
+
           generateObjectId(judge.judgeObj);
-          generateObjectId(judge.compareObj);
+
+          //公式编辑器处理
+          if(judge.compareObjFlag&&judge.compareObjFlag.type) {
+              genFormulaInputId(judge.compareObjFlag);
+          }
       });
 
       item.specificList.forEach(cmd => {
@@ -751,27 +756,27 @@ function generateJsFunc(etree) {
              conditions.push('(' + o + ')');
          }
          else if (c.judgeObjId && c.judgeValFlag && c.enable) {
-            var op = c.compareFlag;
-            var jsop;
-            if (op == '=')
-              jsop = '=='
-            else if (op == '≥')
-              jsop = '>=';
-            else if (op == '≤')
-              jsop = '<=';
-            else
-              jsop = op;
+             var op = c.compareFlag;
+             var jsop;
+             if (op == '=')
+                 jsop = '=='
+             else if (op == '≥')
+                 jsop = '>=';
+             else if (op == '≤')
+                 jsop = '<=';
+             else
+                 jsop = op;
 
-            var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
-            if (c.compareObjId) {
-                //非特殊五类和特殊五类
-              o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
-            } else {
-                //用户填写
-                o += JSON.stringify(c.compareObjFlag);
-            }
-            conditions.push('(' + o + ')');
-          }
+             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
+
+             //用户填写
+             if (c.compareObjFlag && c.compareObjFlag.type) {
+                 o += formulaGenLine(c.compareObjFlag);
+             } else {
+                 o += JSON.stringify(c.compareObjFlag);
+             }
+             conditions.push('(' + o + ')');
+         }
         });
       }
      // console.log('conditions',conditions);
@@ -1068,7 +1073,8 @@ function saveTree(data, node, saveKey) {
                 item.needFill.map((v, i)=> {
                     if(judges.className == 'input' && v.type=='select'){
                         judges.conFlag =v.default;
-                    } else if (judges.className === 'sock' && v.actionName === 'message') {
+                    }
+                    else if (judges.className === 'sock' && v.actionName === 'message') {
                         let valueObj = keyMap[v.default];
                         if (valueObj) {
                             let o = objectToId(valueObj);
@@ -1137,7 +1143,7 @@ function saveTree(data, node, saveKey) {
             item.children.map((v,i)=> {
                 let obj = {};
                 let isSpecial1 = false;
-                let isSpecial2 = false;
+                // let isSpecial2 = false;
                 obj.enable = v.enable; //是否可执行
                 obj.judgeObjKey = v.judgeObjKey;
                 obj.judgeObjFlag = v.judgeObjFlag;
@@ -1157,23 +1163,17 @@ function saveTree(data, node, saveKey) {
                     obj.judgeValFlag = v.judgeValFlag;//判断对象的属性
                 }
 
-
                 obj.compareFlag = v.compareFlag;//比较运算符
 
-
-                obj.compareObjFlag = v.compareObjFlag;
-                 //todo
-
-                obj.compareObjKey = v.compareObjKey;
-                if (v.compareObj) {
-                    var o = objectToId(v.compareObj);
-                    obj.compareObjId = o[0];
-                    if (o[1]) {
-                        obj.compareVarId = o[1];
-                        obj.compareVarName = o[2];
-                    }
+                if(v.compareObjFlag&&v.compareObjFlag.type&&v.compareObjFlag.type===2) {
+                    //公式编辑器的对象处理
+                    obj.compareObjFlag = {
+                        type: 2,
+                        value: dealWithFormulaObj(v.compareObjFlag.value, saveKey)
+                    };
+                } else {
+                    obj.compareObjFlag = v.compareObjFlag;
                 }
-
 
                 obj.arrHidden = v.arrHidden;
 
@@ -2347,8 +2347,7 @@ export default Reflux.createStore({
                 'judgeValFlag':'判断值',
                 'compareFlag':'=',
                 'compareObjFlag':'比较值/对象',
-                'compareValFlag':'比较值',
-                'arrHidden': [true,true,true,true,true,true],  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                'arrHidden': [true,true,true,true,true],  //逻辑运算符,判断对象,判断值,比较运算符,比较对象
                 'enable': true,
             }],
             'zhongHidden':true,
@@ -2552,9 +2551,8 @@ export default Reflux.createStore({
                 judgeValFlag:'判断值',
                 compareFlag:'=',
                 compareObjFlag:'比较值/对象',
-                compareValFlag:'比较值',
                 enable: true,
-                arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                arrHidden: [false,false,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象
             });
             this.trigger({redrawEventTree: true});
             historyName = "添加事件条件" + this.currentWidget.node.name;
@@ -2564,6 +2562,19 @@ export default Reflux.createStore({
     delEventChildren:function(event,index){
         if(event && event['children']){
             event.children.splice(index,1);
+            if(event.children.length === 0) {
+                event['children'].push({
+                    'cid': _childrenCount++,
+                    judgeObjFlag:'判断对象',
+                    judgeValFlag:'判断值',
+                    compareFlag:'=',
+                    compareObjFlag:'比较值/对象',
+                    compareValFlag:'比较值',
+                    enable: true,
+                    arrHidden: [true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                });
+                event.zhongHidden = true;
+            }
             this.trigger({redrawEventTree: true});
             historyName = "删除事件条件" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);
@@ -3384,8 +3395,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        xhr.open(method, url);
+         xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        // xhr.open(method, url);  //上传到服务器时,去掉这个注释
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
