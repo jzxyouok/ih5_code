@@ -349,6 +349,7 @@
 
                     .close-line {
                         width: 20px;
+                        padding: 0 10px;
                         height: 11px;
                         margin-top: 8.5px;
                         background: url("img/button-icon.svg") no-repeat -1600px 0;
@@ -373,8 +374,7 @@
                         }
 
                         .zhong {
-                            width:493px;
-                            border-right: 1px solid #232323;
+                            //border-right: 1px solid #232323;
 
                             .dropDown-layer {
                                 margin-right: 2px;
@@ -768,6 +768,12 @@
                             background: #303f54;
                             margin-bottom: 1px;
 
+                            width:493px;
+
+                            &.list-first {
+                                width: 519px;
+                            }
+
                             &:last-child{ margin-bottom: 0; }
 
                             &:nth-child(1) .supplement-line{ display: none }
@@ -836,6 +842,19 @@
                                 }
                             }
 
+                            .compare {
+                                &.compare-first {
+                                    margin-right: 46px;
+                                }
+                                margin-right: 20px;
+                            }
+
+                            .plus-btn {
+                                position: absolute;
+                                right: 0;
+                                top: 0;
+                            }
+
                             .close-btn {
                                 cursor: pointer;
                                 width: 20px;
@@ -847,6 +866,10 @@
                                 top:0;
                                 outline: 0;
                                 border: none;
+                                border-right: 1px solid #232323;
+                                &.close-btn-first {
+                                    right: 26px;
+                                }
                                 &:hover { background-position: -1722px -40px; }
                                 &:active { background-position: -1722px -80px; }
                             }

@@ -2568,6 +2568,19 @@ export default Reflux.createStore({
     delEventChildren:function(event,index){
         if(event && event['children']){
             event.children.splice(index,1);
+            if(event.children.length === 0) {
+                event['children'].push({
+                    'cid': _childrenCount++,
+                    judgeObjFlag:'判断对象',
+                    judgeValFlag:'判断值',
+                    compareFlag:'=',
+                    compareObjFlag:'比较值/对象',
+                    compareValFlag:'比较值',
+                    enable: true,
+                    arrHidden: [true,true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                });
+                event.zhongHidden = true;
+            }
             this.trigger({redrawEventTree: true});
             historyName = "删除事件条件" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);

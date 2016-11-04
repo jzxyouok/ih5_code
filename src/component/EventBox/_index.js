@@ -280,7 +280,6 @@ class EventBox extends React.Component {
 
     render() {
         let currentObj = WidgetStore.getWidgetByKey(this.state.activeKey);
-        // let maxWidth = this.getTitleMaxWidth();
         return (
             <div className={$class('EventBox',{'keep':this.state.keepIt}, {'hidden':this.props.isHidden})}
                  style={{ left : this.props.expanded? '65px':'37px'}}
@@ -304,7 +303,6 @@ class EventBox extends React.Component {
                             })
                         }
                     </div>
-                    {/*<span className='flex-1'>事件属性</span>*/}
                     <div className="EB--title-search-wrap f--hlc">
                         <div className="search-group f--hlc">
                             <button className="search-btn" onClick={this.onClickShowNoEventObjList} title='添加对象事件'>
