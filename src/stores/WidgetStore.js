@@ -756,31 +756,27 @@ function generateJsFunc(etree) {
              conditions.push('(' + o + ')');
          }
          else if (c.judgeObjId && c.judgeValFlag && c.enable) {
-            var op = c.compareFlag;
-            var jsop;
-            if (op == '=')
-              jsop = '=='
-            else if (op == '≥')
-              jsop = '>=';
-            else if (op == '≤')
-              jsop = '<=';
-            else
-              jsop = op;
+             var op = c.compareFlag;
+             var jsop;
+             if (op == '=')
+                 jsop = '=='
+             else if (op == '≥')
+                 jsop = '>=';
+             else if (op == '≤')
+                 jsop = '<=';
+             else
+                 jsop = op;
 
-            var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
-            if (c.compareObjId) {
-                //非特殊五类和特殊五类,更新晓斌的代码后,删除这段
-              o += getIdsName(c.compareObjId, c.compareVarName, c.compareValFlag);
-            } else {
-                //用户填写
-                if(c.compareObjFlag&&c.compareObjFlag.type) {
-                    o += formulaGenLine(c.compareObjFlag);
-                } else  {
-                    o += JSON.stringify(c.compareObjFlag);
-                }
-            }
-            conditions.push('(' + o + ')');
-          }
+             var o = getIdsName(c.judgeObjId, c.judgeVarName, c.judgeValFlag) + jsop;
+
+             //用户填写
+             if (c.compareObjFlag && c.compareObjFlag.type) {
+                 o += formulaGenLine(c.compareObjFlag);
+             } else {
+                 o += JSON.stringify(c.compareObjFlag);
+             }
+             conditions.push('(' + o + ')');
+         }
         });
       }
      // console.log('conditions',conditions);
@@ -2575,7 +2571,7 @@ export default Reflux.createStore({
                     compareObjFlag:'比较值/对象',
                     compareValFlag:'比较值',
                     enable: true,
-                    arrHidden: [true,true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                    arrHidden: [true,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
                 });
                 event.zhongHidden = true;
             }

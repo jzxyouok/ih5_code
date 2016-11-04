@@ -57,7 +57,7 @@ class Event extends React.Component {
         this.onChildEnable = this.onChildEnable.bind(this);
 
         this.menuList = this.menuList.bind(this);
-        this.setEventBoxWidth = this.setEventBoxWidth.bind(this);
+
 
 
         this.onSetFuncSpecificListProperty = this.onSetFuncSpecificListProperty.bind(this);
@@ -95,17 +95,12 @@ class Event extends React.Component {
             activeKey: nextProps.activeKey,
             wKey: nextProps.wKey,
             eventList: nextProps.eventList
-        }, ()=> {
-            this.setEventBoxWidth();
         })
     }
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
-
-        //获取当前事件对象的触发条件
-        this.setEventBoxWidth();
     }
 
     componentWillUnmount() {
@@ -118,7 +113,6 @@ class Event extends React.Component {
             if (this.props.wKey === this.props.activeKey) {
                 this.forceUpdate();
             }
-            this.setEventBoxWidth();
         }
 
         if(widget.initTree){
@@ -503,7 +497,6 @@ class Event extends React.Component {
 
         if (isRun) {
             let eventList = this.state.eventList;
-            this.setEventBoxWidth(eventList);
             this.setState({eventList: eventList});
         }
         WidgetActions['recordEventTreeList']();
@@ -608,30 +601,6 @@ class Event extends React.Component {
             }
         </Menu>)
     }
-
-    setEventBoxWidth(eventList){
-        let tag=false;
-        // let oEventBox=document.getElementsByClassName('EventBox')[0];
-
-        let elist=eventList?eventList:this.state.eventList;
-            elist.map((v,i)=>{
-                if(v.children){
-                    v.children.map((item,index)=>{
-                        if( !item.arrHidden[2] && !item.arrHidden[5]){
-                            tag=true;
-                        }
-                    });
-                }
-        });
-        // oEventBox.style.width=tag?'820px':'740px';
-        this.eventBoxWidthIsLarge = tag;
-
-        this.setState({toLong:tag});
-    }
-
-
-
-
     //设置触发条件的填入值
     setNeedFill(value){
         //判定是否需要显示填入值的样式
