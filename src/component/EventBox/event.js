@@ -514,7 +514,7 @@ class Event extends React.Component {
     setCurOption(curChildrenIndex,curEventIndex,type,isUpdate,e){
         this.curChildrenIndex =curChildrenIndex;
         this.curEventIndex=curEventIndex;
-        let option = type.replace('Flag', 'Option');
+        let option = type?type.replace('Flag', 'Option'):'';
         let obj={};
         let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
 
@@ -599,9 +599,7 @@ class Event extends React.Component {
         return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag,null,null)}>
             {
                 this.state[option].map((v, i)=> {
-
                         return <MenuItem key={i} index={i} object={v.showName?v.showName:v} keyVal={v.showName?v.key:null}>{v.showName?v.showName:v}</MenuItem>;
-
                 })
             }
         </Menu>)
@@ -707,7 +705,10 @@ class Event extends React.Component {
 
                 WidgetActions['changeContactObj'](item.default=='请选择'?null:item.default);
 
-                return <Select disabled={!obj.enable} className='dropDown-input-content' value={str}
+                return <Select disabled={!obj.enable}
+                               className='dropDown-input-content'
+                               value={str}
+
                                onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
             } else {
                 item.option.map((v, i)=> {
@@ -814,11 +815,11 @@ class Event extends React.Component {
                                                     :v.needFill.map((n,m)=>{
                                                     let content;
                                                     if(n.type=='select' && n.showName ===undefined){
-                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '> {this.getAntdComponent(n,m,v)}</div>)
+                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '    onClick={this.setCurOption.bind(this,0,i,null,false)}> {this.getAntdComponent(n,m,v)}</div>)
                                                     }else{
                                                         content= (<div key={m} className='dropDown-input2 dropDown-input-full '>
                                                             <div className='dropDown-input-txt-half'>{n.showName}</div>
-                                                            <div className='dropDown-input-half'>
+                                                            <div className='dropDown-input-half'    onClick={this.setCurOption.bind(this,0,i,null,false)}>
                                                                 {this.getAntdComponent(n,m,v)}
                                                             </div>
                                                         </div>)

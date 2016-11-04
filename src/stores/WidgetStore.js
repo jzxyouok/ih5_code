@@ -2542,7 +2542,7 @@ export default Reflux.createStore({
                 compareFlag:'=',
                 compareObjFlag:'比较值/对象',
                 enable: true,
-                arrHidden: [false,false,true,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象,比较值
+                arrHidden: [false,false,true,true,true]  //逻辑运算符,判断对象,判断值,比较运算符,比较对象
             });
             this.trigger({redrawEventTree: true});
             historyName = "添加事件条件" + this.currentWidget.node.name;
