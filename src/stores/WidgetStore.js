@@ -1164,16 +1164,15 @@ function saveTree(data, node, saveKey) {
                 obj.compareObjFlag = v.compareObjFlag;
                  //todo
 
-                obj.compareObjKey = v.compareObjKey;
-                if (v.compareObj) {
-                    var o = objectToId(v.compareObj);
-                    obj.compareObjId = o[0];
-                    if (o[1]) {
-                        obj.compareVarId = o[1];
-                        obj.compareVarName = o[2];
-                    }
-                }
-
+                // obj.compareObjKey = v.compareObjKey;
+                // if (v.compareObj) {
+                //     var o = objectToId(v.compareObj);
+                //     obj.compareObjId = o[0];
+                //     if (o[1]) {
+                //         obj.compareVarId = o[1];
+                //         obj.compareVarName = o[2];
+                //     }
+                // }
 
                 obj.arrHidden = v.arrHidden;
 
@@ -3383,8 +3382,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        xhr.open(method, url);
+        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        //xhr.open(method, url);
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
