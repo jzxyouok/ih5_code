@@ -43,8 +43,6 @@ class Event extends React.Component {
 
         this.oldVal = null;
 
-        this.eventBoxWidthIsLarge = false; //是否大框
-
         this.chooseEventBtn = this.chooseEventBtn.bind(this);
         this.expandedBtn = this.expandedBtn.bind(this);
         this.addEventBtn = this.addEventBtn.bind(this);
@@ -69,7 +67,8 @@ class Event extends React.Component {
         this.getObjNameByKey = this.getObjNameByKey.bind(this);
         this.content = this.content.bind(this);
 
-
+        this.onFormulaInputFocus = this.onFormulaInputFocus.bind(this);
+        this.onFormulaInputBlur = this.onFormulaInputBlur.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -542,9 +541,14 @@ class Event extends React.Component {
     }
 
     inputChange(val,event) {
-
+        let value = null;
+        if(val === 'compareObjFlag') {
+            value = event;
+        } else {
+            value = event.target.value;
+        }
         let eventList = this.state.eventList;
-        eventList[this.curEventIndex].children[this.curChildrenIndex][val] = event.target.value;
+        eventList[this.curEventIndex].children[this.curChildrenIndex][val] = value;
         this.setState({
             eventList: eventList
         });
@@ -607,7 +611,7 @@ class Event extends React.Component {
 
     setEventBoxWidth(eventList){
         let tag=false;
-        let oEventBox=document.getElementsByClassName('EventBox')[0];
+        // let oEventBox=document.getElementsByClassName('EventBox')[0];
 
         let elist=eventList?eventList:this.state.eventList;
             elist.map((v,i)=>{
@@ -619,7 +623,7 @@ class Event extends React.Component {
                     });
                 }
         });
-        oEventBox.style.width=tag?'820px':'740px';
+        // oEventBox.style.width=tag?'820px':'740px';
         this.eventBoxWidthIsLarge = tag;
 
         this.setState({toLong:tag});
@@ -778,15 +782,58 @@ class Event extends React.Component {
         }
     }
 
+    onFormulaInputFocus(value, index, topIndex, canChange) {
+        //选中
+        this.setCurOption(index,topIndex,'compareObjFlag',false);
 
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
+        if(value&&!value.enable) {
+            return false;
+        }
+        if(canChange) {
+            if(document.getElementById('EBContentLayer').scrollTop != 0) {
+                //为了滚动后不会跳
+                let top = document.getElementById('EBContentLayer').scrollTop;
+                document.getElementById('EventBox').style.top = -top+37+'px';
+            }
+            this.refs['itemTitle'].style.overflow = 'visible';
+            this.refs['list-item-'+index].style.width = 'auto';
+            if(index === 0) {
+                this.refs['list-item-'+index].style.minWidth = '519px';
+            } else {
+                this.refs['list-item-'+index].style.minWidth = '493px';
+            }
+            document.getElementById('EventBox').style.overflow = 'visible';
+            document.getElementById('EventBox').style.zIndex = 51;
+            document.getElementById('EBContentLayer').style.overflow = 'visible';
+            document.getElementById('EBContentLayer').style.overflow = 'visible';
+        }
+        return true;
+    }
+
+    onFormulaInputBlur(index) {
+        this.refs['itemTitle'].style.overflow = 'hidden';
+        this.refs['list-item-'+index].style.minWidth = 'none';
+        if(index === 0) {
+            this.refs['list-item-'+index].style.width = '519px';
+        } else {
+            this.refs['list-item-'+index].style.width = '493px';
+        }
+        document.getElementById('EventBox').style.overflow = 'hidden';
+        document.getElementById('EBContentLayer').style.overflow = 'scroll';
+        document.getElementById('EventBox').style.top = '37px';
+        document.getElementById('EventBox').style.zIndex = 50;
+    }
 
     content(v,i){
             return  <div className={$class('item f--h', {'item-not-enable': !v.enable})} key={i} id={'event-item-'+v.eid} >
                 <span className='left-line' />
-                <div className='item-main flex-1' style={{width:this.eventBoxWidthIsLarge?'788px':'703.5px'}}>
-                    <div className='item-header f--h'>
+                <div className='item-main flex-1'>
+                    <div className='item-header f--h' id={'event-item-header-'+v.eid}>
                         <span className='close-line' onClick={this.delEvent.bind(this,i)} />
-                        <div className='item-title flex-1 f--h'>
+                        <div className='item-title flex-1 f--h' ref="itemTitle">
                             <div className='left'>
                                 <div className='left-layer  f--h' id={'event-item-left-'+v.eid}>
                                     <div className="enable-button-div">
@@ -834,14 +881,14 @@ class Event extends React.Component {
                             {
                                 !v.children || v.children.length === 0
                                     ? null
-                                    :   <div className={$class('zhong',{'hidden':v.zhongHidden,'zhongToLong':this.state.toLong})}>
+                                    :   <div className={$class('zhong',{'hidden':v.zhongHidden})}>
                                     {
                                         v.children.map((v1,i1)=>{
                                             let judgeObjName = this.getObjNameByKey(v1.judgeObjKey,'判断对象',v1.judgeObjFlag);
                                             let judgeValName = this.getShowNameByName('judgeValFlag',v1.judgeValFlag,i1,i);
-                                            let compareObjName = this.getObjNameByKey(v1.compareObjKey,'比较值/对象',v1.compareObjFlag);
-
-                                            return  <div className={$class("list f--hlc", {'list-not-enable': !v1.enable})} key={i1}>
+                                            return  <div className={$class("list f--hlc", {'list-not-enable': !v1.enable}, {'list-first': i1===0})}
+                                                         key={i1}
+                                                         ref={'list-item-'+i1}>
                                                 <span className="supplement-line" />
                                                 <div className="enable-button-div">
                                                     <button className={$class("title-icon")}
@@ -903,7 +950,7 @@ class Event extends React.Component {
                                                             </Dropdown>
                                                     }
                                                 </div>
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})}>
                                                     {
                                                         !v1.enable
                                                             ? <div className='title f--hlc'>
@@ -921,36 +968,60 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[4],'com120':v1.compareObjFlag=='比较值/对象'})} >
+                                                <div className={$class('dropDown-layer middle compare-layer',{'hidden':v1.arrHidden[4]})} >
                                                     {
-                                                        !v1.enable
-                                                            ? <div className={$class('title f--hlc pl25',{'title-gray':v1.compareObjFlag=='比较值/对象'})} >
-                                                                {compareObjName}
-                                                                <span className='icon'/></div>
-                                                            : <input  value={v1.compareObjFlag}    onClick={this.setCurOption.bind(this,i1,i,'compareObjFlag',false)}   onChange={this.inputChange.bind(this,'compareObjFlag')}  />
+                                                        <div className={$class("compare f--hlc", {'compare-first':i1===0})}>
+                                                            <FormulaInput containerId={'event-item-header-'+v.eid}
+                                                                          disabled={!v1.enable}
+                                                                          objectList={this.state.allWidgetsList}
+                                                                          onFocus={this.onFormulaInputFocus.bind(this, v1, i1, i)}
+                                                                          onBlur={this.onFormulaInputBlur.bind(this, i1)}
+                                                                          value={v1.compareObjFlag&&v1.compareObjFlag.type!==undefined?v1.compareObjFlag:null}
+                                                                          minWidth="160px"
+                                                                          onChange={this.inputChange.bind(this,'compareObjFlag')}/>
+                                                        </div>
                                                     }
                                                 </div>
-
-                                                <button className={$class('close-btn')}
+                                                <button className={$class('close-btn', {'close-btn-first':i1===0})}
                                                         disabled={!v.enable}
                                                         onClick={this.deleteOperation.bind(this,i1,i)} />
+                                                {
+                                                    i1!==0
+                                                    ? null
+                                                    : <div className='right flex-1'>
+                                                        <div className='right-layer'>
+                                                            <button className={$class('plus-btn')}
+                                                                    disabled={!v.enable}
+                                                                    onClick={this.plusOperation.bind(this,i)}>
+                                                                <div className='btn'>
+                                                                    <span className='heng' />
+                                                                    <span className='shu' />
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                }
                                             </div>
                                         })
                                     }
                                 </div>
                             }
-                            <div className='right flex-1'>
-                                <div className='right-layer'>
-                                    <button className={$class('plus-btn')}
-                                            disabled={!v.enable}
-                                            onClick={this.plusOperation.bind(this,i)}>
-                                        <div className='btn'>
-                                            <span className='heng' />
-                                            <span className='shu' />
-                                        </div>
-                                    </button>
+                            {
+                                !v.zhongHidden
+                                ? null
+                                : <div className='right flex-1'>
+                                    <div className='right-layer'>
+                                        <button className={$class('plus-btn')}
+                                                disabled={!v.enable}
+                                                onClick={this.plusOperation.bind(this,i)}>
+                                            <div className='btn'>
+                                                <span className='heng' />
+                                                <span className='shu' />
+                                            </div>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
                     </div>
                     <div className='item-content'>
@@ -962,7 +1033,6 @@ class Event extends React.Component {
                                                  specific={v2}
                                                  event={v}
                                                  wKey={this.props.wKey}
-                                                 isLarge={this.eventBoxWidthIsLarge}
                                                  activeKey={this.props.activeKey}/>
                             })
                         }
