@@ -658,7 +658,12 @@ class Property extends React.Component {
         };
         let menuClassList = (v3, i3)=> {
             return <MenuItem data={v3} key={i3}
-                             className={$class({'customize-last':i3===this.customList.length-1})}>{v3}
+                             className={$class({'customize-last':i3===this.customList.length-1})}>
+                                {
+                                    v3&&v3.substr(0,1) === "_"
+                                    ?v3.substr(1)
+                                    :v3
+                                }
                              </MenuItem>;
         };
 
@@ -685,9 +690,12 @@ class Property extends React.Component {
                     selectedValue = WidgetStore.getWidgetByKey(item.value);
                     showValue = (!selectedValue || !selectedValue.props || !selectedValue.props.name)?title:selectedValue.props.name;
                     break;
-                default:
+                case optionType.class:
                     selectedValue = item.value;
                     showValue = !selectedValue?title:selectedValue;
+                default:
+                    selectedValue = item.value;
+                    showValue = !selectedValue?title:selectedValue.substr(0,1) === "_"?selectedValue.substr(1):selectedValue;
                     break;
             }
             return (<Dropdown overlay={menu} trigger={['click']}
