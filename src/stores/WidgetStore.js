@@ -1068,7 +1068,8 @@ function saveTree(data, node, saveKey) {
                 item.needFill.map((v, i)=> {
                     if(judges.className == 'input' && v.type=='select'){
                         judges.conFlag =v.default;
-                    } else if (judges.className === 'sock' && v.actionName === 'message') {
+                    }
+                    else if (judges.className === 'sock' && v.actionName === 'message') {
                         let valueObj = keyMap[v.default];
                         if (valueObj) {
                             let o = objectToId(valueObj);
@@ -1137,7 +1138,7 @@ function saveTree(data, node, saveKey) {
             item.children.map((v,i)=> {
                 let obj = {};
                 let isSpecial1 = false;
-                let isSpecial2 = false;
+                // let isSpecial2 = false;
                 obj.enable = v.enable; //是否可执行
                 obj.judgeObjKey = v.judgeObjKey;
                 obj.judgeObjFlag = v.judgeObjFlag;
@@ -1162,7 +1163,7 @@ function saveTree(data, node, saveKey) {
 
 
                 obj.compareObjFlag = v.compareObjFlag;
-                 //todo
+                 //todo:删除
 
                 // obj.compareObjKey = v.compareObjKey;
                 // if (v.compareObj) {
