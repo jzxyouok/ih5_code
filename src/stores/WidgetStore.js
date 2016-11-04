@@ -3541,6 +3541,7 @@ export default Reflux.createStore({
         });
     },
     changeContactObj:function (key) {
+        console.log('key',key);
         this.trigger({contactObj:key});
     },
 });

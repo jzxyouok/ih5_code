@@ -1005,6 +1005,8 @@ class Event extends React.Component {
                                            className='dropDown-input-option'>{WidgetStore.getWidgetByKey(v).props.name}</Option>);
                 });
 
+                WidgetActions['changeContactObj'](item.default=='请选择'?null:item.default);
+
                 return <Select disabled={!obj.enable} className='dropDown-input-content' value={str}
                                onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
             } else {
