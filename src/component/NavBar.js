@@ -218,10 +218,12 @@ class NavBar extends React.Component {
             //console.log(nid);
             this.onImportUrl(PREFIX + 'work/' + nid, nid);
         }
-        //let id = localStorage.getItem("workID");
-        //if(id !== null){
-        //    this.onImportUrl(PREFIX + 'work/' + id, id);
-        //}
+        else{
+            let id = localStorage.getItem("workID");
+            if(id !== null){
+                this.onImportUrl(PREFIX + 'work/' + id, id);
+            }
+        }
         WidgetActions['cleanHistory']();
     }
 
