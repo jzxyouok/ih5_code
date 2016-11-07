@@ -391,7 +391,6 @@ class NavBar extends React.Component {
                 let r = JSON.parse(text);
                 if (r['token']) {
                     Cookies.set('ih5token', r['token'], { expires: 30 });
-                    getWorks(r['token']);
                     this.getWorks( r['token']);
                 } else {
                     this.setState({loginVisible: true});
