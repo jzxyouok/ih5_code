@@ -189,19 +189,19 @@ class NavBar extends React.Component {
         document.body.addEventListener('keyup', this.onKeyHistory);
         document.body.addEventListener('keydown', this.onKeyDown);
 
-        window.onbeforeunload = ()=>{
-            var n = window.event.screenX - window.screenLeft;
-            //鼠标在当前窗口内时，n<m，b为false；鼠标在当前窗口外时，n>m，b为true。20这个值是指关闭按钮的宽度
-            var b = n > document.documentElement.scrollWidth-20;
-            //鼠标在客户区内时，window.event.clientY>0；鼠标在客户区外时，window.event.clientY<0
-            if(b && window.event.clientY < 0 || window.event.altKey){
-                //这是一个关闭操作而非刷新
-                return false;
-            }else{
-                //这是一个刷新操作而非关闭
-                return false;
-            }
-        };
+        //window.onbeforeunload = ()=>{
+        //    var n = window.event.screenX - window.screenLeft;
+        //    //鼠标在当前窗口内时，n<m，b为false；鼠标在当前窗口外时，n>m，b为true。20这个值是指关闭按钮的宽度
+        //    var b = n > document.documentElement.scrollWidth-20;
+        //    //鼠标在客户区内时，window.event.clientY>0；鼠标在客户区外时，window.event.clientY<0
+        //    if(b && window.event.clientY < 0 || window.event.altKey){
+        //        //这是一个关闭操作而非刷新
+        //        return false;
+        //    }else{
+        //        //这是一个刷新操作而非关闭
+        //        return false;
+        //    }
+        //};
 
 
         let pathName = window.location.search;
@@ -391,7 +391,7 @@ class NavBar extends React.Component {
                 let r = JSON.parse(text);
                 if (r['token']) {
                     Cookies.set('ih5token', r['token'], { expires: 30 });
-                    getWorks(r['token']);
+                    this.getWorks( r['token']);
                 } else {
                     this.setState({loginVisible: true});
                 }
