@@ -169,8 +169,8 @@ class NavBar extends React.Component {
             this.state.loginVisible = false;
             this.getWorks(name);
         } else {
-            //this.state.loginVisible = true;
-            window.open("http://test-beta.ih5.cn", "_self")
+            this.state.loginVisible = true;
+            //window.open("http://test-beta.ih5.cn", "_self")
         }
         this.newWork();
         this.workid = null;
