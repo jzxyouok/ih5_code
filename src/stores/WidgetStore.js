@@ -762,7 +762,7 @@ function generateJsFunc(etree) {
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
-         if( c.showName=='碰撞对象'){
+         if( c.showName=='碰撞对象' ){
              let o='param.target.id=='+JSON.stringify(c.judgeObjId);
              conditions.push('(' + o + ')');
          }
@@ -1120,6 +1120,9 @@ function saveTree(data, node, saveKey) {
                             let bodyObj= keyMap[v.default];
                             if(bodyObj){
                                 obj.judgeObjId=bodyObj.parent.props.id;
+                            }else{
+                                //没有碰撞对象
+                                obj.judgeObjId=null;
                             }
                         }
 
@@ -3416,8 +3419,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-         //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-         xhr.open(method, url);  //上传到服务器时,去掉这个注释
+         xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+         //xhr.open(method, url);  //上传到服务器时,去掉这个注释
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
@@ -3524,15 +3527,22 @@ export default Reflux.createStore({
         let selectOther = (selectdata)=>{
             if(this.currentActiveEventTreeKey) {
                 this.selectWidget(selectdata, null, keepType.event);
+                this.activeEventTree(this.currentActiveEventTreeKey);
             }
             else if(this.currentFunction){
                 this.selectWidget(selectdata, null, keepType.func);
+                this.currentFunction = keyMap[this.currentFunction.key];
+                this.selectFadeWidget(this.currentFunction, nodeType.func);
             }
             else if(this.currentVariable) {
                 this.selectWidget(selectdata, null, keepType.var);
+                this.currentVariable = keyMap[this.currentVariable.key];
+                this.selectFadeWidget(this.currentVariable, nodeType.var);
             }
             else if(this.currentDBItem) {
-                this.selectWidget(selectdata,null, keepType.dbItem);
+                this.selectWidget(selectdata, null, keepType.dbItem);
+                this.currentDBItem = keyMap[this.currentDBItem.key];
+                this.selectFadeWidget(this.currentDBItem, nodeType.dbItem);
             }
             else {
                 this.selectWidget(selectdata);
@@ -3574,7 +3584,6 @@ export default Reflux.createStore({
         });
     },
     changeContactObj:function (key) {
-
         this.trigger({contactObj:key});
     },
 });
