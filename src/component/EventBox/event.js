@@ -30,7 +30,6 @@ class Event extends React.Component {
             wKey: this.props.wKey,
             specialObject: ['counter', 'text', 'var', 'input'],
             //用于下拉框显示
-            conOption: [],//每次点击后赋值
             logicalOption: ['and', 'or', 'not'],  //下拉选项
             judgeObjOption: [],
             judgeValOption: [],
@@ -72,6 +71,7 @@ class Event extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+
         //解析部分
         nextProps.eventList.map((v, i)=> {
             v.className = nextProps.widget.className;
@@ -253,15 +253,15 @@ class Event extends React.Component {
     //获取触发条件
     getConditionOption(optionName, oCurChild) {
         let aProps = [];
-        let obj = {}
         let className = this.state.selectWidget.className;
+
         propertyMap[className].map((item, index)=> {
             if (item.isEvent === true) {
-                aProps.push(item);
+                aProps.push(JSON.parse(JSON.stringify(item)));
             }
         });
-        obj[optionName] = aProps;
-        return obj;
+
+        this.state.eventList[this.curEventIndex].conOption = aProps;
     }
 
     //获取判断对象
@@ -355,8 +355,8 @@ class Event extends React.Component {
                         }
                     });
                 }
-                if (this.state.conOption.length > 0) {
-                    conArr = this.state.conOption;
+                if (this.state.eventList[curEventIndex].conOption&&this.state.eventList[curEventIndex].conOption.length > 0) {
+                    conArr = this.state.eventList[curEventIndex].conOption;
                 }
                 conArr.map((v, i)=> {
                     if (name == v.name) {
@@ -399,7 +399,7 @@ class Event extends React.Component {
        let curChild = this.state.curChild;
        let allWidgetsList = this.state.allWidgetsList;
        if (type == 'conFlag') {
-           this.state.conOption.map((v, i)=> {
+           this.state.eventList[this.curEventIndex].conOption.map((v, i)=> {
                if (v.showName == value) {
                    name = v.name;
                }
@@ -504,8 +504,10 @@ class Event extends React.Component {
 
     //点击select,出现下拉框之前的事件
     setCurOption(curChildrenIndex,curEventIndex,type,isUpdate,e){
+
         this.curChildrenIndex =curChildrenIndex;
         this.curEventIndex=curEventIndex;
+
         let option = type?type.replace('Flag', 'Option'):'';
         let obj={};
         let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
@@ -513,7 +515,7 @@ class Event extends React.Component {
         //每次点击,从新获取下拉框的内容
         switch (type) {
             case 'conFlag':
-                obj = this.getConditionOption(option, curChild);
+                    this.getConditionOption(option, curChild);
                 break;
             case 'judgeObjFlag':
                 obj = this.getJudgeObjOption(option, curChild);
@@ -526,11 +528,12 @@ class Event extends React.Component {
         }
 
         obj.curChild =curChild;
-        this.setState(obj);
+       this.setState(obj);
 
         if(isUpdate){
             this.forceUpdate();
         }
+
     }
 
     inputChange(val,event) {
@@ -593,9 +596,18 @@ class Event extends React.Component {
 
     menuList(flag) {
         let option = flag.replace('Flag', 'Option');
+        let targetArr=[];
+        if(flag=='conFlag'){
+            targetArr=this.state.eventList[this.curEventIndex].conOption;
+            if(targetArr===undefined){
+                targetArr=[];
+            }
+        }else{
+            targetArr =  this.state[option];
+        }
         return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag,null,null)}>
             {
-                this.state[option].map((v, i)=> {
+                targetArr.map((v, i)=> {
                         return <MenuItem key={i} index={i} object={v.showName?v.showName:v} keyVal={v.showName?v.key:null}>{v.showName?v.showName:v}</MenuItem>;
                 })
             }
@@ -606,17 +618,20 @@ class Event extends React.Component {
         //判定是否需要显示填入值的样式
         let isShow=false;
         let eventList = this.state.eventList;
+        let curEventIndex =  this.curEventIndex;
         let needFill=[];
-        this.state.conOption.map((v,i)=>{
+
+        eventList[this.curEventIndex].conOption.map((v,i)=>{
             if(v.name==value && v.needFill){
                 isShow=true;
                 needFill=v.needFill;
             }
         });
+
         if(isShow){
-            eventList[this.curEventIndex].needFill =needFill;
-        }else{
-            eventList[this.curEventIndex].needFill =undefined;
+                eventList[curEventIndex].needFill =needFill;
+        }else {
+            eventList[curEventIndex].needFill = undefined;
         }
         this.setState({eventList:eventList});
     }
@@ -635,94 +650,96 @@ class Event extends React.Component {
         this.setState({eventList:eventList});
     }
 
-    getAntdComponent(index,obj){
+    getAntdComponent(item,index,obj) {
 
-        let eventList =this.state.eventList;
-        if(!eventList[this.curEventIndex].needFill){
-            eventList[this.curEventIndex].needFill =obj.needFill;
-        }
-        let item =eventList[this.curEventIndex].needFill[index];
+            if (item.type == 'number') {
+                return <InputNumber disabled={!obj.enable} step={1} min={0} className='dropDown-input-content'
+                                    value={item.default} onChange={this.onChangeProp.bind(this, index, item.type)}/>
+            }
+            else if (item.type == 'string') {
+                return <Input disabled={!obj.enable} className='dropDown-input-content' value={item.default}
+                              onChange={this.onChangeProp.bind(this, index, item.type)}/>
+            }
+            else if (item.type == 'select') {
+                let optionArr = [];
+                if (item.showName == '碰撞对象') {
+                    //获取的其他body
+                    let keyList = [];
 
+                    let curBodyKey = this.state.selectWidget.key;
 
-        if(item.type=='number'){
-            return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
-        }
-        else if(item.type=='string'){
-            return <Input disabled={!obj.enable} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
-        }
-        else if(item.type=='select') {
-            let optionArr = [];
-            if (item.showName == '碰撞对象') {
-                //获取的其他body
-                let keyList = [];
-
-                let curBodyKey = this.state.selectWidget.key;
-
-                let findChildKey = (v, i)=> {
-                    if (v.className == 'body' && v.key != curBodyKey) {
-                        keyList.push(v.key);
-                    } else {
-                        v.children.map(findChildKey);
+                    let findChildKey = (v, i)=> {
+                        if (v.className == 'body' && v.key != curBodyKey) {
+                            keyList.push(v.key);
+                        } else {
+                            v.children.map(findChildKey);
+                        }
                     }
-                }
 
-                this.state.initTree.map((v,i)=>{
-                    let node =v.tree;
-                    if(node.children.length){
-                        node.children.map(findChildKey);
+                    this.state.initTree.map((v, i)=> {
+                        let node = v.tree;
+                        if (node.children.length) {
+                            node.children.map(findChildKey);
+                        }
+                    });
+
+                    item.option = keyList;
+                    let str = item.default;
+                    let itemObj = WidgetStore.getWidgetByKey(item.default);
+                    if (itemObj) {
+                        str = itemObj.props.name;
+                    }else if(str !='请选择'){
+                        str ='请选择';
+                        //清空
+                        this.state.eventList[this.curEventIndex].needFill[index].default ='';
                     }
-                });
+                    item.option.map((v, i)=> {
+                        optionArr.push(<Option key={i} value={v.toString()}
+                                               className='dropDown-input-option'>{WidgetStore.getWidgetByKey(v).props.name}</Option>);
+                    });
 
-                item.option = keyList;
-                let str = item.default;
-                let itemObj = WidgetStore.getWidgetByKey(item.default);
-                if (itemObj) {
-                    str = itemObj.props.name;
+                    WidgetActions['changeContactObj'](item.default == '请选择' ? null : item.default);
+
+                    return <Select disabled={!obj.enable}
+                                   className='dropDown-input-content'
+                                   value={str}
+
+                                   onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
+                } else {
+                    item.option.map((v, i)=> {
+                        optionArr.push(<Option key={i} className='dropDown-input-option'>{v}</Option>);
+                    });
+                    return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default}
+                                   onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
                 }
-                item.option.map((v, i)=> {
-                    optionArr.push(<Option key={i} value={v.toString()}
-                                           className='dropDown-input-option'>{WidgetStore.getWidgetByKey(v).props.name}</Option>);
-                });
-
-                WidgetActions['changeContactObj'](item.default=='请选择'?null:item.default);
-
-                return <Select disabled={!obj.enable}
-                               className='dropDown-input-content'
-                               value={str}
-
-                               onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
-            } else {
-                item.option.map((v, i)=> {
-                    optionArr.push(<Option key={i} className='dropDown-input-option'>{v}</Option>);
-                });
-                return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default}
+            }
+            else if (item.type == 'var') {
+                let optionArr = [];
+                let key = 0;
+                if (this.state.selectWidget.intVarList) {
+                    this.state.selectWidget.intVarList.forEach((v, i)=> {
+                        optionArr.push(<Option key={key++} value={v.key + ''}
+                                               className='dropDown-input-option'>{v.props.name}</Option>);
+                    });
+                }
+                if (this.state.selectWidget.strVarList) {
+                    this.state.selectWidget.strVarList.forEach((v, i)=> {
+                        optionArr.push(<Option key={key++} value={v.key + ''}
+                                               className='dropDown-input-option'>{v.props.name}</Option>);
+                    });
+                }
+                let valueObj = WidgetStore.getWidgetByKey(item.default);
+                let value = null;
+                if (valueObj) {
+                    value = valueObj.props.name;
+                }
+                return <Select disabled={!obj.enable} className='dropDown-input-content' value={value}
+                               placeholder="选择变量"
+                               getPopupContainer={() => document.getElementById('event-item-left-' + obj.eid)}
                                onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
             }
         }
-        else if(item.type=='var'){
-            let optionArr=[];
-            let key = 0;
-            if(this.state.selectWidget.intVarList) {
-                this.state.selectWidget.intVarList.forEach((v,i)=>{
-                    optionArr.push(<Option key={key++} value={v.key+''} className='dropDown-input-option'>{v.props.name}</Option>);
-                });
-            }
-            if(this.state.selectWidget.strVarList) {
-                this.state.selectWidget.strVarList.forEach((v,i)=>{
-                    optionArr.push(<Option  key={key++} value={v.key+''} className='dropDown-input-option'>{v.props.name}</Option>);
-                });
-            }
-            let valueObj = WidgetStore.getWidgetByKey(item.default);
-            let value = null;
-            if(valueObj) {
-                value=valueObj.props.name;
-            }
-            return <Select disabled={!obj.enable} className='dropDown-input-content' value={value}
-                           placeholder="选择变量"
-                           getPopupContainer={() => document.getElementById('event-item-left-'+obj.eid)}
-                           onChange={this.onChangeProp.bind(this,index,item.type)}>{optionArr}</Select>
-        }
-    }
+
 
     showCompareDropDown(name,curEventIndex,curChildrenIndex){
         let eventList=this.state.eventList;
@@ -839,12 +856,12 @@ class Event extends React.Component {
                                                     :v.needFill.map((n,m)=>{
                                                     let content;
                                                     if(n.type=='select' && n.showName ===undefined){
-                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '    onClick={this.setCurOption.bind(this,0,i,null,false)}> {this.getAntdComponent(m,v)}</div>)
+                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '    onClick={this.setCurOption.bind(this,0,i,null,false)}> {this.getAntdComponent(n,m,v)}</div>)
                                                     }else{
                                                         content= (<div key={m} className='dropDown-input2 dropDown-input-full '>
                                                             <div className='dropDown-input-txt-half'>{n.showName}</div>
                                                             <div className='dropDown-input-half'    onClick={this.setCurOption.bind(this,0,i,null,false)}>
-                                                                {this.getAntdComponent(m,v)}
+                                                                {this.getAntdComponent(n,m,v)}
                                                             </div>
                                                         </div>)
                                                     }
@@ -1019,6 +1036,7 @@ class Event extends React.Component {
     }
 
     render() {
+
         return (
             <div className={$class('Event',{'active' :this.props.activeKey === this.props.wKey })}
                  onClick={this.chooseEventBtn.bind(this, this.props.wKey)}

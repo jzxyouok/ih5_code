@@ -693,6 +693,8 @@ class PropertyView extends React.Component {
     getFields() {
         let node = this.selectNode;
 
+       // console.log(node);
+
         if (!node)  return null;
 
         if( node.node.keepRatio ===undefined && ( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist')){
@@ -753,21 +755,13 @@ class PropertyView extends React.Component {
 
                 }else{
                     let str = item.name == 'scaleX' ? 'width' : 'height';
-
                     defaultValue=(node.node.class=='bitmaptext' && this.textSizeObj)?this.textSizeObj[str]: node.node[str];
-
                     this.textSizeObj =null;
-
                     if (!this.selectNode.node.defaultData) { this.selectNode.node.defaultData={}; }//只执行一次
-
                     //设置初始宽高,便于计算放大缩小的系数
                     if(this.selectNode.node.scaleX=='1' &&this.selectNode.node.scaleY=='1') {
-
                         this.selectNode.node.defaultData[str] = defaultValue
-
-
                     }
-
                 }
             }else if(item.type==propertyType.Color || item.type==propertyType.Color2 || item.type === propertyType.TbColor){
                 if( item.name == 'color' &&  !node.props.color){ //只执行一次
