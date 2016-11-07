@@ -79,7 +79,7 @@ class DesignView extends React.Component {
     }
 
     onStatusChange(widget) {
-      // console.log(widget);
+       console.log(widget);
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
             if(widget.selectWidget.className == "root" && widget.selectWidget.props.name == "stage") {
@@ -91,14 +91,6 @@ class DesignView extends React.Component {
             }else if(widget.selectWidget.props.rulerArr === undefined){
                 this.drawLine([]);
             }
-            if(widget.selectWidget.className == "root"){
-                //点击舞台后,整个页面会渲染一遍,导致属性面板的失焦事件不能发生,强行让它发生一遍
-                let oPropertyView =  document.getElementById('PropertyView').getElementsByClassName('ant-input')[0];
-                if(oPropertyView){
-                    oPropertyView.focus();
-                    oPropertyView.blur();
-                }
-            }
             setTimeout(function () {
                 //点击舞台后,整个页面会渲染一遍,导致浏览器失焦,导致ctrl+s的时候不能阻止默认的保存事件,导致要写下面无奈的代码
                 let oPropertyView =  document.getElementById('PropertyView').getElementsByClassName('ant-input')[0];
@@ -109,6 +101,15 @@ class DesignView extends React.Component {
 
         if(widget.setRulerLine){
             this.isShowRulerLine(widget.setRulerLine.isShow);
+        }
+
+        if(widget.updateProperties || widget.selectWidget){
+            //点击舞台后,整个页面会渲染一遍,导致属性面板的失焦事件不能发生,强行让它发生一遍
+            let oPropertyView =  document.getElementById('PropertyView').getElementsByClassName('ant-input')[0];
+            if(oPropertyView){
+                oPropertyView.focus();
+                oPropertyView.blur();
+            }
         }
 
         if(widget.updateProperties && (widget.updateProperties .width || widget.updateProperties .height)){
