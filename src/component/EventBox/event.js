@@ -254,10 +254,23 @@ class Event extends React.Component {
     getConditionOption(optionName, oCurChild) {
         let aProps = [];
         let className = this.state.selectWidget.className;
+        let hasContact=false;
+
+        this.state.selectWidget.children.map((v,i)=>{
+             if(v.className=='body'){
+                 hasContact=true;
+             }
+        });
 
         propertyMap[className].map((item, index)=> {
             if (item.isEvent === true) {
-                aProps.push(JSON.parse(JSON.stringify(item)));
+                if(item.name=='beginContact'||item.name=='endContact'){
+                    if(hasContact){
+                        aProps.push(JSON.parse(JSON.stringify(item)));
+                    }
+                }else{
+                    aProps.push(JSON.parse(JSON.stringify(item)));
+                }
             }
         });
 
@@ -667,7 +680,14 @@ class Event extends React.Component {
                     //获取的其他body
                     let keyList = [];
 
-                    let curBodyKey = this.state.selectWidget.key;
+                    let curBodyKey ;
+
+                    this.state.selectWidget.children.map((v,i)=>{
+                        if(v.className=='body'){
+                            curBodyKey=v.key;
+                        }
+                    });
+
 
                     let findChildKey = (v, i)=> {
                         if (v.className == 'body' && v.key != curBodyKey) {

@@ -1032,21 +1032,28 @@ class PropertyView extends React.Component {
             /******** 设置布局结构和图标 *************/
                 //左右结构显示
             let hasTwin;
+            let hasOne;
+            let isBody;
             if( className == "table"){
                 hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','行数','列数','头部字体','图表字体大小','字体','网格颜色','网格大小'].indexOf(item.showName) >= 0;
             }
             else if(className == "timer"){
                 hasTwin = ['X','Y','W','H','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','自动播放','循环播放'].indexOf(item.showName) >= 0;
+                hasOne=true;
             }
-            else if(className == "container" || className == "canvas"){
-                hasTwin = ['X','Y','W','H','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;
+            else if(className == "container" || className == "canvas" || className == "world"){
+                hasTwin = ['X','Y','W','H','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','北墙','南墙','西墙','东墙'].indexOf(item.showName) >= 0;
+                hasOne=true;
             }
             else {
-                hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高'].indexOf(item.showName) >= 0;
+                hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','固定x坐标','固定y坐标','碰撞反应','圆形边界'].indexOf(item.showName) >= 0;
+            }
+            if(className == "body"){
+                isBody=true;
             }
 
             let hasPx=['X','Y','W','H','网格大小'].indexOf(item.showName)>=0; //判断input中是否添加px单位
-            let hasDegree =['rotationImgTag'].indexOf(item.showName)>=0; //判断input中是否添加°单位
+            let hasDegree =['旋转度'].indexOf(item.showName)>=0; //判断input中是否添加°单位
             let hasLock=item.showLock==true; //判断是否在元素前添加锁图标
 
             if(!item.showName){item.showName=item.name;}//当showName不存在时,用name作为showName
@@ -1082,26 +1089,27 @@ class PropertyView extends React.Component {
             if( className == "table" && (item.name === "fontFill" || item.name === "fillColor" || item.name === "altColor")){
                 tdColorSwitch = true;
             }
-            //if( this.state.tbHeaderToggle && item.name == 'showHeader'){
-            //    style['margin'] = "0";
-            //}
+
 
             groups[groupName].push(
                 <div key={item.name}
                      className={cls('f--hlc','ant-row','ant-form-item',
                          {'ant-form-half': hasTwin},
                          {'ant-form-full': !hasTwin},
+                         {'ant-body': isBody},
+                         {'ant-rotation': hasOne && item.name=='rotation'},
+                         {'ant-autoGravity':item.name=='autoGravity'},
                          {'tdColorSwitch' : tdColorSwitch }
-                         //,{'hidden': this.state.tbHeaderToggle
-                         //                && (item.name =='head' || item.name =='headerFontFamily'
-                         //                || item.name =='headerFontSize' || item.name =='headerFontFill')
-                         //}
+
                      )}
                      style={style}>
 
                     <div className={cls('ant-col-l ant-form-item-label',{"hidden" : defaultProp.tbCome == "tbS"})}>{htmlStr}</div>
                     <div className={cls('ant-col-r',{"tbSSStyle" : defaultProp.tbCome == "tbS"},{"tbFSStyle" : defaultProp.tbCome == "tbF"})}>
-                        <div className= {cls('ant-form-item-control', {'ant-input-degree':hasDegree}, {'ant-input-px': hasPx})}>
+                        <div className= {cls('ant-form-item-control',
+                            {'ant-input-degree':hasDegree},
+                            {'ant-input-px': hasPx}
+                        )}>
                             {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
                         </div>
                     </div>
