@@ -256,32 +256,28 @@ function loadTree(parent, node, idList) {
       idList[node['id']] = current;
   }
 
+  current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props']);
 
+  // var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
 
-  var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
+  // current.node = bridge.addWidget(renderer,
+  //     (parent)
+  //     ? parent.node
+  //     : null, node['cls'], null, node['props'],
+  //       (parent && parent.timerWidget) ? parent.timerWidget.node : null
+  // );
 
-  current.node = bridge.addWidget(renderer,
-      (parent)
-      ? parent.node
-      : null, node['cls'], null, node['props'],
-        (parent && parent.timerWidget) ? parent.timerWidget.node : null
-  );
-
-
-
-    current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
-
-
+  // current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
 
   if (parent) {
     parent.children.unshift(current);
     current.rootWidget = parent.rootWidget;
-    if (renderer != current.rootWidget.rendererList[0])
-      current.rootWidget.rendererList.unshift(renderer);
+    // if (renderer != current.rootWidget.rendererList[0])
+    //   current.rootWidget.rendererList.unshift(renderer);
   } else {
     current.rootWidget = current;
     current.imageList = node['links'] || [];
-    current.rendererList = [renderer];
+    // current.rendererList = [renderer];
     bridge.setLinks(current.node, current.imageList);
     // bridge.createSelector(current.node);
   }
@@ -1632,16 +1628,16 @@ export default Reflux.createStore({
     selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
         if (widget) {
-            if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
-                render = true;
-                var el = bridge.getDomElement(widget.rootWidget.node);
-                if (el != rootElm) {
-                    if (rootElm)
-                        rootDiv.removeChild(rootElm);
-                        rootElm = el;
-                        rootDiv.appendChild(rootElm);
-                }
-            }
+            // if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
+            //     render = true;
+            //     var el = bridge.getEl(widget.rootWidget.node);
+            //     if (el != rootElm) {
+            //         if (rootElm)
+            //             rootDiv.removeChild(rootElm);
+            //             rootElm = el;
+            //             rootDiv.appendChild(rootElm);
+            //     }
+            // }
 
             if(widget.props['locked'] === undefined) {
                 widget.props['locked'] = false;
@@ -1753,8 +1749,8 @@ export default Reflux.createStore({
 
 
       if (className === 'track') {
-        if (!this.currentWidget.timerWidget ||
-            (this.currentWidget.className !== 'image'
+          if (!this.currentWidget.timerWidget ||
+              (this.currentWidget.className !== 'image'
               && this.currentWidget.className !== 'imagelist'
               && this.currentWidget.className !== 'text'
               && this.currentWidget.className !== 'bitmaptext'
@@ -1764,17 +1760,21 @@ export default Reflux.createStore({
               && this.currentWidget.className !== 'counter'
               && this.currentWidget.className !== 'rect'
               && this.currentWidget.className !== 'container'))
-          return;
-        let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
-        let dataList = [];   //let dataList = [[0], [1]];
-        //for (let i = 0; i < propList.length; i++) {
-        //  let d = this.currentWidget.node[propList[i]];
-        //  dataList[0].push(d);
-        //  //dataList[1].push(d);
-        //}
-        let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList, 'name':props['name']}});
-        this.trigger({redrawTree: true, updateTrack: track});
-      } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
+              return;
+          let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
+          let dataList = [];   //let dataList = [[0], [1]];
+          //for (let i = 0; i < propList.length; i++) {
+          //  let d = this.currentWidget.node[propList[i]];
+          //  dataList[0].push(d);
+          //  //dataList[1].push(d);
+          //}
+          let track = loadTree(this.currentWidget, {
+              'cls': className,
+              'props': {'prop': propList, 'data': dataList, 'name': props['name']}
+          });
+          this.trigger({redrawTree: true, updateTrack: track});
+          // } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
+      } else {
         let p;
         if (props || link) {
           p = {};
@@ -3146,7 +3146,6 @@ export default Reflux.createStore({
         // bridge.createSelector(null);
 
         if (!rootDiv) {
-            this.mutliSelectMode = false;
             rootDiv = document.getElementById('canvas-dom');
             rootDiv.addEventListener('dragenter', dragenter, false);
             rootDiv.addEventListener('dragover', dragover, false);
@@ -3157,6 +3156,7 @@ export default Reflux.createStore({
                 }
             }.bind(this), false);
         }
+        rootDiv.appendChild(bridge.getEl(stageTree[0].tree.node));
 
         this.trigger({
             initTree: stageTree
