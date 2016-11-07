@@ -1135,6 +1135,11 @@
                         @include border-radius(2px);
                         .title {
                             background: #162322;
+                            .target-obj-input {
+                                .ant-input {
+                                    background: #162322;
+                                }
+                            }
                         }
                     }
 
@@ -1937,6 +1942,10 @@
   .ant-select-dropdown-menu-item-selected.select-scaleType{
     background: #162322;
   }
+    .ant-select-dropdown-menu-item-disabled{
+        background-color: #19222e;
+        padding: 2px 4px;
+    }
 }
 
 .dropDown-input-option{
@@ -1944,6 +1953,10 @@
     &.ant-select-dropdown-menu-item-selected{
         background-color: #19222e;
     }
+    &.ant-select-dropdown-menu-item{
+        padding: 2px 10px;
+    }
+
     &.ant-select-dropdown-menu-item-active{
         background-color: #19222e;
         &:hover{

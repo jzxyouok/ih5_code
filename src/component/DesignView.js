@@ -79,15 +79,13 @@ class DesignView extends React.Component {
     }
 
     onStatusChange(widget) {
-       // console.log(widget);
+       //   console.log(widget);
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
             if(widget.selectWidget.className == "root" && widget.selectWidget.props.name == "stage") {
                 this.rootWidget = widget.selectWidget;
             }
             //isShow没有定义时和确定显示的时候才执行
-
-
             if(widget.selectWidget.props.rulerArr &&( this.selectNode.props.isShow ||  this.selectNode.props.isShow===undefined)){
                 this.drawLine(widget.selectWidget.props.rulerArr);
             }else if(widget.selectWidget.props.rulerArr === undefined){
@@ -103,6 +101,15 @@ class DesignView extends React.Component {
 
         if(widget.setRulerLine){
             this.isShowRulerLine(widget.setRulerLine.isShow);
+        }
+
+        if(widget.updateProperties || widget.selectWidget){
+            //点击舞台后,整个页面会渲染一遍,导致属性面板的失焦事件不能发生,强行让它发生一遍
+            let oPropertyView =  document.getElementById('PropertyView').getElementsByClassName('ant-input')[0];
+            if(oPropertyView){
+                oPropertyView.focus();
+                oPropertyView.blur();
+            }
         }
 
         if(widget.updateProperties && (widget.updateProperties .width || widget.updateProperties .height)){

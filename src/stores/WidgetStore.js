@@ -767,7 +767,7 @@ function generateJsFunc(etree) {
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
-         if( c.showName=='碰撞对象'){
+         if( c.showName=='碰撞对象' ){
              let o='param.target.id=='+JSON.stringify(c.judgeObjId);
              conditions.push('(' + o + ')');
          }
@@ -1125,6 +1125,9 @@ function saveTree(data, node, saveKey) {
                             let bodyObj= keyMap[v.default];
                             if(bodyObj){
                                 obj.judgeObjId=bodyObj.parent.props.id;
+                            }else{
+                                //没有碰撞对象
+                                obj.judgeObjId=null;
                             }
                         }
 
