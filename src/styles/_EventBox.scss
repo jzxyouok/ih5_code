@@ -1302,7 +1302,7 @@
                             }
                         }
                         .ant-fade-input {
-                            line-height: 16px;
+                            @extend %font-omitted;
                         }
                         .ant-input,
                         .ant-input-sm{
@@ -1748,6 +1748,7 @@
             .ant-dropdown-menu-item {
                 color: white;
                 padding: 2px 14px;
+                @extend %font-omitted;
 
                 &.customize-last {
                     border-bottom: 1px solid #666;
