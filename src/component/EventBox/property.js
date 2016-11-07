@@ -438,6 +438,7 @@ class Property extends React.Component {
         //search
         let value = e.target.value;
         let final = null;
+        let hasSameObject = false;
         if(value === 'this' || value === '目标对象'){
             final = 'this';
         } else if ((value === '碰撞目标对象' || value === 'param.target')&&this.state.contactObj){
@@ -451,14 +452,21 @@ class Property extends React.Component {
                 }
             });
             if(resultIndexList.length>0) {
-                final = this.state.objectList[resultIndexList[0]].key;
+                resultIndexList.forEach((v,i)=>{
+                    if(this.state.objectList[v].key === this.state.currentObject) {
+                        hasSameObject = true;
+                    }
+                });
+                if(!hasSameObject) {
+                    final = this.state.objectList[resultIndexList[0]].key;
+                }
             }
         }
         this.setState({
             editTargetObj: false,
             objectDropdownVisible: false
         });
-        if (final!==null) {
+        if (final!==null&&final!==this.state.currentObject) {
             this.setState({
                 currentObject: final
             }, ()=> {
@@ -981,9 +989,11 @@ class Property extends React.Component {
                 targetName = w.props.name;
             }
             return (
-                <div className="target-obj-input">
-                    <div onClick={this.onStartEditTargetObj.bind(this, targetName)} className={$class('ant-input ant-input-sm ant-fade-input',
-                        {'hidden':this.state.editTargetObj})}>
+                <div className="target-obj-input f--hlc">
+                    <div onClick={this.onStartEditTargetObj.bind(this, targetName)}
+                         className={$class('ant-input ant-input-sm ant-fade-input',
+                        {'hidden':this.state.editTargetObj})}
+                         style={{'cursor':this.state.currentEnable?'auto':'not-allowed'}}>
                         {
                             targetName
                         }

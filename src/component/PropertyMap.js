@@ -1,5 +1,16 @@
 import bridge from 'bridge';
-import {isCustomizeWidget, dataType} from '../stores/WidgetStore';
+
+function isCustomizeWidget(className) {
+    if (className&&className.length>0){
+        return className.substr(0,1)==='_';
+    }
+    return false;
+}
+
+var dataType = {
+    oneDArr: 'oneDArr',
+    twoDArr: 'twoDArr'
+};
 
 const propertyType = {
     Integer: 0,
