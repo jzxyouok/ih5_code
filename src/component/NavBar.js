@@ -163,7 +163,7 @@ class NavBar extends React.Component {
         this.fileUrl = null;
         this.isPlay = null;
 
-        var name = Cookies.get('ih5bearer');
+        var name = Cookies.get('ih5token');
         //console.log(name);
         if (name) {
             this.state.loginVisible = false;
@@ -390,7 +390,7 @@ class NavBar extends React.Component {
             function(text) {
                 let r = JSON.parse(text);
                 if (r['token']) {
-                    Cookies.set('ih5bearer', r['token'], { expires: 30 });
+                    Cookies.set('ih5token', r['token'], { expires: 30 });
                     getWorks(r['token']);
                 } else {
                     this.setState({loginVisible: true});
@@ -613,7 +613,7 @@ class NavBar extends React.Component {
     }
 
     onLogout() {
-        Cookies.remove('ih5bearer');
+        Cookies.remove('ih5token');
         this.setState({loginVisible: true, username: null});
     }
 
