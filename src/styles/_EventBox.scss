@@ -1135,6 +1135,11 @@
                         @include border-radius(2px);
                         .title {
                             background: #162322;
+                            .target-obj-input {
+                                .ant-input {
+                                    background: #162322;
+                                }
+                            }
                         }
                     }
 
