@@ -1287,6 +1287,50 @@
                         width: 171px;
                     }
 
+                    .target-obj-input {
+                        width: 124px;
+                        .ant-input {
+                            height: 20px;
+                            padding: 2px 0;
+                            color: #b5b5b5;
+                            background-color: #1c2f2e;
+                            border: 0;
+                            outline: 0;
+                            border-radius: 0;
+                            &:hover {
+                                background-color: #152322;
+                            }
+                        }
+                        .ant-fade-input {
+                            line-height: 16px;
+                        }
+                        .ant-input,
+                        .ant-input-sm{
+                            &:focus {
+                                border: 0 !important;
+                                outline: 0;
+                                box-shadow: none;
+                            }
+                        }
+                    }
+
+                    .title {
+                        transition-duration: 0.2s;
+                        &:hover {
+                            transition-duration: 0.2s;
+                            .target-obj-input .ant-input {
+                                background-color: #152322;
+                            }
+                        }
+                    }
+
+                    .p--dropDown .title .icon {
+                        position: relative;
+                        margin: 0 5px;
+                        padding: 5px;
+                        right: 0;
+                    }
+
                     .p--icon {
                         cursor: pointer;
                         width: 18px;

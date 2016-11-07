@@ -44,6 +44,7 @@ class Property extends React.Component {
             currentAction: this.props.specific.action,  //name&property
             currentEnable: this.props.specific.enable,  //是否enable
             contactObj: null,
+            editTargetObj: false,
         };
         this.expandBtn = this.expandBtn.bind(this);
 
@@ -54,12 +55,15 @@ class Property extends React.Component {
 
         this.onObjectVisibleChange = this.onObjectVisibleChange.bind(this);
         this.onObjectSelect = this.onObjectSelect.bind(this);
+        this.onStartEditTargetObj = this.onStartEditTargetObj.bind(this);
+        this.onEndEditTargetObj = this.onEndEditTargetObj.bind(this);
+
         this.onActionVisibleChange = this.onActionVisibleChange.bind(this);
         this.onActionSelect = this.onActionSelect.bind(this);
         this.onGetActionList = this.onGetActionList.bind(this);
+
         this.onChangePropDom = this.onChangePropDom.bind(this);
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
-
         this.onPropsObjButtonClick = this.onPropsObjButtonClick.bind(this);
         this.onPropsObjResultGet = this.onPropsObjResultGet.bind(this);
 
@@ -401,10 +405,66 @@ class Property extends React.Component {
         if(!this.state.currentEnable) {
             return;
         }
+        if(this.state.editTargetObj) {
+            return;
+        }
         this.setState({
             objectDropdownVisible: flag,
 
         });
+    }
+
+    onStartEditTargetObj(targetName ,e) {
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+        if(!this.state.currentEnable) {
+            return;
+        }
+        e.stopPropagation();
+        this.setState({
+            editTargetObj: true,
+            objectDropdownVisible: false
+        }, ()=>{
+            if(targetName === '目标对象') {
+                targetName = '';
+            }
+            this.refs['tarObjInput'].refs.input.value = targetName;
+            this.refs['tarObjInput'].refs.input.focus();
+        });
+    }
+
+    onEndEditTargetObj(e) {
+        //search
+        let value = e.target.value;
+        let final = null;
+        if(value === 'this' || value === '目标对象'){
+            final = 'this';
+        } else if ((value === '碰撞目标对象' || value === 'param.target')&&this.state.contactObj){
+            final = 'param.target';
+        } else {
+            //检查是否在obejctlist内
+            let resultIndexList = [];
+            this.state.objectList.forEach((v,i)=>{
+                if(value === v.props.name){
+                    resultIndexList.push(i);
+                }
+            });
+            if(resultIndexList.length>0) {
+                final = this.state.objectList[resultIndexList[0]].key;
+            }
+        }
+        this.setState({
+            editTargetObj: false,
+            objectDropdownVisible: false
+        });
+        if (final!==null) {
+            this.setState({
+                currentObject: final
+            }, ()=> {
+                WidgetActions['changeSpecific'](this.state.specific, {'object':this.state.currentObject});
+            });
+        }
     }
 
     onActionSelect(e){
@@ -911,6 +971,33 @@ class Property extends React.Component {
             </Menu>
         );
 
+        let targetObjInput = ()=>{
+            let targetName = '目标对象';
+            if(this.state.currentObject === 'this') {
+                targetName = '当前对象';
+            } else if(this.state.currentObject === 'param.target'&&this.state.contactObj) {
+                targetName = '碰撞目标对象';
+            } else if (w && w.props && w.props.name) {
+                targetName = w.props.name;
+            }
+            return (
+                <div className="target-obj-input">
+                    <div onClick={this.onStartEditTargetObj.bind(this, targetName)} className={$class('ant-input ant-input-sm ant-fade-input',
+                        {'hidden':this.state.editTargetObj})}>
+                        {
+                            targetName
+                        }
+                    </div>
+                    <Input ref="tarObjInput"
+                           className={$class({'hidden':!this.state.editTargetObj})}
+                           onBlur={this.onEndEditTargetObj}
+                           onPressEnter={this.onEndEditTargetObj}
+                           disabled={!this.state.currentEnable}
+                           size='small'/>
+                </div>
+            )
+        };
+
         return (
             <div className={$class("Property f--h", {'Property-not-enable':!this.state.currentEnable})} id={propertyId}>
                 <div className="P--left-line"></div>
@@ -937,13 +1024,7 @@ class Property extends React.Component {
                                                 onClick={this.onSTButtonClick}
                                                 getResult={this.onSTResultGet.bind(this)} />
                                             {
-                                                this.state.currentObject === 'this'
-                                                    ? '当前对象'
-                                                    : this.state.currentObject === 'param.target'
-                                                    ? '碰撞目标对象'
-                                                    : !w || !w.props || !w.props.name
-                                                    ?'目标对象'
-                                                    : w.props.name
+                                                targetObjInput()
                                             }
                                             <span className="icon" />
                                         </div>
