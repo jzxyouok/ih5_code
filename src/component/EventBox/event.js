@@ -596,19 +596,20 @@ class Event extends React.Component {
 
     menuList(flag) {
         let option = flag.replace('Flag', 'Option');
-        let targetArr=[];
-        if(flag=='conFlag'){
-            targetArr=this.state.eventList[this.curEventIndex].conOption;
-            if(targetArr===undefined){
-                targetArr=[];
-            }
-        }else{
-            targetArr =  this.state[option];
+        let targetArr = [];
+        if (flag == 'conFlag' && this.state.eventList[this.curEventIndex]) {
+            targetArr = this.state.eventList[this.curEventIndex].conOption;
+        } else {
+            targetArr = this.state[option];
         }
-        return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag,null,null)}>
+        if (targetArr === undefined) {
+            targetArr = [];
+        }
+        return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag, null, null)}>
             {
                 targetArr.map((v, i)=> {
-                        return <MenuItem key={i} index={i} object={v.showName?v.showName:v} keyVal={v.showName?v.key:null}>{v.showName?v.showName:v}</MenuItem>;
+                    return <MenuItem key={i} index={i} object={v.showName ? v.showName : v}
+                                     keyVal={v.showName ? v.key : null}>{v.showName ? v.showName : v}</MenuItem>;
                 })
             }
         </Menu>)
