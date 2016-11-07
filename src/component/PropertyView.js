@@ -99,9 +99,9 @@ class PropertyView extends React.Component {
             case propertyType.Percentage:
                 // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                 return  <div>
-                    <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
-                    <Slider    step={1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
-                </div>;
+                            <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+                            <Slider step={1}  max={100} min={0} {...defaultProp} className='slider-per'/>
+                        </div>;
 
             case propertyType.Text:
                 return <Input type="textarea" {...defaultProp} />;

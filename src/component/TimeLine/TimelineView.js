@@ -777,6 +777,9 @@ class TimelineView extends React.Component {
             move=true;
             _x= e.pageX;
             _y= e.pageY;
+            left = self.state.dragTimelineLeft;
+            right = self.state.dragTimelineRight;
+            bottom = self.state.dragTimelineBottom;
 
             $(document).bind('mousemove',(function(e){
                 if(move){
@@ -791,9 +794,23 @@ class TimelineView extends React.Component {
             }));
             $(document).bind('mouseup',(function(){
                 move=false;
-                left = self.state.dragTimelineLeft;
-                right = self.state.dragTimelineRight;
-                bottom = self.state.dragTimelineBottom;
+                let isLeft = self.state.dragTimelineLeft<=87;
+                let isBootom = self.state.dragTimelineBottom <= 50;
+                if(isLeft && isBootom){
+                    left = 37;
+                    right = 281;
+                    bottom = 0;
+                }
+                else {
+                    left = self.state.dragTimelineLeft;
+                    right = self.state.dragTimelineRight ;
+                    bottom = self.state.dragTimelineBottom;
+                }
+                self.setState({
+                    dragTimelineLeft : left,
+                    dragTimelineRight : right,
+                    dragTimelineBottom : bottom
+                });
                 if((window.innerWidth-left-right) < (window.innerWidth-self.state.leftAddRight)){
                     self.setState({
                         leftAddRight : left + right

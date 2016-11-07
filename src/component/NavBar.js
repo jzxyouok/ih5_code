@@ -163,14 +163,14 @@ class NavBar extends React.Component {
         this.fileUrl = null;
         this.isPlay = null;
 
-        var name = Cookies.get('ih5token');
+        var name = Cookies.get('ih5bearer');
         //console.log(name);
         if (name) {
             this.state.loginVisible = false;
             this.getWorks(name);
         } else {
-            //this.state.loginVisible = true;
-            window.open("http://test-beta.ih5.cn", "_self")
+            this.state.loginVisible = true;
+            //window.open("http://test-beta.ih5.cn", "_self")
         }
         this.newWork();
         this.workid = null;
@@ -390,7 +390,7 @@ class NavBar extends React.Component {
             function(text) {
                 let r = JSON.parse(text);
                 if (r['token']) {
-                    Cookies.set('ih5token', r['token'], { expires: 30 });
+                    Cookies.set('ih5bearer', r['token'], { expires: 30 });
                     getWorks(r['token']);
                 } else {
                     this.setState({loginVisible: true});
@@ -613,7 +613,7 @@ class NavBar extends React.Component {
     }
 
     onLogout() {
-        Cookies.remove('ih5token');
+        Cookies.remove('ih5bearer');
         this.setState({loginVisible: true, username: null});
     }
 
