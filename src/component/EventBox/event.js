@@ -635,7 +635,15 @@ class Event extends React.Component {
         this.setState({eventList:eventList});
     }
 
-    getAntdComponent(item,index,obj){
+    getAntdComponent(index,obj){
+
+        let eventList =this.state.eventList;
+        if(!eventList[this.curEventIndex].needFill){
+            eventList[this.curEventIndex].needFill =obj.needFill;
+        }
+        let item =eventList[this.curEventIndex].needFill[index];
+
+
         if(item.type=='number'){
             return <InputNumber disabled={!obj.enable} step={1}  min={0} className='dropDown-input-content' value={item.default} onChange={this.onChangeProp.bind(this,index,item.type)} />
         }
@@ -831,12 +839,12 @@ class Event extends React.Component {
                                                     :v.needFill.map((n,m)=>{
                                                     let content;
                                                     if(n.type=='select' && n.showName ===undefined){
-                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '    onClick={this.setCurOption.bind(this,0,i,null,false)}> {this.getAntdComponent(n,m,v)}</div>)
+                                                        content =(<div key={m} className='dropDown-input2 dropDown-input-full '    onClick={this.setCurOption.bind(this,0,i,null,false)}> {this.getAntdComponent(m,v)}</div>)
                                                     }else{
                                                         content= (<div key={m} className='dropDown-input2 dropDown-input-full '>
                                                             <div className='dropDown-input-txt-half'>{n.showName}</div>
                                                             <div className='dropDown-input-half'    onClick={this.setCurOption.bind(this,0,i,null,false)}>
-                                                                {this.getAntdComponent(n,m,v)}
+                                                                {this.getAntdComponent(m,v)}
                                                             </div>
                                                         </div>)
                                                     }
@@ -863,13 +871,13 @@ class Event extends React.Component {
                                                     <button className={$class("title-icon")}
                                                             onClick={this.onChildEnable.bind(this, v, v1)}/>
                                                 </div>
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[0]})} >
+                                                <div className={$class('dropDown-layer short',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[0]})} >
                                                     <div className="title f--hlc cursor_default">
                                                         且
                                                     </div>
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[1]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[1]})} >
                                                     <SelectTargetButton
                                                                         className={'p--icon'}
                                                                         disabled={!v.enable || !v1.enable}
@@ -898,7 +906,7 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle',{'hidden':v1.arrHidden[2]})} >
+                                                <div className={$class('dropDown-layer middle',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[2]})} >
                                                     {
                                                         !v1.enable
                                                             ?  <div className={$class('title f--hlc',{'title-gray':v1.judgeValFlag=='判断值'})}>
@@ -919,7 +927,7 @@ class Event extends React.Component {
                                                             </Dropdown>
                                                     }
                                                 </div>
-                                                <div className={$class('dropDown-layer short',{'hidden':v1.arrHidden[3]})}>
+                                                <div className={$class('dropDown-layer short',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[3]})}>
                                                     {
                                                         !v1.enable
                                                             ? <div className='title f--hlc'>
@@ -937,7 +945,7 @@ class Event extends React.Component {
                                                     }
                                                 </div>
 
-                                                <div className={$class('dropDown-layer middle compare-layer',{'hidden':v1.arrHidden[4]})} >
+                                                <div className={$class('dropDown-layer middle compare-layer',{'hidden':v1&&v1.arrHidden&&v1.arrHidden[4]})} >
                                                     {
                                                         <div className={$class("compare f--hlc", {'compare-first':i1===0})}>
                                                             <FormulaInput containerId={'event-item-header-'+v.eid}
