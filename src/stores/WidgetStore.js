@@ -115,6 +115,7 @@ function loadTree(parent, node, idList) {
       current.key = current.props['key'];
       delete(current.props['key']);
   } else {
+      _keyCount=keyMap.length;
     current.key = _keyCount++;
   }
   keyMap[current.key] = current;
@@ -3524,15 +3525,22 @@ export default Reflux.createStore({
         let selectOther = (selectdata)=>{
             if(this.currentActiveEventTreeKey) {
                 this.selectWidget(selectdata, null, keepType.event);
+                this.activeEventTree(this.currentActiveEventTreeKey);
             }
             else if(this.currentFunction){
                 this.selectWidget(selectdata, null, keepType.func);
+                this.currentFunction = keyMap[this.currentFunction.key];
+                this.selectFadeWidget(this.currentFunction, nodeType.func);
             }
             else if(this.currentVariable) {
                 this.selectWidget(selectdata, null, keepType.var);
+                this.currentVariable = keyMap[this.currentVariable.key];
+                this.selectFadeWidget(this.currentVariable, nodeType.var);
             }
             else if(this.currentDBItem) {
-                this.selectWidget(selectdata,null, keepType.dbItem);
+                this.selectWidget(selectdata, null, keepType.dbItem);
+                this.currentDBItem = keyMap[this.currentDBItem.key];
+                this.selectFadeWidget(this.currentDBItem, nodeType.dbItem);
             }
             else {
                 this.selectWidget(selectdata);
