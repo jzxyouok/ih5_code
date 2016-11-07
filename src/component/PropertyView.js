@@ -33,7 +33,8 @@ class PropertyView extends React.Component {
             tbHeadHeight: 0,
             tbHeaderToggle : true,
             tbWhichColumn : 0,
-            tbLineWidth : "自动"
+            tbLineWidth : "自动",
+            isSliderChange : false
         };
         this.selectNode = null;
         this.currentPage = null;
@@ -62,6 +63,8 @@ class PropertyView extends React.Component {
         this.tbHeadHeightInput = this.tbHeadHeightInput.bind(this);
         this.tbLineWidthInput = this.tbLineWidthInput.bind(this);
         this.tbLineWidth = this.tbLineWidth.bind(this);
+        this.sliderUp = this.sliderUp.bind(this);
+        this.sliderChange = this.sliderChange.bind(this);
     }
 
     //获取封装的form组件
@@ -99,9 +102,15 @@ class PropertyView extends React.Component {
             case propertyType.Percentage:
                 // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                 return  <div>
-                    <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
-                    <Slider    step={1}  max={100} min={0}   {...defaultProp}    className='slider-per' />
-                </div>;
+                            <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
+                            <Slider step={1}
+                                    max={100}
+                                    min={0}
+                                    {...defaultProp}
+                                    className='slider-per'
+                                    onChange = { this.sliderChange.bind(this) }
+                                    onAfterChange={ this.sliderUp.bind(this) } />
+                        </div>;
 
             case propertyType.Text:
                 return <Input type="textarea" {...defaultProp} />;
@@ -545,6 +554,26 @@ class PropertyView extends React.Component {
             }
         }
 
+    }
+
+    sliderUp(event){
+        const obj = {};
+        let v = parseFloat(event) / 100 ;
+        obj['alpha'] = v;
+        this.selectNode.props.alpha = v;
+        this.selectNode.node.alpha = v;
+        this.onStatusChange({updateProperties: obj});
+        WidgetActions['updateProperties'](obj, false, true);
+    }
+
+    sliderChange(event){
+        const obj = {};
+        let v = parseFloat(event) / 100 ;
+        obj['alpha'] = v;
+        this.selectNode.props.alpha = v;
+        this.selectNode.node.alpha = v;
+        this.onStatusChange({updateProperties: obj});
+        WidgetActions['updateProperties'](obj, false, true,true);
     }
 
     tbHeadHeightInput(event){

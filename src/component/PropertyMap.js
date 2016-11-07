@@ -1,5 +1,4 @@
 import bridge from 'bridge';
-import {isCustomizeWidget, dataType} from '../stores/WidgetStore';
 
 const propertyType = {
     Integer: 0,
@@ -762,14 +761,14 @@ propertyMap['intVar'] = [
         ], isFunc: true },
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
-propertyMap[dataType.oneDArr] = [
+propertyMap['oneDArr'] = [
     { addRequires: widgetFlags.Root},
     { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
     { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
     { name: 'row', showName:'行',type: propertyType.Integer, default: 0, isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
-propertyMap[dataType.twoDArr] = [
+propertyMap['twoDArr'] = [
     { addRequires: widgetFlags.Root},
     { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
     { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
@@ -898,7 +897,7 @@ function checkEventClass(selected) {
     if(selected.className === 'func' ||
         selected.className === 'var' ||
         selected.className === 'dbItem'||
-        (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))){
+        (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))){
         return false;
     } else {
         return true;
@@ -910,7 +909,7 @@ function checkLockClass(selected) {
         selected.className === 'func'||
         selected.className === 'var' ||
         selected.className === 'dbItem'||
-        (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))){
+        (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))){
         return false;
     } else {
         return true;
@@ -923,7 +922,7 @@ function checkIsClassType(className) {
         className === 'box' || className === 'textBox' ||
         className === 'graphics' || className === 'class' ||
         className === 'strVar' || className === 'intVar' ||
-        className === dataType.oneDArr || className === dataType.twoDArr) {
+        className === 'oneDArr' || className === 'twoDArr') {
         return false;
     } else {
         return true;
@@ -979,7 +978,7 @@ function checkChildClass(selected, className) {
         if(selected.className === 'func' ||
             selected.className === 'var' ||
             selected.className === 'dbItem'||
-            (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))) {
+            (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))) {
             return false;
         } else {
             return true;
@@ -990,7 +989,7 @@ function checkChildClass(selected, className) {
             selected.className === 'func' ||
             selected.className === 'var' ||
             selected.className === 'dbItem' ||
-            (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))){
+            (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))){
             return false;
         } else {
             return true;
@@ -999,8 +998,8 @@ function checkChildClass(selected, className) {
     if (selected.className === 'func' ||
         selected.className === 'var' ||
         selected.className === 'dbItem' ||
-        isCustomizeWidget(selected.className) ||
-        (selected.className === 'data'&&(selected.props.type===dataType.oneDArr||selected.props.type===dataType.twoDArr))) {
+        selected.className.substr(0,1)==='_' ||    //自定义class
+        (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))) {
         return false;
     }
     var provides = propertyFlags[selected.className].provides;
