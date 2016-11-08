@@ -693,4 +693,4 @@ dealWithOriginalPropertyMap();
 //添加伪对象的属性
 addCustomWidgetProperties();
 
-export {propertyMap, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkIsClassType};
+export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkIsClassType};

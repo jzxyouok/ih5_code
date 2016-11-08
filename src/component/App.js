@@ -10,7 +10,7 @@ import PropertyView from './PropertyView';
 //import TimelineView from './TimelineView';
 import ToolBox from './ToolBox/ToolBox';
 import EventBox from './EventBox/_index';
-import ParamsPanel from './ParamsPanel';
+// import ParamsPanel from './ParamsPanel';
 import TimelineView from './Timeline/TimelineView';
 import FunctionView from './FunctionView/FunctionView';
 import VariableView from './VariableView/VariableView';
