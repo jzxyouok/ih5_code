@@ -1,3 +1,5 @@
+import bridge from 'bridge';
+
 const propertyType = {
     Integer: 0,
     Number: 1,
@@ -296,7 +298,7 @@ const widgetFlags = { Root: 1,
 
 widgetFlags.FLAG_MASK = widgetFlags.Root | widgetFlags.Display | widgetFlags.Container;
 
-const propertyMap2 = {
+const propertyMap = {
     'object':
     { dom:
     { funcs: [ { name: 'delete', info: '' } ],
@@ -765,6 +767,69 @@ let specialCaseElement = (className)=> {
     }
 };
 
+let addCustomWidgetProperties = ()=>{
+    propertyMap['strVar'] = {
+        dom: {
+            funcs: [{name: 'changeValue', showName:'赋值', info:'(value)', property:[
+                {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]}],
+            props: [{name: 'value',showName:'内容', type: propertyType.Text,  default: ''}],
+            events: [],
+            provides: 0
+        }
+    };
+    propertyMap['strVar'].canvas = propertyMap['strVar'].dom;
+    propertyMap['strVar'].flex = propertyMap['strVar'].dom;
+
+    propertyMap['intVar'] = {
+        dom: {
+            funcs: [{ name: 'changeValue', showName:'赋值', info:'(value)', property:[
+                        {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]},
+                    { name: 'add1', showName:'加1'},
+                    { name: 'minus1', showName:'减1'},
+                    { name: 'addN', showName:'加N', property:[
+                        {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
+                    { name: 'minusN', showName:'减N', property:[
+                        {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
+                    { name: 'getInt', showName:'取整'},
+                    { name: 'randomValue', showName:'生成随机数', property:[
+                        {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
+                        {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}]},],
+            props: [{name: 'value',showName:'内容', type: propertyType.Text,  default: ''}],
+            events: [],
+            provides: 0
+        }
+    };
+    propertyMap['intVar'].canvas = propertyMap['intVar'].dom;
+    propertyMap['intVar'].flex = propertyMap['intVar'].dom;
+
+    propertyMap['oneDArr'] = {
+        dom: {
+            funcs: [{ name: 'getRoot', showName:'获取父级对象'}],
+            props: [{ name: 'title',showName:'变量名', type: propertyType.String, default: ''},
+                    { name: 'value', showName:'值',type: propertyType.String, default: ''},
+                    { name: 'row', showName:'行',type: propertyType.Integer, default: 0},],
+            events: [],
+            provides: 0
+        }
+    };
+    propertyMap['oneDArr'].canvas = propertyMap['oneDArr'].dom;
+    propertyMap['oneDArr'].flex = propertyMap['oneDArr'].dom;
+
+    propertyMap['twoDArr'] = {
+        dom: {
+            funcs: [{ name: 'getRoot', showName:'获取父级对象'}],
+            props: [{ name: 'title',showName:'变量名', type: propertyType.String, default: ''},
+                { name: 'value', showName:'值',type: propertyType.String, default: ''},
+                { name: 'row', showName:'行',type: propertyType.Integer, default: 0},
+                { name: 'column', showName:'列',type: propertyType.Integer, default: 0}],
+            events: [],
+            provides: 0
+        }
+    };
+    propertyMap['twoDArr'].canvas = propertyMap['twoDArr'].dom;
+    propertyMap['twoDArr'].flex = propertyMap['twoDArr'].dom;
+};
+
 let additionalElementByClassName = (className, type)=>{
     switch (type) {
         case 'props':
@@ -776,7 +841,16 @@ let additionalElementByClassName = (className, type)=>{
     }
 };
 
-let sortElementByClassName = (className, type)=>{
+let sortElementByClassName = (className, type, element)=>{
+    //sort list by order
+    let compare = (property)=>{
+        return function(a,b){
+            var value1 = a[property];
+            var value2 = b[property];
+            return value1 - value2;
+        };
+    };
+    console.log(element[type].sort(compare('order')));
     switch (type) {
         case 'props':
             break;
@@ -785,16 +859,6 @@ let sortElementByClassName = (className, type)=>{
         case 'funcs':
             break;
     }
-};
-
-//sort list by order
-let compare = (property)=>{
-    return function(a,b){
-        var value1 = a[property];
-        var value2 = b[property];
-        return value1 - value2;
-    };
-    // console.log(arr.sort(compare('age')))
 };
 
 function dealWithElement(prop, map, type) {
@@ -810,6 +874,53 @@ function dealWithElement(prop, map, type) {
             break;
     }
 }
+
+let getPropertyMap = (widget, className, type)=> {
+    let cl = className;
+    if(className === 'data') {
+        if(widget.props.type === 'oneDArr') {
+            cl = 'oneDArr';
+        } else if (widget.props.type === 'twoDArr') {
+            cl = 'twoDArr';
+        }
+    } else if(className === 'var') {
+        if(widget.type === 'number') {
+            cl = 'intVar';
+        } else if (widget.type === 'string') {
+            cl = 'strVar';
+        }
+    } else if(className.substr(0,1) === '_') {
+        cl = 'class';
+    }
+    if(!propertyMap[cl]) {
+        return [];
+    }
+    if(className === 'var' || className === 'func' || className === 'dbItem') {
+        switch (type) {
+            case 'props':
+                return bridge.getMap(widget.widget.node, propertyMap[cl]).props;
+                break;
+            case 'events':
+                return bridge.getMap(widget.widget.node, propertyMap[cl]).events;
+                break;
+            case 'funcs':
+                return bridge.getMap(widget.widget.node, propertyMap[cl]).funcs;
+                break;
+        }
+    } else {
+        switch (type) {
+            case 'props':
+                return bridge.getMap(widget.node, propertyMap[cl]).props;
+                break;
+            case 'events':
+                return bridge.getMap(widget.node, propertyMap[cl]).events;
+                break;
+            case 'funcs':
+                return bridge.getMap(widget.node, propertyMap[cl]).funcs;
+                break;
+        }
+    }
+};
 
 function dealWithProperties(prop, map){
     if(map) {
@@ -845,9 +956,9 @@ function dealWithFuncs(func, map){
 }
 
 //对propertyMap的属性，事件，动作进行处理
-for (let className in propertyMap2) {
-    let clTypes = propertyMap2[className];
-    let sel = specialCaseElement(className);
+for (let className in propertyMap) {
+    let clTypes = propertyMap[className];
+    let sEl = specialCaseElement(className);
     for(let type in clTypes) {
         let el = clTypes[type];
         if(el.props&&el.props.length>0) {
@@ -855,7 +966,7 @@ for (let className in propertyMap2) {
                 //对属性处理
                 dealWithElement(p, propMapping, 'props');
                 //特殊处理
-                dealWithElement(p, sel.props, 'props');
+                dealWithElement(p, sEl.props, 'props');
             });
         }
         if(el.events&&el.events.length>0) {
@@ -863,7 +974,7 @@ for (let className in propertyMap2) {
                 //对事件进行处理
                 dealWithElement(e, eventMapping, 'events');
                 //特殊处理
-                dealWithElement(e, sel.events, 'events');
+                dealWithElement(e, sEl.events, 'events');
             });
         }
         if(el.funcs&&el.funcs.length>0) {
@@ -871,10 +982,11 @@ for (let className in propertyMap2) {
                 //对动作进行处理
                 dealWithElement(f, funcMapping, 'funcs');
                 //特殊处理
-                dealWithElement(f, sel.funcs, 'funcs');
+                dealWithElement(f, sEl.funcs, 'funcs');
             });
         }
     }
 }
+addCustomWidgetProperties();
 
-export {propertyMap2};
+export {propertyMap, getPropertyMap};
