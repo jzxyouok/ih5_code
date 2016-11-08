@@ -1,5 +1,6 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
+import  {propertyMap} from '../component/PropertyMap';
 
 var bridge = require('bridge');
 bridge.create();
@@ -1625,6 +1626,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['closeKeyboardMove'], this.closeKeyboardMove);
 
         this.listenTo(WidgetActions['alignWidgets'], this.alignWidgets);
+        this.listenTo(WidgetActions['updateConOptions'], this.updateConOptions);
+
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -2357,11 +2360,11 @@ export default Reflux.createStore({
             this.trigger({eventTreeList: this.eventTreeList});
         }
     },
-    emptyEvent: function () {
+    emptyEvent: function (className) {
         //需根据不同的className添加不同的触发条件和目标对象，动作之类的
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
-
+        let conOption =this.getConditionOption();
         let event = {
             'eid': eid,
             'children': [{
@@ -2372,6 +2375,7 @@ export default Reflux.createStore({
                 'arrHidden': [true,true,true,true,true],  //逻辑运算符,判断对象,判断值,比较运算符,比较对象
                 'enable': true,
             }],
+            'conOption':conOption,
             'zhongHidden':true,
             'logicalFlag':'and',
             'conFlag':'触发条件',
@@ -3083,6 +3087,8 @@ export default Reflux.createStore({
         }
     },
     deleteTreeNode: function (type) {
+        let targetWidget =this.currentWidget;
+        let deleteBody=false;
         switch(type){
             case nodeType.func:
                 this.removeFunction();
@@ -3099,7 +3105,18 @@ export default Reflux.createStore({
                 this.getAllWidgets();
                 break;
         }
-        this.trigger({deleteWidget:true});
+        if(targetWidget.className=='body'){
+            let conArr = this.getConditionOption(targetWidget.parent);
+            targetWidget.parent.props.eventTree.map((v,i)=>{
+                if(v.conFlag=='beginContact'||v.conFlag=='endContact'){
+                    v.conFlag='触发条件';
+                    delete v.needFill;
+                }
+                v.conOption = conArr;
+            });
+            deleteBody=true;
+        }
+        this.trigger({deleteWidget:true,deleteBody:deleteBody});
     },
     didSelectTarget: function (data) {
         this.trigger({didSelectTarget:{target:data}});
@@ -3401,6 +3418,37 @@ export default Reflux.createStore({
     },
     imageTextSize:function(sizeObj){
         this.trigger({ imageTextSizeObj:sizeObj});
+    },
+    updateConOptions(){
+        let conArr = this.getConditionOption();
+        this.currentWidget.props.eventTree.map((v,i)=>{
+            v.conOption = conArr;
+        });
+        this.trigger({redrawEventTree: true});
+    },
+    getConditionOption(widget) {
+        //获取触发条件
+        let selectWidget =widget?widget:this.currentWidget;
+        let className=selectWidget.className;
+        let aProps = [];
+        let hasContact=false;
+        selectWidget.children.map((v,i)=>{
+            if(v.className=='body'){
+                hasContact=true;
+            }
+        });
+        propertyMap[className].map((item, index)=> {
+            if (item.isEvent === true) {
+                if(item.name=='beginContact'||item.name=='endContact'){
+                    if(hasContact){
+                        aProps.push(JSON.parse(JSON.stringify(item)));
+                    }
+                }else{
+                    aProps.push(JSON.parse(JSON.stringify(item)));
+                }
+            }
+        });
+        return aProps;
     },
     closeKeyboardMove:function(bool){
         this.trigger({ closeKeyboardMove:{

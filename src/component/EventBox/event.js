@@ -6,7 +6,7 @@ import $class from 'classnames'
 import Property from './Property'
 import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-import  {propertyMap, propertyType} from '../PropertyMap'
+import  {propertyMap, propertyType} from '../PropertyMap';
 import {eventTempData} from './tempData';
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
@@ -47,7 +47,7 @@ class Event extends React.Component {
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
-        this.getConditionOption = this.getConditionOption.bind(this);
+
         this.getJudgeObjOption = this.getJudgeObjOption.bind(this);
         this.getJudgeValOption = this.getJudgeValOption.bind(this);
 
@@ -115,6 +115,10 @@ class Event extends React.Component {
             }
         }
 
+        if(widget.deleteBody) {
+            this.forceUpdate();
+        }
+
         if(widget.initTree){
             this.setState({
                 initTree:widget.initTree
@@ -124,7 +128,7 @@ class Event extends React.Component {
         if (widget.allWidgets) {
             let arr = [];
             let arr2 = [];
-            let eventList = this.state.eventList;
+
             widget.allWidgets.map((v, i)=> {
                 arr.push([v.className, v.props.name, v.type]);
                 arr2.push({
@@ -133,13 +137,11 @@ class Event extends React.Component {
                 });
             });
 
-
             //此处可设置对象关系,将对象的引用注入进来.
             this.setState({
                 objName: arr,   //类名与命名
                 allWidgetsList: widget.allWidgets,
-                judgeObjOption: arr2,  //命名
-                eventList: eventList
+                judgeObjOption: arr2  //命名
             });
         }
 
@@ -250,42 +252,6 @@ class Event extends React.Component {
         });
     }
 
-    //获取触发条件
-    getConditionOption(optionName, oCurChild) {
-
-
-
-        let aProps = [];
-        let className = this.state.selectWidget.className;
-        let hasContact=false;
-        let eventList =this.state.eventList;
-
-        this.state.selectWidget.children.map((v,i)=>{
-             if(v.className=='body'){
-                 hasContact=true;
-             }
-        });
-
-
-
-        propertyMap[className].map((item, index)=> {
-            if (item.isEvent === true) {
-                if(item.name=='beginContact'||item.name=='endContact'){
-                    if(hasContact){
-                        aProps.push(JSON.parse(JSON.stringify(item)));
-                    }
-                }else{
-                    aProps.push(JSON.parse(JSON.stringify(item)));
-                }
-            }
-        });
-
-        eventList[this.curEventIndex].conOption = aProps;
-
-        this.setState({eventList:eventList});
-
-    }
-
     //获取判断对象
     getJudgeObjOption(optionName, oCurChild) {
         let allWidgetsList = this.state.allWidgetsList;
@@ -373,6 +339,7 @@ class Event extends React.Component {
         let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
         if (allWidgetsList) {
             if (type == 'conFlag') {
+
                 //获取当前事件的类名
                 let conArr = [];
                 let className = this.state.eventList[curEventIndex].className;
@@ -386,11 +353,13 @@ class Event extends React.Component {
                 if (this.state.eventList[curEventIndex].conOption&&this.state.eventList[curEventIndex].conOption.length > 0) {
                     conArr = this.state.eventList[curEventIndex].conOption;
                 }
+
                 conArr.map((v, i)=> {
                     if (name == v.name) {
                         showName = v.showName;
                     }
                 });
+
             } else if (type == 'judgeValFlag' && curChild) {
                 let judgeObjFlag = curChild.saveJudgeObjFlag ? curChild.saveJudgeObjFlag : curChild.judgeObjFlag;
 
@@ -544,9 +513,6 @@ class Event extends React.Component {
 
         //每次点击,从新获取下拉框的内容
         switch (type) {
-            case 'conFlag':
-                    this.getConditionOption(option, curChild);
-                break;
             case 'judgeObjFlag':
                 obj = this.getJudgeObjOption(option, curChild);
                 break;
@@ -558,11 +524,9 @@ class Event extends React.Component {
         }
         obj.curChild =curChild;
        this.setState(obj);
-
         if(isUpdate){
             this.forceUpdate();
         }
-
     }
 
     inputChange(val,event) {
