@@ -1,6 +1,7 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
-import  {propertyMap} from '../component/PropertyMap';
+//import  {propertyMap} from '../component/PropertyMap';
+import {propertyType, getPropertyMap} from '../component/tempMap'
 
 var bridge = require('bridge');
 bridge.create();
@@ -3439,7 +3440,8 @@ export default Reflux.createStore({
                 hasContact=true;
             }
         });
-        propertyMap[className].map((item, index)=> {
+        getPropertyMap(selectWidget, className, 'props').map((item, index) => {
+        //  propertyMap[className].map((item, index)=> {
             if (item.isEvent === true) {
                 if(item.name=='beginContact'||item.name=='endContact'){
                     if(hasContact){

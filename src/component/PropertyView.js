@@ -1255,7 +1255,7 @@ class PropertyView extends React.Component {
         document.addEventListener('mouseup', this.mouseUp.bind(this));
 
         $('#PropertyView').on('focus','textarea,input',function () {
-            $(this).select();
+              $(this).select();
         });
     }
     componentWillUnmount() {

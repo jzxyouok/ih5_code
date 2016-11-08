@@ -112,9 +112,9 @@ class Property extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         this.onStatusChange(WidgetStore.getAllWidgets());
-        $('.pp--list input,.pp--list textarea').focus(function () {
-             $(this).select();
-        });
+        // $('.pp--list input,.pp--list textarea').focus(function () {
+        //      $(this).select();
+        // });
     }
 
     componentWillUnmount() {
