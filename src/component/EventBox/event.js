@@ -47,7 +47,7 @@ class Event extends React.Component {
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
-        this.getConditionOption = this.getConditionOption.bind(this);
+
         this.getJudgeObjOption = this.getJudgeObjOption.bind(this);
         this.getJudgeValOption = this.getJudgeValOption.bind(this);
 
@@ -251,43 +251,7 @@ class Event extends React.Component {
             expanded: expanded
         });
     }
-
-    //获取触发条件
-    getConditionOption() {
-        let selectWidget =this.state.selectWidget;
-        let aProps = [];
-        let className =selectWidget.className;
-        let hasContact=false;
-        let eventList =this.state.eventList;
-
-        selectWidget.children.map((v,i)=>{
-             if(v.className=='body'){
-                 hasContact=true;
-             }
-        });
-
-        propertyMap[className].map((item, index)=> {
-            if (item.isEvent === true) {
-                if(item.name=='beginContact'||item.name=='endContact'){
-                    if(hasContact){
-                        aProps.push(JSON.parse(JSON.stringify(item)));
-                    }
-                }else{
-                    aProps.push(JSON.parse(JSON.stringify(item)));
-                }
-            }
-        });
-
-
-        if(!eventList[this.curEventIndex].conOption){
-
-        }
-        eventList[this.curEventIndex].conOption = aProps;
-
-        //this.setState({eventList:eventList});
-
-    }
-
+ 
     //获取判断对象
     getJudgeObjOption(optionName, oCurChild) {
         let allWidgetsList = this.state.allWidgetsList;
@@ -549,9 +513,6 @@ class Event extends React.Component {
 
         //每次点击,从新获取下拉框的内容
         switch (type) {
-            case 'conFlag':
-              // this.getConditionOption();
-                break;
             case 'judgeObjFlag':
                 obj = this.getJudgeObjOption(option, curChild);
                 break;
@@ -563,11 +524,9 @@ class Event extends React.Component {
         }
         obj.curChild =curChild;
        this.setState(obj);
-
         if(isUpdate){
             this.forceUpdate();
         }
-
     }
 
     inputChange(val,event) {
