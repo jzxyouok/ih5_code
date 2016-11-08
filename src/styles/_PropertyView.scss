@@ -87,12 +87,36 @@ $toBottom:14px;
             }
         }
     }
+	.ant-form-half{
+		&.ant-body{
+			.ant-form-item-label{
+				label{
+					width: 85px !important;
+				}
+			}
+		}
+	}
    .ant-form-full {
 	  margin-bottom:$toBottom;
 	 &:last-child{
 	   margin-bottom: 0;
 	 }
+	 &.ant-body{
+		 .ant-form-item-label{
+			 label{
+				 width: 85px !important;
+			 }
+		 }
+	 }
 	 .ant-input-number.ant-input-number-sm{width: 100%;}
+	   &.ant-rotation{
+		   .ant-input-number{width: 60px !important;}
+	   }
+	   &.ant-autoGravity{
+		   .ant-form-item-label{
+			   label{width: 105px !important;}
+		   }
+	   }
    }
 
     .ant-input-number {
