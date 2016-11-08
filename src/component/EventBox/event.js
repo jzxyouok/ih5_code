@@ -251,7 +251,7 @@ class Event extends React.Component {
             expanded: expanded
         });
     }
- 
+
     //获取判断对象
     getJudgeObjOption(optionName, oCurChild) {
         let allWidgetsList = this.state.allWidgetsList;
