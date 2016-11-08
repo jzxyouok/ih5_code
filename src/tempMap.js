@@ -987,6 +987,7 @@ for (let className in propertyMap) {
         }
     }
 }
+//添加伪对象的属性
 addCustomWidgetProperties();
 
 export {propertyMap, getPropertyMap};
