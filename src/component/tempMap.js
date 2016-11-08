@@ -6,6 +6,9 @@ import {propertyMap, propertyType, backwardTransOptions, forwardTransOptions,
 let propMapping = {
     'id': {showName:'ID', type: propertyType.String, default: ''},
 
+    'originX': {type: propertyType.Hidden},
+    'originY': {type: propertyType.Hidden},
+
     'width': {showName:'W', type: propertyType.Integer, default: 0, group:'position'},
     'height': {showName:'H',type: propertyType.Integer, default: 0, group:'position'},
     'scaleType': {showName:'适配', type: propertyType.Select, default:'满屏', options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools'},
@@ -530,16 +533,16 @@ let dealWithOriginalPropertyMap = ()=>{
             }
             //添加缺省的属性
             el.props = el.props.concat(additionalElementProp(className, 'props'));
-            // if(el.events&&el.events.length>0) {
-            //     el.events.forEach((e)=>{
-            //         //对事件进行处理
-            //         dealWithElement(e, eventMapping, 'events');
-            //         //特殊处理
-            //         dealWithElement(e, sElMapping.events, 'events');
-            //     });
-            // }
+            if(el.events&&el.events.length>0) {
+                el.events.forEach((e)=>{
+                    //对事件进行处理
+                    dealWithElement(e, eventMapping, 'events');
+                    //特殊处理
+                    dealWithElement(e, sElMapping.events, 'events');
+                });
+            }
             //添加缺省的事件
-            //el.events = el.events.concat(additionalElementProp(className, 'events'));
+            el.events = el.events.concat(additionalElementProp(className, 'events'));
             if(el.funcs&&el.funcs.length>0) {
                 el.funcs.forEach((f)=>{
                     //对动作进行处理

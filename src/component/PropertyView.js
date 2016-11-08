@@ -1123,7 +1123,7 @@ class PropertyView extends React.Component {
         const saveArr = []; //给部分属性排序用
         getPropertyMap(node, className, 'props').forEach((item, index) => {
         // propertyMap[className].forEach((item, index) => {
-        //     if (item.isProperty) {
+            if (item.type !== propertyType.Hidden) {
                 if(item.name=='visible' || item.name=='initVisible' ){
                     saveArr.push(item);
                 }else{
@@ -1134,7 +1134,7 @@ class PropertyView extends React.Component {
                         getInput(item, index);
                     }
                 }
-            // }
+            }
         });
         saveArr.map(item=>{
             getInput(item);
