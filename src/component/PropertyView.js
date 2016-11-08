@@ -16,7 +16,6 @@ import { SwitchMore,DropDownInput ,ConInputNumber} from  './PropertyView/Propert
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
 
-// import {propertyType, propertyMap} from './PropertyMap';
 import {propertyType, getPropertyMap} from './tempMap'
 import {chooseFile} from  '../utils/upload';
 
@@ -752,7 +751,6 @@ class PropertyView extends React.Component {
             }
         }
 
-        // if (!propertyMap[className])    return null;
         if (getPropertyMap(node, className, 'props').length===0)    return null;
 
         const groups = {};
@@ -1122,7 +1120,6 @@ class PropertyView extends React.Component {
 
         const saveArr = []; //给部分属性排序用
         getPropertyMap(node, className, 'props').forEach((item, index) => {
-        // propertyMap[className].forEach((item, index) => {
             if (item.type !== propertyType.Hidden) {
                 if(item.name=='visible' || item.name=='initVisible' ){
                     saveArr.push(item);
@@ -1223,9 +1220,7 @@ class PropertyView extends React.Component {
             }
 
             getPropertyMap(selectNode, className, 'props').map(item => {
-            // propertyMap[className].map(item => {
-            //     if (item.isProperty && obj[item.name] !== undefined) {
-                if (obj[item.name] !== undefined) {
+                if (item.type !== propertyType.Hidden&&obj[item.name] !== undefined) {
                     if (obj[item.name] === null) {
                         delete(selectNode.props[item.name]);
                         if (needRender)
