@@ -2377,6 +2377,7 @@ export default Reflux.createStore({
             'conFlag':'触发条件',
             'className':null,
             'enable': true,
+            'tag':'haha',
             'specificList': [eventSpec]
         };
         return event;

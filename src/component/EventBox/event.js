@@ -144,6 +144,7 @@ class Event extends React.Component {
         }
 
         if (widget.selectWidget) {
+            console.log(this.state.eventList);
             this.setState({
                 selectWidget: widget.selectWidget
             });
@@ -251,22 +252,18 @@ class Event extends React.Component {
     }
 
     //获取触发条件
-    getConditionOption(optionName, oCurChild) {
-
-
-
+    getConditionOption() {
+        let selectWidget =this.state.selectWidget;
         let aProps = [];
-        let className = this.state.selectWidget.className;
+        let className =selectWidget.className;
         let hasContact=false;
         let eventList =this.state.eventList;
 
-        this.state.selectWidget.children.map((v,i)=>{
+        selectWidget.children.map((v,i)=>{
              if(v.className=='body'){
                  hasContact=true;
              }
         });
-
-
 
         propertyMap[className].map((item, index)=> {
             if (item.isEvent === true) {
@@ -280,9 +277,13 @@ class Event extends React.Component {
             }
         });
 
+
+        if(!eventList[this.curEventIndex].conOption){
+
+        }
         eventList[this.curEventIndex].conOption = aProps;
 
-        this.setState({eventList:eventList});
+        //this.setState({eventList:eventList});
 
     }
 
@@ -545,7 +546,7 @@ class Event extends React.Component {
         //每次点击,从新获取下拉框的内容
         switch (type) {
             case 'conFlag':
-                    this.getConditionOption(option, curChild);
+              // this.getConditionOption();
                 break;
             case 'judgeObjFlag':
                 obj = this.getJudgeObjOption(option, curChild);
@@ -882,6 +883,7 @@ class Event extends React.Component {
                                                 :<Dropdown overlay={this.menuList('conFlag')}
                                                         onClick={this.setCurOption.bind(this,0,i,'conFlag',false)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
+
                                                         trigger={['click']}>
                                                     <div  className={$class('title f--hlc',{'title-gray':v.conFlag=='触发条件'})} >
                                                         {this.getShowNameByName('conFlag',v.conFlag,0,i)}
