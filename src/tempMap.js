@@ -765,13 +765,27 @@ let specialCaseElement = (className)=> {
     }
 };
 
-let additionalElementByClassName = (className)=>{
-
+let additionalElementByClassName = (className, type)=>{
+    switch (type) {
+        case 'props':
+            break;
+        case 'events':
+            break;
+        case 'funcs':
+            break;
+    }
 };
 
-let sortElementByClassName = (className)=>{
-
-}
+let sortElementByClassName = (className, type)=>{
+    switch (type) {
+        case 'props':
+            break;
+        case 'events':
+            break;
+        case 'funcs':
+            break;
+    }
+};
 
 //sort list by order
 let compare = (property)=>{
