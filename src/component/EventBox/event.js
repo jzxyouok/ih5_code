@@ -6,7 +6,7 @@ import $class from 'classnames'
 import Property from './Property'
 import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-import  {propertyMap, propertyType} from '../PropertyMap'
+import  {propertyMap, propertyType} from '../PropertyMap';
 import {eventTempData} from './tempData';
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
@@ -115,6 +115,10 @@ class Event extends React.Component {
             }
         }
 
+        if(widget.deleteBody) {
+            this.forceUpdate();
+        }
+
         if(widget.initTree){
             this.setState({
                 initTree:widget.initTree
@@ -124,7 +128,7 @@ class Event extends React.Component {
         if (widget.allWidgets) {
             let arr = [];
             let arr2 = [];
-            let eventList = this.state.eventList;
+
             widget.allWidgets.map((v, i)=> {
                 arr.push([v.className, v.props.name, v.type]);
                 arr2.push({
@@ -133,18 +137,15 @@ class Event extends React.Component {
                 });
             });
 
-
             //此处可设置对象关系,将对象的引用注入进来.
             this.setState({
                 objName: arr,   //类名与命名
                 allWidgetsList: widget.allWidgets,
-                judgeObjOption: arr2,  //命名
-                eventList: eventList
+                judgeObjOption: arr2  //命名
             });
         }
 
         if (widget.selectWidget) {
-            console.log(this.state.eventList);
             this.setState({
                 selectWidget: widget.selectWidget
             });
@@ -374,6 +375,7 @@ class Event extends React.Component {
         let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
         if (allWidgetsList) {
             if (type == 'conFlag') {
+
                 //获取当前事件的类名
                 let conArr = [];
                 let className = this.state.eventList[curEventIndex].className;
@@ -387,11 +389,13 @@ class Event extends React.Component {
                 if (this.state.eventList[curEventIndex].conOption&&this.state.eventList[curEventIndex].conOption.length > 0) {
                     conArr = this.state.eventList[curEventIndex].conOption;
                 }
+
                 conArr.map((v, i)=> {
                     if (name == v.name) {
                         showName = v.showName;
                     }
                 });
+
             } else if (type == 'judgeValFlag' && curChild) {
                 let judgeObjFlag = curChild.saveJudgeObjFlag ? curChild.saveJudgeObjFlag : curChild.judgeObjFlag;
 
@@ -883,7 +887,6 @@ class Event extends React.Component {
                                                 :<Dropdown overlay={this.menuList('conFlag')}
                                                         onClick={this.setCurOption.bind(this,0,i,'conFlag',false)}
                                                         getPopupContainer={() => document.getElementById('event-item-'+v.eid)}
-
                                                         trigger={['click']}>
                                                     <div  className={$class('title f--hlc',{'title-gray':v.conFlag=='触发条件'})} >
                                                         {this.getShowNameByName('conFlag',v.conFlag,0,i)}

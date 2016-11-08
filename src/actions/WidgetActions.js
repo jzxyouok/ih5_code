@@ -68,7 +68,7 @@ export default Reflux.createActions([
   'renameWidget',
   'didSelectTarget',         //选择了目标对象
   'changeContactObj',              //碰撞对象选择
-
+   'updateConOptions',        //更新触发条件
     'closeKeyboardMove',      //禁止键盘左右上下移动
 
   'updateHistoryRecord',

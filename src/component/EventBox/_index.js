@@ -111,6 +111,8 @@ class EventBox extends React.Component {
                 WidgetActions['activeEventTree'](nid);
             });
         }
+        //更新触发条件
+        WidgetActions['updateConOptions'](nid);
     }
 
     doGetNoEventObjList() {
