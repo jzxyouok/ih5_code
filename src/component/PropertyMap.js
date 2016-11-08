@@ -156,6 +156,7 @@ propertyMap['text'] = [
     { name: 'isUnMatch', showName:'不匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'Contain', showName:'包含文本', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'change', showName:'内容改变', isEvent: true},
+
 ];
 
 propertyMap['counter'] = [
