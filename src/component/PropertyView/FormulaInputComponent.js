@@ -11,7 +11,7 @@ import WidgetStore, {varType, dataType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { ArrTableDropDown } from '../PropertyView/ArrTableDropDown';
-import { propertyMap } from '../PropertyMap'
+import { getPropertyMap, propertyType } from '../tempMap'
 import SelectTargetAction from '../../actions/SelectTargetAction';
 
 import $ from 'jquery';
@@ -300,8 +300,8 @@ class FormulaInput extends React.Component {
                         break;
                 }
             }
-            propertyMap[className].map((v)=> {
-                if (v.isProperty && v.name != 'id') {
+            getPropertyMap(obj, className, 'props').map((v)=> {
+                if (v.type !== propertyType.Hidden && v.name != 'id') {
                     if(v.showName=='W'){
                         props.push({name:'width', showName:'宽度'});
                     }else if(v.showName=='H'){

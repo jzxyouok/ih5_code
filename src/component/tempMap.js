@@ -101,8 +101,8 @@ let propMapping = {
     'count': {showName:'播放次数', type: propertyType.Integer, default: 1},
     'initHide': {showName:'初始隐藏', type: propertyType.Boolean, default: false},
 
-    'startTime': {type: propertyType.Number, default: 0, isProperty: true },
-    'endTime': {type: propertyType.Number, default: 0, isProperty: true },
+    'startTime': {type: propertyType.Number, default: 0},
+    'endTime': {type: propertyType.Number, default: 0},
 
     'sockName' : {showName:'名称',  type: propertyType.String, default: null, readOnly:true },
     'listened': {showName:'是否监听', type: propertyType.Boolean, default: false},
@@ -227,7 +227,7 @@ let funcMapping = {
         {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]},
     'callback(err, result)': {showName:'回调函数', 'value':null, 'type':propertyType.Hidden},
 
-    'send': {showName:'发送消息', isFunc: true, info:'(data)', property:[
+    'send': {showName:'发送消息', info:'(data)', property:[
         {'name':'value', showName:'内容', 'value':null, 'type':propertyType.FormulaInput}]},
 
     'getResult': {showName: '获取表格数据', info: '(pageNum)', property: [
@@ -419,16 +419,16 @@ let addFuncsByClassName = (className) => {
     switch (className) {
         case 'counter':
             list = [
-                { name: 'add1', showName:'加1', isFunc: true },
-                { name: 'minus1', showName:'减1', isFunc: true },
+                { name: 'add1', showName:'加1'},
+                { name: 'minus1', showName:'减1'},
                 { name: 'addN', showName:'加N', property:[
-                    {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}], isFunc: true },
+                    {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
                 { name: 'minusN', showName:'减N', property:[
-                    {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}], isFunc: true },
-                { name: 'getInt', showName:'取整', isFunc: true },
+                    {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
+                { name: 'getInt', showName:'取整'},
                 { name: 'randomValue', showName:'生成随机数', property:[
                     {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
-                    {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}], isFunc: true }];
+                    {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}]}];
             break;
         default:
             break;

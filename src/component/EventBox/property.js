@@ -11,7 +11,8 @@ import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { RangeComponent } from '../PropertyView/RangeComponent';
 import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
 import { DBConsComponent } from '../PropertyView/DBConsComponent';
-import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
+import { checkChildClass, checkIsClassType } from '../PropertyMap'
+import { getPropertyMap, propertyMap, propertyType} from '../tempMap'
 import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
 import  $ from 'jquery';
 
@@ -214,19 +215,15 @@ class Property extends React.Component {
                     break;
             }
         }
-        if(propertyMap&&propertyMap[className]) {
-            propertyMap[className].map((item, index) => {
-                if (item.isFunc) {
-                    let temp = JSON.parse(JSON.stringify(item));
-                    if (temp.info) {
-                        delete temp.info;
-                    }
-                    delete temp.isFunc;
-                    temp.type = funcType.default;
-                    actionList.push(temp);
-                }
-            });
-        }
+        getPropertyMap(obj, className, 'funcs').map((item, index) => {
+            let temp = JSON.parse(JSON.stringify(item));
+            if (temp.info) {
+                delete temp.info;
+            }
+            temp.type = funcType.default;
+            actionList.push(temp);
+        });
+
         let objRoot = null;
         if(obj.className === 'var'|| obj.className === 'dbItem' || obj.className === 'func') {
             objRoot = obj.widget.rootWidget;
@@ -246,15 +243,14 @@ class Property extends React.Component {
         })
     }
 
-    setDefaultMappingProps(className, list, type) {
+    setDefaultMappingProps(node, className, list, type) {
         if(className=='table'){
             className='tableForSet';
         }
         let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
-        propertyMap[className].map((v,i)=>{
-            if(v.isProperty&& v.name !='id'){
+        getPropertyMap(node, className, 'props').map((v,i)=>{
+            if(v.type !== propertyType.Hidden&&v.name !='id'){
                 let vObj=JSON.parse(JSON.stringify(v));
-                (delete vObj.isProperty);
                 vObj.isProp=true;
                 if(vObj.name=='scaleX'){
                     vObj.name='width';
@@ -293,7 +289,7 @@ class Property extends React.Component {
         let propertyList=[];
         if(node){
             let className=node.className;
-            this.setDefaultMappingProps(className, propertyList, 'add');
+            this.setDefaultMappingProps(node,className, propertyList, 'add');
         }
         obj.property= propertyList;
         return obj;
@@ -574,7 +570,10 @@ class Property extends React.Component {
             if (isCustomizeWidget(className)) {
                 className = 'class';
             }
-            this.setDefaultMappingProps(className, newProperty, 'change');
+            let obj = WidgetStore.getWidgetByKey(this.state.currentObject);
+            if(obj) {
+                this.setDefaultMappingProps(obj, className, newProperty, 'change');
+            }
             property = newProperty;
         }
         let action = this.state.currentAction;
