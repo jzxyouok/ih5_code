@@ -1124,7 +1124,7 @@ function saveTree(data, node, saveKey) {
                             judges.conFlag= item.conFlag;
                             let bodyObj= keyMap[v.default];
                             if(bodyObj){
-                                obj.judgeObjId=bodyObj.parent.props.id;
+                                obj.judgeObjId=bodyObj.props.id;
                             }else{
                                 //没有碰撞对象
                                 obj.judgeObjId=null;

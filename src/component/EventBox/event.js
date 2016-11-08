@@ -252,15 +252,21 @@ class Event extends React.Component {
 
     //获取触发条件
     getConditionOption(optionName, oCurChild) {
+
+
+
         let aProps = [];
         let className = this.state.selectWidget.className;
         let hasContact=false;
+        let eventList =this.state.eventList;
 
         this.state.selectWidget.children.map((v,i)=>{
              if(v.className=='body'){
                  hasContact=true;
              }
         });
+
+
 
         propertyMap[className].map((item, index)=> {
             if (item.isEvent === true) {
@@ -274,7 +280,10 @@ class Event extends React.Component {
             }
         });
 
-        this.state.eventList[this.curEventIndex].conOption = aProps;
+        eventList[this.curEventIndex].conOption = aProps;
+
+        this.setState({eventList:eventList});
+
     }
 
     //获取判断对象
@@ -327,6 +336,9 @@ class Event extends React.Component {
     }
 
     plusOperation(eventIndex) {
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
         if (this.state.eventList[eventIndex] && !this.state.eventList[eventIndex].enable) {
             return;
         }
@@ -343,6 +355,9 @@ class Event extends React.Component {
     }
 
     deleteOperation(curChildrenIndex, curEventIndex) {
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
         if (this.state.eventList[curEventIndex] && !this.state.eventList[curEventIndex].enable) {
             return;
         }
@@ -517,7 +532,9 @@ class Event extends React.Component {
 
     //点击select,出现下拉框之前的事件
     setCurOption(curChildrenIndex,curEventIndex,type,isUpdate,e){
-
+        if(this.state.activeKey !== this.state.wKey) {
+            return false;
+        }
         this.curChildrenIndex =curChildrenIndex;
         this.curEventIndex=curEventIndex;
 
@@ -539,7 +556,6 @@ class Event extends React.Component {
             default:
                 ;
         }
-
         obj.curChild =curChild;
        this.setState(obj);
 
@@ -618,6 +634,7 @@ class Event extends React.Component {
         if (targetArr === undefined) {
             targetArr = [];
         }
+
         return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag, null, null)}>
             {
                 targetArr.map((v, i)=> {
@@ -689,9 +706,10 @@ class Event extends React.Component {
                     });
 
 
+
                     let findChildKey = (v, i)=> {
                         if (v.className == 'body' && v.key != curBodyKey) {
-                            keyList.push(v.key);
+                            keyList.push(v.parent.key);
                         } else {
                             v.children.map(findChildKey);
                         }

@@ -155,8 +155,6 @@ propertyMap['text'] = [
     { name: 'Contain', showName:'包含文本', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'change', showName:'内容改变', isEvent: true},
 
-
-
 ];
 propertyMap['counter'] = [
     { name: 'changeValue', showName:'赋值', info:'(value)',
