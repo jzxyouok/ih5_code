@@ -3177,7 +3177,9 @@ export default Reflux.createStore({
                 }
             }.bind(this), false);
         }
+        rootDiv.innerHTML = '';
         rootDiv.appendChild(bridge.getEl(stageTree[0].tree.node));
+        this.render();
 
         this.trigger({
             initTree: stageTree

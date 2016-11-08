@@ -298,130 +298,350 @@ widgetFlags.FLAG_MASK = widgetFlags.Root | widgetFlags.Display | widgetFlags.Con
 
 const propertyMap = {
     'object':
-    { dom:
+    { flex:
     { funcs: [ { name: 'delete', info: '' } ],
-        props: [],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [],
         provides: 0 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 0 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
-            props: [],
-            provides: 0 },
-        flex:
-        { funcs: [ { name: 'delete', info: '' } ],
-            props: [],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
             provides: 0 } },
     'display':
-    { dom:
+    { flex:
     { funcs: [ { name: 'delete', info: '' } ],
-        props: [],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [],
         provides: 2 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props:
-                [ { name: 'positionX', type: 0, default: 0 },
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
-                    { name: 'scaleY', type: 1, default: 1 } ],
-            provides: 2 },
-        flex:
-        { funcs: [ { name: 'delete', info: '' } ],
-            props: [],
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 } ],
+            events: [],
             provides: 2 } },
     'container':
-    { dom:
+    { flex:
     { funcs: [ { name: 'delete', info: '' } ],
-        props: [],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'direction', type: 2, default: '' },
+                { name: 'alignItems', type: 2, default: '' } ],
+        events: [],
         provides: 6 },
-        canvas:
+        dom:
         { funcs: [ { name: 'delete', info: '' } ],
-            props:
-                [ { name: 'positionX', type: 0, default: 0 },
-                    { name: 'positionY', type: 0, default: 0 },
-                    { name: 'scaleX', type: 1, default: 1 },
-                    { name: 'scaleY', type: 1, default: 1 } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
             provides: 6 },
-        flex:
-        { funcs: [ { name: 'delete', info: '' } ],
-            props:
-                [ { name: 'direction', type: 2, default: '' },
-                    { name: 'alignItems', type: 2, default: '' } ],
-            provides: 6 } },
-    'canvas':
-    { dom:
-    { funcs: [ { name: 'delete', info: '' } ],
-        props: [],
-        provides: 10 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props:
-                [ { name: 'positionX', type: 0, default: 0 },
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
-                    { name: 'scaleY', type: 1, default: 1 } ],
-            provides: 10 },
-        flex:
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 } ],
+            events: [],
+            provides: 6 } },
+    'graphics':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'originX', type: 1, default: 0 },
+                { name: 'originY', type: 1, default: 0 },
+                { name: 'shapeWidth', type: 0, default: 0 },
+                { name: 'shapeHeight', type: 0, default: 0 },
+                { name: 'fillColor', type: 6, default: '' },
+                { name: 'lineColor', type: 6, default: '' },
+                { name: 'lineWidth', type: 0, default: 1 } ],
+        events: [],
+        provides: 2 },
+        dom:
         { funcs: [ { name: 'delete', info: '' } ],
             props:
-                [ { name: 'width', type: 0, default: 0 },
-                    { name: 'height', type: 0, default: 0 } ],
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'shapeWidth', type: 0, default: 0 },
+                    { name: 'shapeHeight', type: 0, default: 0 },
+                    { name: 'fillColor', type: 6, default: '' },
+                    { name: 'lineColor', type: 6, default: '' },
+                    { name: 'lineWidth', type: 0, default: 1 } ],
+            events: [],
+            provides: 2 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'shapeWidth', type: 0, default: 0 },
+                    { name: 'shapeHeight', type: 0, default: 0 },
+                    { name: 'fillColor', type: 6, default: '' },
+                    { name: 'lineColor', type: 6, default: '' },
+                    { name: 'lineWidth', type: 0, default: 1 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true } ],
+            events: [],
+            provides: 2 } },
+    'sprite':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [],
+        provides: 2 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 2 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 } ],
+            events: [],
+            provides: 2 } },
+    'canvas':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'width', type: 0, default: 0 },
+                { name: 'height', type: 0, default: 0 } ],
+        events: [],
+        provides: 10 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 10 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 } ],
+            events: [],
             provides: 10 } },
     'root':
-    { dom:
+    { flex:
     { funcs: [ { name: 'delete', info: '' } ],
-        props: [],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'direction', type: 2, default: '' },
+                { name: 'alignItems', type: 2, default: '' },
+                { name: 'width', type: 0, default: 0 },
+                { name: 'height', type: 0, default: 0 },
+                { name: 'color', type: 6, default: '' } ],
+        events: [],
         provides: 7 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 7 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props:
-                [ { name: 'positionX', type: 0, default: 0 },
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
-                    { name: 'scaleY', type: 1, default: 1 } ],
-            provides: 7 },
-        flex:
-        { funcs: [ { name: 'delete', info: '' } ],
-            props:
-                [ { name: 'direction', type: 2, default: '' },
-                    { name: 'alignItems', type: 2, default: '' },
-                    { name: 'width', type: 0, default: 0 },
-                    { name: 'height', type: 0, default: 0 },
-                    { name: 'color', type: 6, default: '' } ],
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 } ],
+            events: [],
             provides: 7 } },
     'image':
-    { dom:
+    { flex:
     { funcs: [ { name: 'delete', info: '' } ],
-        props: [],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'link', type: 0, default: 0 } ],
+        events: [],
         provides: 2 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'link', type: 0, default: 0 } ],
+            events: [],
+            provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props:
-                [ { name: 'positionX', type: 0, default: 0 },
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
                     { name: 'link', type: 0, default: 0 } ],
-            provides: 2 },
-        flex:
-        { funcs: [ { name: 'delete', info: '' } ],
-            props: [ { name: 'link', type: 0, default: 0 } ],
+            events: [],
             provides: 2 } },
     'text':
-    { dom:
+    { flex:
     { funcs: [ { name: 'delete', info: '' } ],
-        props: [],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'value', type: 3, default: '' } ],
+        events: [],
         provides: 2 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props:
-                [ { name: 'positionX', type: 0, default: 0 },
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
                     { name: 'value', type: 3, default: '' } ],
-            provides: 2 },
-        flex:
+            events: [],
+            provides: 2 } },
+    'rect':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'originX', type: 1, default: 0 },
+                { name: 'originY', type: 1, default: 0 },
+                { name: 'shapeWidth', type: 0, default: 0 },
+                { name: 'shapeHeight', type: 0, default: 0 },
+                { name: 'fillColor', type: 6, default: '' },
+                { name: 'lineColor', type: 6, default: '' },
+                { name: 'lineWidth', type: 0, default: 1 },
+                { name: 'radius', type: 0, default: 0 } ],
+        events: [],
+        provides: 2 },
+        dom:
         { funcs: [ { name: 'delete', info: '' } ],
-            props: [ { name: 'value', type: 3, default: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'shapeWidth', type: 0, default: 0 },
+                    { name: 'shapeHeight', type: 0, default: 0 },
+                    { name: 'fillColor', type: 6, default: '' },
+                    { name: 'lineColor', type: 6, default: '' },
+                    { name: 'lineWidth', type: 0, default: 1 },
+                    { name: 'radius', type: 0, default: 0 } ],
+            events: [],
+            provides: 2 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'shapeWidth', type: 0, default: 0 },
+                    { name: 'shapeHeight', type: 0, default: 0 },
+                    { name: 'fillColor', type: 6, default: '' },
+                    { name: 'lineColor', type: 6, default: '' },
+                    { name: 'lineWidth', type: 0, default: 1 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'radius', type: 0, default: 0 } ],
+            events: [],
+            provides: 2 } },
+    'ellipse':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'originX', type: 1, default: 0 },
+                { name: 'originY', type: 1, default: 0 },
+                { name: 'shapeWidth', type: 0, default: 0 },
+                { name: 'shapeHeight', type: 0, default: 0 },
+                { name: 'fillColor', type: 6, default: '' },
+                { name: 'lineColor', type: 6, default: '' },
+                { name: 'lineWidth', type: 0, default: 1 } ],
+        events: [],
+        provides: 2 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'shapeWidth', type: 0, default: 0 },
+                    { name: 'shapeHeight', type: 0, default: 0 },
+                    { name: 'fillColor', type: 6, default: '' },
+                    { name: 'lineColor', type: 6, default: '' },
+                    { name: 'lineWidth', type: 0, default: 1 } ],
+            events: [],
+            provides: 2 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'shapeWidth', type: 0, default: 0 },
+                    { name: 'shapeHeight', type: 0, default: 0 },
+                    { name: 'fillColor', type: 6, default: '' },
+                    { name: 'lineColor', type: 6, default: '' },
+                    { name: 'lineWidth', type: 0, default: 1 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true } ],
+            events: [],
             provides: 2 } },
 };
 
