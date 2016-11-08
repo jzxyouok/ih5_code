@@ -572,7 +572,7 @@ class Property extends React.Component {
             //不需要替换1，2和最后1个
             let newProperty = [property[0], property[1], property[property.length-1]];
             if (isCustomizeWidget(className)) {
-                className = 'container';
+                className = 'class';
             }
             this.setDefaultMappingProps(className, newProperty, 'change');
             property = newProperty;
