@@ -233,23 +233,20 @@ let funcMapping = {
     'prevResult': {showName:'获取上一页数据'},
 };
 
-let specialCaseElement = (className)=> {
+let specialCaseElementMapping = (className)=> {
     switch (className) {
         case 'counter':
             return {
                 props: {
-                    'value': {showName:'数值', type: propertyType.Number, default: 0}
-                },
+                    'value': {showName:'数值', type: propertyType.Number, default: 0}},
                 events: {
-                    'change': {showName:'数值改变'}
-                }
+                    'change': {showName:'数值改变'}}
             };
             break;
         case 'qrcode':
             return {
                 props: {
-                    'value': {showName:'数据', type: propertyType.String, default:''}
-                }
+                    'value': {showName:'数据', type: propertyType.String, default:''}}
             };
             break;
         case 'oneDArr':
@@ -257,23 +254,20 @@ let specialCaseElement = (className)=> {
             return {
                 props: {
                     'title': {showName:'变量名', type: propertyType.String, default: ''},
-                    'value': {showName:'值',type: propertyType.String, default: ''}
-                }
+                    'value': {showName:'值',type: propertyType.String, default: ''}}
             };
             break;
         case 'bitmaptext':
             return {
                 props: {
-                    'color': {showName:'文字颜色', type: propertyType.Color, default:'',group:'tools'},
-                }
+                    'color': {showName:'文字颜色', type: propertyType.Color, default:'',group:'tools'},}
             };
             break;
         case 'html':
             return {
                 props: {
                     'width': {type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
-                    'height': {type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
-                }
+                    'height': {type: propertyType.Hidden, default: 0, group:'position', readOnly: true},}
             };
             break;
         case 'input':
@@ -284,21 +278,18 @@ let specialCaseElement = (className)=> {
                     'height': {type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
                     'shapeWidth': {type: propertyType.Hidden, default: 0, group:'position'},
                     'shapeHeight': {type: propertyType.Hidden, default: 0, group:'position'},
-                    'color': {showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF'},
-                },
+                    'color': {showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF'}},
                 events: {
                     'isMatch': {showName:'匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
-                    'isUnMatch': {showName:'不匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
-                }
+                    'isUnMatch': {showName:'不匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},}
             };
             break;
         case 'easing':
             return {
                 props: {
                     'type': {showName:'移动方式',type: propertyType.Select, default: '无', options:easingMoveOptions},
-                    'radius': {showName:'圆角', type: propertyType.Number, default: 0, group:undefined},
-                    'autoPlay': {showName:'自动播放', type: propertyType.Boolean, default: false, group:undefined},
-                }
+                    'radius': {showName:'圆角', type: propertyType.Number, default: 0},
+                    'autoPlay': {showName:'自动播放', type: propertyType.Boolean, default: false}}
             };
             break;
         case 'effect':
@@ -306,15 +297,13 @@ let specialCaseElement = (className)=> {
                 props: {
                     'type':{showName:'动效类型', type: propertyType.Select,  default:'无',optionsToJudge:effectOptionsToJudge,options:effectOption},
                     'duration': {showName:'时长', type: propertyType.Number, default: 1},
-                    'autoPlay': {showName:'自动播放', type: propertyType.Boolean, default: false, group:undefined},
-                }
+                    'autoPlay': {showName:'自动播放', type: propertyType.Boolean, default: false}}
             };
             break;
         case 'track':
             return {
                 props: {
-                    'type': {type: propertyType.String, default: ''},
-                }
+                    'type': {type: propertyType.String, default: ''}}
             };
             break;
         case 'table':
@@ -323,8 +312,7 @@ let specialCaseElement = (className)=> {
                     'lineColor': {showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', tbCome:"tbF"},
                     'lineWidth': {showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', tbCome:"tbS"},
                     'fontFamily': {showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
-                    'fontSize': {showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" },
-                }
+                    'fontSize': {showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
             };
             break;
         case 'tableForSet':
@@ -334,8 +322,7 @@ let specialCaseElement = (className)=> {
                     'lineColor': {showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', tbCome:"tbF"},
                     'lineWidth': {showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', tbCome:"tbS"},
                     'fontFamily': {showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
-                    'fontSize': {showName:'字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" },
-                }
+                    'fontSize': {showName:'字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
             };
         default:
             return {};
@@ -490,7 +477,7 @@ function dealWithFuncs(func, map){
 //对propertyMap的属性，事件，动作进行处理
 for (let className in propertyMap) {
     let clTypes = propertyMap[className];
-    let sEl = specialCaseElement(className);
+    let sElMapping = specialCaseElementMapping(className);
     for(let type in clTypes) {
         let el = clTypes[type];
         if(el.props&&el.props.length>0) {
@@ -498,7 +485,7 @@ for (let className in propertyMap) {
                 //对属性处理
                 dealWithElement(p, propMapping, 'props');
                 //特殊处理
-                dealWithElement(p, sEl.props, 'props');
+                dealWithElement(p, sElMapping.props, 'props');
             });
         }
         if(el.events&&el.events.length>0) {
@@ -506,7 +493,7 @@ for (let className in propertyMap) {
                 //对事件进行处理
                 dealWithElement(e, eventMapping, 'events');
                 //特殊处理
-                dealWithElement(e, sEl.events, 'events');
+                dealWithElement(e, sElMapping.events, 'events');
             });
         }
         if(el.funcs&&el.funcs.length>0) {
@@ -514,7 +501,7 @@ for (let className in propertyMap) {
                 //对动作进行处理
                 dealWithElement(f, funcMapping, 'funcs');
                 //特殊处理
-                dealWithElement(f, sEl.funcs, 'funcs');
+                dealWithElement(f, sElMapping.funcs, 'funcs');
             });
         }
     }
