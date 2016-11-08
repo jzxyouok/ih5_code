@@ -20,7 +20,7 @@ import DBItemView from './DBItemView/DBItemView';
 import WidgetStore from '../stores/WidgetStore';
 import ToolBoxStore from '../stores/ToolBoxStore';
 
-import {propertyMap} from '../tempMap'
+import {propertyMap} from '../component/tempMap'
 
 class App extends React.Component {
     constructor(props) {

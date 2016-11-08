@@ -393,16 +393,56 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['twoDArr'].flex = propertyMap['twoDArr'].dom;
 };
 
-let addElementPropByClassName = (className, type)=>{
+let addPropsByClassName = (className) => {
+    let list = [];
+    switch (className) {
+        default:
+            break;
+    }
+    return list;
+};
+
+let addEventsByClassName = (className) => {
+    let list = [];
+    switch (className) {
+        default:
+            break;
+    }
+    return list;
+};
+
+let addFuncsByClassName = (className) => {
+    let list = [];
+    switch (className) {
+        case 'counter':
+            list = [
+                { name: 'add1', showName:'加1', isFunc: true },
+                { name: 'minus1', showName:'减1', isFunc: true },
+                { name: 'addN', showName:'加N', property:[
+                    {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}], isFunc: true },
+                { name: 'minusN', showName:'减N', property:[
+                    {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}], isFunc: true },
+                { name: 'getInt', showName:'取整', isFunc: true },
+                { name: 'randomValue', showName:'生成随机数', property:[
+                    {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
+                    {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}], isFunc: true }];
+            break;
+        default:
+            break;
+    }
+    return list;
+};
+
+let additionalElementProp = (className, type)=>{
     switch (type) {
         case 'props':
-            return [];
+            return addPropsByClassName(className);
             break;
         case 'events':
-            return [];
+            return addEventsByClassName(className);
             break;
         case 'funcs':
-            return [];
+            return addFuncsByClassName(className);
             break;
     }
 };
@@ -474,40 +514,45 @@ function dealWithFuncs(func, map){
     }
 }
 
-//对propertyMap的属性，事件，动作进行处理
-for (let className in propertyMap) {
-    let clTypes = propertyMap[className];
-    let sElMapping = specialCaseElementMapping(className);
-    for(let type in clTypes) {
-        let el = clTypes[type];
-        if(el.props&&el.props.length>0) {
-            el.props.forEach((p)=>{
-                //对属性处理
-                dealWithElement(p, propMapping, 'props');
-                //特殊处理
-                dealWithElement(p, sElMapping.props, 'props');
-            });
-        }
-        if(el.events&&el.events.length>0) {
-            el.events.forEach((e)=>{
-                //对事件进行处理
-                dealWithElement(e, eventMapping, 'events');
-                //特殊处理
-                dealWithElement(e, sElMapping.events, 'events');
-            });
-        }
-        if(el.funcs&&el.funcs.length>0) {
-            el.funcs.forEach((f)=>{
-                //对动作进行处理
-                dealWithElement(f, funcMapping, 'funcs');
-                //特殊处理
-                dealWithElement(f, sElMapping.funcs, 'funcs');
-            });
+let dealWithOriginalPropertyMap = ()=>{
+    for (let className in propertyMap) {
+        let clTypes = propertyMap[className];
+        let sElMapping = specialCaseElementMapping(className);
+        for(let type in clTypes) {
+            let el = clTypes[type];
+            if(el.props&&el.props.length>0) {
+                el.props.forEach((p)=>{
+                    //对属性处理
+                    dealWithElement(p, propMapping, 'props');
+                    //特殊处理
+                    dealWithElement(p, sElMapping.props, 'props');
+                });
+            }
+            //添加缺省的属性
+            el.props = el.props.concat(additionalElementProp(className, 'props'));
+            // if(el.events&&el.events.length>0) {
+            //     el.events.forEach((e)=>{
+            //         //对事件进行处理
+            //         dealWithElement(e, eventMapping, 'events');
+            //         //特殊处理
+            //         dealWithElement(e, sElMapping.events, 'events');
+            //     });
+            // }
+            //添加缺省的事件
+            //el.events = el.events.concat(additionalElementProp(className, 'events'));
+            if(el.funcs&&el.funcs.length>0) {
+                el.funcs.forEach((f)=>{
+                    //对动作进行处理
+                    dealWithElement(f, funcMapping, 'funcs');
+                    //特殊处理
+                    dealWithElement(f, sElMapping.funcs, 'funcs');
+                });
+            }
+            //添加附加的动作
+            el.funcs = el.funcs.concat(additionalElementProp(className, 'funcs'));
         }
     }
-}
-//添加伪对象的属性
-addCustomWidgetProperties();
+};
 
 let getPropertyMap = (widget, className, type)=> {
     let cl = className;
@@ -556,4 +601,96 @@ let getPropertyMap = (widget, className, type)=> {
     }
 };
 
-export {propertyMap, getPropertyMap};
+let checkEventClass = (selected) => {
+    if(selected.className === 'func' ||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'||
+        (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))){
+        return false;
+    } else {
+        return true;
+    }
+};
+
+let checkLockClass = (selected) => {
+    if(selected.className === 'root'||
+        selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'||
+        (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))){
+        return false;
+    } else {
+        return true;
+    }
+};
+
+let checkNotInDomMode = (selected, className) => {
+    //TODO
+    return false;
+};
+
+let checkNotInCanvasMode = (selected, className) => {
+    //TODO
+    return false;
+};
+
+let checkIsClassType = (className) => {
+    if(className === 'widget'|| className === 'data' ||
+        className === 'root' || className === 'sprite' ||
+        className === 'box' || className === 'textBox' ||
+        className === 'graphics' || className === 'class' ||
+        className === 'strVar' || className === 'intVar' ||
+        className === 'oneDArr' || className === 'twoDArr') {
+        return false;
+    } else {
+        return true;
+    }
+};
+
+let checkChildClass = (selected, className) => {
+    // 对函数,变量,自定义函数等的处理
+    if(className ==='dbItem'){
+        if(selected.className === 'db'){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    if(className === 'func'){
+        if(selected.className === 'func' ||
+            selected.className === 'var' ||
+            selected.className === 'dbItem'||
+            (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    if(className === 'var') {
+        if( selected.className === 'counter' ||
+            selected.className === 'func' ||
+            selected.className === 'var' ||
+            selected.className === 'dbItem' ||
+            (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))){
+            return false;
+        } else {
+            return true;
+        }
+    }
+    if (selected.className === 'func' ||
+        selected.className === 'var' ||
+        selected.className === 'dbItem' ||
+        selected.className.substr(0,1)==='_' ||    //自定义class
+        (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))) {
+        return false;
+    }
+    //TODO
+    return true;
+};
+
+//对propertyMap的属性，事件，动作进行处理
+dealWithOriginalPropertyMap();
+//添加伪对象的属性
+addCustomWidgetProperties();
+
+export {propertyMap, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkIsClassType};
