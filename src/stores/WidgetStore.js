@@ -301,7 +301,8 @@ function loadTree(parent, node, idList) {
 function idToObject(list, idName, varName) {
   if (!idName)
     return null;
-  if(idName === 'this' || idName === 'param.target' ||idName === 'globalXY') {
+  if(idName === 'this' || idName === 'param.target'
+      || idName === 'target' || idName === 'globalXY') {
       return {key:idName};
   }
   var obj = list[idName];
@@ -522,7 +523,8 @@ function generateObjectId(object) {
 
 function objectToId(object) {
   let idName, varKey, varName;
-    if(object === 'this' || object === 'param.target' || object === 'globalXY') {
+    if(object === 'this' || object === 'param.target'
+        || object === 'target' || object === 'globalXY') {
         return [object, undefined, undefined];
     }
   if (object.className == 'var') {
@@ -552,7 +554,8 @@ function objectKeyToId(key) {
         let obj = keyMap[key];
         if(obj){
             return objectToId(obj);
-        } else if (key === 'this'|| key === 'param.target' || key === 'globalXY') {
+        } else if (key === 'this'|| key === 'param.target'
+            || key === 'target' || key === 'globalXY') {
             return objectToId(key);
         }
     }
@@ -664,6 +667,8 @@ function generateId(node) {
 function getIdsName(idName, varName, propName) {
     if(idName === 'this' || idName === 'param.target') {
         return idName+ '.' + propName;
+    } else if (idName === 'target') {
+        return 'param.'+idName+ '.' + propName;
     } else if (idName === 'globalXY') {
         if(propName === 'Y') {
             return 'param.globalY';
@@ -778,7 +783,7 @@ function generateJsFunc(etree) {
              var op = c.compareFlag;
              var jsop;
              if (op == '=')
-                 jsop = '=='
+                 jsop = '==';
              else if (op == '≥')
                  jsop = '>=';
              else if (op == '≤')
