@@ -550,27 +550,26 @@ let modifyEventList = (list, className, type) => {
 let modifyFuncList = (list, className, type) => {
     //以后还可能对于不用的type进行不同定制（modeType）
     if(className === 'text'|| className=== 'counter') {
-        let func = { name: 'changeValue', showName:'赋值', info:'(value)', property:[
-                {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]};
+        let func = { name:'changeValue', showName:'赋值', info:'(value)', property:[
+                {'name':'value', 'showName':'值', 'value':null, 'type':propertyType.FormulaInput}]};
         list.unshift(func);
     }
     if(className==='counter') {
         let temp = [
-            { name: 'add1', showName:'加1'},
-            { name: 'minus1', showName:'减1'},
-            { name: 'addN', showName:'加N', property:[
-                {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
-            { name: 'minusN', showName:'减N', property:[
-                {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
-            { name: 'getInt', showName:'取整'},
-            { name: 'randomValue', showName:'生成随机数', property:[
-                {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
-                {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}]}];
+            { name:'add1', showName:'加1'},
+            { name:'minus1', showName:'减1'},
+            { name:'addN', showName:'加N', property:[
+                {'name':'value', 'showName':'N', 'value':null, 'type':propertyType.Integer}]},
+            { name:'minusN', showName:'减N', property:[
+                {'name':'value', 'showName':'N', 'value':null, 'type':propertyType.Integer}]},
+            { name:'getInt', showName:'取整'},
+            { name:'randomValue', showName:'生成随机数', property:[
+                {'name':'minValue', 'showName':'最小值', 'value':null, 'type':propertyType.Integer},
+                {'name':'maxValue', 'showName':'最大值', 'value':null, 'type':propertyType.Integer}]}];
         list = list.concat(temp);
     }
     if(visibleWidgetList.indexOf(className)>=0) {
-        let temp = [{ name: 'show', showName:'显示'},
-            { name: 'hide', showName:'隐藏'}];
+        let temp = [{ name:'show', showName:'显示'}, { name:'hide', showName:'隐藏'}];
         list = list.concat(temp);
     }
     return list;
