@@ -140,7 +140,7 @@ let propMapping = {
     'flexWrap': {showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
     'flexDirection': {showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
     'scaleStage': {showName:'缩放舞台', type: propertyType.Percentage, default: 1},
-    'bgImage': {showName:'外间距', type: propertyType.Number, default:0},
+    'bgImage': {showName:'背景图片', type: propertyType.String, default:''},
 };
 
 let eventMapping = {
