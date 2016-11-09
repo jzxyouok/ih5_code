@@ -740,17 +740,6 @@ class PropertyView extends React.Component {
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
 
-        if(className == 'data') {
-            switch (node.props.type) {
-                case dataType.oneDArr:
-                    className = dataType.oneDArr;
-                    break;
-                case dataType.twoDArr:
-                    className = dataType.twoDArr;
-                    break;
-            }
-        }
-
         if (getPropertyMap(node, className, 'props').length===0)    return null;
 
         const groups = {};
@@ -1207,17 +1196,6 @@ class PropertyView extends React.Component {
             let obj = widget.updateProperties;
             let className = selectNode.className;
             if (className.charAt(0) == '_')  className = 'class';
-
-            if(className == 'data') {
-                switch (selectNode.props.type) {
-                    case dataType.oneDArr:
-                        className = dataType.oneDArr;
-                        break;
-                    case dataType.twoDArr:
-                        className = dataType.twoDArr;
-                        break;
-                }
-            }
 
             getPropertyMap(selectNode, className, 'props').map(item => {
                 if (item.type !== propertyType.Hidden&&obj[item.name] !== undefined) {

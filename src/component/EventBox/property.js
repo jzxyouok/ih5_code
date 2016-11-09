@@ -203,18 +203,6 @@ class Property extends React.Component {
             actionList.push(this.getSetPropsObj());
         }
 
-        if(className === 'var'){
-            switch (obj.type) {
-                case varType.number:
-                    className = 'intVar';
-                    break;
-                case varType.string:
-                    className = 'strVar';
-                    break;
-                default:
-                    break;
-            }
-        }
         getPropertyMap(obj, className, 'funcs').map((item, index) => {
             let temp = JSON.parse(JSON.stringify(item));
             if (temp.info) {
@@ -230,7 +218,7 @@ class Property extends React.Component {
         } else {
             objRoot = obj.rootWidget;
         }
-        if(objRoot.className==='root'&&objRoot.props.isStage) {
+        if(objRoot.className==='root'&&!objRoot.props.isStage) {
             actionList.push({
                 name: 'deleteRootComponent',
                 showName: '删除组件',

@@ -299,16 +299,6 @@ class FormulaInput extends React.Component {
         let props = [];
         if(obj&&obj.className){
             let className = obj.className;
-            if(obj.className === 'var'){
-                switch (obj.type) {
-                    case varType.string:
-                        className = 'strVar';
-                        break;
-                    case varType.number:
-                        className = 'intVar';
-                        break;
-                }
-            }
             getPropertyMap(obj, className, 'props').map((v)=> {
                 if (v.type !== propertyType.Hidden && v.name != 'id') {
                     if(v.showName=='W'){

@@ -577,7 +577,8 @@ let getPropertyMap = (widget, className, type)=> {
     if(!propertyMap[cl]) {
         return [];
     }
-    if(className === 'var' || className === 'func' || className === 'dbItem') {
+    if(className === 'intVar' || className === 'strVar' ||
+        className === 'var' || className === 'func' || className === 'dbItem') {
         switch (type) {
             case 'props':
                 return bridge.getMap(widget.widget.node, propertyMap[cl]).props;
