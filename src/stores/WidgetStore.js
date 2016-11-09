@@ -1,7 +1,6 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
-//import  {propertyMap} from '../component/PropertyMap';
-import {propertyType, getPropertyMap} from '../component/tempMap'
+import {getPropertyMap} from '../component/tempMap'
 
 var bridge = require('bridge');
 bridge.create();
