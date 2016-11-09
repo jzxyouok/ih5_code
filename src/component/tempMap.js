@@ -124,6 +124,18 @@ let propMapping = {
     'headerFontSize': {showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, tbCome:"tbS" },
     'headerFontFill': {showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800'},
     'altColor': {showName:'隔行颜色', type: propertyType.Color,group:'display', default: ''},
+
+    'margin': {showName:'外间距', type: propertyType.Number, default:0},
+    'padding': {showName:'内间距', type: propertyType.Number, default:0},
+    //关于flex的请看：https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex
+    'flex': {showName:'flex', type: propertyType.String, default:''},
+    'alignSelf': {showName:'对齐方式', type: propertyType.String, default:''},
+    'alignItems': {showName:'对齐对象', type: propertyType.String, default:''},
+    'justifyContent': {showName:'排列内容', type: propertyType.Select, default:'flex-start', options:{'行首起始':'flex-start', '行尾开始':'flex-end'}},
+    'flexWrap': {showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
+    'flexDirection': {showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
+    'scaleStage': {showName:'缩放舞台', type: propertyType.Percentage, default: 1},
+    'bgImage': {showName:'外间距', type: propertyType.Number, default:0},
 };
 
 let eventMapping = {
