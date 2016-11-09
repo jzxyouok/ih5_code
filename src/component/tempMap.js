@@ -143,7 +143,7 @@ let propMapping = {
     'justifyContent': {name:'justifyContent', showName:'排列内容', type: propertyType.Select, default:'flex-start', options:{'行首起始':'flex-start', '行尾开始':'flex-end'}},
     'flexWrap': {name:'flexWrap', showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
     'flexDirection': {name:'flexDirection', showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
-    'scaleStage': {name:'scaleStage', showName:'缩放舞台', type: propertyType.Percentage, default: 1},
+    'scaleStage': {name:'scaleStage', showName:'缩放舞台', type: propertyType.String, default: ''},
     'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.String, default:''},
 };
 
