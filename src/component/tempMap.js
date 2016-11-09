@@ -443,13 +443,13 @@ let modifyPropList = (list, className, type) => {
     let aLack=[];
     if(className=='container'){
         switch (type){
-            case 'flex':
+            case modeType.flex:
                 aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
                 break;
-            case 'dom':
+            case modeType.dom:
                 aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
                 break;
-            case 'canvas':
+            case modeType.canvas:
                 aLack=['keepRatio','alpha','initVisible'];
                 break;
         }
@@ -490,13 +490,13 @@ let modifyEventList = (list, className, type) => {
     if(className=='container'){
         switch (type){
             case 'flex':
-                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide',];
+                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                break;
             case 'dom':
-                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide',];
+                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
             case 'canvas':
-                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide',];
+                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
     }
