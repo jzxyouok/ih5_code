@@ -416,7 +416,7 @@ let modifyEventList = (list, className, type) => {
 
 let modifyFuncList = (list, className, type) => {
     //以后还可能对于不用的type进行不同定制（modeType）
-    if(className === 'text'|| className=== 'counter' || className === 'strVar' || className === 'intVar') {
+    if(className === 'text'|| className=== 'counter') {
         let func = { name: 'changeValue', showName:'赋值', info:'(value)', property:[
                 {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]};
         list.unshift(func);
