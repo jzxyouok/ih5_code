@@ -9,6 +9,11 @@ let modeType = {
     canvas: 'canvas'
 };
 
+let visibleWidgetList = ['image', 'imagelist', 'text',
+    'video', 'rect', 'ellipse', 'path',
+    'slidetimer', 'bitmaptext', 'qrcode', 'counter',
+    'button', 'taparea', 'container', 'input', 'html', 'table'];
+
 let propMapping = {
     'id': {showName:'ID', type: propertyType.String, default: ''},
 
@@ -243,7 +248,6 @@ let funcMapping = {
         {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]},
     'update': {showName:'更新', info:'(data, callback(err, result))', property:[
         {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]},
-    'callback(err, result)': {showName:'回调函数', 'value':null, 'type':propertyType.Hidden},
 
     'send': {showName:'发送消息', info:'(data)', property:[
         {'name':'value', showName:'内容', 'value':null, 'type':propertyType.FormulaInput}]},
@@ -445,6 +449,11 @@ let modifyFuncList = (list, className, type) => {
             { name: 'randomValue', showName:'生成随机数', property:[
                 {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
                 {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}]}];
+        list = list.concat(temp);
+    }
+    if(visibleWidgetList.indexOf(className)>=0) {
+        let temp = [{ name: 'show', showName:'显示'},
+            { name: 'hide', showName:'隐藏'}];
         list = list.concat(temp);
     }
     return list;
