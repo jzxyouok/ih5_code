@@ -493,48 +493,12 @@ let sortElementByClassName = (className, type, element)=>{
     }
 };
 
-function dealWithElement(prop, map, type) {
-    switch (type) {
-        case 'props':
-            dealWithProperties(prop, map);
-            break;
-        case 'events':
-            dealWithEvents(prop, map);
-            break;
-        case 'funcs':
-            dealWithFuncs(prop, map);
-            break;
-    }
-}
-
-function dealWithProperties(prop, map){
+function dealWithElement(el, map) {
     if(map) {
-        let m = map[prop.name];
+        let m = map[el.name];
         if(m) {
             for(let p in m) {
-                prop[p] = m[p];
-            }
-        }
-    }
-}
-
-function dealWithEvents(event, map){
-    if(map) {
-        let e = map[event.name];
-        if(e) {
-            for(let p in e) {
-                event[p] = e[p];
-            }
-        }
-    }
-}
-
-function dealWithFuncs(func, map){
-    if(map){
-        let f = map[func.name];
-        if(f) {
-            for(let p in f) {
-                func[p] = f[p];
+                el[p] = m[p];
             }
         }
     }
@@ -549,9 +513,9 @@ let dealWithOriginalPropertyMap = ()=>{
             if(el.props&&el.props.length>0) {
                 el.props.forEach((p)=>{
                     //对属性处理
-                    dealWithElement(p, propMapping, 'props');
+                    dealWithElement(p, propMapping);
                     //特殊处理
-                    dealWithElement(p, sElMapping.props, 'props');
+                    dealWithElement(p, sElMapping.props);
                 });
             }
             //添加缺省的属性
@@ -559,9 +523,9 @@ let dealWithOriginalPropertyMap = ()=>{
             if(el.events&&el.events.length>0) {
                 el.events.forEach((e)=>{
                     //对事件进行处理
-                    dealWithElement(e, eventMapping, 'events');
+                    dealWithElement(e, eventMapping);
                     //特殊处理
-                    dealWithElement(e, sElMapping.events, 'events');
+                    dealWithElement(e, sElMapping.events);
                 });
             }
             //添加缺省的事件
@@ -569,9 +533,9 @@ let dealWithOriginalPropertyMap = ()=>{
             if(el.funcs&&el.funcs.length>0) {
                 el.funcs.forEach((f)=>{
                     //对动作进行处理
-                    dealWithElement(f, funcMapping, 'funcs');
+                    dealWithElement(f, funcMapping);
                     //特殊处理
-                    dealWithElement(f, sElMapping.funcs, 'funcs');
+                    dealWithElement(f, sElMapping.funcs);
                 });
             }
             //添加附加的动作
