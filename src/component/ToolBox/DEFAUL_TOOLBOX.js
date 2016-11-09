@@ -202,7 +202,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         mode: modeType.dom,
         secondary: [
-            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'shapeWidth': 300, 'shapeHeight': 300}}
+            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'shapeWidth': '100%', 'shapeHeight': '100%'}}
         ]
     },{
         name:'时间轴',

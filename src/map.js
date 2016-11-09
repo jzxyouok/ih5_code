@@ -316,7 +316,11 @@ const propertyMap = {
     'display':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
-        props: [ { name: 'id', type: 2, default: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' } ],
         events: [],
         provides: 2 },
         dom:
@@ -340,8 +344,14 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
-                { name: 'direction', type: 2, default: '' },
-                { name: 'alignItems', type: 2, default: '' } ],
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
+                { name: 'padding', type: 2, default: '' },
+                { name: 'flexDirection', type: 2, default: '' },
+                { name: 'justifyContent', type: 2, default: '' },
+                { name: 'alignItems', type: 2, default: '' },
+                { name: 'flexWrap', type: 2, default: '' } ],
         events: [],
         provides: 6 },
         dom:
@@ -365,6 +375,9 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
                 { name: 'originX', type: 1, default: 0 },
                 { name: 'originY', type: 1, default: 0 },
                 { name: 'shapeWidth', type: 0, default: 0 },
@@ -410,7 +423,11 @@ const propertyMap = {
     'sprite':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
-        props: [ { name: 'id', type: 2, default: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' } ],
         events: [],
         provides: 2 },
         dom:
@@ -438,8 +455,12 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
-                { name: 'width', type: 0, default: 0 },
-                { name: 'height', type: 0, default: 0 } ],
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
+                { name: 'width', type: 2, default: '' },
+                { name: 'height', type: 2, default: '' },
+                { name: 'color', type: 6, default: '' } ],
         events: [],
         provides: 10 },
         dom:
@@ -463,11 +484,19 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
-                { name: 'direction', type: 2, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
+                { name: 'padding', type: 2, default: '' },
+                { name: 'flexDirection', type: 2, default: '' },
+                { name: 'justifyContent', type: 2, default: '' },
                 { name: 'alignItems', type: 2, default: '' },
+                { name: 'flexWrap', type: 2, default: '' },
+                { name: 'scaleStage', type: 4, default: false },
                 { name: 'width', type: 0, default: 0 },
                 { name: 'height', type: 0, default: 0 },
-                { name: 'color', type: 6, default: '' } ],
+                { name: 'color', type: 6, default: '' },
+                { name: 'bgImage', type: 2, default: '' } ],
         events: [],
         provides: 7 },
         dom:
@@ -491,6 +520,9 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
                 { name: 'link', type: 0, default: 0 } ],
         events: [],
         provides: 2 },
@@ -522,6 +554,9 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
                 { name: 'value', type: 3, default: '' } ],
         events: [],
         provides: 2 },
@@ -551,6 +586,9 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
                 { name: 'originX', type: 1, default: 0 },
                 { name: 'originY', type: 1, default: 0 },
                 { name: 'shapeWidth', type: 0, default: 0 },
@@ -601,6 +639,9 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
                 { name: 'originX', type: 1, default: 0 },
                 { name: 'originY', type: 1, default: 0 },
                 { name: 'shapeWidth', type: 0, default: 0 },
