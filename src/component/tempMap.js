@@ -397,10 +397,12 @@ let addCustomWidgetProperties = ()=>{
 };
 
 let addPropsByClassName = (list, className) => {
+
     return list;
 };
 
 let addEventsByClassName = (list, className) => {
+
     return list;
 };
 
