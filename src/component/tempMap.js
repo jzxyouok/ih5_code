@@ -422,50 +422,29 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['twoDArr'].flex = propertyMap['twoDArr'].dom;
 };
 
-let dealPropList =(aLack,list,className,type)=>{
+let dealElementList =(aLack, className, mapping, type)=>{
     let obj = specialCaseElementMapping(className);
-
-    switch (type){
-        case 'props':
-            aLack.map((v)=> {
-                let c=null;
-                if(propMapping[v]){
-                   c=propMapping[v];
-                }
-                if(obj.props&&obj.props[v]){
-                    c=obj.props[v];
-                }
-                if(c){
-                    list.push(c);
-                }else {
-                    alert('通用属性和特殊属性中没有:' + v + '通知下程序猿!');
-                }
-            });
-            break;
-        case 'events':
-            aLack.map((v)=> {
-                let c=null;
-                if( eventMapping[v]){
-                    c= eventMapping[v];
-                }
-                if(obj.events&&obj.events[v]) {
-                    c = obj.events[v];
-                }
-                if(c){
-                    list.push(c);
-                }else {
-                    alert('通用属性和特殊属性中没有:' + v + '通知下程序猿!');
-                }
-            });
-            break;
-    }
+    let list = [];
+    aLack.map((v)=> {
+        let c = null;
+        if (mapping[v]) {
+            c = mapping[v];
+        }
+        if (obj[type] && obj[type][v]) {
+            c = obj[type][v];
+        }
+        if (c) {
+            list.push(c);
+        } else {
+            alert('通用属性和特殊属性中没有:' + v + '通知下程序猿!');
+        }
+    });
     return list;
-}
+};
 
 let modifyPropList = (list, className, type) => {
     //根据不同的class对props进行定制和排序
     //以后还可能对于不用的type进行不同定制（modeType）
-   // console.log(list,className,type);
     let aLack=[];
     if(className=='container'){
         switch (type){
@@ -504,8 +483,7 @@ let modifyPropList = (list, className, type) => {
     else if(className=='ellipse'){
 
     }
-    list = dealPropList(aLack,list,className,'props');
-   // console.log(list,className,type);
+    list = list.concat(dealElementList(aLack, className, propMapping, 'props'));
     return list;
 };
 
@@ -551,8 +529,7 @@ let modifyEventList = (list, className, type) => {
     else if(className=='ellipse'){
 
     }
-   list = dealPropList(aLack,list,className,'events');
-  //  console.log(list,className,type);
+    list = list.concat(dealElementList(aLack, className, eventMapping, 'events'));
     return list;
 };
 
