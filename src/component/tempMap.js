@@ -143,7 +143,7 @@ let propMapping = {
     'justifyContent': {name:'justifyContent', showName:'排列内容', type: propertyType.Select, default:'flex-start', options:{'行首起始':'flex-start', '行尾开始':'flex-end'}},
     'flexWrap': {name:'flexWrap', showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
     'flexDirection': {name:'flexDirection', showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
-    'scaleStage': {name:'scaleStage', showName:'缩放舞台', type: propertyType.Percentage, default: 1},
+    'scaleStage': {name:'scaleStage', showName:'缩放舞台', type: propertyType.String, default: ''},
     'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.String, default:''},
 };
 
@@ -559,27 +559,26 @@ let modifyEventList = (list, className, type) => {
 let modifyFuncList = (list, className, type) => {
     //以后还可能对于不用的type进行不同定制（modeType）
     if(className === 'text'|| className=== 'counter') {
-        let func = { name: 'changeValue', showName:'赋值', info:'(value)', property:[
-                {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]};
+        let func = { name:'changeValue', showName:'赋值', info:'(value)', property:[
+                {'name':'value', 'showName':'值', 'value':null, 'type':propertyType.FormulaInput}]};
         list.unshift(func);
     }
     if(className==='counter') {
         let temp = [
-            { name: 'add1', showName:'加1'},
-            { name: 'minus1', showName:'减1'},
-            { name: 'addN', showName:'加N', property:[
-                {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
-            { name: 'minusN', showName:'减N', property:[
-                {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
-            { name: 'getInt', showName:'取整'},
-            { name: 'randomValue', showName:'生成随机数', property:[
-                {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
-                {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}]}];
+            { name:'add1', showName:'加1'},
+            { name:'minus1', showName:'减1'},
+            { name:'addN', showName:'加N', property:[
+                {'name':'value', 'showName':'N', 'value':null, 'type':propertyType.Integer}]},
+            { name:'minusN', showName:'减N', property:[
+                {'name':'value', 'showName':'N', 'value':null, 'type':propertyType.Integer}]},
+            { name:'getInt', showName:'取整'},
+            { name:'randomValue', showName:'生成随机数', property:[
+                {'name':'minValue', 'showName':'最小值', 'value':null, 'type':propertyType.Integer},
+                {'name':'maxValue', 'showName':'最大值', 'value':null, 'type':propertyType.Integer}]}];
         list = list.concat(temp);
     }
     if(visibleWidgetList.indexOf(className)>=0) {
-        let temp = [{ name: 'show', showName:'显示'},
-            { name: 'hide', showName:'隐藏'}];
+        let temp = [{ name:'show', showName:'显示'}, { name:'hide', showName:'隐藏'}];
         list = list.concat(temp);
     }
     return list;
