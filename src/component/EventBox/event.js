@@ -269,7 +269,6 @@ class Event extends React.Component {
     getJudgeValOption(optionName, curChild) {
         let aProps = [];
         let className = null;
-
         let judgeObjFlag = curChild.judgeObjFlag; //判断对象名字
 
         let allWidgetsList = this.state.allWidgetsList;
@@ -282,9 +281,9 @@ class Event extends React.Component {
 
 
         let obj = {};
-        getPropertyMap(this.state.selectWidget, className, 'props').map((v, i)=> {
+        getPropertyMap( WidgetStore.getWidgetByKey(this.state.wKey), className, 'props').map((v, i)=> {
         // propertyMap[className].map((v, i)=> {
-            if (v.isProperty && v.name != 'id') {
+            if (v.type !== propertyType.Hidden && v.name != 'id') {
                 if (v.showName == 'W') {
                     aProps.push('宽度');
                 } else if (v.showName == 'H') {
@@ -337,18 +336,20 @@ class Event extends React.Component {
 
         let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
         if (allWidgetsList) {
+            let curObj =WidgetStore.getWidgetByKey(this.state.wKey);
             if (type == 'conFlag') {
-
                 //获取当前事件的类名
                 let conArr = [];
                 let className = this.state.eventList[curEventIndex].className;
                 if (className) {
-                    getPropertyMap(this.state.selectWidget, className, 'props').map((item, index)=> {
+
+                    getPropertyMap(curObj, className, 'events').map((item, index)=> {
                     //  propertyMap[className].map((item, index)=> {
-                        if (item.isEvent === true) {
+                    //     if (item.isEvent === true) {
                             conArr.push(item);
-                        }
+                        // }
                     });
+
                 }
                 if (this.state.eventList[curEventIndex].conOption&&this.state.eventList[curEventIndex].conOption.length > 0) {
                     conArr = this.state.eventList[curEventIndex].conOption;
@@ -371,8 +372,8 @@ class Event extends React.Component {
                     }
                 });
 
-            if (judgeObjClassName &&getPropertyMap(this.state.selectWidget, judgeObjClassName, 'props').length!=0) {
-                getPropertyMap(this.state.selectWidget, judgeObjClassName, 'props').map((v, i)=> {
+            if (judgeObjClassName &&getPropertyMap(curObj, judgeObjClassName, 'props').length!=0) {
+                getPropertyMap(curObj, judgeObjClassName, 'props').map((v, i)=> {
                // propertyMap[judgeObjClassName].map((v, i)=> {
                     if (name == 'width' || name == 'W') {
                         showName = '宽度';
@@ -410,7 +411,7 @@ class Event extends React.Component {
                    judgeObjClassName = v.className;
                }
            });
-           getPropertyMap(this.state.selectWidget, judgeObjClassName, 'props').map((v, i)=> {
+           getPropertyMap( WidgetStore.getWidgetByKey(this.state.wKey), judgeObjClassName, 'props').map((v, i)=> {
           // propertyMap[judgeObjClassName].map((v, i)=> {
                if (value == '宽度') {
                    name = 'width';
