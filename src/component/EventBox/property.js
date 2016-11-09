@@ -62,6 +62,7 @@ class Property extends React.Component {
         this.onActionVisibleChange = this.onActionVisibleChange.bind(this);
         this.onActionSelect = this.onActionSelect.bind(this);
         this.onGetActionList = this.onGetActionList.bind(this);
+        this.onGetActionPropertyFIList = this.onGetActionPropertyFIList.bind(this);
 
         this.onChangePropDom = this.onChangePropDom.bind(this);
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
@@ -149,7 +150,8 @@ class Property extends React.Component {
             this.setState({
                 contactObj: widget.contactObj
             }, ()=>{
-                if(this.state.contactObj === null && this.state.currentObject === 'param.target') {
+                if(this.state.contactObj === null &&
+                    (this.state.currentObject === 'param.target'||this.state.currentObject === 'target')) {
                     WidgetActions['changeSpecific'](this.state.specific, {'object':'this'});
                 }
             });
@@ -163,7 +165,7 @@ class Property extends React.Component {
         let obj = WidgetStore.getWidgetByKey(key);
         if(key === 'this') {
             obj = WidgetStore.getWidgetByKey(this.state.wKey);
-        } else if (key === 'param.target'&&this.state.contactObj) {
+        } else if ((key === 'param.target'||key === 'target')&&this.state.contactObj) {
             obj = WidgetStore.getWidgetByKey(this.state.contactObj);
         }
         if(!obj||!obj.className) {
@@ -271,7 +273,8 @@ class Property extends React.Component {
         let node = WidgetStore.getWidgetByKey(this.state.currentObject);
         if(this.state.currentObject === 'this') {
             node = WidgetStore.getWidgetByKey(this.state.wKey);
-        } else if (this.state.currentObject === 'param.target'&&this.state.contactObj) {
+        } else if (this.state.contactObj&&
+            (this.state.currentObject === 'param.target'|| this.state.currentObject === 'target')) {
             node = WidgetStore.getWidgetByKey(this.state.contactObj);
         }
         let propertyList=[];
@@ -363,7 +366,7 @@ class Property extends React.Component {
         e.domEvent.stopPropagation();
         let object = e.item.props.object;
         let key = null;
-        if(object === 'this' || (object === 'param.target'&&this.state.contactObj)) {
+        if(object === 'this' || (this.state.contactObj&&(object === 'param.target'||object === 'target'))) {
             key = object;
         } else {
             key = object.key;
@@ -425,8 +428,8 @@ class Property extends React.Component {
         let hasSameObject = false;
         if(value === 'this' || value === '目标对象'){
             final = 'this';
-        } else if ((value === '碰撞目标对象' || value === 'param.target')&&this.state.contactObj){
-            final = 'param.target';
+        } else if ((value === '碰撞目标对象' || value === 'param.target' || value === 'target')&&this.state.contactObj){
+            final = 'target';
         } else {
             //检查是否在obejctlist内
             let resultIndexList = [];
@@ -580,7 +583,7 @@ class Property extends React.Component {
         let widget = WidgetStore.getWidgetByKey(key);
         if(key === 'this') {
             widget = WidgetStore.getWidgetByKey(this.state.wKey);
-        } else if (key === 'param.target'&&this.state.contactObj) {
+        } else if ((key === 'param.target'||key === 'target')&&this.state.contactObj) {
             widget = WidgetStore.getWidgetByKey(this.state.contactObj);
         }
         if(widget) {
@@ -597,6 +600,18 @@ class Property extends React.Component {
                 }
             }
         }
+    }
+
+    onGetActionPropertyFIList() {
+        let fIList = [];
+        this.state.objectList.forEach(v=>{
+            fIList.push(v);
+        });
+        if(this.state.event.conFlag === 'click'||this.state.event.conFlag === 'touchDown'
+            || this.state.event.conFlag === 'touchUp') {
+            fIList.unshift({className:'DIY', key:'globalXY', props:{name:'点击坐标'}})
+        }
+        return fIList;
     }
 
     onFormulaInputFocus(canChange) {
@@ -722,7 +737,8 @@ class Property extends React.Component {
         let w = null;
         if(this.state.currentObject === 'this') {
             w = WidgetStore.getWidgetByKey(this.state.wKey);
-        } else if (this.state.currentObject === 'param.target'&&this.state.contactObj) {
+        } else if (this.state.contactObj&&
+            (this.state.currentObject === 'param.target'||this.state.currentObject === 'target')) {
             w = WidgetStore.getWidgetByKey(this.state.contactObj)
         } else {
             w = WidgetStore.getWidgetByKey(this.state.currentObject);
@@ -746,13 +762,13 @@ class Property extends React.Component {
                                     this.state.currentAction.name==='setProps'
                                         ? this.state.currentObject==='this'
                                             ? this.state.wKey
-                                            : this.state.currentObject==='param.target'
+                                            : this.state.currentObject==='param.target'||this.state.currentObject==='target'
                                                 ? this.state.contactObj
                                                 : this.state.currentObject
                                         : null}
                                 property={v1}
                                 propertyId={propertyId}
-                                objectList={this.state.objectList}
+                                objectList={this.onGetActionPropertyFIList()}
                                 onFInputFocus={this.onFormulaInputFocus}
                                 onFInputBlur={this.onFormulaInputBlur}
                                 getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
@@ -856,7 +872,7 @@ class Property extends React.Component {
                 case propertyType.Number:
                     return <InputNumber step={0.1} {...defaultProp}/>;
                 case propertyType.Boolean3:
-                    return <Switch checkedChildren={'开'} unCheckedChildren={'关'} {...defaultProp}/>
+                    return <Switch checkedChildren={'开'} unCheckedChildren={'关'} {...defaultProp}/>;
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Boolean:
@@ -864,7 +880,7 @@ class Property extends React.Component {
                 case propertyType.FormulaInput:
                     return <FormulaInput containerId={propertyId}
                                          disabled={!this.state.currentEnable}
-                                         objectList={this.state.objectList}
+                                         objectList={this.onGetActionPropertyFIList()}
                                          onFocus={this.onFormulaInputFocus}
                                          onBlur={this.onFormulaInputBlur}
                                          {...defaultProp}/>;
@@ -931,7 +947,7 @@ class Property extends React.Component {
         let objectMenu = (
             <Menu onClick={this.onObjectSelect}>
                 <MenuItem key={'this'} object={'this'}>当前对象</MenuItem>
-                <MenuItem key={'param.target'} className={$class({'hidden':!this.state.contactObj})} object={'param.target'}>碰撞目标对象</MenuItem>
+                <MenuItem key={'target'} className={$class({'hidden':!this.state.contactObj})} object={'target'}>碰撞目标对象</MenuItem>
                 {
                     !this.state.objectList||this.state.objectList.length==0
                         ? null
@@ -970,7 +986,8 @@ class Property extends React.Component {
             let targetName = '目标对象';
             if(this.state.currentObject === 'this') {
                 targetName = '当前对象';
-            } else if(this.state.currentObject === 'param.target'&&this.state.contactObj) {
+            } else if(this.state.contactObj&&
+                (this.state.currentObject === 'param.target'||this.state.currentObject === 'target')) {
                 targetName = '碰撞目标对象';
             } else if (w && w.props && w.props.name) {
                 targetName = w.props.name;
