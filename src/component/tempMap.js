@@ -362,9 +362,8 @@ let specialCaseElementMapping = (className)=> {
 let addCustomWidgetProperties = ()=>{
     propertyMap['strVar'] = {
         dom: {
-            funcs: [{name:'changeValue', showName:'赋值', info:'(value)', property:[
-                {'name':'value', 'showName':'值', 'value':null, 'type':propertyType.FormulaInput}]}],
-            props: [{name:'value',showName:'内容', type: propertyType.Text,  default: ''}],
+            funcs: dealElementList(['changeValue'], 'strVar', 'funcs'),
+            props: dealElementList(['value'], 'strVar', 'props'),
             events: [],
             provides: 0
         }
@@ -374,19 +373,8 @@ let addCustomWidgetProperties = ()=>{
 
     propertyMap['intVar'] = {
         dom: {
-            funcs: [{ name:'changeValue', showName:'赋值', info:'(value)', property:[
-                        {'name':'value', 'showName':'值', 'value':null, 'type':propertyType.FormulaInput}]},
-                    { name:'add1', showName:'加1'},
-                    { name:'minus1', showName:'减1'},
-                    { name:'addN', showName:'加N', property:[
-                        {'name':'value', 'showName':'N', 'value':null, 'type':propertyType.Integer}]},
-                    { name:'minusN', showName:'减N', property:[
-                        {'name':'value', 'showName':'N', 'value':null, 'type':propertyType.Integer}]},
-                    { name:'getInt', showName:'取整'},
-                    { name:'randomValue', showName:'生成随机数', property:[
-                        {'name':'minValue', 'showName':'最小值', 'value':null, 'type':propertyType.Integer},
-                        {'name':'maxValue', 'showName':'最大值', 'value':null, 'type':propertyType.Integer}]},],
-            props: [{name: 'value',showName:'内容', type: propertyType.Text,  default: ''}],
+            funcs: dealElementList(['changeValue','add1','minus1','addN','minusN','getInt','randomValue'], 'intVar', 'funcs'),
+            props: dealElementList(['value'], 'intVar', 'props'),
             events: [],
             provides: 0
         }
@@ -396,10 +384,8 @@ let addCustomWidgetProperties = ()=>{
 
     propertyMap['oneDArr'] = {
         dom: {
-            funcs: [{ name:'getRoot', showName:'获取父级对象'}],
-            props: [{ name:'title',showName:'变量名', type: propertyType.String, default: ''},
-                    { name:'value', showName:'值',type: propertyType.String, default: ''},
-                    { name:'row', showName:'行',type: propertyType.Integer, default: 0},],
+            funcs: dealElementList(['getRoot'], 'oneDArr', 'funcs'),
+            props: dealElementList(['title', 'value', 'row'], 'oneDArr', 'props'),
             events: [],
             provides: 0
         }
@@ -409,11 +395,8 @@ let addCustomWidgetProperties = ()=>{
 
     propertyMap['twoDArr'] = {
         dom: {
-            funcs: [{ name:'getRoot', showName:'获取父级对象'}],
-            props: [{ name:'title',showName:'变量名', type: propertyType.String, default: ''},
-                { name:'value', showName:'值',type: propertyType.String, default: ''},
-                { name:'row', showName:'行',type: propertyType.Integer, default: 0},
-                { name:'column', showName:'列',type: propertyType.Integer, default: 0}],
+            funcs: dealElementList(['getRoot'], 'twoDArr', 'funcs'),
+            props: dealElementList(['title', 'value', 'row', 'column'], 'twoDArr', 'props'),
             events: [],
             provides: 0
         }
@@ -422,12 +405,26 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['twoDArr'].flex = propertyMap['twoDArr'].dom;
 };
 
-let dealElementList =(aLack, className, mapping, type)=>{
+let dealElementList =(aLack, className, type)=>{
     let obj = specialCaseElementMapping(className);
     let list = [];
+    let mapping = null;
+    switch (type) {
+        case 'props':
+            mapping = propMapping;
+            break;
+        case 'events':
+            mapping = eventMapping;
+            break;
+        case 'funcs':
+            mapping = funcMapping;
+            break;
+        default:
+            break;
+    }
     aLack.map((v)=> {
         let c = null;
-        if (mapping[v]) {
+        if (mapping && mapping[v]) {
             c = mapping[v];
         }
         if (obj[type] && obj[type][v]) {
@@ -483,7 +480,7 @@ let modifyPropList = (list, className, type) => {
     else if(className=='ellipse'){
 
     }
-    list = list.concat(dealElementList(aLack, className, propMapping, 'props'));
+    list = list.concat(dealElementList(aLack, className, 'props'));
     return list;
 };
 
@@ -529,33 +526,22 @@ let modifyEventList = (list, className, type) => {
     else if(className=='ellipse'){
 
     }
-    list = list.concat(dealElementList(aLack, className, eventMapping, 'events'));
+    list = list.concat(dealElementList(aLack, className, 'events'));
     return list;
 };
 
 let modifyFuncList = (list, className, type) => {
     //以后还可能对于不用的type进行不同定制（modeType）
     if(className === 'text'|| className=== 'counter') {
-        let func = { name:'changeValue', showName:'赋值', info:'(value)', property:[
-                {'name':'value', 'showName':'值', 'value':null, 'type':propertyType.FormulaInput}]};
-        list.unshift(func);
+        let func = dealElementList(['changeValue'], className, 'funcs');
+        list.unshift(func[0]);
     }
     if(className==='counter') {
-        let temp = [
-            { name:'add1', showName:'加1'},
-            { name:'minus1', showName:'减1'},
-            { name:'addN', showName:'加N', property:[
-                {'name':'value', 'showName':'N', 'value':null, 'type':propertyType.Integer}]},
-            { name:'minusN', showName:'减N', property:[
-                {'name':'value', 'showName':'N', 'value':null, 'type':propertyType.Integer}]},
-            { name:'getInt', showName:'取整'},
-            { name:'randomValue', showName:'生成随机数', property:[
-                {'name':'minValue', 'showName':'最小值', 'value':null, 'type':propertyType.Integer},
-                {'name':'maxValue', 'showName':'最大值', 'value':null, 'type':propertyType.Integer}]}];
+        let temp = dealElementList(['add1','minus1','addN','minusN','getInt','randomValue'], className, 'funcs');
         list = list.concat(temp);
     }
     if(visibleWidgetList.indexOf(className)>=0) {
-        let temp = [{ name:'show', showName:'显示'}, { name:'hide', showName:'隐藏'}];
+        let temp = dealElementList(['show','hide'], className, 'funcs');
         list = list.concat(temp);
     }
     return list;
