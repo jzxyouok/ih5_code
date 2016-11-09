@@ -16,8 +16,6 @@ let visibleWidgetList = ['image', 'imagelist', 'text',
     'slidetimer', 'bitmaptext', 'qrcode', 'counter',
     'button', 'taparea', 'container', 'input', 'html', 'table'];
 
-
-
 let propMapping = {
     'id': {name:'id', showName:'ID', type: propertyType.String, default: ''},
 
