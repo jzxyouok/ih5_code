@@ -558,6 +558,9 @@ let dealWithOriginalPropertyMap = ()=>{
 };
 
 let getPropertyMap = (widget, className, type)=> {
+    if(!widget) {
+        return [];
+    }
     let cl = className;
     if(className === 'data') {
         if(widget.props.type === 'oneDArr') {

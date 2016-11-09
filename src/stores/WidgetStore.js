@@ -3440,16 +3440,14 @@ export default Reflux.createStore({
             }
         });
         getPropertyMap(selectWidget, className, 'events').map((item, index) => {
-        //  propertyMap[className].map((item, index)=> {
-        //     if (item.isEvent === true) {
-                if(item.name=='beginContact'||item.name=='endContact'){
-                    if(hasContact){
-                        aProps.push(JSON.parse(JSON.stringify(item)));
-                    }
-                }else{
+            if(item.name=='beginContact'||item.name=='endContact'){
+                if(hasContact){
                     aProps.push(JSON.parse(JSON.stringify(item)));
                 }
-            // }
+            }else{
+                aProps.push(JSON.parse(JSON.stringify(item)));
+            }
+
         });
         return aProps;
     },

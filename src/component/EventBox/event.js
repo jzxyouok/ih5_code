@@ -4,7 +4,6 @@ import $class from 'classnames'
 import Property from './Property'
 import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-// import {propertyType, propertyMap} from './PropertyMap';
 import {propertyType, getPropertyMap} from '../tempMap'
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
@@ -281,8 +280,8 @@ class Event extends React.Component {
 
 
         let obj = {};
-        getPropertyMap( WidgetStore.getWidgetByKey(this.state.wKey), className, 'props').map((v, i)=> {
-        // propertyMap[className].map((v, i)=> {
+        let pObj = WidgetStore.getWidgetByKey(this.state.wKey);
+        getPropertyMap(pObj, className, 'props').map((v, i)=> {
             if (v.type !== propertyType.Hidden && v.name != 'id') {
                 if (v.showName == 'W') {
                     aProps.push('宽度');
@@ -344,10 +343,7 @@ class Event extends React.Component {
                 if (className) {
 
                     getPropertyMap(curObj, className, 'events').map((item, index)=> {
-                    //  propertyMap[className].map((item, index)=> {
-                    //     if (item.isEvent === true) {
-                            conArr.push(item);
-                        // }
+                        conArr.push(item);
                     });
 
                 }
@@ -372,9 +368,8 @@ class Event extends React.Component {
                     }
                 });
 
-            if (judgeObjClassName &&getPropertyMap(curObj, judgeObjClassName, 'props').length!=0) {
+            if (judgeObjClassName) {
                 getPropertyMap(curObj, judgeObjClassName, 'props').map((v, i)=> {
-               // propertyMap[judgeObjClassName].map((v, i)=> {
                     if (name == 'width' || name == 'W') {
                         showName = '宽度';
                     } else if (name == 'height' || name == 'H') {
@@ -412,7 +407,6 @@ class Event extends React.Component {
                }
            });
            getPropertyMap( WidgetStore.getWidgetByKey(this.state.wKey), judgeObjClassName, 'props').map((v, i)=> {
-          // propertyMap[judgeObjClassName].map((v, i)=> {
                if (value == '宽度') {
                    name = 'width';
                } else if (value == '高度') {
