@@ -3,6 +3,8 @@ import bridge from 'bridge';
 import {propertyMap, propertyType, backwardTransOptions, forwardTransOptions,
     effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags} from '../map';
 
+import {originalPropertyMap} from './PropertyMap';
+
 let modeType = {
     flex: 'flex',
     dom: 'dom',
@@ -13,6 +15,8 @@ let visibleWidgetList = ['image', 'imagelist', 'text',
     'video', 'rect', 'ellipse', 'path',
     'slidetimer', 'bitmaptext', 'qrcode', 'counter',
     'button', 'taparea', 'container', 'input', 'html', 'table'];
+
+
 
 let propMapping = {
     'id': {showName:'ID', type: propertyType.String, default: ''},
@@ -418,15 +422,128 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['twoDArr'].flex = propertyMap['twoDArr'].dom;
 };
 
+let dealPropList =(aLack,list,className,type)=>{
+    let obj = specialCaseElementMapping(className);
+    let a;
+    let b;
+    switch (type){
+        case 'props':
+            aLack.map((v)=> {
+                if(( a = propMapping[v])&&a){
+                    list.push(a);
+                }else if((b=obj.props[v])&&b){
+                    list.push(b);
+                }else {
+                    alert('通用属性和特殊属性中没有:' + v +'通知下程序猿!');
+                }
+            });
+            break;
+        case 'events':
+            aLack.map((v)=> {
+                if(( a = eventMapping[v])&&a){
+                    list.push(a);
+                }else if((b=obj.events[v])&&b){
+                    list.push(b);
+                }else {
+                    alert('通用属性和特殊属性中没有:' + v +'通知下程序猿!');
+                }
+            });
+            break;
+    }
+    return list;
+}
+
 let modifyPropList = (list, className, type) => {
     //根据不同的class对props进行定制和排序
     //以后还可能对于不用的type进行不同定制（modeType）
+   // console.log(list,className,type);
+    let aLack=[];
+    if(className=='container'){
+        switch (type){
+            case 'flex':
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
+                break;
+            case 'dom':
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
+                break;
+            case 'canvas':
+                aLack=['keepRatio','alpha','initVisible'];
+                break;
+        }
+    }
+    else if(className=='graphics'){
+
+    }
+    else if(className=='sprite'){
+
+    }
+    else if(className=='canvas'){
+
+    }
+    else if(className=='root'){
+
+    }
+    else if(className=='image'){
+
+    }
+    else if(className=='text'){
+
+    }
+    else if(className=='rect'){
+
+    }
+    else if(className=='ellipse'){
+
+    }
+    list = dealPropList(aLack,list,className,'props');
+    //console.log(list,className,type);
     return list;
 };
 
 let modifyEventList = (list, className, type) => {
     //根据不同的class对events进行定制和排序
     //以后还可能对于不用的type进行不同定制（modeType）
+  //  console.log(list,className,type);
+    let aLack=[];
+    if(className=='container'){
+        switch (type){
+            case 'flex':
+                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide',];
+               break;
+            case 'dom':
+                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide',];
+                break;
+            case 'canvas':
+                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide',];
+                break;
+        }
+    }
+    else if(className=='graphics'){
+
+    }
+    else if(className=='sprite'){
+
+    }
+    else if(className=='canvas'){
+
+    }
+    else if(className=='root'){
+
+    }
+    else if(className=='image'){
+
+    }
+    else if(className=='text'){
+
+    }
+    else if(className=='rect'){
+
+    }
+    else if(className=='ellipse'){
+
+    }
+   list = dealPropList(aLack,list,className,'events');
+   console.log(list,className,type);
     return list;
 };
 
@@ -556,6 +673,7 @@ let dealWithOriginalPropertyMap = ()=>{
             }
             //添加缺省的属性
             el.props = modifyElementList(el.props, className, 'props', type);
+
             if(el.events&&el.events.length>0) {
                 el.events.forEach((e)=>{
                     //对事件进行处理

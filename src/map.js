@@ -340,8 +340,9 @@ const propertyMap = {
             events: [],
             provides: 2 } },
     'container':
-    { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    {
+        flex:
+        { funcs: [ { name: 'delete', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'margin', type: 2, default: '' },
@@ -369,7 +370,8 @@ const propertyMap = {
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
             events: [],
-            provides: 6 } },
+            provides: 6 }
+    },
     'graphics':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
