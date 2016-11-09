@@ -52,7 +52,7 @@ class App extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.unsubscribeToolbox = ToolBoxStore.listen(this.onToolBoxStatusChange);
         this.onStatusChange(WidgetStore.getStore());
-        console.log(propertyMap);
+      //   console.log(propertyMap);
      //   document.addEventListener('keydown',this.keySave);
 
     }
