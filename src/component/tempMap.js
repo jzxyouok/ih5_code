@@ -9,6 +9,11 @@ let modeType = {
     canvas: 'canvas'
 };
 
+let visibleWidgetList = ['image', 'imagelist', 'text',
+    'video', 'rect', 'ellipse', 'path',
+    'slidetimer', 'bitmaptext', 'qrcode', 'counter',
+    'button', 'taparea', 'container', 'input', 'html', 'table'];
+
 let propMapping = {
     'id': {showName:'ID', type: propertyType.String, default: ''},
 
@@ -135,7 +140,7 @@ let propMapping = {
     'flexWrap': {showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
     'flexDirection': {showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
     'scaleStage': {showName:'缩放舞台', type: propertyType.Percentage, default: 1},
-    'bgImage': {showName:'外间距', type: propertyType.Number, default:0},
+    'bgImage': {showName:'背景图片', type: propertyType.String, default:''},
 };
 
 let eventMapping = {
@@ -243,7 +248,6 @@ let funcMapping = {
         {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]},
     'update': {showName:'更新', info:'(data, callback(err, result))', property:[
         {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]},
-    'callback(err, result)': {showName:'回调函数', 'value':null, 'type':propertyType.Hidden},
 
     'send': {showName:'发送消息', info:'(data)', property:[
         {'name':'value', showName:'内容', 'value':null, 'type':propertyType.FormulaInput}]},
@@ -445,6 +449,11 @@ let modifyFuncList = (list, className, type) => {
             { name: 'randomValue', showName:'生成随机数', property:[
                 {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
                 {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}]}];
+        list = list.concat(temp);
+    }
+    if(visibleWidgetList.indexOf(className)>=0) {
+        let temp = [{ name: 'show', showName:'显示'},
+            { name: 'hide', showName:'隐藏'}];
         list = list.concat(temp);
     }
     return list;
