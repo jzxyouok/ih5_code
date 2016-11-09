@@ -543,7 +543,7 @@ let modifyEventList = (list, className, type) => {
 
     }
    list = dealPropList(aLack,list,className,'events');
-   console.log(list,className,type);
+   // console.log(list,className,type);
     return list;
 };
 
