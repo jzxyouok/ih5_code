@@ -396,56 +396,47 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['twoDArr'].flex = propertyMap['twoDArr'].dom;
 };
 
-let addPropsByClassName = (className) => {
-    let list = [];
-    switch (className) {
-        default:
-            break;
+let addPropsByClassName = (list, className) => {
+    return list;
+};
+
+let addEventsByClassName = (list, className) => {
+    return list;
+};
+
+let addFuncsByClassName = (list, className) => {
+    if(className === 'text'|| className=== 'counter' || className === 'strVar' || className === 'intVar') {
+        let func = { name: 'changeValue', showName:'赋值', info:'(value)', property:[
+                {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]};
+        list.unshift(func);
+    }
+    if(className==='counter') {
+        let temp = [
+            { name: 'add1', showName:'加1'},
+            { name: 'minus1', showName:'减1'},
+            { name: 'addN', showName:'加N', property:[
+                {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
+            { name: 'minusN', showName:'减N', property:[
+                {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
+            { name: 'getInt', showName:'取整'},
+            { name: 'randomValue', showName:'生成随机数', property:[
+                {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
+                {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}]}];
+        list = list.concat(temp);
     }
     return list;
 };
 
-let addEventsByClassName = (className) => {
-    let list = [];
-    switch (className) {
-        default:
-            break;
-    }
-    return list;
-};
-
-let addFuncsByClassName = (className) => {
-    let list = [];
-    switch (className) {
-        case 'counter':
-            list = [
-                { name: 'add1', showName:'加1'},
-                { name: 'minus1', showName:'减1'},
-                { name: 'addN', showName:'加N', property:[
-                    {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
-                { name: 'minusN', showName:'减N', property:[
-                    {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}]},
-                { name: 'getInt', showName:'取整'},
-                { name: 'randomValue', showName:'生成随机数', property:[
-                    {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
-                    {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}]}];
-            break;
-        default:
-            break;
-    }
-    return list;
-};
-
-let additionalElementProp = (className, type)=>{
+let addedElementList = (list, className, type)=>{
     switch (type) {
         case 'props':
-            return addPropsByClassName(className);
+            return addPropsByClassName(list, className);
             break;
         case 'events':
-            return addEventsByClassName(className);
+            return addEventsByClassName(list, className);
             break;
         case 'funcs':
-            return addFuncsByClassName(className);
+            return addFuncsByClassName(list, className);
             break;
     }
 };
@@ -532,7 +523,7 @@ let dealWithOriginalPropertyMap = ()=>{
                 });
             }
             //添加缺省的属性
-            el.props = el.props.concat(additionalElementProp(className, 'props'));
+            el.props = addedElementList(el.props, className, 'props');
             if(el.events&&el.events.length>0) {
                 el.events.forEach((e)=>{
                     //对事件进行处理
@@ -542,7 +533,7 @@ let dealWithOriginalPropertyMap = ()=>{
                 });
             }
             //添加缺省的事件
-            el.events = el.events.concat(additionalElementProp(className, 'events'));
+            el.events = addedElementList(el.events, className, 'events');
             if(el.funcs&&el.funcs.length>0) {
                 el.funcs.forEach((f)=>{
                     //对动作进行处理
@@ -552,7 +543,7 @@ let dealWithOriginalPropertyMap = ()=>{
                 });
             }
             //添加附加的动作
-            el.funcs = el.funcs.concat(additionalElementProp(className, 'funcs'));
+            el.funcs = addedElementList(el.funcs, className, 'funcs');
         }
     }
 };
