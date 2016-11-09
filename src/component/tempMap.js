@@ -424,28 +424,37 @@ let addCustomWidgetProperties = ()=>{
 
 let dealPropList =(aLack,list,className,type)=>{
     let obj = specialCaseElementMapping(className);
-    let a;
-    let b;
+
     switch (type){
         case 'props':
             aLack.map((v)=> {
-                if(( a = propMapping[v])&&a){
-                    list.push(a);
-                }else if((b=obj.props[v])&&b){
-                    list.push(b);
+                let c=null;
+                if(propMapping[v]){
+                   c=propMapping[v];
+                }
+                if(obj.props&&obj.props[v]){
+                    c=obj.props[v];
+                }
+                if(c){
+                    list.push(c);
                 }else {
-                    alert('通用属性和特殊属性中没有:' + v +'通知下程序猿!');
+                    alert('通用属性和特殊属性中没有:' + v + '通知下程序猿!');
                 }
             });
             break;
         case 'events':
             aLack.map((v)=> {
-                if(( a = eventMapping[v])&&a){
-                    list.push(a);
-                }else if((b=obj.events[v])&&b){
-                    list.push(b);
+                let c=null;
+                if( eventMapping[v]){
+                    c= eventMapping[v];
+                }
+                if(obj.events&&obj.events[v]) {
+                    c = obj.events[v];
+                }
+                if(c){
+                    list.push(c);
                 }else {
-                    alert('通用属性和特殊属性中没有:' + v +'通知下程序猿!');
+                    alert('通用属性和特殊属性中没有:' + v + '通知下程序猿!');
                 }
             });
             break;
@@ -496,7 +505,7 @@ let modifyPropList = (list, className, type) => {
 
     }
     list = dealPropList(aLack,list,className,'props');
-    //console.log(list,className,type);
+   // console.log(list,className,type);
     return list;
 };
 
@@ -543,7 +552,7 @@ let modifyEventList = (list, className, type) => {
 
     }
    list = dealPropList(aLack,list,className,'events');
-   // console.log(list,className,type);
+  //  console.log(list,className,type);
     return list;
 };
 
