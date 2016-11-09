@@ -80,6 +80,7 @@ class FormulaInput extends React.Component {
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
 
         this.checkValueObjValid = this.checkValueObjValid.bind(this); //不存在的obj清掉
+        this.checkObjExist = this.checkObjExist.bind(this);
 
         this.resizeInputWidth = this.resizeInputWidth.bind(this);
         this.doGetCaretPosition = this.doGetCaretPosition.bind(this);
@@ -139,7 +140,7 @@ class FormulaInput extends React.Component {
             let changed = false;
             value.forEach((v, i)=>{
                 if(v.objKey) {
-                    let obj = WidgetStore.getWidgetByKey(v.objKey);
+                    let obj = this.checkObjExist(v);
                     if(!obj) {
                         changed = true;
                         value.splice(i,1);
@@ -161,6 +162,22 @@ class FormulaInput extends React.Component {
                 })
             }
         }
+    }
+
+    checkObjExist(obj) {
+        let index = -1;
+        this.props.objectList.forEach((v, i)=>{
+            if(obj.objKey === v.key) {
+                index = i;
+            }
+        });
+        if(index >= 0) {
+            return this.props.objectList[index];
+        }
+        if(obj.objKey === 'globalXY') {
+            return {className:'DIY', key:'globalXY', props:{name:'点击坐标'}};
+        }
+        return null;
     }
 
     // formula mode
@@ -297,6 +314,7 @@ class FormulaInput extends React.Component {
 
     onGetPropertyList(obj){
         let props = [];
+
         if(obj&&obj.className){
             let className = obj.className;
             if(obj.className === 'var'){
@@ -309,19 +327,25 @@ class FormulaInput extends React.Component {
                         break;
                 }
             }
-            propertyMap[className].map((v)=> {
-                if (v.isProperty && v.name != 'id') {
-                    if(v.showName=='W'){
-                        props.push({name:'width', showName:'宽度'});
-                    }else if(v.showName=='H'){
-                        props.push({name:'height', showName:'高度'});
-                    }else if(v.showName=='中心点'){
-                    }else{
-                        props.push({name:v.name, showName:v.showName});
+            if(propertyMap[className]) {
+                propertyMap[className].map((v)=> {
+                    if (v.isProperty && v.name != 'id') {
+                        if(v.showName=='W'){
+                            props.push({name:'width', showName:'宽度'});
+                        }else if(v.showName=='H'){
+                            props.push({name:'height', showName:'高度'});
+                        }else if(v.showName=='中心点'){
+                        }else{
+                            props.push({name:v.name, showName:v.showName});
+                        }
                     }
-                }
-            });
-
+                });
+            }
+            if(obj && obj.className === 'DIY' && obj.key === 'globalXY') {
+                props.push({name:'X', showName:'X坐标'});
+                props.push({name:'Y', showName:'Y坐标'});
+                return props;
+            }
         }
         return props;
     }
@@ -660,25 +684,6 @@ class FormulaInput extends React.Component {
             );
         };
 
-        // let formulaObjDropDown = () =>{
-        //     if(this.disabled) {
-        //         return  (<div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
-        //             <div className="dropDown-title">选择对象</div>
-        //             <span className="right-icon" />
-        //         </div>)
-        //     }  else {
-        //         return (<Dropdown overlay={objectMenu} trigger={['click']}
-        //                    getPopupContainer={() => document.getElementById(this.containerId)}
-        //                    onVisibleChange={this.onObjectVisibleChange}
-        //                    visible={this.state.objectDropDownVisible}>
-        //             <div className={$class("formula--dropDown formula-obj-dropDown f--hlc")}>
-        //                 <div className="dropDown-title">选择对象</div>
-        //                 <span className="right-icon" />
-        //             </div>
-        //         </Dropdown>);
-        //     }
-        // };
-
         let formulaPropertyDropdown  = (obj, v, i) => {
             if(this.disabled) {
                 return ( <div className={$class("formula--dropDown formula-obj-property-dropDown f--hlc")}>
@@ -701,7 +706,7 @@ class FormulaInput extends React.Component {
         };
 
         let formulaList = (v, i)=> {
-            let obj = WidgetStore.getWidgetByKey(v.objKey);
+            let obj = this.checkObjExist(v);
             return (
                 <div key={i} className="formula-mode-div f--hlc">
                     {
