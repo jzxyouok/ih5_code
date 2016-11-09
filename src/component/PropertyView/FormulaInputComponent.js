@@ -170,26 +170,35 @@ class FormulaInput extends React.Component {
                 e.stopPropagation();
                 SelectTargetAction['selectBtnClick'](null, false, []);
             }
-            if(this.refs.formulaMode&&!this.state.on) {
-                this.setState({
-                    on: true
-                }, ()=>{
-                    if(this.refs.formulaMode) {
-                        this.refs.formulaMode.style.cursor = 'auto';
-                        this.refs.formulaMode.style.width = 'auto';
-                        this.refs.formulaMode.style.minWidth = this.minWidth;
-                        this.refs.formulaMode.style.overflow = 'visible';
-                        this.onChangeFocus(true);
-                        if(activePatternIndex!==undefined&&
-                            activePatternIndex!=null&&
-                            activePatternIndex>=0) {
-                            let focus = 'pattern'+activePatternIndex;
-                            if(this.refs[focus]) {
-                                this.refs[focus].refs.input.focus();
-                            }
-                        }
+
+            let activePattern = ()=> {
+                if(activePatternIndex!==undefined&&
+                    activePatternIndex!=null&&
+                    activePatternIndex>=0) {
+                    let focus = 'pattern'+activePatternIndex;
+                    if(this.refs[focus]) {
+                        this.refs[focus].refs.input.focus();
                     }
-                })
+                }
+            };
+
+            if(this.refs.formulaMode) {
+                if(!this.state.on) {
+                    this.setState({
+                        on: true
+                    }, ()=>{
+                        if(this.refs.formulaMode) {
+                            this.refs.formulaMode.style.cursor = 'auto';
+                            this.refs.formulaMode.style.width = 'auto';
+                            this.refs.formulaMode.style.minWidth = this.minWidth;
+                            this.refs.formulaMode.style.overflow = 'visible';
+                            this.onChangeFocus(true);
+                            activePattern();
+                        }
+                    })
+                } else {
+                    activePattern();
+                }
             }
             return true;
         } else {
