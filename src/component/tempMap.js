@@ -3,6 +3,12 @@ import bridge from 'bridge';
 import {propertyMap, propertyType, backwardTransOptions, forwardTransOptions,
     effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags} from '../map';
 
+let modeType = {
+    flex: 'flex',
+    dom: 'dom',
+    canvas: 'canvas'
+};
+
 let propMapping = {
     'id': {showName:'ID', type: propertyType.String, default: ''},
 
@@ -396,17 +402,20 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['twoDArr'].flex = propertyMap['twoDArr'].dom;
 };
 
-let addPropsByClassName = (list, className) => {
-
+let modifyPropList = (list, className, type) => {
+    //根据不同的class对props进行定制和排序
+    //以后还可能对于不用的type进行不同定制（modeType）
     return list;
 };
 
-let addEventsByClassName = (list, className) => {
-
+let modifyEventList = (list, className, type) => {
+    //根据不同的class对events进行定制和排序
+    //以后还可能对于不用的type进行不同定制（modeType）
     return list;
 };
 
-let addFuncsByClassName = (list, className) => {
+let modifyFuncList = (list, className, type) => {
+    //以后还可能对于不用的type进行不同定制（modeType）
     if(className === 'text'|| className=== 'counter' || className === 'strVar' || className === 'intVar') {
         let func = { name: 'changeValue', showName:'赋值', info:'(value)', property:[
                 {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]};
@@ -429,16 +438,16 @@ let addFuncsByClassName = (list, className) => {
     return list;
 };
 
-let addedElementList = (list, className, type)=>{
-    switch (type) {
+let modifyElementList = (list, className, elementType, type)=>{
+    switch (elementType) {
         case 'props':
-            return addPropsByClassName(list, className);
+            return modifyPropList(list, className, type);
             break;
         case 'events':
-            return addEventsByClassName(list, className);
+            return modifyEventList(list, className, type);
             break;
         case 'funcs':
-            return addFuncsByClassName(list, className);
+            return modifyFuncList(list, className, type);
             break;
     }
 };
@@ -525,7 +534,7 @@ let dealWithOriginalPropertyMap = ()=>{
                 });
             }
             //添加缺省的属性
-            el.props = addedElementList(el.props, className, 'props');
+            el.props = modifyElementList(el.props, className, 'props', type);
             if(el.events&&el.events.length>0) {
                 el.events.forEach((e)=>{
                     //对事件进行处理
@@ -535,7 +544,7 @@ let dealWithOriginalPropertyMap = ()=>{
                 });
             }
             //添加缺省的事件
-            el.events = addedElementList(el.events, className, 'events');
+            el.events = modifyElementList(el.events, className, 'events', type);
             if(el.funcs&&el.funcs.length>0) {
                 el.funcs.forEach((f)=>{
                     //对动作进行处理
@@ -545,7 +554,7 @@ let dealWithOriginalPropertyMap = ()=>{
                 });
             }
             //添加附加的动作
-            el.funcs = addedElementList(el.funcs, className, 'funcs');
+            el.funcs = modifyElementList(el.funcs, className, 'funcs', type);
         }
     }
 };
