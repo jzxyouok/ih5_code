@@ -62,6 +62,7 @@ class Property extends React.Component {
         this.onActionVisibleChange = this.onActionVisibleChange.bind(this);
         this.onActionSelect = this.onActionSelect.bind(this);
         this.onGetActionList = this.onGetActionList.bind(this);
+        this.onGetActionPropertyFIList = this.onGetActionPropertyFIList.bind(this);
 
         this.onChangePropDom = this.onChangePropDom.bind(this);
         this.onPropertyContentSelect = this.onPropertyContentSelect.bind(this);
@@ -599,6 +600,18 @@ class Property extends React.Component {
         }
     }
 
+    onGetActionPropertyFIList() {
+        let fIList = [];
+        this.state.objectList.forEach(v=>{
+            fIList.push(v);
+        });
+        if(this.state.event.conFlag === 'click'||this.state.event.conFlag === 'touchDown'
+            || this.state.event.conFlag === 'touchUp') {
+            fIList.unshift({className:'DIY', key:'globalXY', props:{name:'点击坐标'}})
+        }
+        return fIList;
+    }
+
     onFormulaInputFocus(canChange) {
         if(this.state.activeKey !== this.state.wKey) {
             return false;
@@ -752,7 +765,7 @@ class Property extends React.Component {
                                         : null}
                                 property={v1}
                                 propertyId={propertyId}
-                                objectList={this.state.objectList}
+                                objectList={this.onGetActionPropertyFIList()}
                                 onFInputFocus={this.onFormulaInputFocus}
                                 onFInputBlur={this.onFormulaInputBlur}
                                 getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
@@ -856,7 +869,7 @@ class Property extends React.Component {
                 case propertyType.Number:
                     return <InputNumber step={0.1} {...defaultProp}/>;
                 case propertyType.Boolean3:
-                    return <Switch checkedChildren={'开'} unCheckedChildren={'关'} {...defaultProp}/>
+                    return <Switch checkedChildren={'开'} unCheckedChildren={'关'} {...defaultProp}/>;
                 case propertyType.Boolean2:
                     return <SwitchMore   {...defaultProp}/>;
                 case propertyType.Boolean:
@@ -864,7 +877,7 @@ class Property extends React.Component {
                 case propertyType.FormulaInput:
                     return <FormulaInput containerId={propertyId}
                                          disabled={!this.state.currentEnable}
-                                         objectList={this.state.objectList}
+                                         objectList={this.onGetActionPropertyFIList()}
                                          onFocus={this.onFormulaInputFocus}
                                          onBlur={this.onFormulaInputBlur}
                                          {...defaultProp}/>;

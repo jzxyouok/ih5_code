@@ -79,7 +79,6 @@ class DesignView extends React.Component {
     }
 
     onStatusChange(widget) {
-     //   console.log(widget);
         if(widget.selectWidget){
             this.selectNode =widget.selectWidget;
             if(widget.selectWidget.className == "root" && widget.selectWidget.props.name == "stage") {
