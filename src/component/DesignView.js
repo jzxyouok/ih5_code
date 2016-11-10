@@ -24,14 +24,14 @@ class DesignView extends React.Component {
         this.stageZoomTop=0;
         this.stageZoomLeft=0;
         this.keyboard=false;
-
+      
         this.canvasObj={
             subW:null,
             subH:null,
             canvasWraper:null,
             oCanvasDom:null
         };
-
+        
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
@@ -49,7 +49,6 @@ class DesignView extends React.Component {
     }
 
     componentDidMount() {
-
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         window.onresize=this.onresize;
@@ -74,9 +73,9 @@ class DesignView extends React.Component {
         document.getElementById('v_ruler').removeEventListener('mousedown', this.mouseDown_left);
         document.getElementById('DesignView-Container').removeEventListener('mousemove', this.mouseMove);
         document.getElementById('DesignView-Container').removeEventListener('mouseup', this.mouseUp);
-        document.getElementById('canvas-dom').removeEventListener('mousedown',this.canvasMousedown);
-        document.getElementById('canvas-dom').removeEventListener('mousemove',this.canvasMouseMove);
-        document.getElementById('canvas-dom').removeEventListener('mouseup',this.canvasMouseUp);
+        document.getElementById('canvas-wraper').removeEventListener('mousedown',this.canvasMousedown);
+        document.getElementById('canvas-wraper').removeEventListener('mousemove',this.canvasMouseMove);
+        document.getElementById('canvas-wraper').removeEventListener('mouseup',this.canvasMouseUp);
     }
 
     onStatusChange(widget) {
@@ -125,7 +124,6 @@ class DesignView extends React.Component {
         }else{
             this.keyboard=false;
         }
-
     }
 
     stageZoomChange(){
@@ -150,13 +148,13 @@ class DesignView extends React.Component {
         let oHeight =document.getElementById('v_ruler');
 
 
-        if(iWidthSum){
-            let sWidth='';
-            for(let i = 0 ;i<=iWidthSum;i++){
-                sWidth+='<li>'+i*100+'</li>'
-            }
-            oWidth.innerHTML=sWidth;
-        }
+       if(iWidthSum){
+           let sWidth='';
+           for(let i = 0 ;i<=iWidthSum;i++){
+               sWidth+='<li>'+i*100+'</li>'
+           }
+           oWidth.innerHTML=sWidth;
+       }
         if(iHeightSum){
             let sHeight='';
             for(let i = 0 ;i<=iHeightSum;i++){
@@ -372,34 +370,35 @@ class DesignView extends React.Component {
         if(this.state.space && this.state.isDown){
             event.preventDefault();
 
-            this.canvasObj.canvasWraper.style.left =(e.pageX-this.canvasObj.subW+320)+'px';
-            this.canvasObj.oCanvasDom.style.top =(e.pageY-this.canvasObj.subH)+'px';
+              this.canvasObj.canvasWraper.style.left =(e.pageX-this.canvasObj.subW+320)+'px';
+             this.canvasObj.oCanvasDom.style.top =(e.pageY-this.canvasObj.subH)+'px';
 
-            this.drawLine(this.aODiv);
+             this.drawLine(this.aODiv);
         }
     }
 
-    canvasMouseUp(e){
-        event.preventDefault();
-        if (this.state.isDown) {
-            this.setState({
-                isDown:false
-            });
-            this.canvasObj.canvasWraper = null;
-            this.canvasObj.oCanvasDom = null;
-        }
-
+   canvasMouseUp(e){
+           event.preventDefault();
+           if (this.state.isDown) {
+               this.setState({
+                   isDown:false
+               });
+               this.canvasObj.canvasWraper = null;
+               this.canvasObj.oCanvasDom = null;
+           }
+       //参考线
+      // WidgetActions['setRulerLineBtn'](false);
     }
-
+    
 
     mouseDown_top(event){
-        event.stopPropagation();
-        this.curODiv =  document.createElement('div');
-        this.curODiv.appendChild(document.createElement('div'));
-        this.curODiv.setAttribute('class','rulerWLine');
-        this.refs.container.appendChild(this.curODiv);
-        this.isDraging=true;
-        this.whichDrag='top';
+            event.stopPropagation();
+            this.curODiv =  document.createElement('div');
+            this.curODiv.appendChild(document.createElement('div'));
+            this.curODiv.setAttribute('class','rulerWLine');
+            this.refs.container.appendChild(this.curODiv);
+            this.isDraging=true;
+            this.whichDrag='top';
     }
 
     mouseDown_left(event){
@@ -416,7 +415,7 @@ class DesignView extends React.Component {
         if(this.curODiv &&  this.isDraging){
             event.stopPropagation();
             if(this.whichDrag=='top'){
-                this.curODiv.style.top = (event.pageY)+'px';
+               this.curODiv.style.top = (event.pageY)+'px';
 
                 document.body.style.cursor=' n-resize';
             }else{
@@ -482,10 +481,10 @@ class DesignView extends React.Component {
 
         return (
             <div
-                id='DesignView-Container'
-                ref='container'
-                onWheel={this.scroll}
-                className={cls({'moveTag':this.state.space&&this.state.isDown,'no-moveTag':this.state.space&&!this.state.isDown})}
+                 id='DesignView-Container'
+                 ref='container'
+                 onWheel={this.scroll}
+                 className={cls({'moveTag':this.state.space&&this.state.isDown,'no-moveTag':this.state.space&&!this.state.isDown})}
             >
                 <div  ref='line_top' id='line_top'></div>
                 <div ref='canvasWraper' className='canvas-wraper' id="canvas-wraper" >
@@ -494,8 +493,8 @@ class DesignView extends React.Component {
                          className="DesignView"
                          ref='view'
                          style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
-                      <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
-                      <ul id='v_ruler'></ul>
+                        <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
+                        <ul id='v_ruler'></ul>
                     </div>
                 </div>
             </div>
