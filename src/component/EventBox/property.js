@@ -255,7 +255,7 @@ class Property extends React.Component {
             }
         }
         mappingList.map((v,i)=>{
-            if(v.type !== propertyType.Hidden&&v.name !='id'){
+            if(v.type !== propertyType.Hidden&&!v.readOnly&&v.name !='id'){
                 let vObj=JSON.parse(JSON.stringify(v));
                 vObj.isProp=true;
                 if(vObj.name=='scaleX'){
