@@ -909,7 +909,7 @@ class PropertyView extends React.Component {
             let defaultProp = {
                 size: 'small',
                 placeholder: item.default,
-                disabled: item.readOnly !== undefined,
+                disabled: item.readOnly === true,
                 onChange:  this.onChangePropDom.bind(this, item)
             };
 
@@ -1110,7 +1110,7 @@ class PropertyView extends React.Component {
                             {'ant-input-degree':hasDegree},
                             {'ant-input-px': hasPx}
                         )}>
-                            {this.getInputBox(item.type, defaultProp, item.readOnly !== undefined)}
+                            {this.getInputBox(item.type, defaultProp, item.readOnly === true)}
                         </div>
                     </div>
                 </div>
