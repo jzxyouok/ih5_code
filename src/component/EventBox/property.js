@@ -1071,7 +1071,7 @@ class Property extends React.Component {
                         </div>
 
                         <div className="p--right flex-1">
-                            <div className="p--property" ref='pProperty' style={{width:'475px'}}>
+                            <div className="p--property" ref='pProperty'>
                                 <Dropdown overlay={actionMenu} trigger={['click']}
                                           getPopupContainer={() => document.getElementById(propertyId)}
                                           onVisibleChange={this.onActionVisibleChange}
