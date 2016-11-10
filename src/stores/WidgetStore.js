@@ -3163,7 +3163,8 @@ export default Reflux.createStore({
                 }
             }.bind(this), false);
         }
-        rootDiv.innerHTML = '';
+
+        // rootDiv.innerHTML = '';
 
         if (data['defs']) {
             for (let n in data['defs']) {
