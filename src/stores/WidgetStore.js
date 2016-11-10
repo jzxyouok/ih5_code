@@ -105,7 +105,7 @@ const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse
     'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas', 'table'];
 var currentLoading;
 
-function loadTree(parent, node, idList) {
+function loadTree(parent, node, idList, initEl) {
   let current = {};
   current.parent = parent;
   current.className = node['cls'];
@@ -258,7 +258,7 @@ function loadTree(parent, node, idList) {
       idList[node['id']] = current;
   }
 
-  current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props']);
+  current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl);
 
   // var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
 
@@ -3151,31 +3151,7 @@ export default Reflux.createStore({
 
         _keyCount = 1;
         keyMap = [];
-        if (data['defs']) {
-            for (let n in data['defs']) {
-                bridge.addClass(n);
-                classList.push(n);
-                idList = [];
-                tree = loadTree(null, data['defs'][n], idList);
-                stageTree.push({name: n, tree: tree});
-                resolveEventTree(tree, idList);
-                resolveDBItemList(tree, idList);
-            }
-        }
-
-        //起个名字给舞台
-        if (data['stage']){
-            data['stage']['props']['name'] = 'stage';
-        }
-        if(data['stage']&&data['stage']['props']['isStage'] === undefined) {
-            data['stage']['props']['isStage'] = true;
-        }
         idList = [];
-        tree = loadTree(null, data['stage'], idList);
-        resolveEventTree(tree, idList);
-        resolveDBItemList(tree, idList);
-        stageTree.unshift({name: 'stage', tree: tree});
-        // bridge.createSelector(null);
 
         if (!rootDiv) {
             rootDiv = document.getElementById('canvas-dom');
@@ -3189,7 +3165,31 @@ export default Reflux.createStore({
             }.bind(this), false);
         }
         rootDiv.innerHTML = '';
-        rootDiv.appendChild(bridge.getEl(stageTree[0].tree.node));
+
+        if (data['defs']) {
+            for (let n in data['defs']) {
+                bridge.addClass(n);
+                classList.push(n);
+                idList = [];
+                tree = loadTree(null, data['defs'][n], idList, rootDiv);
+                stageTree.push({name: n, tree: tree});
+                resolveEventTree(tree, idList);
+                resolveDBItemList(tree, idList);
+            }
+        }
+
+        //起个名字给舞台
+        if (data['stage']){
+            data['stage']['props']['name'] = 'stage';
+        }
+        if(data['stage']&&data['stage']['props']['isStage'] === undefined) {
+            data['stage']['props']['isStage'] = true;
+        }
+        tree = loadTree(null, data['stage'], idList, rootDiv);
+        resolveEventTree(tree, idList);
+        resolveDBItemList(tree, idList);
+        stageTree.unshift({name: 'stage', tree: tree});
+        this.rootDiv = rootDiv;
         this.render();
 
         this.trigger({
@@ -3578,11 +3578,11 @@ export default Reflux.createStore({
             for (let n in data['defs']) {
                 bridge.addClass(n);
                 classList.push(n);
-                tree = loadTree(null, data['defs'][n], null);
+                tree = loadTree(null, data['defs'][n], null, this.rootDiv);
                 stageTree.push({name: n, tree: tree});
             }
         }
-        tree = loadTree(null, data['stage'], null);
+        tree = loadTree(null, data['stage'], null, this.rootDiv);
         stageTree.unshift({name: 'stage', tree: tree});
 
         _keyCount=keyMap.length;
