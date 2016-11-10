@@ -3,8 +3,6 @@ import bridge from 'bridge';
 import {propertyMap, propertyType, backwardTransOptions, forwardTransOptions,
     effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags} from '../map';
 
-import {originalPropertyMap} from './PropertyMap';
-
 let modeType = {
     flex: 'flex',
     dom: 'dom',
@@ -204,6 +202,7 @@ let funcMapping = {
     'create': {name:'create', showName:'创建对象', property:[
         {'name':'class', 'showName':'类别', 'value':null, 'type':propertyType.Select},
         {'name':'id', 'showName':'ID', 'value':null, 'type':propertyType.String},
+        {'name':'props', 'showName':'属性', value:null, 'type':propertyType.Remove},
         {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2}]},
     'gotoPage': {name:'gotoPage', showName:'跳转到页面', property:[
         {'name':'page', 'showName':'页面', 'value':null, 'type':propertyType.Integer}]},

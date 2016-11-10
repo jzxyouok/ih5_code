@@ -42,15 +42,12 @@ let tableIcon = img('table.svg');
 
 let worldIcon = img('world.svg');
 
+let domIcon = img('dom.svg');
+
 // let trackIcon = img('track.svg');
 // let bodyIcon = img('body.svg');
 // let easingIcon = img('easing.svg');
 // let effectIcon = img('effect.svg');
-
-let modeType = {
-    canvas: 2,  //canvas模式
-    dom: 1      //dom模式
-};
 
 var cid = 1;
 var TOOL_ID = {
@@ -92,7 +89,8 @@ var TOOL_ID = {
     INPUT:33,
     PERSONSALDB:34,
     MODULE : 35,
-    TABLE : 36
+    TABLE : 36,
+    DOM: 37,
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -118,7 +116,6 @@ var DEFAULT_TOOLBOX = {
         key:3,
         gid:3,
         primary: 0,
-        mode: modeType.dom,
         secondary: [
             {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50, 'fontSize':26}}]
     },{
@@ -161,7 +158,6 @@ var DEFAULT_TOOLBOX = {
         key:8,
         gid:8,
         primary: 0,
-        mode: modeType.dom,
         secondary: [
             {cid:TOOL_ID.HTML,name:'网页',icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
     },{
@@ -176,7 +172,6 @@ var DEFAULT_TOOLBOX = {
         key:10,
         gid:10,
         primary: 0,
-        mode: modeType.dom,
         secondary: [
             {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'}]
     },{
@@ -200,9 +195,16 @@ var DEFAULT_TOOLBOX = {
         key:13,
         gid:13,
         primary: 0,
-        mode: modeType.dom,
         secondary: [
-            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'shapeWidth': '100%', 'shapeHeight': '100%'}}
+            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'width': '100%', 'width': '100%'}}
+        ]
+    },{
+        name:'DOM',
+        key:37,
+        gid:37,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.DOM,name:'DOM',icon:domIcon, className:'dom', drawRect:true, param:{'width': '100%', 'height': '100%'}}
         ]
     },{
         name:'时间轴',
@@ -309,5 +311,4 @@ var DEFAULT_TOOLBOX = {
     // }
 };
 
-export {modeType};
 export default DEFAULT_TOOLBOX;

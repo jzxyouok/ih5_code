@@ -11,11 +11,10 @@ import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { RangeComponent } from '../PropertyView/RangeComponent';
 import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
 import { DBConsComponent } from '../PropertyView/DBConsComponent';
-import { checkChildClass, checkIsClassType } from '../PropertyMap'
+import { checkChildClass, checkIsClassType } from '../tempMap'
 import { getPropertyMap, propertyMap, propertyType} from '../tempMap'
 import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
 import  $ from 'jquery';
-
 
 const Option = Select.Option;
 const Panel = Collapse.Panel;
@@ -210,6 +209,14 @@ class Property extends React.Component {
             if (temp.info) {
                 delete temp.info;
             }
+            if(temp.property){
+                //属性中有hidden的就删除起来
+                temp.property.forEach((v, i)=>{
+                    if(v.type === propertyType.Remove) {
+                        temp.property.splice(i, 1);
+                    }
+                })
+            }
             temp.type = funcType.default;
             actionList.push(temp);
         });
@@ -238,7 +245,14 @@ class Property extends React.Component {
             className='tableForSet';
         }
         let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
-        getPropertyMap(node, className, 'props').map((v,i)=>{
+        let mappingList = getPropertyMap(node, className, 'props');
+        if(type === 'change') {
+            //对父级的类别进行处理
+            if(node.className === 'canvas' || node.className === 'dom') {
+                mappingList = propertyMap[className][node.className].props;
+            }
+        }
+        mappingList.map((v,i)=>{
             if(v.type !== propertyType.Hidden&&v.name !='id'){
                 let vObj=JSON.parse(JSON.stringify(v));
                 vObj.isProp=true;

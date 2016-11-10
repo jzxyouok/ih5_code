@@ -20,8 +20,6 @@ import DBItemView from './DBItemView/DBItemView';
 import WidgetStore from '../stores/WidgetStore';
 import ToolBoxStore from '../stores/ToolBoxStore';
 
-import {propertyMap} from '../component/tempMap'
-
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -52,7 +50,6 @@ class App extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.unsubscribeToolbox = ToolBoxStore.listen(this.onToolBoxStatusChange);
         this.onStatusChange(WidgetStore.getStore());
-      //   console.log(propertyMap);
      //   document.addEventListener('keydown',this.keySave);
 
     }
