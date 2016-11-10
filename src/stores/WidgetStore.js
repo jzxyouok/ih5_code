@@ -3189,7 +3189,6 @@ export default Reflux.createStore({
         resolveEventTree(tree, idList);
         resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
-        this.rootDiv = rootDiv;
         this.render();
 
         this.trigger({
@@ -3578,11 +3577,11 @@ export default Reflux.createStore({
             for (let n in data['defs']) {
                 bridge.addClass(n);
                 classList.push(n);
-                tree = loadTree(null, data['defs'][n], null, this.rootDiv);
+                tree = loadTree(null, data['defs'][n], null);
                 stageTree.push({name: n, tree: tree});
             }
         }
-        tree = loadTree(null, data['stage'], null, this.rootDiv);
+        tree = loadTree(null, data['stage'], null);
         stageTree.unshift({name: 'stage', tree: tree});
 
         _keyCount=keyMap.length;
