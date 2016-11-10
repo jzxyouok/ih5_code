@@ -50,7 +50,7 @@ class PropertyViewSetUp extends React.Component {
         let defaultProp = {
             size: 'small',
             placeholder: item.default,
-            disabled: (item.readOnly !== undefined) || !this.props.enable,
+            disabled: (item.readOnly !== undefined) || this.props.disabled,
             onChange:  this.onChangePropDom.bind(this, item)
         };
         let node = WidgetStore.getWidgetByKey(this.state.oKey);

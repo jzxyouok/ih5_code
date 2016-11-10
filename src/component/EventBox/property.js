@@ -781,6 +781,7 @@ class Property extends React.Component {
                                         : null}
                                 property={v1}
                                 propertyId={propertyId}
+                                disabled={!this.state.currentEnable}
                                 objectList={this.onGetActionPropertyFIList()}
                                 onFInputFocus={this.onFormulaInputFocus}
                                 onFInputBlur={this.onFormulaInputBlur}
