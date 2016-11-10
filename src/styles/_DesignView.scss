@@ -11,10 +11,10 @@ $lineColor:#4AFFFF;
         margin-left: -320px;
     }
   &.moveTag{
-    cursor: url('./img/move.cur'),auto;
+    cursor: url('img/move.svg'),auto;
   }
   &.no-moveTag{
-    cursor: url('./img/noMove.cur'),auto;
+    cursor: url('img/noMove.svg'),auto;
   }
     #line_top{
         width: 100%;

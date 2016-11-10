@@ -16,7 +16,7 @@ import { SwitchMore,DropDownInput ,ConInputNumber} from  './PropertyView/Propert
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
 
-import {propertyType, getPropertyMap} from './tempMap'
+import {propertyType, propertyMap} from './PropertyMap';
 import {chooseFile} from  '../utils/upload';
 
 require("jscolor/jscolor");
@@ -740,7 +740,18 @@ class PropertyView extends React.Component {
 
         let className = node.className.charAt(0) == '_'?'class':node.className;
 
-        if (getPropertyMap(node, className, 'props').length===0)    return null;
+        if(className == 'data') {
+            switch (node.props.type) {
+                case dataType.oneDArr:
+                    className = dataType.oneDArr;
+                    break;
+                case dataType.twoDArr:
+                    className = dataType.twoDArr;
+                    break;
+            }
+        }
+
+        if (!propertyMap[className])    return null;
 
         const groups = {};
 
@@ -1108,8 +1119,8 @@ class PropertyView extends React.Component {
 
 
         const saveArr = []; //给部分属性排序用
-        getPropertyMap(node, className, 'props').forEach((item, index) => {
-            if (item.type !== propertyType.Hidden) {
+        propertyMap[className].forEach((item, index) => {
+            if (item.isProperty) {
                 if(item.name=='visible' || item.name=='initVisible' ){
                     saveArr.push(item);
                 }else{
@@ -1197,8 +1208,20 @@ class PropertyView extends React.Component {
             let className = selectNode.className;
             if (className.charAt(0) == '_')  className = 'class';
 
-            getPropertyMap(selectNode, className, 'props').map(item => {
-                if (item.type !== propertyType.Hidden&&obj[item.name] !== undefined) {
+            if(className == 'data') {
+                switch (selectNode.props.type) {
+                    case dataType.oneDArr:
+                        className = dataType.oneDArr;
+                        break;
+                    case dataType.twoDArr:
+                        className = dataType.twoDArr;
+                        break;
+                }
+            }
+
+
+            propertyMap[className].map(item => {
+                if (item.isProperty && obj[item.name] !== undefined) {
                     if (obj[item.name] === null) {
                         delete(selectNode.props[item.name]);
                         if (needRender)
@@ -1228,7 +1251,7 @@ class PropertyView extends React.Component {
         document.addEventListener('mouseup', this.mouseUp.bind(this));
 
         $('#PropertyView').on('focus','textarea,input',function () {
-              $(this).select();
+            $(this).select();
         });
     }
     componentWillUnmount() {
