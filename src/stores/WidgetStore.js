@@ -1,6 +1,6 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
-import  {propertyMap} from '../component/PropertyMap';
+import {getPropertyMap} from '../component/tempMap'
 
 var bridge = require('bridge');
 bridge.create();
@@ -105,7 +105,7 @@ const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse
     'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas', 'table'];
 var currentLoading;
 
-function loadTree(parent, node, idList) {
+function loadTree(parent, node, idList, initEl) {
   let current = {};
   current.parent = parent;
   current.className = node['cls'];
@@ -258,32 +258,28 @@ function loadTree(parent, node, idList) {
       idList[node['id']] = current;
   }
 
+  current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl);
 
+  // var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
 
-  var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
+  // current.node = bridge.addWidget(renderer,
+  //     (parent)
+  //     ? parent.node
+  //     : null, node['cls'], null, node['props'],
+  //       (parent && parent.timerWidget) ? parent.timerWidget.node : null
+  // );
 
-  current.node = bridge.addWidget(renderer,
-      (parent)
-      ? parent.node
-      : null, node['cls'], null, node['props'],
-        (parent && parent.timerWidget) ? parent.timerWidget.node : null
-  );
-
-
-
-    current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
-
-
+  // current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
 
   if (parent) {
     parent.children.unshift(current);
     current.rootWidget = parent.rootWidget;
-    if (renderer != current.rootWidget.rendererList[0])
-      current.rootWidget.rendererList.unshift(renderer);
+    // if (renderer != current.rootWidget.rendererList[0])
+    //   current.rootWidget.rendererList.unshift(renderer);
   } else {
     current.rootWidget = current;
     current.imageList = node['links'] || [];
-    current.rendererList = [renderer];
+    // current.rendererList = [renderer];
     bridge.setLinks(current.node, current.imageList);
     // bridge.createSelector(current.node);
   }
@@ -1650,16 +1646,16 @@ export default Reflux.createStore({
     selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
         if (widget) {
-            if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
-                render = true;
-                var el = bridge.getDomElement(widget.rootWidget.node);
-                if (el != rootElm) {
-                    if (rootElm)
-                        rootDiv.removeChild(rootElm);
-                        rootElm = el;
-                        rootDiv.appendChild(rootElm);
-                }
-            }
+            // if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
+            //     render = true;
+            //     var el = bridge.getEl(widget.rootWidget.node);
+            //     if (el != rootElm) {
+            //         if (rootElm)
+            //             rootDiv.removeChild(rootElm);
+            //             rootElm = el;
+            //             rootDiv.appendChild(rootElm);
+            //     }
+            // }
 
             if(widget.props['locked'] === undefined) {
                 widget.props['locked'] = false;
@@ -1768,11 +1764,10 @@ export default Reflux.createStore({
       else {
           historyName = "添加图片 "+ props.name;
       }
-
-
+        
       if (className === 'track') {
-        if (!this.currentWidget.timerWidget ||
-            (this.currentWidget.className !== 'image'
+          // if (!this.currentWidget.timerWidget ||
+          if (this.currentWidget.className !== 'image'
               && this.currentWidget.className !== 'imagelist'
               && this.currentWidget.className !== 'text'
               && this.currentWidget.className !== 'bitmaptext'
@@ -1781,18 +1776,22 @@ export default Reflux.createStore({
               && this.currentWidget.className !== 'qrcode'
               && this.currentWidget.className !== 'counter'
               && this.currentWidget.className !== 'rect'
-              && this.currentWidget.className !== 'container'))
-          return;
-        let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
-        let dataList = [];   //let dataList = [[0], [1]];
-        //for (let i = 0; i < propList.length; i++) {
-        //  let d = this.currentWidget.node[propList[i]];
-        //  dataList[0].push(d);
-        //  //dataList[1].push(d);
-        //}
-        let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList, 'name':props['name']}});
-        this.trigger({redrawTree: true, updateTrack: track});
-      } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
+              && this.currentWidget.className !== 'container')
+              return;
+          let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
+          let dataList = [];   //let dataList = [[0], [1]];
+          //for (let i = 0; i < propList.length; i++) {
+          //  let d = this.currentWidget.node[propList[i]];
+          //  dataList[0].push(d);
+          //  //dataList[1].push(d);
+          //}
+          let track = loadTree(this.currentWidget, {
+              'cls': className,
+              'props': {'prop': propList, 'data': dataList, 'name': props['name']}
+          });
+          this.trigger({redrawTree: true, updateTrack: track});
+          // } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
+      } else {
         let p;
         if (props || link) {
           p = {};
@@ -1804,12 +1803,12 @@ export default Reflux.createStore({
           if (link)
             p['link'] = this.currentWidget.rootWidget.imageList.push(link) - 1;
         }
-          var o = loadTree(this.currentWidget, {'cls':className, 'props': p});
-          if (className == 'bitmaptext')
-              currentLoading = o;
+        var o = loadTree(this.currentWidget, {'cls':className, 'props': p});
+        if (className == 'bitmaptext')
+           currentLoading = o;
         var cmd = {redrawTree: true};
 
-        if (className == 'body'  )
+        if (className == 'body')
           cmd.updateProperties = {'originX':0.5, 'originY':0.5};
         this.trigger(cmd);
         this.getAllWidgets();
@@ -3151,12 +3150,32 @@ export default Reflux.createStore({
 
         _keyCount = 1;
         keyMap = [];
+        idList = [];
+
+        if (!rootDiv) {
+            rootDiv = document.getElementById('canvas-dom');
+            rootDiv.addEventListener('dragenter', dragenter, false);
+            rootDiv.addEventListener('dragover', dragover, false);
+            rootDiv.addEventListener('drop', drop.bind(this), false);
+            rootDiv.addEventListener('mousedown', function(e) {
+                if(!(this.currentFunction|| this.currentVariable || this.currentDBItem)){
+                    this.selectWidget(this.currentWidget);
+                }
+            }.bind(this), false);
+        }
+
+
+         if(rootDiv.childNodes.length>2){
+             rootDiv.removeChild(rootDiv.childNodes[rootDiv.childNodes.length-1]);
+         }
+
+
         if (data['defs']) {
             for (let n in data['defs']) {
                 bridge.addClass(n);
                 classList.push(n);
                 idList = [];
-                tree = loadTree(null, data['defs'][n], idList);
+                tree = loadTree(null, data['defs'][n], idList, rootDiv);
                 stageTree.push({name: n, tree: tree});
                 resolveEventTree(tree, idList);
                 resolveDBItemList(tree, idList);
@@ -3170,25 +3189,11 @@ export default Reflux.createStore({
         if(data['stage']&&data['stage']['props']['isStage'] === undefined) {
             data['stage']['props']['isStage'] = true;
         }
-        idList = [];
-        tree = loadTree(null, data['stage'], idList);
+        tree = loadTree(null, data['stage'], idList, rootDiv);
         resolveEventTree(tree, idList);
         resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
-        // bridge.createSelector(null);
-
-        if (!rootDiv) {
-            this.mutliSelectMode = false;
-            rootDiv = document.getElementById('canvas-dom');
-            rootDiv.addEventListener('dragenter', dragenter, false);
-            rootDiv.addEventListener('dragover', dragover, false);
-            rootDiv.addEventListener('drop', drop.bind(this), false);
-            rootDiv.addEventListener('mousedown', function(e) {
-                if(!(this.currentFunction|| this.currentVariable || this.currentDBItem)){
-                    this.selectWidget(this.currentWidget);
-                }
-            }.bind(this), false);
-        }
+        this.render();
 
         this.trigger({
             initTree: stageTree
@@ -3448,16 +3453,15 @@ export default Reflux.createStore({
                 hasContact=true;
             }
         });
-        propertyMap[className].map((item, index)=> {
-            if (item.isEvent === true) {
-                if(item.name=='beginContact'||item.name=='endContact'){
-                    if(hasContact){
-                        aProps.push(JSON.parse(JSON.stringify(item)));
-                    }
-                }else{
+        getPropertyMap(selectWidget, className, 'events').map((item, index) => {
+            if(item.name=='beginContact'||item.name=='endContact'){
+                if(hasContact){
                     aProps.push(JSON.parse(JSON.stringify(item)));
                 }
+            }else{
+                aProps.push(JSON.parse(JSON.stringify(item)));
             }
+
         });
         return aProps;
     },

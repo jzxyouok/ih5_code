@@ -4,7 +4,7 @@ import {Form, Input} from 'antd';
 import { Menu, Dropdown } from 'antd';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {nodeType} from '../../stores/WidgetStore';
-import { propertyType } from '../PropertyMap'
+import { propertyType } from '../tempMap'
 
 var CodeMirror = require('codemirror/CodeMirror');
 

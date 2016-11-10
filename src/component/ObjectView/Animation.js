@@ -3,8 +3,7 @@ import React from 'react';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {varType, isCustomizeWidget, nodeType} from '../../stores/WidgetStore';
-import {checkChildClass, checkEventClass, checkNotInDomMode} from '../PropertyMap';
-import {modeType} from '../ToolBox/DEFAUL_TOOLBOX'
+import {checkChildClass, checkEventClass, checkNotInDomMode} from '../tempMap';
 import $class from 'classnames';
 
 const animationData = [
@@ -13,10 +12,10 @@ const animationData = [
     {name:'函数', class:'func-btn', className:'func', disabled:false, param:{key:'',value:''}},
     {name:'数据库变量', class:'db-item-btn', className:'dbItem', disabled:false, param:{name:''}},
     {name:'轨迹', class:'locus-btn', className:'track', disabled:false},
-    {name:'动效', class:'rotation-btn', className:'effect', disabled:false, mode:modeType.dom},
-    {name:'3D旋转', class:'dx-btn', className:'3dRotate', disabled:false, mode:modeType.dom},
+    {name:'动效', class:'rotation-btn', className:'effect', disabled:false,},
+    {name:'3D旋转', class:'dx-btn', className:'3dRotate', disabled:false},
     {name:'缓动', class:'easing-btn', className:'easing', disabled:false},
-    {name:'物体', class:'object-btn', className:'body', disabled:false, mode:modeType.canvas},
+    {name:'物体', class:'object-btn', className:'body', disabled:false},
 ];
 
 class Animation extends React.Component {
