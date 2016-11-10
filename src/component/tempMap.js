@@ -259,7 +259,8 @@ let funcMapping = {
     'prevResult': {name:'prevResult', showName:'获取上一页数据'},
 };
 
-let specialCaseElementMapping = (className)=> {
+let specialCaseElementMapping = (className, type)=> {
+    //以后还要对不同的type进行修正(modeType)
     switch (className) {
         case 'counter':
             return {
@@ -359,8 +360,8 @@ let specialCaseElementMapping = (className)=> {
 let addCustomWidgetProperties = ()=>{
     propertyMap['strVar'] = {
         dom: {
-            funcs: dealElementList(['changeValue'], 'strVar', 'funcs'),
-            props: dealElementList(['value'], 'strVar', 'props'),
+            funcs: dealElementList(['changeValue'], 'strVar', 'funcs', modeType.dom),
+            props: dealElementList(['value'], 'strVar', 'props', modeType.dom),
             events: [],
             provides: 0
         }
@@ -370,8 +371,8 @@ let addCustomWidgetProperties = ()=>{
 
     propertyMap['intVar'] = {
         dom: {
-            funcs: dealElementList(['changeValue','add1','minus1','addN','minusN','getInt','randomValue'], 'intVar', 'funcs'),
-            props: dealElementList(['value'], 'intVar', 'props'),
+            funcs: dealElementList(['changeValue','add1','minus1','addN','minusN','getInt','randomValue'], 'intVar', 'funcs', modeType.dom),
+            props: dealElementList(['value'], 'intVar', 'props', modeType.dom),
             events: [],
             provides: 0
         }
@@ -381,8 +382,8 @@ let addCustomWidgetProperties = ()=>{
 
     propertyMap['oneDArr'] = {
         dom: {
-            funcs: dealElementList(['getRoot'], 'oneDArr', 'funcs'),
-            props: dealElementList(['title', 'value', 'row'], 'oneDArr', 'props'),
+            funcs: dealElementList(['getRoot'], 'oneDArr', 'funcs', modeType.dom),
+            props: dealElementList(['title', 'value', 'row'], 'oneDArr', 'props', modeType.dom),
             events: [],
             provides: 0
         }
@@ -392,8 +393,8 @@ let addCustomWidgetProperties = ()=>{
 
     propertyMap['twoDArr'] = {
         dom: {
-            funcs: dealElementList(['getRoot'], 'twoDArr', 'funcs'),
-            props: dealElementList(['title', 'value', 'row', 'column'], 'twoDArr', 'props'),
+            funcs: dealElementList(['getRoot'], 'twoDArr', 'funcs', modeType.dom),
+            props: dealElementList(['title', 'value', 'row', 'column'], 'twoDArr', 'props', modeType.dom),
             events: [],
             provides: 0
         }
@@ -402,11 +403,11 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['twoDArr'].flex = propertyMap['twoDArr'].dom;
 };
 
-let dealElementList =(aLack, className, type)=>{
-    let obj = specialCaseElementMapping(className);
+let dealElementList =(aLack, className, elType ,type)=>{
+    let sMapping = specialCaseElementMapping(className, type);
     let list = [];
     let mapping = null;
-    switch (type) {
+    switch (elType) {
         case 'props':
             mapping = propMapping;
             break;
@@ -424,8 +425,8 @@ let dealElementList =(aLack, className, type)=>{
         if (mapping && mapping[v]) {
             c = mapping[v];
         }
-        if (obj[type] && obj[type][v]) {
-            c = obj[type][v];
+        if (sMapping[elType] && sMapping[elType][v]) {
+            c = sMapping[elType][v];
         }
         if (c) {
             list.push(c);
@@ -450,7 +451,7 @@ let modifyPropList = (list, className, type) => {
                 aLack=['keepRatio','alpha','initVisible'];
                 break;
         }
-        list = list.concat(dealElementList(aLack, className, 'props'));
+        list = list.concat(dealElementList(aLack, className, 'props', type));
     }
     else if(className=='graphics'){
 
@@ -491,7 +492,7 @@ let modifyEventList = (list, className, type) => {
                 aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
-        list = list.concat(dealElementList(aLack, className, 'events'));
+        list = list.concat(dealElementList(aLack, className, 'events', type));
     }
     else if(className=='graphics'){
 
@@ -523,15 +524,15 @@ let modifyEventList = (list, className, type) => {
 let modifyFuncList = (list, className, type) => {
     //以后还可能对于不用的type进行不同定制（modeType）
     if(className === 'text'|| className=== 'counter') {
-        let func = dealElementList(['changeValue'], className, 'funcs');
+        let func = dealElementList(['changeValue'], className, 'funcs', type);
         list.unshift(func[0]);
     }
-    if(className==='counter') {
-        let temp = dealElementList(['add1','minus1','addN','minusN','getInt','randomValue'], className, 'funcs');
+    if(className === 'counter') {
+        let temp = dealElementList(['add1','minus1','addN','minusN','getInt','randomValue'], className, 'funcs', type);
         list = list.concat(temp);
     }
     if(visibleWidgetList.indexOf(className)>=0) {
-        let temp = dealElementList(['show','hide'], className, 'funcs');
+        let temp = dealElementList(['show','hide'], className, 'funcs', type);
         list = list.concat(temp);
     }
     return list;
@@ -551,7 +552,7 @@ let modifyElementList = (list, className, elementType, type)=>{
     }
 };
 
-let sortElementByClassName = (className, type, element)=>{
+let sortElementByClassName = (className, elType, element)=>{
     //sort list by order
     let compare = (property)=>{
         return function(a,b){
@@ -560,8 +561,8 @@ let sortElementByClassName = (className, type, element)=>{
             return value1 - value2;
         };
     };
-    console.log(element[type].sort(compare('order')));
-    switch (type) {
+    console.log(element[elType].sort(compare('order')));
+    switch (elType) {
         case 'props':
             break;
         case 'events':
@@ -585,9 +586,10 @@ function dealWithElement(el, map) {
 let dealWithOriginalPropertyMap = ()=>{
     for (let className in propertyMap) {
         let clTypes = propertyMap[className];
-        let sElMapping = specialCaseElementMapping(className);
         for(let type in clTypes) {
             let el = clTypes[type];
+            //特殊处理
+            let sElMapping = specialCaseElementMapping(className, type);
             if(el.props&&el.props.length>0) {
                 el.props.forEach((p)=>{
                     //对属性处理
