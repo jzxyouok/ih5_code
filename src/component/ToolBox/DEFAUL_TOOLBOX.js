@@ -196,7 +196,7 @@ var DEFAULT_TOOLBOX = {
         gid:13,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'width': '100%', 'width': '100%'}}
+            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'width': '100%', 'height': '100%'}}
         ]
     },{
         name:'DOM',
