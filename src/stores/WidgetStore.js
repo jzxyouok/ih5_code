@@ -1764,8 +1764,7 @@ export default Reflux.createStore({
       else {
           historyName = "添加图片 "+ props.name;
       }
-
-
+        
       if (className === 'track') {
           // if (!this.currentWidget.timerWidget ||
           if (this.currentWidget.className !== 'image'
