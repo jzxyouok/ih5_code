@@ -444,8 +444,6 @@ let modifyPropList = (list, className, type) => {
     if(className=='container'){
         switch (type){
             case modeType.flex:
-                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
-                break;
             case modeType.dom:
                 aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
                 break;
@@ -453,6 +451,7 @@ let modifyPropList = (list, className, type) => {
                 aLack=['keepRatio','alpha','initVisible'];
                 break;
         }
+        list = list.concat(dealElementList(aLack, className, 'props'));
     }
     else if(className=='graphics'){
 
@@ -478,27 +477,22 @@ let modifyPropList = (list, className, type) => {
     else if(className=='ellipse'){
 
     }
-    list = list.concat(dealElementList(aLack, className, 'props'));
     return list;
 };
 
 let modifyEventList = (list, className, type) => {
     //根据不同的class对events进行定制和排序
     //以后还可能对于不用的type进行不同定制（modeType）
-  //  console.log(list,className,type);
     let aLack=[];
     if(className=='container'){
         switch (type){
-            case 'flex':
-                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
-               break;
-            case 'dom':
-                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
-                break;
-            case 'canvas':
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
                 aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
+        list = list.concat(dealElementList(aLack, className, 'events'));
     }
     else if(className=='graphics'){
 
@@ -524,7 +518,6 @@ let modifyEventList = (list, className, type) => {
     else if(className=='ellipse'){
 
     }
-    list = list.concat(dealElementList(aLack, className, 'events'));
     return list;
 };
 
