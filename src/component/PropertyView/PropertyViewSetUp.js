@@ -50,7 +50,7 @@ class PropertyViewSetUp extends React.Component {
         let defaultProp = {
             size: 'small',
             placeholder: item.default,
-            disabled: item.readOnly !== undefined,
+            disabled: (item.readOnly !== undefined) || !this.props.enable,
             onChange:  this.onChangePropDom.bind(this, item)
         };
         let node = WidgetStore.getWidgetByKey(this.state.oKey);
@@ -283,7 +283,6 @@ class PropertyViewSetUp extends React.Component {
                 return  <DropDownInput {...defaultProp} />;
             case propertyType.FormulaInput:
                 return <FormulaInput containerId={this.props.propertyId}
-                                     disabled={!this.props.enable}
                                      minWidth="142px"
                                      objectList={this.props.objectList}
                                      onFocus={this.props.onFInputFocus}
