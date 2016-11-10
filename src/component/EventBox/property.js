@@ -249,7 +249,9 @@ class Property extends React.Component {
         if(type === 'change') {
             //对父级的类别进行处理
             if(node.className === 'canvas' || node.className === 'dom') {
-                mappingList = propertyMap[className][node.className].props;
+                if(propertyMap[className]&&propertyMap[className][node.className]) {
+                    mappingList = propertyMap[className][node.className].props;
+                }
             }
         }
         mappingList.map((v,i)=>{
