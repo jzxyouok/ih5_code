@@ -440,6 +440,8 @@ let dealElementList =(aLack, className, elType ,type)=>{
 let modifyPropList = (list, className, type) => {
     //根据不同的class对props进行定制和排序
     //以后还可能对于不用的type进行不同定制（modeType）
+    //box:['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+
     let aLack=[];
     if(className=='container'){
         switch (type){
@@ -451,32 +453,112 @@ let modifyPropList = (list, className, type) => {
                 aLack=['keepRatio','alpha','initVisible'];
                 break;
         }
-        list = list.concat(dealElementList(aLack, className, 'props', type));
     }
     else if(className=='graphics'){
-
+        switch (type){
+            case modeType.flex:
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                break;
+            case modeType.dom:
+                aLack=['originPos','alpha','initVisible'];
+                break;
+            case modeType.canvas:
+                aLack=['originPos','alpha','initVisible'];
+                break;
+        }
     }
     else if(className=='sprite'){
-
+        switch (type){
+            case modeType.flex:
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                break;
+            case modeType.dom:
+                aLack=['originPos','alpha','initVisible'];
+                break;
+            case modeType.canvas:
+                aLack=['originPos','alpha','initVisible'];
+                break;
+        }
     }
     else if(className=='canvas'){
-
+        switch (type){
+            case modeType.flex:
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
+                break;
+            case modeType.dom:
+                aLack=['alpha','initVisible','width','height'];
+                break;
+            case modeType.canvas:
+                aLack=['alpha','initVisible','width','height'];
+                break;
+        }
     }
     else if(className=='root'){
-
+        switch (type){
+            case modeType.flex:
+                aLack=['scaleType','color','clipped'];
+                break;
+            case modeType.dom:
+                aLack=['width','height','scaleType','color','clipped'];
+                break;
+            case modeType.canvas:
+                aLack=['width','height','scaleType','color','clipped'];
+                break;
+        }
     }
     else if(className=='image'){
-
+        switch (type){
+            case modeType.flex:
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                break;
+            case modeType.dom:
+                aLack=['originPos','alpha','initVisible'];
+                break;
+            case modeType.canvas:
+                aLack=['originPos','alpha','initVisible'];
+                break;
+        }
     }
     else if(className=='text'){
-
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible','fontFamily','fontSize','fontFill'];
+                break;
+            case modeType.dom:
+                aLack= ['originPos','alpha','initVisible','fontFamily','fontSize','fontFill'];
+                break;
+            case modeType.canvas:
+                aLack= ['originPos','alpha','initVisible','fontFamily','fontSize','fontFill'];
+                break;
+        }
     }
     else if(className=='rect'){
-
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                break;
+            case modeType.dom:
+                aLack= ['originPos','alpha','initVisible'];
+                break;
+            case modeType.canvas:
+                aLack= ['originPos','alpha','initVisible'];
+                break;
+        }
     }
     else if(className=='ellipse'){
-
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                break;
+            case modeType.dom:
+                aLack= ['originPos','alpha','initVisible'];
+                break;
+            case modeType.canvas:
+                aLack= ['originPos','alpha','initVisible'];
+                break;
+        }
     }
+    list = list.concat(dealElementList(aLack, className, 'props', type));
     return list;
 };
 
@@ -489,35 +571,83 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
-        list = list.concat(dealElementList(aLack, className, 'events', type));
     }
     else if(className=='graphics'){
-
+        switch (type){
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
+                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                break;
+        }
     }
     else if(className=='sprite'){
-
+        switch (type){
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
+                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                break;
+        }
     }
     else if(className=='canvas'){
-
+        switch (type){
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
+                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                break;
+        }
     }
     else if(className=='root'){
-
+        switch (type){
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
+                aLack=['init','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown'];
+                break;
+        }
     }
     else if(className=='image'){
-
+        switch (type){
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
+                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                break;
+        }
     }
     else if(className=='text'){
-
+        switch (type){
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
+                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide','isMatch','isUnMatch','Contain','change'];
+                break;
+        }
     }
     else if(className=='rect'){
-
+        switch (type){
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
+                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                break;
+        }
     }
     else if(className=='ellipse'){
-
+        switch (type){
+            case modeType.flex:
+            case modeType.dom:
+            case modeType.canvas:
+                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                break;
+        }
     }
+    list = list.concat(dealElementList(aLack, className, 'events', type));
     return list;
 };
 

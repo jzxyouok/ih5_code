@@ -77,6 +77,7 @@ propertyMap['root'] = [
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools', isProperty: true},
     { name: 'color',showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools', isProperty: true },
     { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
+
     { name: 'init', showName:'初始化', isEvent: true },
     { name: 'click', showName:'点击', isEvent: true, info:['globalX','globalY']},
     { name: 'touchDown', showName:'手指按下', isEvent: true, info:['globalX','globalY']},
@@ -130,6 +131,7 @@ propertyMap['box'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'show', showName:'显示', isEvent: true },
     { name: 'hide', showName:'隐藏', isEvent: true },
+
     { name: 'toggleVisible', showName:'交替显示', isFunc: true },
     { name: 'hideSibling', showName:'隐藏同层控件', isFunc: true },
     { name: 'show', showName:'显示', isFunc: true },
@@ -149,9 +151,11 @@ propertyMap['textBox']=[
 propertyMap['text'] = [
     { name: 'changeValue', showName:'赋值', isFunc:true, info:'(value)', property:[
         {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]},
+
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
+
     { name: 'isMatch', showName:'匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'isUnMatch', showName:'不匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'Contain', showName:'包含文本', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
@@ -331,6 +335,9 @@ propertyMap['container'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'show', showName:'显示', isEvent: true },
     { name: 'hide', showName:'隐藏', isEvent: true },
+    { name: 'beginContact', showName:'开始碰撞', info:'{target}', isEvent: true ,needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
+    { name: 'endContact', showName:'结束碰撞', info:'{target}', isEvent: true, needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
+
 
     { name: 'toggleVisible', showName:'交替显示', isFunc: true },
     { name: 'hideSibling', showName:'隐藏同层控件', isFunc: true },
