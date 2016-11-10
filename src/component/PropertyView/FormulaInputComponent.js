@@ -11,7 +11,7 @@ import WidgetStore, {varType, dataType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { ArrTableDropDown } from '../PropertyView/ArrTableDropDown';
-import { propertyMap } from '../PropertyMap'
+import { getPropertyMap, propertyType } from '../tempMap'
 import SelectTargetAction from '../../actions/SelectTargetAction';
 
 import $ from 'jquery';
@@ -315,37 +315,27 @@ class FormulaInput extends React.Component {
     onGetPropertyList(obj){
         let props = [];
 
+        //自定义选项
+        if(obj && obj.className === 'DIY' && obj.key === 'globalXY') {
+            props.push({name:'X', showName:'X坐标'});
+            props.push({name:'Y', showName:'Y坐标'});
+            return props;
+        }
+
         if(obj&&obj.className){
             let className = obj.className;
-            if(obj.className === 'var'){
-                switch (obj.type) {
-                    case varType.string:
-                        className = 'strVar';
-                        break;
-                    case varType.number:
-                        className = 'intVar';
-                        break;
-                }
-            }
-            if(propertyMap[className]) {
-                propertyMap[className].map((v)=> {
-                    if (v.isProperty && v.name != 'id') {
-                        if(v.showName=='W'){
-                            props.push({name:'width', showName:'宽度'});
-                        }else if(v.showName=='H'){
-                            props.push({name:'height', showName:'高度'});
-                        }else if(v.showName=='中心点'){
-                        }else{
-                            props.push({name:v.name, showName:v.showName});
-                        }
+            getPropertyMap(obj, className, 'props').map((v)=> {
+                if (v.type !== propertyType.Hidden && v.name != 'id') {
+                    if(v.showName=='W'){
+                        props.push({name:'width', showName:'宽度'});
+                    }else if(v.showName=='H'){
+                        props.push({name:'height', showName:'高度'});
+                    }else if(v.showName=='中心点'){
+                    }else{
+                        props.push({name:v.name, showName:v.showName});
                     }
-                });
-            }
-            if(obj && obj.className === 'DIY' && obj.key === 'globalXY') {
-                props.push({name:'X', showName:'X坐标'});
-                props.push({name:'Y', showName:'Y坐标'});
-                return props;
-            }
+                }
+            });
         }
         return props;
     }
@@ -771,25 +761,6 @@ class FormulaInput extends React.Component {
                                    onClick={this.onFocus.bind(this,null,true)}
                                    onBlur={this.onFormulaPatternBlur.bind(this,v,i)}
                                    onChange={this.onFormulaPatternChange.bind(this, v, i)}/>
-                            {/*{*/}
-                                {/*v.property*/}
-                                    {/*? (<Input placeholder="公式"*/}
-                                             {/*disabled={this.disabled}*/}
-                                             {/*value={v.pattern}*/}
-                                              {/*className='formula-obj-pattern'*/}
-                                             {/*onChange={this.onFormulaPatternChange.bind(this, v, i)}/>)*/}
-                                    {/*: null*/}
-                            {/*}*/}
-                            {/*{*/}
-                                {/*v.property&&this.state.value.length-1===i*/}
-                                    {/*? (<button className="add-obj-btn" onClick={this.onAddBtn} disabled={this.disabled}>*/}
-                                    {/*<div className="btn-layer">*/}
-                                        {/*<span className="heng"/>*/}
-                                        {/*<span className="shu"/>*/}
-                                    {/*</div>*/}
-                                {/*</button>)*/}
-                                    {/*: null*/}
-                            {/*}*/}
                         </div>)
                     }
                 </div>

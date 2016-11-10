@@ -23,7 +23,7 @@ import WidgetStore, {nodeType} from '../stores/WidgetStore';
 import DbHeaderAction from '../actions/DbHeader'
 import DbHeaderStores from '../stores/DbHeader';
 import DrawRect from './ToolBox/DrawRect';
-import {checkChildClass} from './PropertyMap';
+import {checkChildClass} from './tempMap';
 import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
@@ -339,7 +339,7 @@ class NavBar extends React.Component {
 
     newWork() {
         this.workid = null;
-        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040, 'color':'#FFFFFF'}, links:[]}});
+        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040, 'backgroundColor':'#FFFFFF', 'flexDirection':'column', 'alignItems': 'flex-start'}, links:[]}});
     }
 
     getWorks(token) {
