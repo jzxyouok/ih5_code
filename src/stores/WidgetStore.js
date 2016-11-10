@@ -1767,8 +1767,8 @@ export default Reflux.createStore({
 
 
       if (className === 'track') {
-          if (!this.currentWidget.timerWidget ||
-              (this.currentWidget.className !== 'image'
+          // if (!this.currentWidget.timerWidget ||
+          if (this.currentWidget.className !== 'image'
               && this.currentWidget.className !== 'imagelist'
               && this.currentWidget.className !== 'text'
               && this.currentWidget.className !== 'bitmaptext'
@@ -1777,7 +1777,7 @@ export default Reflux.createStore({
               && this.currentWidget.className !== 'qrcode'
               && this.currentWidget.className !== 'counter'
               && this.currentWidget.className !== 'rect'
-              && this.currentWidget.className !== 'container'))
+              && this.currentWidget.className !== 'container')
               return;
           let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
           let dataList = [];   //let dataList = [[0], [1]];
@@ -1804,12 +1804,12 @@ export default Reflux.createStore({
           if (link)
             p['link'] = this.currentWidget.rootWidget.imageList.push(link) - 1;
         }
-          var o = loadTree(this.currentWidget, {'cls':className, 'props': p});
-          if (className == 'bitmaptext')
-              currentLoading = o;
+        var o = loadTree(this.currentWidget, {'cls':className, 'props': p});
+        if (className == 'bitmaptext')
+           currentLoading = o;
         var cmd = {redrawTree: true};
 
-        if (className == 'body'  )
+        if (className == 'body')
           cmd.updateProperties = {'originX':0.5, 'originY':0.5};
         this.trigger(cmd);
         this.getAllWidgets();
