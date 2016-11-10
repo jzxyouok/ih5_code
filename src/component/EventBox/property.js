@@ -609,7 +609,7 @@ class Property extends React.Component {
         });
         if(this.state.event.conFlag === 'click'||this.state.event.conFlag === 'touchDown'
             || this.state.event.conFlag === 'touchUp') {
-            fIList.unshift({className:'DIY', key:'globalXY', props:{name:'点击坐标'}})
+            fIList.unshift({className:'DIY', key:'globalXY', props:{name:'点击位置', showName:'当前点击X/Y坐标'}})
         }
         return fIList;
     }

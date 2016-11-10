@@ -175,7 +175,7 @@ class FormulaInput extends React.Component {
             return this.props.objectList[index];
         }
         if(obj.objKey === 'globalXY') {
-            return {className:'DIY', key:'globalXY', props:{name:'点击坐标'}};
+            return {className:'DIY', key:'globalXY', props:{name:'点击坐标', showName:'当前点击X/Y坐标'}};
         }
         return null;
     }
@@ -645,7 +645,11 @@ class FormulaInput extends React.Component {
 
     render() {
         let objectMenuItem = (v1,i1)=>{
-            return  <MenuItem key={i1} object={v1}>{v1.props.name}</MenuItem>
+            if(v1.className === 'DIY') {
+                return  <MenuItem key={i1} object={v1}>{v1.props.showName?v1.props.showName:v1.props.name}</MenuItem>
+            } else {
+                return  <MenuItem key={i1} object={v1}>{v1.props.name}</MenuItem>
+            }
         };
 
         let objectMenu = (
