@@ -259,6 +259,7 @@ function loadTree(parent, node, idList, initEl) {
   }
 
   current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl);
+  current.timerWidget = bridge.isTimer(current.node) ? current : ((parent) ? parent.timerWidget : null);
 
   // var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
 
@@ -1766,8 +1767,8 @@ export default Reflux.createStore({
       }
         
       if (className === 'track') {
-          // if (!this.currentWidget.timerWidget ||
-          if (this.currentWidget.className !== 'image'
+          if (!this.currentWidget.timerWidget ||
+              (this.currentWidget.className !== 'image'
               && this.currentWidget.className !== 'imagelist'
               && this.currentWidget.className !== 'text'
               && this.currentWidget.className !== 'bitmaptext'
@@ -1776,7 +1777,7 @@ export default Reflux.createStore({
               && this.currentWidget.className !== 'qrcode'
               && this.currentWidget.className !== 'counter'
               && this.currentWidget.className !== 'rect'
-              && this.currentWidget.className !== 'container')
+              && this.currentWidget.className !== 'container'))
               return;
           let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
           let dataList = [];   //let dataList = [[0], [1]];
