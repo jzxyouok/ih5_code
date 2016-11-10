@@ -3164,7 +3164,11 @@ export default Reflux.createStore({
             }.bind(this), false);
         }
 
-        // rootDiv.innerHTML = '';
+
+         if(rootDiv.childNodes.length>2){
+             rootDiv.removeChild(rootDiv.childNodes[rootDiv.childNodes.length-1]);
+         }
+
 
         if (data['defs']) {
             for (let n in data['defs']) {

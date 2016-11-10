@@ -49,6 +49,7 @@ class DesignView extends React.Component {
     }
 
     componentDidMount() {
+
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         window.onresize=this.onresize;
@@ -124,6 +125,7 @@ class DesignView extends React.Component {
         }else{
             this.keyboard=false;
         }
+
     }
 
     stageZoomChange(){
@@ -488,13 +490,12 @@ class DesignView extends React.Component {
                 <div  ref='line_top' id='line_top'></div>
                 <div ref='canvasWraper' className='canvas-wraper' id="canvas-wraper" >
                     <div  ref='line_left'  id='line_left'></div>
-
                     <div id='canvas-dom'
                          className="DesignView"
                          ref='view'
                          style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
-                        <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
-                        <ul id='v_ruler'></ul>
+                      <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
+                      <ul id='v_ruler'></ul>
                     </div>
                 </div>
             </div>
