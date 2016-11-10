@@ -254,7 +254,7 @@ class Property extends React.Component {
         }
         let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
         propertyMap[className].map((v,i)=>{
-            if(v.isProperty&& v.name !='id'){
+            if(v.isProperty&&!v.readOnly&& v.name !='id'){
                 let vObj=JSON.parse(JSON.stringify(v));
                 (delete vObj.isProperty);
                 vObj.isProp=true;
