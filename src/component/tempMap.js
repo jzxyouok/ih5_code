@@ -14,6 +14,11 @@ let visibleWidgetList = ['image', 'imagelist', 'text',
     'slidetimer', 'bitmaptext', 'qrcode', 'counter',
     'button', 'taparea', 'container', 'input', 'html', 'table'];
 
+let isInCLList = (className, classNameList)=>{
+    //检查是否在所需的classnamelist内
+    return classNameList.indexOf(className)>=0;
+};
+
 let propMapping = {
     'id': {name:'id', showName:'ID', type: propertyType.String, default: ''},
 
@@ -261,99 +266,86 @@ let funcMapping = {
 
 let specialCaseElementMapping = (className, type)=> {
     //以后还要对不同的type进行修正(modeType)
-    switch (className) {
-        case 'counter':
-            return {
-                props: {
-                    'value': {name:'value', showName:'数值', type: propertyType.Number, default: 0}},
-                events: {
-                    'change': {name:'change', showName:'数值改变'}}
-            };
-            break;
-        case 'qrcode':
-            return {
-                props: {
-                    'value': {name:'value', showName:'数据', type: propertyType.String, default:''}}
-            };
-            break;
-        case 'oneDArr':
-        case 'twoDArr':
-            return {
-                props: {
-                    'title': {name:'title', showName:'变量名', type: propertyType.String, default: ''},
-                    'value': {name:'value', showName:'值',type: propertyType.String, default: ''}}
-            };
-            break;
-        case 'bitmaptext':
-            return {
-                props: {
-                    'color': {name:'color', showName:'文字颜色', type: propertyType.Color, default:'',group:'tools'},}
-            };
-            break;
-        case 'html':
-            return {
-                props: {
-                    'width': {name:'width', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
-                    'height': {name:'height', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},}
-            };
-            break;
-        case 'input':
-            return {
-                props: {
-                    'value': {name:'value', showName:'内容', type: propertyType.String, default: ''},
-                    'width': {name:'width', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
-                    'height': {name:'height', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
-                    'shapeWidth': {name:'shapeWidth', type: propertyType.Hidden, default: 0, group:'position'},
-                    'shapeHeight': {name:'shapeHeight', type: propertyType.Hidden, default: 0, group:'position'},
-                    'color': {name:'color', showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF'}},
-                events: {
-                    'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
-                    'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},}
-            };
-            break;
-        case 'easing':
-            return {
-                props: {
-                    'type': {name:'type', showName:'移动方式',type: propertyType.Select, default: '无', options:easingMoveOptions},
-                    'radius': {name:'radius', showName:'圆角', type: propertyType.Number, default: 0},
-                    'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, default: false}}
-            };
-            break;
-        case 'effect':
-            return {
-                props: {
-                    'type':{name:'type', showName:'动效类型', type: propertyType.Select,  default:'无',optionsToJudge:effectOptionsToJudge,options:effectOption},
-                    'duration': {name:'duration', showName:'时长', type: propertyType.Number, default: 1},
-                    'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, default: false}}
-            };
-            break;
-        case 'track':
-            return {
-                props: {
-                    'type': {name:'type', type: propertyType.String, default: ''}}
-            };
-            break;
-        case 'table':
-            return {
-                props: {
-                    'lineColor': {name:'lineColor', showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', tbCome:"tbF"},
-                    'lineWidth': {name:'lineWidth', showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', tbCome:"tbS"},
-                    'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
-                    'fontSize': {name:'fontSize', showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
-            };
-            break;
-        case 'tableForSet':
-            return {
-                props: {
-                    'fillColor': {name:'fillColor', showName:'表格底色', type: propertyType.Color,group:'display', default: ''},
-                    'lineColor': {name:'lineColor', showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', tbCome:"tbF"},
-                    'lineWidth': {name:'lineWidth', showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', tbCome:"tbS"},
-                    'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
-                    'fontSize': {name:'fontSize', showName:'字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
-            };
-        default:
-            return {};
-            break;
+    if(isInCLList(className, ['counter'])) {
+        return {
+            props: {
+                'value': {name:'value', showName:'数值', type: propertyType.Number, default: 0}},
+            events: {
+                'change': {name:'change', showName:'数值改变'}}
+        };
+    } else if (isInCLList(className, ['qrcode'])) {
+        return {
+            props: {
+                'value': {name:'value', showName:'数据', type: propertyType.String, default:''}}
+        };
+    } else if (isInCLList(className, ['oneDArr', 'twoDArr'])) {
+        return {
+            props: {
+                'title': {name:'title', showName:'变量名', type: propertyType.String, default: ''},
+                'value': {name:'value', showName:'值',type: propertyType.String, default: ''}}
+        };
+    } else if (isInCLList(className, ['bitmaptext'])) {
+        return {
+            props: {
+                'color': {name:'color', showName:'文字颜色', type: propertyType.Color, default:'',group:'tools'},}
+        };
+    } else if (isInCLList(className, ['html'])) {
+        return {
+            props: {
+                'width': {name:'width', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
+                'height': {name:'height', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},}
+        };
+    } else if (isInCLList(className, ['input'])) {
+        return {
+            props: {
+                'value': {name:'value', showName:'内容', type: propertyType.String, default: ''},
+                'width': {name:'width', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
+                'height': {name:'height', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
+                'shapeWidth': {name:'shapeWidth', type: propertyType.Hidden, default: 0, group:'position'},
+                'shapeHeight': {name:'shapeHeight', type: propertyType.Hidden, default: 0, group:'position'},
+                'color': {name:'color', showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF'}},
+            events: {
+                'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
+                'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},}
+        };
+    } else if (isInCLList(className, ['easing'])) {
+        return {
+            props: {
+                'type': {name:'type', showName:'移动方式',type: propertyType.Select, default: '无', options:easingMoveOptions},
+                'radius': {name:'radius', showName:'圆角', type: propertyType.Number, default: 0},
+                'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, default: false}}
+        };
+    } else if (isInCLList(className, ['effect'])) {
+        return {
+            props: {
+                'type':{name:'type', showName:'动效类型', type: propertyType.Select,  default:'无',optionsToJudge:effectOptionsToJudge,options:effectOption},
+                'duration': {name:'duration', showName:'时长', type: propertyType.Number, default: 1},
+                'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, default: false}}
+        };
+    } else if (isInCLList(className, ['track'])) {
+        return {
+            props: {
+                'type': {name:'type', type: propertyType.String, default: ''}}
+        };
+    } else if (isInCLList(className, ['table'])) {
+        return {
+            props: {
+                'lineColor': {name:'lineColor', showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', tbCome:"tbF"},
+                'lineWidth': {name:'lineWidth', showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', tbCome:"tbS"},
+                'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
+                'fontSize': {name:'fontSize', showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
+        };
+    } else if (isInCLList(className, ['tableForSet'])) {
+        return {
+            props: {
+                'fillColor': {name:'fillColor', showName:'表格底色', type: propertyType.Color,group:'display', default: ''},
+                'lineColor': {name:'lineColor', showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', tbCome:"tbF"},
+                'lineWidth': {name:'lineWidth', showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', tbCome:"tbS"},
+                'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
+                'fontSize': {name:'fontSize', showName:'字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
+        };
+    } else {
+        return {};
     }
 };
 
@@ -653,15 +645,15 @@ let modifyEventList = (list, className, type) => {
 
 let modifyFuncList = (list, className, type) => {
     //以后还可能对于不用的type进行不同定制（modeType）
-    if(className === 'text'|| className=== 'counter') {
+    if(isInCLList(className, ['text', 'counter'])) {
         let func = dealElementList(['changeValue'], className, 'funcs', type);
         list.unshift(func[0]);
     }
-    if(className === 'counter') {
+    if(isInCLList(className, ['counter'])) {
         let temp = dealElementList(['add1','minus1','addN','minusN','getInt','randomValue'], className, 'funcs', type);
         list = list.concat(temp);
     }
-    if(visibleWidgetList.indexOf(className)>=0) {
+    if(isInCLList(className, visibleWidgetList)) {
         let temp = dealElementList(['show','hide'], className, 'funcs', type);
         list = list.concat(temp);
     }
@@ -778,8 +770,7 @@ let getPropertyMap = (widget, className, type)=> {
     if(!propertyMap[cl]) {
         return [];
     }
-    if(className === 'intVar' || className === 'strVar' ||
-        className === 'var' || className === 'func' || className === 'dbItem') {
+    if(isInCLList(className, ['intVar','strVar','var','func','dbItem'])) {
         switch (type) {
             case 'props':
                 return bridge.getMap(widget.widget.node, propertyMap[cl]).props;
