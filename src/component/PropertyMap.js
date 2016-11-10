@@ -324,8 +324,8 @@ propertyMap['container'] = [
     { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
-
-
+    { name: 'beginContact', showName:'开始碰撞', info:'{target}', isEvent: true ,needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
+    { name: 'endContact', showName:'结束碰撞', info:'{target}', isEvent: true, needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
     { name: 'click', showName:'点击', isEvent: true, info:'{globalX, globalY}'},
     { name: 'touchDown', showName:'手指按下', isEvent: true, info:['globalX','globalY']},
     { name: 'touchUp', showName:'手指松开', isEvent: true, info:['globalX','globalY']},
@@ -335,10 +335,6 @@ propertyMap['container'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'show', showName:'显示', isEvent: true },
     { name: 'hide', showName:'隐藏', isEvent: true },
-    { name: 'beginContact', showName:'开始碰撞', info:'{target}', isEvent: true ,needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
-    { name: 'endContact', showName:'结束碰撞', info:'{target}', isEvent: true, needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
-
-
     { name: 'toggleVisible', showName:'交替显示', isFunc: true },
     { name: 'hideSibling', showName:'隐藏同层控件', isFunc: true },
     { name: 'show', showName:'显示', isFunc: true },
