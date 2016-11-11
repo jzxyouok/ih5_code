@@ -242,6 +242,10 @@ class Event extends React.Component {
     }
 
     delEvent(index) {
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+
         WidgetActions['delEvent'](this.state.eventList, index);
     }
 
