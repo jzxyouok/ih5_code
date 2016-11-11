@@ -80,7 +80,7 @@ class FormulaInput extends React.Component {
         this.onInputTypeValueChange = this.onInputTypeValueChange.bind(this);
 
         this.checkValueObjValid = this.checkValueObjValid.bind(this); //不存在的obj清掉
-        this.checkObjExist = this.checkObjExist.bind(this);
+        this.getValidObj = this.getValidObj.bind(this);
 
         this.resizeInputWidth = this.resizeInputWidth.bind(this);
         this.doGetCaretPosition = this.doGetCaretPosition.bind(this);
@@ -140,7 +140,7 @@ class FormulaInput extends React.Component {
             let changed = false;
             value.forEach((v, i)=>{
                 if(v.objKey) {
-                    let obj = this.checkObjExist(v);
+                    let obj = this.getValidObj(v);
                     if(!obj) {
                         changed = true;
                         value.splice(i,1);
@@ -164,7 +164,7 @@ class FormulaInput extends React.Component {
         }
     }
 
-    checkObjExist(obj) {
+    getValidObj(obj) {
         let index = -1;
         this.props.objectList.forEach((v, i)=>{
             if(obj.objKey === v.key) {
@@ -175,7 +175,7 @@ class FormulaInput extends React.Component {
             return this.props.objectList[index];
         }
         if(obj.objKey === 'globalXY') {
-            return {className:'DIY', key:'globalXY', props:{name:'点击坐标', showName:'当前点击X/Y坐标'}};
+            return {className:'DIY', key:'globalXY', props:{name:'点击位置', showName:'点击位置'}};
         }
         return null;
     }
@@ -700,7 +700,7 @@ class FormulaInput extends React.Component {
         };
 
         let formulaList = (v, i)=> {
-            let obj = this.checkObjExist(v);
+            let obj = this.getValidObj(v);
             return (
                 <div key={i} className="formula-mode-div f--hlc">
                     {
