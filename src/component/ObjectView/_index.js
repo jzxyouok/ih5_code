@@ -62,6 +62,11 @@ class ObjectView extends React.Component {
     }
 
     onStatusChange(widget) {
+        if(widget.redrawTree) {
+            if(this.state.currentNode&&!this.state.currentNode.widget){
+                this.onInitButtons(this.state.currentNode);
+            }
+        }
         if(widget.redrawWidget) {
             this.onInitButtons(widget.redrawWidget);
         }
