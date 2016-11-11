@@ -1587,6 +1587,74 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 2 } },
+    'world':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [],
+        provides: 128 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 128 },
+        canvas:
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'play', info: '' },
+                { name: 'pause', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'keepRatio', type: 4, default: false },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'autoPlay', type: 4, default: false },
+                    { name: 'northWall', type: 4, default: true },
+                    { name: 'southWall', type: 4, default: true },
+                    { name: 'westWall', type: 4, default: true },
+                    { name: 'eastWall', type: 4, default: true },
+                    { name: 'gravityX', type: 1, default: 0 },
+                    { name: 'gravityY', type: 1, default: 0 } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
+            provides: 134 } },
+    'body':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [],
+        provides: 0 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 0 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'mass', type: 1, default: 0 },
+                    { name: 'globalVx', type: 1, default: 0 },
+                    { name: 'globalVy', type: 1, default: 0 },
+                    { name: 'velocityX', type: 1, default: 0 },
+                    { name: 'velocityY', type: 1, default: 0 },
+                    { name: 'angularVelocity', type: 1, default: 0 },
+                    { name: 'damping', type: 1, default: 0 },
+                    { name: 'angularDamping', type: 1, default: 0 } ],
+            events:
+                [ { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
+            provides: 0 } },
 };
 
 export {propertyMap, propertyType, backwardTransOptions, forwardTransOptions, effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags};
