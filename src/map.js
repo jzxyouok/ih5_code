@@ -317,7 +317,9 @@ const propertyMap = {
             provides: 0 } },
     'display':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -330,10 +332,19 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -344,10 +355,19 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -356,11 +376,20 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'container':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -378,10 +407,19 @@ const propertyMap = {
                 { name: 'justifyContent', type: 2, default: '' },
                 { name: 'alignItems', type: 2, default: '' },
                 { name: 'flexWrap', type: 2, default: '' } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 6 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -392,10 +430,19 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 6 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -404,11 +451,20 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 6 } },
     'graphics':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 0, default: 0, readOnly: true },
@@ -426,10 +482,19 @@ const propertyMap = {
                 { name: 'fillColor', type: 6, default: '' },
                 { name: 'lineColor', type: 6, default: '' },
                 { name: 'lineWidth', type: 0, default: 1 } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -447,10 +512,19 @@ const propertyMap = {
                     { name: 'lineWidth', type: 0, default: 1 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -468,11 +542,20 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'sprite':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -485,10 +568,19 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -501,10 +593,19 @@ const propertyMap = {
                     { name: 'rotation', type: 1, default: 0 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -517,11 +618,20 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'canvas':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -534,10 +644,19 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 10 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -548,10 +667,19 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 10 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -560,11 +688,20 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 10 } },
     'dom':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -577,10 +714,19 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 10 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -591,10 +737,19 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 10 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -603,11 +758,20 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 10 } },
     'root':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 0, default: 0 },
@@ -629,10 +793,18 @@ const propertyMap = {
                 { name: 'bgImage', type: 2, default: '' } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' },
                 { name: 'init', info: '' } ],
         provides: 23 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -645,10 +817,18 @@ const propertyMap = {
                     { name: 'rotation', type: 1, default: 0 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' },
                     { name: 'init', info: '' } ],
             provides: 23 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -659,11 +839,19 @@ const propertyMap = {
                     { name: 'rotation', type: 1, default: 0 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' },
                     { name: 'init', info: '' } ],
             provides: 23 } },
     'image':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -677,10 +865,19 @@ const propertyMap = {
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
                 { name: 'link', type: 0, default: 0 } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -694,10 +891,19 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'link', type: 0, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -711,11 +917,20 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'link', type: 0, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'text':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -729,10 +944,19 @@ const propertyMap = {
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
                 { name: 'value', type: 3, default: '' } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -746,10 +970,19 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'value', type: 3, default: '' } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -763,11 +996,20 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'value', type: 3, default: '' } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'rect':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 0, default: 0, readOnly: true },
@@ -786,10 +1028,19 @@ const propertyMap = {
                 { name: 'lineColor', type: 6, default: '' },
                 { name: 'lineWidth', type: 0, default: 1 },
                 { name: 'radius', type: 0, default: 0 } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -808,10 +1059,19 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'radius', type: 0, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -830,11 +1090,20 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'radius', type: 0, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'ellipse':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 0, default: 0, readOnly: true },
@@ -852,10 +1121,19 @@ const propertyMap = {
                 { name: 'fillColor', type: 6, default: '' },
                 { name: 'lineColor', type: 6, default: '' },
                 { name: 'lineWidth', type: 0, default: 1 } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -873,10 +1151,19 @@ const propertyMap = {
                     { name: 'lineWidth', type: 0, default: 1 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -894,11 +1181,20 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'path':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 0, default: 0, readOnly: true },
@@ -919,10 +1215,19 @@ const propertyMap = {
                 { name: 'path', type: 2, default: '' },
                 { name: 'viewBoxWidth', type: 0, default: 0 },
                 { name: 'viewBoxHeight', type: 0, default: 0 } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -943,10 +1248,19 @@ const propertyMap = {
                     { name: 'path', type: 2, default: '' },
                     { name: 'viewBoxWidth', type: 0, default: 0 },
                     { name: 'viewBoxHeight', type: 0, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -967,12 +1281,20 @@ const propertyMap = {
                     { name: 'path', type: 2, default: '' },
                     { name: 'viewBoxWidth', type: 0, default: 0 },
                     { name: 'viewBoxHeight', type: 0, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'timer':
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' },
             { name: 'play', info: '' },
             { name: 'replay', info: '' },
             { name: 'pause', info: '' },
@@ -999,12 +1321,19 @@ const propertyMap = {
                 { name: 'totalTime', type: 1, default: 10 } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' },
                 { name: 'stop', info: '' },
                 { name: 'loop', info: '' } ],
         provides: 70 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' },
                 { name: 'play', info: '' },
                 { name: 'replay', info: '' },
                 { name: 'pause', info: '' },
@@ -1024,12 +1353,19 @@ const propertyMap = {
                     { name: 'totalTime', type: 1, default: 10 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' },
                     { name: 'stop', info: '' },
                     { name: 'loop', info: '' } ],
             provides: 70 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' },
                 { name: 'play', info: '' },
                 { name: 'replay', info: '' },
                 { name: 'pause', info: '' },
@@ -1047,6 +1383,12 @@ const propertyMap = {
                     { name: 'totalTime', type: 1, default: 10 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' },
                     { name: 'stop', info: '' },
                     { name: 'loop', info: '' } ],
             provides: 70 } },
@@ -1080,7 +1422,9 @@ const propertyMap = {
             provides: 0 } },
     'qrcode':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -1096,10 +1440,19 @@ const propertyMap = {
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'value', type: 2, default: '' } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -1115,10 +1468,19 @@ const propertyMap = {
                     { name: 'shapeWidth', type: 0, default: 0 },
                     { name: 'shapeHeight', type: 0, default: 0 },
                     { name: 'value', type: 2, default: '' } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -1134,11 +1496,20 @@ const propertyMap = {
                     { name: 'shapeWidth', type: 0, default: 0 },
                     { name: 'shapeHeight', type: 0, default: 0 },
                     { name: 'value', type: 2, default: '' } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
     'counter':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'width', type: 2, default: '' },
@@ -1153,10 +1524,19 @@ const propertyMap = {
                 { name: 'maxHeight', type: 2, default: '' },
                 { name: 'value', type: 1, default: 0 },
                 { name: 'precision', type: 0, default: 0 } ],
-        events: [ { name: 'click', info: 'globalX, globalY' } ],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'touchDown', info: 'globalX, globalY' },
+                { name: 'touchUp', info: 'globalX, globalY' },
+                { name: 'swipeLeft', info: '' },
+                { name: 'swipeRight', info: '' },
+                { name: 'swipeUp', info: '' },
+                { name: 'swipeDown', info: '' } ],
         provides: 2 },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -1171,10 +1551,19 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'value', type: 1, default: 0 },
                     { name: 'precision', type: 0, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
@@ -1189,7 +1578,14 @@ const propertyMap = {
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'value', type: 1, default: 0 },
                     { name: 'precision', type: 0, default: 0 } ],
-            events: [ { name: 'click', info: 'globalX, globalY' } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
             provides: 2 } },
 };
 

@@ -209,6 +209,11 @@ let funcMapping = {
         {'name':'id', 'showName':'ID', 'value':null, 'type':propertyType.String},
         {'name':'props', 'showName':'属性', value:null, 'type':propertyType.Remove},
         {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2}]},
+    'clone': {name:'clone', showName: '克隆对象', property:[
+        {'name':'obj', 'showName':'对象', 'value':null, 'type':propertyType.ObjectSelect},
+        {'name':'id', 'showName':'ID', 'value':null, 'type':propertyType.String},
+        {'name':'props', 'showName':'属性', value:null, 'type':propertyType.Remove},
+        {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2}]},
     'gotoPage': {name:'gotoPage', showName:'跳转到页面', property:[
         {'name':'page', 'showName':'页面', 'value':null, 'type':propertyType.Integer}]},
     'gotoPageNum': {name:'gotoPageNum', showName:'跳转到页数', property:[

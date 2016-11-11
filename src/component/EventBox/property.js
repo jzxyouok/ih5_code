@@ -570,8 +570,12 @@ class Property extends React.Component {
         }
         let property = this.state.currentAction.property;
         property[index] = prop;
-        if(type === optionType.class && this.state.currentAction.name === 'create') {
+        if((type === optionType.class && this.state.currentAction.name === 'create') ||
+            type === optionType.widget && this.state.currentAction.name === 'clone') {
             let className = data;
+            if(this.state.currentAction.name === 'clone') {
+                className = data.className;
+            }
             //不需要替换1，2和最后1个
             let newProperty = [property[0], property[1], property[property.length-1]];
             if (isCustomizeWidget(className)) {
@@ -906,7 +910,7 @@ class Property extends React.Component {
                     let sType = optionType.normal;
                     let sList = [];
                     if(item.name === 'class'){
-                        sTitleTemp = '类别';
+                        sTitleTemp = item.showName;
                         sType = optionType.class;
                         sList = this.classNameList;
                     } else {
@@ -918,9 +922,13 @@ class Property extends React.Component {
                     let objType = optionType.normal;
                     let objList = [];
                     if(w&&w.className === 'db'&&item.name ==='data'){
-                        objTitleTemp = '来源';
+                        objTitleTemp = item.showName;
                         objType = optionType.widget;
                         objList = w.dbItemList;
+                    } else if(item.name === 'obj'){
+                        objTitleTemp = item.showName;
+                        objType = optionType.widget;
+                        objList = this.state.objectList;
                     } else {
                         return <div>未定义类型</div>;
                     }

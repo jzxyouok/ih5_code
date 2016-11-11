@@ -5,6 +5,7 @@ import {getPropertyMap} from '../component/tempMap'
 var bridge = require('bridge');
 bridge.create();
 var globalToken;
+var globalVersion = '';
 
 var rootDiv;
 var rootElm;
@@ -684,6 +685,9 @@ function generateJsFunc(etree) {
   var output = {};
 
   let replaceSymbolStr = (str)=>{
+      if(str===null&&str===undefined){
+          return str;
+      }
       let temp = str;
       let chineseSymbol = [/＋/g,/－/g,/＊/g,/／/g,/（/g,/）/g,/？/g,/：/g,/‘/g,/’/g];
       let englishSymbol = ["+","-","*","/","(",")","?",":","'","'"];
@@ -694,6 +698,9 @@ function generateJsFunc(etree) {
   };
 
     let replaceMathOp = (value)=> {
+        if(value===null&&value===undefined){
+            return value;
+        }
         let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
             'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan'];
         array.forEach(s=>{
@@ -820,7 +827,7 @@ function generateJsFunc(etree) {
               }
           } else if (cmd.action.name === 'deleteRootComponent') {
               lines.push('param.target.getRoot().delete()');
-          } else if (cmd.action.name === 'create') {
+          } else if (cmd.action.name === 'create' || cmd.action.name === 'clone') {
               if(cmd.action.property.length>=3) {
                   let cName = null;
                   let cId = null;
@@ -829,6 +836,15 @@ function generateJsFunc(etree) {
                   cmd.action.property.forEach((prop,i)=>{
                       if (i === 0) {
                           cName = prop.value;
+                          if(cmd.action.name === 'clone') {
+                              let propObj = prop.valueId;
+                              cName = getIdsName(propObj[0], propObj[2], '');
+                              if(cName.substr(cName.length-1,cName.length)===".") {
+                                  cName = cName.substr(0,cName.length-1);
+                              }
+                          } else {
+                              cName = JSON.stringify(prop.value);
+                          }
                       } else if (i === 1) {
                           cId = prop.value;
                       } else if (i === cmd.action.property.length-1) {
@@ -847,7 +863,7 @@ function generateJsFunc(etree) {
                           }
                       }
                   });
-                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create') + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + '{'+ props.join(',') +'}' +',' + bottom +')');
+                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], cmd.action.name) + '(' + cName + ',' + JSON.stringify(cId) + ',' + '{'+ props.join(',') +'}' +',' + bottom +')');
               }
           } else if (cmd.action.name === 'find') {
               let propsList = [];
@@ -1027,7 +1043,7 @@ function generateJsFunc(etree) {
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
-
+        lines.push('console.log(ids)');
       if (lines.length) {
         var out = '';
         if (conditions.length == 1) {
@@ -1632,15 +1648,12 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['changeContactObj'], this.changeContactObj);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
-
-
-
         this.listenTo(WidgetActions['closeKeyboardMove'], this.closeKeyboardMove);
 
         this.listenTo(WidgetActions['alignWidgets'], this.alignWidgets);
         this.listenTo(WidgetActions['updateConOptions'], this.updateConOptions);
 
-
+        this.listenTo(WidgetActions['setVersion'], this.setVersion);
         this.eventTreeList = [];
         this.historyRoad;
     },
@@ -3391,7 +3404,7 @@ export default Reflux.createStore({
         if (wid) {
             this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb,null,updateProgress);
         } else {
-            this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname) + encodeURIComponent(wdescribe),
+            this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname) + encodeURIComponent(wdescribe) + "&version=" + globalVersion,
                         'application/octet-stream', data, cb,null,updateProgress);
         }
     },
@@ -3652,6 +3665,10 @@ export default Reflux.createStore({
     },
     changeContactObj:function (key) {
         this.trigger({contactObj:key});
+    },
+
+    setVersion(v) {
+        globalVersion = v;
     },
 });
 

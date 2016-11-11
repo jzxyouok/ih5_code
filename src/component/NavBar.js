@@ -348,6 +348,9 @@ class NavBar extends React.Component {
             if (result['name']) {
                 this.playUrl = result['playUrl'];
                 this.fileUrl = result['fileUrl'];
+                if (result['version']) {
+                    WidgetActions['setVersion'](result['version']);
+                }
                 bridge.setFilePath(this.fileUrl + 'files/');
                 this.setState({
                     loginVisible: false,

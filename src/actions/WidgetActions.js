@@ -75,5 +75,7 @@ export default Reflux.createActions([
   'revokedHistory',
   'replyHistory',
   'chooseHistory',
-  'cleanHistory'
+  'cleanHistory',
+
+  'setVersion'    //版本
 ]);
