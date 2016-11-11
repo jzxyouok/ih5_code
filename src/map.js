@@ -288,12 +288,13 @@ const widgetFlags = { Root: 1,
     Display: 2,
     Container: 4,
     Renderer: 8,
-    Leaf: 16,
-    Timer: 32,
-    World: 64,
-    Unique: 128,
-    DomOnly: 256,
-    CanvasOnly: 512 };
+    Anchor: 16,
+    Leaf: 32,
+    Timer: 64,
+    World: 128,
+    Unique: 256,
+    DomOnly: 512,
+    CanvasOnly: 1024 };
 
 widgetFlags.FLAG_MASK = widgetFlags.Root | widgetFlags.Display | widgetFlags.Container;
 
@@ -627,7 +628,7 @@ const propertyMap = {
                 { name: 'scaleStage', type: 4, default: false },
                 { name: 'bgImage', type: 2, default: '' } ],
         events: [],
-        provides: 7 },
+        provides: 23 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
             props:
@@ -641,7 +642,7 @@ const propertyMap = {
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
             events: [],
-            provides: 7 },
+            provides: 23 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props:
@@ -653,7 +654,7 @@ const propertyMap = {
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
             events: [],
-            provides: 7 } },
+            provides: 23 } },
     'image':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
@@ -991,7 +992,7 @@ const propertyMap = {
                 { name: 'loop', type: 4, default: false },
                 { name: 'totalTime', type: 1, default: 10 } ],
         events: [],
-        provides: 38 },
+        provides: 70 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1013,7 +1014,7 @@ const propertyMap = {
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 } ],
             events: [],
-            provides: 38 },
+            provides: 70 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1033,7 +1034,7 @@ const propertyMap = {
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 } ],
             events: [],
-            provides: 38 } },
+            provides: 70 } },
     'track':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
@@ -1062,6 +1063,119 @@ const propertyMap = {
                     { name: 'endTime', type: 1, default: -1 } ],
             events: [],
             provides: 0 } },
+    'qrcode':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'width', type: 2, default: '' },
+                { name: 'height', type: 2, default: '' },
+                { name: 'backgroundColor', type: 6, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
+                { name: 'minWidth', type: 2, default: '' },
+                { name: 'maxWidth', type: 2, default: '' },
+                { name: 'minHeight', type: 2, default: '' },
+                { name: 'maxHeight', type: 2, default: '' },
+                { name: 'shapeWidth', type: 0, default: 0 },
+                { name: 'shapeHeight', type: 0, default: 0 },
+                { name: 'value', type: 2, default: '' } ],
+        events: [],
+        provides: 2 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'keepRatio', type: 4, default: false },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'shapeWidth', type: 0, default: 0 },
+                    { name: 'shapeHeight', type: 0, default: 0 },
+                    { name: 'value', type: 2, default: '' } ],
+            events: [],
+            provides: 2 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'keepRatio', type: 4, default: false },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'shapeWidth', type: 0, default: 0 },
+                    { name: 'shapeHeight', type: 0, default: 0 },
+                    { name: 'value', type: 2, default: '' } ],
+            events: [],
+            provides: 2 } },
+    'counter':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'width', type: 2, default: '' },
+                { name: 'height', type: 2, default: '' },
+                { name: 'backgroundColor', type: 6, default: '' },
+                { name: 'margin', type: 2, default: '' },
+                { name: 'flex', type: 2, default: '' },
+                { name: 'alignSelf', type: 2, default: '' },
+                { name: 'minWidth', type: 2, default: '' },
+                { name: 'maxWidth', type: 2, default: '' },
+                { name: 'minHeight', type: 2, default: '' },
+                { name: 'maxHeight', type: 2, default: '' },
+                { name: 'value', type: 1, default: 0 },
+                { name: 'precision', type: 0, default: 0 } ],
+        events: [],
+        provides: 2 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'keepRatio', type: 4, default: false },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'value', type: 1, default: 0 },
+                    { name: 'precision', type: 0, default: 0 } ],
+            events: [],
+            provides: 2 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'keepRatio', type: 4, default: false },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'width', type: 0, default: 0, readOnly: true },
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'value', type: 1, default: 0 },
+                    { name: 'precision', type: 0, default: 0 } ],
+            events: [],
+            provides: 2 } },
 };
 
 export {propertyMap, propertyType, backwardTransOptions, forwardTransOptions, effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags};
