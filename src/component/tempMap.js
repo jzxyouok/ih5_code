@@ -563,7 +563,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                aLack=['beginContact','endContact','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
     }
@@ -572,7 +572,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                aLack=['beginContact','endContact','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
     }
@@ -581,7 +581,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                aLack=['beginContact','endContact','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
     }
@@ -590,7 +590,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                aLack=['beginContact','endContact','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
     }
@@ -599,7 +599,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['init','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown'];
+                aLack=['touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown'];
                 break;
         }
     }
@@ -608,7 +608,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                aLack=['beginContact','endContact','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
     }
@@ -617,7 +617,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide','isMatch','isUnMatch','Contain','change'];
+                aLack=['beginContact','endContact','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide','isMatch','isUnMatch','Contain','change'];
                 break;
         }
     }
@@ -626,7 +626,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                aLack=['beginContact','endContact','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
     }
@@ -635,7 +635,7 @@ let modifyEventList = (list, className, type) => {
             case modeType.flex:
             case modeType.dom:
             case modeType.canvas:
-                aLack=['beginContact','endContact','click','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
+                aLack=['beginContact','endContact','touchDown','touchUp','swipeLeft','swipeRight','swipeUp','swipeDown','show','hide'];
                 break;
         }
     }
