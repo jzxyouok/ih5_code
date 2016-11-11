@@ -330,7 +330,7 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -344,7 +344,7 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -356,7 +356,7 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'container':
     { flex:
@@ -378,7 +378,7 @@ const propertyMap = {
                 { name: 'justifyContent', type: 2, default: '' },
                 { name: 'alignItems', type: 2, default: '' },
                 { name: 'flexWrap', type: 2, default: '' } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 6 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -392,7 +392,7 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 6 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -404,7 +404,7 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 6 } },
     'graphics':
     { flex:
@@ -426,7 +426,7 @@ const propertyMap = {
                 { name: 'fillColor', type: 6, default: '' },
                 { name: 'lineColor', type: 6, default: '' },
                 { name: 'lineWidth', type: 0, default: 1 } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -447,7 +447,7 @@ const propertyMap = {
                     { name: 'lineWidth', type: 0, default: 1 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -468,7 +468,7 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'sprite':
     { flex:
@@ -485,7 +485,7 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -501,7 +501,7 @@ const propertyMap = {
                     { name: 'rotation', type: 1, default: 0 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -517,7 +517,7 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'canvas':
     { flex:
@@ -534,7 +534,7 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 10 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -548,7 +548,7 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 10 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -560,7 +560,7 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 10 } },
     'dom':
     { flex:
@@ -577,7 +577,7 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 10 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -591,7 +591,7 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 10 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -603,7 +603,7 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 10 } },
     'root':
     { flex:
@@ -627,7 +627,9 @@ const propertyMap = {
                 { name: 'flexWrap', type: 2, default: '' },
                 { name: 'scaleStage', type: 4, default: false },
                 { name: 'bgImage', type: 2, default: '' } ],
-        events: [],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'init', info: '' } ],
         provides: 23 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -641,7 +643,9 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'init', info: '' } ],
             provides: 23 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -653,7 +657,9 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 } ],
-            events: [],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'init', info: '' } ],
             provides: 23 } },
     'image':
     { flex:
@@ -671,7 +677,7 @@ const propertyMap = {
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
                 { name: 'link', type: 0, default: 0 } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -688,7 +694,7 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'link', type: 0, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -705,7 +711,7 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'link', type: 0, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'text':
     { flex:
@@ -723,7 +729,7 @@ const propertyMap = {
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
                 { name: 'value', type: 3, default: '' } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -740,7 +746,7 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'value', type: 3, default: '' } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -757,7 +763,7 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'value', type: 3, default: '' } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'rect':
     { flex:
@@ -780,7 +786,7 @@ const propertyMap = {
                 { name: 'lineColor', type: 6, default: '' },
                 { name: 'lineWidth', type: 0, default: 1 },
                 { name: 'radius', type: 0, default: 0 } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -802,7 +808,7 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'radius', type: 0, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -824,7 +830,7 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'radius', type: 0, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'ellipse':
     { flex:
@@ -846,7 +852,7 @@ const propertyMap = {
                 { name: 'fillColor', type: 6, default: '' },
                 { name: 'lineColor', type: 6, default: '' },
                 { name: 'lineWidth', type: 0, default: 1 } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -867,7 +873,7 @@ const propertyMap = {
                     { name: 'lineWidth', type: 0, default: 1 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -888,7 +894,7 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'path':
     { flex:
@@ -913,7 +919,7 @@ const propertyMap = {
                 { name: 'path', type: 2, default: '' },
                 { name: 'viewBoxWidth', type: 0, default: 0 },
                 { name: 'viewBoxHeight', type: 0, default: 0 } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -937,7 +943,7 @@ const propertyMap = {
                     { name: 'path', type: 2, default: '' },
                     { name: 'viewBoxWidth', type: 0, default: 0 },
                     { name: 'viewBoxHeight', type: 0, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -961,7 +967,7 @@ const propertyMap = {
                     { name: 'path', type: 2, default: '' },
                     { name: 'viewBoxWidth', type: 0, default: 0 },
                     { name: 'viewBoxHeight', type: 0, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'timer':
     { flex:
@@ -991,7 +997,10 @@ const propertyMap = {
                 { name: 'autoPlay', type: 4, default: false },
                 { name: 'loop', type: 4, default: false },
                 { name: 'totalTime', type: 1, default: 10 } ],
-        events: [],
+        events:
+            [ { name: 'click', info: 'globalX, globalY' },
+                { name: 'stop', info: '' },
+                { name: 'loop', info: '' } ],
         provides: 70 },
         dom:
         { funcs:
@@ -1013,7 +1022,10 @@ const propertyMap = {
                     { name: 'autoPlay', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 } ],
-            events: [],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'stop', info: '' },
+                    { name: 'loop', info: '' } ],
             provides: 70 },
         canvas:
         { funcs:
@@ -1033,7 +1045,10 @@ const propertyMap = {
                     { name: 'autoPlay', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 } ],
-            events: [],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'stop', info: '' },
+                    { name: 'loop', info: '' } ],
             provides: 70 } },
     'track':
     { flex:
@@ -1081,7 +1096,7 @@ const propertyMap = {
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'value', type: 2, default: '' } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -1100,7 +1115,7 @@ const propertyMap = {
                     { name: 'shapeWidth', type: 0, default: 0 },
                     { name: 'shapeHeight', type: 0, default: 0 },
                     { name: 'value', type: 2, default: '' } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -1119,7 +1134,7 @@ const propertyMap = {
                     { name: 'shapeWidth', type: 0, default: 0 },
                     { name: 'shapeHeight', type: 0, default: 0 },
                     { name: 'value', type: 2, default: '' } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
     'counter':
     { flex:
@@ -1138,7 +1153,7 @@ const propertyMap = {
                 { name: 'maxHeight', type: 2, default: '' },
                 { name: 'value', type: 1, default: 0 },
                 { name: 'precision', type: 0, default: 0 } ],
-        events: [],
+        events: [ { name: 'click', info: 'globalX, globalY' } ],
         provides: 2 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -1156,7 +1171,7 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'value', type: 1, default: 0 },
                     { name: 'precision', type: 0, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
@@ -1174,7 +1189,7 @@ const propertyMap = {
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'value', type: 1, default: 0 },
                     { name: 'precision', type: 0, default: 0 } ],
-            events: [],
+            events: [ { name: 'click', info: 'globalX, globalY' } ],
             provides: 2 } },
 };
 

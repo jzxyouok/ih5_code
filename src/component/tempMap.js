@@ -243,22 +243,22 @@ let funcMapping = {
     'seek': {name:'seek', showName:'跳至', property:[
         {'name':'time', 'showName':'跳至', 'value':null, 'type':propertyType.Float}]},
 
-    'find': {name:'find', showName:'输出', info:'(option, callback(err, result))', property:[
+    'find': {name:'find', showName:'输出', info:'option, callback(err, result)', property:[
         {'name':'type', 'showName':'普通', 'value':'normal', 'type':propertyType.Hidden},
         {'name':'conditions', 'showName':'输出条件', 'value':[{field:null,operation:'=',compare:null}], 'type':propertyType.DBCons},
         {'name':'order', 'showName':'排序方式', 'value':{field:null, asc:true}, 'type':propertyType.DBOrder},
         {'name':'lines', 'showName':'输出行数', 'value':{from:null, to:null}, 'type':propertyType.Range},
         {'name':'object', 'showName':'输出至对象', 'value':null, 'type':propertyType.Object},
         {'name':'onlyMe', 'showName':'仅当前用户', 'value':false, 'type':propertyType.Boolean3}]},
-    'insert': {name:'insert', showName:'提交', info:'(data, callback(err, result))', property:[
+    'insert': {name:'insert', showName:'提交', info:'data, callback(err, result)', property:[
         {'name':'data', 'showName':'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]},
-    'update': {name:'update', showName:'更新', info:'(data, callback(err, result))', property:[
+    'update': {name:'update', showName:'更新', info:'data, callback(err, result)', property:[
         {'name':'data', 'showName':'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]},
 
-    'send': {name:'send', showName:'发送消息', info:'(data)', property:[
+    'send': {name:'send', showName:'发送消息', info:'data', property:[
         {'name':'value', 'showName':'内容', 'value':null, 'type':propertyType.FormulaInput}]},
 
-    'getResult': {name:'getResult', showName: '获取表格数据', info: '(pageNum)', property: [
+    'getResult': {name:'getResult', showName: '获取表格数据', info: 'pageNum', property: [
         {'name': 'pageNum', 'showName': '页数', 'value': null, 'type': propertyType.Integer}]},
     'nextResult': {name:'nextResult', showName:'获取下一页数据'},
     'prevResult': {name:'prevResult', showName:'获取上一页数据'},
