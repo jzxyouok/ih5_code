@@ -495,6 +495,7 @@ class ObjectTree extends React.Component {
         data.props['visible'] = bool;
         data.node['visible'] = bool;
         WidgetActions['render']();
+        this.forceUpdate();
     }
 
     lockBtn(nid, data,event) {
