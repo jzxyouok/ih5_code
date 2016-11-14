@@ -769,15 +769,15 @@ propertyMap['oneDArr'] = [
     { addRequires: widgetFlags.Root},
     { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
     { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
-    { name: 'row', showName:'行',type: propertyType.Integer, default: 0, isProperty: true },
+    { name: 'row', showName:'行',type: propertyType.Integer, default: 0, group:"oneDArr", isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 propertyMap['twoDArr'] = [
     { addRequires: widgetFlags.Root},
     { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
     { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
-    { name: 'row', showName:'行',type: propertyType.Integer, default: 0, isProperty: true },
-    { name: 'column', showName:'列',type: propertyType.Integer, default: 0, isProperty: true },
+    { name: 'row', showName:'行',type: propertyType.Integer, default: 0, group:"twoDArr", isProperty: true },
+    { name: 'column', showName:'列',type: propertyType.Integer, default: 0, group:"twoDArr", isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 

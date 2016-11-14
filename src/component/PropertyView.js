@@ -1011,6 +1011,9 @@ class PropertyView extends React.Component {
             if( className == "table"){
                 hasTwin = ['X','Y','W','H','旋转度','中心点','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','行数','列数','头部字体','图表字体大小','字体','网格颜色','网格大小'].indexOf(item.showName) >= 0;
             }
+            else if (className === 'twoDArr') {
+                hasTwin = ['行','列'].indexOf(item.showName) >= 0;
+            }
             else if(className == "timer"){
                 hasTwin = ['X','Y','W','H','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','自动播放','循环播放'].indexOf(item.showName) >= 0;
                 hasOne=true;
