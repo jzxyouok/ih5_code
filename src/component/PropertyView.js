@@ -18,6 +18,7 @@ import {chooseFile} from  '../utils/upload';
 require("jscolor/jscolor");
 import TbCome from './TbCome';
 import {PropertyViewMove} from  './PropertyView/MoudleMove';
+import DbHeaderStores from '../stores/DbHeader';
 
 class PropertyView extends React.Component {
     constructor(props) {
@@ -31,14 +32,15 @@ class PropertyView extends React.Component {
             tbHeaderToggle : true,
             tbWhichColumn : 0,
             tbLineWidth : "自动",
-            isSliderChange : false
+            isSliderChange : false,
+            dbList: [],
+            AllDbList : [],
         };
         this.moudleMove=null;
         this.selectNode = null;
         this.currentPage = null;
         this.fontList=[];
         this.textSizeObj=null;
-
 
         this.defaultData = {
             width: null,
@@ -205,6 +207,21 @@ class PropertyView extends React.Component {
                 </div>;
             case propertyType.Dropdown:
                 return  <DropDownInput {...defaultProp} />;
+            case propertyType.dbSelect:
+                if(!defaultProp.value){
+                    defaultProp.value = null;
+                }
+                return <div className="flex-1">
+                    <Select {...defaultProp}>
+                        <Option value={null} key={0}>无数据源</Option>
+                        {
+                            this.state.dbList.map((v, i)=>{
+                               return <Option value={v.id} key={i+1}>{v.name}</Option>
+                            })
+                        }
+                    </Select>
+                </div>;
+                // return <div>数据库选择</div>;
             default:
                 return <Input {...defaultProp} />;
         }
@@ -469,6 +486,7 @@ class PropertyView extends React.Component {
                     break;
                 default:
                     v = value;
+                    break;
             }
         }
 
@@ -653,7 +671,6 @@ class PropertyView extends React.Component {
             }
         }
     }
-
 
     getFontDefault(value){
         for(let i in this.fontList){
@@ -1220,7 +1237,53 @@ class PropertyView extends React.Component {
             this.forceUpdate();
         }
 
+        //数据库列表的获取
+        if(widget.allWidgets){
+            let dbList = [];
+            widget.allWidgets.map((v,i)=>{
+                if(v.className == "db"){
+                    let data = {};
+                    if(v.node.dbType == "shareDb"){
+                        this.state.AllDbList.map((v1,i1)=>{
+                            if(v1.id == v.props.dbid){
+                                data = v1;
+                                dbList.push(data);
+                                this.setState({
+                                    dbList : dbList
+                                })
+                            }
+                        })
+                    }
+                    else {
+                        WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + v.props.dbid, null, null, function(text) {
+                            var result = JSON.parse(text);
+                            //console.log(result);
+                            if (result['header']) {
+                                data['id'] = v.props.dbid;
+                                data['name'] = v.props.name;
+                                data['header'] = result['header'];
+                            }
+                            else {
+                                data['id'] = v.props.dbid;
+                                data['name'] = v.props.name;
+                            }
+                            dbList.push(data);
+                            this.setState({
+                                dbList : dbList
+                            })
+                        }.bind(this));
+                    }
+                }
+            })
+        }
     }
+
+    DbHeaderData(data,bool){
+        this.setState({
+            AllDbList : data
+        })
+    }
+
     componentWillReceiveProps(nextProps) {
         this.setState({
             expanded: nextProps.expanded
@@ -1228,6 +1291,7 @@ class PropertyView extends React.Component {
     }
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        DbHeaderStores.listen(this.DbHeaderData.bind(this));
         this.moudleMove = new PropertyViewMove('PropertyViewHeader', this);
 
         $('#PropertyView').on('focus', 'textarea,input', function () {
@@ -1236,6 +1300,7 @@ class PropertyView extends React.Component {
     }
     componentWillUnmount() {
         this.unsubscribe();
+        DbHeaderStores.removeListener(this.DbHeaderData.bind(this));
         this.moudleMove.unBind();
         $('#PropertyView').unbind();
     }

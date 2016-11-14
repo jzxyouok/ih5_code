@@ -297,6 +297,13 @@ class Property extends React.Component {
         let propertyList=[];
         if(node){
             let className=node.className;
+            if(className === 'data') {
+                if(node.props.type === 'twoDArr') {
+                    className = 'twoDArr';
+                } else if(node.props.type === 'oneDArr') {
+                    className = 'oneDArr';
+                }
+            }
             this.setDefaultMappingProps(className, propertyList, 'add');
         }
         obj.property= propertyList;
