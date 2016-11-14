@@ -1061,7 +1061,7 @@ function generateJsFunc(etree) {
           var logicalFlag = item.judges.logicalFlag;
           var lop;
           if (logicalFlag == 'and')
-            lop = '&&'
+            lop = '&&';
           else if (logicalFlag == 'or')
             lop = '||';
           if (lop)
