@@ -259,15 +259,15 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.COMINTERFACE, name:'连接', icon: cominterfaceIcon, className:'sock'}]
-    },{
-        name:'设备',
-        key:22,
-        gid:22,
-        primary: 0,
-        secondary: [
-            {cid:TOOL_ID.REMOTEDEVICE, name:'移动设备', icon: remotedeviceIcon, className:'remotedevice'},
-            {cid:TOOL_ID.REMOTEDEVICE, name:'PC设备', icon: pcdeviceIcon, className:'pcdevice'}
-        ]
+    // },{
+    //     name:'设备',
+    //     key:22,
+    //     gid:22,
+    //     primary: 0,
+    //     secondary: [
+    //         {cid:TOOL_ID.REMOTEDEVICE, name:'移动设备', icon: remotedeviceIcon, className:'remotedevice'},
+    //         {cid:TOOL_ID.REMOTEDEVICE, name:'PC设备', icon: pcdeviceIcon, className:'pcdevice'}
+    //     ]
     },{
         name:'微信',
         key:23,
