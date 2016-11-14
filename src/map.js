@@ -1617,6 +1617,7 @@ const propertyMap = {
                     { name: 'southWall', type: 4, default: true },
                     { name: 'westWall', type: 4, default: true },
                     { name: 'eastWall', type: 4, default: true },
+                    { name: 'autoGravity', type: 4, default: false },
                     { name: 'gravityX', type: 1, default: 0 },
                     { name: 'gravityY', type: 1, default: 0 } ],
             events:
@@ -1644,6 +1645,8 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'mass', type: 1, default: 0 },
+                    { name: 'isCircle', type: 4, default: false },
+                    { name: 'collisionResponse', type: 4, default: true },
                     { name: 'globalVx', type: 1, default: 0 },
                     { name: 'globalVy', type: 1, default: 0 },
                     { name: 'velocityX', type: 1, default: 0 },
