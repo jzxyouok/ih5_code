@@ -3223,6 +3223,7 @@ export default Reflux.createStore({
         resolveEventTree(tree, idList);
         resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
+        rootDiv.lastChild.style.position='relative';
         this.render();
 
         this.trigger({
