@@ -132,6 +132,7 @@ class PropertyView extends React.Component {
                 if(defaultProp.tbCome){
                     delete defaultData.tbCome;
                 }
+
                 return  <Input ref={(inputDom) => {
                     if (inputDom) {
                         var dom = ReactDOM.findDOMNode(inputDom).firstChild;
