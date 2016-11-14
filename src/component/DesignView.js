@@ -2,6 +2,7 @@ import React from 'react';
 import cls from 'classnames';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
+import {DesignViewMove,DesignViewLineMove} from './PropertyView/MoudleMove';
 
 
 class DesignView extends React.Component {
@@ -25,27 +26,17 @@ class DesignView extends React.Component {
         this.stageZoomLeft=0;
         this.keyboard=false;
 
-        this.canvasObj={
-            subW:null,
-            subH:null,
-            canvasWraper:null,
-            oCanvasDom:null
-        };
+
+        this.moudleMove=null;
+        this.designViewLineMove=null;
+
 
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onresize=this.onresize.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
-
         this.isShowRulerLine = this.isShowRulerLine.bind(this);
-        this.mouseDown_top = this.mouseDown_top.bind(this);
-        this.mouseDown_left = this.mouseDown_left.bind(this);
-        this.mouseMove = this.mouseMove.bind(this);
-        this.mouseUp = this.mouseUp.bind(this);
-        this.canvasMousedown = this.canvasMousedown.bind(this);
-        this.canvasMouseMove = this.canvasMouseMove.bind(this);
-        this.canvasMouseUp = this.canvasMouseUp.bind(this);
     }
 
     componentDidMount() {
@@ -56,13 +47,9 @@ class DesignView extends React.Component {
         this.setRuler(6,10);  //设置基准线
         document.body.addEventListener('keydown', this.onKeyScroll);
         document.body.addEventListener('keyup', this.onKeyUp);
-        document.getElementById('h_ruler').addEventListener('mousedown',this.mouseDown_top);
-        document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);
-        document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
-        document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
-        document.getElementById('canvas-wraper').addEventListener('mousedown',this.canvasMousedown);
-        document.getElementById('canvas-wraper').addEventListener('mousemove',this.canvasMouseMove);
-        document.getElementById('canvas-wraper').addEventListener('mouseup',this.canvasMouseUp);
+
+        this.moudleMove=new DesignViewMove('canvas-dom',this);
+        this.designViewLineMove =new DesignViewLineMove(this);
     }
 
     componentWillUnmount() {
@@ -70,13 +57,11 @@ class DesignView extends React.Component {
         window.onresize = null;
         document.body.removeEventListener('keydown', this.onKeyScroll);
         document.body.removeEventListener('keyup', this.onKeyUp);
-        document.getElementById('h_ruler').removeEventListener('mousedown', this.mouseDown_top);
-        document.getElementById('v_ruler').removeEventListener('mousedown', this.mouseDown_left);
-        document.getElementById('DesignView-Container').removeEventListener('mousemove', this.mouseMove);
-        document.getElementById('DesignView-Container').removeEventListener('mouseup', this.mouseUp);
-        document.getElementById('canvas-dom').removeEventListener('mousedown',this.canvasMousedown);
-        document.getElementById('canvas-dom').removeEventListener('mousemove',this.canvasMouseMove);
-        document.getElementById('canvas-dom').removeEventListener('mouseup',this.canvasMouseUp);
+
+
+        this.moudleMove.unBind();
+        this.designViewLineMove.unBind();
+
     }
 
     onStatusChange(widget) {
@@ -349,137 +334,9 @@ class DesignView extends React.Component {
 
     }
 
-
-    canvasMousedown(e){
-        if(this.state.space){
-            event.preventDefault();
-            let oCanvasWraper = this.refs.canvasWraper;
-            let oCanvasDom =this.refs.view;
-            this.canvasObj.canvasWraper = oCanvasWraper;
-            this.canvasObj.oCanvasDom = oCanvasDom;
-
-
-            this.setState({
-                isDown:true
-            });
-            this.canvasObj.subW =e.pageX-oCanvasWraper.offsetLeft;
-            this.canvasObj.subH =e.pageY-oCanvasDom.offsetTop;
-
-        }
-    }
-
-    canvasMouseMove(e){
-        if(this.state.space && this.state.isDown){
-            event.preventDefault();
-
-            this.canvasObj.canvasWraper.style.left =(e.pageX-this.canvasObj.subW+320)+'px';
-            this.canvasObj.oCanvasDom.style.top =(e.pageY-this.canvasObj.subH)+'px';
-
-            this.drawLine(this.aODiv);
-        }
-    }
-
-    canvasMouseUp(e){
-        event.preventDefault();
-        if (this.state.isDown) {
-            this.setState({
-                isDown:false
-            });
-            this.canvasObj.canvasWraper = null;
-            this.canvasObj.oCanvasDom = null;
-        }
-
-    }
-
-
-    mouseDown_top(event){
-        event.stopPropagation();
-        this.curODiv =  document.createElement('div');
-        this.curODiv.appendChild(document.createElement('div'));
-        this.curODiv.setAttribute('class','rulerWLine');
-        this.refs.container.appendChild(this.curODiv);
-        this.isDraging=true;
-        this.whichDrag='top';
-    }
-
-    mouseDown_left(event){
-        event.stopPropagation();
-        this.curODiv =  document.createElement('div');
-        this.curODiv.appendChild(document.createElement('div'));
-        this.curODiv.setAttribute('class','rulerHLine');
-        this.refs.container.appendChild(this.curODiv);
-        this.isDraging=true;
-        this.whichDrag='left';
-    }
-
-    mouseMove(event){
-        if(this.curODiv &&  this.isDraging){
-            event.stopPropagation();
-            if(this.whichDrag=='top'){
-                this.curODiv.style.top = (event.pageY)+'px';
-
-                document.body.style.cursor=' n-resize';
-            }else{
-                this.curODiv.style.left = (event.pageX)+'px';
-                document.body.style.cursor='e-resize';
-            }
-            if((event.pageY<=this.refs.view.offsetTop +this.stageZoomTop && this.refs.view.offsetTop +this.stageZoomTop-14 <=event.pageY)||(event.pageX<=this.refs.canvasWraper.offsetLeft+this.stageZoomLeft && this.refs.canvasWraper.offsetLeft+this.stageZoomLeft-13 <=event.pageX)){
-                this.curODiv.style.display='none';
-            }else{
-                this.curODiv.style.display='block';
-            }
-
-        }
-    }
-
-    mouseUp(event){
-        let $this =this;
-        if(this.curODiv) {
-            event.stopPropagation();
-            //在x_ruler ,则消失,否则存储
-            if((event.pageY<=this.refs.view.offsetTop+this.stageZoomTop && this.refs.view.offsetTop+this.stageZoomTop-14 <=event.pageY)||(event.pageX<=this.refs.canvasWraper.offsetLeft +this.stageZoomLeft && this.refs.canvasWraper.offsetLeft +this.stageZoomLeft-13 <=event.pageX) ){
-                this.refs.container.removeChild(this.curODiv);
-            }else{
-                //存在,则修改;不存在,则添加
-                this.curODiv.onmousedown= function(){
-                    $this.isDraging=true;
-                    $this.curODiv=this;
-                    //清除aODiv中的存储
-                    $this.aODiv.map((item,index) =>{
-                        if(item.oDiv.flag == this.flag){
-                            $this.aODiv.splice(index,1);
-                        }
-                    });
-                    $this.whichDrag =this.whichDrag;
-                    //解绑事件
-                    this.onmousedown=null;
-                };
-
-                this.curODiv.flag=this.count++;
-                this.curODiv.whichDrag=this.whichDrag;
-                this.aODiv.push({
-                    oDiv:this.curODiv,
-                    offsetLeft:(event.pageX-this.refs.canvasWraper.offsetLeft)/this.stageZoomRate,
-                    offsetTop:(this.refs.view.offsetTop+this.stageZoomTop -event.pageY)/this.stageZoomRate
-                });
-                WidgetStore.currentWidget.props.rulerArr =this.aODiv;
-            }
-            document.body.style.cursor='auto';
-            this.isDraging=false;
-            this.curODiv=null;
-            this.whichDrag=null;
-            //全部显示 ,如果处于非显示状态,则触发显示
-            if( this.selectNode&& this.selectNode.props.isShow != undefined && !this.selectNode.props.isShow){
-                WidgetActions['setRulerLineBtn'](true);
-            }
-        }
-    }
-
-
     render() {
         //缩放后设置参考线位置
         this.stageZoomChange();
-
         return (
             <div
                 id='DesignView-Container'

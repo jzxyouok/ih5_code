@@ -81,6 +81,8 @@ class Property extends React.Component {
 
         this.setDefaultMappingProps = this.setDefaultMappingProps.bind(this);
 
+        this.getObjByKey = this.getObjByKey.bind(this);
+
         this.arrList = []; //数组类型变量列表
         this.classNameList = []; //类别列表
         this.customClassList = []; //用于保存自定义类
@@ -160,13 +162,18 @@ class Property extends React.Component {
         }
     }
 
-    onGetActionList(key){
+    getObjByKey(key) {
         let obj = WidgetStore.getWidgetByKey(key);
         if(key === 'this') {
             obj = WidgetStore.getWidgetByKey(this.state.wKey);
         } else if ((key === 'param.target'||key === 'target')&&this.state.contactObj) {
             obj = WidgetStore.getWidgetByKey(this.state.contactObj);
         }
+        return obj;
+    }
+
+    onGetActionList(key){
+        let obj = this.getObjByKey(key);
         if(!obj||!obj.className) {
             this.setState({
                 actionList: []
@@ -286,13 +293,7 @@ class Property extends React.Component {
             showName: '设置属性',
             type: funcType.default
         };
-        let node = WidgetStore.getWidgetByKey(this.state.currentObject);
-        if(this.state.currentObject === 'this') {
-            node = WidgetStore.getWidgetByKey(this.state.wKey);
-        } else if (this.state.contactObj&&
-            (this.state.currentObject === 'param.target'|| this.state.currentObject === 'target')) {
-            node = WidgetStore.getWidgetByKey(this.state.contactObj);
-        }
+        let node = this.getObjByKey(this.state.currentObject);
         let propertyList=[];
         if(node){
             let className=node.className;
@@ -581,13 +582,17 @@ class Property extends React.Component {
             if (isCustomizeWidget(className)) {
                 className = 'class';
             }
-            let obj = WidgetStore.getWidgetByKey(this.state.currentObject);
+            let obj = this.getObjByKey(this.state.currentObject);
             if(obj) {
                 this.setDefaultMappingProps(obj, className, newProperty, 'change');
-            }
-            if(this.state.currentAction.name === 'clone') {
-                //设置默认值
-                //TODO
+                if(this.state.currentAction.name === 'clone' && newProperty.length>3) {
+                    //根据data的props, 设置默认值
+                    newProperty.forEach((v, i)=> {
+                        if((i>1||i<newProperty.length-1) && data.props[v.name]) {
+                            v.value = data.props[v.name];
+                        }
+                    });
+                }
             }
             property = newProperty;
         }
@@ -604,12 +609,7 @@ class Property extends React.Component {
     onGetClassListByKey(key) {
         this.classNameList = [];
         this.customList = [];
-        let widget = WidgetStore.getWidgetByKey(key);
-        if(key === 'this') {
-            widget = WidgetStore.getWidgetByKey(this.state.wKey);
-        } else if ((key === 'param.target'||key === 'target')&&this.state.contactObj) {
-            widget = WidgetStore.getWidgetByKey(this.state.contactObj);
-        }
+        let widget = this.getObjByKey(key);
         if(widget) {
             if(widget.className === 'root' || widget.className === 'container' || widget.className === 'timer'
                 || widget.className === 'slidetimer' || widget.className === 'world') {
@@ -758,18 +758,10 @@ class Property extends React.Component {
     render() {
         let propertyId = 'spec-item-'+ this.state.specific.sid;
 
-        let w = null;
-        if(this.state.currentObject === 'this') {
-            w = WidgetStore.getWidgetByKey(this.state.wKey);
-        } else if (this.state.contactObj&&
-            (this.state.currentObject === 'param.target'||this.state.currentObject === 'target')) {
-            w = WidgetStore.getWidgetByKey(this.state.contactObj)
-        } else {
-            w = WidgetStore.getWidgetByKey(this.state.currentObject);
-        }
+        let w = this.getObjByKey(this.state.currentObject);
         let f = null;
         if (this.state.currentAction&&this.state.currentAction.type === funcType.customize) {
-            f = WidgetStore.getWidgetByKey(this.state.currentAction.func);
+            f = this.getObjByKey(this.state.currentAction.func);
         }
 
         let propertyContent = (v1,i1)=>{
@@ -840,7 +832,7 @@ class Property extends React.Component {
             let menu = propertySelectMenu(list, item, index, type);
             switch (type){
                 case optionType.widget:
-                    selectedValue = WidgetStore.getWidgetByKey(item.value);
+                    selectedValue = this.getObjByKey(item.value);
                     showValue = (!selectedValue || !selectedValue.props || !selectedValue.props.name)?title:selectedValue.props.name;
                     break;
                 case optionType.class:
@@ -865,7 +857,7 @@ class Property extends React.Component {
         };
 
         let propertyObjDropDownMenu = (list, item, index, type)=>{
-            let itemObj = WidgetStore.getWidgetByKey(item.value);
+            let itemObj = this.getObjByKey(item.value);
             return (<Dropdown overlay={propertySelectMenu(list, item, index, type)} trigger={['click']}
                        getPopupContainer={() => document.getElementById(propertyId)}>
                 <div className={$class("p--dropDown p--obj-dropDown")}>
@@ -986,7 +978,7 @@ class Property extends React.Component {
         );
 
         let actionMenuItem = (v2, i)=>{
-            let func = WidgetStore.getWidgetByKey(v2.func);
+            let func = this.getObjByKey(v2.func);
             switch (v2.type) {
                 case funcType.customize:
                     if(func){

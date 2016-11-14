@@ -483,10 +483,10 @@ let modifyPropList = (list, className, type) => {
                 aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
                 break;
             case modeType.dom:
-                aLack=['alpha','initVisible','width','height'];
+                aLack=['alpha','initVisible'];
                 break;
             case modeType.canvas:
-                aLack=['alpha','initVisible','width','height'];
+                aLack=['alpha','initVisible'];
                 break;
         }
     }
@@ -496,10 +496,10 @@ let modifyPropList = (list, className, type) => {
                 aLack=['scaleType','color','clipped'];
                 break;
             case modeType.dom:
-                aLack=['width','height','scaleType','color','clipped'];
+                aLack=['scaleType','color','clipped'];
                 break;
             case modeType.canvas:
-                aLack=['width','height','scaleType','color','clipped'];
+                aLack=['scaleType','color','clipped'];
                 break;
         }
     }

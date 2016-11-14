@@ -26,7 +26,7 @@ class Event extends React.Component {
             activeKey: this.props.activeKey,  //当前激活事件的key
             wKey: this.props.wKey,
             specialObject: ['counter', 'text', 'var', 'input'],
-            //用于下拉框显示
+            //用于下拉框显示123
             logicalOption: ['and', 'or', 'not'],  //下拉选项
             judgeObjOption: [],
             judgeValOption: [],
@@ -44,17 +44,13 @@ class Event extends React.Component {
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
-
         this.getJudgeObjOption = this.getJudgeObjOption.bind(this);
         this.getJudgeValOption = this.getJudgeValOption.bind(this);
-
 
         this.onEventEnable = this.onEventEnable.bind(this);
         this.onChildEnable = this.onChildEnable.bind(this);
 
         this.menuList = this.menuList.bind(this);
-
-
 
         this.onSetFuncSpecificListProperty = this.onSetFuncSpecificListProperty.bind(this);
         this.getAntdComponent = this.getAntdComponent.bind(this);
