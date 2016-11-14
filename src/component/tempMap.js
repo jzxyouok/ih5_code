@@ -123,8 +123,9 @@ let propMapping = {
     'sockName' : {name:'sockName', showName:'名称',  type: propertyType.String, default: null, readOnly:true },
     'listened': {name:'listened', showName:'是否监听', type: propertyType.Boolean, default: false},
 
-    'row': {name:'row', showName:'行',type: propertyType.Integer, default: 0},
-    'column': {name:'column', showName:'列',type: propertyType.Integer, default: 0},
+    'row': {name:'row', showName:'行',type: propertyType.Integer, default: 0, group:"dArr"},
+    'column': {name:'column', showName:'列',type: propertyType.Integer, default: 0, group:"dArr"},
+    'dbSource': { name: 'dbSource', showName:'数据来源', type: propertyType.dbSelect, default: null},
 
     'rowNum': {name:'rowNum', showName:'行数', default : 0, type:propertyType.Integer , group:"tableP"},
     'header': {name:'header', showName:'列数', default : 0, type:propertyType.Integer , group:"tableP"},
@@ -391,7 +392,7 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['twoDArr'] = {
         dom: {
             funcs: dealElementList(['getRoot'], 'twoDArr', 'funcs', modeType.dom),
-            props: dealElementList(['title', 'value', 'row', 'column'], 'twoDArr', 'props', modeType.dom),
+            props: dealElementList(['title', 'value', 'row', 'column', 'dbSource'], 'twoDArr', 'props', modeType.dom),
             events: [],
             provides: 0
         }
