@@ -188,7 +188,7 @@ var DEFAULT_TOOLBOX = {
         gid:12,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.FLEX,name:'排版容器',icon:flexIcon, className:'flex', drawRect:true}
+            {cid:TOOL_ID.FLEX,name:'排版容器',icon:flexIcon, className:'flex', drawRect:true, param: {'width': '100%', 'height': '100%'}}
         ]
     },{
         name:'画布',
