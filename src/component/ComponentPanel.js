@@ -80,7 +80,7 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:"pcdeviceIcon", className:'pcdevice'},
                 {cid:this.cid++,icon:"onedarrIcon", className:'oneDArr'},
                 {cid:this.cid++,icon:"twodarrIcon", className:'twoDArr'},
-                {cid:this.cid++,icon:"composingcontainerIcon", className:'composingcontainer'},
+                {cid:this.cid++,icon:"flexIcon", className:'flex'},
                 {cid:this.cid++,icon:"cominterfaceIcon", className:'cominterface'},
                 {cid:this.cid++,icon:"htmlIcon", className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}},
                 {cid:this.cid++,icon:"pageIcon", className:'page'},

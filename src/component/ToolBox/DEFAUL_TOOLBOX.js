@@ -33,7 +33,7 @@ let remotedeviceIcon = img('remoteDevice.svg');
 let pcdeviceIcon = img('pcDevice.svg');
 let onedarrIcon = img('oneDArr.svg');
 let twodarrIcon = img('twoDArr.svg');
-let composingcontainerIcon = img('composingContainer.svg');
+let flexIcon = img('flex.svg');
 let cominterfaceIcon = img('comInterface.svg');
 let htmlIcon = img('html.svg');
 let inputIcon = img('input.svg');
@@ -82,7 +82,7 @@ var TOOL_ID = {
     PCDEVICE: 28,
     TWODARR: 29,
     ONEDARR: 35,
-    COMPOSINGCONTAINER:30,
+    FLEX:30,
     COMINTERFACE:31,
 
     HTML:32,
@@ -188,7 +188,7 @@ var DEFAULT_TOOLBOX = {
         gid:12,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.COMPOSINGCONTAINER,name:'排版容器',icon:composingcontainerIcon, className:'composingcontainer'}
+            {cid:TOOL_ID.FLEX,name:'排版容器',icon:flexIcon, className:'flex', drawRect:true, param: {'width': '100%', 'height': '100%'}}
         ]
     },{
         name:'画布',
