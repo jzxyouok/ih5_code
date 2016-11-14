@@ -348,6 +348,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -424,6 +425,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -499,6 +501,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -585,6 +588,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -661,6 +665,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -669,8 +674,7 @@ const propertyMap = {
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
                     { name: 'width', type: 2, default: '' },
-                    { name: 'height', type: 2, default: '' },
-                    { name: 'backgroundColor', type: 6, default: '' } ],
+                    { name: 'height', type: 2, default: '' } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -737,6 +741,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -749,7 +754,9 @@ const propertyMap = {
                     { name: 'justifyContent', type: 2, default: '' },
                     { name: 'alignItems', type: 2, default: '' },
                     { name: 'alignContent', type: 2, default: '' },
-                    { name: 'flexWrap', type: 2, default: '' } ],
+                    { name: 'flexWrap', type: 2, default: '' },
+                    { name: 'width', type: 2, default: '' },
+                    { name: 'height', type: 2, default: '' } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -813,6 +820,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -889,6 +897,7 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'scaleStage', type: 4, default: false },
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 },
@@ -959,6 +968,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -1038,6 +1048,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -1122,6 +1133,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -1215,6 +1227,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -1309,6 +1322,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -1420,6 +1434,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -1535,6 +1550,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
@@ -1619,6 +1635,7 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
