@@ -59,9 +59,9 @@ class DesignView extends React.Component {
         document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);
         document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
         document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
-        document.getElementById('canvas-wraper').addEventListener('mousedown',this.canvasMousedown);
-        document.getElementById('canvas-wraper').addEventListener('mousemove',this.canvasMouseMove);
-        document.getElementById('canvas-wraper').addEventListener('mouseup',this.canvasMouseUp);
+        document.getElementById('canvas-dom').addEventListener('mousedown',this.canvasMousedown);
+        document.getElementById('canvas-dom').addEventListener('mousemove',this.canvasMouseMove);
+        document.getElementById('canvas-dom').addEventListener('mouseup',this.canvasMouseUp);
     }
 
     componentWillUnmount() {
@@ -73,9 +73,9 @@ class DesignView extends React.Component {
         document.getElementById('v_ruler').removeEventListener('mousedown', this.mouseDown_left);
         document.getElementById('DesignView-Container').removeEventListener('mousemove', this.mouseMove);
         document.getElementById('DesignView-Container').removeEventListener('mouseup', this.mouseUp);
-        document.getElementById('canvas-wraper').removeEventListener('mousedown',this.canvasMousedown);
-        document.getElementById('canvas-wraper').removeEventListener('mousemove',this.canvasMouseMove);
-        document.getElementById('canvas-wraper').removeEventListener('mouseup',this.canvasMouseUp);
+        document.getElementById('canvas-dom').removeEventListener('mousedown',this.canvasMousedown);
+        document.getElementById('canvas-dom').removeEventListener('mousemove',this.canvasMouseMove);
+        document.getElementById('canvas-dom').removeEventListener('mouseup',this.canvasMouseUp);
     }
 
     onStatusChange(widget) {

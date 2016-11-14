@@ -29,7 +29,7 @@ class Event extends React.Component {
             activeKey: this.props.activeKey,  //当前激活事件的key
             wKey: this.props.wKey,
             specialObject: ['counter', 'text', 'var', 'input'],
-            //用于下拉框显示
+            //用于下拉框显示123
             logicalOption: ['and', 'or', 'not'],  //下拉选项
             judgeObjOption: [],
             judgeValOption: [],
