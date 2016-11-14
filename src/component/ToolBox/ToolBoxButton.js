@@ -173,11 +173,13 @@ class ToolBoxButton extends Component {
                 this.props.param.width = this.props.param.width?this.props.param.width:data.width;
                 this.props.param.height = this.props.param.height?this.props.param.height:data.height;
             }
-            if (this.props.upload) {
+            if(this.props.upload||this.props.drawRectText||this.props.drawRect) {
                 this.props.param.originX = 0.5;
                 this.props.param.originY = 0.5;
                 this.props.param.positionX += this.props.param.shapeWidth*0.5;
                 this.props.param.positionY += this.props.param.shapeHeight*0.5;
+            }
+            if (this.props.upload) {
                 //上传
                 this.onFileUpload();
                 ToolBoxAction['deselect']();
@@ -185,10 +187,6 @@ class ToolBoxButton extends Component {
                 this.drawRect.cleanUp();
                 this.drawRect = null;
             } else if(this.props.drawRectText) {
-                this.props.param.originX = 0.5;
-                this.props.param.originY = 0.5;
-                this.props.param.positionX += this.props.param.shapeWidth*0.5;
-                this.props.param.positionY += this.props.param.shapeHeight*0.5;
                 //弹窗输入文本
                 this.drawRect.end();
                 //弹窗事件
@@ -199,11 +197,6 @@ class ToolBoxButton extends Component {
                     }
                 });
             } else if (this.props.drawRect) {
-                this.props.param.originX = 0.5;
-                this.props.param.originY = 0.5;
-                this.props.param.positionX += this.props.param.shapeWidth*0.5;
-                this.props.param.positionY += this.props.param.shapeHeight*0.5;
-
                 //普通画框
                 if(this.props.className === 'qrcode') {
                     //qrcode处理
