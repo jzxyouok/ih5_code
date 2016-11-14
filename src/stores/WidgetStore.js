@@ -685,7 +685,7 @@ function generateJsFunc(etree) {
   var output = {};
 
   let replaceSymbolStr = (str)=>{
-      if(str===null&&str===undefined){
+      if(str===null||str===undefined){
           return str;
       }
       let temp = str;
@@ -698,7 +698,7 @@ function generateJsFunc(etree) {
   };
 
     let replaceMathOp = (value)=> {
-        if(value===null&&value===undefined){
+        if(value===null||value===undefined){
             return value;
         }
         let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
@@ -711,6 +711,9 @@ function generateJsFunc(etree) {
     };
 
   let hasSymbol = (str)=> {
+      if(str===null||str===undefined){
+          return false;
+      }
       let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
       let englishSymbol = ["+","-","*","/","(",")","?",":","'","'","."];
       let hasSymbol = false;
@@ -728,6 +731,9 @@ function generateJsFunc(etree) {
   };
 
     let operationTranslate = (item)=> {
+        if(item===null||item===undefined){
+            return item;
+        }
         let operation = ['=', '>', '<', '!=', '≥', '≤'];
         let trans = ['$e', '$gt', '$lt', '$ne', '$gte', '$lte'];
         let index = operation.indexOf(item);
@@ -854,10 +860,14 @@ function generateJsFunc(etree) {
                           if(prop.value) {
                               switch (prop.type) {
                                   case 12: //FormulaInput
-                                      props.push('\''+prop.name+'\''+':'+formulaGenLine(prop.value));
+                                      if(formulaGenLine(prop.value)!=='') {
+                                          props.push('\''+prop.name+'\''+':'+formulaGenLine(prop.value));
+                                      }
                                       break;
                                   default:
-                                      props.push('\''+prop.name+'\''+':'+JSON.stringify(prop.value));
+                                      if(JSON.stringify(prop.value)!=='') {
+                                          props.push('\''+prop.name+'\''+':'+JSON.stringify(prop.value));
+                                      }
                                       break;
                               }
                           }
