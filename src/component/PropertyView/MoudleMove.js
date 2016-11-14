@@ -6,7 +6,7 @@ class PropertyViewMove {
     constructor(idName,thisObj){
         this.thisObj=thisObj;
         this.idName=idName;
-        this.expanded=false;
+
         this.PropertyViewPosition={
             subW:null,
             subH:null,
@@ -47,7 +47,7 @@ class PropertyViewMove {
             let clientWidth = document.body.clientWidth;
             let subRight = clientWidth - subW - 260;
             if (subW < 76) {
-                this.PropertyViewPosition.oPropertyView.style.left = this.expanded? '65px':'37px';
+                this.PropertyViewPosition.oPropertyView.style.left = this.thisObj.state.expanded? '65px':'37px';
             }
             if (subH < 76) {
                 this.PropertyViewPosition.oPropertyView.style.top = '36px';
@@ -64,7 +64,6 @@ class DesignViewMove{
     constructor(idName,thisObj){
         this.oCanvas=document.getElementById(idName);
         this.thisObj=thisObj;
-        this.space=false;
         this.canvasObj={
             subW:null,
             subH:null,
@@ -84,7 +83,7 @@ class DesignViewMove{
         this.oCanvas.removeEventListener('mouseup',this.canvasMouseUp.bind(this));
     }
     canvasMousedown(e) {
-        if (this.space) {
+        if (this.thisObj.state.space) {
             e.preventDefault();
             let oCanvasWraper =  this.thisObj.refs.canvasWraper;
             let oCanvasDom =  this.thisObj.refs.view;
@@ -99,7 +98,7 @@ class DesignViewMove{
     }
 
     canvasMouseMove(e){
-        if( this.space &&  this.thisObj.state.isDown){
+        if( this.thisObj.state.space &&  this.thisObj.state.isDown){
             e.preventDefault();
             this.canvasObj.canvasWraper.style.left =(e.pageX-this.canvasObj.subW+320)+'px';
             this.canvasObj.oCanvasDom.style.top =(e.pageY-this.canvasObj.subH)+'px';

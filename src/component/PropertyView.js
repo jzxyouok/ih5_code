@@ -23,6 +23,7 @@ class PropertyView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            expanded:props.expanded,
             fields: null,
             propertyName:null,
             sockName : null,
@@ -1218,7 +1219,9 @@ class PropertyView extends React.Component {
 
     }
     componentWillReceiveProps(nextProps) {
-        this.moudleMove.expanded = nextProps.expanded;
+        this.setState({
+            expanded: nextProps.expanded
+        })
     }
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
@@ -1250,7 +1253,7 @@ class PropertyView extends React.Component {
             <div>
                 <div id='PropertyView'
                      ref='PropertyView'
-                     style={{ left : this.props.expanded? '65px':'37px'}}
+                     style={{ left : this.state.expanded? '65px':'37px'}}
                      className={cls({'hidden':this.props.isHidden})}>
                     <h1 id='PropertyViewHeader'>{this.state.propertyName}的属性</h1>
                     <div id='PropertyViewBody'>

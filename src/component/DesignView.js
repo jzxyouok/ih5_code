@@ -183,7 +183,7 @@ class DesignView extends React.Component {
     onKeyUp(event){
         //空格键
         if( event.keyCode == 32){
-            this.moudleMove.space=false;
+
             this.setState({
                 space:false
             });
@@ -244,8 +244,7 @@ class DesignView extends React.Component {
         }
 
         //空格键
-        if( event.keyCode == 32){
-            this.moudleMove.space=true;
+        if( event.keyCode == 32){ 
             this.setState({
                 space:true
             });
