@@ -687,6 +687,9 @@ function generateJsFunc(etree) {
   var output = {};
 
   let replaceSymbolStr = (str)=>{
+      if(str===null||str===undefined){
+          return str;
+      }
       let temp = str;
       let chineseSymbol = [/＋/g,/－/g,/＊/g,/／/g,/（/g,/）/g,/？/g,/：/g,/‘/g,/’/g];
       let englishSymbol = ["+","-","*","/","(",")","?",":","'","'"];
@@ -697,6 +700,9 @@ function generateJsFunc(etree) {
   };
 
     let replaceMathOp = (value)=> {
+        if(value===null||value===undefined){
+            return value;
+        }
         let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
             'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan'];
         array.forEach(s=>{
@@ -707,6 +713,9 @@ function generateJsFunc(etree) {
     };
 
   let hasSymbol = (str)=> {
+      if(str===null||str===undefined){
+          return false;
+      }
       let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
       let englishSymbol = ["+","-","*","/","(",")","?",":","'","'","."];
       let hasSymbol = false;
@@ -724,6 +733,9 @@ function generateJsFunc(etree) {
   };
 
     let operationTranslate = (item)=> {
+        if(item===null||item===undefined){
+            return item;
+        }
         let operation = ['=', '>', '<', '!=', '≥', '≤'];
         let trans = ['$e', '$gt', '$lt', '$ne', '$gte', '$lte'];
         let index = operation.indexOf(item);
@@ -841,10 +853,14 @@ function generateJsFunc(etree) {
                           if(prop.value) {
                               switch (prop.type) {
                                   case 12: //FormulaInput
-                                      props.push('\''+prop.name+'\''+':'+formulaGenLine(prop.value));
+                                      if(formulaGenLine(prop.value)!=='') {
+                                          props.push('\''+prop.name+'\''+':'+formulaGenLine(prop.value));
+                                      }
                                       break;
                                   default:
-                                      props.push('\''+prop.name+'\''+':'+JSON.stringify(prop.value));
+                                      if(JSON.stringify(prop.value)!=='') {
+                                          props.push('\''+prop.name+'\''+':'+JSON.stringify(prop.value));
+                                      }
                                       break;
                               }
                           }
@@ -963,14 +979,20 @@ function generateJsFunc(etree) {
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originY')+'='+ arr[1]);
                           } else if(prop.name === 'alpha') {
                               //FormulaInput
-                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ '('+formulaGenLine(prop.value)+')'+'/100');
+                              if(formulaGenLine(prop.value)!=='') {
+                                  lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ '('+formulaGenLine(prop.value)+')'+'/100');
+                              }
                           } else {
                               switch (prop.type) {
                                   case 12: //FormulaInput
-                                      lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                      if(formulaGenLine(prop.value)!=='') {
+                                          lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                      }
                                       break;
                                   default:
-                                      lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value));
+                                      if(JSON.stringify(prop.value)!=='') {
+                                          lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value));
+                                      }
                                       break;
                               }
                           }
@@ -1039,7 +1061,7 @@ function generateJsFunc(etree) {
           var logicalFlag = item.judges.logicalFlag;
           var lop;
           if (logicalFlag == 'and')
-            lop = '&&'
+            lop = '&&';
           else if (logicalFlag == 'or')
             lop = '||';
           if (lop)
