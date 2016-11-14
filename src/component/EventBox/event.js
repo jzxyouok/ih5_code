@@ -47,17 +47,13 @@ class Event extends React.Component {
         this.addEventBtn = this.addEventBtn.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
 
-
         this.getJudgeObjOption = this.getJudgeObjOption.bind(this);
         this.getJudgeValOption = this.getJudgeValOption.bind(this);
-
 
         this.onEventEnable = this.onEventEnable.bind(this);
         this.onChildEnable = this.onChildEnable.bind(this);
 
         this.menuList = this.menuList.bind(this);
-
-
 
         this.onSetFuncSpecificListProperty = this.onSetFuncSpecificListProperty.bind(this);
         this.getAntdComponent = this.getAntdComponent.bind(this);
