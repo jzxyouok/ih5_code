@@ -10,18 +10,14 @@ const Option = Select.Option;
 const Panel = Collapse.Panel;
 const MenuItem = Menu.Item;
 import cls from 'classnames';
-
 import { SwitchMore,DropDownInput ,ConInputNumber} from  './PropertyView/PropertyViewComponet';
-
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
-
 import {propertyType, propertyMap} from './PropertyMap';
 import {chooseFile} from  '../utils/upload';
-
 require("jscolor/jscolor");
-
-import TbCome from './TbCome'
+import TbCome from './TbCome';
+import MoudleMove from  './PropertyView/MoudleMove';
 
 class PropertyView extends React.Component {
     constructor(props) {
@@ -36,17 +32,12 @@ class PropertyView extends React.Component {
             tbLineWidth : "自动",
             isSliderChange : false
         };
+        this.moudleMove=null;
         this.selectNode = null;
         this.currentPage = null;
         this.fontList=[];
         this.textSizeObj=null;
 
-        this.PropertyViewPosition={
-            subW:null,
-            subH:null,
-            isDown:false,
-            oPropertyView:null
-        };
 
         this.defaultData = {
             width: null,
@@ -266,7 +257,6 @@ class PropertyView extends React.Component {
                 case propertyType.Float:
                     let defaultWidth = this.selectNode.node.defaultData.width;
                     let defaultHeight = this.selectNode.node.defaultData.height;
-
                     if (this.selectNode.node.keepRatio) {
                         //修改之前的宽度和高度
                         let oldWidth = this.selectNode.node.width;
@@ -275,22 +265,15 @@ class PropertyView extends React.Component {
                         if ('scaleX' == prop.name) {
                             let obj = {}
                             obj.scaleX = parseInt(value) / defaultWidth;
-
                             obj.scaleY = ( oldHeight * value) / (oldWidth * defaultHeight);
-
                             this.onStatusChange({updateProperties: obj});
                             WidgetActions['updateProperties'](obj, false, false);
-
                         } else if ('scaleY' == prop.name) {
-
                             let obj = {}
                             obj.scaleY = parseInt(value) / defaultHeight;
-
                             obj.scaleX = ( oldWidth * value) / (oldHeight * defaultWidth);
-
                             this.onStatusChange({updateProperties: obj});
                             WidgetActions['updateProperties'](obj, false, false);
-
                         }
                         bTag = false;
                         break;
@@ -303,7 +286,6 @@ class PropertyView extends React.Component {
                             this.selectNode.props.height = value;
                         }
                     }
-
                     break;
                 case propertyType.Dropdown:
                     if (prop.name == 'originPos') {
@@ -316,9 +298,7 @@ class PropertyView extends React.Component {
                         let oldOrigin = this.getOldOrigin(propsObj.originPosKey, prop.options);
                         let w = nodeObj.width * (x - parseFloat(oldOrigin[0]));
                         let h = nodeObj.height * (parseFloat(oldOrigin[1]) - y);
-
                         let D = Math.sqrt(h * h + w * w);
-
                         let d = null;
                         if (w == 0) {
                             if (h > 0) {
@@ -346,34 +326,25 @@ class PropertyView extends React.Component {
                                 alert('bug!');
                             }
                         }
-
                         let ran = d - nodeObj.rotation * Math.PI / 180;
-
                         let posX = nodeObj.positionX + Math.cos(ran) * D;
                         let posY = nodeObj.positionY - Math.sin(ran) * D;
                         propsObj.originPosKey = this.getSelectDefault({x: x, y: y}, prop.options);
-
-
                         propsObj.originX = x;
                         nodeObj.originX = x;
                         propsObj.originY = y;
                         nodeObj.originY = y;
 
-
                         propsObj.positionX = posX;
                         nodeObj.positionX = posX;
                         propsObj.positionY = posY;
                         nodeObj.positionY = posY;
-
                         WidgetActions['updateProperties']({
                             originX:x,
                             originY:y,
                             positionX:posX,
                             positionY:posY
                         }, true, false);
-                        // WidgetActions['render']();
-                        // this.setState({fields: this.getFields()});
-
                         bTag = false;
                     }
                     break;
@@ -381,14 +352,16 @@ class PropertyView extends React.Component {
                     if (prop.name == 'scaleType') {
                         this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
                         v = parseInt(value);
-                    } else if (prop.name == 'fontFamily') {
+                    }
+                    else if (prop.name == 'fontFamily') {
                         this.selectNode.props.fontFamilyKey = this.getFontDefault(value);
                         v = value;
-                    } else if (prop.name == 'headerFontFamily') {
+                    }
+                    else if (prop.name == 'headerFontFamily') {
                         this.selectNode.props.headerFontFamily = this.getFontDefault(value);
                         v = value;
                     }
-                    else  if(prop.name=='vertical') {
+                    else if(prop.name=='vertical') {
                         this.selectNode.props[prop.name] = value=='true'?'垂直':'水平';
                         v = value;
                     }
@@ -403,10 +376,12 @@ class PropertyView extends React.Component {
                             }
                         }
                         v = value;
-                    } else if (prop.name == 'forwardTransition' || prop.name == 'backwardTransition') {
+                    }
+                    else if (prop.name == 'forwardTransition' || prop.name == 'backwardTransition') {
                         this.selectNode.props[prop.name + '_val'] = this.getScaleTypeDefault(value, prop.options);
                         v = parseInt(value);
-                    } else if (prop.name == 'font') {
+                    }
+                    else if (prop.name == 'font') {
                         if (value == 0) {
                             chooseFile('font', true, function () {
                                 let fontObj = eval("(" + arguments[1] + ")");
@@ -433,12 +408,12 @@ class PropertyView extends React.Component {
                                 }
                             });
                             bTag = false;
-                        } else {
+                        }
+                        else {
                             this.selectNode.props.fontKey = this.getFontDefault(value);
                             v = value;
                         }
                     }
-
                     else {
                         v = parseInt(value);
                     }
@@ -449,7 +424,8 @@ class PropertyView extends React.Component {
                 case propertyType.Boolean2:
                     if (value === null) {
                         delete  this.selectNode.props.initVisible;
-                    } else {
+                    }
+                    else {
                         this.selectNode.props.initVisible = value;
                     }
                     bTag = false;
@@ -721,15 +697,12 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;
-
        // console.log(node);
-
         if (!node)  return null;
 
         if( node.node.keepRatio ===undefined && ( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist')){
             this.isCanKeepRatio = true;
         }
-
         if( node.node.keepRatio ===undefined  && this.isCanKeepRatio){
             node.node.keepRatio = true;
             let obj={};
@@ -751,7 +724,7 @@ class PropertyView extends React.Component {
             }
         }
 
-        if (!propertyMap[className])    return null;
+        if (!propertyMap[className])  return null;
 
         const groups = {};
 
@@ -759,9 +732,8 @@ class PropertyView extends React.Component {
 
             //设置默认值,用于展示
             let defaultValue;
-            if (item.readOnly ) {
+            if (item.readOnly){
                 defaultValue = node.node[item.name];
-                //console.log(item);
                 if(item.name=='sockName'){
                     defaultValue = this.state.sockName
                 }
@@ -792,7 +764,8 @@ class PropertyView extends React.Component {
                         this.selectNode.node.defaultData[str] = defaultValue
                     }
                 }
-            }else if(item.type==propertyType.Color || item.type==propertyType.Color2 || item.type === propertyType.TbColor){
+            }
+            else if(item.type==propertyType.Color || item.type==propertyType.Color2 || item.type === propertyType.TbColor){
                 if( item.name == 'color' &&  !node.props.color){ //只执行一次
                     node.props.color='#FFFFFF';
                 }
@@ -801,12 +774,11 @@ class PropertyView extends React.Component {
                 }else{
                     defaultValue =node.props[item.name];
                 }
-
-
                 if(item.type === propertyType.TbColor){
                     defaultValue = node.props['headerColor'];
                 }
-            } else if(item.type==propertyType.Dropdown ){
+            }
+            else if(item.type==propertyType.Dropdown ){
                 //设置中心点
                 defaultValue = item.default;
                 //当originY时才会激活,而不是originPos
@@ -837,7 +809,8 @@ class PropertyView extends React.Component {
                 else if(item.name=='chooseColumn'){
                     defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn  + ' 列';
                 }
-            } else if(item.type === propertyType.Boolean2 ){
+            }
+            else if(item.type === propertyType.Boolean2 ){
                 if(node.props[item.name]===undefined){
                     defaultValue =item.default;
                 }else{
@@ -849,7 +822,8 @@ class PropertyView extends React.Component {
                         defaultValue=1;
                     }
                 }
-            }else if(item.type === propertyType.Percentage ){
+            }
+            else if(item.type === propertyType.Percentage ){
                 defaultValue = item.default*100;
                 if(node.props[item.name]!==undefined) {
                     defaultValue =node.props[item.name]*100;
@@ -877,7 +851,6 @@ class PropertyView extends React.Component {
                     defaultValue = node.node[item.name];
                 }
             }
-
             else {
                 if(className == "table"){
                     if(item.name == "rowNum"){
@@ -1244,20 +1217,20 @@ class PropertyView extends React.Component {
         }
 
     }
-
+    componentWillReceiveProps(nextProps) {
+        this.moudleMove.expanded = nextProps.expanded;
+    }
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
-        document.addEventListener('mousemove', this.mouseMove.bind(this));
-        document.addEventListener('mouseup', this.mouseUp.bind(this));
+        this.moudleMove = new MoudleMove('PropertyViewHeader', this);
 
-        $('#PropertyView').on('focus','textarea,input',function () {
+        $('#PropertyView').on('focus', 'textarea,input', function () {
             $(this).select();
         });
     }
     componentWillUnmount() {
         this.unsubscribe();
-        document.removeEventListener('mousemove', this.mouseMove.bind(this));
-        document.removeEventListener('mouseup', this.mouseUp.bind(this));
+        this.moudleMove.unBind();
         $('#PropertyView').unbind();
     }
 
@@ -1272,69 +1245,21 @@ class PropertyView extends React.Component {
         this.refs.TbCome.show(data,column,header);
     }
 
-    mouseDown(e){
-        let oPropertyView = this.refs.PropertyView;
-        this.PropertyViewPosition.oPropertyView = oPropertyView;
-        this.PropertyViewPosition.isDown=true;
-        //oPropertyView.style.zIndex=1000;
-
-        this.PropertyViewPosition.subW =e.pageX-oPropertyView.offsetLeft;
-        this.PropertyViewPosition.subH =e.pageY-oPropertyView.offsetTop;
-    }
-
-    mouseMove(e){
-        if( this.PropertyViewPosition.isDown){
-            this.PropertyViewPosition.oPropertyView.style.left =(e.pageX-this.PropertyViewPosition.subW)+'px';
-            this.PropertyViewPosition.oPropertyView.style.top =(e.pageY-this.PropertyViewPosition.subH)+'px';
-        }
-
-    }
-
-    mouseUp(e){
-        if( this.PropertyViewPosition.isDown) {
-
-
-            let subW = e.pageX - this.PropertyViewPosition.subW;
-            let subH = e.pageY - this.PropertyViewPosition.subH;
-            let clientWidth = document.body.clientWidth;
-            let subRight = clientWidth - subW - 260;
-
-
-            if (subW < 76) {
-                this.PropertyViewPosition.oPropertyView.style.left = this.props.expanded? '65px':'37px';
-            }
-            if (subH < 76) {
-                this.PropertyViewPosition.oPropertyView.style.top = '36px';
-            }
-            if (subRight < 76) {
-                this.PropertyViewPosition.oPropertyView.style.left = (clientWidth - 296) + 'px';
-            }
-            this.PropertyViewPosition.isDown = false;
-            this.PropertyViewPosition.oPropertyView = null;
-        }
-    }
-
     render() {
-
         return (
             <div>
                 <div id='PropertyView'
                      ref='PropertyView'
                      style={{ left : this.props.expanded? '65px':'37px'}}
                      className={cls({'hidden':this.props.isHidden})}>
-                    <h1 id='PropertyViewHeader'
-                        onMouseDown={this.mouseDown.bind(this)}
-                    >{this.state.propertyName}的属性</h1>
+                    <h1 id='PropertyViewHeader'>{this.state.propertyName}的属性</h1>
                     <div id='PropertyViewBody'>
                         {this.state.fields}
                     </div>
                 </div>
-
                 <TbCome ref="TbCome" />
             </div>
         );
     }
-
 }
-
 module.exports = PropertyView;
