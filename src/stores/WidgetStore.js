@@ -986,14 +986,20 @@ function generateJsFunc(etree) {
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originY')+'='+ arr[1]);
                           } else if(prop.name === 'alpha') {
                               //FormulaInput
-                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ '('+formulaGenLine(prop.value)+')'+'/100');
+                              if(formulaGenLine(prop.value)!=='') {
+                                  lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ '('+formulaGenLine(prop.value)+')'+'/100');
+                              }
                           } else {
                               switch (prop.type) {
                                   case 12: //FormulaInput
-                                      lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                      if(formulaGenLine(prop.value)!=='') {
+                                          lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                      }
                                       break;
                                   default:
-                                      lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value));
+                                      if(JSON.stringify(prop.value)!=='') {
+                                          lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ JSON.stringify(prop.value));
+                                      }
                                       break;
                               }
                           }
