@@ -17,7 +17,7 @@ import {propertyType, propertyMap} from './PropertyMap';
 import {chooseFile} from  '../utils/upload';
 require("jscolor/jscolor");
 import TbCome from './TbCome';
-import MoudleMove from  './PropertyView/MoudleMove';
+import {PropertyViewMove} from  './PropertyView/MoudleMove';
 
 class PropertyView extends React.Component {
     constructor(props) {
@@ -1222,7 +1222,7 @@ class PropertyView extends React.Component {
     }
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
-        this.moudleMove = new MoudleMove('PropertyViewHeader', this);
+        this.moudleMove = new PropertyViewMove('PropertyViewHeader', this);
 
         $('#PropertyView').on('focus', 'textarea,input', function () {
             $(this).select();

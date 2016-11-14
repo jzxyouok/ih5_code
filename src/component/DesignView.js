@@ -2,6 +2,7 @@ import React from 'react';
 import cls from 'classnames';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
+import {DesignViewMove} from './PropertyView/MoudleMove';
 
 
 class DesignView extends React.Component {
@@ -24,14 +25,9 @@ class DesignView extends React.Component {
         this.stageZoomTop=0;
         this.stageZoomLeft=0;
         this.keyboard=false;
-      
-        this.canvasObj={
-            subW:null,
-            subH:null,
-            canvasWraper:null,
-            oCanvasDom:null
-        };
-        
+
+        this.moudleMove=null;
+
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
@@ -43,9 +39,7 @@ class DesignView extends React.Component {
         this.mouseDown_left = this.mouseDown_left.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
-        this.canvasMousedown = this.canvasMousedown.bind(this);
-        this.canvasMouseMove = this.canvasMouseMove.bind(this);
-        this.canvasMouseUp = this.canvasMouseUp.bind(this);
+
     }
 
     componentDidMount() {
@@ -59,9 +53,8 @@ class DesignView extends React.Component {
         document.getElementById('v_ruler').addEventListener('mousedown',this.mouseDown_left);
         document.getElementById('DesignView-Container').addEventListener('mousemove',this.mouseMove);
         document.getElementById('DesignView-Container').addEventListener('mouseup',this.mouseUp);
-        document.getElementById('canvas-dom').addEventListener('mousedown',this.canvasMousedown);
-        document.getElementById('canvas-dom').addEventListener('mousemove',this.canvasMouseMove);
-        document.getElementById('canvas-dom').addEventListener('mouseup',this.canvasMouseUp);
+
+        this.moudleMove=new DesignViewMove('canvas-dom',this);
     }
 
     componentWillUnmount() {
@@ -73,9 +66,8 @@ class DesignView extends React.Component {
         document.getElementById('v_ruler').removeEventListener('mousedown', this.mouseDown_left);
         document.getElementById('DesignView-Container').removeEventListener('mousemove', this.mouseMove);
         document.getElementById('DesignView-Container').removeEventListener('mouseup', this.mouseUp);
-        document.getElementById('canvas-dom').removeEventListener('mousedown',this.canvasMousedown);
-        document.getElementById('canvas-dom').removeEventListener('mousemove',this.canvasMouseMove);
-        document.getElementById('canvas-dom').removeEventListener('mouseup',this.canvasMouseUp);
+
+        this.moudleMove.unBind();
     }
 
     onStatusChange(widget) {
@@ -191,7 +183,7 @@ class DesignView extends React.Component {
     onKeyUp(event){
         //空格键
         if( event.keyCode == 32){
-
+            this.moudleMove.space=false;
             this.setState({
                 space:false
             });
@@ -253,6 +245,7 @@ class DesignView extends React.Component {
 
         //空格键
         if( event.keyCode == 32){
+            this.moudleMove.space=true;
             this.setState({
                 space:true
             });
@@ -347,49 +340,6 @@ class DesignView extends React.Component {
 
     }
 
-
-    canvasMousedown(e){
-        if(this.state.space){
-            event.preventDefault();
-            let oCanvasWraper = this.refs.canvasWraper;
-            let oCanvasDom =this.refs.view;
-            this.canvasObj.canvasWraper = oCanvasWraper;
-            this.canvasObj.oCanvasDom = oCanvasDom;
-
-
-            this.setState({
-                isDown:true
-            });
-            this.canvasObj.subW =e.pageX-oCanvasWraper.offsetLeft;
-            this.canvasObj.subH =e.pageY-oCanvasDom.offsetTop;
-
-        }
-    }
-
-    canvasMouseMove(e){
-        if(this.state.space && this.state.isDown){
-            event.preventDefault();
-
-              this.canvasObj.canvasWraper.style.left =(e.pageX-this.canvasObj.subW+320)+'px';
-             this.canvasObj.oCanvasDom.style.top =(e.pageY-this.canvasObj.subH)+'px';
-
-             this.drawLine(this.aODiv);
-        }
-    }
-
-   canvasMouseUp(e){
-           event.preventDefault();
-           if (this.state.isDown) {
-               this.setState({
-                   isDown:false
-               });
-               this.canvasObj.canvasWraper = null;
-               this.canvasObj.oCanvasDom = null;
-           }
-       //参考线
-      // WidgetActions['setRulerLineBtn'](false);
-    }
-    
 
     mouseDown_top(event){
             event.stopPropagation();

@@ -2,7 +2,7 @@
  * Created by vxplo on 2016/11/14.
  */
 
-class MoudleMove {
+class PropertyViewMove {
     constructor(idName,thisObj){
         this.thisObj=thisObj;
         this.idName=idName;
@@ -60,5 +60,64 @@ class MoudleMove {
         }
     }
 }
+class DesignViewMove{
+    constructor(idName,thisObj){
+        this.oCanvas=document.getElementById(idName);
+        this.thisObj=thisObj;
+        this.space=false;
+        this.canvasObj={
+            subW:null,
+            subH:null,
+            canvasWraper:null,
+            oCanvasDom:null
+        };
+        this.bind();
+    }
+    bind(){
+        this.oCanvas.addEventListener('mousedown',this.canvasMousedown.bind(this));
+        this.oCanvas.addEventListener('mousemove',this.canvasMouseMove.bind(this));
+        this.oCanvas.addEventListener('mouseup',this.canvasMouseUp.bind(this));
+    }
+    unBind(){
+        this.oCanvas.removeEventListener('mousedown',this.canvasMousedown.bind(this));
+        this.oCanvas.removeEventListener('mousemove',this.canvasMouseMove.bind(this));
+        this.oCanvas.removeEventListener('mouseup',this.canvasMouseUp.bind(this));
+    }
+    canvasMousedown(e) {
+        if (this.space) {
+            e.preventDefault();
+            let oCanvasWraper =  this.thisObj.refs.canvasWraper;
+            let oCanvasDom =  this.thisObj.refs.view;
+            this.canvasObj.canvasWraper = oCanvasWraper;
+            this.canvasObj.oCanvasDom = oCanvasDom;
+            this.thisObj.setState({
+                isDown: true
+            });
+            this.canvasObj.subW = e.pageX - oCanvasWraper.offsetLeft;
+            this.canvasObj.subH = e.pageY - oCanvasDom.offsetTop;
+        }
+    }
 
-module.exports = MoudleMove;
+    canvasMouseMove(e){
+        if( this.space &&  this.thisObj.state.isDown){
+            e.preventDefault();
+            this.canvasObj.canvasWraper.style.left =(e.pageX-this.canvasObj.subW+320)+'px';
+            this.canvasObj.oCanvasDom.style.top =(e.pageY-this.canvasObj.subH)+'px';
+
+            this.thisObj.drawLine( this.thisObj.aODiv);
+        }
+    }
+
+    canvasMouseUp(e){
+        e.preventDefault();
+        if ( this.thisObj.state.isDown) {
+            this.thisObj.setState({
+                isDown:false
+            });
+            this.canvasObj.canvasWraper = null;
+            this.canvasObj.oCanvasDom = null;
+        }
+    }
+}
+
+module.exports = {PropertyViewMove,DesignViewMove};
