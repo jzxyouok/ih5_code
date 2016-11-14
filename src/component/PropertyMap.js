@@ -26,6 +26,7 @@ const propertyType = {
     Hidden: -1,
     Boolean3:22,
     ObjectSelect:23,
+    dbSelect:24,
 };
 
 var level;
@@ -774,6 +775,7 @@ propertyMap['twoDArr'] = [
     { name: 'value', showName:'值',type: propertyType.String, default: '', isProperty: true },
     { name: 'row', showName:'行',type: propertyType.Integer, default: 0, group:"twoDArr", isProperty: true },
     { name: 'column', showName:'列',type: propertyType.Integer, default: 0, group:"twoDArr", isProperty: true },
+    { name: 'dbSource', showName: '数据来源', type: propertyType.dbSelect, default: null, isProperty: true},
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
 
