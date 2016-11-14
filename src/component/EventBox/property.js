@@ -585,10 +585,14 @@ class Property extends React.Component {
             let obj = this.getObjByKey(this.state.currentObject);
             if(obj) {
                 this.setDefaultMappingProps(obj, className, newProperty, 'change');
-            }
-            if(this.state.currentAction.name === 'clone') {
-                //设置默认值
-                //TODO
+                if(this.state.currentAction.name === 'clone' && newProperty.length>3) {
+                    //根据data的props, 设置默认值
+                    newProperty.forEach((v, i)=> {
+                        if((i>1||i<newProperty.length-1) && data.props[v.name]) {
+                            v.value = data.props[v.name];
+                        }
+                    });
+                }
             }
             property = newProperty;
         }
