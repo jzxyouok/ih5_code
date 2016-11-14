@@ -1059,7 +1059,7 @@ function generateJsFunc(etree) {
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
-        lines.push('console.log(ids)');
+        // lines.push('console.log(ids)');
       if (lines.length) {
         var out = '';
         if (conditions.length == 1) {
