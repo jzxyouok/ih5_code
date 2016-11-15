@@ -150,7 +150,7 @@ let propMapping = {
     'justifyContent': {name:'justifyContent', showName:'排列内容', type: propertyType.Select, default:'flex-start', options:{'行首起始':'flex-start', '行尾开始':'flex-end'}},
     'flexWrap': {name:'flexWrap', showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
     'flexDirection': {name:'flexDirection', showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
-    'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'PC', options:{'手机':true,'PC':false}},
+    'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'PC', options:{'手机':'true','PC':'false'}},
     'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.String, default:''},
 };
 

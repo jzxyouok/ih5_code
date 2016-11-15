@@ -372,7 +372,7 @@ class PropertyView extends React.Component {
                         v = parseInt(value);
                     }
                     else if(prop.name == 'scaleStage'){
-                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                        this.selectNode.props.scaleStageKey = this.getScaleTypeDefault(value, prop.options);
                         v = value;
                     }
                     else if (prop.name == 'fontFamily') {
