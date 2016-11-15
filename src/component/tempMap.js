@@ -47,7 +47,11 @@ let propMapping = {
     'keepRatio': {name:'keepRatio', showName:'等比缩放', type: propertyType.Hidden, default:false},
     'originPos': {name:'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',order:5},
     'rotation': {name:'rotation', showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position',order:6},
-    'alpha': {name:'alpha', showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display' },
+    'alpha': {name:'alpha', showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display',order:1 },
+    'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.String, default:'',group:'display',order:2},
+    'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'display',order:3},
+
+
     'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools'},
 
     'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体'},
@@ -88,7 +92,7 @@ let propMapping = {
     'backwardTransition': {name:'backwardTransition', showName:'前翻效果',  type: propertyType.Select, default:'同上一页',options:backwardTransOptions},
     'forwardTransition': {name:'forwardTransition', showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:forwardTransOptions},
 
-    'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
+
 
     'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false},
 
@@ -140,7 +144,7 @@ let propMapping = {
     'headerFontSize': {name:'headerFontSize', showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, tbCome:"tbS" },
     'headerFontFill': {name:'headerFontFill', showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800'},
     'altColor': {name:'altColor', showName:'隔行颜色', type: propertyType.Color,group:'display', default: ''},
-
+    'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
     'margin': {name:'margin', showName:'外间距', type: propertyType.Number, default:0},
     'padding': {name:'padding', showName:'内间距', type: propertyType.Number, default:0},
     //关于flex的请看：https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex
@@ -151,7 +155,7 @@ let propMapping = {
     'flexWrap': {name:'flexWrap', showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
     'flexDirection': {name:'flexDirection', showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
     'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'PC', options:{'手机':'true','PC':'false'}},
-    'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.String, default:''},
+
 };
 
 let eventMapping = {

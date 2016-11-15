@@ -719,7 +719,8 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;
-        console.log(node);
+       // console.log(node);
+
         if (!node)  return null;
         let isKeepRatioArr=['qrcode','rect','image','bitmaptext','imagelist','ellipse','path'];
         if( node.node.keepRatio ===undefined && isKeepRatioArr.indexOf(node.node.class)>=0){
@@ -1120,6 +1121,12 @@ class PropertyView extends React.Component {
                 //去除属性
                 if ((className == 'timer' || className == 'container') && ( item.name == 'scaleX' || item.name == 'scaleY')) {
                     ;
+                }else if(className=='root'){
+                    if( ['visible'].indexOf(item.name)>=0){
+                        ;
+                    }else{
+                        getInput(item, index);
+                    }
                 }else if(['width','height','shapeWidth','shapeHeight','visible'].indexOf(item.name)>=0){
                     //不显示出来的属性
                     ;
