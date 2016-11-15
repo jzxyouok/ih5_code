@@ -1213,7 +1213,6 @@ class PropertyView extends React.Component {
                 }
             }
 
-
             propertyMap[className].map(item => {
                 if (item.isProperty && obj[item.name] !== undefined) {
                     if (obj[item.name] === null) {

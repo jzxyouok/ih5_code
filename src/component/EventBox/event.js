@@ -1029,6 +1029,7 @@ class Event extends React.Component {
                                 return <Property key={i2}
                                                  specific={v2}
                                                  event={v}
+                                                 dbList={this.props.dbList}
                                                  wKey={this.props.wKey}
                                                  activeKey={this.props.activeKey}/>
                             })
