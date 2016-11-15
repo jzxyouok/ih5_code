@@ -501,8 +501,9 @@ function objectToId(object) {
   let idName, varKey, varName;
     if(object === 'this' || object === 'param.target'
         || object === 'target' || object === 'globalXY') {
-        return [object, undefined, undefined];
+        return [object, undefined, undefined, object];
     }
+  let keyName = object.key;  //把key记录下来,只有在生成js语句才用到
   if (object.className == 'var') {
     idName = object.widget.props['id'];
     varName = object.name;
@@ -522,7 +523,7 @@ function objectToId(object) {
     idName = object.props['id'];
   }　
 
-  return [idName, varKey, varName];
+  return [idName, varKey, varName, keyName];
 }
 
 function objectKeyToId(key) {
@@ -658,7 +659,7 @@ function generateJsFunc(etree) {
   var output = {};
 
   let replaceSymbolStr = (str)=>{
-      if(str===null||str===undefined){
+      if(str===null||str===undefined||str.replace===undefined){
           return str;
       }
       let temp = str;
@@ -671,7 +672,7 @@ function generateJsFunc(etree) {
   };
 
     let replaceMathOp = (value)=> {
-        if(value===null||value===undefined){
+        if(value===null||value===undefined||value.replace===undefined){
             return value;
         }
         let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
@@ -684,27 +685,27 @@ function generateJsFunc(etree) {
     };
 
   let hasSymbol = (str)=> {
-      if(str===null||str===undefined){
+      if(str===null||str===undefined||str.indexOf===undefined){
           return false;
       }
       let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
       let englishSymbol = ["+","-","*","/","(",")","?",":","'","'","."];
-      let hasSymbol = false;
+      let hasS = false;
       chineseSymbol.forEach(v=>{
           if(str.indexOf(v)>=0){
-              hasSymbol = true;
+              hasS = true;
           }
       });
       englishSymbol.forEach(v=>{
           if(str.indexOf(v)>=0){
-              hasSymbol = true;
+              hasS = true;
           }
       });
-      return hasSymbol;
+      return hasS;
   };
 
     let operationTranslate = (item)=> {
-        if(item===null||item===undefined){
+        if(item===null||item===undefined||item.indexOf===undefined){
             return item;
         }
         let operation = ['=', '>', '<', '!=', '≥', '≤'];
@@ -716,34 +717,76 @@ function generateJsFunc(etree) {
         return null;
     };
 
+    let dealWithformulaValue = (value)=> {
+        if(isNaN(value)&&!hasSymbol(value)) {
+            return JSON.stringify(value);
+        } else {
+            return replaceMathOp(replaceSymbolStr(value));
+        }
+    };
+
   //公式编辑器内容生成运行内容
   let formulaGenLine = (fInput)=> {
       let line = '';
       if(fInput){
           if(fInput.type === 1){
-              if(isNaN(fInput.value)&&!hasSymbol(fInput.value)) {
-                  line = JSON.stringify(fInput.value);
-              } else {
-                  line = replaceMathOp(replaceSymbolStr(fInput.value));
-              }
+              line = dealWithformulaValue(fInput.value);
           } else if (fInput.type === 2) {
               let subLine = '';
               fInput.value.forEach((fV,i) =>{
                   if(fV.objId&&fV.property){
                       if(i===0&&fV.prePattern){
-                          if(isNaN(fV.prePattern)&&!hasSymbol(fV.prePattern)) {
-                              subLine += JSON.stringify(fV.prePattern);
-                          } else {
-                              subLine += replaceMathOp(replaceSymbolStr(fV.prePattern));
-                          }
+                          subLine += dealWithformulaValue(fV.prePattern);
                       }
-                      subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
-                      if(fV.pattern) {
-                          if(isNaN(fV.pattern)&&!hasSymbol(fV.pattern)) {
-                              subLine += JSON.stringify(fV.pattern);
-                          } else {
-                              subLine += replaceMathOp(replaceSymbolStr(fV.pattern));
+                      if(fV.property.type&&fV.property.value) {
+                          //一，二维变量的选择
+                          switch (fV.property.type) {
+                              case 1:
+                              case 2:
+                                  // let dVar = keyMap[fV.objId[3]];
+                                  // let val = '';
+                                  // if(dVar&&dVar.props&&dVar.props.value) {
+                                  //     let rows = dVar.props.value.split(';');
+                                  //     if (rows.length>=fV.property.value[0]){
+                                  //       let columns = rows[fV.property.value[0]-1].split(',');
+                                  //         if (columns.length>=fV.property.value[1]){
+                                  //             let temp  = columns[fV.property.value[1]-1];
+                                  //             val = dealWithformulaValue(temp);
+                                  //         }
+                                  //     }
+                                  // }
+                                  // if(val!=''){
+                                      //需要用ids来做
+                                      let value = 'ids.'+fV.objId[0]+'.value';
+                                      let value0 = fV.property.value[0];
+                                      let value1 = fV.property.value[1];
+                                      let formula = "(function(value, value0, value1) {  "+
+                                      "var temp = null;                                  "+
+                                      "if(value) {                                       "+
+                                      "    var rows = value.split(';');                  "+
+                                      "    if(rows.length>=value0) {                     "+
+                                      "        var columns = rows[value0-1].split(',');  "+
+                                      "        if (columns.length>=value1){              "+
+                                      "            var temp  = columns[value1-1];        "+
+                                      "            if(isNaN(temp)) {                     "+
+                                      "                temp = JSON.stringify(temp);      "+
+                                      "            }                                     "+
+                                      "        }                                         "+
+                                      "    }                                             "+
+                                      "}                                                 "+
+                                      "console.log(temp);                                "+
+                                      "return temp;                                      "+
+                                      "}("+value+','+value0+','+value1+"))               ";
+                                      subLine += formula;
+                                  // }
+                                  break;
+
                           }
+                      } else {
+                          subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
+                      }
+                      if(fV.pattern) {
+                          subLine += dealWithformulaValue(fV.pattern);
                       }
                   }
               });
@@ -891,28 +934,27 @@ function generateJsFunc(etree) {
                           case 'object':
                               if(prop.valueId) {
                                   let arrValue = getIdsName(prop.valueId[0], prop.valueId[2], 'value');
-                                  let method = "var arrValue = '';"+
-                                      "console.log("+arrValue+");"+
-                                      "if(data.length>0){"+
-                                      "var dataList = [];"+
-                                      "data.forEach(function(v, i){"+
-                                      "var temp = [];"+
-                                      "for (var prop in v) {"+
-                                      "if(prop.substr(0,1)!=='_'){"+
-                                      "temp.push(v[prop]);"+
-                                      "}"+
-                                      "}"+
-                                      "if(temp.length>0) {"+
-                                      "dataList.push(temp.join(','));"+
-                                      "}"+
-                                      "});"+
-                                      "if(dataList.length>0){"+
-                                      "arrValue = dataList.join(';');"+
-                                      "}"+
-                                      "}"+
-                                      "if(arrValue != ''){"+
-                                        arrValue + "= arrValue;"+
-                                      "}"+"console.log("+'ids.'+prop.valueId[0]+");";
+                                  let method = "var arrValue = '';                    "+
+                                      "console.log("+arrValue+");                     "+
+                                      "if(data.length>0){                             "+
+                                      " var dataList = [];                            "+
+                                      " data.forEach(function(v, i){                  "+
+                                      "     var temp = [];                            "+
+                                      "     for (var prop in v) {                     "+
+                                      "         if(prop.substr(0,1)!=='_'){           "+
+                                      "             temp.push(v[prop]);               "+
+                                      "         }                                     "+
+                                      "     }                                         "+
+                                      "     if(temp.length>0) {                       "+
+                                      "         dataList.push(temp.join(','));        "+
+                                      "     }                                         "+
+                                      " });                                           "+
+                                      " if(dataList.length>0){                        "+
+                                      "     arrValue = dataList.join(';');            "+
+                                      " }                                             "+
+                                      "}                                              "+
+                                      "if(arrValue != ''){"+ arrValue + "= arrValue;} "+
+                                      "console.log("+'ids.'+prop.valueId[0] +");      ";
                                   callBack = ',function(err, data){'+'console.log(data);'+method+'}';
                               }
                               break;
@@ -975,8 +1017,8 @@ function generateJsFunc(etree) {
               if (cmd.action.property) {
                   line += cmd.action.property.map(function(p) {
                       let va = null;
-                      if(p['vKey'] !== undefined && p.name == 'data') {
-                          va = keyMap[p['vKey']];
+                      if(p.valueId&&p.valueId.length===4&&p.valueId[3] !== undefined && p.name == 'data') {
+                          va = keyMap[p.valueId[3]];
                           if (va) {
                               var list = [];
                               va.fields.forEach(function(v) {
@@ -991,10 +1033,10 @@ function generateJsFunc(etree) {
                                       }
                                   }
                               });
-                              delete(p['vKey']);
+                              // delete(p['vKey']);
                               return '{' + list.join(',') + '}';
                           } else {
-                              delete(p['vKey']);
+                              // delete(p['vKey']);
                               return '';
                           }
                       }
@@ -1240,9 +1282,9 @@ function saveTree(data, node, saveKey) {
                                         type: v.type,
                                         valueId: objectKeyToId(v.value)
                                     };
-                                    if(v.name === 'data') {
-                                        temp.vKey = v.value;
-                                    }
+                                    // if(v.name === 'data') {
+                                    //     temp.vKey = v.value;
+                                    // }
                                     if (saveKey) {
                                         temp.value = v.value;
                                     }
