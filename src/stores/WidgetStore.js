@@ -3574,6 +3574,10 @@ export default Reflux.createStore({
         this.trigger({hasHandle: status});
     },
     updateHistoryRecord: function(historyName) {
+        //TODO:START-会影响功能，需小颖去修复下这块
+        return;
+        //TODO:END
+        
         let data = {};
         data['stage'] = {};
 
