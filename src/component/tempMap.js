@@ -494,13 +494,13 @@ let modifyPropList = (list, className, type) => {
     else if(className=='root'){
         switch (type){
             case modeType.flex:
-                aLack=['scaleType','color','clipped'];
+                aLack=['scaleType','color'];
                 break;
             case modeType.dom:
-                aLack=['scaleType','color','clipped'];
+                aLack=['scaleType','color'];
                 break;
             case modeType.canvas:
-                aLack=['scaleType','color','clipped'];
+                aLack=['scaleType','color'];
                 break;
         }
     }
