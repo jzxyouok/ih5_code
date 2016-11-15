@@ -1651,6 +1651,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['copyTreeNode'], this.copyTreeNode);
         this.listenTo(WidgetActions['deleteTreeNode'], this.deleteTreeNode);
         this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
+        //修改widget的资源入口
+        this.listenTo(WidgetActions['changeResource'], this.changeResource);
 
         //函数，变量，db item等伪对象选择添加的入口
         this.listenTo(WidgetActions['selectFadeWidget'], this.selectFadeWidget);
@@ -1671,16 +1673,12 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cleanHistory'], this.cleanHistory);
 
         this.listenTo(WidgetActions['changeContactObj'], this.changeContactObj);
+        this.listenTo(WidgetActions['updateConOptions'], this.updateConOptions);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
-
-
-
 
         this.listenTo(WidgetActions['closeKeyboardMove'], this.closeKeyboardMove);
 
         this.listenTo(WidgetActions['alignWidgets'], this.alignWidgets);
-        this.listenTo(WidgetActions['updateConOptions'], this.updateConOptions);
-
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -3167,6 +3165,22 @@ export default Reflux.createStore({
             deleteBody=true;
         }
         this.trigger({deleteWidget:true,deleteBody:deleteBody});
+    },
+    changeResource: function(name, link, type) {
+        switch (type) {
+            case 'image':
+                if (name&&link&&this.currentWidget.className==='image'){
+                    let temp = this.currentWidget.rootWidget.imageList.push(link) - 1;
+                    this.currentWidget.props['link'] =  temp;
+                    this.currentWidget.node['link'] =  temp;
+                    this.currentWidget.props['name'] = name;
+                    this.currentWidget.node['name'] = name;
+                    var rootNode = this.currentWidget.rootWidget.node;
+                    process.nextTick(() =>bridge.render(rootNode));
+                    this.selectWidget(this.currentWidget);
+                }
+                break;
+        }
     },
     didSelectTarget: function (data) {
         this.trigger({didSelectTarget:{target:data}});

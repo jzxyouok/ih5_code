@@ -75,5 +75,7 @@ export default Reflux.createActions([
   'revokedHistory',
   'replyHistory',
   'chooseHistory',
-  'cleanHistory'
+  'cleanHistory',
+
+  'changeResource',             //修改资源入口
 ]);
