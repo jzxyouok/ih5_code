@@ -50,7 +50,9 @@ class ObjectTree extends React.Component {
             selectTargetMode: false, //目标选择模式
 
             multiSelectMode: false,
-            nids: []   //多选的
+            nids: [],   //多选的
+
+            rightClickKey: null, //右键
         };
 
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -92,6 +94,7 @@ class ObjectTree extends React.Component {
         this.itemDragStart = this.itemDragStart.bind(this);
         this.itemDragEnd = this.itemDragEnd.bind(this);
         this.itemDragOver = this.itemDragOver.bind(this);
+        this.getDeltaX = this.getDeltaX.bind(this);
         this.getDeltaY = this.getDeltaY.bind(this);
         this.getChildrenKeys = this.getChildrenKeys.bind(this);
         //拖动时显示的tip
@@ -117,6 +120,8 @@ class ObjectTree extends React.Component {
 
         this.addModuleBtn = this.addModuleBtn.bind(this);
 
+        //右键点击
+        this.onRightClick = this.onRightClick.bind(this);
     }
 
     componentDidMount() {
@@ -132,8 +137,6 @@ class ObjectTree extends React.Component {
         window.addEventListener('keyup', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').addEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').addEventListener('mousedown', this.onLeaveMultiSelectMode);
-
-
     }
 
     componentWillUnmount() {
@@ -141,13 +144,13 @@ class ObjectTree extends React.Component {
         this.stUnsubscribe();
         window.removeEventListener('keydown', this.itemWindowKeyAction);
         window.removeEventListener('keyup', this.resetCmdKey);
+
         //多选
         window.removeEventListener('blur', this.onMultiSelectKeyUp);
         window.removeEventListener('keydown', this.onMultiSelectKeyDown);
         window.removeEventListener('keyup', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
-
     }
 
     onStatusChange(widget) {
@@ -574,6 +577,16 @@ class ObjectTree extends React.Component {
                 }
             }
         });
+    }
+
+    onRightClick(nid, data, e) {
+        this.chooseBtn(nid, data, e);
+        e.preventDefault();
+        e.stopPropagation();
+        if(this.refs['rightMenu']) {
+            this.refs['rightMenu'].style.top = '100px';
+            this.refs['rightMenu'].style.left = '100px';
+        }
     }
 
     fadeWidgetBtn(nid, data, type,event) {
@@ -1203,6 +1216,14 @@ class ObjectTree extends React.Component {
         }
         return top;
     }
+    getDeltaX(obj){
+        var ParentObj=obj;
+        var left=obj.offsetLeft;
+        while(ParentObj=ParentObj.offsetParent){
+            left+=ParentObj.offsetLeft;
+        }
+        return left;
+    }
 
     addModuleBtn(event){
         event.stopPropagation();
@@ -1377,6 +1398,7 @@ class ObjectTree extends React.Component {
                      onBlur={this.itemRemoveKeyListener.bind(this, 'item')}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid ||this.isInMultiList(v.key)})}
                          onClick={this.chooseBtn.bind(this,v.key, v)}
+                         onContextMenu={this.onRightClick.bind(this, v.key, v)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
 
                         {
@@ -1430,7 +1452,8 @@ class ObjectTree extends React.Component {
                             v.props.eventTree
                                 ? enableEventTreeBtn(v.key, v)
                                 : <div className={$class('item-event-empty',{'active': v.key === this.state.nid||this.isInMultiList(v.key)})}
-                                       onClick={this.chooseBtn.bind(this,v.key, v)}></div>
+                                       onClick={this.chooseBtn.bind(this,v.key, v)}
+                                       onContextMenu={this.onRightClick.bind(this, v.key, v)}></div>
                         }
                     </div>
                 </div>
@@ -1566,6 +1589,13 @@ class ObjectTree extends React.Component {
                              </div>
                           })
                 }
+                </div>
+
+                <div ref="rightMenu"
+                     style={{position: 'absolute',
+                         zIndex: 1,
+                         backgroundColor: 'wheat'}}>
+                    right menu
                 </div>
 
                 <div className='hidden'>
