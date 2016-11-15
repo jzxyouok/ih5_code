@@ -767,23 +767,23 @@ function generateJsFunc(etree) {
                       }
                       if(fV.property.type&&fV.property.value) {
                           //一，二维变量的选择
-                          let dVar = keyMap[fV.objId[3]];
                           switch (fV.property.type) {
                               case 1:
                               case 2:
-                                  let val = '';
-                                  if(dVar&&dVar.props&&dVar.props.value) {
-                                      let rows = dVar.props.value.split(';');
-                                      if (rows.length>=fV.property.value[0]){
-                                        let columns = rows[fV.property.value[0]-1].split(',');
-                                          if (columns.length>=fV.property.value[1]){
-                                              let temp  = columns[fV.property.value[1]-1];
-                                              val = dealWithformulaValue(temp);
-                                          }
-                                      }
-                                  }
-                                  //需要用ids来做
-                                  if(val!=''){
+                                  // let dVar = keyMap[fV.objId[3]];
+                                  // let val = '';
+                                  // if(dVar&&dVar.props&&dVar.props.value) {
+                                  //     let rows = dVar.props.value.split(';');
+                                  //     if (rows.length>=fV.property.value[0]){
+                                  //       let columns = rows[fV.property.value[0]-1].split(',');
+                                  //         if (columns.length>=fV.property.value[1]){
+                                  //             let temp  = columns[fV.property.value[1]-1];
+                                  //             val = dealWithformulaValue(temp);
+                                  //         }
+                                  //     }
+                                  // }
+                                  // if(val!=''){
+                                      //需要用ids来做
                                       let value = 'ids.'+fV.objId[0]+'.value';
                                       let value0 = fV.property.value[0];
                                       let value1 = fV.property.value[1];
@@ -805,7 +805,7 @@ function generateJsFunc(etree) {
                                       "return temp;                                      "+
                                       "}("+value+','+value0+','+value1+"))               ";
                                       subLine += formula;
-                                  }
+                                  // }
                                   break;
 
                           }
@@ -990,7 +990,7 @@ function generateJsFunc(etree) {
                                       " }                                             "+
                                       "}                                              "+
                                       "if(arrValue != ''){"+ arrValue + "= arrValue;} "+
-                                      "console.log("+'ids.'+prop.valueId[0] +");";
+                                      "console.log("+'ids.'+prop.valueId[0] +");      ";
                                   callBack = ',function(err, data){'+'console.log(data);'+method+'}';
                               }
                               break;
