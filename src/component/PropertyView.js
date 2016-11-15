@@ -371,6 +371,10 @@ class PropertyView extends React.Component {
                         this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
                         v = parseInt(value);
                     }
+                    else if(prop.name == 'scaleStage'){
+                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                        v = value;
+                    }
                     else if (prop.name == 'fontFamily') {
                         this.selectNode.props.fontFamilyKey = this.getFontDefault(value);
                         v = value;
@@ -805,6 +809,8 @@ class PropertyView extends React.Component {
                 //当originY时才会激活,而不是originPos
                 if(item.name=='scaleType' && node.props.scaleTypeKey){
                     defaultValue = node.props.scaleTypeKey;
+                }else if(item.name=='scaleStage' && node.props.scaleStageKey){
+                    defaultValue = node.props.scaleStageKey;
                 }else if( item.name=='font' && node.props.fontKey){
                     defaultValue = node.props.fontKey;
                 }else if( item.name=='fontFamily'  && node.props.fontFamilyKey){
