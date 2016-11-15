@@ -1125,11 +1125,19 @@ function saveTree(data, node, saveKey) {
             return temp;
         };
 
-        //todo:将解析的部分放到generateJsFunc
+
         node.props['eventTree'].forEach(item => {
-        var cmds = [];
+        /*
+        * luozheao,20161115
+        * 触发条件与判断条件拼接思路:
+        * 1 将需要填值的触发条件处理成判断条件
+        * 2 处理判断条件
+        * 3 传给generateJsFunc,用于拼接成执行代码
+        * 4 将item传到etree里,loadTree时候直接调用item,不用再把处理过的判断条件解析一遍
+        * */
+            var cmds = [];
         var judges={};
-        var test ={};
+
 
             var eventEnable = item.enable; //是否可执行
             judges.conFlag = item.conFlag;
@@ -1356,6 +1364,7 @@ function saveTree(data, node, saveKey) {
         });
 
         etree.push({cmds:cmds,judges:judges, enable:eventEnable,eventNode:item});
+
       });
       data['etree'] = etree;
         if(node.props['enableEventTree'] && !saveKey){
@@ -3511,8 +3520,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-         xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-      //   xhr.open(method, url);  //上传到服务器时,去掉这个注释
+       //  xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, url);  //上传到服务器时,去掉这个注释
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
