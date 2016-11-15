@@ -381,7 +381,7 @@ let addCustomWidgetProperties = ()=>{
     propertyMap['oneDArr'] = {
         dom: {
             funcs: dealElementList(['getRoot'], 'oneDArr', 'funcs', modeType.dom),
-            props: dealElementList(['title', 'value', 'row'], 'oneDArr', 'props', modeType.dom),
+            props: dealElementList(['title', 'value', 'column'], 'oneDArr', 'props', modeType.dom),
             events: [],
             provides: 0
         }
