@@ -19,6 +19,11 @@ let isInCLList = (className, classNameList)=>{
     return classNameList.indexOf(className)>=0;
 };
 
+/*
+* luozheao,20161115
+* 备注:添加了order字段,用于给模块内部的组件哥哥们排序
+* 按数字大小,从上到下排序,没有order属性,则排最后面
+* */
 let propMapping = {
     'id': {name:'id', showName:'ID', type: propertyType.String, default: ''},
 
@@ -27,21 +32,21 @@ let propMapping = {
 
     'width': {name:'width', showName:'W', type: propertyType.Integer, default: 0, group:'position'},
     'height': {name:'height', showName:'H',type: propertyType.Integer, default: 0, group:'position'},
-    'scaleType': {name:'scaleType', showName:'适配', type: propertyType.Select, default:'满屏', options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools'},
-    'backgroundColor': {name:'backgroundColor', showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools'},
-    'clipped': {name:'clipped', showName:'剪切', type: propertyType.Boolean, default: false, group:'tools'},
+    'scaleType': {name:'scaleType', showName:'适配', type: propertyType.Select, default:'满屏', options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools',order:1},
+    'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'tools',order:2},
+    'clipped': {name:'clipped', showName:'剪切', type: propertyType.Boolean, default: false, group:'tools',order:3},
 
     'title': {name:'title', showName:'标题', type: propertyType.String, default: ''},
     'desc': {name:'desc', showName:'描述', type: propertyType.String, default: ''},
     'imgUrl': {name:'imgUrl', showName:'图片地址', type: propertyType.String, default: ''},
 
-    'positionX': {name:'positionX', showName:'X', type: propertyType.Integer, default: 0, group:'position'},
-    'positionY': {name:'positionY', showName:'Y', type: propertyType.Integer, default: 0, group:'position'},
-    'scaleX': {name:'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position'},
-    'scaleY': {name:'scaleY', showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position'},
+    'positionX': {name:'positionX', showName:'X', type: propertyType.Integer, default: 0, group:'position',order:1},
+    'positionY': {name:'positionY', showName:'Y', type: propertyType.Integer, default: 0, group:'position',order:2},
+    'scaleX': {name:'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position',order:3},
+    'scaleY': {name:'scaleY', showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position',order:4},
     'keepRatio': {name:'keepRatio', showName:'等比缩放', type: propertyType.Hidden, default:false},
-    'originPos': {name:'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position'},
-    'rotation': {name:'rotation', showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position'},
+    'originPos': {name:'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',order:5},
+    'rotation': {name:'rotation', showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position',order:6},
     'alpha': {name:'alpha', showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display' },
     'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools'},
 
@@ -145,7 +150,7 @@ let propMapping = {
     'justifyContent': {name:'justifyContent', showName:'排列内容', type: propertyType.Select, default:'flex-start', options:{'行首起始':'flex-start', '行尾开始':'flex-end'}},
     'flexWrap': {name:'flexWrap', showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
     'flexDirection': {name:'flexDirection', showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
-    'scaleStage': {name:'scaleStage', showName:'缩放舞台', type: propertyType.String, default: ''},
+    'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.String, default: ''},
     'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.String, default:''},
 };
 
@@ -494,13 +499,13 @@ let modifyPropList = (list, className, type) => {
     else if(className=='root'){
         switch (type){
             case modeType.flex:
-                aLack=['scaleType','color'];
+                aLack=[];
                 break;
             case modeType.dom:
-                aLack=['scaleType','color'];
+                aLack=[];
                 break;
             case modeType.canvas:
-                aLack=['scaleType','color'];
+                aLack=[];
                 break;
         }
     }

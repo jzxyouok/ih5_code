@@ -126,7 +126,6 @@ class PropertyView extends React.Component {
                 if(defaultProp.tbCome){
                     delete defaultData.tbCome;
                 }
-
                 return  <Input ref={(inputDom) => {
                     if (inputDom) {
                         var dom = ReactDOM.findDOMNode(inputDom).firstChild;
@@ -744,7 +743,7 @@ class PropertyView extends React.Component {
         }
         if (getPropertyMap(node, className, 'props').length===0)    return null;
 
-        const groups = {};
+        let groups = {};
 
         const getInput = (item, index) => {
 
@@ -784,13 +783,9 @@ class PropertyView extends React.Component {
                 }
             }
             else if(item.type==propertyType.Color || item.type==propertyType.Color2 || item.type === propertyType.TbColor){
-                if( item.name == 'color' &&  !node.props.color){ //只执行一次
-                    node.props.color='#FFFFFF';
-                }
+                defaultValue =node.props[item.name];
                 if(node.props[item.name+'_originColor']){  //舞台颜色隐藏后保存的颜色
                     defaultValue =node.props[item.name+'_originColor'];
-                }else{
-                    defaultValue =node.props[item.name];
                 }
                 if(item.type === propertyType.TbColor){
                     defaultValue = node.props['headerColor'];
@@ -1087,6 +1082,7 @@ class PropertyView extends React.Component {
 
             groups[groupName].push(
                 <div key={item.name}
+                     order={item.order}
                      className={cls('f--hlc','ant-row','ant-form-item',
                          {'ant-form-half': hasTwin},
                          {'ant-form-full': !hasTwin},
@@ -1112,24 +1108,22 @@ class PropertyView extends React.Component {
         };
 
 
-        const saveArr = []; //给部分属性排序用
+
         getPropertyMap(node, className, 'props').forEach((item, index) => {
             if (item.type !== propertyType.Hidden) {
-                if(item.name=='visible' || item.name=='initVisible' ){
-                    saveArr.push(item);
-                }else{
-                    //去除属性
-                    if((className == 'timer' || className == 'container') && ( item.name=='scaleX' ||  item.name=='scaleY')){
-                        ;
-                    }else{
-                        getInput(item, index);
-                    }
+                //去除属性
+                if ((className == 'timer' || className == 'container') && ( item.name == 'scaleX' || item.name == 'scaleY')) {
+                    ;
+                }else if((item.name=='width'||item.name=='height')&& item.readOnly===true){
+                    ;
+                } else {
+                    getInput(item, index);
                 }
             }
         });
-        saveArr.map(item=>{
-            getInput(item);
-        });
+
+
+        groups = this.sortGroups(groups);
 
         return Object.keys(groups).map((name,index) =>{
             let insertClassName =  className + "-" + 'form_'+name;
@@ -1147,6 +1141,51 @@ class PropertyView extends React.Component {
             </Form>
         });
     }
+    /****************工具方法区域,start**********************************/
+    /*luozheao,20161115
+    * 功能:
+    * 给属性面板各模块和模块内部组件排序
+    * */
+    sortGroups(groups) {
+       // console.log(groups);
+        let sortArr = ['basic', 'position', 'display', 'tools']
+        let obj={};
+        //模块排序
+        sortArr.map((v,i)=>{
+              if(groups[v]){
+                  obj[v]=groups[v]
+              }
+        });
+        //模块内部排序
+        for(let i in obj){
+            let objArr=[];
+            let orderNoArr=[];
+            obj[i].map((v,i)=>{
+                if(v.props.order){
+                    //冒泡排序
+                    if(objArr.length==0){
+                        objArr.push(v);
+                    }else{
+                         let tag=true;
+                         objArr.forEach((k,index)=>{
+                             if(tag && v.props.order<=k.props.order){
+                                 objArr.splice(index,0,v);
+                                 tag=false;
+                             }
+                         });
+                         if(tag){
+                             objArr.push(v);
+                         }
+                    }
+                }else{
+                    orderNoArr.push(v);
+                }
+            });
+            obj[i]=objArr.concat(orderNoArr);
+        }
+       return obj;
+    }
+    /****************工具方法区域,end**********************************/
 
     onStatusChange(widget) {
         if(widget.fontListObj){
