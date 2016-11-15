@@ -1875,7 +1875,7 @@ const propertyMap = {
                 [ { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 0 } },
-    'database':
+    'db':
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
