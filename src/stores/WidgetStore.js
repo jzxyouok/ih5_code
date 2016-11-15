@@ -529,8 +529,9 @@ function objectToId(object) {
   let idName, varKey, varName;
     if(object === 'this' || object === 'param.target'
         || object === 'target' || object === 'globalXY') {
-        return [object, undefined, undefined];
+        return [object, undefined, undefined, object];
     }
+  let keyName = object.key;  //把key记录下来,只有在生成js语句才用到
   if (object.className == 'var') {
     idName = object.widget.props['id'];
     varName = object.name;
@@ -550,7 +551,7 @@ function objectToId(object) {
     idName = object.props['id'];
   }　
 
-  return [idName, varKey, varName];
+  return [idName, varKey, varName, keyName];
 }
 
 function objectKeyToId(key) {
@@ -687,7 +688,7 @@ function generateJsFunc(etree) {
   var output = {};
 
   let replaceSymbolStr = (str)=>{
-      if(str===null||str===undefined){
+      if(str===null||str===undefined||str.replace===undefined){
           return str;
       }
       let temp = str;
@@ -700,7 +701,7 @@ function generateJsFunc(etree) {
   };
 
     let replaceMathOp = (value)=> {
-        if(value===null||value===undefined){
+        if(value===null||value===undefined||value.replace===undefined){
             return value;
         }
         let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
@@ -713,7 +714,7 @@ function generateJsFunc(etree) {
     };
 
   let hasSymbol = (str)=> {
-      if(str===null||str===undefined){
+      if(str===null||str===undefined||str.indexOf===undefined){
           return false;
       }
       let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
@@ -733,7 +734,7 @@ function generateJsFunc(etree) {
   };
 
     let operationTranslate = (item)=> {
-        if(item===null||item===undefined){
+        if(item===null||item===undefined||item.indexOf===undefined){
             return item;
         }
         let operation = ['=', '>', '<', '!=', '≥', '≤'];
@@ -766,7 +767,39 @@ function generateJsFunc(etree) {
                               subLine += replaceMathOp(replaceSymbolStr(fV.prePattern));
                           }
                       }
-                      subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
+                      if(fV.property.type&&fV.property.value) {
+                          //二维变量的选择
+                          switch (fV.property.type) {
+                              case 1:
+                                  //db
+                                  //如何获取数据库的值？
+                                  break;
+                              case 2:
+                                  //list
+                                  let val = '';
+                                  if(keyMap[fV.objId[3]]&&keyMap[fV.objId[3]].props&&keyMap[fV.objId[3]].props.value) {
+                                      let rows = keyMap[fV.objId[3]].props.value.split(';');
+                                      if (rows.length>=fV.property.value[0]){
+                                        let columns = rows[fV.property.value[0]-1].split(',');
+                                          if (columns.length>=fV.property.value[1]){
+                                              let temp  = columns[fV.property.value[1]-1];
+                                              if(isNaN(temp)&&!hasSymbol(temp)) {
+                                                  temp = JSON.stringify(temp);
+                                              } else {
+                                                  temp = replaceMathOp(replaceSymbolStr(temp));
+                                              }
+                                              val = temp;
+                                          }
+                                      }
+                                  }
+                                  if(val!=''){
+                                      subLine += val;
+                                  }
+                                  break;
+                          }
+                      } else {
+                          subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
+                      }
                       if(fV.pattern) {
                           if(isNaN(fV.pattern)&&!hasSymbol(fV.pattern)) {
                               subLine += JSON.stringify(fV.pattern);
@@ -1004,8 +1037,8 @@ function generateJsFunc(etree) {
               if (cmd.action.property) {
                   line += cmd.action.property.map(function(p) {
                       let va = null;
-                      if(p['vKey'] !== undefined && p.name == 'data') {
-                          va = keyMap[p['vKey']];
+                      if(p.valueId&&p.valueId.length===4&&p.valueId[3] !== undefined && p.name == 'data') {
+                          va = keyMap[p.valueId[3]];
                           if (va) {
                               var list = [];
                               va.fields.forEach(function(v) {
@@ -1020,10 +1053,10 @@ function generateJsFunc(etree) {
                                       }
                                   }
                               });
-                              delete(p['vKey']);
+                              // delete(p['vKey']);
                               return '{' + list.join(',') + '}';
                           } else {
-                              delete(p['vKey']);
+                              // delete(p['vKey']);
                               return '';
                           }
                       }
@@ -1273,9 +1306,9 @@ function saveTree(data, node, saveKey) {
                                         type: v.type,
                                         valueId: objectKeyToId(v.value)
                                     };
-                                    if(v.name === 'data') {
-                                        temp.vKey = v.value;
-                                    }
+                                    // if(v.name === 'data') {
+                                    //     temp.vKey = v.value;
+                                    // }
                                     if (saveKey) {
                                         temp.value = v.value;
                                     }
