@@ -110,7 +110,7 @@ class ArrTableDropDown extends React.Component {
                             ? <div>{title}</div>
                             : j===0&&row!==0
                             ? <div>{row}</div>
-                            : <div className="data-btn" onClick={this.onClickArrTableData.bind(this, row, title, type)}></div>
+                            : <div className="data-btn" onClick={this.onClickArrTableData.bind(this, row, j, type)}></div>
                     }
                 </td>);
             }
