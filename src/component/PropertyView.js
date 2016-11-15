@@ -719,10 +719,10 @@ class PropertyView extends React.Component {
 
     getFields() {
         let node = this.selectNode;
-       // console.log(node);
+        console.log(node);
         if (!node)  return null;
-
-        if( node.node.keepRatio ===undefined && ( node.node.class=='qrcode' ||  node.node.class=='image'||  node.node.class=='bitmaptext'||  node.node.class=='imagelist')){
+        let isKeepRatioArr=['qrcode','rect','image','bitmaptext','imagelist','ellipse','path'];
+        if( node.node.keepRatio ===undefined && isKeepRatioArr.indexOf(node.node.class)>=0){
             this.isCanKeepRatio = true;
         }
         if( node.node.keepRatio ===undefined  && this.isCanKeepRatio){
@@ -1036,7 +1036,7 @@ class PropertyView extends React.Component {
                 hasTwin = ['X','Y','W','H','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','自动播放','循环播放'].indexOf(item.showName) >= 0;
                 hasOne=true;
             }
-            else if(className == "container" || className == "canvas" || className == "world"){
+            else if(['container','canvas','flex','world','path'].indexOf(className)>=0){
                 hasTwin = ['X','Y','W','H','shapeW','shapeH','scaleX','scaleY','原始宽','原始高','北墙','南墙','西墙','东墙'].indexOf(item.showName) >= 0;
                 hasOne=true;
             }
@@ -1120,9 +1120,10 @@ class PropertyView extends React.Component {
                 //去除属性
                 if ((className == 'timer' || className == 'container') && ( item.name == 'scaleX' || item.name == 'scaleY')) {
                     ;
-                }else if((item.name=='width'||item.name=='height')&& item.readOnly===true){
+                }else if(['width','height','shapeWidth','shapeHeight','visible'].indexOf(item.name)>=0){
+                    //不显示出来的属性
                     ;
-                } else {
+                }else {
                     getInput(item, index);
                 }
             }

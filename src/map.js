@@ -786,7 +786,7 @@ const propertyMap = {
             provides: 10 } },
     'flex':
     { flex:
-    { funcs:
+        { funcs:
         [ { name: 'delete', info: '' },
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
