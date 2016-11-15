@@ -28,7 +28,7 @@ let propMapping = {
     'width': {name:'width', showName:'W', type: propertyType.Integer, default: 0, group:'position'},
     'height': {name:'height', showName:'H',type: propertyType.Integer, default: 0, group:'position'},
     'scaleType': {name:'scaleType', showName:'适配', type: propertyType.Select, default:'满屏', options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools'},
-    'color': {name:'color', showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools'},
+    'backgroundColor': {name:'backgroundColor', showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools'},
     'clipped': {name:'clipped', showName:'剪切', type: propertyType.Boolean, default: false, group:'tools'},
 
     'title': {name:'title', showName:'标题', type: propertyType.String, default: ''},
@@ -429,7 +429,7 @@ let dealElementList =(aLack, className, elType ,type)=>{
         if (c) {
             list.push(c);
         } else {
-            alert('通用属性和特殊属性中没有:' + v + '通知下程序猿!');
+            alert('通用属性和特殊属性中没有:' + v + '通知下程序员!');
         }
     });
     return list;
