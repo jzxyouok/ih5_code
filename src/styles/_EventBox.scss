@@ -1740,6 +1740,13 @@
                                 display: block;
                             }
                         }
+
+                        .propertySet {
+                            .ant-select-selection__rendered {
+                                line-height: 22px;
+                                height: 22px;
+                            }
+                        }
                     }
                 }
             }
@@ -1770,8 +1777,6 @@
             .ant-dropdown-menu-item:last-child {
                 border-radius: 0 0 2px 2px;
             }
-
-
 
             &.Property-not-enable {
                 .p--title,

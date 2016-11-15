@@ -288,6 +288,20 @@ class PropertyViewSetUp extends React.Component {
                                      onFocus={this.props.onFInputFocus}
                                      onBlur={this.props.onFInputBlur}
                                      {...defaultProp}/>;
+            case propertyType.dbSelect:
+                if(!defaultProp.value){
+                    defaultProp.value = null;
+                }
+                return <div className="flex-1">
+                    <Select {...defaultProp}>
+                        <Option value={null} key={0}>无数据源</Option>
+                        {
+                            this.props.dbList.map((v, i)=>{
+                                return <Option value={v.id} key={i+1}>{v.name}</Option>
+                            })
+                        }
+                    </Select>
+                </div>;
             default:
                 return <Input {...defaultProp} />;
         }

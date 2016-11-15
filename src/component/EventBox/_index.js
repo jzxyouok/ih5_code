@@ -7,6 +7,7 @@ import { Input } from 'antd';
 import WidgetStore, {keepType, isCustomizeWidget, dataType}  from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import ComponentPanel from '../ComponentPanel';
+import DbHeaderStores from '../../stores/DbHeader';
 
 import $ from 'jquery';
 
@@ -29,6 +30,7 @@ class EventBox extends React.Component {
             allWidgetList:[],//可选widget的列表
             objList: [],//下来框的
             objListType: objListType.default, //default的时候不显示
+            dbList: [], //数据库列表
         };
         this.eventData = eventTempData;
         this.totalWidth = 0;
@@ -51,12 +53,14 @@ class EventBox extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        DbHeaderStores.listen(this.DbHeaderData.bind(this));
         this.onStatusChange(WidgetStore.reorderEventTreeList());
         window.addEventListener('click', this.onBlur);
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+        DbHeaderStores.removeListener(this.DbHeaderData.bind(this));
         window.removeEventListener('click', this.onBlur);
     }
 
@@ -92,6 +96,43 @@ class EventBox extends React.Component {
                 activeKey: widget.activeEventTreeKey.key
             });
         } else if(widget.allWidgets){
+            let dbList = [];
+            widget.allWidgets.map((v,i)=>{
+                if(v.className == "db"){
+                    let data = {};
+                    if(v.node.dbType == "shareDb"){
+                        this.state.AllDbList.map((v1,i1)=>{
+                            if(v1.id == v.props.dbid){
+                                data = v1;
+                                dbList.push(data);
+                                this.setState({
+                                    dbList : dbList
+                                })
+                            }
+                        })
+                    }
+                    else {
+                        WidgetActions['ajaxSend'](null, 'POST', 'app/dbGetParm/' + v.props.dbid, null, null, function(text) {
+                            var result = JSON.parse(text);
+                            //console.log(result);
+                            if (result['header']) {
+                                data['id'] = v.props.dbid;
+                                data['name'] = v.props.name;
+                                data['header'] = result['header'];
+                            }
+                            else {
+                                data['id'] = v.props.dbid;
+                                data['name'] = v.props.name;
+                            }
+                            dbList.push(data);
+                            this.setState({
+                                dbList : dbList
+                            })
+                        }.bind(this));
+                    }
+                }
+            });
+
             this.setState({
                 allWidgetList: widget.allWidgets
             })
@@ -99,6 +140,12 @@ class EventBox extends React.Component {
         if(widget.historyPropertiesUpdate){
             this.forceUpdate();
         }
+    }
+
+    DbHeaderData(data,bool){
+        this.setState({
+            AllDbList : data
+        })
     }
 
     chooseEventBtn(nid, data){
@@ -367,6 +414,7 @@ class EventBox extends React.Component {
                                                   eventList={v.props.eventTree}
                                                   name={v.props.name}
                                                   wKey={v.key}
+                                                  dbList={this.state.dbList}
                                                   activeKey={this.state.activeKey}
                                                   chooseEventBtn={this.chooseEventBtn.bind(this, v.key, v)} />
                                   })
