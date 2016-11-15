@@ -775,7 +775,7 @@ class FormulaInput extends React.Component {
                                         onClick={this.onFocus.bind(this,null,true)}
                                         disable={this.disabled}
                                         dbSource={obj.props.dbSource}
-                                        row={obj.props.row}
+                                        row={obj.props.type==='twoDArr'?obj.props.row:1}
                                         column={obj.props.column}/>)
                                         : formulaPropertyDropdown(obj, v, i)
                                         : (<div className={$class("formula-obj-property",{'hidden':obj.className==='var'||obj.className === 'counter'})}
