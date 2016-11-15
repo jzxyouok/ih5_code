@@ -2366,8 +2366,6 @@ export default Reflux.createStore({
         //this.updateHistoryRecord(historyName);
     },
     updateProperties: function(obj, skipRender, skipProperty, special) {
-
-
         let isHistoryRecord = true;
         if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
@@ -2375,7 +2373,6 @@ export default Reflux.createStore({
                 obj.alpha = 1;
             }
         }
-
 
         //如果是this.selectWidgets更新的坐标属性，如果没有发生位移的改变则不需要更新历史记录
         if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){

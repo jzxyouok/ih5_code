@@ -443,56 +443,56 @@ let dealElementList =(aLack, className, elType ,type)=>{
 let modifyPropList = (list, className, type) => {
     //根据不同的class对props进行定制和排序
     //以后还可能对于不用的type进行不同定制（modeType）
-    //box:['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+    //box:['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
 
     let aLack=[];
     if(className=='container'){
         switch (type){
             case modeType.flex:
             case modeType.dom:
-                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','initVisible'];
                 break;
             case modeType.canvas:
-                aLack=['keepRatio','alpha','initVisible'];
+                aLack=['keepRatio','initVisible'];
                 break;
         }
     }
     else if(className=='graphics'){
         switch (type){
             case modeType.flex:
-                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
                 break;
             case modeType.dom:
-                aLack=['originPos','alpha','initVisible'];
+                aLack=['originPos','initVisible'];
                 break;
             case modeType.canvas:
-                aLack=['originPos','alpha','initVisible'];
+                aLack=['originPos','initVisible'];
                 break;
         }
     }
     else if(className=='sprite'){
         switch (type){
             case modeType.flex:
-                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
                 break;
             case modeType.dom:
-                aLack=['originPos','alpha','initVisible'];
+                aLack=['originPos','initVisible'];
                 break;
             case modeType.canvas:
-                aLack=['originPos','alpha','initVisible'];
+                aLack=['originPos','initVisible'];
                 break;
         }
     }
     else if(className=='canvas'){
         switch (type){
             case modeType.flex:
-                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','alpha','initVisible'];
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','rotation','initVisible'];
                 break;
             case modeType.dom:
-                aLack=['alpha','initVisible'];
+                aLack=['initVisible'];
                 break;
             case modeType.canvas:
-                aLack=['alpha','initVisible'];
+                aLack=['initVisible'];
                 break;
         }
     }
@@ -512,52 +512,52 @@ let modifyPropList = (list, className, type) => {
     else if(className=='image'){
         switch (type){
             case modeType.flex:
-                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                aLack=['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
                 break;
             case modeType.dom:
-                aLack=['originPos','alpha','initVisible'];
+                aLack=['originPos','initVisible'];
                 break;
             case modeType.canvas:
-                aLack=['originPos','alpha','initVisible'];
+                aLack=['originPos','initVisible'];
                 break;
         }
     }
     else if(className=='text'){
         switch (type){
             case modeType.flex:
-                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible','fontFamily','fontSize','fontFill'];
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible','fontFamily','fontSize','fontFill'];
                 break;
             case modeType.dom:
-                aLack= ['originPos','alpha','initVisible','fontFamily','fontSize','fontFill'];
+                aLack= ['originPos','initVisible','fontFamily','fontSize','fontFill'];
                 break;
             case modeType.canvas:
-                aLack= ['originPos','alpha','initVisible','fontFamily','fontSize','fontFill'];
+                aLack= ['originPos','initVisible','fontFamily','fontSize','fontFill'];
                 break;
         }
     }
     else if(className=='rect'){
         switch (type){
             case modeType.flex:
-                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
                 break;
             case modeType.dom:
-                aLack= ['originPos','alpha','initVisible'];
+                aLack= ['originPos','initVisible'];
                 break;
             case modeType.canvas:
-                aLack= ['originPos','alpha','initVisible'];
+                aLack= ['originPos','initVisible'];
                 break;
         }
     }
     else if(className=='ellipse'){
         switch (type){
             case modeType.flex:
-                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','alpha','initVisible'];
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
                 break;
             case modeType.dom:
-                aLack= ['originPos','alpha','initVisible'];
+                aLack= ['originPos','initVisible'];
                 break;
             case modeType.canvas:
-                aLack= ['originPos','alpha','initVisible'];
+                aLack= ['originPos','initVisible'];
                 break;
         }
     }
