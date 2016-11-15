@@ -527,8 +527,9 @@ function objectToId(object) {
   let idName, varKey, varName;
     if(object === 'this' || object === 'param.target'
         || object === 'target' || object === 'globalXY') {
-        return [object, undefined, undefined];
+        return [object, undefined, undefined, object];
     }
+  let keyName = object.key;  //把key记录下来,只有在生成js语句才用到
   if (object.className == 'var') {
     idName = object.widget.props['id'];
     varName = object.name;
@@ -548,7 +549,7 @@ function objectToId(object) {
     idName = object.props['id'];
   }　
 
-  return [idName, varKey, varName];
+  return [idName, varKey, varName, keyName];
 }
 
 function objectKeyToId(key) {
@@ -685,7 +686,7 @@ function generateJsFunc(etree) {
   var output = {};
 
   let replaceSymbolStr = (str)=>{
-      if(str===null||str===undefined){
+      if(str===null||str===undefined||str.replace===undefined){
           return str;
       }
       let temp = str;
@@ -698,7 +699,7 @@ function generateJsFunc(etree) {
   };
 
     let replaceMathOp = (value)=> {
-        if(value===null||value===undefined){
+        if(value===null||value===undefined||value.replace===undefined){
             return value;
         }
         let array = ['abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max',
@@ -711,27 +712,27 @@ function generateJsFunc(etree) {
     };
 
   let hasSymbol = (str)=> {
-      if(str===null||str===undefined){
+      if(str===null||str===undefined||str.indexOf===undefined){
           return false;
       }
       let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
       let englishSymbol = ["+","-","*","/","(",")","?",":","'","'","."];
-      let hasSymbol = false;
+      let hasS = false;
       chineseSymbol.forEach(v=>{
           if(str.indexOf(v)>=0){
-              hasSymbol = true;
+              hasS = true;
           }
       });
       englishSymbol.forEach(v=>{
           if(str.indexOf(v)>=0){
-              hasSymbol = true;
+              hasS = true;
           }
       });
-      return hasSymbol;
+      return hasS;
   };
 
     let operationTranslate = (item)=> {
-        if(item===null||item===undefined){
+        if(item===null||item===undefined||item.indexOf===undefined){
             return item;
         }
         let operation = ['=', '>', '<', '!=', '≥', '≤'];
@@ -743,34 +744,58 @@ function generateJsFunc(etree) {
         return null;
     };
 
+    let dealWithformulaValue = (value)=> {
+        if(isNaN(value)&&!hasSymbol(value)) {
+            return JSON.stringify(value);
+        } else {
+            return replaceMathOp(replaceSymbolStr(value));
+        }
+    };
+
   //公式编辑器内容生成运行内容
   let formulaGenLine = (fInput)=> {
       let line = '';
       if(fInput){
           if(fInput.type === 1){
-              if(isNaN(fInput.value)&&!hasSymbol(fInput.value)) {
-                  line = JSON.stringify(fInput.value);
-              } else {
-                  line = replaceMathOp(replaceSymbolStr(fInput.value));
-              }
+              line = dealWithformulaValue(fInput.value);
           } else if (fInput.type === 2) {
               let subLine = '';
               fInput.value.forEach((fV,i) =>{
                   if(fV.objId&&fV.property){
                       if(i===0&&fV.prePattern){
-                          if(isNaN(fV.prePattern)&&!hasSymbol(fV.prePattern)) {
-                              subLine += JSON.stringify(fV.prePattern);
-                          } else {
-                              subLine += replaceMathOp(replaceSymbolStr(fV.prePattern));
-                          }
+                          subLine += dealWithformulaValue(fV.prePattern);
                       }
-                      subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
-                      if(fV.pattern) {
-                          if(isNaN(fV.pattern)&&!hasSymbol(fV.pattern)) {
-                              subLine += JSON.stringify(fV.pattern);
-                          } else {
-                              subLine += replaceMathOp(replaceSymbolStr(fV.pattern));
+                      if(fV.property.type&&fV.property.value) {
+                          //一，二维变量的选择
+                          let dVar = keyMap[fV.objId[3]];
+                          switch (fV.property.type) {
+                              case 1:
+                                  //db
+                                  //如何获取数据库的值？
+                                  break;
+                              case 2:
+                                  //list
+                                  let val = '';
+                                  if(dVar&&dVar.props&&dVar.props.value) {
+                                      let rows = dVar.props.value.split(';');
+                                      if (rows.length>=fV.property.value[0]){
+                                        let columns = rows[fV.property.value[0]-1].split(',');
+                                          if (columns.length>=fV.property.value[1]){
+                                              let temp  = columns[fV.property.value[1]-1];
+                                              val = dealWithformulaValue(temp);
+                                          }
+                                      }
+                                  }
+                                  if(val!=''){
+                                      subLine += val;
+                                  }
+                                  break;
                           }
+                      } else {
+                          subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
+                      }
+                      if(fV.pattern) {
+                          subLine += dealWithformulaValue(fV.pattern);
                       }
                   }
               });
@@ -1011,8 +1036,8 @@ function generateJsFunc(etree) {
               if (cmd.action.property) {
                   line += cmd.action.property.map(function(p) {
                       let va = null;
-                      if(p['vKey'] !== undefined && p.name == 'data') {
-                          va = keyMap[p['vKey']];
+                      if(p.valueId&&p.valueId.length===4&&p.valueId[3] !== undefined && p.name == 'data') {
+                          va = keyMap[p.valueId[3]];
                           if (va) {
                               var list = [];
                               va.fields.forEach(function(v) {
@@ -1027,10 +1052,10 @@ function generateJsFunc(etree) {
                                       }
                                   }
                               });
-                              delete(p['vKey']);
+                              // delete(p['vKey']);
                               return '{' + list.join(',') + '}';
                           } else {
-                              delete(p['vKey']);
+                              // delete(p['vKey']);
                               return '';
                           }
                       }
@@ -1280,9 +1305,9 @@ function saveTree(data, node, saveKey) {
                                         type: v.type,
                                         valueId: objectKeyToId(v.value)
                                     };
-                                    if(v.name === 'data') {
-                                        temp.vKey = v.value;
-                                    }
+                                    // if(v.name === 'data') {
+                                    //     temp.vKey = v.value;
+                                    // }
                                     if (saveKey) {
                                         temp.value = v.value;
                                     }

@@ -31,6 +31,7 @@ class EventBox extends React.Component {
             objList: [],//下来框的
             objListType: objListType.default, //default的时候不显示
             dbList: [], //数据库列表
+            AllDbList:[],
         };
         this.eventData = eventTempData;
         this.totalWidth = 0;

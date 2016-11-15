@@ -396,10 +396,10 @@ class FormulaInput extends React.Component {
         })
     }
 
-    onChangeArrTableData(v, i, row, column) {
+    onChangeArrTableData(v, i, row, column, type) {
        let value = this.state.value;
         if(value&&value.length>0){
-            v.property = [row, column];
+            v.property = {value:[row, column], type:type};
             value[i] = v;
         }
         this.setState({
@@ -763,16 +763,17 @@ class FormulaInput extends React.Component {
                                         className={$class("formula--dropDown formula-obj-property-dropDown formula-obj-arrType-dropDown f--hlc")}
                                         onChange={this.onChangeArrTableData.bind(this, v, i)}
                                         onClick={this.onFocus.bind(this,null,true)}
-                                        row={obj.props.row}
                                         disable={this.disabled}
+                                        dbSource={obj.props.dbSource}
+                                        row={obj.props.type==='twoDArr'?obj.props.row:1}
                                         column={obj.props.column}/>)
                                         : formulaPropertyDropdown(obj, v, i)
                                         : (<div className={$class("formula-obj-property",{'hidden':obj.className==='var'||obj.className === 'counter'})}
                                                 onClick={this.onFocus.bind(this, i)}>
                                         {
                                             obj.className === 'data'
-                                                ? v.property.length===2
-                                                ? <span>{v.property[0]}行{v.property[1]}列</span>
+                                                ? v.property.value&&v.property.value.length===2
+                                                ? <span>{v.property.value[0]}行{v.property.value[1]}列</span>
                                                 : <span>数据错误</span>
                                                 : <span>{v.property.showName}</span>
                                         }
