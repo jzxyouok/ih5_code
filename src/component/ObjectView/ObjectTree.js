@@ -7,6 +7,7 @@ import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget, selectableClass} from '../../stores/WidgetStore';
 import {checkChildClass} from '../tempMap';
+import {chooseFile} from  '../../utils/upload';
 
 import SelectTargetStore from '../../stores/SelectTargetStore'
 
@@ -60,6 +61,8 @@ class ObjectTree extends React.Component {
         this.showHideBtn = this.showHideBtn.bind(this);
         this.lockBtn = this.lockBtn.bind(this);
         this.eventBtn = this.eventBtn.bind(this);
+        this.onChangeReSrc = this.onChangeReSrc.bind(this);
+        this.onFileUpload = this.onFileUpload.bind(this);
 
         this.onSelectTargetMode = this.onSelectTargetMode.bind(this);
         this.onSelectTargetModeChange = this.onSelectTargetModeChange.bind(this);
@@ -536,6 +539,41 @@ class ObjectTree extends React.Component {
                 WidgetActions['activeEventTree'](nid);
             }
         }
+    }
+
+    onChangeReSrc(data) {
+        if(this.onSelectTargetMode(data)) {
+            event.stopPropagation();
+            return false;
+        }
+        if(this.state.multiSelectMode&&this.state.nids.length>0) {
+            return false;
+        }
+        if(data.className === 'image'||data.className === 'video') {
+            this.onFileUpload(data.className);
+        }
+    }
+
+    onFileUpload(className) {
+        chooseFile(className, false, (w) => {
+            if (w.files.length) {
+                if (className == 'image' || className == 'video') {
+                    let fileName = w.files[0].name;
+                    let dot = fileName.lastIndexOf('.');
+                    if (dot > 0) {
+                        var ext = fileName.substr(dot + 1).toLowerCase();
+                        if (ext == 'png' || ext == 'jpeg' || ext == 'jpg') {
+                            fileName = fileName.substr(0, dot);
+                        }
+                    }
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        WidgetActions['changeResource'](fileName, e.target.result, className);
+                    };
+                    reader.readAsDataURL(w.files[0]);
+                }
+            }
+        });
     }
 
     fadeWidgetBtn(nid, data, type,event) {
@@ -1361,8 +1399,11 @@ class ObjectTree extends React.Component {
                                 : icon( 0 , v.key)
                         }
                         {
-                            picIsImage?<span className="item-icon2"><img className="item-img" src={ pic } /></span>
-                                : <span className={$class('item-icon', pic)} />
+                            picIsImage
+                                ? <span className="item-icon2">
+                                    <img className="item-img" src={ pic } onDoubleClick={this.onChangeReSrc.bind(this, v)}/>
+                                  </span>
+                                : <span className={$class('item-icon', pic)}/>
                         }
                         {
                             isCustomizeWidget(v.className) || v.className == 'db'|| v.className == "sock"
