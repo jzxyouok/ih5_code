@@ -774,7 +774,7 @@ function generateJsFunc(etree) {
                                       "        }                                         "+
                                       "    }                                             "+
                                       "}                                                 "+
-                                      "console.log(temp);                                "+
+                                      // "console.log(temp);                                "+
                                       "return temp;                                      "+
                                       "}("+value+','+value0+','+value1+"))               ";
                                       subLine += formula;
@@ -935,7 +935,7 @@ function generateJsFunc(etree) {
                               if(prop.valueId) {
                                   let arrValue = getIdsName(prop.valueId[0], prop.valueId[2], 'value');
                                   let method = "var arrValue = '';                    "+
-                                      "console.log("+arrValue+");                     "+
+                                      // "console.log("+arrValue+");                     "+
                                       "if(data.length>0){                             "+
                                       " var dataList = [];                            "+
                                       " data.forEach(function(v, i){                  "+
@@ -953,8 +953,8 @@ function generateJsFunc(etree) {
                                       "     arrValue = dataList.join(';');            "+
                                       " }                                             "+
                                       "}                                              "+
-                                      "if(arrValue != ''){"+ arrValue + "= arrValue;} "+
-                                      "console.log("+'ids.'+prop.valueId[0] +");      ";
+                                      "if(arrValue != ''){"+ arrValue + "= arrValue;} ";
+                                      // "console.log("+'ids.'+prop.valueId[0] +");      ";
                                   callBack = ',function(err, data){'+'console.log(data);'+method+'}';
                               }
                               break;
