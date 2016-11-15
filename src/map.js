@@ -289,12 +289,13 @@ const widgetFlags = { Root: 1,
     Container: 4,
     Renderer: 8,
     Anchor: 16,
-    Leaf: 32,
-    Timer: 64,
-    World: 128,
-    Unique: 256,
-    DomOnly: 512,
-    CanvasOnly: 1024 };
+    Page: 32,
+    Leaf: 64,
+    Timer: 128,
+    World: 256,
+    Unique: 512,
+    DomOnly: 1024,
+    CanvasOnly: 2048 };
 
 widgetFlags.FLAG_MASK = widgetFlags.Root | widgetFlags.Display | widgetFlags.Container;
 
@@ -432,7 +433,9 @@ const propertyMap = {
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
-                    { name: 'rotation', type: 1, default: 0 } ],
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'clipped', type: 4, default: false },
+                    { name: 'bgImage', type: 2, default: '' } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -463,6 +466,49 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 6 } },
+    'pagecontainer':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [],
+        provides: 32 },
+        dom:
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'nextPage', info: '' },
+                { name: 'prevPage', info: '' },
+                { name: 'gotoPageNum', info: 'page, direction' },
+                { name: 'gotoPage', info: 'page' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'clipped', type: 4, default: false },
+                    { name: 'bgImage', type: 2, default: '' },
+                    { name: 'width', type: 0, default: 0 },
+                    { name: 'height', type: 0, default: 0 } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
+            provides: 38 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 32 } },
     'graphics':
     { flex:
     { funcs:
@@ -858,48 +904,26 @@ const propertyMap = {
             provides: 10 } },
     'root':
     { flex:
-    { funcs:
-        [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
-        props:
-            [ { name: 'id', type: 2, default: '' },
-                { name: 'width', type: 2, default: '' },
-                { name: 'height', type: 2, default: '' },
-                { name: 'backgroundColor', type: 6, default: '' },
-                { name: 'margin', type: 2, default: '' },
-                { name: 'flex', type: 2, default: '' },
-                { name: 'alignSelf', type: 2, default: '' },
-                { name: 'minWidth', type: 2, default: '' },
-                { name: 'maxWidth', type: 2, default: '' },
-                { name: 'minHeight', type: 2, default: '' },
-                { name: 'maxHeight', type: 2, default: '' },
-                { name: 'padding', type: 2, default: '' },
-                { name: 'flexDirection', type: 2, default: '' },
-                { name: 'justifyContent', type: 2, default: '' },
-                { name: 'alignItems', type: 2, default: '' },
-                { name: 'alignContent', type: 2, default: '' },
-                { name: 'flexWrap', type: 2, default: '' } ],
-        events:
-            [ { name: 'click', info: 'globalX, globalY' },
-                { name: 'touchDown', info: 'globalX, globalY' },
-                { name: 'touchUp', info: 'globalX, globalY' },
-                { name: 'swipeLeft', info: '' },
-                { name: 'swipeRight', info: '' },
-                { name: 'swipeUp', info: '' },
-                { name: 'swipeDown', info: '' },
-                { name: 'init', info: '' } ],
-        provides: 23 },
+    { funcs: [ { name: 'delete', info: '' } ],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [ { name: 'init', info: '' } ],
+        provides: 49 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'nextPage', info: '' },
+                { name: 'prevPage', info: '' },
+                { name: 'gotoPageNum', info: 'page, direction' },
+                { name: 'gotoPage', info: 'page' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'backgroundColor', type: 6, default: '' },
-                    { name: 'scaleStage', type: 4, default: false },
+                    { name: 'clipped', type: 4, default: false },
+                    { name: 'bgImage', type: 2, default: '' },
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 },
-                    { name: 'bgImage', type: 2, default: '' } ],
+                    { name: 'scaleStage', type: 4, default: false } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -909,29 +933,12 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
                     { name: 'init', info: '' } ],
-            provides: 23 },
+            provides: 55 },
         canvas:
-        { funcs:
-            [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
-            props:
-                [ { name: 'id', type: 2, default: '' },
-                    { name: 'keepRatio', type: 4, default: false },
-                    { name: 'positionX', type: 0, default: 0 },
-                    { name: 'positionY', type: 0, default: 0 },
-                    { name: 'scaleX', type: 1, default: 1 },
-                    { name: 'scaleY', type: 1, default: 1 },
-                    { name: 'rotation', type: 1, default: 0 } ],
-            events:
-                [ { name: 'click', info: 'globalX, globalY' },
-                    { name: 'touchDown', info: 'globalX, globalY' },
-                    { name: 'touchUp', info: 'globalX, globalY' },
-                    { name: 'swipeLeft', info: '' },
-                    { name: 'swipeRight', info: '' },
-                    { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' },
-                    { name: 'init', info: '' } ],
-            provides: 23 } },
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [ { name: 'init', info: '' } ],
+            provides: 49 } },
     'image':
     { flex:
     { funcs:
@@ -1414,7 +1421,7 @@ const propertyMap = {
                 { name: 'swipeDown', info: '' },
                 { name: 'stop', info: '' },
                 { name: 'loop', info: '' } ],
-        provides: 70 },
+        provides: 134 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1434,6 +1441,8 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
+                    { name: 'clipped', type: 4, default: false },
+                    { name: 'bgImage', type: 2, default: '' },
                     { name: 'autoPlay', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 } ],
@@ -1447,7 +1456,7 @@ const propertyMap = {
                     { name: 'swipeDown', info: '' },
                     { name: 'stop', info: '' },
                     { name: 'loop', info: '' } ],
-            provides: 70 },
+            provides: 134 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1477,7 +1486,7 @@ const propertyMap = {
                     { name: 'swipeDown', info: '' },
                     { name: 'stop', info: '' },
                     { name: 'loop', info: '' } ],
-            provides: 70 } },
+            provides: 134 } },
     'slidetimer':
     { flex:
     { funcs:
@@ -1504,7 +1513,6 @@ const propertyMap = {
                 { name: 'alignItems', type: 2, default: '' },
                 { name: 'alignContent', type: 2, default: '' },
                 { name: 'flexWrap', type: 2, default: '' },
-                { name: 'autoPlay', type: 4, default: false },
                 { name: 'loop', type: 4, default: false },
                 { name: 'totalTime', type: 1, default: 10 },
                 { name: 'shapeWidth', type: 0, default: 0 },
@@ -1513,7 +1521,8 @@ const propertyMap = {
                 { name: 'lineColor', type: 6, default: '' },
                 { name: 'lineWidth', type: 0, default: 1 },
                 { name: 'radius', type: 0, default: 0 },
-                { name: 'sliderScale', type: 5, default: 1 } ],
+                { name: 'vertical', type: 4, default: false },
+                { name: 'sliderScale', type: 1, default: 1 } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
                 { name: 'touchDown', info: 'globalX, globalY' },
@@ -1524,7 +1533,7 @@ const propertyMap = {
                 { name: 'swipeDown', info: '' },
                 { name: 'stop', info: '' },
                 { name: 'loop', info: '' } ],
-        provides: 70 },
+        provides: 134 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1543,7 +1552,8 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
-                    { name: 'autoPlay', type: 4, default: false },
+                    { name: 'clipped', type: 4, default: false },
+                    { name: 'bgImage', type: 2, default: '' },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 },
                     { name: 'shapeWidth', type: 0, default: 0 },
@@ -1554,7 +1564,8 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'radius', type: 0, default: 0 },
-                    { name: 'sliderScale', type: 5, default: 1 } ],
+                    { name: 'vertical', type: 4, default: false },
+                    { name: 'sliderScale', type: 1, default: 1 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -1565,7 +1576,7 @@ const propertyMap = {
                     { name: 'swipeDown', info: '' },
                     { name: 'stop', info: '' },
                     { name: 'loop', info: '' } ],
-            provides: 70 },
+            provides: 134 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1582,7 +1593,6 @@ const propertyMap = {
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
                     { name: 'rotation', type: 1, default: 0 },
-                    { name: 'autoPlay', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 },
                     { name: 'shapeWidth', type: 0, default: 0 },
@@ -1595,7 +1605,8 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'radius', type: 0, default: 0 },
-                    { name: 'sliderScale', type: 5, default: 1 } ],
+                    { name: 'vertical', type: 4, default: false },
+                    { name: 'sliderScale', type: 1, default: 1 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -1606,7 +1617,7 @@ const propertyMap = {
                     { name: 'swipeDown', info: '' },
                     { name: 'stop', info: '' },
                     { name: 'loop', info: '' } ],
-            provides: 70 } },
+            provides: 134 } },
     'track':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
@@ -1809,12 +1820,12 @@ const propertyMap = {
     { funcs: [ { name: 'delete', info: '' } ],
         props: [ { name: 'id', type: 2, default: '' } ],
         events: [],
-        provides: 128 },
+        provides: 256 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
             props: [ { name: 'id', type: 2, default: '' } ],
             events: [],
-            provides: 128 },
+            provides: 256 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1845,7 +1856,7 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
-            provides: 134 } },
+            provides: 262 } },
     'body':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
@@ -1932,6 +1943,45 @@ const propertyMap = {
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'sid', type: 2, default: '' },
                     { name: 'listened', type: 4, default: false } ],
+            events: [],
+            provides: 0 } },
+    'page':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [],
+        provides: 0 },
+        dom:
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'keepRatio', type: 4, default: false },
+                    { name: 'backgroundColor', type: 6, default: '' },
+                    { name: 'positionX', type: 0, default: 0 },
+                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'scaleX', type: 1, default: 1 },
+                    { name: 'scaleY', type: 1, default: 1 },
+                    { name: 'originX', type: 1, default: 0 },
+                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'clipped', type: 4, default: false },
+                    { name: 'bgImage', type: 2, default: '' },
+                    { name: 'forwardTransition', type: 0, default: 0 },
+                    { name: 'backwardTransition', type: 0, default: 0 } ],
+            events:
+                [ { name: 'click', info: 'globalX, globalY' },
+                    { name: 'touchDown', info: 'globalX, globalY' },
+                    { name: 'touchUp', info: 'globalX, globalY' },
+                    { name: 'swipeLeft', info: '' },
+                    { name: 'swipeRight', info: '' },
+                    { name: 'swipeUp', info: '' },
+                    { name: 'swipeDown', info: '' } ],
+            provides: 6 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
             events: [],
             provides: 0 } },
 };
