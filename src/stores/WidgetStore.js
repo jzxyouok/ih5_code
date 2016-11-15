@@ -770,11 +770,7 @@ function generateJsFunc(etree) {
                           let dVar = keyMap[fV.objId[3]];
                           switch (fV.property.type) {
                               case 1:
-                                  //db
-                                  //如何获取数据库的值？
-                                  break;
                               case 2:
-                                  //list
                                   let val = '';
                                   if(dVar&&dVar.props&&dVar.props.value) {
                                       let rows = dVar.props.value.split(';');
@@ -786,10 +782,32 @@ function generateJsFunc(etree) {
                                           }
                                       }
                                   }
+                                  //需要用ids来做
                                   if(val!=''){
-                                      subLine += val;
+                                      let value = 'ids.'+fV.objId[0]+'.value';
+                                      let value0 = fV.property.value[0];
+                                      let value1 = fV.property.value[1];
+                                      let formula = "(function(value, value0, value1) {  "+
+                                      "var temp = null;                                  "+
+                                      "if(value) {                                       "+
+                                      "    var rows = value.split(';');                  "+
+                                      "    if(rows.length>=value0) {                     "+
+                                      "        var columns = rows[value0-1].split(',');  "+
+                                      "        if (columns.length>=value1){              "+
+                                      "            var temp  = columns[value1-1];        "+
+                                      "            if(isNaN(temp)) {                     "+
+                                      "                temp = JSON.stringify(temp);      "+
+                                      "            }                                     "+
+                                      "        }                                         "+
+                                      "    }                                             "+
+                                      "}                                                 "+
+                                      "console.log(temp);                                "+
+                                      "return temp;                                      "+
+                                      "}("+value+','+value0+','+value1+"))               ";
+                                      subLine += formula;
                                   }
                                   break;
+
                           }
                       } else {
                           subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
@@ -952,28 +970,27 @@ function generateJsFunc(etree) {
                           case 'object':
                               if(prop.valueId) {
                                   let arrValue = getIdsName(prop.valueId[0], prop.valueId[2], 'value');
-                                  let method = "var arrValue = '';"+
-                                      "console.log("+arrValue+");"+
-                                      "if(data.length>0){"+
-                                      "var dataList = [];"+
-                                      "data.forEach(function(v, i){"+
-                                      "var temp = [];"+
-                                      "for (var prop in v) {"+
-                                      "if(prop.substr(0,1)!=='_'){"+
-                                      "temp.push(v[prop]);"+
-                                      "}"+
-                                      "}"+
-                                      "if(temp.length>0) {"+
-                                      "dataList.push(temp.join(','));"+
-                                      "}"+
-                                      "});"+
-                                      "if(dataList.length>0){"+
-                                      "arrValue = dataList.join(';');"+
-                                      "}"+
-                                      "}"+
-                                      "if(arrValue != ''){"+
-                                        arrValue + "= arrValue;"+
-                                      "}"+"console.log("+'ids.'+prop.valueId[0]+");";
+                                  let method = "var arrValue = '';                    "+
+                                      "console.log("+arrValue+");                     "+
+                                      "if(data.length>0){                             "+
+                                      " var dataList = [];                            "+
+                                      " data.forEach(function(v, i){                  "+
+                                      "     var temp = [];                            "+
+                                      "     for (var prop in v) {                     "+
+                                      "         if(prop.substr(0,1)!=='_'){           "+
+                                      "             temp.push(v[prop]);               "+
+                                      "         }                                     "+
+                                      "     }                                         "+
+                                      "     if(temp.length>0) {                       "+
+                                      "         dataList.push(temp.join(','));        "+
+                                      "     }                                         "+
+                                      " });                                           "+
+                                      " if(dataList.length>0){                        "+
+                                      "     arrValue = dataList.join(';');            "+
+                                      " }                                             "+
+                                      "}                                              "+
+                                      "if(arrValue != ''){"+ arrValue + "= arrValue;} "+
+                                      "console.log("+'ids.'+prop.valueId[0] +");";
                                   callBack = ',function(err, data){'+'console.log(data);'+method+'}';
                               }
                               break;
