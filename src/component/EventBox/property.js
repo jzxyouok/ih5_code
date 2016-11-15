@@ -142,7 +142,7 @@ class Property extends React.Component {
             }, ()=>{
                 this.arrList = [];
                 this.state.objectList.forEach(v=>{
-                    if(v.className === 'data') {
+                    if(v.className === 'data'&&v.props.type === 'twoDArr') {
                         this.arrList.push(v);
                     }
                 });
@@ -778,6 +778,7 @@ class Property extends React.Component {
                                 propertyId={propertyId}
                                 disabled={!this.state.currentEnable}
                                 objectList={this.onGetActionPropertyFIList()}
+                                dbList={this.props.dbList}
                                 onFInputFocus={this.onFormulaInputFocus}
                                 onFInputBlur={this.onFormulaInputBlur}
                                 getResult={this.getPropertyViewSetUpResult.bind(this,i1)}
