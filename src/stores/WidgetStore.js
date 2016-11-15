@@ -719,18 +719,18 @@ function generateJsFunc(etree) {
       }
       let chineseSymbol = ["＋","－","＊","／","（","）","？","：","‘","’","."];
       let englishSymbol = ["+","-","*","/","(",")","?",":","'","'","."];
-      let hasSymbol = false;
+      let hasS = false;
       chineseSymbol.forEach(v=>{
           if(str.indexOf(v)>=0){
-              hasSymbol = true;
+              hasS = true;
           }
       });
       englishSymbol.forEach(v=>{
           if(str.indexOf(v)>=0){
-              hasSymbol = true;
+              hasS = true;
           }
       });
-      return hasSymbol;
+      return hasS;
   };
 
     let operationTranslate = (item)=> {
@@ -746,29 +746,30 @@ function generateJsFunc(etree) {
         return null;
     };
 
+    let dealWithformulaValue = (value)=> {
+        if(isNaN(value)&&!hasSymbol(value)) {
+            return JSON.stringify(value);
+        } else {
+            return replaceMathOp(replaceSymbolStr(value));
+        }
+    };
+
   //公式编辑器内容生成运行内容
   let formulaGenLine = (fInput)=> {
       let line = '';
       if(fInput){
           if(fInput.type === 1){
-              if(isNaN(fInput.value)&&!hasSymbol(fInput.value)) {
-                  line = JSON.stringify(fInput.value);
-              } else {
-                  line = replaceMathOp(replaceSymbolStr(fInput.value));
-              }
+              line = dealWithformulaValue(fInput.value);
           } else if (fInput.type === 2) {
               let subLine = '';
               fInput.value.forEach((fV,i) =>{
                   if(fV.objId&&fV.property){
                       if(i===0&&fV.prePattern){
-                          if(isNaN(fV.prePattern)&&!hasSymbol(fV.prePattern)) {
-                              subLine += JSON.stringify(fV.prePattern);
-                          } else {
-                              subLine += replaceMathOp(replaceSymbolStr(fV.prePattern));
-                          }
+                          subLine += dealWithformulaValue(fV.prePattern);
                       }
                       if(fV.property.type&&fV.property.value) {
-                          //二维变量的选择
+                          //一，二维变量的选择
+                          let dVar = keyMap[fV.objId[3]];
                           switch (fV.property.type) {
                               case 1:
                                   //db
@@ -777,18 +778,13 @@ function generateJsFunc(etree) {
                               case 2:
                                   //list
                                   let val = '';
-                                  if(keyMap[fV.objId[3]]&&keyMap[fV.objId[3]].props&&keyMap[fV.objId[3]].props.value) {
-                                      let rows = keyMap[fV.objId[3]].props.value.split(';');
+                                  if(dVar&&dVar.props&&dVar.props.value) {
+                                      let rows = dVar.props.value.split(';');
                                       if (rows.length>=fV.property.value[0]){
                                         let columns = rows[fV.property.value[0]-1].split(',');
                                           if (columns.length>=fV.property.value[1]){
                                               let temp  = columns[fV.property.value[1]-1];
-                                              if(isNaN(temp)&&!hasSymbol(temp)) {
-                                                  temp = JSON.stringify(temp);
-                                              } else {
-                                                  temp = replaceMathOp(replaceSymbolStr(temp));
-                                              }
-                                              val = temp;
+                                              val = dealWithformulaValue(temp);
                                           }
                                       }
                                   }
@@ -801,11 +797,7 @@ function generateJsFunc(etree) {
                           subLine += getIdsName(fV.objId[0], fV.objId[2], fV.property.name);
                       }
                       if(fV.pattern) {
-                          if(isNaN(fV.pattern)&&!hasSymbol(fV.pattern)) {
-                              subLine += JSON.stringify(fV.pattern);
-                          } else {
-                              subLine += replaceMathOp(replaceSymbolStr(fV.pattern));
-                          }
+                          subLine += dealWithformulaValue(fV.pattern);
                       }
                   }
               });
