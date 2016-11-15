@@ -203,7 +203,9 @@ function loadTree(parent, node, idList) {
       var r = {};
       r.enable = item.enable;
       var judgesObj = item.judges;
-      r.conFlag = judgesObj.conFlag;
+
+      r.conFlag = judgesObj.conFlag||'触发条件';
+
       r.logicalFlag = judgesObj.logicalFlag;
       r.zhongHidden = judgesObj.zhongHidden;
       r.className = judgesObj.className;
@@ -220,6 +222,13 @@ function loadTree(parent, node, idList) {
                 needFill.push(obj);
             }
             else{
+                if (v.judgeObjKey) {
+                    let obj1 = keyMap[v.judgeObjKey];
+                    if (obj1) {
+                        v.judgeObjFlag = obj1.props.name;
+                    }
+                }
+                v.judgeValFlag = v.judgeValFlag|| '判断值';
                 r.children.push(v);
             }
         });
@@ -1172,7 +1181,8 @@ function saveTree(data, node, saveKey) {
                         judges.children.push(obj);
                     }
                 });
-            }else if( judges.className=='counter' &&( judges.conFlag == 'positive' || judges.conFlag == 'negative')) {
+            }
+            else if( judges.className=='counter' &&( judges.conFlag == 'positive' || judges.conFlag == 'negative')) {
                 let obj = {};
                 obj.enable=true;
                 obj.judgeObjKey =node.key;
@@ -1345,10 +1355,7 @@ function saveTree(data, node, saveKey) {
             }
             cmds.push(c);
         });
-
         etree.push({cmds:cmds,judges:judges, enable:eventEnable});
-
-
       });
       data['etree'] = etree;
         if(node.props['enableEventTree'] && !saveKey){
@@ -2398,6 +2405,7 @@ export default Reflux.createStore({
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
         let conOption =this.getConditionOption();
+        let eventClassName=this.currentWidget.className;
         let event = {
             'eid': eid,
             'children': [{
@@ -2412,7 +2420,7 @@ export default Reflux.createStore({
             'zhongHidden':true,
             'logicalFlag':'and',
             'conFlag':'触发条件',
-            'className':null,
+            'className':eventClassName,
             'enable': true,
             'specificList': [eventSpec]
         };
@@ -3501,8 +3509,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-         //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-         xhr.open(method, url);  //上传到服务器时,去掉这个注释
+         xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+      //   xhr.open(method, url);  //上传到服务器时,去掉这个注释
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
