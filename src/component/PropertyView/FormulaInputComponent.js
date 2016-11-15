@@ -28,38 +28,39 @@ const minInputWidth = 2;
 let initValue = (props) => {
     let value = null;
     let type = inputType.value;
-    // if(props.value) {
-    //     value = props.value.value;
-    //     type = props.value.type;
-    // }
-    if(props.value&&props.objectList&&props.objectList.length>0) {
-        let pValue = props.value;
-        let pList = props.objectList;
-        value = pValue.value;
-        type = pValue.type;
-        if(type === inputType.formula) {
-            if(value){
-                value.forEach((v1, i1)=>{
-                    let inList = false;
-                    pList.forEach((v)=>{
-                        if(v.key === v1.objKey) {
-                            inList = true;
-                        }
-                    });
-                    if(!inList) {
-                        value.splice(i1,1);
-                    }
-                });
-                if(value.length === 0) {
-                    value = null;
-                    type = inputType.value;
-                }
-            } else {
-                value = null;
-                type = inputType.value;
-            }
-        }
+    if(props.value) {
+        value = props.value.value;
+        type = props.value.type;
     }
+    // if(props.value&&props.objectList&&props.objectList.length>0) {
+    //     debugger;
+    //     let pValue = props.value;
+    //     let pList = props.objectList;
+    //     value = pValue.value;
+    //     type = pValue.type;
+    //     if(type === inputType.formula) {
+    //         if(value){
+    //             value.forEach((v1, i1)=>{
+    //                 let inList = false;
+    //                 pList.forEach((v)=>{
+    //                     if(v.key === v1.objKey) {
+    //                         inList = true;
+    //                     }
+    //                 });
+    //                 if(!inList) {
+    //                     value.splice(i1,1);
+    //                 }
+    //             });
+    //             if(value.length === 0) {
+    //                 value = null;
+    //                 type = inputType.value;
+    //             }
+    //         } else {
+    //             value = null;
+    //             type = inputType.value;
+    //         }
+    //     }
+    // }
     return {value:value, type:type};
 };
 
@@ -202,9 +203,9 @@ class FormulaInput extends React.Component {
         if(index >= 0) {
             return this.props.objectList[index];
         }
-        // if(obj.objKey === 'globalXY') {
-        //     return {className:'DIY', key:'globalXY', props:{name:'点击位置', showName:'点击位置'}};
-        // }
+        if(obj.objKey === 'globalXY') {
+            return {className:'DIY', key:'globalXY', props:{name:'点击位置', showName:'点击位置'}};
+        }
         return null;
     }
 

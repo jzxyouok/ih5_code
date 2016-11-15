@@ -201,36 +201,7 @@ function loadTree(parent, node, idList, initEl) {
   if (node['etree']) {
     var eventTree = [];
     node['etree'].forEach(item =>{
-      var r = {};
-      r.enable = item.enable;
-      var judgesObj = item.judges;
-      r.conFlag = judgesObj.conFlag;
-      r.logicalFlag = judgesObj.logicalFlag;
-      r.zhongHidden = judgesObj.zhongHidden;
-      r.className = judgesObj.className;
-      r.children = [];
-        let needFill =[];
-        judgesObj.children.map((v,i)=>{
-            if(v.showName !==undefined) {
-                let obj = {};
-                r.conFlag = v.compareFlag;
-                obj.showName = v.showName;
-                obj.type = v.type;
-                obj.default = v.compareObjFlag;
-                obj.enable = v.enable;
-                needFill.push(obj);
-            }
-            else{
-                r.children.push(v);
-            }
-        });
-        if(needFill.length>0){
-            r.needFill=needFill;
-        }
-        if(judgesObj.needFills){
-            r.needFills = judgesObj.needFills;
-        }
-
+      var r=item.eventNode;
       r.eid = (_eventCount++);
       r.specificList = [];
       item.cmds.forEach(cmd => {
@@ -524,6 +495,7 @@ function generateObjectId(object) {
 }
 
 function objectToId(object) {
+
   let idName, varKey, varName;
     if(object === 'this' || object === 'param.target'
         || object === 'target' || object === 'globalXY') {
@@ -602,7 +574,6 @@ function generateId(node) {
 
       item.children.forEach(judge => {
           judge.judgeObj = keyMap[judge.judgeObjKey];
-
           generateObjectId(judge.judgeObj);
 
           //公式编辑器处理
@@ -801,7 +772,7 @@ function generateJsFunc(etree) {
                                       "        }                                         "+
                                       "    }                                             "+
                                       "}                                                 "+
-                                      "console.log(temp);                                "+
+                                      // "console.log(temp);                                "+
                                       "return temp;                                      "+
                                       "}("+value+','+value0+','+value1+"))               ";
                                       subLine += formula;
@@ -826,7 +797,7 @@ function generateJsFunc(etree) {
   };
 
   etree.forEach(function(item) {
-    if (item.judges.conFlag && item.enable) {
+    if (item.judges.conFlag !='触发条件' && item.enable) {
       // var out = '';
       var lines = [];
       var conditions = [];
@@ -971,7 +942,7 @@ function generateJsFunc(etree) {
                               if(prop.valueId) {
                                   let arrValue = getIdsName(prop.valueId[0], prop.valueId[2], 'value');
                                   let method = "var arrValue = '';                    "+
-                                      "console.log("+arrValue+");                     "+
+                                      // "console.log("+arrValue+");                     "+
                                       "if(data.length>0){                             "+
                                       " var dataList = [];                            "+
                                       " data.forEach(function(v, i){                  "+
@@ -989,8 +960,8 @@ function generateJsFunc(etree) {
                                       "     arrValue = dataList.join(';');            "+
                                       " }                                             "+
                                       "}                                              "+
-                                      "if(arrValue != ''){"+ arrValue + "= arrValue;} "+
-                                      "console.log("+'ids.'+prop.valueId[0] +");      ";
+                                      "if(arrValue != ''){"+ arrValue + "= arrValue;} ";
+                                      // "console.log("+'ids.'+prop.valueId[0] +");      ";
                                   callBack = ',function(err, data){'+'console.log(data);'+method+'}';
                               }
                               break;
@@ -1120,6 +1091,7 @@ function generateJsFunc(etree) {
           out += lines[0];
         else
           out += '{' + lines.join(';') + '}';
+
         if (output[item.judges.conFlag]) {
           output[item.judges.conFlag] += ';' + out;
         } else {
@@ -1134,6 +1106,7 @@ function generateJsFunc(etree) {
 
 function saveTree(data, node, saveKey) {
   data['cls'] = node.className;
+
   let props = {};
   for (let name in node.props) {
     if (name === 'id')
@@ -1159,13 +1132,17 @@ function saveTree(data, node, saveKey) {
             return temp;
         };
 
+        //todo:将解析的部分放到generateJsFunc
         node.props['eventTree'].forEach(item => {
         var cmds = [];
         var judges={};
+        var test ={};
+
             var eventEnable = item.enable; //是否可执行
             judges.conFlag = item.conFlag;
-            if(judges.conFlag=='触发条件'){judges.conFlag=null;}
-            judges.className=node.className;
+
+            judges.className=item.className;
+
             judges.children=[];
             if(item.needFill) {
                 judges.conFlag = 'change';//触发条件
@@ -1184,9 +1161,9 @@ function saveTree(data, node, saveKey) {
                     }
                     else {
                         let obj = {};
-                        obj.enable=true;
-                        obj.judgeObjKey =node.key;
-                        let judgeObj =keyMap[obj.judgeObjKey];
+                        obj.enable = true;
+                        obj.judgeObjKey = node.key;
+                        let judgeObj = keyMap[obj.judgeObjKey];
                         if (judgeObj) {
                             let o = objectToId(judgeObj);
                             obj.judgeObjId = o[0];
@@ -1199,29 +1176,28 @@ function saveTree(data, node, saveKey) {
 
                         obj.compareFlag = item.conFlag;
 
-                        if((judges.className=='text' ||judges.className=='input') &&  (obj.compareFlag == 'isMatch' || obj.compareFlag == 'isUnMatch')){
-                            obj.compareFlag = obj.compareFlag == 'isMatch'?'=':'!=';
-                        }else if(judges.className=='counter' && ( obj.compareFlag=='valRange') ){
-                            obj.compareFlag = v.showName == '最大值'?'<':'>';
-                        }else if(v.showName=='碰撞对象'){
-                            judges.conFlag= item.conFlag;
-                            let bodyObj= keyMap[v.default];
-                            if(bodyObj){
-                                obj.judgeObjId=bodyObj.props.id;
-                            }else{
+                        if ((judges.className == 'text' || judges.className == 'input') && (obj.compareFlag == 'isMatch' || obj.compareFlag == 'isUnMatch')) {
+                            obj.compareFlag = obj.compareFlag == 'isMatch' ? '=' : '!=';
+                        } else if (judges.className == 'counter' && ( obj.compareFlag == 'valRange')) {
+                            obj.compareFlag = v.showName == '最大值' ? '<' : '>';
+                        } else if (v.showName == '碰撞对象') {
+                            judges.conFlag = item.conFlag;
+                            let bodyObj = keyMap[v.default];
+                            if (bodyObj) {
+                                obj.judgeObjId = bodyObj.props.id;
+                            } else {
                                 //没有碰撞对象
-                                obj.judgeObjId=null;
+                                obj.judgeObjId = null;
                             }
                         }
-
-                        obj.showName=v.showName;
-                        obj.type=v.type;
-                        obj.compareObjFlag =v.default;
-
+                        obj.showName = v.showName;
+                        obj.type = v.type;
+                        obj.compareObjFlag = v.default;
                         judges.children.push(obj);
                     }
                 });
-            }else if( judges.className=='counter' &&( judges.conFlag == 'positive' || judges.conFlag == 'negative')) {
+            }
+            else if( judges.className=='counter' &&( judges.conFlag == 'positive' || judges.conFlag == 'negative')) {
                 let obj = {};
                 obj.enable=true;
                 obj.judgeObjKey =node.key;
@@ -1241,14 +1217,12 @@ function saveTree(data, node, saveKey) {
                 judges.children.push(obj);
             }
 
-
-
         judges.logicalFlag =item.logicalFlag; //逻辑判断符
         judges.zhongHidden =item.zhongHidden; //是否启用逻辑判断条件
-            item.children.map((v,i)=> {
+         item.children.map((v,i)=> {
                 let obj = {};
                 let isSpecial1 = false;
-                // let isSpecial2 = false;
+
                 obj.enable = v.enable; //是否可执行
                 obj.judgeObjKey = v.judgeObjKey;
                 obj.judgeObjFlag = v.judgeObjFlag;
@@ -1261,15 +1235,10 @@ function saveTree(data, node, saveKey) {
                     }
                     //获取类名,判断是否属于五类特殊对象对象,改造条件值
                     isSpecial1 = specialObject.indexOf(v.judgeObj.className) >= 0;
+                    delete  v.judgeObj;
                 }
-                if (isSpecial1) {
-                    obj.judgeValFlag = 'value';
-                } else {
-                    obj.judgeValFlag = v.judgeValFlag;//判断对象的属性
-                }
-
+               obj.judgeValFlag =isSpecial1?'value':v.judgeValFlag;
                 obj.compareFlag = v.compareFlag;//比较运算符
-
                 if(v.compareObjFlag&&v.compareObjFlag.type&&v.compareObjFlag.type===2) {
                     //公式编辑器的对象处理
                     obj.compareObjFlag = {
@@ -1279,9 +1248,7 @@ function saveTree(data, node, saveKey) {
                 } else {
                     obj.compareObjFlag = v.compareObjFlag;
                 }
-
                 obj.arrHidden = v.arrHidden;
-
                 judges.children.push(obj);
             });
 
@@ -1395,9 +1362,7 @@ function saveTree(data, node, saveKey) {
             cmds.push(c);
         });
 
-        etree.push({cmds:cmds,judges:judges, enable:eventEnable});
-
-
+        etree.push({cmds:cmds,judges:judges, enable:eventEnable,eventNode:item});
       });
       data['etree'] = etree;
         if(node.props['enableEventTree'] && !saveKey){
@@ -1446,7 +1411,7 @@ function saveTree(data, node, saveKey) {
   }
   if (list.length)
     data['vars'] = list;
-  list = [];
+    list = [];
   if (node.funcList.length > 0) {
       node.funcList.forEach(item =>{
           var o = {};
@@ -2447,6 +2412,7 @@ export default Reflux.createStore({
         let eid = _eventCount++;
         let eventSpec = this.emptyEventSpecific();
         let conOption =this.getConditionOption();
+        let eventClassName=this.currentWidget.className;
         let event = {
             'eid': eid,
             'children': [{
@@ -2461,7 +2427,7 @@ export default Reflux.createStore({
             'zhongHidden':true,
             'logicalFlag':'and',
             'conFlag':'触发条件',
-            'className':null,
+            'className':eventClassName,
             'enable': true,
             'specificList': [eventSpec]
         };
@@ -2472,7 +2438,7 @@ export default Reflux.createStore({
             'sid': _specificCount++,
             'object': null,
             'action': null,
-            'enable': true,
+            'enable': true
         };
         return eventSpecific;
     },
@@ -3379,6 +3345,7 @@ export default Reflux.createStore({
       //       a1.push(a2[i]);
       //     }
       // };
+
         let getImageList = function(array, list) {
           var result = [];
           var count = 0;
@@ -3422,10 +3389,11 @@ export default Reflux.createStore({
         let data = {};
         let images = [];
         data['stage'] = {};
-        trimTree(stageTree[0].tree);
-        generateId(stageTree[0].tree);
+        trimTree(stageTree[0].tree); //处理图片链接
+        generateId(stageTree[0].tree);//给树中涉及到的对象加上id
         saveTree(data['stage'], stageTree[0].tree);
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
+
         // data['stage']['links'] = stageTree[0].tree.imageList.length;
         // appendArray(images, stageTree[0].tree.imageList);
         data['stage']['links'] = getImageList(images, stageTree[0].tree.imageList);
@@ -3556,8 +3524,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-         //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-         xhr.open(method, url);  //上传到服务器时,去掉这个注释
+         xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+      //   xhr.open(method, url);  //上传到服务器时,去掉这个注释
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)

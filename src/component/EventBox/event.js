@@ -26,7 +26,7 @@ class Event extends React.Component {
             activeKey: this.props.activeKey,  //当前激活事件的key
             wKey: this.props.wKey,
             specialObject: ['counter', 'text', 'var', 'input'],
-            //用于下拉框显示123
+            //用于下拉框显示
             logicalOption: ['and', 'or', 'not'],  //下拉选项
             judgeObjOption: [],
             judgeValOption: [],
@@ -64,26 +64,6 @@ class Event extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
-        //解析部分
-        nextProps.eventList.map((v, i)=> {
-            v.className = nextProps.widget.className;
-            if (!v.conFlag) {
-                v.conFlag = '触发条件';
-            }
-            v.children.map((item, index)=> {
-                if (item.judgeObjKey) {
-                    let obj1 = WidgetStore.getWidgetByKey(item.judgeObjKey);
-                    if (obj1) {
-                        item.judgeObjFlag = obj1.props.name;
-                    }
-                }
-                if (!item.judgeValFlag) {
-                    item.judgeValFlag = '判断值';
-                }
-            });
-        });
-
         this.setState({
             activeKey: nextProps.activeKey,
             wKey: nextProps.wKey,
