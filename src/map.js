@@ -323,6 +323,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -348,6 +350,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -372,6 +376,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -394,6 +400,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -425,6 +433,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -434,8 +444,8 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
-                    { name: 'clipped', type: 4, default: false },
-                    { name: 'bgImage', type: 2, default: '' } ],
+                    { name: 'bgImage', type: 2, default: '' },
+                    { name: 'clipped', type: 4, default: false } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -451,6 +461,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -482,6 +494,8 @@ const propertyMap = {
                 { name: 'gotoPage', info: 'page' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -491,8 +505,8 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
-                    { name: 'clipped', type: 4, default: false },
                     { name: 'bgImage', type: 2, default: '' },
+                    { name: 'clipped', type: 4, default: false },
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 } ],
             events:
@@ -516,6 +530,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 0, default: 0, readOnly: true },
                 { name: 'height', type: 0, default: 0, readOnly: true },
                 { name: 'margin', type: 2, default: '' },
@@ -545,6 +561,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -575,6 +593,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -606,6 +626,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -631,6 +653,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -657,6 +681,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -683,6 +709,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -708,6 +736,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -734,6 +764,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -759,6 +791,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -784,6 +818,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -816,6 +852,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -838,6 +876,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -863,6 +903,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -887,6 +929,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -918,9 +962,11 @@ const propertyMap = {
                 { name: 'gotoPage', info: 'page' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'backgroundColor', type: 6, default: '' },
-                    { name: 'clipped', type: 4, default: false },
                     { name: 'bgImage', type: 2, default: '' },
+                    { name: 'clipped', type: 4, default: false },
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 },
                     { name: 'scaleStage', type: 4, default: false } ],
@@ -946,6 +992,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -972,6 +1020,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -999,6 +1049,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1026,6 +1078,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -1052,6 +1106,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -1079,6 +1135,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1106,6 +1164,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 0, default: 0, readOnly: true },
                 { name: 'height', type: 0, default: 0, readOnly: true },
                 { name: 'margin', type: 2, default: '' },
@@ -1136,6 +1196,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1167,6 +1229,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1199,6 +1263,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 0, default: 0, readOnly: true },
                 { name: 'height', type: 0, default: 0, readOnly: true },
                 { name: 'margin', type: 2, default: '' },
@@ -1228,6 +1294,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1258,6 +1326,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1289,6 +1359,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 0, default: 0, readOnly: true },
                 { name: 'height', type: 0, default: 0, readOnly: true },
                 { name: 'margin', type: 2, default: '' },
@@ -1321,6 +1393,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1354,6 +1428,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1392,6 +1468,8 @@ const propertyMap = {
             { name: 'seek', info: 't' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -1419,8 +1497,7 @@ const propertyMap = {
                 { name: 'swipeRight', info: '' },
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' },
-                { name: 'stop', info: '' },
-                { name: 'loop', info: '' } ],
+                { name: 'stop', info: '' } ],
         provides: 134 },
         dom:
         { funcs:
@@ -1432,6 +1509,8 @@ const propertyMap = {
                 { name: 'seek', info: 't' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -1441,8 +1520,8 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
-                    { name: 'clipped', type: 4, default: false },
                     { name: 'bgImage', type: 2, default: '' },
+                    { name: 'clipped', type: 4, default: false },
                     { name: 'autoPlay', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 } ],
@@ -1454,8 +1533,7 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
-                    { name: 'stop', info: '' },
-                    { name: 'loop', info: '' } ],
+                    { name: 'stop', info: '' } ],
             provides: 134 },
         canvas:
         { funcs:
@@ -1467,6 +1545,8 @@ const propertyMap = {
                 { name: 'seek', info: 't' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1484,8 +1564,7 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
-                    { name: 'stop', info: '' },
-                    { name: 'loop', info: '' } ],
+                    { name: 'stop', info: '' } ],
             provides: 134 } },
     'slidetimer':
     { flex:
@@ -1498,6 +1577,8 @@ const propertyMap = {
             { name: 'seek', info: 't' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 0, default: 0, readOnly: true },
                 { name: 'height', type: 0, default: 0, readOnly: true },
                 { name: 'margin', type: 2, default: '' },
@@ -1531,8 +1612,7 @@ const propertyMap = {
                 { name: 'swipeRight', info: '' },
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' },
-                { name: 'stop', info: '' },
-                { name: 'loop', info: '' } ],
+                { name: 'stop', info: '' } ],
         provides: 134 },
         dom:
         { funcs:
@@ -1544,6 +1624,8 @@ const propertyMap = {
                 { name: 'seek', info: 't' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1552,8 +1634,8 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
-                    { name: 'clipped', type: 4, default: false },
                     { name: 'bgImage', type: 2, default: '' },
+                    { name: 'clipped', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 },
                     { name: 'shapeWidth', type: 0, default: 0 },
@@ -1574,8 +1656,7 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
-                    { name: 'stop', info: '' },
-                    { name: 'loop', info: '' } ],
+                    { name: 'stop', info: '' } ],
             provides: 134 },
         canvas:
         { funcs:
@@ -1587,6 +1668,8 @@ const propertyMap = {
                 { name: 'seek', info: 't' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1615,8 +1698,7 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
-                    { name: 'stop', info: '' },
-                    { name: 'loop', info: '' } ],
+                    { name: 'stop', info: '' } ],
             provides: 134 } },
     'track':
     { flex:
@@ -1653,6 +1735,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -1681,6 +1765,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -1710,6 +1796,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1739,6 +1827,8 @@ const propertyMap = {
             { name: 'clone', info: 'obj, id, props, isBottom' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
+                { name: 'visible', type: 4, default: true },
+                { name: 'alpha', type: 5, default: 1 },
                 { name: 'width', type: 2, default: '' },
                 { name: 'height', type: 2, default: '' },
                 { name: 'backgroundColor', type: 6, default: '' },
@@ -1766,6 +1856,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -1794,6 +1886,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1834,6 +1928,8 @@ const propertyMap = {
                 { name: 'pause', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'positionX', type: 0, default: 0 },
                     { name: 'positionY', type: 0, default: 0 },
@@ -1957,6 +2053,8 @@ const propertyMap = {
                 { name: 'clone', info: 'obj, id, props, isBottom' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
+                    { name: 'visible', type: 4, default: true },
+                    { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
                     { name: 'positionX', type: 0, default: 0 },
@@ -1966,8 +2064,8 @@ const propertyMap = {
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
-                    { name: 'clipped', type: 4, default: false },
                     { name: 'bgImage', type: 2, default: '' },
+                    { name: 'clipped', type: 4, default: false },
                     { name: 'forwardTransition', type: 0, default: 0 },
                     { name: 'backwardTransition', type: 0, default: 0 } ],
             events:
