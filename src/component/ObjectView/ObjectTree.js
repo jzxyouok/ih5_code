@@ -132,7 +132,7 @@ class ObjectTree extends React.Component {
         this.onRightClick = this.onRightClick.bind(this);
         this.onHideToolMenu = this.onHideToolMenu.bind(this);
         this.onClickToolMenuItem = this.onClickToolMenuItem.bind(this);
-        this.onMouseDownMenuItem = this.onMouseDownMenuItem.bind(this);
+        this.onMouseDownToolMenuItem = this.onMouseDownToolMenuItem.bind(this);
     }
 
     componentDidMount() {
@@ -654,7 +654,7 @@ class ObjectTree extends React.Component {
         });
     }
 
-    onMouseDownMenuItem(e) {
+    onMouseDownToolMenuItem(e) {
         e.stopPropagation();
     }
 
@@ -675,16 +675,22 @@ class ObjectTree extends React.Component {
                 this.itemActions('delete');
                 break;
             case 'originSize':
+                this.itemActions('originSize');
                 break;
             case 'originPercent':
+                this.itemActions('originPercent');
                 break;
             case 'relPaste':
+                this.itemActions('relPaste');
                 break;
             case 'crossCopy':
+                this.itemActions('crossCopy');
                 break;
             case 'crossPaste':
+                this.itemActions('crossPaste');
                 break;
             case 'saveAsCom':
+                this.itemActions('saveAsCom');
                 break;
         }
     }
@@ -827,20 +833,32 @@ class ObjectTree extends React.Component {
     }
 
     itemActions(type) {
-        //对不是delete事件的db和sock处理
-        if(type !== 'delete'&&this.state.selectWidget) {
-            if(this.state.selectWidget.className == "db"
-                || this.state.selectWidget.className == "sock"){
-                return ;
-            }
-        }
         //func,var,dbItem的处理
-        if(type === 'paste') {
+        if(type === 'paste'||type === 'originSize'|| type === 'originPercent') {
             //当前选中func or var就不理会
             if(this.state.nodeType === nodeType.func ||
                 this.state.nodeType==nodeType.var ||
                 this.state.nodeType == nodeType.dbItem) {
                 return;
+            }
+        }
+
+        //对db和sock处理
+        if(this.state.selectWidget) {
+            if(type !== 'delete') {
+                if(this.state.selectWidget.className == "db"
+                    || this.state.selectWidget.className == "sock"){
+                    return ;
+                }
+            } else {
+                if(this.state.selectWidget.className == "db"){
+                    if(this.state.selectWidget.node.dbType = "shareDb"){
+                        ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
+                    }
+                }
+                if(this.state.selectWidget.className == "sock"){
+                    ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+                }
             }
         }
 
@@ -855,29 +873,25 @@ class ObjectTree extends React.Component {
                 WidgetActions['cutTreeNode'](this.state.nodeType);
                 break;
             case 'delete':
-                if(this.state.selectWidget) {
-                    if(this.state.selectWidget.className == "db"){
-                        if(this.state.selectWidget.node.dbType = "shareDb"){
-                            ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
-                        }
-                    }
-                    if(this.state.selectWidget.className == "sock"){
-                        ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
-                    }
-                }
                 WidgetActions['deleteTreeNode'](this.state.nodeType);
                 break;
             case 'originSize':
+                WidgetActions['originSizeTreeNode'](this.state.nodeType);
                 break;
             case 'originPercent':
+                WidgetActions['originPercentTreeNode'](this.state.nodeType);
                 break;
             case 'relPaste':
+                //TODO: WidgetActions['relPasteTreeNode'](this.state.nodeType);
                 break;
             case 'crossCopy':
+                //TODO: WidgetActions['crossCopyTreeNode'](this.state.nodeType);
                 break;
             case 'crossPaste':
+                //TODO: WidgetActions['crossPasteTreeNode'](this.state.nodeType);
                 break;
             case 'saveAsCom':
+                //TODO: WidgetActions['saveAsComTreeNode'](this.state.nodeType);
                 break;
             default:
                 break;
@@ -1711,7 +1725,7 @@ class ObjectTree extends React.Component {
                                     {
                                         v.map((v1,i1)=>{
                                            return <div key={i1} className="menu-item f--hlc"
-                                                       onMouseDown={this.onMouseDownMenuItem.bind(this)}
+                                                       onMouseDown={this.onMouseDownToolMenuItem.bind(this)}
                                                        onClick={this.onClickToolMenuItem.bind(this, v1.name)}>
                                                {v1.showName}
                                                </div>;

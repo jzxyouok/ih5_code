@@ -1651,6 +1651,9 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['copyTreeNode'], this.copyTreeNode);
         this.listenTo(WidgetActions['deleteTreeNode'], this.deleteTreeNode);
         this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
+        this.listenTo(WidgetActions['originSizeTreeNode'], this.originSizeTreeNode);
+        this.listenTo(WidgetActions['originPercentTreeNode'], this.originPercentTreeNode);
+
         //修改widget的资源入口
         this.listenTo(WidgetActions['changeResource'], this.changeResource);
 
@@ -1941,6 +1944,18 @@ export default Reflux.createStore({
         this.copyWidget(true);
         this.removeWidget(true);
     },
+    originSizeWidget: function() {
+        if(this.currentWidget&&(this.currentWidget.node['scaleX']|| this.currentWidget.node['scaleX']===0)) {
+            this.updateProperties({'scaleX':1,'scaleY':1});
+            this.render();
+        }
+    },
+    originPercentWidget: function() {
+        if(this.currentWidget&&(this.currentWidget.node['scaleX']|| this.currentWidget.node['scaleX']===0)) {
+            this.updateProperties({'scaleY':this.currentWidget.node['scaleX']});
+            this.render();
+        }
+    },
     lockWidget: function () {
         if (this.currentWidget) {
             this.currentWidget.props['locked'] = !this.currentWidget.props['locked'];
@@ -1968,7 +1983,6 @@ export default Reflux.createStore({
             //this.updateHistoryRecord(historyName);
         }
     },
-
     getPointsOfWidget: function(widget) {
         //每个对象需要获取相对于舞台的绝对位置（6个点）
         //left，top，right，bottom，centreX, centreY
@@ -3165,6 +3179,16 @@ export default Reflux.createStore({
             deleteBody=true;
         }
         this.trigger({deleteWidget:true,deleteBody:deleteBody});
+    },
+    originSizeTreeNode: function(type) {
+        if(type === nodeType.widget) {
+            this.originSizeWidget();
+        }
+    },
+    originPercentTreeNode: function(type) {
+        if(type === nodeType.widget) {
+            this.originPercentWidget();
+        }
     },
     changeResource: function(name, link, type) {
         switch (type) {
