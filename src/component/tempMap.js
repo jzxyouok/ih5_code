@@ -565,6 +565,162 @@ let modifyPropList = (list, className, type) => {
                 break;
         }
     }
+    else if(className=='path'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
+                break;
+            case modeType.dom:
+                aLack= ['originPos','initVisible'];
+                break;
+            case modeType.canvas:
+                aLack= ['originPos','initVisible'];
+                break;
+        }
+    }
+    else if(className=='timer'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','rotation','initVisible'];
+                break;
+            case modeType.dom:
+                aLack= ['initVisible'];
+                break;
+            case modeType.canvas:
+                aLack= ['initVisible'];
+                break;
+        }
+    }
+    else if(className=='slidetimer'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible','fillColor'];
+                break;
+            case modeType.dom:
+                aLack= ['fillColor'];
+                break;
+            case modeType.canvas:
+                aLack= ['fillColor'];
+                break;
+        }
+    }
+    else if(className=='track'){
+        switch (type){
+            case modeType.flex:
+                aLack= [];
+                break;
+            case modeType.dom:
+                aLack= [];
+                break;
+            case modeType.canvas:
+                aLack= [];
+                break;
+        }
+    }
+    else if(className=='qrcode'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
+                break;
+            case modeType.dom:
+                aLack= [];
+                break;
+            case modeType.canvas:
+                aLack= [];
+                break;
+        }
+    }
+    else if(className=='counter'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible'];
+                break;
+            case modeType.dom:
+                aLack= [];
+                break;
+            case modeType.canvas:
+                aLack= [];
+                break;
+        }
+    }
+    else if(className=='world'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','rotation','initVisible','autoGravity','gravityX','gravityY','border','northWall','southWall','westWall','eastWall'];
+                break;
+            case modeType.dom:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','rotation','initVisible','autoGravity','gravityX','gravityY','border','northWall','southWall','westWall','eastWall'];
+                break;
+            case modeType.canvas:
+                aLack= [];
+                break;
+        }
+    }
+    else if(className=='body'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['mass','globalVx','globalVy','velocityX','velocityY','angularVelocity','fixedX','fixedY','fixedRotation','damping','angularDamping','collisionResponse','isCircle','detectionDepth'];
+                break;
+            case modeType.dom:
+                aLack= ['mass','globalVx','globalVy','velocityX','velocityY','angularVelocity','fixedX','fixedY','fixedRotation','damping','angularDamping','collisionResponse','isCircle','detectionDepth'];
+                break;
+            case modeType.canvas:
+                aLack= ['fixedX','fixedY','fixedRotation','detectionDepth'];
+                break;
+        }
+    }
+    else if(className=='db'){
+        switch (type){
+            case modeType.flex:
+                aLack= [];
+                break;
+            case modeType.dom:
+                aLack= [];
+                break;
+            case modeType.canvas:
+                aLack= [];
+                break;
+        }
+    }
+    else if(className=='sock'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['sockName'];
+                break;
+            case modeType.dom:
+                aLack= ['sockName'];
+                break;
+            case modeType.canvas:
+                aLack= ['sockName'];
+                break;
+        }
+    }
+    else if(className=='page'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['backwardTransition','forwardTransition','bgColor'];
+                break;
+            case modeType.dom:
+                aLack= ['bgColor'];
+                break;
+            case modeType.canvas:
+                aLack= ['backwardTransition','forwardTransition','bgColor'];
+                break;
+        }
+    }
+    else if(className=='input'){
+        switch (type){
+            case modeType.flex:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible','value','backgroundColor'];
+                break;
+            case modeType.dom:
+                aLack= ['value'];
+                break;
+            case modeType.canvas:
+                aLack= ['positionX','positionY','scaleX','scaleY','keepRatio','originPos','rotation','initVisible','value','backgroundColor'];
+                break;
+        }
+    }
     list = list.concat(dealElementList(aLack, className, 'props', type));
     return list;
 };
