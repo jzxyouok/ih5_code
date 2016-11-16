@@ -1865,9 +1865,14 @@ export default Reflux.createStore({
         }
 
         if (className == 'image') {
+            let originVisible = o.node['visible'];
+            if(originVisible) {
+                o.node['visible'] = false;
+            }
             process.nextTick(() => {
                 this.trigger(cmd);
                 this.getAllWidgets();
+                o.node['visible'] = originVisible;
                 o.node['scaleX'] = p.shapeWidth/o.node.width;
                 o.node['scaleY'] = p.shapeHeight/o.node.height;
                 this.render();
@@ -3227,12 +3232,17 @@ export default Reflux.createStore({
                     this.currentWidget.node['name'] = name;
                     this.currentWidget.node['scaleX'] = 1;
                     this.currentWidget.node['scaleY'] = 1;
+                    let originVisible = this.currentWidget.node['visible'];
+                    if(originVisible) {
+                        this.currentWidget.node['visible'] = false;
+                    }
                     bridge.updateSelector(this.currentWidget.node);
                     process.nextTick(() => {
                         let width = this.currentWidget.node.shapeWidth;
                         let height = this.currentWidget.node.shapeHeight;
                         let tempW = this.currentWidget.node.width;
                         let tempH = this.currentWidget.node.height;
+                        this.currentWidget.node['visible']= originVisible;
                         this.currentWidget.node['scaleX'] = width/tempW;
                         this.currentWidget.node['scaleY'] = height/tempH;
                         this.selectWidget(this.currentWidget);
