@@ -756,11 +756,13 @@ class PropertyView extends React.Component {
         }
      }
 
-     /**
+    /**
      * luozheao,20161116
      * 功能:
      * 生成classname
-     * */
+     * @param node
+     * @returns {className}
+     */
     generateClassName(node){
         let className = node.className.charAt(0) == '_'?'class':node.className;
         if(className == 'data') {
@@ -1254,22 +1256,18 @@ class PropertyView extends React.Component {
         let getInput=this.getInput.bind(this);
         getPropertyMap(node, className, 'props').forEach((item, index) => {
             if (item.type !== propertyType.Hidden) {
-                if ( ['timer','container'].indexOf(className)>=0 && ['scaleX','scaleY'].indexOf( item.name)>=0) {
-                    //不需要显示scaleX和scaleY的属性面板
-                    ;
-                }
-                else if(className=='root'){
-                    if( ['visible'].indexOf(item.name)<0){
-                        getInput(item, className,groups);
-                    }
-                }
-                else if(['width','height','shapeWidth','shapeHeight','visible'].indexOf(item.name)>=0){
-                    //通用:不显示出来的属性
-                    ;
-                }
-                else {
-                    getInput(item,className, groups);
-                }
+                // if ( ['timer','container'].indexOf(className)>=0 && ['scaleX','scaleY'].indexOf( item.name)>=0) {
+                //     //不需要显示scaleX和scaleY的属性面板
+                //     ;
+                // }
+                // else if(['shapeWidth','shapeHeight','visible'].indexOf(item.name)>=0){
+                //     //通用:不显示出来的属性
+                //     ;
+                // }
+                // else {
+                //     getInput(item,className, groups);
+                // }
+                getInput(item,className, groups);
             }
         });
     }
