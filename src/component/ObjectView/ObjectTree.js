@@ -50,7 +50,9 @@ class ObjectTree extends React.Component {
             selectTargetMode: false, //目标选择模式
 
             multiSelectMode: false,
-            nids: []   //多选的
+            nids: [],   //多选的
+
+            showToolMenu: false, //右键
         };
 
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -92,6 +94,7 @@ class ObjectTree extends React.Component {
         this.itemDragStart = this.itemDragStart.bind(this);
         this.itemDragEnd = this.itemDragEnd.bind(this);
         this.itemDragOver = this.itemDragOver.bind(this);
+        this.getDeltaX = this.getDeltaX.bind(this);
         this.getDeltaY = this.getDeltaY.bind(this);
         this.getChildrenKeys = this.getChildrenKeys.bind(this);
         //拖动时显示的tip
@@ -117,6 +120,19 @@ class ObjectTree extends React.Component {
 
         this.addModuleBtn = this.addModuleBtn.bind(this);
 
+        //右键点击
+        this.toolMenuList = [
+            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'黏贴'},
+                {name:'relPaste',showName:'相对位置黏贴'},{name:'delete',showName:'删除'}],
+            [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
+            [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例黏贴'}],
+            [{name:'saveAsCom',showName:'另存为小模块'}]
+        ];
+        this.relocateToolMenu = this.relocateToolMenu.bind(this);
+        this.onRightClick = this.onRightClick.bind(this);
+        this.onHideToolMenu = this.onHideToolMenu.bind(this);
+        this.onClickToolMenuItem = this.onClickToolMenuItem.bind(this);
+        this.onMouseDownToolMenuItem = this.onMouseDownToolMenuItem.bind(this);
     }
 
     componentDidMount() {
@@ -126,14 +142,16 @@ class ObjectTree extends React.Component {
         window.addEventListener('keydown', this.itemWindowKeyAction);
         window.addEventListener('keyup', this.resetCmdKey);
 
+        //右键menu
+        window.addEventListener('mousedown', this.onHideToolMenu);
+        window.addEventListener('click', this.onHideToolMenu);
+
         //多选
         window.addEventListener('blur', this.onMultiSelectKeyUp);
         window.addEventListener('keydown', this.onMultiSelectKeyDown);
         window.addEventListener('keyup', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').addEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').addEventListener('mousedown', this.onLeaveMultiSelectMode);
-
-
     }
 
     componentWillUnmount() {
@@ -141,13 +159,17 @@ class ObjectTree extends React.Component {
         this.stUnsubscribe();
         window.removeEventListener('keydown', this.itemWindowKeyAction);
         window.removeEventListener('keyup', this.resetCmdKey);
+
+        //右键menu
+        window.removeEventListener('mousedown', this.onHideToolMenu);
+        window.addEventListener('click', this.onHideToolMenu);
+
         //多选
         window.removeEventListener('blur', this.onMultiSelectKeyUp);
         window.removeEventListener('keydown', this.onMultiSelectKeyDown);
         window.removeEventListener('keyup', this.onMultiSelectKeyUp);
         document.getElementById('DesignView-Container').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
         document.getElementById('ObjectTree').removeEventListener('mousedown', this.onLeaveMultiSelectMode);
-
     }
 
     onStatusChange(widget) {
@@ -351,7 +373,8 @@ class ObjectTree extends React.Component {
         if(result.stUpdate){
             this.setState({
                 selectTargetMode: result.stUpdate.isActive,
-                targetList: result.stUpdate.targetList
+                targetList: result.stUpdate.targetList,
+                showToolMenu:false
             })
         }
     }
@@ -456,29 +479,26 @@ class ObjectTree extends React.Component {
     chooseBtn(nid, data, event){
         //console.log(data);
         if(this.onSelectTargetMode(data)) {
-            event.stopPropagation();
+            if(event){ event.stopPropagation(); }
             return false;
         }
-        if(event){
-            event.stopPropagation();
-        }
+        if(event){ event.stopPropagation(); }
+        this.setState({
+            showToolMenu:false,
+            editMode: false
+        });
 
         if(this.state.multiSelectMode) {
             if((selectableClass.indexOf(data.className)>=0||isCustomizeWidget(data.className))&&
                 !data.props.locked&&this.state.selectWidget) {
-                this.setState({
-                    editMode: false
-                },()=>{
-                    if(!this.isInMultiList(nid)){
-                        WidgetActions['selectWidget'](data, true, null, true);
-                    }
-                });
+                if(!this.isInMultiList(nid)){
+                    WidgetActions['selectWidget'](data, true, null, true);
+                }
             }
         } else {
             if(this.state.nid !== nid || this.state.activeEventTreeKey) {
                 this.setState({
-                    nid : nid,
-                    editMode: false
+                    nid : nid
                 },()=>{
                     WidgetActions['selectWidget'](data, true);
                 });
@@ -576,9 +596,108 @@ class ObjectTree extends React.Component {
         });
     }
 
-    fadeWidgetBtn(nid, data, type,event) {
+    relocateToolMenu(clientX, clientY) {
+        this.setState({
+            showToolMenu: true
+        },()=>{
+            if(this.refs['objectTree']&&this.refs['toolMenu']) {
+                let containerWidth = this.refs['objectTree'].clientWidth;
+                let containerHeight = this.refs['objectTree'].clientHeight;
+                //菜单高度：278 宽度：132
+                let menuWidth = 132;
+                let menuHeight = 2;
+                this.toolMenuList.forEach((group, gIndex)=>{
+                    menuHeight+=3*2; //padding
+                    menuHeight+=group.length*20; //items
+                    if(gIndex!=this.toolMenuList.length-1) {
+                        menuHeight+=1;
+                    } //seperator
+                });
+                let clickX = clientX - this.getDeltaX(this.refs['objectTree']) + document.body.scrollLeft;
+                let clickY = clientY - this.getDeltaY(this.refs['objectTree']) + document.body.scrollTop;
+                if(containerWidth-clickX>menuWidth) {
+                    this.refs['toolMenu'].style.left = clickX+'px';
+                } else {
+                    this.refs['toolMenu'].style.left = (clickX-menuWidth)+'px';
+                }
+                if(containerHeight-clickY>menuHeight) {
+                    this.refs['toolMenu'].style.top = clickY+'px';
+                } else {
+                    this.refs['toolMenu'].style.top = (clickY-menuHeight)+'px';
+                }
+            }
+        });
+    }
+
+    onRightClick(nid, data, type, e) {
+        e.preventDefault();
+        e.stopPropagation();
         if(this.onSelectTargetMode(data)) {
-            event.stopPropagation();
+            return false;
+        }
+        if(this.state.multiSelectMode&&this.state.nids.length>0) {
+            return false;
+        }
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+        if(type===nodeType.widget) {
+            this.chooseBtn(nid, data);
+        } else {
+            this.fadeWidgetBtn(nid, data, type);
+        }
+        this.relocateToolMenu(clientX, clientY);
+    }
+
+    onHideToolMenu() {
+        this.setState({
+            showToolMenu: false
+        });
+    }
+
+    onMouseDownToolMenuItem(e) {
+        e.stopPropagation();
+    }
+
+    onClickToolMenuItem(actionName, e) {
+        e.stopPropagation();
+        this.onHideToolMenu();
+        switch (actionName) {
+            case 'copy':
+                this.itemActions('copy');
+                break;
+            case 'cut':
+                this.itemActions('cut');
+                break;
+            case 'paste':
+                this.itemActions('paste');
+                break;
+            case 'delete':
+                this.itemActions('delete');
+                break;
+            case 'originSize':
+                this.itemActions('originSize');
+                break;
+            case 'originPercent':
+                this.itemActions('originPercent');
+                break;
+            case 'relPaste':
+                this.itemActions('relPaste');
+                break;
+            case 'crossCopy':
+                this.itemActions('crossCopy');
+                break;
+            case 'crossPaste':
+                this.itemActions('crossPaste');
+                break;
+            case 'saveAsCom':
+                this.itemActions('saveAsCom');
+                break;
+        }
+    }
+
+    fadeWidgetBtn(nid, data, type, event) {
+        if(this.onSelectTargetMode(data)) {
+            if(event){ event.stopPropagation(); }
             return false;
         }if(this.state.multiSelectMode) {
             return false;
@@ -714,52 +833,65 @@ class ObjectTree extends React.Component {
     }
 
     itemActions(type) {
-        switch (type) {
-            case 'copy':
-                if(this.state.selectWidget){
-                    if(this.state.selectWidget.className == "db"
-                        || this.state.selectWidget.className == "sock"){
-                        return ;
+        //func,var,dbItem的处理
+        if(type === 'paste'||type === 'originSize'|| type === 'originPercent') {
+            //当前选中func or var就不理会
+            if(this.state.nodeType === nodeType.func ||
+                this.state.nodeType==nodeType.var ||
+                this.state.nodeType == nodeType.dbItem) {
+                return;
+            }
+        }
+
+        //对db和sock处理
+        if(this.state.selectWidget) {
+            if(type !== 'delete') {
+                if(this.state.selectWidget.className == "db"
+                    || this.state.selectWidget.className == "sock"){
+                    return ;
+                }
+            } else {
+                if(this.state.selectWidget.className == "db"){
+                    if(this.state.selectWidget.node.dbType = "shareDb"){
+                        ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
                     }
                 }
+                if(this.state.selectWidget.className == "sock"){
+                    ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
+                }
+            }
+        }
+
+        switch (type) {
+            case 'copy':
                 WidgetActions['copyTreeNode'](this.state.nodeType);
                 break;
             case 'paste':
-                //当前选中func or var就不理会
-                if(this.state.nodeType === nodeType.func ||
-                    this.state.nodeType==nodeType.var ||
-                    this.state.nodeType == nodeType.dbItem) {
-                    return;
-                }
-                if(this.state.selectWidget){
-                    if(this.state.selectWidget.className == "db"
-                        || this.state.selectWidget.className == "sock"){
-                        return ;
-                    }
-                }
                 WidgetActions['pasteTreeNode']();
                 break;
             case 'cut':
-                if(this.state.selectWidget){
-                    if(this.state.selectWidget.className == "db"
-                        || this.state.selectWidget.className == "sock"){
-                        return;
-                    }
-                }
                 WidgetActions['cutTreeNode'](this.state.nodeType);
                 break;
             case 'delete':
-                if(this.state.selectWidget) {
-                    if(this.state.selectWidget.className == "db"){
-                        if(this.state.selectWidget.node.dbType = "shareDb"){
-                            ReDbOrSockIdAction['reDbOrSockId']("db",this.state.selectWidget.node.dbid);
-                        }
-                    }
-                    if(this.state.selectWidget.className == "sock"){
-                        ReDbOrSockIdAction['reDbOrSockId']("sock",this.state.selectWidget.node.sid);
-                    }
-                }
                 WidgetActions['deleteTreeNode'](this.state.nodeType);
+                break;
+            case 'originSize':
+                WidgetActions['originSizeTreeNode'](this.state.nodeType);
+                break;
+            case 'originPercent':
+                WidgetActions['originPercentTreeNode'](this.state.nodeType);
+                break;
+            case 'relPaste':
+                //TODO: WidgetActions['relPasteTreeNode'](this.state.nodeType);
+                break;
+            case 'crossCopy':
+                //TODO: WidgetActions['crossCopyTreeNode'](this.state.nodeType);
+                break;
+            case 'crossPaste':
+                //TODO: WidgetActions['crossPasteTreeNode'](this.state.nodeType);
+                break;
+            case 'saveAsCom':
+                //TODO: WidgetActions['saveAsComTreeNode'](this.state.nodeType);
                 break;
             default:
                 break;
@@ -1203,6 +1335,14 @@ class ObjectTree extends React.Component {
         }
         return top;
     }
+    getDeltaX(obj){
+        var ParentObj=obj;
+        var left=obj.offsetLeft;
+        while(ParentObj=ParentObj.offsetParent){
+            left+=ParentObj.offsetLeft;
+        }
+        return left;
+    }
 
     addModuleBtn(event){
         event.stopPropagation();
@@ -1247,7 +1387,8 @@ class ObjectTree extends React.Component {
                     {'event-icon-normal':data.props['enableEventTree']},
                     {'event-icon-disable':!data.props['enableEventTree']},
                     {'active':this.state.activeEventTreeKey==nid})}
-                           onClick={this.eventBtn.bind(this,nid,data)}></div>;
+                           onClick={this.eventBtn.bind(this,nid,data)}
+                           onContextMenu={this.onRightClick.bind(this, nid, data, nodeType.widget)}></div>;
             return btn;
         };
 
@@ -1265,6 +1406,7 @@ class ObjectTree extends React.Component {
                     <div className={$class('fade-widget-title f--h f--hlc',
                         {'active': item.key === this.state.nid})}
                          onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}
+                         onContextMenu={this.onRightClick.bind(this, item.key, item, type)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className={$class('item-icon fade-widget-icon',
                             {'func-icon':type===nodeType.func},
@@ -1281,7 +1423,8 @@ class ObjectTree extends React.Component {
                     </div>
                     <div className={$class('item-event')}>
                         <div className={$class('item-event-empty',{'active': item.key === this.state.nid})}
-                             onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}></div>
+                             onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}
+                             onContextMenu={this.onRightClick.bind(this, item.key, item, type)}></div>
                     </div>
                 </div>
             });
@@ -1377,6 +1520,7 @@ class ObjectTree extends React.Component {
                      onBlur={this.itemRemoveKeyListener.bind(this, 'item')}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid ||this.isInMultiList(v.key)})}
                          onClick={this.chooseBtn.bind(this,v.key, v)}
+                         onContextMenu={this.onRightClick.bind(this, v.key, v, nodeType.widget)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
 
                         {
@@ -1430,7 +1574,8 @@ class ObjectTree extends React.Component {
                             v.props.eventTree
                                 ? enableEventTreeBtn(v.key, v)
                                 : <div className={$class('item-event-empty',{'active': v.key === this.state.nid||this.isInMultiList(v.key)})}
-                                       onClick={this.chooseBtn.bind(this,v.key, v)}></div>
+                                       onClick={this.chooseBtn.bind(this,v.key, v)}
+                                       onContextMenu={this.onRightClick.bind(this, v.key, v, nodeType.widget)}></div>
                         }
                     </div>
                 </div>
@@ -1475,7 +1620,7 @@ class ObjectTree extends React.Component {
 
         return (
             <div id={'ObjectTree'} className={$class('ObjectTree',
-                {'selectTargetMode': this.state.selectTargetMode})}>
+                {'selectTargetMode': this.state.selectTargetMode})} ref="objectTree">
                 <div className={$class("stage")} >
                 {
                      !allTreeData
@@ -1495,7 +1640,8 @@ class ObjectTree extends React.Component {
                                       onBlur={this.itemRemoveKeyListener.bind(this, 'root')}>
                                      <div className={$class('stage-title f--h f--hlc',{'active': v.tree.key === this.state.nid})}
                                           style={{ width : this.props.width - 36 - 24 }}
-                                          onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}>
+                                          onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}
+                                          onContextMenu={this.onRightClick.bind(this, v.tree.key, v.tree, nodeType.widget)}>
                                          { btn(-1, v.tree) }
                                          {
                                              v.tree.children.length > 0
@@ -1567,6 +1713,29 @@ class ObjectTree extends React.Component {
                           })
                 }
                 </div>
+                {
+                    !this.state.showToolMenu
+                        ? null
+                        : <div className="tool-menu"
+                               ref="toolMenu">
+                        {
+                            this.toolMenuList.map((v,i)=>{
+                                return <div key={i} className={$class("menu-group",
+                                    {'menu-group-border':i!=this.toolMenuList.length-1})}>
+                                    {
+                                        v.map((v1,i1)=>{
+                                           return <div key={i1} className="menu-item f--hlc"
+                                                       onMouseDown={this.onMouseDownToolMenuItem.bind(this)}
+                                                       onClick={this.onClickToolMenuItem.bind(this, v1.name)}>
+                                               {v1.showName}
+                                               </div>;
+                                        })
+                                    }
+                                </div>;
+                            })
+                        }
+                    </div>
+                }
 
                 <div className='hidden'>
                     <ComponentPanel ref='ComponentPanel' />
