@@ -52,7 +52,7 @@ class ObjectTree extends React.Component {
             multiSelectMode: false,
             nids: [],   //多选的
 
-            rightClickKey: null, //右键
+            showRightClickMenu: false, //右键
         };
 
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -122,6 +122,7 @@ class ObjectTree extends React.Component {
 
         //右键点击
         this.onRightClick = this.onRightClick.bind(this);
+        this.onHideRightMenu = this.onHideRightMenu.bind(this);
     }
 
     componentDidMount() {
@@ -130,6 +131,9 @@ class ObjectTree extends React.Component {
         this.onStatusChange(WidgetStore.getStore());
         window.addEventListener('keydown', this.itemWindowKeyAction);
         window.addEventListener('keyup', this.resetCmdKey);
+
+        //右键menu
+        window.addEventListener('mousedown', this.onHideRightMenu);
 
         //多选
         window.addEventListener('blur', this.onMultiSelectKeyUp);
@@ -144,6 +148,9 @@ class ObjectTree extends React.Component {
         this.stUnsubscribe();
         window.removeEventListener('keydown', this.itemWindowKeyAction);
         window.removeEventListener('keyup', this.resetCmdKey);
+
+        //右键menu
+        window.removeEventListener('mousedown', this.onHideRightMenu);
 
         //多选
         window.removeEventListener('blur', this.onMultiSelectKeyUp);
@@ -354,7 +361,8 @@ class ObjectTree extends React.Component {
         if(result.stUpdate){
             this.setState({
                 selectTargetMode: result.stUpdate.isActive,
-                targetList: result.stUpdate.targetList
+                targetList: result.stUpdate.targetList,
+                showRightClickMenu:false
             })
         }
     }
@@ -465,23 +473,22 @@ class ObjectTree extends React.Component {
         if(event){
             event.stopPropagation();
         }
+        this.setState({
+            showRightClickMenu:false,
+            editMode: false
+        });
 
         if(this.state.multiSelectMode) {
             if((selectableClass.indexOf(data.className)>=0||isCustomizeWidget(data.className))&&
                 !data.props.locked&&this.state.selectWidget) {
-                this.setState({
-                    editMode: false
-                },()=>{
-                    if(!this.isInMultiList(nid)){
-                        WidgetActions['selectWidget'](data, true, null, true);
-                    }
-                });
+                if(!this.isInMultiList(nid)){
+                    WidgetActions['selectWidget'](data, true, null, true);
+                }
             }
         } else {
             if(this.state.nid !== nid || this.state.activeEventTreeKey) {
                 this.setState({
-                    nid : nid,
-                    editMode: false
+                    nid : nid
                 },()=>{
                     WidgetActions['selectWidget'](data, true);
                 });
@@ -580,13 +587,42 @@ class ObjectTree extends React.Component {
     }
 
     onRightClick(nid, data, e) {
-        this.chooseBtn(nid, data, e);
         e.preventDefault();
         e.stopPropagation();
-        if(this.refs['rightMenu']) {
-            this.refs['rightMenu'].style.top = '100px';
-            this.refs['rightMenu'].style.left = '100px';
+        if(this.onSelectTargetMode(data)) {
+            return false;
         }
+        if(this.state.multiSelectMode&&this.state.nids.length>0) {
+            return false;
+        }
+        this.chooseBtn(nid, data, e);
+        this.setState({
+            showRightClickMenu: true
+        });
+        if(this.refs['objectTree']&&this.refs['rightMenu']) {
+            let containerWidth = this.refs['objectTree'].clientWidth;
+            let containerHeight = this.refs['objectTree'].clientHeight;
+            //菜单高度：278 宽度：132
+            let menuWidth = 132;
+            let menuHeight = 278;
+            let clickX = e.clientX - this.getDeltaX(this.refs['objectTree']) + document.body.scrollLeft;
+            let clickY = e.clientY - this.getDeltaY(this.refs['objectTree']) + document.body.scrollTop;
+            if(containerWidth-clickX+10>menuWidth) {
+                this.refs['rightMenu'].style.left = clickX+'px';
+            } else {
+                this.refs['rightMenu'].style.left = (clickX-menuWidth)+'px';
+            }
+            if(containerHeight-clickY+10>menuHeight) {
+                this.refs['rightMenu'].style.top = clickY+'px';
+            } else {
+                this.refs['rightMenu'].style.top = (clickY-menuHeight)+'px';
+            }
+        }
+    }
+    onHideRightMenu() {
+        this.setState({
+            showRightClickMenu: false
+        });
     }
 
     fadeWidgetBtn(nid, data, type,event) {
@@ -1498,7 +1534,7 @@ class ObjectTree extends React.Component {
 
         return (
             <div id={'ObjectTree'} className={$class('ObjectTree',
-                {'selectTargetMode': this.state.selectTargetMode})}>
+                {'selectTargetMode': this.state.selectTargetMode})} ref="objectTree">
                 <div className={$class("stage")} >
                 {
                      !allTreeData
@@ -1590,14 +1626,15 @@ class ObjectTree extends React.Component {
                           })
                 }
                 </div>
-
                 <div ref="rightMenu"
+                     className={$class({'hidden':!this.state.showRightClickMenu})}
                      style={{position: 'absolute',
                          zIndex: 1,
+                         width: '132px',
+                         height: '278px',
                          backgroundColor: 'wheat'}}>
                     right menu
                 </div>
-
                 <div className='hidden'>
                     <ComponentPanel ref='ComponentPanel' />
                 </div>
