@@ -303,6 +303,36 @@
     .fade-widget-icon {
         margin-left: 11px;
     }
+
+    .right-click-menu {
+        position: absolute;
+        z-index: 1;
+        background-color: #353535;
+        width: 132px;
+        border: 1px solid #151515;
+        -moz-box-shadow: 5px 5px 14px 5px rgba(0, 0, 0, 0.1);
+        //Safariand Google chrome10.0-
+        -webkit-box-shadow: 5px 5px 14px 5px rgba(0, 0, 0, 0.1);
+        //Firefox4.0+、 Google chrome 10.0+ 、 Oprea10.5+ and IE9
+        box-shadow:  5px 5px 14px 5px rgba(0, 0, 0, 0.1);
+        .menu-group {
+            padding: 5px 0;
+            .menu-item {
+                cursor: pointer;
+                padding: 0 12px;
+                font-size: 14px;
+                height: 24px;
+                color: #b5b5b5;
+                text-align: center;
+                &:hover {
+                    background-color: #232323;
+                }
+            }
+        }
+        .menu-group-border {
+            border-bottom: 1px solid #232323;
+        }
+    }
 }
 
 #treeDragTip {

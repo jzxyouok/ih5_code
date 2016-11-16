@@ -121,8 +121,15 @@ class ObjectTree extends React.Component {
         this.addModuleBtn = this.addModuleBtn.bind(this);
 
         //右键点击
+        this.rightClickMenuList = [
+            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'黏贴'},{name:'delete',showName:'删除'}],
+            [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
+            [{name:'relPaste',showName:'相对位置黏贴'},{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例黏贴'}],
+            [{name:'saveAsCom',showName:'另存为小模块'}]
+        ];
+        this.relocateRightClickMenu = this.relocateRightClickMenu.bind(this);
         this.onRightClick = this.onRightClick.bind(this);
-        this.onHideRightMenu = this.onHideRightMenu.bind(this);
+        this.onHideRightClickMenu = this.onHideRightClickMenu.bind(this);
     }
 
     componentDidMount() {
@@ -133,7 +140,7 @@ class ObjectTree extends React.Component {
         window.addEventListener('keyup', this.resetCmdKey);
 
         //右键menu
-        window.addEventListener('mousedown', this.onHideRightMenu);
+        window.addEventListener('mousedown', this.onHideRightClickMenu);
 
         //多选
         window.addEventListener('blur', this.onMultiSelectKeyUp);
@@ -150,7 +157,7 @@ class ObjectTree extends React.Component {
         window.removeEventListener('keyup', this.resetCmdKey);
 
         //右键menu
-        window.removeEventListener('mousedown', this.onHideRightMenu);
+        window.removeEventListener('mousedown', this.onHideRightClickMenu);
 
         //多选
         window.removeEventListener('blur', this.onMultiSelectKeyUp);
@@ -586,6 +593,32 @@ class ObjectTree extends React.Component {
         });
     }
 
+    relocateRightClickMenu(clientX, clientY) {
+        this.setState({
+            showRightClickMenu: true
+        },()=>{
+            if(this.refs['objectTree']&&this.refs['rightClickMenu']) {
+                let containerWidth = this.refs['objectTree'].clientWidth;
+                let containerHeight = this.refs['objectTree'].clientHeight;
+                //菜单高度：278 宽度：132
+                let menuWidth = 132;
+                let menuHeight = 285;
+                let clickX = clientX - this.getDeltaX(this.refs['objectTree']) + document.body.scrollLeft;
+                let clickY = clientY - this.getDeltaY(this.refs['objectTree']) + document.body.scrollTop;
+                if(containerWidth-clickX+10>menuWidth) {
+                    this.refs['rightClickMenu'].style.left = clickX+'px';
+                } else {
+                    this.refs['rightClickMenu'].style.left = (clickX-menuWidth)+'px';
+                }
+                if(containerHeight-clickY+10>menuHeight) {
+                    this.refs['rightClickMenu'].style.top = clickY+'px';
+                } else {
+                    this.refs['rightClickMenu'].style.top = (clickY-menuHeight)+'px';
+                }
+            }
+        });
+    }
+
     onRightClick(nid, data, e) {
         e.preventDefault();
         e.stopPropagation();
@@ -595,31 +628,13 @@ class ObjectTree extends React.Component {
         if(this.state.multiSelectMode&&this.state.nids.length>0) {
             return false;
         }
+        let clientX = e.clientX;
+        let clientY = e.clientY;
         this.chooseBtn(nid, data, e);
-        this.setState({
-            showRightClickMenu: true
-        });
-        if(this.refs['objectTree']&&this.refs['rightMenu']) {
-            let containerWidth = this.refs['objectTree'].clientWidth;
-            let containerHeight = this.refs['objectTree'].clientHeight;
-            //菜单高度：278 宽度：132
-            let menuWidth = 132;
-            let menuHeight = 278;
-            let clickX = e.clientX - this.getDeltaX(this.refs['objectTree']) + document.body.scrollLeft;
-            let clickY = e.clientY - this.getDeltaY(this.refs['objectTree']) + document.body.scrollTop;
-            if(containerWidth-clickX+10>menuWidth) {
-                this.refs['rightMenu'].style.left = clickX+'px';
-            } else {
-                this.refs['rightMenu'].style.left = (clickX-menuWidth)+'px';
-            }
-            if(containerHeight-clickY+10>menuHeight) {
-                this.refs['rightMenu'].style.top = clickY+'px';
-            } else {
-                this.refs['rightMenu'].style.top = (clickY-menuHeight)+'px';
-            }
-        }
+        this.relocateRightClickMenu(clientX, clientY);
     }
-    onHideRightMenu() {
+
+    onHideRightClickMenu() {
         this.setState({
             showRightClickMenu: false
         });
@@ -1626,15 +1641,26 @@ class ObjectTree extends React.Component {
                           })
                 }
                 </div>
-                <div ref="rightMenu"
-                     className={$class({'hidden':!this.state.showRightClickMenu})}
-                     style={{position: 'absolute',
-                         zIndex: 1,
-                         width: '132px',
-                         height: '278px',
-                         backgroundColor: 'wheat'}}>
-                    right menu
-                </div>
+                {
+                    !this.state.showRightClickMenu
+                        ? null
+                        : <div className="right-click-menu"
+                               ref="rightClickMenu">
+                        {
+                            this.rightClickMenuList.map((v,i)=>{
+                                return <div key={i} className={$class("menu-group",
+                                    {'menu-group-border':i!=this.rightClickMenuList.length-1})}>
+                                    {
+                                        v.map((v1,i1)=>{
+                                           return <div key={i1} className="menu-item f--hlc">{v1.showName}</div>;
+                                        })
+                                    }
+                                </div>;
+                            })
+                        }
+                    </div>
+                }
+
                 <div className='hidden'>
                     <ComponentPanel ref='ComponentPanel' />
                 </div>
