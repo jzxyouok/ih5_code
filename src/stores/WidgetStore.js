@@ -1860,13 +1860,25 @@ export default Reflux.createStore({
            currentLoading = o;
         var cmd = {redrawTree: true};
 
-        if (className == 'body')
-          cmd.updateProperties = {'originX':0.5, 'originY':0.5};
-        this.trigger(cmd);
-        this.getAllWidgets();
-        this.render();
+        if (className == 'body') {
+            cmd.updateProperties = {'originX':0.5, 'originY':0.5};
+        }
+
+        if (className == 'image') {
+            process.nextTick(() => {
+                this.trigger(cmd);
+                this.getAllWidgets();
+                o.node['scaleX'] = p.shapeWidth/o.node.width;
+                o.node['scaleY'] = p.shapeHeight/o.node.height;
+                this.render();
+            });
+        } else {
+            this.trigger(cmd);
+            this.getAllWidgets();
+            this.render();
+        }
       }
-        this.updateHistoryRecord(historyName);
+      this.updateHistoryRecord(historyName);
     },
     removeWidget: function(shouldChooseParent) {
         historyName = "删除" + this.currentWidget.node.name;
@@ -3213,10 +3225,18 @@ export default Reflux.createStore({
                     this.currentWidget.node['link'] =  temp;
                     this.currentWidget.props['name'] = name;
                     this.currentWidget.node['name'] = name;
-                    setTimeout(()=> {
-                        bridge.updateSelector(this.currentWidget.node);
-                        this.render();
-                    }, 10);
+                    this.currentWidget.node['scaleX'] = 1;
+                    this.currentWidget.node['scaleY'] = 1;
+                    bridge.updateSelector(this.currentWidget.node);
+                    process.nextTick(() => {
+                        let width = this.currentWidget.node.shapeWidth;
+                        let height = this.currentWidget.node.shapeHeight;
+                        let tempW = this.currentWidget.node.width;
+                        let tempH = this.currentWidget.node.height;
+                        this.currentWidget.node['scaleX'] = width/tempW;
+                        this.currentWidget.node['scaleY'] = height/tempH;
+                        this.selectWidget(this.currentWidget);
+                    });
                 }
                 break;
         }
