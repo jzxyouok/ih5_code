@@ -51,6 +51,8 @@ export default Reflux.createActions([
   'copyTreeNode',                   //复制功能入口
   'deleteTreeNode',                 //删除功能入口
   'renameTreeNode',                 //重命名功能入口
+  'originSizeTreeNode',             //原始大小功能入口
+  'originPercentTreeNode',          //原始比例功能入口
 
   'resetTrack',
   'syncTrack',
