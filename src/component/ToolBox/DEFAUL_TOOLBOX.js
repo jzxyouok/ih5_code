@@ -43,7 +43,7 @@ let tableIcon = img('table.svg');
 let worldIcon = img('world.svg');
 
 let domIcon = img('dom.svg');
-
+let pageContainerIcon = img('pageContainer.svg');
 // let trackIcon = img('track.svg');
 // let bodyIcon = img('body.svg');
 // let easingIcon = img('easing.svg');
@@ -91,6 +91,7 @@ var TOOL_ID = {
     MODULE : 35,
     TABLE : 36,
     DOM: 37,
+    PAGECONTAINER: 38,
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -118,6 +119,13 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50, 'fontSize':26}}]
+    },{
+        name:'计数器',
+        key:15,
+        gid:15,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0, 'fontSize':26, 'fontFill':'#000000'}}]
     },{
         name:'几何图形',
         key:4,
@@ -159,21 +167,24 @@ var DEFAULT_TOOLBOX = {
         gid:8,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.HTML,name:'网页',icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
-    },{
-        name:'文件',
-        key:9,
-        gid:9,
-        primary: 0,
-        secondary: [
+            {cid:TOOL_ID.HTML,name:'网页',icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}},
             {cid:TOOL_ID.FILE,name:'文件',icon:fileIcon, className:'file'}]
+    // },{
+    //     name:'文件',
+    //     key:9,
+    //     gid:9,
+    //     primary: 0,
+    //     secondary: [
+    //         {cid:TOOL_ID.FILE,name:'文件',icon:fileIcon, className:'file'}]
     },{
         name:'页面',
         key:10,
         gid:10,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'}]
+            {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'},
+            {cid:TOOL_ID.PAGECONTAINER,name:'页面容器',icon:pageContainerIcon, className:'pagecontainer'}
+        ]
     },{
         name:'容器',
         key:11,
@@ -188,24 +199,26 @@ var DEFAULT_TOOLBOX = {
         gid:12,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.FLEX,name:'排版容器',icon:flexIcon, className:'flex', param: {'width': '100%', 'height': '100%'}}
-        ]
-    },{
-        name:'画布',
-        key:13,
-        gid:13,
-        primary: 0,
-        secondary: [
-            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param:{'width': '100%', 'height': '100%'}}
-        ]
-    },{
-        name:'DOM',
-        key:37,
-        gid:37,
-        primary: 0,
-        secondary: [
+            {cid:TOOL_ID.FLEX,name:'排版容器',icon:flexIcon, className:'flex', param: {'width': '100%', 'height': '100%'}},
+            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param:{'width': '100%', 'height': '100%'}},
             {cid:TOOL_ID.DOM,name:'DOM',icon:domIcon, className:'dom', param:{'width': '100%', 'height': '100%'}}
         ]
+    // },{
+    //     name:'画布',
+    //     key:13,
+    //     gid:13,
+    //     primary: 0,
+    //     secondary: [
+    //         {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param:{'width': '100%', 'height': '100%'}}
+    //     ]
+    // },{
+    //     name:'DOM',
+    //     key:37,
+    //     gid:37,
+    //     primary: 0,
+    //     secondary: [
+    //         {cid:TOOL_ID.DOM,name:'DOM',icon:domIcon, className:'dom', param:{'width': '100%', 'height': '100%'}}
+    //     ]
     },{
         name:'时间轴',
         key:14,
@@ -219,13 +232,6 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer', drawRect:true,
                 param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}}
         ]
-    },{
-        name:'计数器',
-        key:15,
-        gid:15,
-        primary: 0,
-        secondary: [
-            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0, 'fontSize':26, 'fontFill':'#000000'}}]
     },{
         name:'物理世界',
         key:25,
