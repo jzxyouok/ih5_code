@@ -1959,12 +1959,14 @@ export default Reflux.createStore({
     originSizeWidget: function() {
         if(this.currentWidget&&(this.currentWidget.node['scaleX']|| this.currentWidget.node['scaleX']===0)) {
             this.updateProperties({'scaleX':1,'scaleY':1});
+            bridge.updateSelector(this.currentWidget.node);
             this.render();
         }
     },
     originPercentWidget: function() {
         if(this.currentWidget&&(this.currentWidget.node['scaleX']|| this.currentWidget.node['scaleX']===0)) {
             this.updateProperties({'scaleY':this.currentWidget.node['scaleX']});
+            bridge.updateSelector(this.currentWidget.node);
             this.render();
         }
     },
@@ -3211,9 +3213,10 @@ export default Reflux.createStore({
                     this.currentWidget.node['link'] =  temp;
                     this.currentWidget.props['name'] = name;
                     this.currentWidget.node['name'] = name;
-                    var rootNode = this.currentWidget.rootWidget.node;
-                    process.nextTick(() =>bridge.render(rootNode));
-                    this.selectWidget(this.currentWidget);
+                    setTimeout(()=> {
+                        bridge.updateSelector(this.currentWidget.node);
+                        this.render();
+                    }, 10);
                 }
                 break;
         }
