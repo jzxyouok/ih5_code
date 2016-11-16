@@ -304,7 +304,7 @@
         margin-left: 11px;
     }
 
-    .right-click-menu {
+    .tool-menu {
         position: absolute;
         z-index: 1;
         background-color: #353535;
@@ -316,12 +316,12 @@
         //Firefox4.0+、 Google chrome 10.0+ 、 Oprea10.5+ and IE9
         box-shadow:  5px 5px 14px 5px rgba(0, 0, 0, 0.1);
         .menu-group {
-            padding: 5px 0;
+            padding: 3px 0;
             .menu-item {
                 cursor: pointer;
                 padding: 0 12px;
-                font-size: 14px;
-                height: 24px;
+                font-size: 12px;
+                height: 20px;
                 color: #b5b5b5;
                 text-align: center;
                 &:hover {
@@ -394,7 +394,7 @@
     .sock-icon { background-position: -1280px 0;  }
 
     .rectIcon { background-position: -1520px 0;  }
-    .ellipseIcon { background-position: -1560 0;  }
+    .ellipseIcon { background-position: -1560px 0;  }
     .curveIcon { background-position: -920px -160px;  }
     .textIcon { background-position: -1400px 0;  }
     .videoIcon { background-position: 0 -160px;  }

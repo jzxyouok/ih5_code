@@ -52,7 +52,7 @@ class ObjectTree extends React.Component {
             multiSelectMode: false,
             nids: [],   //多选的
 
-            showRightClickMenu: false, //右键
+            showToolMenu: false, //右键
         };
 
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -121,15 +121,18 @@ class ObjectTree extends React.Component {
         this.addModuleBtn = this.addModuleBtn.bind(this);
 
         //右键点击
-        this.rightClickMenuList = [
-            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'黏贴'},{name:'delete',showName:'删除'}],
+        this.toolMenuList = [
+            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'黏贴'},
+                {name:'relPaste',showName:'相对位置黏贴'},{name:'delete',showName:'删除'}],
             [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
-            [{name:'relPaste',showName:'相对位置黏贴'},{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例黏贴'}],
+            [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例黏贴'}],
             [{name:'saveAsCom',showName:'另存为小模块'}]
         ];
-        this.relocateRightClickMenu = this.relocateRightClickMenu.bind(this);
+        this.relocateToolMenu = this.relocateToolMenu.bind(this);
         this.onRightClick = this.onRightClick.bind(this);
-        this.onHideRightClickMenu = this.onHideRightClickMenu.bind(this);
+        this.onHideToolMenu = this.onHideToolMenu.bind(this);
+        this.onClickToolMenuItem = this.onClickToolMenuItem.bind(this);
+        this.onMouseDownMenuItem = this.onMouseDownMenuItem.bind(this);
     }
 
     componentDidMount() {
@@ -140,7 +143,8 @@ class ObjectTree extends React.Component {
         window.addEventListener('keyup', this.resetCmdKey);
 
         //右键menu
-        window.addEventListener('mousedown', this.onHideRightClickMenu);
+        window.addEventListener('mousedown', this.onHideToolMenu);
+        window.addEventListener('click', this.onHideToolMenu);
 
         //多选
         window.addEventListener('blur', this.onMultiSelectKeyUp);
@@ -157,7 +161,8 @@ class ObjectTree extends React.Component {
         window.removeEventListener('keyup', this.resetCmdKey);
 
         //右键menu
-        window.removeEventListener('mousedown', this.onHideRightClickMenu);
+        window.removeEventListener('mousedown', this.onHideToolMenu);
+        window.addEventListener('click', this.onHideToolMenu);
 
         //多选
         window.removeEventListener('blur', this.onMultiSelectKeyUp);
@@ -369,7 +374,7 @@ class ObjectTree extends React.Component {
             this.setState({
                 selectTargetMode: result.stUpdate.isActive,
                 targetList: result.stUpdate.targetList,
-                showRightClickMenu:false
+                showToolMenu:false
             })
         }
     }
@@ -474,14 +479,12 @@ class ObjectTree extends React.Component {
     chooseBtn(nid, data, event){
         //console.log(data);
         if(this.onSelectTargetMode(data)) {
-            event.stopPropagation();
+            if(event){ event.stopPropagation(); }
             return false;
         }
-        if(event){
-            event.stopPropagation();
-        }
+        if(event){ event.stopPropagation(); }
         this.setState({
-            showRightClickMenu:false,
+            showToolMenu:false,
             editMode: false
         });
 
@@ -593,33 +596,40 @@ class ObjectTree extends React.Component {
         });
     }
 
-    relocateRightClickMenu(clientX, clientY) {
+    relocateToolMenu(clientX, clientY) {
         this.setState({
-            showRightClickMenu: true
+            showToolMenu: true
         },()=>{
-            if(this.refs['objectTree']&&this.refs['rightClickMenu']) {
+            if(this.refs['objectTree']&&this.refs['toolMenu']) {
                 let containerWidth = this.refs['objectTree'].clientWidth;
                 let containerHeight = this.refs['objectTree'].clientHeight;
                 //菜单高度：278 宽度：132
                 let menuWidth = 132;
-                let menuHeight = 285;
+                let menuHeight = 2;
+                this.toolMenuList.forEach((group, gIndex)=>{
+                    menuHeight+=3*2; //padding
+                    menuHeight+=group.length*20; //items
+                    if(gIndex!=this.toolMenuList.length-1) {
+                        menuHeight+=1;
+                    } //seperator
+                });
                 let clickX = clientX - this.getDeltaX(this.refs['objectTree']) + document.body.scrollLeft;
                 let clickY = clientY - this.getDeltaY(this.refs['objectTree']) + document.body.scrollTop;
-                if(containerWidth-clickX+10>menuWidth) {
-                    this.refs['rightClickMenu'].style.left = clickX+'px';
+                if(containerWidth-clickX>menuWidth) {
+                    this.refs['toolMenu'].style.left = clickX+'px';
                 } else {
-                    this.refs['rightClickMenu'].style.left = (clickX-menuWidth)+'px';
+                    this.refs['toolMenu'].style.left = (clickX-menuWidth)+'px';
                 }
-                if(containerHeight-clickY+10>menuHeight) {
-                    this.refs['rightClickMenu'].style.top = clickY+'px';
+                if(containerHeight-clickY>menuHeight) {
+                    this.refs['toolMenu'].style.top = clickY+'px';
                 } else {
-                    this.refs['rightClickMenu'].style.top = (clickY-menuHeight)+'px';
+                    this.refs['toolMenu'].style.top = (clickY-menuHeight)+'px';
                 }
             }
         });
     }
 
-    onRightClick(nid, data, e) {
+    onRightClick(nid, data, type, e) {
         e.preventDefault();
         e.stopPropagation();
         if(this.onSelectTargetMode(data)) {
@@ -630,19 +640,58 @@ class ObjectTree extends React.Component {
         }
         let clientX = e.clientX;
         let clientY = e.clientY;
-        this.chooseBtn(nid, data, e);
-        this.relocateRightClickMenu(clientX, clientY);
+        if(type===nodeType.widget) {
+            this.chooseBtn(nid, data);
+        } else {
+            this.fadeWidgetBtn(nid, data, type);
+        }
+        this.relocateToolMenu(clientX, clientY);
     }
 
-    onHideRightClickMenu() {
+    onHideToolMenu() {
         this.setState({
-            showRightClickMenu: false
+            showToolMenu: false
         });
     }
 
-    fadeWidgetBtn(nid, data, type,event) {
+    onMouseDownMenuItem(e) {
+        e.stopPropagation();
+    }
+
+    onClickToolMenuItem(actionName, e) {
+        e.stopPropagation();
+        this.onHideToolMenu();
+        switch (actionName) {
+            case 'copy':
+                this.itemActions('copy');
+                break;
+            case 'cut':
+                this.itemActions('cut');
+                break;
+            case 'paste':
+                this.itemActions('paste');
+                break;
+            case 'delete':
+                this.itemActions('delete');
+                break;
+            case 'originSize':
+                break;
+            case 'originPercent':
+                break;
+            case 'relPaste':
+                break;
+            case 'crossCopy':
+                break;
+            case 'crossPaste':
+                break;
+            case 'saveAsCom':
+                break;
+        }
+    }
+
+    fadeWidgetBtn(nid, data, type, event) {
         if(this.onSelectTargetMode(data)) {
-            event.stopPropagation();
+            if(event){ event.stopPropagation(); }
             return false;
         }if(this.state.multiSelectMode) {
             return false;
@@ -778,38 +827,31 @@ class ObjectTree extends React.Component {
     }
 
     itemActions(type) {
+        //对不是delete事件的db和sock处理
+        if(type !== 'delete'&&this.state.selectWidget) {
+            if(this.state.selectWidget.className == "db"
+                || this.state.selectWidget.className == "sock"){
+                return ;
+            }
+        }
+        //func,var,dbItem的处理
+        if(type === 'paste') {
+            //当前选中func or var就不理会
+            if(this.state.nodeType === nodeType.func ||
+                this.state.nodeType==nodeType.var ||
+                this.state.nodeType == nodeType.dbItem) {
+                return;
+            }
+        }
+
         switch (type) {
             case 'copy':
-                if(this.state.selectWidget){
-                    if(this.state.selectWidget.className == "db"
-                        || this.state.selectWidget.className == "sock"){
-                        return ;
-                    }
-                }
                 WidgetActions['copyTreeNode'](this.state.nodeType);
                 break;
             case 'paste':
-                //当前选中func or var就不理会
-                if(this.state.nodeType === nodeType.func ||
-                    this.state.nodeType==nodeType.var ||
-                    this.state.nodeType == nodeType.dbItem) {
-                    return;
-                }
-                if(this.state.selectWidget){
-                    if(this.state.selectWidget.className == "db"
-                        || this.state.selectWidget.className == "sock"){
-                        return ;
-                    }
-                }
                 WidgetActions['pasteTreeNode']();
                 break;
             case 'cut':
-                if(this.state.selectWidget){
-                    if(this.state.selectWidget.className == "db"
-                        || this.state.selectWidget.className == "sock"){
-                        return;
-                    }
-                }
                 WidgetActions['cutTreeNode'](this.state.nodeType);
                 break;
             case 'delete':
@@ -824,6 +866,18 @@ class ObjectTree extends React.Component {
                     }
                 }
                 WidgetActions['deleteTreeNode'](this.state.nodeType);
+                break;
+            case 'originSize':
+                break;
+            case 'originPercent':
+                break;
+            case 'relPaste':
+                break;
+            case 'crossCopy':
+                break;
+            case 'crossPaste':
+                break;
+            case 'saveAsCom':
                 break;
             default:
                 break;
@@ -1319,7 +1373,8 @@ class ObjectTree extends React.Component {
                     {'event-icon-normal':data.props['enableEventTree']},
                     {'event-icon-disable':!data.props['enableEventTree']},
                     {'active':this.state.activeEventTreeKey==nid})}
-                           onClick={this.eventBtn.bind(this,nid,data)}></div>;
+                           onClick={this.eventBtn.bind(this,nid,data)}
+                           onContextMenu={this.onRightClick.bind(this, nid, data, nodeType.widget)}></div>;
             return btn;
         };
 
@@ -1337,6 +1392,7 @@ class ObjectTree extends React.Component {
                     <div className={$class('fade-widget-title f--h f--hlc',
                         {'active': item.key === this.state.nid})}
                          onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}
+                         onContextMenu={this.onRightClick.bind(this, item.key, item, type)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
                         <span className={$class('item-icon fade-widget-icon',
                             {'func-icon':type===nodeType.func},
@@ -1353,7 +1409,8 @@ class ObjectTree extends React.Component {
                     </div>
                     <div className={$class('item-event')}>
                         <div className={$class('item-event-empty',{'active': item.key === this.state.nid})}
-                             onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}></div>
+                             onClick={this.fadeWidgetBtn.bind(this, item.key, item, type)}
+                             onContextMenu={this.onRightClick.bind(this, item.key, item, type)}></div>
                     </div>
                 </div>
             });
@@ -1449,7 +1506,7 @@ class ObjectTree extends React.Component {
                      onBlur={this.itemRemoveKeyListener.bind(this, 'item')}>
                     <div className={$class('item-title f--h f--hlc',{'active': v.key === this.state.nid ||this.isInMultiList(v.key)})}
                          onClick={this.chooseBtn.bind(this,v.key, v)}
-                         onContextMenu={this.onRightClick.bind(this, v.key, v)}
+                         onContextMenu={this.onRightClick.bind(this, v.key, v, nodeType.widget)}
                          style={{ paddingLeft: num === 0 ? '28px' :num *20 + 22 +'px', width : this.props.width - 36 - 24  }}>
 
                         {
@@ -1504,7 +1561,7 @@ class ObjectTree extends React.Component {
                                 ? enableEventTreeBtn(v.key, v)
                                 : <div className={$class('item-event-empty',{'active': v.key === this.state.nid||this.isInMultiList(v.key)})}
                                        onClick={this.chooseBtn.bind(this,v.key, v)}
-                                       onContextMenu={this.onRightClick.bind(this, v.key, v)}></div>
+                                       onContextMenu={this.onRightClick.bind(this, v.key, v, nodeType.widget)}></div>
                         }
                     </div>
                 </div>
@@ -1569,7 +1626,8 @@ class ObjectTree extends React.Component {
                                       onBlur={this.itemRemoveKeyListener.bind(this, 'root')}>
                                      <div className={$class('stage-title f--h f--hlc',{'active': v.tree.key === this.state.nid})}
                                           style={{ width : this.props.width - 36 - 24 }}
-                                          onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}>
+                                          onClick={this.chooseBtn.bind(this, v.tree.key, v.tree)}
+                                          onContextMenu={this.onRightClick.bind(this, v.tree.key, v.tree, nodeType.widget)}>
                                          { btn(-1, v.tree) }
                                          {
                                              v.tree.children.length > 0
@@ -1642,17 +1700,21 @@ class ObjectTree extends React.Component {
                 }
                 </div>
                 {
-                    !this.state.showRightClickMenu
+                    !this.state.showToolMenu
                         ? null
-                        : <div className="right-click-menu"
-                               ref="rightClickMenu">
+                        : <div className="tool-menu"
+                               ref="toolMenu">
                         {
-                            this.rightClickMenuList.map((v,i)=>{
+                            this.toolMenuList.map((v,i)=>{
                                 return <div key={i} className={$class("menu-group",
-                                    {'menu-group-border':i!=this.rightClickMenuList.length-1})}>
+                                    {'menu-group-border':i!=this.toolMenuList.length-1})}>
                                     {
                                         v.map((v1,i1)=>{
-                                           return <div key={i1} className="menu-item f--hlc">{v1.showName}</div>;
+                                           return <div key={i1} className="menu-item f--hlc"
+                                                       onMouseDown={this.onMouseDownMenuItem.bind(this)}
+                                                       onClick={this.onClickToolMenuItem.bind(this, v1.name)}>
+                                               {v1.showName}
+                                               </div>;
                                         })
                                     }
                                 </div>;
