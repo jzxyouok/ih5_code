@@ -1114,30 +1114,8 @@ class PropertyView extends React.Component {
             );
         };
 
-
-
-        getPropertyMap(node, className, 'props').forEach((item, index) => {
-            if (item.type !== propertyType.Hidden) {
-                //去除属性
-                if ((className == 'timer' || className == 'container') && ( item.name == 'scaleX' || item.name == 'scaleY')) {
-                    ;
-                }else if(className=='root'){
-                    if( ['visible'].indexOf(item.name)>=0){
-                        ;
-                    }else{
-                        getInput(item, index);
-                    }
-                }else if(['width','height','shapeWidth','shapeHeight','visible'].indexOf(item.name)>=0){
-                    //不显示出来的属性
-                    ;
-                }else {
-                    getInput(item, index);
-                }
-            }
-        });
-
-
-        groups = this.sortGroups(groups);
+        this.generateGroups(node,className,getInput);//生成groups
+        groups = this.sortGroups(groups);//排序groups
 
         return Object.keys(groups).map((name,index) =>{
             let insertClassName =  className + "-" + 'form_'+name;
@@ -1198,6 +1176,33 @@ class PropertyView extends React.Component {
             obj[i]=objArr.concat(orderNoArr);
         }
        return obj;
+    }
+    /*
+    *luzoheao,20161116
+    * 功能:
+    * 生成groups,并过滤掉一些属性
+     */
+    generateGroups(node,className,getInput){
+        getPropertyMap(node, className, 'props').forEach((item, index) => {
+            if (item.type !== propertyType.Hidden) {
+                if ( ['timer','container'].indexOf(className)>=0 && ['scaleX','scaleY'].indexOf( item.name)>=0) {
+                    //不需要显示scaleX和scaleY的属性面板
+                    ;
+                }
+                else if(className=='root'){
+                    if( ['visible'].indexOf(item.name)<0){
+                        getInput(item, index);
+                    }
+                }
+                else if(['width','height','shapeWidth','shapeHeight','visible'].indexOf(item.name)>=0){
+                    //通用:不显示出来的属性
+                    ;
+                }
+                else {
+                    getInput(item, index);
+                }
+            }
+        });
     }
     /****************工具方法区域,end**********************************/
 
