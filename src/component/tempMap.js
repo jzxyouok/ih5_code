@@ -451,10 +451,8 @@ let modifyPropList = (list, className, type) => {
     let aLack = [];
     let originXTag = false;
     let originYTag = false;
-
     let scaleXTag = false;
     let widthTag = false;
-
 
     list.map((v, i) => {
         if (v.name == 'originX') {
