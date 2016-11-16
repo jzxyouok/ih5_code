@@ -136,7 +136,7 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.BUTTON,name:'按钮',icon:buttonIcon, className:'button', drawRect:true,
                 param: {'value': 'Text', 'fillColor':'#3899ec','fontFill':'#FFFFFF', 'radius':20}}, //, 'fontFill':'#000000', 'radius':'20'
             {cid:TOOL_ID.TAPAREA,name:'透明按钮',icon:tapAreaIcon, className:'taparea', drawRect:true,
-                param: { 'fillColor':'#3899ec'}}]
+                param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'#3899ec'}}]
     },{
         name:'二维码',
         key:6,

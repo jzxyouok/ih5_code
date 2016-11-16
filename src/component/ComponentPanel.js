@@ -72,7 +72,7 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:"bitmaptextIcon", className:'bitmaptext', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100}},
                 {cid:this.cid++,icon:"folderIcon", className:'folder'},
                 {cid:this.cid++,icon:"buttonIcon", className:'button', drawRect:true, param: {'value': 'Text', 'fillColor':'#2187F3', 'lineColor':'#2187F3','fontFill':'#000000', 'radius':20}},
-                {cid:this.cid++,icon:"tapAreaIcon", className:'taparea', drawRect:true, param: {'fillColor':'transparent'}},
+                {cid:this.cid++,icon:"tapAreaIcon", className:'taparea', drawRect:true, param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0,'fillColor':'transparent'}},
                 {cid:this.cid++,icon:"qrcodeIcon", className:'qrcode', drawRectText:true, param:{'shapeWidth': 100, 'shapeHeight': 100, 'data': '0'}},
                 {cid:this.cid++,icon:"fileIcon", className:'file'},
                 {cid:this.cid++,icon:"counterIcon", className:'counter', drawRect:true, param: {'value':0}},
