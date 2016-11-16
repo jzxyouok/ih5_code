@@ -1214,10 +1214,11 @@ class NavBar extends React.Component {
                              style={{ left : this.props.expanded? '64px':'36px'}}>
                             <ul className="special-list">
                                 <li className="f--hlc create-li"
-                                    onMouseOver={ this.createWorkShow }
-                                    onMouseOut={ this.createWorkHide }>
+                                    onClick={this.createWork.bind(this,false)}>
+                                    {/*onMouseOver={ this.createWorkShow }*/}
+                                    {/*onMouseOut={ this.createWorkHide }>*/}
                                     新建作品
-                                    <span className="icon" />
+                                    {/*<span className="icon" />*/}
                                 </li>
                                 <li className="f--hlc open-li"
                                     onMouseOver={ this.openWorkShow }
@@ -1252,14 +1253,14 @@ class NavBar extends React.Component {
                                 </ul>
                             </div>
 
-                            <div className={ $class("create-li-content",{"hidden": !this.state.createWork})}
-                                 onMouseOver={ this.createWorkShow }
-                                 onMouseOut={ this.createWorkHide }>
-                                <ul>
-                                    <li onClick={ this.createWork.bind(this,true) }>网页</li>
-                                    <li onClick={ this.createWork.bind(this,false) }>画布</li>
-                                </ul>
-                            </div>
+                            {/*<div className={ $class("create-li-content",{"hidden": !this.state.createWork})}*/}
+                                 {/*onMouseOver={ this.createWorkShow }*/}
+                                 {/*onMouseOut={ this.createWorkHide }>*/}
+                                {/*<ul>*/}
+                                    {/*<li onClick={ this.createWork.bind(this,true) }>网页</li>*/}
+                                    {/*<li onClick={ this.createWork.bind(this,false) }>画布</li>*/}
+                                {/*</ul>*/}
+                            {/*</div>*/}
                         </div>
 
                         <div className='left-group f--hlc'>

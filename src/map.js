@@ -391,7 +391,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'box':
     { flex:
@@ -481,7 +483,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'container':
     { flex:
@@ -566,7 +570,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 6 } },
     'pagecontainer':
     { flex:
@@ -598,7 +604,8 @@ const propertyMap = {
                     { name: 'bgImage', type: 2, default: '' },
                     { name: 'clipped', type: 4, default: false },
                     { name: 'width', type: 0, default: 0 },
-                    { name: 'height', type: 0, default: 0 } ],
+                    { name: 'height', type: 0, default: 0 },
+                    { name: 'swipeType', type: 0, default: 0 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -707,7 +714,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'sprite':
     { flex:
@@ -790,7 +799,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'canvas':
     { flex:
@@ -872,7 +883,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 10 } },
     'flex':
     { flex:
@@ -957,7 +970,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 10 } },
     'dom':
     { flex:
@@ -1034,7 +1049,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 10 } },
     'root':
     { flex:
@@ -1059,6 +1076,7 @@ const propertyMap = {
                     { name: 'clipped', type: 4, default: false },
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 },
+                    { name: 'swipeType', type: 0, default: 0 },
                     { name: 'scaleStage', type: 4, default: false } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
@@ -1093,8 +1111,7 @@ const propertyMap = {
                 { name: 'minWidth', type: 2, default: '' },
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
-                { name: 'maxHeight', type: 2, default: '' },
-                { name: 'link', type: 0, default: 0 } ],
+                { name: 'maxHeight', type: 2, default: '' } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
                 { name: 'touchDown', info: 'globalX, globalY' },
@@ -1122,8 +1139,7 @@ const propertyMap = {
                     { name: 'originY', type: 1, default: 0 },
                     { name: 'rotation', type: 1, default: 0 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
-                    { name: 'height', type: 0, default: 0, readOnly: true },
-                    { name: 'link', type: 0, default: 0 } ],
+                    { name: 'height', type: 0, default: 0, readOnly: true } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -1150,8 +1166,7 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
-                    { name: 'originY', type: 1, default: 0 },
-                    { name: 'link', type: 0, default: 0 } ],
+                    { name: 'originY', type: 1, default: 0 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -1159,7 +1174,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'text':
     { flex:
@@ -1245,7 +1262,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'rect':
     { flex:
@@ -1344,7 +1363,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'ellipse':
     { flex:
@@ -1440,7 +1461,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'path':
     { flex:
@@ -1545,7 +1568,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'timer':
     { flex:
@@ -1654,6 +1679,8 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134 } },
     'slidetimer':
@@ -1779,6 +1806,8 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134 } },
     'track':
@@ -1899,7 +1928,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'counter':
     { flex:
@@ -1988,7 +2019,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 2 } },
     'world':
     { flex:
@@ -2032,7 +2065,9 @@ const propertyMap = {
                     { name: 'swipeLeft', info: '' },
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
-                    { name: 'swipeDown', info: '' } ],
+                    { name: 'swipeDown', info: '' },
+                    { name: 'beginContact', info: '' },
+                    { name: 'endContact', info: '' } ],
             provides: 262 } },
     'body':
     { flex:
@@ -2059,9 +2094,7 @@ const propertyMap = {
                     { name: 'angularVelocity', type: 1, default: 0 },
                     { name: 'damping', type: 1, default: 0 },
                     { name: 'angularDamping', type: 1, default: 0 } ],
-            events:
-                [ { name: 'beginContact', info: '' },
-                    { name: 'endContact', info: '' } ],
+            events: [],
             provides: 0 } },
     'db':
     { flex:
