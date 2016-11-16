@@ -1183,6 +1183,10 @@ class PropertyView extends React.Component {
             hasTwin = ['X', 'Y', 'W', 'H', '旋转度', '中心点', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '固定x坐标', '固定y坐标', '碰撞反应', '圆形边界'].indexOf(item.showName) >= 0;
         }
 
+
+        if (!item.showName) {
+            item.showName = item.name;
+        }
        //拼接图标样式
         let htmlStr;
         if (item.imgClassName) {
@@ -1215,9 +1219,8 @@ class PropertyView extends React.Component {
                 style['lineHeight'] = "22px";
             }
         }
-        if (!item.showName) {
-            item.showName = item.name;
-        }
+
+
         groups[groupName].push(
             <div key={item.name}
                  order={item.order}
