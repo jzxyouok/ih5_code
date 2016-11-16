@@ -280,12 +280,12 @@ var DEFAULT_TOOLBOX = {
         gid:23,
         primary: 0,
         secondary: [{cid:TOOL_ID.WECHAT,name:'微信',icon:wechatIcon, className:'wechat'}]
-    },{
-        name:'组件',
-        key:24,
-        gid:24,
-        primary: 0,
-        secondary: [{cid:TOOL_ID.MODULE,name:'组件',icon:moduleIcon, className:'module'}]
+    // },{
+    //     name:'组件',
+    //     key:24,
+    //     gid:24,
+    //     primary: 0,
+    //     secondary: [{cid:TOOL_ID.MODULE,name:'组件',icon:moduleIcon, className:'module'}]
     // },{
     //     name:'表格',
     //     key:25,
