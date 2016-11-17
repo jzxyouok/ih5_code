@@ -862,9 +862,11 @@ function generateJsFunc(etree) {
                           cName = prop.value;
                           if(cmd.action.name === 'clone') {
                               let propObj = prop.valueId;
-                              cName = getIdsName(propObj[0], propObj[2], '');
-                              if(cName.substr(cName.length-1,cName.length)===".") {
-                                  cName = cName.substr(0,cName.length-1);
+                              if(propObj) {
+                                  cName = getIdsName(propObj[0], propObj[2], '');
+                                  if(cName.substr(cName.length-1,cName.length)===".") {
+                                      cName = cName.substr(0,cName.length-1);
+                                  }
                               }
                           } else {
                               cName = JSON.stringify(prop.value);
@@ -1967,19 +1969,21 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
         if (this.currentWidget) {
-            if (!copyObj.className&&!copyObj.cls) {
+            let tempCopy = cpJson(copyObj);
+            if (!tempCopy.className&&!tempCopy.cls) {
                 return;
             }
             // 重命名要黏贴的widget
-            if (copyObj.props['key'] === undefined) {
+            if (tempCopy.props['key'] === undefined) {
                 //copy
-                copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
+                tempCopy.props = this.addWidgetDefaultName(tempCopy.cls, tempCopy.props, false, true);
             }
-            loadTree(this.currentWidget, copyObj);
-            if(copyObj.props.eventTree){
+            loadTree(this.currentWidget, tempCopy);
+            if(tempCopy.props.eventTree){
                 this.reorderEventTreeList();
             }
             this.trigger({selectWidget: this.currentWidget});
+            this.trigger({redrawEventTree: true});
             this.render();
             historyName = "复制" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);
