@@ -2239,6 +2239,22 @@ const propertyMap = {
             props: [ { name: 'id', type: 2, default: '' } ],
             events: [],
             provides: 0 } },
+    'data':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props: [ { name: 'id', type: 2, default: '' } ],
+        events: [],
+        provides: 0 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 0 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props: [ { name: 'id', type: 2, default: '' } ],
+            events: [],
+            provides: 0 } },
 };
 
 export {propertyMap, propertyType, backwardTransOptions, forwardTransOptions, effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags};
