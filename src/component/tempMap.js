@@ -144,17 +144,26 @@ let propMapping = {
     'headerFontFill': {name:'headerFontFill', showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800'},
     'altColor': {name:'altColor', showName:'隔行颜色', type: propertyType.Color,group:'display', default: ''},
     'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
-    'margin': {name:'margin', showName:'外间距', type: propertyType.Number, default:0},
-    'padding': {name:'padding', showName:'内间距', type: propertyType.Number, default:0},
+
     //关于flex的请看：https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex
-    'flex': {name:'flex', showName:'flex', type: propertyType.String, default:''},
-    'alignSelf': {name:'alignSelf', showName:'对齐方式', type: propertyType.String, default:''},
-    'alignItems': {name:'alignItems', showName:'对齐对象', type: propertyType.String, default:''},
-    'justifyContent': {name:'justifyContent', showName:'排列内容', type: propertyType.Select, default:'flex-start', options:{'行首起始':'flex-start', '行尾开始':'flex-end'}},
-    'flexWrap': {name:'flexWrap', showName:'堆叠', type: propertyType.Select, default:'nowrap', options:{'nowrap':'nowrap','wrap':'wrap','wrap-reverse':'wrap-reverse'}},
-    'flexDirection': {name:'flexDirection', showName:'布局', type: propertyType.Select, default: '垂直',options:{'水平':'row','反向水平':'row-reverse','垂直':'column', '反向垂直':'column-reverse'}},
+
+
     'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'PC', options:{'手机':'true','PC':'false'}},
 
+    'margin': {name:'margin', showName:'外间距', type: propertyType.String, default:'',group:'tools2'},
+    'maxWidth': {name:'maxWidth', showName:'最大宽', type: propertyType.Number, default:'',group:'tools2'},
+    'minWidth': {name:'minWidth', showName:'最小宽', type: propertyType.Number, default:'',group:'tools2'},
+    'maxHeight': {name:'maxHeight', showName:'最大高', type: propertyType.Number, default:'',group:'tools2'},
+    'minHeight': {name:'minHeight', showName:'最小高', type: propertyType.Number, default:'',group:'tools2'},
+    'alignSelf': {name:'alignSelf', showName:'副轴对齐', type: propertyType.Select, default:'自动',options:{'自动':'auto','靠前':'flex-start','靠后':'flex-end','居中':'center', '拉伸':'stretch','对齐文本':'baseline'},group:'tools2'},
+    'flex': {name:'flex', showName:'自动伸缩', type: propertyType.Select, default:'允许缩小',options:{'无':'0 0 auto','允许缩小':'0 1 auto','允许拉伸':'1 0 auto', '自动伸缩':'1 1 auto'},group:'tools2'},
+
+    'padding': {name:'padding', showName:'内间距', type: propertyType.String, default:'',group:'tools3'},
+    'flexDirection': {name:'flexDirection', showName:'主轴方向', type: propertyType.Select, default: '左右',options:{'上下':'column','下上':'column-reverse','左右':'row', '右左':'row-reverse'},group:'tools3'},
+    'justifyContent': {name:'justifyContent', showName:'主轴对齐', type: propertyType.Select, default:'flex-start', options:{'靠前':'flex-start','靠后':'flex-end','居中':'center', '均分（靠边）':'space-around','均分（不靠边）':'space-end'},group:'tools3'},
+    'alignItems': {name:'alignItems', showName:'副轴对齐', type: propertyType.Select, default:'靠前',options:{'靠前':'flex-start','靠后':'flex-end','居中':'center'},group:'tools3'},
+    'alignContent':{name:'alignContent',showName:'alignContent',type: propertyType.Hidden, default:'',group:'tools3'},
+    'flexWrap': {name:'flexWrap', showName:'自动换行', type: propertyType.Boolean, default:false,group:'tools3'}
 };
 
 let eventMapping = {
