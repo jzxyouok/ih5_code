@@ -196,6 +196,10 @@ class Event extends React.Component {
     }
 
     onEventEnable(event, e) {
+        if(this.state.activeKey !== this.state.wKey) {
+            return;
+        }
+
         WidgetActions['enableEvent'](event);
     }
 

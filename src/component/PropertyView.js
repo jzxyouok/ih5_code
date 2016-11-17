@@ -822,7 +822,7 @@ class PropertyView extends React.Component {
     * */
     sortGroups(groups) {
        // console.log(groups);
-        let sortArr = ['basic', 'position', 'display', 'tools','tools2','tools3']
+        let sortArr = ['basic', 'position', 'display', 'tools','tools2','tools3', 'dArr'];
         let obj={};
         //模块排序
         sortArr.map((v,i)=>{
