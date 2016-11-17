@@ -779,12 +779,12 @@ function generateJsFunc(etree) {
                                       "        if (columns.length>=value1){              "+
                                       "            var temp  = columns[value1-1];        "+
                                       "            if(isNaN(temp)) {                     "+
-                                      "                temp = JSON.stringify(temp);      "+
+                                      "                temp = temp+'';                   "+
                                       "            }                                     "+
                                       "        }                                         "+
                                       "    }                                             "+
                                       "}                                                 "+
-                                      // "console.log(temp);                                "+
+                                      // "console.log(temp);                             "+
                                       "return temp;                                      "+
                                       "}("+value+','+value0+','+value1+"))               ";
                                       subLine += formula;
@@ -870,9 +870,11 @@ function generateJsFunc(etree) {
                           cName = prop.value;
                           if(cmd.action.name === 'clone') {
                               let propObj = prop.valueId;
-                              cName = getIdsName(propObj[0], propObj[2], '');
-                              if(cName.substr(cName.length-1,cName.length)===".") {
-                                  cName = cName.substr(0,cName.length-1);
+                              if(propObj) {
+                                  cName = getIdsName(propObj[0], propObj[2], '');
+                                  if(cName.substr(cName.length-1,cName.length)===".") {
+                                      cName = cName.substr(0,cName.length-1);
+                                  }
                               }
                           } else {
                               cName = JSON.stringify(prop.value);
@@ -1976,19 +1978,21 @@ export default Reflux.createStore({
     },
     pasteWidget: function() {
         if (this.currentWidget) {
-            if (!copyObj.className&&!copyObj.cls) {
+            let tempCopy = cpJson(copyObj);
+            if (!tempCopy.className&&!tempCopy.cls) {
                 return;
             }
             // 重命名要黏贴的widget
-            if (copyObj.props['key'] === undefined) {
+            if (tempCopy.props['key'] === undefined) {
                 //copy
-                copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
+                tempCopy.props = this.addWidgetDefaultName(tempCopy.cls, tempCopy.props, false, true);
             }
-            loadTree(this.currentWidget, copyObj);
-            if(copyObj.props.eventTree){
+            loadTree(this.currentWidget, tempCopy);
+            if(tempCopy.props.eventTree){
                 this.reorderEventTreeList();
             }
             this.trigger({selectWidget: this.currentWidget});
+            this.trigger({redrawEventTree: true});
             this.render();
             historyName = "复制" + this.currentWidget.node.name;
             this.updateHistoryRecord(historyName);
@@ -3637,8 +3641,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        //   xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
+        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
