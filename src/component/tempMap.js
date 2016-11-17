@@ -214,12 +214,12 @@ let funcMapping = {
     'getRoot': {name:'getRoot', showName:'获取父级对象'},
     'delete': {name:'delete', showName: '删除对象'},
 
-    'create': {name:'create', showName:'创建对象', property:[
+    'create': {name:'create', showName:'创建控件', property:[
         {'name':'class', 'showName':'类别', 'value':null, 'type':propertyType.Select},
         {'name':'id', 'showName':'ID', 'value':null, 'type':propertyType.String},
         {'name':'props', 'showName':'属性', value:null, 'type':propertyType.Remove},
         {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2}]},
-    'clone': {name:'clone', showName: '克隆对象', property:[
+    'clone': {name:'clone', showName: '创建对象', property:[
         {'name':'obj', 'showName':'对象', 'value':null, 'type':propertyType.ObjectSelect},
         {'name':'id', 'showName':'ID', 'value':null, 'type':propertyType.String},
         {'name':'props', 'showName':'属性', value:null, 'type':propertyType.Remove},
