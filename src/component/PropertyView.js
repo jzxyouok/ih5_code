@@ -271,7 +271,7 @@ class PropertyView extends React.Component {
                         break;
                     }
                     else if(prop.name == 'totalTime' ){
-                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                        this.selectNode.props[prop.name+'Key'] = value;
                     }
                     v = parseFloat(value);
                     break;
@@ -965,6 +965,12 @@ class PropertyView extends React.Component {
                 defaultValue = node.props[item.name] * 100;
             }
         }
+        else if(item.type === propertyType.Number) {
+            defaultValue = node.props[item.name];
+            if (item.name == 'totalTime' && node.props[item.name+'Key']) {
+                defaultValue = node.props[item.name+'Key'];
+            }
+        }
         else if (node.props[item.name] === undefined) {
             if (item.type === propertyType.Boolean) {
                 defaultValue = item.default;
@@ -1033,11 +1039,7 @@ class PropertyView extends React.Component {
                 }
             }
         } else if (item.type === propertyType.Number) {
-            if (item.name == 'totalTime') {
-                defaultProp.name = item.name;
-            } else {
-                defaultProp.value = defaultValue;
-            }
+            defaultProp.value = defaultValue;
         } else if (item.type == propertyType.Dropdown) {
             defaultProp.value = defaultValue;
             defaultProp.item = item;
