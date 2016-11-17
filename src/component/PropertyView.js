@@ -270,6 +270,10 @@ class PropertyView extends React.Component {
                         bTag = false;
                         break;
                     }
+                    // else if(prop.name == 'totalTime' ){
+                    //     this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                    //     v = value;
+                    // }
                     v = parseFloat(value);
                     break;
                 case propertyType.Percentage:
@@ -373,6 +377,10 @@ class PropertyView extends React.Component {
                     if (prop.name == 'scaleType') {
                         this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
                         v = parseInt(value);
+                    }
+                    else if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
+                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                        v = value;
                     }
                     else if (prop.name == 'swipeType') {
                         this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
@@ -917,7 +925,7 @@ class PropertyView extends React.Component {
             //当originY时才会激活,而不是originPos
             if (item.name == 'scaleType' && node.props.scaleTypeKey) {
                 defaultValue = node.props.scaleTypeKey;
-            }else if (item.name == 'swipeType' && node.props[item.name+'Key']) {
+            }else if ((item.name == 'swipeType'|| item.name == 'alignSelf'|| item.name == 'flex'|| item.name == 'flexDirection'|| item.name == 'justifyContent'|| item.name == 'alignItems') && node.props[item.name+'Key']) {
                 defaultValue = node.props[item.name+'Key'];
             } else if (item.name == 'scaleStage' && node.props.scaleStageKey) {
                 defaultValue = node.props.scaleStageKey;
