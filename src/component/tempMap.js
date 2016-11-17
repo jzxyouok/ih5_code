@@ -33,6 +33,7 @@ let propMapping = {
     'width': {name:'width', showName:'W', type: propertyType.Integer, default: 0, group:'position'},
     'height': {name:'height', showName:'H',type: propertyType.Integer, default: 0, group:'position'},
     'scaleType': {name:'scaleType', showName:'适配', type: propertyType.Select, default:'满屏', options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools',order:1},
+    'swipeType': {name:'swipeType', showName:'滑动翻页', type: propertyType.Select, default:'上', options:{'无':0,'上':4,'下':3,'左':2,'右':1}},
     'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'tools',order:2},
     'clipped': {name:'clipped', showName:'剪切', type: propertyType.Boolean, default: false, group:'tools',order:3},
 
@@ -319,8 +320,8 @@ let specialCaseElementMapping = (className, type)=> {
                 'shapeHeight': {name:'shapeHeight', type: propertyType.Hidden, default: 0, group:'position'},
                 'color': {name:'color', showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF'}},
             events: {
-                'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
-                'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},}
+                'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},
+                'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},}
         };
     } else if (isInCLList(className, ['easing'])) {
         return {

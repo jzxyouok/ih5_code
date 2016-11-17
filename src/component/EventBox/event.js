@@ -607,14 +607,17 @@ class Event extends React.Component {
         this.setState({eventList:eventList});
     }
 
-    onChangeProp(index,type,value){
+    onChangeProp(index,item,value){
         let eventList =this.state.eventList;
+        let type=item.type;
         if(type=='number'){
             eventList[this.curEventIndex].needFill[index].default =value;
         }else if(type=='string'){
             eventList[this.curEventIndex].needFill[index].default =value.target.value;
         }else if(type=='select'){
-            eventList[this.curEventIndex].needFill[index].default =value;
+            //蚂蚁Select组件出问题了,原本value应该是选择的内容,结果变成了内容对应的序号,暂时写个兼容性代码,以后有空找下原因
+            eventList[this.curEventIndex].needFill[index].default =item.option[value];
+
         } else if(type==='var'){
             eventList[this.curEventIndex].needFill[index].default = parseFloat(value);
         }
@@ -622,14 +625,13 @@ class Event extends React.Component {
     }
 
     getAntdComponent(item,index,obj) {
-
             if (item.type == 'number') {
                 return <InputNumber disabled={!obj.enable} step={1} min={0} className='dropDown-input-content'
-                                    value={item.default} onChange={this.onChangeProp.bind(this, index, item.type)}/>
+                                    value={item.default} onChange={this.onChangeProp.bind(this, index, item)}/>
             }
             else if (item.type == 'string') {
                 return <Input disabled={!obj.enable} className='dropDown-input-content' value={item.default}
-                              onChange={this.onChangeProp.bind(this, index, item.type)}/>
+                              onChange={this.onChangeProp.bind(this, index, item)}/>
             }
             else if (item.type == 'select') {
                 let optionArr = [];
@@ -644,8 +646,6 @@ class Event extends React.Component {
                             curBodyKey=v.key;
                         }
                     });
-
-
 
                     let findChildKey = (v, i)=> {
                         if (v.className == 'body' && v.key != curBodyKey) {
@@ -686,10 +686,10 @@ class Event extends React.Component {
                                    onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
                 } else {
                     item.option.map((v, i)=> {
-                        optionArr.push(<Option key={i} className='dropDown-input-option'>{v}</Option>);
+                        optionArr.push(<Option key={i}  className='dropDown-input-option'>{v}</Option>);
                     });
                     return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default}
-                                   onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
+                                   onChange={this.onChangeProp.bind(this, index, item)}>{optionArr}</Select>
                 }
             }
             else if (item.type == 'var') {
@@ -715,22 +715,10 @@ class Event extends React.Component {
                 return <Select disabled={!obj.enable} className='dropDown-input-content' value={value}
                                placeholder="选择变量"
                                getPopupContainer={() => document.getElementById('event-item-left-' + obj.eid)}
-                               onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
+                               onChange={this.onChangeProp.bind(this, index, item)}>{optionArr}</Select>
             }
         }
 
-
-    // showCompareDropDown(name,curEventIndex,curChildrenIndex){
-    //     let eventList=this.state.eventList;
-    //     eventList.map((v,i)=>{
-    //        v.children.map((item,index)=>{
-    //             if(item.showDropdown){item.showDropdown=false;}
-    //        });
-    //     });
-    //     eventList[curEventIndex].children[curChildrenIndex].showDropdown =true;
-    //     this.setState({eventList:eventList});
-    //     this.refs[name].focus();
-    // }
     onSTButtonClick(curChildrenIndex,curEventIndex){
 
         this.curChildrenIndex =curChildrenIndex;
