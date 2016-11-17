@@ -803,6 +803,34 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 2 } },
+    'font':
+    { flex:
+    { funcs: [ { name: 'delete', info: '' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'fontSize', type: 0, default: 26 },
+                { name: 'fontFamily', type: 2, default: '' },
+                { name: 'fontFill', type: 6, default: '' } ],
+        events: [],
+        provides: 0 },
+        dom:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'fontSize', type: 0, default: 26 },
+                    { name: 'fontFamily', type: 2, default: '' },
+                    { name: 'fontFill', type: 6, default: '' } ],
+            events: [],
+            provides: 0 },
+        canvas:
+        { funcs: [ { name: 'delete', info: '' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'fontSize', type: 0, default: 26 },
+                    { name: 'fontFamily', type: 2, default: '' },
+                    { name: 'fontFill', type: 6, default: '' } ],
+            events: [],
+            provides: 0 } },
     'canvas':
     { flex:
     { funcs:
@@ -1197,6 +1225,9 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'fontSize', type: 0, default: 26 },
+                { name: 'fontFamily', type: 2, default: '' },
+                { name: 'fontFill', type: 6, default: '' },
                 { name: 'value', type: 3, default: '' } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
@@ -1226,6 +1257,9 @@ const propertyMap = {
                     { name: 'rotation', type: 1, default: 0 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'fontSize', type: 0, default: 26 },
+                    { name: 'fontFamily', type: 2, default: '' },
+                    { name: 'fontFill', type: 6, default: '' },
                     { name: 'value', type: 3, default: '' } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
@@ -1254,6 +1288,9 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
+                    { name: 'fontSize', type: 0, default: 26 },
+                    { name: 'fontFamily', type: 2, default: '' },
+                    { name: 'fontFill', type: 6, default: '' },
                     { name: 'value', type: 3, default: '' } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
@@ -1951,6 +1988,9 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'fontSize', type: 0, default: 26 },
+                { name: 'fontFamily', type: 2, default: '' },
+                { name: 'fontFill', type: 6, default: '' },
                 { name: 'value', type: 1, default: 0 },
                 { name: 'precision', type: 0, default: 0 } ],
         events:
@@ -1981,6 +2021,9 @@ const propertyMap = {
                     { name: 'rotation', type: 1, default: 0 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'fontSize', type: 0, default: 26 },
+                    { name: 'fontFamily', type: 2, default: '' },
+                    { name: 'fontFill', type: 6, default: '' },
                     { name: 'value', type: 1, default: 0 },
                     { name: 'precision', type: 0, default: 0 } ],
             events:
@@ -2010,6 +2053,9 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'originX', type: 1, default: 0 },
                     { name: 'originY', type: 1, default: 0 },
+                    { name: 'fontSize', type: 0, default: 26 },
+                    { name: 'fontFamily', type: 2, default: '' },
+                    { name: 'fontFill', type: 6, default: '' },
                     { name: 'value', type: 1, default: 0 },
                     { name: 'precision', type: 0, default: 0 } ],
             events:
@@ -2085,8 +2131,12 @@ const propertyMap = {
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'mass', type: 1, default: 0 },
+                    { name: 'fixedX', type: 4, default: false },
+                    { name: 'fixedY', type: 4, default: false },
+                    { name: 'fixedRotation', type: 4, default: false },
                     { name: 'isCircle', type: 4, default: false },
                     { name: 'collisionResponse', type: 4, default: true },
+                    { name: 'detectionDepth', type: 0, default: 2 },
                     { name: 'globalVx', type: 1, default: 0 },
                     { name: 'globalVy', type: 1, default: 0 },
                     { name: 'velocityX', type: 1, default: 0 },
@@ -2222,7 +2272,11 @@ const propertyMap = {
                     { name: 'shapeWidth', type: 0, default: 0 },
                     { name: 'shapeHeight', type: 0, default: 0 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
-                    { name: 'height', type: 0, default: 0, readOnly: true } ],
+                    { name: 'height', type: 0, default: 0, readOnly: true },
+                    { name: 'fontSize', type: 0, default: 26 },
+                    { name: 'fontFamily', type: 2, default: '' },
+                    { name: 'fontFill', type: 6, default: '' },
+                    { name: 'value', type: 2, default: '' } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
