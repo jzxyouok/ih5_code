@@ -1184,9 +1184,9 @@ class PropertyView extends React.Component {
         }
 
 
-        if (!item.showName) {
-            item.showName = item.name;
-        }
+        // if (!item.showName) {
+        //     item.showName = item.name;
+        // }
        //拼接图标样式
         let htmlStr;
         if (item.imgClassName) {
@@ -1198,9 +1198,9 @@ class PropertyView extends React.Component {
                 ? <label>
                 <div className={cls('ant-lock', {'ant-lock-checked': node.node.keepRatio})}
                      onClick={this.antLock.bind(this)}></div>
-                {item.showName}
+                {item.showName||item.name}
             </label>
-                : <label>{item.showName}</label>
+                : <label>{item.showName||item.name}</label>
         }
 
         //todo:可以设置一个标志位,在这个标志位下设定样式
