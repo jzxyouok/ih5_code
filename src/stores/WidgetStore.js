@@ -202,11 +202,15 @@ function loadTree(parent, node, idList, initEl) {
     var eventTree = [];
     node['etree'].forEach(item =>{
       var r=item.eventNode;
-      r.eid = (_eventCount++);
+      if(!r.eid) {
+        r.eid = _eventCount++;
+      }
       r.specificList = [];
       item.cmds.forEach(cmd => {
           let temp = cmd;
-          temp.sid = _specificCount++;
+          if(!temp.sid) {
+              temp.sid = _eventCount++;
+          }
           r.specificList.push(temp);
       });
       //没有的时候添加一个空的
@@ -1108,7 +1112,7 @@ function generateJsFunc(etree) {
   return output;
 }
 
-function saveTree(data, node, saveKey) {
+function saveTree(data, node, saveKey, saveEventObjsKey) {
   data['cls'] = node.className;
 
   let props = {};
@@ -1136,7 +1140,6 @@ function saveTree(data, node, saveKey) {
             return temp;
         };
 
-
         node.props['eventTree'].forEach(item => {
         /*
         * luozheao,20161115
@@ -1147,8 +1150,7 @@ function saveTree(data, node, saveKey) {
         * 4 将item传到etree里,loadTree时候直接调用item,不用再把处理过的判断条件解析一遍
         * */
             var cmds = [];
-        var judges={};
-
+            var judges={};
 
             var eventEnable = item.enable; //是否可执行
             judges.conFlag = item.conFlag;
@@ -1255,7 +1257,7 @@ function saveTree(data, node, saveKey) {
                     //公式编辑器的对象处理
                     obj.compareObjFlag = {
                         type: 2,
-                        value: dealWithFormulaObj(v.compareObjFlag.value, saveKey)
+                        value: dealWithFormulaObj(v.compareObjFlag.value, saveKey||saveEventObjsKey)
                     };
                 } else {
                     obj.compareObjFlag = v.compareObjFlag;
@@ -1268,7 +1270,10 @@ function saveTree(data, node, saveKey) {
             let c = {};
             c.enable = cmd.enable;
             c.sObjId = objectKeyToId(cmd.object);
-            if(saveKey) {
+            if(saveKey||saveEventObjsKey) {
+                if(saveKey) {
+                    c.sid = cmd.sid;
+                }
                 c.object = cmd.object;
             }
             //有对象才会有动作，不然动作清除
@@ -1278,7 +1283,7 @@ function saveTree(data, node, saveKey) {
                     case funcType.customize:
                         c.action.funcId = objectKeyToId(cmd.action.func);
                         c.action.type = cmd.action.type;
-                        if(saveKey) {
+                        if(saveKey||saveEventObjsKey) {
                             c.action.func = cmd.action.func;
                         }
                         break;
@@ -1301,10 +1306,7 @@ function saveTree(data, node, saveKey) {
                                         type: v.type,
                                         valueId: objectKeyToId(v.value)
                                     };
-                                    // if(v.name === 'data') {
-                                    //     temp.vKey = v.value;
-                                    // }
-                                    if (saveKey) {
+                                    if (saveKey||saveEventObjsKey) {
                                         temp.value = v.value;
                                     }
                                     property.push(temp);
@@ -1326,7 +1328,7 @@ function saveTree(data, node, saveKey) {
                                     if(v.isProp) {
                                         temp.isProp = v.isProp;
                                     }
-                                    temp.value.value = dealWithFormulaObj(v.value.value, saveKey);
+                                    temp.value.value = dealWithFormulaObj(v.value.value, saveKey||saveEventObjsKey);
                                     property.push(temp);
                                 } else {
                                     property.push(v);
@@ -1350,7 +1352,7 @@ function saveTree(data, node, saveKey) {
                                                     value: []
                                                 }
                                             };
-                                            temp2.compare.value = dealWithFormulaObj(v1.compare.value, saveKey);
+                                            temp2.compare.value = dealWithFormulaObj(v1.compare.value, saveKey||saveEventObjsKey);
                                             temp.value.push(temp2);
                                         } else {
                                             temp.value.push(v1);
@@ -1373,7 +1375,11 @@ function saveTree(data, node, saveKey) {
             }
             cmds.push(c);
         });
-
+        if(!saveKey) {
+            //如果不savekey就复制一下并删除eid
+            item = cpJson(item);
+            (delete item.eid);
+        }
         etree.push({cmds:cmds,judges:judges, enable:eventEnable,eventNode:item});
 
       });
@@ -1473,7 +1479,7 @@ function saveTree(data, node, saveKey) {
       }
       let child = {};
       data['children'].unshift(child);
-      saveTree(child, item, saveKey);
+      saveTree(child, item, saveKey, saveEventObjsKey);
     });
   }
 }
@@ -1947,31 +1953,34 @@ export default Reflux.createStore({
         loopDelete(w);
     },
     copyWidget: function(shouldCut) {
-      if (this.currentWidget && this.currentWidget.parent) {
-        copyObj = {};
-        if(shouldCut) {
-            saveTree(copyObj, this.currentWidget, true);
-        } else {
-            saveTree(copyObj, this.currentWidget);
+        if (this.currentWidget && this.currentWidget.parent) {
+            copyObj = {};
+            if(shouldCut) {
+                saveTree(copyObj, this.currentWidget, true, true);
+            } else {
+                saveTree(copyObj, this.currentWidget, false, true);
+            }
         }
-      }
     },
     pasteWidget: function() {
-      if (this.currentWidget) {
-          if (!copyObj.className&&!copyObj.cls) {
-              return;
-          }
-        // 重命名要黏贴的widget
-        copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
-        loadTree(this.currentWidget, copyObj);
-        if(copyObj.props.eventTree){
-          this.reorderEventTreeList();
+        if (this.currentWidget) {
+            if (!copyObj.className&&!copyObj.cls) {
+                return;
+            }
+            // 重命名要黏贴的widget
+            if (copyObj.props['key'] === undefined) {
+                //copy
+                copyObj.props = this.addWidgetDefaultName(copyObj.cls, copyObj.props, false, true);
+            }
+            loadTree(this.currentWidget, copyObj);
+            if(copyObj.props.eventTree){
+                this.reorderEventTreeList();
+            }
+            this.trigger({selectWidget: this.currentWidget});
+            this.render();
+            historyName = "复制" + this.currentWidget.node.name;
+            this.updateHistoryRecord(historyName);
         }
-        this.trigger({selectWidget: this.currentWidget});
-        this.render();
-          historyName = "复制" + this.currentWidget.node.name;
-          this.updateHistoryRecord(historyName);
-      }
     },
     cutWidget: function() {
         this.copyWidget(true);
