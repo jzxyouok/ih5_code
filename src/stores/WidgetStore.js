@@ -940,6 +940,7 @@ function generateJsFunc(etree) {
                               break;
                           case 'object':
                               if(prop.valueId) {
+                                  propsList.push('\''+'$array'+'\''+':1');
                                   let arrValue = getIdsName(prop.valueId[0], prop.valueId[2], 'value');
                                   let method = "var arrValue = '';                    "+
                                       // "console.log("+arrValue+");                     "+
