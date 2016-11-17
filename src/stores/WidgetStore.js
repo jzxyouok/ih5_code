@@ -947,15 +947,18 @@ function generateJsFunc(etree) {
                                       "if(data.length>0){                             "+
                                       " var dataList = [];                            "+
                                       " data.forEach(function(v, i){                  "+
-                                      "     var temp = [];                            "+
-                                      "     for (var prop in v) {                     "+
-                                      "         if(prop.substr(0,1)!=='_'){           "+
-                                      "             temp.push(v[prop]);               "+
-                                      "         }                                     "+
-                                      "     }                                         "+
-                                      "     if(temp.length>0) {                       "+
-                                      "         dataList.push(temp.join(','));        "+
-                                      "     }                                         "+
+                                      // "     var temp = [];                            "+
+                                      // "     for (var prop in v) {                     "+
+                                      // "         if(prop.substr(0,1)!=='_'){           "+
+                                      // "             temp.push(v[prop]);               "+
+                                      // "         }                                     "+
+                                      // "     }                                         "+
+                                      // "     if(temp.length>0) {                       "+
+                                      // "         dataList.push(temp.join(','));        "+
+                                      // "     }                                         "+
+                                      "     if(v.join!==undefined) {                  "+//new start
+                                      "         dataList.push(v.join(','));           "+
+                                      "     }                                         "+//new end
                                       " });                                           "+
                                       " if(dataList.length>0){                        "+
                                       "     arrValue = dataList.join(';');            "+
