@@ -779,12 +779,12 @@ function generateJsFunc(etree) {
                                       "        if (columns.length>=value1){              "+
                                       "            var temp  = columns[value1-1];        "+
                                       "            if(isNaN(temp)) {                     "+
-                                      "                temp = JSON.stringify(temp);      "+
+                                      "                temp = temp+'';                   "+
                                       "            }                                     "+
                                       "        }                                         "+
                                       "    }                                             "+
                                       "}                                                 "+
-                                      // "console.log(temp);                                "+
+                                      // "console.log(temp);                             "+
                                       "return temp;                                      "+
                                       "}("+value+','+value0+','+value1+"))               ";
                                       subLine += formula;
@@ -3641,8 +3641,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        //   xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
+        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
