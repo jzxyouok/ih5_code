@@ -88,6 +88,7 @@ class Property extends React.Component {
         this.customClassList = []; //用于保存自定义类
         this.customList = []; //用于loop自定义类
         this.funcListLength = 0;
+        this.nullObj = {key:null, props:{name:'无对象'}};
     }
 
     componentWillReceiveProps(nextProps) {
@@ -545,7 +546,7 @@ class Property extends React.Component {
                 getTarget = true;
             }
         });
-        if (getTarget) {
+        if (getTarget||result.key===null) {
             prop.value = result.key;
             let property = this.state.currentAction.property;
             property[index] = prop;
@@ -934,6 +935,7 @@ class Property extends React.Component {
                     let oList = this.state.objectList;
                     if(w&&w.className === 'db' && item.name === 'object') {
                         oList = [];
+                        oList.push(this.nullObj);
                         this.state.objectList.forEach(v=>{
                             if (v.className === 'data') {
                                 oList.push(v);
