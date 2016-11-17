@@ -62,12 +62,10 @@ class PropertyViewSetUp extends React.Component {
             case propertyType.Select:
                 defaultProp.options = [];
                 //适配
-                if (item.name == 'scaleType') {
                     defaultValue=item.default;
                     for (var i in  item.options) {
                         defaultProp.options.push(<Option key={item.options[i]} className='select-scaleType'>{i}</Option>);
                     }
-                }
                 break;
             case propertyType.Dropdown:
                 //中心点
@@ -230,7 +228,7 @@ class PropertyViewSetUp extends React.Component {
                 return <Switch   {...defaultProp} />;
             case propertyType.Boolean2:
                 return <SwitchMore   {...defaultProp} />;
-            case propertyType.Select:
+            case propertyType.Select: 
                 if(defaultProp.tbCome == "tbF"){
                     style['width'] = "125px";
                     style['maxWidth'] = "125px";
