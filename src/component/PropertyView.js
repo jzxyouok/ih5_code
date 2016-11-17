@@ -373,7 +373,7 @@ class PropertyView extends React.Component {
                     }
                     else if(prop.name == 'scaleStage'){
                         this.selectNode.props.scaleStageKey = this.getScaleTypeDefault(value, prop.options);
-                        v = value;
+                        v = value=='true'?true:false;
                     }
                     else if (prop.name == 'fontFamily') {
                         this.selectNode.props.fontFamilyKey = this.getFontDefault(value);
@@ -1195,9 +1195,9 @@ class PropertyView extends React.Component {
                 ? <label>
                 <div className={cls('ant-lock', {'ant-lock-checked': node.node.keepRatio})}
                      onClick={this.antLock.bind(this)}></div>
-                {item.showName||item.name}
+                {item.showName}
             </label>
-                : <label>{item.showName||item.name}</label>
+                : <label>{item.showName}</label>
         }
 
         //todo:可以设置一个标志位,在这个标志位下设定样式

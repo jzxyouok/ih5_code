@@ -175,6 +175,7 @@ let eventMapping = {
     'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{showName:'文本',type:'string',default:''}]},
     'Contain': {name:'Contain', showName:'包含文本', needFill:[{showName:'文本',type:'string',default:''}]},
     'change': {name:'change', showName:'内容改变'},
+    'input': {name:'input', showName:'输入'},
 
     '==': {name:'==', showName:'等于', needFill:[{showName:'值',type:'number',default:''}]},
     '!=': {name:'!=', showName:'不等于', needFill:[{showName:'值',type:'number',default:''}]},
@@ -187,17 +188,17 @@ let eventMapping = {
     'even': {name:'even', showName:'为偶数'},
     'remainder': {name:'remainder', showName:'余数为', needFill:[{showName:'除数',type:'number',default:''}, {showName:'余数',type:'number',default:''}]},
 
-    'isEmpty': {name:'isEmpty', showName:'为空',needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
-    'isNotEmpty': {name:'isNotEmpty', showName:'不为空', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
-    'isContain': {name:'isContain', showName:'包含文本', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
-    'lenEqual': {name:'lenEqual', showName:'长度等于', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenUnEqual': {name:'lenUnEqual', showName:'长度不等于', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenBigThan': {name:'lenBigThan', showName:'长度大于', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenLessThan': {name:'lenLessThan', showName:'长度小于', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'isNum': {name:'isNum', showName:'是数字', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
-    'isNotNum': {name:'isNotNum', showName:'不是数字', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
-    'isLetter': {name:'isLetter', showName:'是字母', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
-    'isNotLetter': {name:'isNotLetter', showName:'不是字母', needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
+    'isEmpty': {name:'isEmpty', showName:'为空',needFill:[{type:'select', option:['change','input'],default:'change'}]},
+    'isNotEmpty': {name:'isNotEmpty', showName:'不为空', needFill:[{type:'select', option:['change','input'],default:'change'}]},
+    'isContain': {name:'isContain', showName:'包含文本', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},
+    'lenEqual': {name:'lenEqual', showName:'长度等于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+    'lenUnEqual': {name:'lenUnEqual', showName:'长度不等于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+    'lenBigThan': {name:'lenBigThan', showName:'长度大于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+    'lenLessThan': {name:'lenLessThan', showName:'长度小于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+    'isNum': {name:'isNum', showName:'是数字', needFill:[{type:'select', option:['change','input'],default:'change'}]},
+    'isNotNum': {name:'isNotNum', showName:'不是数字', needFill:[{type:'select', option:['change','input'],default:'change'}]},
+    'isLetter': {name:'isLetter', showName:'是字母', needFill:[{type:'select', option:['change','input'],default:'change'}]},
+    'isNotLetter': {name:'isNotLetter', showName:'不是字母', needFill:[{type:'select', option:['change','input'],default:'change'}]},
 
     'loop': {name:'loop', showName:'重复播放'},
     'stop': {name:'stop', showName:'停止'},
@@ -465,6 +466,7 @@ let modifyPropList = (list, className, type) => {
     });
 
     //不显示出来的属性
+    //list的元素可能没有showName,暂时用name替代.遇到这种情况,应在propMapping中添加进去
     list.map((v, i) => {
         if (v.name == 'width' || v.name == 'height') {
             if (scaleXTag && widthTag) {
@@ -474,6 +476,9 @@ let modifyPropList = (list, className, type) => {
             v.type = propertyType.Hidden;
         } else if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
+        }
+        if(!v.showName){
+            v.showName=v.name;
         }
     });
     //部分属性面板才有中心点
@@ -489,7 +494,6 @@ let modifyEventList = (list, className, type) => {
     //根据不同的class对events进行定制和排序
     //以后还可能对于不用的type进行不同定制（modeType）
     let aLack=[];
-    //todo: 晓斌那边添加了什么自定义的事件,补上吧,如果没有,则删除这句话.
     //只在dom模式下添加自定义的事件
     if(type==modeType.dom){
         if(className=='input'){
@@ -505,6 +509,12 @@ let modifyEventList = (list, className, type) => {
             aLack=['==','!=','>','<','valRange','change','positive','negative','odd','even','remainder'];
         }
     }
+    //list的元素可能没有showName,暂时用name替代.遇到这种情况,应在eventMapping中添加进去
+    list.map((v,i)=>{
+        if(!v.showName){
+            v.showName=v.name;
+        }
+    });
     list = list.concat(dealElementList(aLack, className, 'events', type));
     return list;
 };

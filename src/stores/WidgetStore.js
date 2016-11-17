@@ -3569,6 +3569,7 @@ export default Reflux.createStore({
         this.trigger({redrawEventTree: true});
     },
     getConditionOption(widget) {
+
         //获取触发条件
         let selectWidget =widget?widget:this.currentWidget;
         let className=selectWidget.className;
