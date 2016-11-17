@@ -270,10 +270,9 @@ class PropertyView extends React.Component {
                         bTag = false;
                         break;
                     }
-                    // else if(prop.name == 'totalTime' ){
-                    //     this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
-                    //     v = value;
-                    // }
+                    else if(prop.name == 'totalTime' ){
+                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                    }
                     v = parseFloat(value);
                     break;
                 case propertyType.Percentage:
