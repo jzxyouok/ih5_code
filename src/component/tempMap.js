@@ -19,9 +19,9 @@ let isInCLList = (className, classNameList)=>{
     return classNameList.indexOf(className)>=0;
 };
 
-/*
+/**
 * luozheao,20161115
-* 备注:添加了order字段,用于给模块内部的组件哥哥们排序
+* 备注:添加了order字段,用于给模块内部的组件排序
 * 按数字大小,从上到下排序,没有order属性,则排最后面
 * */
 let propMapping = {
@@ -49,8 +49,6 @@ let propMapping = {
     'rotation': {name:'rotation', showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position',order:6},
     'alpha': {name:'alpha', showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display',order:1 },
     'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.String, default:'',group:'display',order:2},
-    'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'display',order:3},
-
 
     'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools'},
 

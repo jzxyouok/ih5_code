@@ -1184,9 +1184,6 @@ class PropertyView extends React.Component {
         }
 
 
-        // if (!item.showName) {
-        //     item.showName = item.name;
-        // }
        //拼接图标样式
         let htmlStr;
         if (item.imgClassName) {
@@ -1259,17 +1256,6 @@ class PropertyView extends React.Component {
         let getInput=this.getInput.bind(this);
         getPropertyMap(node, className, 'props').forEach((item, index) => {
             if (item.type !== propertyType.Hidden) {
-                // if ( ['timer','container'].indexOf(className)>=0 && ['scaleX','scaleY'].indexOf( item.name)>=0) {
-                //     //不需要显示scaleX和scaleY的属性面板
-                //     ;
-                // }
-                // else if(['shapeWidth','shapeHeight','visible'].indexOf(item.name)>=0){
-                //     //通用:不显示出来的属性
-                //     ;
-                // }
-                // else {
-                //     getInput(item,className, groups);
-                // }
                 getInput(item,className, groups);
             }
         });
