@@ -615,9 +615,7 @@ class Event extends React.Component {
         }else if(type=='string'){
             eventList[this.curEventIndex].needFill[index].default =value.target.value;
         }else if(type=='select'){
-            //蚂蚁Select组件出问题了,原本value应该是选择的内容,结果变成了内容对应的序号,暂时写个兼容性代码,以后有空找下原因
-            eventList[this.curEventIndex].needFill[index].default =item.option[value];
-
+            eventList[this.curEventIndex].needFill[index].default =value; 
         } else if(type==='var'){
             eventList[this.curEventIndex].needFill[index].default = parseFloat(value);
         }
@@ -665,11 +663,11 @@ class Event extends React.Component {
                     item.option = keyList;
                     let str = item.default;
                     let itemObj = WidgetStore.getWidgetByKey(item.default);
+
                     if (itemObj) {
                         str = itemObj.props.name;
                     }else if(str !='请选择'){
                         str ='请选择';
-                        //清空
                         this.state.eventList[this.curEventIndex].needFill[index].default ='';
                     }
                     item.option.map((v, i)=> {
@@ -682,11 +680,10 @@ class Event extends React.Component {
                     return <Select disabled={!obj.enable}
                                    className='dropDown-input-content'
                                    value={str}
-
-                                   onChange={this.onChangeProp.bind(this, index, item.type)}>{optionArr}</Select>
+                                   onChange={this.onChangeProp.bind(this, index, item)}>{optionArr}</Select>
                 } else {
                     item.option.map((v, i)=> {
-                        optionArr.push(<Option key={i}  className='dropDown-input-option'>{v}</Option>);
+                        optionArr.push(<Option key={i} value={v}  className='dropDown-input-option'>{v}</Option>);
                     });
                     return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default}
                                    onChange={this.onChangeProp.bind(this, index, item)}>{optionArr}</Select>
