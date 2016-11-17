@@ -11,10 +11,10 @@ import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { RangeComponent } from '../PropertyView/RangeComponent';
 import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
 import { DBConsComponent } from '../PropertyView/DBConsComponent';
-import { propertyMap, propertyType, checkChildClass, checkIsClassType } from '../PropertyMap'
+import { checkChildClass, checkIsClassType } from '../tempMap'
+import { getPropertyMap, propertyMap, propertyType} from '../tempMap'
 import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
 import  $ from 'jquery';
-
 
 const Option = Select.Option;
 const Panel = Collapse.Panel;
@@ -115,9 +115,9 @@ class Property extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         this.onStatusChange(WidgetStore.getAllWidgets());
-        $('.pp--list input,.pp--list textarea').focus(function () {
-             $(this).select();
-        });
+        // $('.pp--list input,.pp--list textarea').focus(function () {
+        //      $(this).select();
+        // });
     }
 
     componentWillUnmount() {
@@ -211,38 +211,30 @@ class Property extends React.Component {
             actionList.push(this.getSetPropsObj());
         }
 
-        if(className === 'var'){
-            switch (obj.type) {
-                case varType.number:
-                    className = 'intVar';
-                    break;
-                case varType.string:
-                    className = 'strVar';
-                    break;
-                default:
-                    break;
+        getPropertyMap(obj, className, 'funcs').map((item, index) => {
+            let temp = JSON.parse(JSON.stringify(item));
+            if (temp.info) {
+                delete temp.info;
             }
-        }
-        if(propertyMap&&propertyMap[className]) {
-            propertyMap[className].map((item, index) => {
-                if (item.isFunc) {
-                    let temp = JSON.parse(JSON.stringify(item));
-                    if (temp.info) {
-                        delete temp.info;
+            if(temp.property){
+                //属性中有hidden的就删除起来
+                temp.property.forEach((v, i)=>{
+                    if(v.type === propertyType.Remove) {
+                        temp.property.splice(i, 1);
                     }
-                    delete temp.isFunc;
-                    temp.type = funcType.default;
-                    actionList.push(temp);
-                }
-            });
-        }
+                })
+            }
+            temp.type = funcType.default;
+            actionList.push(temp);
+        });
+
         let objRoot = null;
         if(obj.className === 'var'|| obj.className === 'dbItem' || obj.className === 'func') {
             objRoot = obj.widget.rootWidget;
         } else {
             objRoot = obj.rootWidget;
         }
-        if(objRoot.className==='root'&&objRoot.props.isStage) {
+        if(objRoot.className==='root'&&!objRoot.props.isStage) {
             actionList.push({
                 name: 'deleteRootComponent',
                 showName: '删除组件',
@@ -255,15 +247,23 @@ class Property extends React.Component {
         })
     }
 
-    setDefaultMappingProps(className, list, type) {
+    setDefaultMappingProps(node, className, list, type) {
         if(className=='table'){
             className='tableForSet';
         }
         let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
-        propertyMap[className].map((v,i)=>{
-            if(v.isProperty&&!v.readOnly&& v.name !='id'){
+        let mappingList = getPropertyMap(node, className, 'props');
+        if(type === 'change') {
+            //对父级的类别进行处理
+            if(node.className === 'canvas' || node.className === 'dom') {
+                if(propertyMap[className]&&propertyMap[className][node.className]) {
+                    mappingList = propertyMap[className][node.className].props;
+                }
+            }
+        }
+        mappingList.map((v,i)=>{
+            if(v.type !== propertyType.Hidden&&!v.readOnly&&v.name !='id'){
                 let vObj=JSON.parse(JSON.stringify(v));
-                (delete vObj.isProperty);
                 vObj.isProp=true;
                 if(vObj.name=='scaleX'){
                     vObj.name='width';
@@ -297,14 +297,7 @@ class Property extends React.Component {
         let propertyList=[];
         if(node){
             let className=node.className;
-            if(className === 'data') {
-                if(node.props.type === 'twoDArr') {
-                    className = 'twoDArr';
-                } else if(node.props.type === 'oneDArr') {
-                    className = 'oneDArr';
-                }
-            }
-            this.setDefaultMappingProps(className, propertyList, 'add');
+            this.setDefaultMappingProps(node,className, propertyList, 'add');
         }
         obj.property= propertyList;
         return obj;
@@ -578,14 +571,29 @@ class Property extends React.Component {
         }
         let property = this.state.currentAction.property;
         property[index] = prop;
-        if(type === optionType.class && this.state.currentAction.name === 'create') {
+        if((type === optionType.class && this.state.currentAction.name === 'create') ||
+            type === optionType.widget && this.state.currentAction.name === 'clone') {
             let className = data;
+            if(this.state.currentAction.name === 'clone') {
+                className = data.className;
+            }
             //不需要替换1，2和最后1个
             let newProperty = [property[0], property[1], property[property.length-1]];
             if (isCustomizeWidget(className)) {
                 className = 'class';
             }
-            this.setDefaultMappingProps(className, newProperty, 'change');
+            let obj = this.getObjByKey(this.state.currentObject);
+            if(obj) {
+                this.setDefaultMappingProps(obj, className, newProperty, 'change');
+                if(this.state.currentAction.name === 'clone' && newProperty.length>3) {
+                    //根据data的props, 设置默认值
+                    newProperty.forEach((v, i)=> {
+                        if((i>1||i<newProperty.length-1) && data.props[v.name]) {
+                            v.value = data.props[v.name];
+                        }
+                    });
+                }
+            }
             property = newProperty;
         }
         let action = this.state.currentAction;
@@ -899,7 +907,7 @@ class Property extends React.Component {
                     let sType = optionType.normal;
                     let sList = [];
                     if(item.name === 'class'){
-                        sTitleTemp = '类别';
+                        sTitleTemp = item.showName;
                         sType = optionType.class;
                         sList = this.classNameList;
                     } else {
@@ -911,9 +919,13 @@ class Property extends React.Component {
                     let objType = optionType.normal;
                     let objList = [];
                     if(w&&w.className === 'db'&&item.name ==='data'){
-                        objTitleTemp = '来源';
+                        objTitleTemp = item.showName;
                         objType = optionType.widget;
                         objList = w.dbItemList;
+                    } else if(item.name === 'obj'){
+                        objTitleTemp = item.showName;
+                        objType = optionType.widget;
+                        objList = this.state.objectList;
                     } else {
                         return <div>未定义类型</div>;
                     }

@@ -1,10 +1,11 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
-import  {propertyMap} from '../component/PropertyMap';
+import {getPropertyMap} from '../component/tempMap'
 
 var bridge = require('bridge');
 bridge.create();
 var globalToken;
+var globalVersion = '';
 
 var rootDiv;
 var rootElm;
@@ -102,10 +103,10 @@ function onSelect(isMulti) {
 }
 
 const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer',
-    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'canvas', 'table'];
+    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'table'];
 var currentLoading;
 
-function loadTree(parent, node, idList) {
+function loadTree(parent, node, idList, initEl) {
   let current = {};
   current.parent = parent;
   current.className = node['cls'];
@@ -229,32 +230,29 @@ function loadTree(parent, node, idList) {
       idList[node['id']] = current;
   }
 
+  current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl);
+  current.timerWidget = bridge.isTimer(current.node) ? current : ((parent) ? parent.timerWidget : null);
 
+  // var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
 
-  var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
+  // current.node = bridge.addWidget(renderer,
+  //     (parent)
+  //     ? parent.node
+  //     : null, node['cls'], null, node['props'],
+  //       (parent && parent.timerWidget) ? parent.timerWidget.node : null
+  // );
 
-  current.node = bridge.addWidget(renderer,
-      (parent)
-      ? parent.node
-      : null, node['cls'], null, node['props'],
-        (parent && parent.timerWidget) ? parent.timerWidget.node : null
-  );
-
-
-
-    current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
-
-
+  // current.timerWidget = (bridge.isTimer(current.node)) ? current : ((parent && parent.timerWidget) ? parent.timerWidget : null);
 
   if (parent) {
     parent.children.unshift(current);
     current.rootWidget = parent.rootWidget;
-    if (renderer != current.rootWidget.rendererList[0])
-      current.rootWidget.rendererList.unshift(renderer);
+    // if (renderer != current.rootWidget.rendererList[0])
+    //   current.rootWidget.rendererList.unshift(renderer);
   } else {
     current.rootWidget = current;
     current.imageList = node['links'] || [];
-    current.rendererList = [renderer];
+    // current.rendererList = [renderer];
     bridge.setLinks(current.node, current.imageList);
     // bridge.createSelector(current.node);
   }
@@ -849,7 +847,7 @@ function generateJsFunc(etree) {
               }
           } else if (cmd.action.name === 'deleteRootComponent') {
               lines.push('param.target.getRoot().delete()');
-          } else if (cmd.action.name === 'create') {
+          } else if (cmd.action.name === 'create' || cmd.action.name === 'clone') {
               if(cmd.action.property.length>=3) {
                   let cName = null;
                   let cId = null;
@@ -858,6 +856,15 @@ function generateJsFunc(etree) {
                   cmd.action.property.forEach((prop,i)=>{
                       if (i === 0) {
                           cName = prop.value;
+                          if(cmd.action.name === 'clone') {
+                              let propObj = prop.valueId;
+                              cName = getIdsName(propObj[0], propObj[2], '');
+                              if(cName.substr(cName.length-1,cName.length)===".") {
+                                  cName = cName.substr(0,cName.length-1);
+                              }
+                          } else {
+                              cName = JSON.stringify(prop.value);
+                          }
                       } else if (i === 1) {
                           cId = prop.value;
                       } else if (i === cmd.action.property.length-1) {
@@ -880,7 +887,7 @@ function generateJsFunc(etree) {
                           }
                       }
                   });
-                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'create') + '(' + JSON.stringify(cName) + ',' + JSON.stringify(cId) + ',' + '{'+ props.join(',') +'}' +',' + bottom +')');
+                  lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], cmd.action.name) + '(' + cName + ',' + JSON.stringify(cId) + ',' + '{'+ props.join(',') +'}' +',' + bottom +')');
               }
           } else if (cmd.action.name === 'find') {
               let propsList = [];
@@ -1065,7 +1072,7 @@ function generateJsFunc(etree) {
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
-
+        // lines.push('console.log(ids)');
       if (lines.length) {
         var out = '';
         if (conditions.length == 1) {
@@ -1651,6 +1658,11 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['copyTreeNode'], this.copyTreeNode);
         this.listenTo(WidgetActions['deleteTreeNode'], this.deleteTreeNode);
         this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
+        this.listenTo(WidgetActions['originSizeTreeNode'], this.originSizeTreeNode);
+        this.listenTo(WidgetActions['originPercentTreeNode'], this.originPercentTreeNode);
+
+        //修改widget的资源入口
+        this.listenTo(WidgetActions['changeResource'], this.changeResource);
 
         //函数，变量，db item等伪对象选择添加的入口
         this.listenTo(WidgetActions['selectFadeWidget'], this.selectFadeWidget);
@@ -1671,16 +1683,14 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['cleanHistory'], this.cleanHistory);
 
         this.listenTo(WidgetActions['changeContactObj'], this.changeContactObj);
+        this.listenTo(WidgetActions['updateConOptions'], this.updateConOptions);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
-
-
-
 
         this.listenTo(WidgetActions['closeKeyboardMove'], this.closeKeyboardMove);
 
         this.listenTo(WidgetActions['alignWidgets'], this.alignWidgets);
-        this.listenTo(WidgetActions['updateConOptions'], this.updateConOptions);
 
+        this.listenTo(WidgetActions['setVersion'], this.setVersion);
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -1688,16 +1698,16 @@ export default Reflux.createStore({
     selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
         if (widget) {
-            if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
-                render = true;
-                var el = bridge.getDomElement(widget.rootWidget.node);
-                if (el != rootElm) {
-                    if (rootElm)
-                        rootDiv.removeChild(rootElm);
-                        rootElm = el;
-                        rootDiv.appendChild(rootElm);
-                }
-            }
+            // if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
+            //     render = true;
+            //     var el = bridge.getEl(widget.rootWidget.node);
+            //     if (el != rootElm) {
+            //         if (rootElm)
+            //             rootDiv.removeChild(rootElm);
+            //             rootElm = el;
+            //             rootDiv.appendChild(rootElm);
+            //     }
+            // }
 
             if(widget.props['locked'] === undefined) {
                 widget.props['locked'] = false;
@@ -1806,11 +1816,10 @@ export default Reflux.createStore({
       else {
           historyName = "添加图片 "+ props.name;
       }
-
-
+        
       if (className === 'track') {
-        if (!this.currentWidget.timerWidget ||
-            (this.currentWidget.className !== 'image'
+          if (!this.currentWidget.timerWidget ||
+              (this.currentWidget.className !== 'image'
               && this.currentWidget.className !== 'imagelist'
               && this.currentWidget.className !== 'text'
               && this.currentWidget.className !== 'bitmaptext'
@@ -1820,17 +1829,21 @@ export default Reflux.createStore({
               && this.currentWidget.className !== 'counter'
               && this.currentWidget.className !== 'rect'
               && this.currentWidget.className !== 'container'))
-          return;
-        let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
-        let dataList = [];   //let dataList = [[0], [1]];
-        //for (let i = 0; i < propList.length; i++) {
-        //  let d = this.currentWidget.node[propList[i]];
-        //  dataList[0].push(d);
-        //  //dataList[1].push(d);
-        //}
-        let track = loadTree(this.currentWidget, {'cls':className, 'props': {'prop': propList, 'data': dataList, 'name':props['name']}});
-        this.trigger({redrawTree: true, updateTrack: track});
-      } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
+              return;
+          let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
+          let dataList = [];   //let dataList = [[0], [1]];
+          //for (let i = 0; i < propList.length; i++) {
+          //  let d = this.currentWidget.node[propList[i]];
+          //  dataList[0].push(d);
+          //  //dataList[1].push(d);
+          //}
+          let track = loadTree(this.currentWidget, {
+              'cls': className,
+              'props': {'prop': propList, 'data': dataList, 'name': props['name']}
+          });
+          this.trigger({redrawTree: true, updateTrack: track});
+          // } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
+      } else {
         let p;
         if (props || link) {
           p = {};
@@ -1842,18 +1855,35 @@ export default Reflux.createStore({
           if (link)
             p['link'] = this.currentWidget.rootWidget.imageList.push(link) - 1;
         }
-          var o = loadTree(this.currentWidget, {'cls':className, 'props': p});
-          if (className == 'bitmaptext')
-              currentLoading = o;
+        var o = loadTree(this.currentWidget, {'cls':className, 'props': p});
+        if (className == 'bitmaptext')
+           currentLoading = o;
         var cmd = {redrawTree: true};
 
-        if (className == 'body'  )
-          cmd.updateProperties = {'originX':0.5, 'originY':0.5};
-        this.trigger(cmd);
-        this.getAllWidgets();
-        this.render();
+        if (className == 'body') {
+            cmd.updateProperties = {'originX':0.5, 'originY':0.5};
+        }
+
+        if (className == 'image') {
+            let originVisible = o.node['visible'];
+            if(originVisible) {
+                o.node['visible'] = false;
+            }
+            process.nextTick(() => {
+                this.trigger(cmd);
+                this.getAllWidgets();
+                o.node['visible'] = originVisible;
+                o.node['scaleX'] = p.shapeWidth/o.node.width;
+                o.node['scaleY'] = p.shapeHeight/o.node.height;
+                this.render();
+            });
+        } else {
+            this.trigger(cmd);
+            this.getAllWidgets();
+            this.render();
+        }
       }
-        this.updateHistoryRecord(historyName);
+      this.updateHistoryRecord(historyName);
     },
     removeWidget: function(shouldChooseParent) {
         historyName = "删除" + this.currentWidget.node.name;
@@ -1943,6 +1973,20 @@ export default Reflux.createStore({
         this.copyWidget(true);
         this.removeWidget(true);
     },
+    originSizeWidget: function() {
+        if(this.currentWidget&&(this.currentWidget.node['scaleX']|| this.currentWidget.node['scaleX']===0)) {
+            this.updateProperties({'scaleX':1,'scaleY':1});
+            bridge.updateSelector(this.currentWidget.node);
+            this.render();
+        }
+    },
+    originPercentWidget: function() {
+        if(this.currentWidget&&(this.currentWidget.node['scaleX']|| this.currentWidget.node['scaleX']===0)) {
+            this.updateProperties({'scaleY':this.currentWidget.node['scaleX']});
+            bridge.updateSelector(this.currentWidget.node);
+            this.render();
+        }
+    },
     lockWidget: function () {
         if (this.currentWidget) {
             this.currentWidget.props['locked'] = !this.currentWidget.props['locked'];
@@ -1970,7 +2014,6 @@ export default Reflux.createStore({
             //this.updateHistoryRecord(historyName);
         }
     },
-
     getPointsOfWidget: function(widget) {
         //每个对象需要获取相对于舞台的绝对位置（6个点）
         //left，top，right，bottom，centreX, centreY
@@ -3168,6 +3211,46 @@ export default Reflux.createStore({
         }
         this.trigger({deleteWidget:true,deleteBody:deleteBody});
     },
+    originSizeTreeNode: function(type) {
+        if(type === nodeType.widget) {
+            this.originSizeWidget();
+        }
+    },
+    originPercentTreeNode: function(type) {
+        if(type === nodeType.widget) {
+            this.originPercentWidget();
+        }
+    },
+    changeResource: function(name, link, type) {
+        switch (type) {
+            case 'image':
+                if (name&&link&&this.currentWidget.className==='image'){
+                    let temp = this.currentWidget.rootWidget.imageList.push(link) - 1;
+                    this.currentWidget.props['link'] =  temp;
+                    this.currentWidget.node['link'] =  temp;
+                    this.currentWidget.props['name'] = name;
+                    this.currentWidget.node['name'] = name;
+                    this.currentWidget.node['scaleX'] = 1;
+                    this.currentWidget.node['scaleY'] = 1;
+                    let originVisible = this.currentWidget.node['visible'];
+                    if(originVisible) {
+                        this.currentWidget.node['visible'] = false;
+                    }
+                    bridge.updateSelector(this.currentWidget.node);
+                    process.nextTick(() => {
+                        let width = this.currentWidget.node.shapeWidth;
+                        let height = this.currentWidget.node.shapeHeight;
+                        let tempW = this.currentWidget.node.width;
+                        let tempH = this.currentWidget.node.height;
+                        this.currentWidget.node['visible']= originVisible;
+                        this.currentWidget.node['scaleX'] = width/tempW;
+                        this.currentWidget.node['scaleY'] = height/tempH;
+                        this.selectWidget(this.currentWidget);
+                    });
+                }
+                break;
+        }
+    },
     didSelectTarget: function (data) {
         this.trigger({didSelectTarget:{target:data}});
     },
@@ -3190,12 +3273,32 @@ export default Reflux.createStore({
 
         _keyCount = 1;
         keyMap = [];
+        idList = [];
+
+        if (!rootDiv) {
+            rootDiv = document.getElementById('canvas-dom');
+            rootDiv.addEventListener('dragenter', dragenter, false);
+            rootDiv.addEventListener('dragover', dragover, false);
+            rootDiv.addEventListener('drop', drop.bind(this), false);
+            rootDiv.addEventListener('mousedown', function(e) {
+                if(!(this.currentFunction|| this.currentVariable || this.currentDBItem)){
+                    this.selectWidget(this.currentWidget);
+                }
+            }.bind(this), false);
+        }
+
+
+         if(rootDiv.childNodes.length>2){
+             rootDiv.removeChild(rootDiv.childNodes[rootDiv.childNodes.length-1]);
+         }
+
+
         if (data['defs']) {
             for (let n in data['defs']) {
                 bridge.addClass(n);
                 classList.push(n);
                 idList = [];
-                tree = loadTree(null, data['defs'][n], idList);
+                tree = loadTree(null, data['defs'][n], idList, rootDiv);
                 stageTree.push({name: n, tree: tree});
                 resolveEventTree(tree, idList);
                 resolveDBItemList(tree, idList);
@@ -3209,25 +3312,12 @@ export default Reflux.createStore({
         if(data['stage']&&data['stage']['props']['isStage'] === undefined) {
             data['stage']['props']['isStage'] = true;
         }
-        idList = [];
-        tree = loadTree(null, data['stage'], idList);
+        tree = loadTree(null, data['stage'], idList, rootDiv);
         resolveEventTree(tree, idList);
         resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
-        // bridge.createSelector(null);
-
-        if (!rootDiv) {
-            this.mutliSelectMode = false;
-            rootDiv = document.getElementById('canvas-dom');
-            rootDiv.addEventListener('dragenter', dragenter, false);
-            rootDiv.addEventListener('dragover', dragover, false);
-            rootDiv.addEventListener('drop', drop.bind(this), false);
-            rootDiv.addEventListener('mousedown', function(e) {
-                if(!(this.currentFunction|| this.currentVariable || this.currentDBItem)){
-                    this.selectWidget(this.currentWidget);
-                }
-            }.bind(this), false);
-        }
+        rootDiv.lastChild.style.position='relative';
+        this.render();
 
         this.trigger({
             initTree: stageTree
@@ -3426,7 +3516,7 @@ export default Reflux.createStore({
         if (wid) {
             this.ajaxSend(null, 'PUT', 'app/work/' + wid, 'application/octet-stream', data, cb,null,updateProgress);
         } else {
-            this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname) + encodeURIComponent(wdescribe),
+            this.ajaxSend(null, 'POST', 'app/work?name=' + encodeURIComponent(wname) + encodeURIComponent(wdescribe) + "&version=" + globalVersion,
                         'application/octet-stream', data, cb,null,updateProgress);
         }
     },
@@ -3489,16 +3579,15 @@ export default Reflux.createStore({
                 hasContact=true;
             }
         });
-        propertyMap[className].map((item, index)=> {
-            if (item.isEvent === true) {
-                if(item.name=='beginContact'||item.name=='endContact'){
-                    if(hasContact){
-                        aProps.push(JSON.parse(JSON.stringify(item)));
-                    }
-                }else{
+        getPropertyMap(selectWidget, className, 'events').map((item, index) => {
+            if(item.name=='beginContact'||item.name=='endContact'){
+                if(hasContact){
                     aProps.push(JSON.parse(JSON.stringify(item)));
                 }
+            }else{
+                aProps.push(JSON.parse(JSON.stringify(item)));
             }
+
         });
         return aProps;
     },
@@ -3542,6 +3631,10 @@ export default Reflux.createStore({
         this.trigger({hasHandle: status});
     },
     updateHistoryRecord: function(historyName) {
+        //TODO:START-会影响功能，需小颖去修复下这块
+        return;
+        //TODO:END
+        
         let data = {};
         data['stage'] = {};
 
@@ -3688,6 +3781,10 @@ export default Reflux.createStore({
     },
     changeContactObj:function (key) {
         this.trigger({contactObj:key});
+    },
+
+    setVersion(v) {
+        globalVersion = v;
     },
 });
 

@@ -26,8 +26,10 @@ class DesignView extends React.Component {
         this.stageZoomLeft=0;
         this.keyboard=false;
 
+
         this.moudleMove=null;
         this.designViewLineMove=null;
+
 
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
@@ -38,6 +40,7 @@ class DesignView extends React.Component {
     }
 
     componentDidMount() {
+
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         window.onresize=this.onresize;
@@ -55,8 +58,10 @@ class DesignView extends React.Component {
         document.body.removeEventListener('keydown', this.onKeyScroll);
         document.body.removeEventListener('keyup', this.onKeyUp);
 
+
         this.moudleMove.unBind();
         this.designViewLineMove.unBind();
+
     }
 
     onStatusChange(widget) {
@@ -105,6 +110,7 @@ class DesignView extends React.Component {
         }else{
             this.keyboard=false;
         }
+
     }
 
     stageZoomChange(){
@@ -129,13 +135,13 @@ class DesignView extends React.Component {
         let oHeight =document.getElementById('v_ruler');
 
 
-       if(iWidthSum){
-           let sWidth='';
-           for(let i = 0 ;i<=iWidthSum;i++){
-               sWidth+='<li>'+i*100+'</li>'
-           }
-           oWidth.innerHTML=sWidth;
-       }
+        if(iWidthSum){
+            let sWidth='';
+            for(let i = 0 ;i<=iWidthSum;i++){
+                sWidth+='<li>'+i*100+'</li>'
+            }
+            oWidth.innerHTML=sWidth;
+        }
         if(iHeightSum){
             let sHeight='';
             for(let i = 0 ;i<=iHeightSum;i++){
@@ -328,16 +334,15 @@ class DesignView extends React.Component {
 
     }
 
-
     render() {
         //缩放后设置参考线位置
         this.stageZoomChange();
         return (
             <div
-                 id='DesignView-Container'
-                 ref='container'
-                 onWheel={this.scroll}
-                 className={cls({'moveTag':this.state.space&&this.state.isDown,'no-moveTag':this.state.space&&!this.state.isDown})}
+                id='DesignView-Container'
+                ref='container'
+                onWheel={this.scroll}
+                className={cls({'moveTag':this.state.space&&this.state.isDown,'no-moveTag':this.state.space&&!this.state.isDown})}
             >
                 <div  ref='line_top' id='line_top'></div>
                 <div ref='canvasWraper' className='canvas-wraper' id="canvas-wraper" >
@@ -346,8 +351,8 @@ class DesignView extends React.Component {
                          className="DesignView"
                          ref='view'
                          style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
-                        <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
-                        <ul id='v_ruler'></ul>
+                      <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
+                      <ul id='v_ruler'></ul>
                     </div>
                 </div>
             </div>

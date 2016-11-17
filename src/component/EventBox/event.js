@@ -1,13 +1,10 @@
 //事件
 import React from 'react';
-
 import $class from 'classnames'
-
 import Property from './Property'
 import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-import  {propertyMap, propertyType} from '../PropertyMap';
-import {eventTempData} from './tempData';
+import {propertyType, getPropertyMap} from '../tempMap'
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { Menu, Dropdown, Icon ,InputNumber,Input,Select} from 'antd';
@@ -251,7 +248,6 @@ class Event extends React.Component {
     getJudgeValOption(optionName, curChild) {
         let aProps = [];
         let className = null;
-
         let judgeObjFlag = curChild.judgeObjFlag; //判断对象名字
 
         let allWidgetsList = this.state.allWidgetsList;
@@ -264,8 +260,9 @@ class Event extends React.Component {
 
 
         let obj = {};
-        propertyMap[className].map((v, i)=> {
-            if (v.isProperty && v.name != 'id') {
+        let pObj = WidgetStore.getWidgetByKey(this.state.wKey);
+        getPropertyMap(pObj, className, 'props').map((v, i)=> {
+            if (v.type !== propertyType.Hidden && v.name != 'id') {
                 if (v.showName == 'W') {
                     aProps.push('宽度');
                 } else if (v.showName == 'H') {
@@ -318,17 +315,17 @@ class Event extends React.Component {
 
         let curChild = this.state.eventList[curEventIndex].children[curChildrenIndex];
         if (allWidgetsList) {
+            let curObj =WidgetStore.getWidgetByKey(this.state.wKey);
             if (type == 'conFlag') {
-
                 //获取当前事件的类名
                 let conArr = [];
                 let className = this.state.eventList[curEventIndex].className;
                 if (className) {
-                    propertyMap[className].map((item, index)=> {
-                        if (item.isEvent === true) {
-                            conArr.push(item);
-                        }
+
+                    getPropertyMap(curObj, className, 'events').map((item, index)=> {
+                        conArr.push(item);
                     });
+
                 }
                 if (this.state.eventList[curEventIndex].conOption&&this.state.eventList[curEventIndex].conOption.length > 0) {
                     conArr = this.state.eventList[curEventIndex].conOption;
@@ -351,8 +348,8 @@ class Event extends React.Component {
                     }
                 });
 
-            if (judgeObjClassName && propertyMap[judgeObjClassName]) {
-                propertyMap[judgeObjClassName].map((v, i)=> {
+            if (judgeObjClassName) {
+                getPropertyMap(curObj, judgeObjClassName, 'props').map((v, i)=> {
                     if (name == 'width' || name == 'W') {
                         showName = '宽度';
                     } else if (name == 'height' || name == 'H') {
@@ -389,8 +386,7 @@ class Event extends React.Component {
                    judgeObjClassName = v.className;
                }
            });
-
-           propertyMap[judgeObjClassName].map((v, i)=> {
+           getPropertyMap( WidgetStore.getWidgetByKey(this.state.wKey), judgeObjClassName, 'props').map((v, i)=> {
                if (value == '宽度') {
                    name = 'width';
                } else if (value == '高度') {
@@ -724,17 +720,17 @@ class Event extends React.Component {
         }
 
 
-    showCompareDropDown(name,curEventIndex,curChildrenIndex){
-        let eventList=this.state.eventList;
-        eventList.map((v,i)=>{
-           v.children.map((item,index)=>{
-                if(item.showDropdown){item.showDropdown=false;}
-           });
-        });
-        eventList[curEventIndex].children[curChildrenIndex].showDropdown =true;
-        this.setState({eventList:eventList});
-        this.refs[name].focus();
-    }
+    // showCompareDropDown(name,curEventIndex,curChildrenIndex){
+    //     let eventList=this.state.eventList;
+    //     eventList.map((v,i)=>{
+    //        v.children.map((item,index)=>{
+    //             if(item.showDropdown){item.showDropdown=false;}
+    //        });
+    //     });
+    //     eventList[curEventIndex].children[curChildrenIndex].showDropdown =true;
+    //     this.setState({eventList:eventList});
+    //     this.refs[name].focus();
+    // }
     onSTButtonClick(curChildrenIndex,curEventIndex){
 
         this.curChildrenIndex =curChildrenIndex;

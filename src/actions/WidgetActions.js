@@ -51,6 +51,8 @@ export default Reflux.createActions([
   'copyTreeNode',                   //复制功能入口
   'deleteTreeNode',                 //删除功能入口
   'renameTreeNode',                 //重命名功能入口
+  'originSizeTreeNode',             //原始大小功能入口
+  'originPercentTreeNode',          //原始比例功能入口
 
   'resetTrack',
   'syncTrack',
@@ -68,12 +70,15 @@ export default Reflux.createActions([
   'renameWidget',
   'didSelectTarget',         //选择了目标对象
   'changeContactObj',              //碰撞对象选择
-   'updateConOptions',        //更新触发条件
-    'closeKeyboardMove',      //禁止键盘左右上下移动
+  'updateConOptions',        //更新触发条件
+  'closeKeyboardMove',      //禁止键盘左右上下移动
 
   'updateHistoryRecord',
   'revokedHistory',
   'replyHistory',
   'chooseHistory',
-  'cleanHistory'
+  'cleanHistory',
+
+  'setVersion',                 //版本
+  'changeResource',             //修改资源入口
 ]);

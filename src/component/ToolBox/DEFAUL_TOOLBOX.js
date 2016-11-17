@@ -33,7 +33,7 @@ let remotedeviceIcon = img('remoteDevice.svg');
 let pcdeviceIcon = img('pcDevice.svg');
 let onedarrIcon = img('oneDArr.svg');
 let twodarrIcon = img('twoDArr.svg');
-let composingcontainerIcon = img('composingContainer.svg');
+let flexIcon = img('flex.svg');
 let cominterfaceIcon = img('comInterface.svg');
 let htmlIcon = img('html.svg');
 let inputIcon = img('input.svg');
@@ -42,15 +42,12 @@ let tableIcon = img('table.svg');
 
 let worldIcon = img('world.svg');
 
+let domIcon = img('dom.svg');
+let pageContainerIcon = img('pageContainer.svg');
 // let trackIcon = img('track.svg');
 // let bodyIcon = img('body.svg');
 // let easingIcon = img('easing.svg');
 // let effectIcon = img('effect.svg');
-
-let modeType = {
-    canvas: 2,  //canvas模式
-    dom: 1      //dom模式
-};
 
 var cid = 1;
 var TOOL_ID = {
@@ -85,14 +82,16 @@ var TOOL_ID = {
     PCDEVICE: 28,
     TWODARR: 29,
     ONEDARR: 35,
-    COMPOSINGCONTAINER:30,
+    FLEX:30,
     COMINTERFACE:31,
 
     HTML:32,
     INPUT:33,
     PERSONSALDB:34,
     MODULE : 35,
-    TABLE : 36
+    TABLE : 36,
+    DOM: 37,
+    PAGECONTAINER: 38,
 };
 var shapeParam = {'shapeWidth': 100, 'shapeHeight': 100, 'fillColor':'#FFFFFF', 'lineColor': '#000000'};
 var DEFAULT_TOOLBOX = {
@@ -118,9 +117,15 @@ var DEFAULT_TOOLBOX = {
         key:3,
         gid:3,
         primary: 0,
-        mode: modeType.dom,
         secondary: [
             {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50, 'fontSize':26}}]
+    },{
+        name:'计数器',
+        key:15,
+        gid:15,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0, 'fontSize':26, 'fontFill':'#000000'}}]
     },{
         name:'几何图形',
         key:4,
@@ -139,7 +144,7 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.BUTTON,name:'按钮',icon:buttonIcon, className:'button', drawRect:true,
                 param: {'value': 'Text', 'fillColor':'#3899ec','fontFill':'#FFFFFF', 'radius':20}}, //, 'fontFill':'#000000', 'radius':'20'
             {cid:TOOL_ID.TAPAREA,name:'透明按钮',icon:tapAreaIcon, className:'taparea', drawRect:true,
-                param: { 'fillColor':'#3899ec'}}]
+                param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'#3899ec'}}]
     },{
         name:'二维码',
         key:6,
@@ -161,24 +166,25 @@ var DEFAULT_TOOLBOX = {
         key:8,
         gid:8,
         primary: 0,
-        mode: modeType.dom,
         secondary: [
-            {cid:TOOL_ID.HTML,name:'网页',icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}}]
-    },{
-        name:'文件',
-        key:9,
-        gid:9,
-        primary: 0,
-        secondary: [
+            {cid:TOOL_ID.HTML,name:'网页',icon:htmlIcon, className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}},
             {cid:TOOL_ID.FILE,name:'文件',icon:fileIcon, className:'file'}]
+    // },{
+    //     name:'文件',
+    //     key:9,
+    //     gid:9,
+    //     primary: 0,
+    //     secondary: [
+    //         {cid:TOOL_ID.FILE,name:'文件',icon:fileIcon, className:'file'}]
     },{
         name:'页面',
         key:10,
         gid:10,
         primary: 0,
-        mode: modeType.dom,
         secondary: [
-            {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'}]
+            {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'},
+            {cid:TOOL_ID.PAGECONTAINER,name:'页面容器',icon:pageContainerIcon, className:'pagecontainer'}
+        ]
     },{
         name:'容器',
         key:11,
@@ -193,17 +199,26 @@ var DEFAULT_TOOLBOX = {
         gid:12,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.COMPOSINGCONTAINER,name:'排版容器',icon:composingcontainerIcon, className:'composingcontainer'}
+            {cid:TOOL_ID.FLEX,name:'排版容器',icon:flexIcon, className:'flex', param: {'width': '100%', 'height': '100%'}},
+            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param:{'width': '100%', 'height': '100%'}},
+            {cid:TOOL_ID.DOM,name:'DOM',icon:domIcon, className:'dom', param:{'width': '100%', 'height': '100%'}}
         ]
-    },{
-        name:'画布',
-        key:13,
-        gid:13,
-        primary: 0,
-        mode: modeType.dom,
-        secondary: [
-            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', drawRect:true, param:{'shapeWidth': 300, 'shapeHeight': 300}}
-        ]
+    // },{
+    //     name:'画布',
+    //     key:13,
+    //     gid:13,
+    //     primary: 0,
+    //     secondary: [
+    //         {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param:{'width': '100%', 'height': '100%'}}
+    //     ]
+    // },{
+    //     name:'DOM',
+    //     key:37,
+    //     gid:37,
+    //     primary: 0,
+    //     secondary: [
+    //         {cid:TOOL_ID.DOM,name:'DOM',icon:domIcon, className:'dom', param:{'width': '100%', 'height': '100%'}}
+    //     ]
     },{
         name:'时间轴',
         key:14,
@@ -217,13 +232,6 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer', drawRect:true,
                 param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}}
         ]
-    },{
-        name:'计数器',
-        key:15,
-        gid:15,
-        primary: 0,
-        secondary: [
-            {cid:TOOL_ID.COUNTER, name:'计数器', icon: counterIcon, className:'counter', drawRect:true, param: {'value':0, 'fontSize':26, 'fontFill':'#000000'}}]
     },{
         name:'物理世界',
         key:25,
@@ -272,12 +280,12 @@ var DEFAULT_TOOLBOX = {
         gid:23,
         primary: 0,
         secondary: [{cid:TOOL_ID.WECHAT,name:'微信',icon:wechatIcon, className:'wechat'}]
-    },{
-        name:'组件',
-        key:24,
-        gid:24,
-        primary: 0,
-        secondary: [{cid:TOOL_ID.MODULE,name:'组件',icon:moduleIcon, className:'module'}]
+    // },{
+    //     name:'组件',
+    //     key:24,
+    //     gid:24,
+    //     primary: 0,
+    //     secondary: [{cid:TOOL_ID.MODULE,name:'组件',icon:moduleIcon, className:'module'}]
     // },{
     //     name:'表格',
     //     key:25,
@@ -309,5 +317,4 @@ var DEFAULT_TOOLBOX = {
     // }
 };
 
-export {modeType};
 export default DEFAULT_TOOLBOX;

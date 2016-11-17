@@ -48,6 +48,12 @@ const widgetFlags = {
     CanvasOnly: level <<= 1,
 };
 
+const renderType = {
+    flex: 1,
+    dom: 2,
+    canvas: 3
+};
+
 widgetFlags.FLAG_MASK = widgetFlags.Root | widgetFlags.Box | widgetFlags.Container;
 
 var propertyMap = {};
@@ -69,10 +75,10 @@ propertyMap['root'] = [
     { addProvides: widgetFlags.Root | widgetFlags.Container},
     { name: 'width',showName:'W', type: propertyType.Integer, default: 0, group:'position',  isProperty: true },
     { name: 'height', showName:'H',type: propertyType.Integer, default: 0, group:'position', isProperty: true },
-
     { name: 'scaleType',showName:'适配', type: propertyType.Select, default:'满屏',options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools', isProperty: true},
     { name: 'color',showName:'舞台颜色', type: propertyType.Color2, default: '', group:'tools', isProperty: true },
     { name: 'clipped',showName:'剪切', type: propertyType.Boolean, default: false,group:'tools', isProperty: true },
+
     { name: 'init', showName:'初始化', isEvent: true },
     { name: 'click', showName:'点击', isEvent: true, info:['globalX','globalY']},
     { name: 'touchDown', showName:'手指按下', isEvent: true, info:['globalX','globalY']},
@@ -81,25 +87,20 @@ propertyMap['root'] = [
     { name: 'swipeRight', showName:'向右滑动', isEvent: true },
     { name: 'swipeUp',  showName:'向上滑动', isEvent: true },
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
-    { name: 'create', showName:'创建对象', info:'(class,id,props,bottom)',
-        property:[
-            {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
-            {'name':'id', showName:'ID', 'value':null, 'type':propertyType.String},
-            {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
-        ], isFunc: true },
-    { name: 'gotoPage', showName:'跳转到页面', info:'(page)',
-        property:[
-            {'name':'page', showName:'页面', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
-    { name: 'gotoPageNum', showName:'跳转到页数', info:'(num)',
-        property:[
-            {'name':'num', showName:'页数', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
+    { name: 'create', showName:'创建对象', isFunc: true, info:'(class,id,props,bottom)', property:[
+        {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
+        {'name':'id', showName:'ID', 'value':null, 'type':propertyType.String},
+        {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2}]},
+    { name: 'gotoPage', showName:'跳转到页面', isFunc: true, info:'(page)', property:[
+        {'name':'page', showName:'页面', 'value':null, 'type':propertyType.Integer}]},
+    { name: 'gotoPageNum', showName:'跳转到页数', isFunc: true, info:'(num)', property:[
+        {'name':'num', showName:'页数', 'value':null, 'type':propertyType.Integer}]},
     { name: 'nextPage', showName:'下一页', isFunc: true },
     { name: 'prevPage', showName:'上一页', isFunc: true },
     { name: 'getTouchX', showName:'获取点击的X坐标', isFunc: true },
     { name: 'getTouchY', showName:'获取点击的Y坐标', isFunc: true }
 ];
+
 propertyMap['wechat'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
@@ -107,6 +108,7 @@ propertyMap['wechat'] = [
     { name: 'desc', type: propertyType.String, default: '', isProperty: true },
     { name: 'imgUrl', type: propertyType.String, default: '', isProperty: true }
 ];
+
 propertyMap['box'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
@@ -130,75 +132,74 @@ propertyMap['box'] = [
     { name: 'swipeDown', showName:'向下滑动', isEvent: true },
     { name: 'show', showName:'显示', isEvent: true },
     { name: 'hide', showName:'隐藏', isEvent: true },
+
     { name: 'toggleVisible', showName:'交替显示', isFunc: true },
     { name: 'hideSibling', showName:'隐藏同层控件', isFunc: true },
     { name: 'show', showName:'显示', isFunc: true },
     { name: 'hide', showName:'隐藏', isFunc: true },
 ];
+
 propertyMap['sprite'] = [
     ...propertyMap['box'],
 ];
+
 propertyMap['textBox']=[
     { name: 'fontFamily',showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', isProperty: true },
     { name: 'fontSize',showName:'字体大小', type: propertyType.Number,group:'tools', default: 26, isProperty: true },
     { name: 'fontFill',showName:'字体颜色', type: propertyType.Color,group:'tools', default: '#000000', isProperty: true },
 ];
+
 propertyMap['text'] = [
-    { name: 'changeValue', showName:'赋值', info:'(value)',
-        property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
-        ], isFunc: true },
+    { name: 'changeValue', showName:'赋值', isFunc:true, info:'(value)', property:[
+        {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}]},
+
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
+
     { name: 'isMatch', showName:'匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'isUnMatch', showName:'不匹配', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'Contain', showName:'包含文本', isEvent: true,needFill:[{showName:'文本',type:'string',default:''}]},
     { name: 'change', showName:'内容改变', isEvent: true},
 
 ];
+
 propertyMap['counter'] = [
-    { name: 'changeValue', showName:'赋值', info:'(value)',
-        property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
-        ], isFunc: true },
+    { name: 'changeValue', showName:'赋值', info:'(value)', property:[
+        {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}], isFunc: true },
     { name: 'add1', showName:'加1', isFunc: true },
     { name: 'minus1', showName:'减1', isFunc: true },
-    { name: 'addN', showName:'加N',
-        property:[
-            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
-    { name: 'minusN', showName:'减N',
-        property:[
-            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
+    { name: 'addN', showName:'加N', property:[
+        {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}], isFunc: true },
+    { name: 'minusN', showName:'减N', property:[
+        {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}], isFunc: true },
     { name: 'getInt', showName:'取整', isFunc: true },
-    { name: 'randomValue', showName:'生成随机数',
-        property:[
-            {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
-            {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
+    { name: 'randomValue', showName:'生成随机数', property:[
+        {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
+        {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}], isFunc: true },
     ...propertyMap['sprite'],
     { name: 'value',showName:'数值', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'precision', type: propertyType.Integer,group:'tools', default: 0, isProperty: true },
     ...propertyMap['textBox'],
     //事件面板所需触发条件
-    { name: '==', showName:'等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
-    { name: '!=', showName:'不等于', isEvent: true,needFill:[{showName:'值',type:'number',default:''}]},
-    { name: '>', showName:'大于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
-    { name: '<', showName:'小于', isEvent: true ,needFill:[{showName:'值',type:'number',default:''}]},
-    { name: 'valRange', showName:'数值范围', isEvent: true,needFill:[{showName:'最大值',type:'number',default:''},{showName:'最小值',type:'number',default:''}]},
+    { name: '==', showName:'等于', isEvent: true, needFill:[{showName:'值',type:'number',default:''}]},
+    { name: '!=', showName:'不等于', isEvent: true, needFill:[{showName:'值',type:'number',default:''}]},
+    { name: '>', showName:'大于', isEvent: true, needFill:[{showName:'值',type:'number',default:''}]},
+    { name: '<', showName:'小于', isEvent: true, needFill:[{showName:'值',type:'number',default:''}]},
+    { name: 'valRange', showName:'数值范围', isEvent: true, needFill:[{showName:'最大值',type:'number',default:''}, {showName:'最小值',type:'number',default:''}]},
     { name: 'change', showName:'数值改变', isEvent: true },
     { name: 'positive', showName:'为正数', isEvent: true },
     { name: 'negative', showName:'为负数', isEvent: true },
     { name: 'odd', showName:'为奇数', isEvent: true },
     { name: 'even', showName:'为偶数', isEvent: true },
-    { name: 'remainder', showName:'余数为', isEvent: true ,needFill:[{showName:'除数',type:'number',default:''},{showName:'余数',type:'number',default:''}]},
+    { name: 'remainder', showName:'余数为', isEvent: true, needFill:[{showName:'除数',type:'number',default:''}, {showName:'余数',type:'number',default:''}]},
 ];
+
 propertyMap['video'] = [
     ...propertyMap['sprite'],
     { name: 'url',showName:'资源位置', type: propertyType.String, default: '', isProperty: true },
 ];
+
 propertyMap['audio'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
@@ -206,14 +207,17 @@ propertyMap['audio'] = [
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true }
 ];
+
 propertyMap['image'] = [
     ...propertyMap['sprite'],
     { name: 'link',showName:'资源', type: propertyType.Integer, default:0, isProperty: false },
 ];
+
 propertyMap['imagelist'] = [
     ...propertyMap['sprite'],
     { name: 'delay', type: propertyType.Number, default: 0.2, isProperty: true },
 ];
+
 propertyMap['bitmaptext'] = [
     ...propertyMap['sprite'],
     { name: 'value',showName:'内容', type: propertyType.Text, default:'', isProperty: true },
@@ -222,11 +226,13 @@ propertyMap['bitmaptext'] = [
     { name: 'color', showName:'文字颜色', type: propertyType.Color, default:'',group:'tools', isProperty: true },
     { name: 'lineHeight',showName:'行距', type: propertyType.Integer, default:10,group:'tools', isProperty: true },
 ];
+
 propertyMap['qrcode'] = [
     ...propertyMap['sprite'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
     { name: 'value',showName:'数据', type: propertyType.String, default:'', isProperty: true },
 ];
+
 propertyMap['graphics'] = [
     ...propertyMap['box'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
@@ -235,30 +241,33 @@ propertyMap['graphics'] = [
     { name: 'lineWidth',showName:'描边宽度', type: propertyType.Integer, default: 1, group:'display', isProperty: true },
 
 ];
+
 propertyMap['rect'] = [
     ...propertyMap['graphics'],
     { name: 'radius',showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools', isProperty: true },
 ];
+
 propertyMap['taparea'] = [
     ...propertyMap['box'],
     { name: 'fillColor',showName:'填充颜色', type: propertyType.Color, default: '', group:'display', isProperty: true },
 ];
+
 propertyMap['button'] = [
     ...propertyMap['rect'],
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true } ,
     ...propertyMap['textBox'],
 ];
+
 propertyMap['slidetimer'] = [
     ...propertyMap['box'],
     { addProvidesRecursive: widgetFlags.Timer, addProvides: widgetFlags.Container},
     { name: 'fillColor', type: propertyType.Color, default: '', group:'display', isProperty: true },
-
     { name: 'totalTime',showName:'总时长', type: propertyType.Number, group:'tools',default: 10, isProperty: true},
     { name: 'vertical',showName:'滑动方向', type: propertyType.Select,group:'tools', default: '垂直',options:{'垂直':true,'水平':false}, isProperty: true },
     { name: 'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1, isProperty: true},
     { name: 'loop', showName:'循环播放', type: propertyType.Boolean,group:'tools', default: false, isProperty: true}
-
 ];
+
 propertyMap['html'] = [
     ...propertyMap['box'],
     { addRequires: widgetFlags.DomOnly},
@@ -268,6 +277,7 @@ propertyMap['html'] = [
     { name: 'shapeWidth',showName:'原始宽', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'shapeHeight',showName:'原始高', type: propertyType.Integer, default: 0, group:'position', isProperty: true},
 ];
+
 propertyMap['input'] = [
     ...propertyMap['box'],
     { addRequires: widgetFlags.DomOnly},
@@ -277,33 +287,32 @@ propertyMap['input'] = [
     { name: 'shapeWidth', type: propertyType.Integer, default: 0, group:'position', isProperty: false },
     { name: 'shapeHeight', type: propertyType.Integer, default: 0, group:'position', isProperty: false},
     { name: 'color',showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF', isProperty: true },
-
     { name: 'isEmpty', showName:'为空', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
     { name: 'isNotEmpty', showName:'不为空', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
     { name: 'isMatch', showName:'匹配', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
     { name: 'isUnMatch', showName:'不匹配', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
     { name: 'isContain', showName:'包含文本', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'文本',type:'string',default:''}]},
-
     { name: 'lenEqual', showName:'长度等于', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
     { name: 'lenUnEqual', showName:'长度不等于', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
     { name: 'lenBigThan', showName:'长度大于', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
     { name: 'lenLessThan', showName:'长度小于', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-
     { name: 'isNum', showName:'是数字', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
     { name: 'isNotNum', showName:'不是数字', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
     { name: 'isLetter', showName:'是字母', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
     { name: 'isNotLetter', showName:'不是字母', isEvent: true,needFill:[{type:'select', option:['change','blur','onDemand'],default:'change'}]},
-
     ...propertyMap['textBox']
 
 ];
+
 propertyMap['ellipse'] = [
     ...propertyMap['graphics']
 ];
+
 propertyMap['path'] = [
     ...propertyMap['graphics'],
     { name: 'path',showName:'路径', type: propertyType.String, default: '', isProperty: false }
 ];
+
 propertyMap['container'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
@@ -312,7 +321,7 @@ propertyMap['container'] = [
     { name: 'scaleX', showName:'W',type: propertyType.Float, default: 0, group:'position', isProperty: true },
     { name: 'scaleY',showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
     { name: 'keepRatio',showName:'等比缩放', type: propertyType.Boolean, default:false, isProperty: false },
- //   { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
+    //   { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
     { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
     { name: 'alpha',showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
@@ -332,15 +341,11 @@ propertyMap['container'] = [
     { name: 'show', showName:'显示', isFunc: true },
     { name: 'hide', showName:'隐藏', isFunc: true },
     { addProvides: widgetFlags.Container},
-    { name: 'create', showName:'创建对象', info:'(class,id,props,bottom)',
-        property:[
-            {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
-            {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
-            {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2},
-        ], isFunc: true }
+    { name: 'create', showName:'创建对象', info:'(class,id,props,bottom)', property:[
+        {'name':'class', showName:'类别', 'value':null, 'type':propertyType.Select},
+        {'name':'id', showName:'ID', 'value':null, 'type':propertyType.Integer},
+        {'name':'bottom', showName:'是否置底', 'value':null, 'type':propertyType.Boolean2}], isFunc: true }
 ];
-
-
 
 propertyMap['canvas'] = [
     ...propertyMap['container'],
@@ -348,6 +353,7 @@ propertyMap['canvas'] = [
     { name: 'width', type: propertyType.Integer, default: 0, group:'position', isProperty: true },
     { name: 'height', type: propertyType.Integer, default: 0, group:'position', isProperty: true}
 ];
+
 propertyMap['page'] = [
     // ...propertyMap['container'],
     ...propertyMap['widget'],
@@ -413,7 +419,7 @@ propertyMap['page'] = [
     },isProperty: true },
     { name: 'forwardTransition',showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:{
         '同上一页':-1,
-         '无':0,
+        '无':0,
         '向左滑走（平移）':1,
         '向右滑走（平移）':2,
         '向上滑走（平移）':3,
@@ -433,7 +439,6 @@ propertyMap['page'] = [
         '缩小向右':18,
         '缩小向上':19,
         '缩小向下':20,
-
 
         '缩小向后':21,
         '放大向前':22,
@@ -472,12 +477,14 @@ propertyMap['page'] = [
     },isProperty: true },
     { name: 'bgColor',showName:'背景颜色', type: propertyType.Color, default: '', isProperty: true }
 ];
+
 propertyMap['class'] = [
     ...propertyMap['container'],
     { name: 'width', type: propertyType.Integer, default: 0, readOnly: true, group:'position',  isProperty: true },
     { name: 'height', type: propertyType.Integer, default: 0, readOnly: true, group:'position', isProperty: true },
     { name: 'init', showName:'初始化', isEvent: true }
 ];
+
 propertyMap['timer'] = [
     ...propertyMap['container'],
     { addProvides: widgetFlags.Timer},
@@ -487,13 +494,12 @@ propertyMap['timer'] = [
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'replay', showName:'重新播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true },
-    { name: 'seek', showName:'跳至', info: '(time)',
-        property:[
-            {'name':'time', showName:'跳至', 'value':null, 'type':propertyType.Float},
-        ], isFunc: true },
+    { name: 'seek', showName:'跳至', info: '(time)', property:[
+        {'name':'time', showName:'跳至', 'value':null, 'type':propertyType.Float}], isFunc: true},
     { name: 'loop', showName:'重复播放', isEvent: true },
     { name: 'stop', showName:'停止', isEvent: true }
 ];
+
 propertyMap['world'] = [
     ...propertyMap['container'],
     { addRequires: widgetFlags.Root | widgetFlags.CanvasOnly},
@@ -509,6 +515,7 @@ propertyMap['world'] = [
     { name: 'pause', showName:'暂停', isFunc: true },
     { name: 'tick',  showName:'每一帧', isEvent: true }
 ];
+
 propertyMap['body'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box | widgetFlags.CanvasOnly},
@@ -532,6 +539,7 @@ propertyMap['body'] = [
     // { name: 'beginContact', showName:'开始碰撞', info:'{target}', isEvent: true ,needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
     // { name: 'endContact', showName:'结束碰撞', info:'{target}', isEvent: true, needFill:[{showName:'碰撞对象',type:'select', option:[],default:'请选择'}]},
 ];
+
 propertyMap['easing'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Box, addProvides:widgetFlags.Leaf},
@@ -607,38 +615,38 @@ propertyMap['effect'] = [
         '飞入（自右）':'slideInRight',
         '飞入（自下）':'slideInUp'
     }, options:{
-     '弹性进入':'bounceIn',
-     '弹性进入（从上）':'bounceInDown',
-     '弹性进入（从左）':'bounceInLeft',
-     '弹性进入（从右）':'bounceInRight',
-     '弹性进入（从下）':'bounceInUp',
-     '淡入':'fadeIn',
-     '自上淡入':'fadeInDown',
-     ' 自上淡入（长距离）':'fadeInDownBig',
-     '自左淡入':'fadeInLeft',
-     '自左淡入（长距离）':'fadeInLeftBig',
-     '自右淡入':'fadeInRight',
-     '自右淡入（长距离）':'fadeInRightBig',
-     '自下淡入':'fadeInUp',
-     '自下淡入（长距离）':'fadeInUpBig',
-     '翻转进入（上下）':'flipInX',
-     '翻转进入（左右）':'flipInY',
-     '光速进入':'lightSpeedIn',
-     '滚动进入':'rollIn',
-     '旋转进入':'rotateIn',
-     '旋转进入（自左上）':'rotateInDownLeft',
-     '旋转进入（自右上）':'rotateInDownRight',
-     '旋转进入（自左下）':'rotateInUpLeft',
-     '旋转进入（自右下）':'rotateInUpRight',
-     '放大出现':'zoomIn',
-     ' 放大出现（自上）':'zoomInDown',
-     '放大出现（自左）':'zoomInLeft',
-     '放大出现（自右）':'zoomInRight',
-     '放大出现（自下）':'zoomInUp',
-     '飞入（自上）':'slideInDown',
-     '飞入（自左）':'slideInLeft',
-     '飞入（自右）':'slideInRight',
-     '飞入（自下）':'slideInUp',
+        '弹性进入':'bounceIn',
+        '弹性进入（从上）':'bounceInDown',
+        '弹性进入（从左）':'bounceInLeft',
+        '弹性进入（从右）':'bounceInRight',
+        '弹性进入（从下）':'bounceInUp',
+        '淡入':'fadeIn',
+        '自上淡入':'fadeInDown',
+        ' 自上淡入（长距离）':'fadeInDownBig',
+        '自左淡入':'fadeInLeft',
+        '自左淡入（长距离）':'fadeInLeftBig',
+        '自右淡入':'fadeInRight',
+        '自右淡入（长距离）':'fadeInRightBig',
+        '自下淡入':'fadeInUp',
+        '自下淡入（长距离）':'fadeInUpBig',
+        '翻转进入（上下）':'flipInX',
+        '翻转进入（左右）':'flipInY',
+        '光速进入':'lightSpeedIn',
+        '滚动进入':'rollIn',
+        '旋转进入':'rotateIn',
+        '旋转进入（自左上）':'rotateInDownLeft',
+        '旋转进入（自右上）':'rotateInDownRight',
+        '旋转进入（自左下）':'rotateInUpLeft',
+        '旋转进入（自右下）':'rotateInUpRight',
+        '放大出现':'zoomIn',
+        ' 放大出现（自上）':'zoomInDown',
+        '放大出现（自左）':'zoomInLeft',
+        '放大出现（自右）':'zoomInRight',
+        '放大出现（自下）':'zoomInUp',
+        '飞入（自上）':'slideInDown',
+        '飞入（自左）':'slideInLeft',
+        '飞入（自右）':'slideInRight',
+        '飞入（自下）':'slideInUp',
 
         '弹跳':'bounce',
         '闪烁':'flash',
@@ -684,8 +692,7 @@ propertyMap['effect'] = [
         '飞出（向左）':'slideOutLeft',
         '飞出（向右）':'slideOutRight',
         '飞出（向上）':'slideOutUp'
-}, isProperty: true },
-
+    }, isProperty: true },
     { name: 'duration',showName:'时长', type: propertyType.Number, default: 1, isProperty: true },
     { name: 'count',showName:'播放次数', type: propertyType.Integer, default: 1, isProperty: true },
     { name: 'initHide',showName:'初始隐藏', type: propertyType.Boolean, default: false, isProperty: true },
@@ -693,6 +700,7 @@ propertyMap['effect'] = [
     { name: 'play', showName:'播放', isFunc: true },
     { name: 'pause', showName:'暂停', isFunc: true }
 ];
+
 propertyMap['track'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Timer | widgetFlags.Unique, addProvides:widgetFlags.Leaf},
@@ -700,72 +708,59 @@ propertyMap['track'] = [
     { name: 'startTime', type: propertyType.Number, default: 0, isProperty: true },
     { name: 'endTime', type: propertyType.Number, default: 0, isProperty: true }
 ];
+
 propertyMap['db'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
-    { name: 'find', showName:'输出', isFunc: true, info:'(option, callback(err, result))',
-        property:[
-            // {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.ObjectSelect},
-            {'name':'type', showName:'普通', 'value':'normal', 'type':propertyType.Hidden},
-            {'name':'conditions', showName:'输出条件', 'value':[{field:null,operation:'=',compare:null}], 'type':propertyType.DBCons},
-            {'name':'order', showName:'排序方式', 'value':{field:null, asc:true}, 'type':propertyType.DBOrder},
-            {'name':'lines', showName:'输出行数', 'value':{from:null, to:null}, 'type':propertyType.Range},
-            {'name':'object', showName:'输出至对象', 'value':null, 'type':propertyType.Object},
-            {'name':'onlyMe', showName:'仅当前用户', 'value':false, 'type':propertyType.Boolean3},
-            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
-        ]},
-    { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))',
-        property:[
-            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect},
-            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
-        ]},
-    { name: 'update', showName:'更新', isFunc: true, info:'(data, callback(err, result))',
-        property:[
-            {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect},
-            // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
-        ]}
+    { name: 'find', showName:'输出', isFunc: true, info:'(option, callback(err, result))', property:[
+        // {'name':'option', showName:'输出至', 'value':null, 'type':propertyType.ObjectSelect},
+        {'name':'type', showName:'普通', 'value':'normal', 'type':propertyType.Hidden},
+        {'name':'conditions', showName:'输出条件', 'value':[{field:null,operation:'=',compare:null}], 'type':propertyType.DBCons},
+        {'name':'order', showName:'排序方式', 'value':{field:null, asc:true}, 'type':propertyType.DBOrder},
+        {'name':'lines', showName:'输出行数', 'value':{from:null, to:null}, 'type':propertyType.Range},
+        {'name':'object', showName:'输出至对象', 'value':null, 'type':propertyType.Object},
+        {'name':'onlyMe', showName:'仅当前用户', 'value':false, 'type':propertyType.Boolean3}]},
+    // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+    { name: 'insert', showName:'提交', isFunc: true, info:'(data, callback(err, result))', property:[
+        {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]},
+    // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
+    { name: 'update', showName:'更新', isFunc: true, info:'(data, callback(err, result))', property:[
+        {'name':'data', showName:'选择来源', 'value':null, 'type':propertyType.ObjectSelect}]}
+    // {'name':'callback(err, result)', showName:'回调函数', 'value':null, 'type':propertyType.Function},
 ];
+
 propertyMap['sock'] = [
     ...propertyMap['widget'],
     { addRequires: widgetFlags.Root},
     { name: 'sockName' , showName:'名称',  type: propertyType.String, default: null, readOnly:true , isProperty: true},
     { name: 'listened', showName:'是否监听', type: propertyType.Boolean, default: false, isProperty: true },
     { name: 'message', showName:'消息', isEvent: true, info:'data', needFill:[{showName:'值',type:'var',default:null, actionName:'message'}]},
-    { name: 'send', showName:'发送消息', isFunc: true, info:'(data)',
-        property:[
-            {'name':'value', showName:'内容', 'value':null, 'type':propertyType.FormulaInput},
-        ]},
+    { name: 'send', showName:'发送消息', isFunc: true, info:'(data)', property:[
+        {'name':'value', showName:'内容', 'value':null, 'type':propertyType.FormulaInput}]},
 ];
+
 propertyMap['strVar'] = [
-    { name: 'changeValue', showName:'赋值', info:'(value)',
-        property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
-        ], isFunc: true },
+    { name: 'changeValue', showName:'赋值', info:'(value)', property:[
+        {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}], isFunc: true },
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
+
 propertyMap['intVar'] = [
-    { name: 'changeValue', showName:'赋值', info:'(value)',
-        property:[
-            {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput},
-        ], isFunc: true },
+    { name: 'changeValue', showName:'赋值', info:'(value)', property:[
+        {'name':'value', showName:'值', 'value':null, 'type':propertyType.FormulaInput}], isFunc: true },
     { name: 'add1', showName:'加1', isFunc: true },
     { name: 'minus1', showName:'减1', isFunc: true },
-    { name: 'addN', showName:'加N',
-        property:[
-            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
-    { name: 'minusN', showName:'减N',
-        property:[
-            {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
+    { name: 'addN', showName:'加N', property:[
+        {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}], isFunc: true },
+    { name: 'minusN', showName:'减N', property:[
+        {'name':'value', showName:'N', 'value':null, 'type':propertyType.Integer}], isFunc: true },
     { name: 'getInt', showName:'取整', isFunc: true },
-    { name: 'randomValue', showName:'生成随机数',
-        property:[
-            {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
-            {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer},
-        ], isFunc: true },
+    { name: 'randomValue', showName:'生成随机数', property:[
+        {'name':'minValue', showName:'最小值', 'value':null, 'type':propertyType.Integer},
+        {'name':'maxValue', showName:'最大值', 'value':null, 'type':propertyType.Integer}], isFunc: true },
     { name: 'value',showName:'内容', type: propertyType.Text,  default: '', isProperty: true }
 ];
+
 propertyMap['oneDArr'] = [
     { addRequires: widgetFlags.Root},
     { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
@@ -773,6 +768,7 @@ propertyMap['oneDArr'] = [
     { name: 'column', showName:'列',type: propertyType.Integer, default: 0, group:"dArr", isProperty: true },
     { name: 'getRoot', showName:'获取父级对象', isFunc: true },
 ];
+
 propertyMap['twoDArr'] = [
     { addRequires: widgetFlags.Root},
     { name: 'title',showName:'变量名', type: propertyType.String, default: '', isProperty: true },
@@ -816,12 +812,8 @@ propertyMap['table'] = [
     { name: 'fontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
 
-    {
-        name: 'getResult', showName: '获取表格数据', isFunc: true, info: '(pageNum)',
-        property: [
-            {'name': 'pageNum', showName: '页数', 'value': null, 'type': propertyType.Integer},
-        ]
-    },
+    { name: 'getResult', showName: '获取表格数据', isFunc: true, info: '(pageNum)', property: [
+        {'name': 'pageNum', showName: '页数', 'value': null, 'type': propertyType.Integer}]},
     { name: 'nextResult', showName:'获取下一页数据', isFunc: true},
     { name: 'prevResult', showName:'获取上一页数据', isFunc: true},
 
@@ -841,7 +833,6 @@ propertyMap['table'] = [
     //{ name: 'altColor', type: propertyType.Color, default: '', group:'display', group:'cell', isProperty: true },
 ];
 
-
 propertyMap['tableForSet'] = [
     ...propertyMap['widget'],
     { addProvides: widgetFlags.Box, addRequires: widgetFlags.Container},
@@ -851,7 +842,6 @@ propertyMap['tableForSet'] = [
     { name: 'scaleY',showName:'H',showLock:true ,type: propertyType.Float, default: 0, group:'position', isProperty: true},
     { name: 'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',isProperty: true },
     { name: 'rotation',showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position', isProperty: true },
-
 
     {name:'rowNum', showName:'行数', default : 0, type:propertyType.Integer , group:"tableP", isProperty: true},
     {name:'header', showName:'列数', default : 0, type:propertyType.Integer , group:"tableP", isProperty: true},
@@ -867,7 +857,6 @@ propertyMap['tableForSet'] = [
     { name: 'fillColor',showName:'表格底色', type: propertyType.Color,group:'display', default: '', isProperty: true },
     { name: 'altColor',showName:'隔行颜色', type: propertyType.Color,group:'display', default: '', isProperty: true },
 
-
     { name: 'lineColor',showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', isProperty: true , tbCome:"tbF"},
     { name: 'lineWidth',showName:'网格大小', type: propertyType.Integer,group:'tableW', default: '2', isProperty: true , tbCome:"tbS"},
 
@@ -876,12 +865,8 @@ propertyMap['tableForSet'] = [
     { name: 'fontFill',showName:'文字颜色', type: propertyType.Color,group:'tools', default: '', isProperty: true },
     { name: 'initVisible',showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools', isProperty: true },
 
-    {
-        name: 'getResult', showName: '获取表格数据', isFunc: true, info: '(pageNum)',
-        property: [
-            {'name': 'pageNum', showName: '页数', 'value': null, 'type': propertyType.Integer},
-        ]
-    },
+    { name: 'getResult', showName: '获取表格数据', isFunc: true, info: '(pageNum)', property: [
+        {'name': 'pageNum', showName: '页数', 'value': null, 'type': propertyType.Integer}]},
     { name: 'nextResult', showName:'获取下一页数据', isFunc: true},
     { name: 'prevResult', showName:'获取上一页数据', isFunc: true}
 ];
@@ -948,7 +933,7 @@ function checkNotInDomMode(selected, className) {
         return false;
     }
     var requires = propertyFlags[className].requires;
-    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selectWidget.node) != 1)
+    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selectWidget.node) != renderType.dom)
         return true;
     return false;
 }
@@ -966,7 +951,7 @@ function checkNotInCanvasMode(selected, className) {
         return false;
     }
     var requires = propertyFlags[className].requires;
-    if ((requires & widgetFlags.CanvasOnly) != 0 && bridge.getRendererType(selectWidget.node) != 2)
+    if ((requires & widgetFlags.CanvasOnly) != 0 && bridge.getRendererType(selectWidget.node) != renderType.canvas)
         return true;
     return false;
 }
@@ -1020,9 +1005,9 @@ function checkChildClass(selected, className) {
         return false;
     if ((requires & widgetFlags.Timer) != 0 && !selected.timerWidget)
         return false;
-    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selected.node) != 1)
+    if ((requires & widgetFlags.DomOnly) != 0 && bridge.getRendererType(selected.node) != renderType.dom)
         return false;
-    if ((requires & widgetFlags.CanvasOnly) != 0 && bridge.getRendererType(selected.node) != 2)
+    if ((requires & widgetFlags.CanvasOnly) != 0 && bridge.getRendererType(selected.node) != renderType.canvas)
         return false;
     if ((requires & widgetFlags.Unique) != 0) {
         for (var index in selected.children) {

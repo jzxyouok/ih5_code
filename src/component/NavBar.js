@@ -23,7 +23,7 @@ import WidgetStore, {nodeType} from '../stores/WidgetStore';
 import DbHeaderAction from '../actions/DbHeader'
 import DbHeaderStores from '../stores/DbHeader';
 import DrawRect from './ToolBox/DrawRect';
-import {checkChildClass} from './PropertyMap';
+import {checkChildClass} from './tempMap';
 import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
@@ -339,7 +339,7 @@ class NavBar extends React.Component {
 
     newWork() {
         this.workid = null;
-        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040, 'color':'#FFFFFF'}, links:[]}});
+        WidgetActions['initTree']({'stage':{'cls': 'root', 'props': {'width': 640, 'height': 1040, 'backgroundColor':'#FFFFFF'}, links:[]}});
     }
 
     getWorks(token) {
@@ -348,6 +348,9 @@ class NavBar extends React.Component {
             if (result['name']) {
                 this.playUrl = result['playUrl'];
                 this.fileUrl = result['fileUrl'];
+                if (result['version']) {
+                    WidgetActions['setVersion'](result['version']);
+                }
                 bridge.setFilePath(this.fileUrl + 'files/');
                 this.setState({
                     loginVisible: false,
@@ -1211,10 +1214,11 @@ class NavBar extends React.Component {
                              style={{ left : this.props.expanded? '64px':'36px'}}>
                             <ul className="special-list">
                                 <li className="f--hlc create-li"
-                                    onMouseOver={ this.createWorkShow }
-                                    onMouseOut={ this.createWorkHide }>
+                                    onClick={this.createWork.bind(this,false)}>
+                                    {/*onMouseOver={ this.createWorkShow }*/}
+                                    {/*onMouseOut={ this.createWorkHide }>*/}
                                     新建作品
-                                    <span className="icon" />
+                                    {/*<span className="icon" />*/}
                                 </li>
                                 <li className="f--hlc open-li"
                                     onMouseOver={ this.openWorkShow }
@@ -1249,14 +1253,14 @@ class NavBar extends React.Component {
                                 </ul>
                             </div>
 
-                            <div className={ $class("create-li-content",{"hidden": !this.state.createWork})}
-                                 onMouseOver={ this.createWorkShow }
-                                 onMouseOut={ this.createWorkHide }>
-                                <ul>
-                                    <li onClick={ this.createWork.bind(this,true) }>网页</li>
-                                    <li onClick={ this.createWork.bind(this,false) }>画布</li>
-                                </ul>
-                            </div>
+                            {/*<div className={ $class("create-li-content",{"hidden": !this.state.createWork})}*/}
+                                 {/*onMouseOver={ this.createWorkShow }*/}
+                                 {/*onMouseOut={ this.createWorkHide }>*/}
+                                {/*<ul>*/}
+                                    {/*<li onClick={ this.createWork.bind(this,true) }>网页</li>*/}
+                                    {/*<li onClick={ this.createWork.bind(this,false) }>画布</li>*/}
+                                {/*</ul>*/}
+                            {/*</div>*/}
                         </div>
 
                         <div className='left-group f--hlc'>
