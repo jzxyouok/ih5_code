@@ -3641,8 +3641,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
+        //   xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+       xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
