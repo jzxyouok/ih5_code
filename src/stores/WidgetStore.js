@@ -2418,6 +2418,8 @@ export default Reflux.createStore({
             }
         }
 
+        console.log(obj);
+
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;
