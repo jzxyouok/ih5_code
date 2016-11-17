@@ -31,7 +31,6 @@ class Property extends React.Component {
         super(props);
         this.state = {
             expanded: true,
-            isLarge: props.isLarge,
             activeKey: this.props.activeKey,//当前激活的widgetkey
             wKey: this.props.wKey,      //specfic所在的widgetkey
             event: this.props.event,        //对应的事件
@@ -94,7 +93,6 @@ class Property extends React.Component {
     componentWillReceiveProps(nextProps) {
         if(nextProps.activeKey){
             this.setState({
-                isLarge: nextProps.isLarge,
                 activeKey: nextProps.activeKey,
                 event: nextProps.event,
                 wKey: nextProps.wKey,
@@ -102,11 +100,17 @@ class Property extends React.Component {
 
                 currentObject: nextProps.specific.object,
                 currentAction: nextProps.specific.action,
-                currentEnable: nextProps.specific.enable
+                currentEnable: nextProps.specific.enable,
+
+                contactObj: nextProps.contactObj
             }, ()=>{
                 //获取动作
                 if(this.state.currentObject){
                     this.onGetActionList(this.state.currentObject);
+                }
+                if(this.state.contactObj === null &&
+                    (this.state.currentObject === 'param.target'||this.state.currentObject === 'target')) {
+                    WidgetActions['changeSpecific'](this.state.specific, {'object':'this'});
                 }
             });
         }
@@ -147,15 +151,6 @@ class Property extends React.Component {
                         this.arrList.push(v);
                     }
                 });
-            });
-        } else if (widget.contactObj!==undefined) {
-            this.setState({
-                contactObj: widget.contactObj
-            }, ()=>{
-                if(this.state.contactObj === null &&
-                    (this.state.currentObject === 'param.target'||this.state.currentObject === 'target')) {
-                    WidgetActions['changeSpecific'](this.state.specific, {'object':'this'});
-                }
             });
         }
         if(widget.historyPropertiesUpdate){

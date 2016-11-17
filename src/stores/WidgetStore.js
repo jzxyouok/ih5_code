@@ -1692,7 +1692,6 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['chooseHistory'], this.chooseHistory);
         this.listenTo(WidgetActions['cleanHistory'], this.cleanHistory);
 
-        this.listenTo(WidgetActions['changeContactObj'], this.changeContactObj);
         this.listenTo(WidgetActions['updateConOptions'], this.updateConOptions);
         //this.currentActiveEventTreeKey = null;//初始化当前激活事件树的组件值
 
@@ -3794,9 +3793,6 @@ export default Reflux.createStore({
             classList: classList,
             historyPropertiesUpdate : true
         });
-    },
-    changeContactObj:function (key) {
-        this.trigger({contactObj:key});
     },
 
     setVersion(v) {

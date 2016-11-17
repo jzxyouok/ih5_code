@@ -61,6 +61,8 @@ class Event extends React.Component {
 
         this.onFormulaInputFocus = this.onFormulaInputFocus.bind(this);
         this.onFormulaInputBlur = this.onFormulaInputBlur.bind(this);
+
+        this.getContactObjKey = this.getContactObjKey.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -651,7 +653,7 @@ class Event extends React.Component {
                         } else {
                             v.children.map(findChildKey);
                         }
-                    }
+                    };
 
                     this.state.initTree.map((v, i)=> {
                         let node = v.tree;
@@ -674,8 +676,6 @@ class Event extends React.Component {
                         optionArr.push(<Option key={i} value={v.toString()}
                                                className='dropDown-input-option'>{WidgetStore.getWidgetByKey(v).props.name}</Option>);
                     });
-
-                    WidgetActions['changeContactObj'](item.default == '请选择' ? null : item.default);
 
                     return <Select disabled={!obj.enable}
                                    className='dropDown-input-content'
@@ -783,6 +783,18 @@ class Event extends React.Component {
         document.getElementById('EBContentLayer').style.overflow = 'scroll';
         document.getElementById('EventBox').style.top = '37px';
         document.getElementById('EventBox').style.zIndex = 50;
+    }
+
+    getContactObjKey(v) {
+        let objKey = null;
+        if(v&&v.needFill) {
+            v.needFill.forEach((v1)=>{
+                if(v1.showName === '碰撞对象') {
+                    objKey = v1.default;
+                }
+            })
+        }
+        return objKey;
     }
 
     content(v,i){
@@ -990,6 +1002,7 @@ class Event extends React.Component {
                                 return <Property key={i2}
                                                  specific={v2}
                                                  event={v}
+                                                 contactObj={this.getContactObjKey(v)}
                                                  dbList={this.props.dbList}
                                                  wKey={this.props.wKey}
                                                  activeKey={this.props.activeKey}/>
