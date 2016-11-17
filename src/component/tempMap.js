@@ -160,7 +160,7 @@ let propMapping = {
 
     'padding': {name:'padding', showName:'内间距', type: propertyType.String, default:'',group:'tools3'},
     'flexDirection': {name:'flexDirection', showName:'主轴方向', type: propertyType.Select, default: '左右',options:{'上下':'column','下上':'column-reverse','左右':'row', '右左':'row-reverse'},group:'tools3'},
-    'justifyContent': {name:'justifyContent', showName:'主轴对齐', type: propertyType.Select, default:'flex-start', options:{'靠前':'flex-start','靠后':'flex-end','居中':'center', '均分（靠边）':'space-around','均分（不靠边）':'space-end'},group:'tools3'},
+    'justifyContent': {name:'justifyContent', showName:'主轴对齐', type: propertyType.Select, default:'靠前', options:{'靠前':'flex-start','靠后':'flex-end','居中':'center', '均分（靠边）':'space-between','均分（不靠边）':'space-around'},group:'tools3'},
     'alignItems': {name:'alignItems', showName:'副轴对齐', type: propertyType.Select, default:'靠前',options:{'靠前':'flex-start','靠后':'flex-end','居中':'center'},group:'tools3'},
     'alignContent':{name:'alignContent',showName:'alignContent',type: propertyType.Hidden, default:'',group:'tools3'},
     'flexWrap': {name:'flexWrap', showName:'自动换行', type: propertyType.Boolean, default:false,group:'tools3'}

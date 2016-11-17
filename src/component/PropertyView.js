@@ -455,6 +455,10 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Boolean:
+                    if(prop.name == 'flexWrap'){
+                        this.selectNode.props[prop.name+'Key'] = value;
+                        value = value ?'wrap':'nowrap'
+                    }
                     v = value;
                     break;
                 case propertyType.Boolean2:
@@ -721,7 +725,7 @@ class PropertyView extends React.Component {
 
 
     getFields() {
-        // console.log( this.selectNode);
+         console.log( this.selectNode);
         let node = this.selectNode;
         if (!node)  return null;
 
@@ -971,10 +975,14 @@ class PropertyView extends React.Component {
                 defaultValue = node.props[item.name+'Key'];
             }
         }
+        else if(item.type === propertyType.Boolean) {
+            defaultValue = item.default;
+            if(item.name=='flexWrap' && node.props[item.name+'Key']){
+                defaultValue =node.props[item.name+'Key'];
+            }
+        }
         else if (node.props[item.name] === undefined) {
-            if (item.type === propertyType.Boolean) {
-                defaultValue = item.default;
-            } else if (className == "table" && item.name == "headerFontSize") {
+              if (className == "table" && item.name == "headerFontSize") {
                 defaultValue = 26;
                 this.selectNode.props.headerFontSize = 26;
                 this.selectNode.node.headerFontSize = 26;
