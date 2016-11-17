@@ -15,7 +15,7 @@ const animationData = [
     {name:'动效', class:'rotation-btn', className:'effect', disabled:false,},
     {name:'3D旋转', class:'dx-btn', className:'3dRotate', disabled:false},
     {name:'缓动', class:'easing-btn', className:'easing', disabled:false},
-    {name:'物体', class:'object-btn', className:'body', disabled:false},
+    {name:'物体', class:'object-btn', className:'body', disabled:false, param:{mass:1}},
 ];
 
 class Animation extends React.Component {
