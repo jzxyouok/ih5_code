@@ -963,7 +963,9 @@ function generateJsFunc(etree) {
                                       "     var isArray = Object.prototype.toString.call(v) === '[object Array]';"+
                                       "     if(isArray&&v.length>0) {                                            "+//new start
                                       "         var temp = v.splice(0, 1);                                       "+//第一个为id
-                                      "         dataList.push(temp.join(','));                                   "+
+                                      "         if(temp.length>0) {                                              "+
+                                      "             dataList.push(temp.join(','));                               "+
+                                      "         }                                                                "+
                                       "     }                                                                    "+//new end
                                       " });                                                                      "+
                                       " if(dataList.length>0){                                                   "+
