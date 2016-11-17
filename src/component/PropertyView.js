@@ -714,7 +714,7 @@ class PropertyView extends React.Component {
 
 
     getFields() {
-         console.log( this.selectNode);
+        // console.log( this.selectNode);
         let node = this.selectNode;
         if (!node)  return null;
 
