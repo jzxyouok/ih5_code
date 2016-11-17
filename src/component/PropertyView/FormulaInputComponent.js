@@ -774,7 +774,7 @@ class FormulaInput extends React.Component {
                                         {
                                             obj.className === 'data'
                                                 ? v.property.value&&v.property.value.length===2
-                                                ? <span>{v.property.value[0]}行{v.property.value[1]}列</span>
+                                                ? <span>{v.property.value[1]}列{v.property.value[0]}行</span>
                                                 : <span>数据错误</span>
                                                 : <span>{v.property.showName}</span>
                                         }
