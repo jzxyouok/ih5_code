@@ -473,7 +473,7 @@ let modifyPropList = (list, className, type) => {
             if (scaleXTag && widthTag) {
                 v.type = propertyType.Hidden;
             }
-        } else if (['shapeWidth', 'shapeHeight', 'visible'].indexOf(v.name) >= 0) {
+        } else if (['shapeWidth', 'shapeHeight', 'visible','viewBoxWidth','viewBoxHeight'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
         } else if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
@@ -483,7 +483,7 @@ let modifyPropList = (list, className, type) => {
         }
     });
     //部分属性面板才有中心点
-    if (originXTag && originYTag && ['timer','container', 'canvas', 'flex', 'world', 'path'].indexOf(className) < 0) {
+    if (originXTag && originYTag && ['timer','container', 'canvas', 'flex', 'world'].indexOf(className) < 0) {
         aLack = ['originPos'];
     }
 

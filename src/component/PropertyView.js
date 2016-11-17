@@ -240,6 +240,7 @@ class PropertyView extends React.Component {
                         const obj = {};
                         obj[prop.name] = v;
                         obj.scaleY = obj.scaleX = 1;
+                        delete this.selectNode.node.defaultData;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag = false;
@@ -250,6 +251,7 @@ class PropertyView extends React.Component {
                         const obj = {};
                         obj[prop.name] = v;
                         obj.scaleY = obj.scaleX = 1;
+                        delete this.selectNode.node.defaultData;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag = false;
@@ -262,6 +264,7 @@ class PropertyView extends React.Component {
                         const obj = {};
                         obj[prop.name] = parseInt(value);
                         obj.scaleY = obj.scaleX = 1;
+                        delete this.selectNode.node.defaultData;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag = false;
@@ -711,7 +714,7 @@ class PropertyView extends React.Component {
 
 
     getFields() {
-        // console.log( this.selectNode);
+         console.log( this.selectNode);
         let node = this.selectNode;
         if (!node)  return null;
 
@@ -887,8 +890,8 @@ class PropertyView extends React.Component {
                 }
                 //只执行一次
                 //设置初始宽高,便于计算放大缩小的系数
-                if (node.node.scaleX == '1' && node.node.scaleY == '1') {
-                    node.node.defaultData[str] = defaultValue
+                if (node.node.defaultData[str]===undefined) {
+                    node.node.defaultData[str] = defaultValue/ node.node[item.name];
                 }
             }
         }
@@ -1181,7 +1184,7 @@ class PropertyView extends React.Component {
             hasTwin = ['X', 'Y', 'W', 'H', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '自动播放', '循环播放'].indexOf(item.showName) >= 0;
             hasOne = item.name == 'rotation'?true:false;
         }
-        else if (['container', 'canvas', 'flex', 'world', 'path'].indexOf(className) >= 0) {
+        else if (['container', 'canvas', 'flex', 'world'].indexOf(className) >= 0) {
             hasTwin = ['X', 'Y', 'W', 'H', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '北墙', '南墙', '西墙', '东墙'].indexOf(item.showName) >= 0;
             hasOne = item.name == 'rotation'?true:false;
         }
@@ -1322,7 +1325,10 @@ class PropertyView extends React.Component {
             let className = selectNode.className;
             if (className.charAt(0) == '_')  className = 'class';
 
+           // console.log( getPropertyMap(selectNode, className, 'props'));
+
             getPropertyMap(selectNode, className, 'props').map(item => {
+               // console.log(item,obj,selectNode,needRender);
                 if (item.type !== propertyType.Hidden&&obj[item.name] !== undefined) {
                     if (obj[item.name] === null) {
                         delete(selectNode.props[item.name]);
