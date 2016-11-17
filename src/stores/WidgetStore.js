@@ -1112,7 +1112,7 @@ function generateJsFunc(etree) {
   return output;
 }
 
-function saveTree(data, node, saveKey, saveEventObjsKey) {
+function saveTree(data, node, saveKey, saveEventObjKeys) {
   data['cls'] = node.className;
 
   let props = {};
@@ -1257,7 +1257,7 @@ function saveTree(data, node, saveKey, saveEventObjsKey) {
                     //公式编辑器的对象处理
                     obj.compareObjFlag = {
                         type: 2,
-                        value: dealWithFormulaObj(v.compareObjFlag.value, saveKey||saveEventObjsKey)
+                        value: dealWithFormulaObj(v.compareObjFlag.value, saveKey||saveEventObjKeys)
                     };
                 } else {
                     obj.compareObjFlag = v.compareObjFlag;
@@ -1270,7 +1270,7 @@ function saveTree(data, node, saveKey, saveEventObjsKey) {
             let c = {};
             c.enable = cmd.enable;
             c.sObjId = objectKeyToId(cmd.object);
-            if(saveKey||saveEventObjsKey) {
+            if(saveKey||saveEventObjKeys) {
                 if(saveKey) {
                     c.sid = cmd.sid;
                 }
@@ -1283,7 +1283,7 @@ function saveTree(data, node, saveKey, saveEventObjsKey) {
                     case funcType.customize:
                         c.action.funcId = objectKeyToId(cmd.action.func);
                         c.action.type = cmd.action.type;
-                        if(saveKey||saveEventObjsKey) {
+                        if(saveKey||saveEventObjKeys) {
                             c.action.func = cmd.action.func;
                         }
                         break;
@@ -1306,7 +1306,7 @@ function saveTree(data, node, saveKey, saveEventObjsKey) {
                                         type: v.type,
                                         valueId: objectKeyToId(v.value)
                                     };
-                                    if (saveKey||saveEventObjsKey) {
+                                    if (saveKey||saveEventObjKeys) {
                                         temp.value = v.value;
                                     }
                                     property.push(temp);
@@ -1328,7 +1328,7 @@ function saveTree(data, node, saveKey, saveEventObjsKey) {
                                     if(v.isProp) {
                                         temp.isProp = v.isProp;
                                     }
-                                    temp.value.value = dealWithFormulaObj(v.value.value, saveKey||saveEventObjsKey);
+                                    temp.value.value = dealWithFormulaObj(v.value.value, saveKey||saveEventObjKeys);
                                     property.push(temp);
                                 } else {
                                     property.push(v);
@@ -1352,7 +1352,7 @@ function saveTree(data, node, saveKey, saveEventObjsKey) {
                                                     value: []
                                                 }
                                             };
-                                            temp2.compare.value = dealWithFormulaObj(v1.compare.value, saveKey||saveEventObjsKey);
+                                            temp2.compare.value = dealWithFormulaObj(v1.compare.value, saveKey||saveEventObjKeys);
                                             temp.value.push(temp2);
                                         } else {
                                             temp.value.push(v1);
@@ -1479,7 +1479,7 @@ function saveTree(data, node, saveKey, saveEventObjsKey) {
       }
       let child = {};
       data['children'].unshift(child);
-      saveTree(child, item, saveKey, saveEventObjsKey);
+      saveTree(child, item, saveKey, saveEventObjKeys);
     });
   }
 }
@@ -1884,7 +1884,7 @@ export default Reflux.createStore({
                 this.getAllWidgets();
                 o.node['visible'] = originVisible;
                 o.node['scaleX'] = p.shapeWidth/o.node.width;
-                o.node['scaleY'] = p.shapeHeight/o.node.height;
+                o.node['scaleY'] = o.node['scaleX'];
                 this.render();
             });
         } else {
@@ -3259,7 +3259,7 @@ export default Reflux.createStore({
                         let tempH = this.currentWidget.node.height;
                         this.currentWidget.node['visible']= originVisible;
                         this.currentWidget.node['scaleX'] = width/tempW;
-                        this.currentWidget.node['scaleY'] = height/tempH;
+                        this.currentWidget.node['scaleY'] = this.currentWidget.node['scaleX'];
                         this.selectWidget(this.currentWidget);
                     });
                 }
