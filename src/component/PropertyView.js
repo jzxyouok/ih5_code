@@ -262,6 +262,7 @@ class PropertyView extends React.Component {
                         v=value;
                         break;
                     }
+
                     v = parseInt(value);
                     break;
                 case propertyType.Number:
@@ -291,7 +292,7 @@ class PropertyView extends React.Component {
                         c=c||0;
                         d=d||0;
                         let obj={
-                            margin:a+' '+b+' '+c+' '+d
+                            margin:{marginUp:a,marginDown:b,marginLeft:c,marginRight:d}
                         }
 
                         this.onStatusChange({updateProperties: obj});
@@ -311,7 +312,7 @@ class PropertyView extends React.Component {
                         c=c||0;
                         d=d||0;
                         let obj={
-                            padding:a+' '+b+' '+c+' '+d
+                            padding:{paddingUp:a,paddingDown:b,paddingLeft:c,paddingRight:d}
                         }
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
@@ -769,7 +770,7 @@ class PropertyView extends React.Component {
 
 
     getFields() {
-        console.log( this.selectNode);
+      //  console.log( this.selectNode);
         let node = this.selectNode;
         if (!node)  return null;
 
@@ -961,7 +962,8 @@ class PropertyView extends React.Component {
                     defaultValue = node.props[str];
                     node.props[str2] = defaultValue;
                 }
-            } else {
+            }
+            else {
                 let str = item.name == 'scaleX' ? 'width' : 'height';
                 defaultValue = (node.node.class == 'bitmaptext' && this.textSizeObj) ? this.textSizeObj[str] : node.node[str];
                 this.textSizeObj = null;
@@ -1108,9 +1110,14 @@ class PropertyView extends React.Component {
                 }
             }
         } else if (item.type === propertyType.Number) {
-            defaultProp.name =item.name;
+           // defaultProp.name =item.name;
             defaultProp.value = defaultValue;
-        } else if (item.type == propertyType.Dropdown) {
+        }
+        else if (item.type === propertyType.Float) {
+          //  defaultProp.name =item.name;
+            defaultProp.value = defaultValue;
+        }
+        else if (item.type == propertyType.Dropdown) {
             defaultProp.value = defaultValue;
             defaultProp.item = item;
             let arr = [];
@@ -1231,6 +1238,7 @@ class PropertyView extends React.Component {
         let defaultProp = {
             size: 'small',
             placeholder: item.default,
+            name:item.name,
             disabled: item.readOnly === true,
             onChange: this.onChangePropDom.bind(this, item)
         };
@@ -1245,14 +1253,22 @@ class PropertyView extends React.Component {
         let hasTwin; //左右结构显示
         let hasOne=false;  //独占一栏结构显示,用于兼容旋转度属性独占一栏的样式
         let isBody= className == "body"?true:false;  //对body对象定制样式
-        let isFlex= className =='flex'?true:false;
+
+
 
 
         let isAutoGravity = item.name == 'autoGravity'?true:false;
         let tdColorSwitch =className == "table" && ['fontFill','fillColor','altColor'].indexOf(item.name)>=0?true: false;
 
-
+        let hasRate=false;//是否加%
         let hasPx = ['X', 'Y', 'W', 'H', '网格大小' ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
+        if(className=='flex' ||item.showName=='不透明度'){
+            hasPx = !(['W', 'H','不透明度'].indexOf(item.showName) >= 0);
+            hasRate =['W', 'H','不透明度'].indexOf(item.showName) >= 0;
+        }
+
+
+
         let hasDegree = ['旋转度'].indexOf(item.showName) >= 0; //判断input中是否添加°单位
         let hasLock = item.showLock == true; //判断是否在元素前添加锁图标
 
@@ -1333,7 +1349,8 @@ class PropertyView extends React.Component {
                     className={cls('ant-col-r', {"tbSSStyle": defaultProp.tbCome == "tbS"}, {"tbFSStyle": defaultProp.tbCome == "tbF"})}>
                     <div className={cls('ant-form-item-control',
                         {'ant-input-degree': hasDegree},
-                        {'ant-input-px': hasPx}
+                        {'ant-input-px': hasPx},
+                        {'ant-input-rate': hasRate},
                     )}>
                         {this.getInputBox(item.type, defaultProp)}
                     </div>

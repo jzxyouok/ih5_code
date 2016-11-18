@@ -491,20 +491,28 @@ let modifyPropList = (list, className, type) => {
     list.map((v, i) => {
 
         if (v.name == 'width' || v.name == 'height') {
-            if (scaleXTag && widthTag && className !='flex') {
+            if(scaleXTag && widthTag) {
                 v.type = propertyType.Hidden;
             }
         }
-        else if(v.name == 'scaleX' || v.name == 'scaleY'){
-            if (className =='flex') {
-                v.type = propertyType.Hidden;
+
+        if(className =='flex' || className == 'pagecontainer'){
+            if(scaleXTag && widthTag) {
+                if (v.name == 'width' || v.name == 'height') {
+                    v.type = propertyType.Integer;
+                }
+                if (v.name == 'scaleX' || v.name == 'scaleY') {
+                    v.type = propertyType.Hidden;
+                }
             }
         }
-        else if (['shapeWidth', 'shapeHeight', 'visible','viewBoxWidth','viewBoxHeight','globalVx','globalVy'].indexOf(v.name) >= 0) {
+        if (['shapeWidth', 'shapeHeight', 'visible','viewBoxWidth','viewBoxHeight','globalVx','globalVy'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
-        } else if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
+        }
+        if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
-        }else if (['container','flex'].indexOf(className) >= 0 && ['margin', 'padding'].indexOf(v.name) >= 0) {
+        }
+        if (['container','flex'].indexOf(className) >= 0 && ['margin', 'padding'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
             if(v.name=='margin'){
                 aLack=aLack.concat(['marginUp','marginDown','marginLeft','marginRight']);

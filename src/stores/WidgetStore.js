@@ -2446,25 +2446,25 @@ export default Reflux.createStore({
             }
         }
 
-        if( this.currentWidget.props.isRate) {
-             if(obj.width!==undefined){
-                 obj.width =obj.width+'%'
-             }else  if(obj.height!==undefined){
-                 obj.height =obj.height+'%'
-             }else if(obj.minWidth !==undefined){
-                 obj.minWidth =obj.minWidth+'%'
-             }else if(obj.minHeight !==undefined){
-                 obj.minHeight =obj.minHeight+'%'
-             }else if(obj.maxWidth !==undefined){
-                 obj.maxWidth =obj.maxWidth+'%'
-             }else if(obj.maxHeight !==undefined){
-                 obj.maxHeight =obj.maxHeight+'%'
-             }
+
+
+        for(let i in obj){
+           if(this.currentWidget.props[i+'isRate']){
+               obj[i]+='%';
+           }
+           if(i=='margin' || i=='padding'){
+               let strArr=[];
+               for(let v in obj[i]){
+                   if(this.currentWidget.props[v+'isRate']){
+                       obj[i][v]+='%';
+                   }
+                   strArr.push(obj[i][v])
+               }
+               obj[i]=strArr.join(' ');
+           }
         }
 
-
-
-         console.log(obj);
+         console.log(obj,this.currentWidget.props);
 
         let p = {updateProperties: obj};
         if (skipRender) {

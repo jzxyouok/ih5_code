@@ -211,6 +211,7 @@ class ConInputNumber extends React.Component {
         this.state = {
             count:count++
         };
+
         this.T=null;
         this.TOut=null;
         this.fatherObj=null;
@@ -241,12 +242,12 @@ class ConInputNumber extends React.Component {
                 pObj.removeClass('ant-input-px');
                 pObj.addClass('ant-input-rate');
                 $(this).val(str.split('%')[0]);
-                WidgetActions['addProps']({name:'isRate',value:true});
+                WidgetActions['addProps']({name:thisObj.props.name+'isRate',value:true});
             }else if(str.indexOf('px')>=0){
                 pObj.addClass('ant-input-px');
                 pObj.removeClass('ant-input-rate');
                 $(this).val(str.split('px')[0]);
-                WidgetActions['addProps']({name:'isRate',value:false});
+                WidgetActions['addProps']({name:thisObj.props.name+'isRate',value:false});
             }
        })
     }

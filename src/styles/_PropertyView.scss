@@ -735,13 +735,13 @@ $toBottom:14px;
 		 .ant-input-number-input{
 		  height: 22px;
 		 }
-		 &:after{
-		   content: '%';
-		   position: absolute;
-		   right: 2px;
-		   z-index: 100;
-           top: 0px;
-       }
+		// &:after{
+		//   content: '%';
+		//   position: absolute;
+		//   right: 2px;
+		//   z-index: 100;
+       //    top: 0px;
+       //}
 
 		   &:hover:after{
 			 display: none;
