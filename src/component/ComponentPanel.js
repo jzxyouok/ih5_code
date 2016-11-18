@@ -84,7 +84,7 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:"cominterfaceIcon", className:'cominterface'},
                 {cid:this.cid++,icon:"htmlIcon", className:'html', drawRect:true, param:{'shapeWidth': 100, 'shapeHeight': 100}},
                 {cid:this.cid++,icon:"pageIcon", className:'page'},
-                {cid:this.cid++,icon:"pageContainerIcon", className:'pagecontainer'},
+                {cid:this.cid++,icon:"pageContainerIcon", className:'pagecontainer',param: {'width': 200, 'height': 200}},
                 {cid:this.cid++,icon:"canvasIcon", className:'canvas', drawRect:true, param: {'width': 300, 'height': 300}},
                 {cid:this.cid++,icon:"inputIcon", className:'input', param:{'shapeWidth': 200, 'shapeHeight': 50}},
                 {cid:this.cid++,icon:"tableIcon", className:'table', param:{'shapeWidth': 300, 'shapeHeight': 200, 'fillColor':'transparent'}},
