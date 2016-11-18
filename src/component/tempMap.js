@@ -3,6 +3,8 @@ import bridge from 'bridge';
 import {propertyMap, propertyType, backwardTransOptions, forwardTransOptions,
     effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags} from '../map';
 
+var FLAG_MASK = widgetFlags.Display | widgetFlags.Container;
+
 let modeType = {
     flex: 'flex',
     dom: 'dom',
@@ -731,6 +733,43 @@ let checkIsClassType = (className) => {
 
 let checkChildClass = (selected, className) => {
     // 对函数,变量,自定义函数等的处理
+
+
+    var type = bridge.getRendererType(selected.node);
+    var provides = bridge.getMap(selected.node, propertyMap[selected.className]).provides;
+    var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+
+    if (className == 'world')
+        return (selected.className == 'canvas');
+
+    if (className == 'container')
+        return provides & widgetFlags.Container;
+
+    if (requires & widgetFlags.Root)
+        return provides & widgetFlags.Root;
+
+    if ((~(provides & FLAG_MASK) & (requires & FLAG_MASK)) != 0)
+        return false;
+
+    if (type == 1 && ((requires & widgetFlags.Flex) == 0))
+        return false;
+
+    if (type == 2 && ((requires & widgetFlags.Dom) == 0))
+        return false;
+
+    if (type == 4 && ((requires & widgetFlags.Canvas) == 0))
+        return false;
+
+    if ((requires & widgetFlags.Page) && !(provides & widgetFlags.Page))
+        return false;
+
+    if ((requires & widgetFlags.Unique) != 0) {
+        for (var index in selected.children) {
+            if (selected.children[index].className == className)
+                return false;
+        }
+    }
+
     if(className ==='dbItem'){
         if(selected.className === 'db'){
             return true;
