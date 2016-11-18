@@ -41,7 +41,9 @@ const Panel = Collapse.Panel;
 function callback() {
     //console.log(key);
 }
-
+/**
+ *
+ * */
 class ComponentPanel extends React.Component {
     constructor (props) {
         super(props);

@@ -1644,6 +1644,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setFont'], this.setFont);
         this.listenTo(WidgetActions['setImageText'], this.setImageText);
         this.listenTo(WidgetActions['imageTextSize'], this.imageTextSize);
+        this.listenTo(WidgetActions['addProps'], this.addProps);
         this.listenTo(WidgetActions['ajaxSend'], this.ajaxSend);
         this.listenTo(WidgetActions['saveFontList'], this.saveFontList);
         this.listenTo(WidgetActions['activeHandle'], this.activeHandle);
@@ -1715,6 +1716,8 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['alignWidgets'], this.alignWidgets);
 
         this.listenTo(WidgetActions['setVersion'], this.setVersion);
+
+
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -2442,6 +2445,24 @@ export default Reflux.createStore({
                 isHistoryRecord = false;
             }
         }
+
+        if( this.currentWidget.props.isRate) {
+             if(obj.width!==undefined){
+                 obj.width =obj.width+'%'
+             }else  if(obj.height!==undefined){
+                 obj.height =obj.height+'%'
+             }else if(obj.minWidth !==undefined){
+                 obj.minWidth =obj.minWidth+'%'
+             }else if(obj.minHeight !==undefined){
+                 obj.minHeight =obj.minHeight+'%'
+             }else if(obj.maxWidth !==undefined){
+                 obj.maxWidth =obj.maxWidth+'%'
+             }else if(obj.maxHeight !==undefined){
+                 obj.maxHeight =obj.maxHeight+'%'
+             }
+        }
+
+
 
          console.log(obj);
 
@@ -3592,6 +3613,10 @@ export default Reflux.createStore({
     imageTextSize:function(sizeObj){
         this.trigger({ imageTextSizeObj:sizeObj});
     },
+    addProps:function (propsObj) {
+        this.currentWidget.props[propsObj.name]=propsObj.value;
+        this.trigger({selectWidget: this.currentWidget});
+    },
     updateConOptions(){
         let conArr = this.getConditionOption();
         this.currentWidget.props.eventTree.map((v,i)=>{
@@ -3641,7 +3666,7 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //   xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        //     xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
         if (binary)
           xhr.responseType = "arraybuffer";

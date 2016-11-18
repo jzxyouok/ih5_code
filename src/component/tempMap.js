@@ -3,7 +3,7 @@ import bridge from 'bridge';
 import {propertyMap, propertyType, backwardTransOptions, forwardTransOptions,
     effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags} from '../map';
 
-var FLAG_MASK = widgetFlags.Display | widgetFlags.Container;
+var FLAG_MASK = widgetFlags.Display | widgetFlags.Container;   //todo:是否不需要widgetFlags.Root
 
 let modeType = {
     flex: 'flex',
@@ -27,7 +27,7 @@ let isInCLList = (className, classNameList)=>{
 * 按数字大小,从上到下排序,没有order属性,则排最后面
 * */
 let propMapping = {
-    'id': {name:'id', showName:'ID', type: propertyType.String, default: ''},
+    'id': {name:'id', showName:'ID', type: propertyType.String, default: '',order:0},
 
     'originX': {name:'originX', type: propertyType.Hidden, default: 0},
     'originY': {name:'originY', type: propertyType.Hidden, default: 0},
@@ -90,9 +90,8 @@ let propMapping = {
 
     'path': {name:'path', showName:'路径', type: propertyType.Hidden, default: ''},
 
-    'backwardTransition': {name:'backwardTransition', showName:'前翻效果',  type: propertyType.Select, default:'同上一页',options:backwardTransOptions},
-    'forwardTransition': {name:'forwardTransition', showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:forwardTransOptions},
-
+    'backwardTransition': {name:'backwardTransition', showName:'前翻效果',  type: propertyType.Select, default:'同上一页',options:backwardTransOptions,order:1},
+    'forwardTransition': {name:'forwardTransition', showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:forwardTransOptions,order:2},
 
 
     'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false},
@@ -150,22 +149,32 @@ let propMapping = {
     //关于flex的请看：https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex
 
 
-    'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'PC', options:{'手机':'true','PC':'false'}},
+    'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'PC', options:{'PC':'false','手机':'true'}},
 
     'margin': {name:'margin', showName:'外间距', type: propertyType.String, default:'',group:'tools2'},
-    'maxWidth': {name:'maxWidth', showName:'最大宽', type: propertyType.Number, default:'',group:'tools2'},
-    'minWidth': {name:'minWidth', showName:'最小宽', type: propertyType.Number, default:'',group:'tools2'},
-    'maxHeight': {name:'maxHeight', showName:'最大高', type: propertyType.Number, default:'',group:'tools2'},
-    'minHeight': {name:'minHeight', showName:'最小高', type: propertyType.Number, default:'',group:'tools2'},
-    'alignSelf': {name:'alignSelf', showName:'副轴对齐', type: propertyType.Select, default:'自动',options:{'自动':'auto','靠前':'flex-start','靠后':'flex-end','居中':'center', '拉伸':'stretch','对齐文本':'baseline'},group:'tools2'},
-    'flex': {name:'flex', showName:'自动伸缩', type: propertyType.Select, default:'允许缩小',options:{'无':'0 0 auto','允许缩小':'0 1 auto','允许拉伸':'1 0 auto', '自动伸缩':'1 1 auto'},group:'tools2'},
+    'marginUp': {name:'marginUp', showName:'边距上', type: propertyType.Number, default:0,group:'tools2.1'},
+    'marginDown': {name:'marginDown', showName:'边距下', type: propertyType.Number, default:0,group:'tools2.1'},
+    'marginLeft': {name:'marginLeft', showName:'边距左', type: propertyType.Number, default:0,group:'tools2.1'},
+    'marginRight': {name:'marginRight', showName:'边距右', type: propertyType.Number, default:0,group:'tools2.1'},
+
+    'maxWidth': {name:'maxWidth', showName:'最大宽', type: propertyType.Number, default:0,group:'tools2.2'},
+    'minWidth': {name:'minWidth', showName:'最小宽', type: propertyType.Number, default:0,group:'tools2.2'},
+    'maxHeight': {name:'maxHeight', showName:'最大高', type: propertyType.Number, default:0,group:'tools2.2'},
+    'minHeight': {name:'minHeight', showName:'最小高', type: propertyType.Number, default:0,group:'tools2.2'},
+    'alignSelf': {name:'alignSelf', showName:'副轴对齐', type: propertyType.Select, default:'自动',options:{'自动':'auto','靠前':'flex-start','靠后':'flex-end','居中':'center', '拉伸':'stretch','对齐文本':'baseline'},group:'tools2.3'},
+    'flex': {name:'flex', showName:'自动伸缩', type: propertyType.Select, default:'允许缩小',options:{'无':'0 0 auto','允许缩小':'0 1 auto','允许拉伸':'1 0 auto', '自动伸缩':'1 1 auto'},group:'tools2.3'},
 
     'padding': {name:'padding', showName:'内间距', type: propertyType.String, default:'',group:'tools3'},
-    'flexDirection': {name:'flexDirection', showName:'主轴方向', type: propertyType.Select, default: '左右',options:{'上下':'column','下上':'column-reverse','左右':'row', '右左':'row-reverse'},group:'tools3'},
-    'justifyContent': {name:'justifyContent', showName:'主轴对齐', type: propertyType.Select, default:'靠前', options:{'靠前':'flex-start','靠后':'flex-end','居中':'center', '均分（靠边）':'space-between','均分（不靠边）':'space-around'},group:'tools3'},
-    'alignItems': {name:'alignItems', showName:'副轴对齐', type: propertyType.Select, default:'靠前',options:{'靠前':'flex-start','靠后':'flex-end','居中':'center'},group:'tools3'},
-    'alignContent':{name:'alignContent',showName:'alignContent',type: propertyType.Hidden, default:'',group:'tools3'},
-    'flexWrap': {name:'flexWrap', showName:'自动换行', type: propertyType.Boolean, default:false,group:'tools3'}
+    'paddingUp': {name:'paddingUp', showName:'边距上', type: propertyType.Number, default:0,group:'tools3'},
+    'paddingDown': {name:'paddingDown', showName:'边距下', type: propertyType.Number, default:0,group:'tools3'},
+    'paddingLeft': {name:'paddingLeft', showName:'边距左', type: propertyType.Number, default:0,group:'tools3'},
+    'paddingRight': {name:'paddingRight', showName:'边距右', type: propertyType.Number, default:0,group:'tools3'},
+
+    'flexDirection': {name:'flexDirection', showName:'主轴方向', type: propertyType.Select, default: '左右',options:{'上下':'column','下上':'column-reverse','左右':'row', '右左':'row-reverse'},group:'tools3.1'},
+    'justifyContent': {name:'justifyContent', showName:'主轴对齐', type: propertyType.Select, default:'靠前', options:{'靠前':'flex-start','靠后':'flex-end','居中':'center', '均分（靠边）':'space-between','均分（不靠边）':'space-around'},group:'tools3.1'},
+    'alignItems': {name:'alignItems', showName:'副轴对齐', type: propertyType.Select, default:'靠前',options:{'靠前':'flex-start','靠后':'flex-end','居中':'center'},group:'tools3.1'},
+    'alignContent':{name:'alignContent',showName:'alignContent',type: propertyType.Hidden, default:'',group:'tools3.1'},
+    'flexWrap': {name:'flexWrap', showName:'自动换行', type: propertyType.Boolean, default:false,group:'tools3.1'}
 };
 
 let eventMapping = {
@@ -480,14 +489,29 @@ let modifyPropList = (list, className, type) => {
     //不显示出来的属性
     //list的元素可能没有showName,暂时用name替代.遇到这种情况,应在propMapping中添加进去
     list.map((v, i) => {
+
         if (v.name == 'width' || v.name == 'height') {
-            if (scaleXTag && widthTag) {
+            if (scaleXTag && widthTag && className !='flex') {
                 v.type = propertyType.Hidden;
             }
-        } else if (['shapeWidth', 'shapeHeight', 'visible','viewBoxWidth','viewBoxHeight'].indexOf(v.name) >= 0) {
+        }
+        else if(v.name == 'scaleX' || v.name == 'scaleY'){
+            if (className =='flex') {
+                v.type = propertyType.Hidden;
+            }
+        }
+        else if (['shapeWidth', 'shapeHeight', 'visible','viewBoxWidth','viewBoxHeight','globalVx','globalVy'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
         } else if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
+        }else if (['container','flex'].indexOf(className) >= 0 && ['margin', 'padding'].indexOf(v.name) >= 0) {
+            v.type = propertyType.Hidden;
+            if(v.name=='margin'){
+                aLack=aLack.concat(['marginUp','marginDown','marginLeft','marginRight']);
+            }
+            else if(v.name=='padding'){
+                aLack=aLack.concat(['paddingUp','paddingDown','paddingLeft','paddingRight']);
+            }
         }
         if(!v.showName){
             v.showName=v.name;
@@ -495,8 +519,10 @@ let modifyPropList = (list, className, type) => {
     });
     //部分属性面板才有中心点
     if (originXTag && originYTag && ['timer','container', 'canvas', 'flex', 'world'].indexOf(className) < 0) {
-        aLack = ['originPos'];
+        aLack.push('originPos');
     }
+
+
 
     list = list.concat(dealElementList(aLack, className, 'props', type));
     return list;
@@ -733,42 +759,14 @@ let checkIsClassType = (className) => {
 
 let checkChildClass = (selected, className) => {
     // 对函数,变量,自定义函数等的处理
-
-
     var type = bridge.getRendererType(selected.node);
     var provides = bridge.getMap(selected.node, propertyMap[selected.className]).provides;
-    var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
-
-    if (className == 'world')
-        return (selected.className == 'canvas');
-
-    if (className == 'container')
-        return provides & widgetFlags.Container;
-
-    if (requires & widgetFlags.Root)
-        return provides & widgetFlags.Root;
-
-    if ((~(provides & FLAG_MASK) & (requires & FLAG_MASK)) != 0)
+    if(propertyMap[className]){
+        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+    }else{
         return false;
-
-    if (type == 1 && ((requires & widgetFlags.Flex) == 0))
-        return false;
-
-    if (type == 2 && ((requires & widgetFlags.Dom) == 0))
-        return false;
-
-    if (type == 4 && ((requires & widgetFlags.Canvas) == 0))
-        return false;
-
-    if ((requires & widgetFlags.Page) && !(provides & widgetFlags.Page))
-        return false;
-
-    if ((requires & widgetFlags.Unique) != 0) {
-        for (var index in selected.children) {
-            if (selected.children[index].className == className)
-                return false;
-        }
     }
+
 
     if(className ==='dbItem'){
         if(selected.className === 'db'){
@@ -804,6 +802,37 @@ let checkChildClass = (selected, className) => {
         selected.className.substr(0,1)==='_' ||    //自定义class
         (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))) {
         return false;
+    }
+    //20161118,luozheao,新增
+    if (className == 'world')
+        return (selected.className == 'canvas');
+
+    if (className == 'container')
+        return provides & widgetFlags.Container;
+
+    if (requires & widgetFlags.Root)
+        return provides & widgetFlags.Root;
+
+    if ((~(provides & FLAG_MASK) & (requires & FLAG_MASK)) != 0)
+        return false;
+
+    if (type == 1 && ((requires & widgetFlags.Flex) == 0))
+        return false;
+
+    if (type == 2 && ((requires & widgetFlags.Dom) == 0))
+        return false;
+
+    if (type == 4 && ((requires & widgetFlags.Canvas) == 0))
+        return false;
+
+    if ((requires & widgetFlags.Page) && !(provides & widgetFlags.Page))
+        return false;
+
+    if ((requires & widgetFlags.Unique) != 0) {
+        for (var index in selected.children) {
+            if (selected.children[index].className == className)
+                return false;
+        }
     }
     //TODO
     return true;

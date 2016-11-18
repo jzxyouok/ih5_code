@@ -78,7 +78,7 @@ export default Reflux.createActions([
   'replyHistory',
   'chooseHistory',
   'cleanHistory',
-
+  'addProps',                 //给this.selectNode 添加一个属性
   'setVersion',                 //版本
   'changeResource',             //修改资源入口
 ]);

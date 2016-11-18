@@ -75,8 +75,8 @@ class PropertyView extends React.Component {
                     return <ConInputNumber {...defaultProp} />;
                 }
             case propertyType.Float:
-                return <ConInputNumber {...defaultProp}  />;
 
+                return <ConInputNumber {...defaultProp}  />;
             case propertyType.Number:
                 let step=1;
                 if(defaultProp.name=='totalTime'){
@@ -91,6 +91,7 @@ class PropertyView extends React.Component {
                     return <ConInputNumber  {...defaultData} style={style} />;
                 }
                 else {
+
                     return <ConInputNumber  step={step} {...defaultProp}  />;
                 }
             case propertyType.Percentage:
@@ -256,6 +257,10 @@ class PropertyView extends React.Component {
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag = false;
                         break;
+                    }else if( this.selectNode.className=='container'&& this.selectNode.node.padding!==undefined){
+                        //flex下的container
+                        v=value;
+                        break;
                     }
                     v = parseInt(value);
                     break;
@@ -273,7 +278,46 @@ class PropertyView extends React.Component {
                     else if(prop.name == 'totalTime' ){
                         this.selectNode.props[prop.name+'Key'] = value;
                     }
-                    v = parseFloat(value);
+                    else if (['marginUp','marginDown','marginLeft','marginRight'
+                        ].indexOf(prop.name)>=0) {
+                        this.selectNode.props[prop.name+'Key'] = value;
+                        let $obj=$('.flexContainer:eq(4)');
+                        let a= $obj.find('.ant-input-number-input:eq(0)').val();
+                        let b= $obj.find(' .ant-input-number-input:eq(1)').val();
+                        let c= $obj.find('.ant-input-number-input:eq(2)').val();
+                        let d= $obj.find(' .ant-input-number-input:eq(3)').val();
+                        a=a||0;
+                        b=b||0;
+                        c=c||0;
+                        d=d||0;
+                        let obj={
+                            margin:a+' '+b+' '+c+' '+d
+                        }
+
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties'](obj, false, true);
+                        bTag = false;
+                    }
+                    else if (['paddingUp','paddingDown','paddingLeft','paddingRight'
+                        ].indexOf(prop.name)>=0) {
+                        this.selectNode.props[prop.name + 'Key'] = value;
+                        let $obj=$('.flexContainer:eq(7)');
+                        let a= $obj.find('.ant-input-number-input:eq(0)').val();
+                        let b= $obj.find(' .ant-input-number-input:eq(1)').val();
+                        let c= $obj.find('.ant-input-number-input:eq(2)').val();
+                        let d= $obj.find(' .ant-input-number-input:eq(3)').val();
+                        a=a||0;
+                        b=b||0;
+                        c=c||0;
+                        d=d||0;
+                        let obj={
+                            padding:a+' '+b+' '+c+' '+d
+                        }
+                        this.onStatusChange({updateProperties: obj});
+                        WidgetActions['updateProperties'](obj, false, true);
+                        bTag = false;
+                    }
+                        v = parseFloat(value);
                     break;
                 case propertyType.Percentage:
                     v = (prop.name == 'alpha') ? parseFloat(value) / 100 : parseFloat(value);
@@ -304,10 +348,10 @@ class PropertyView extends React.Component {
                     } else {
                         if ('scaleX' == prop.name) {
                             v = parseInt(value) / defaultWidth;
-                            this.selectNode.props.width = value;
+                            this.selectNode.node.width = value;
                         } else if ('scaleY' == prop.name) {
                             v = parseInt(value) / defaultHeight;
-                            this.selectNode.props.height = value;
+                            this.selectNode.node.height = value;
                         }
                     }
                     break;
@@ -725,7 +769,7 @@ class PropertyView extends React.Component {
 
 
     getFields() {
-         console.log( this.selectNode);
+        console.log( this.selectNode);
         let node = this.selectNode;
         if (!node)  return null;
 
@@ -735,13 +779,25 @@ class PropertyView extends React.Component {
         this.lockRatio(node);//初始化时,锁定部分属性面板的宽高比
 
         let groups = {};
-        this.generateGroups(node,className,groups);//生成groups
+        this.generateGroups(node,className,groups);//生成groups,其中涉及到html的拼接
         groups = this.sortGroups(groups);//排序groups
+
+
+        let styleObj={
+            "active" : !this.state.tbHeaderToggle
+        }
+
+        //定制专门的样式,加在Form上面.如flex下的container
+        let resultObj=this.getStyleObj(node);
+        if(resultObj){
+            styleObj[resultObj.name]=resultObj.value;
+        }
+
 
         return Object.keys(groups).map((name,index) =>{
             let insertClassName =  className + "-" + 'form_'+name;//插入一个按钮
             return <Form horizontal
-                         className={cls('form_'+name,{"active" : !this.state.tbHeaderToggle })}
+                         className={cls('form_'+name,styleObj)}
                          key={index}>
                 {groups[name].map((input, i) => input)}
                 {
@@ -757,6 +813,19 @@ class PropertyView extends React.Component {
      * 1 如果有修改,请在注释上写上修改人 修改时间 修改内容
      * 2 属性面板涉及到的属性过多,很容易写的混乱,应将工具类的方法提取出来,只留下主线
      * **********************************/
+    /***
+     * luozheao,20161118
+     * 功能:
+     * 有些属性面板需要专门定制整体的样式,如flex下的container
+     * 返回class名字,和控制显示的布尔值
+     */
+    getStyleObj(node){
+        if(node.className=='container' && node.node.padding !==undefined){
+            return {name:'flexContainer',value:true}
+        }
+        return null
+    }
+
     /**
      * luozheao,20161116
      * 功能:
@@ -826,7 +895,7 @@ class PropertyView extends React.Component {
     * */
     sortGroups(groups) {
        // console.log(groups);
-        let sortArr = ['basic', 'position', 'display', 'tools','tools2','tools3', 'dArr'];
+        let sortArr = ['basic', 'position', 'display', 'tools','tools2','tools2.1','tools2.2','tools2.3','tools3','tools3.1', 'dArr'];
         let obj={};
         //模块排序
         sortArr.map((v,i)=>{
@@ -926,14 +995,8 @@ class PropertyView extends React.Component {
         else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
             defaultValue = item.default;
             //当originY时才会激活,而不是originPos
-            if (item.name == 'scaleType' && node.props.scaleTypeKey) {
-                defaultValue = node.props.scaleTypeKey;
-            }else if ((item.name == 'swipeType'|| item.name == 'alignSelf'|| item.name == 'flex'|| item.name == 'flexDirection'|| item.name == 'justifyContent'|| item.name == 'alignItems') && node.props[item.name+'Key']) {
-                defaultValue = node.props[item.name+'Key'];
-            } else if (item.name == 'scaleStage' && node.props.scaleStageKey) {
-                defaultValue = node.props.scaleStageKey;
-            } else if (item.name == 'font' && node.props.fontKey) {
-                defaultValue = node.props.fontKey;
+            if (['font', 'scaleStage', 'scaleType', 'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
+                defaultValue = node.props[item.name + 'Key'];
             } else if (item.name == 'fontFamily' && node.props.fontFamilyKey) {
                 defaultValue = node.props.fontFamily;
             } else if ((item.name == 'forwardTransition' || item.name == 'backwardTransition') && node.props[item.name + '_val']) {
@@ -942,11 +1005,9 @@ class PropertyView extends React.Component {
                 defaultValue = node.props.type;
             } else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
                 defaultValue = node.props.headerFontFamily;
-            }
-            else if (item.name == 'vertical' && node.props[item.name]) {
+            } else if (item.name == 'vertical' && node.props[item.name]) {
                 defaultValue = node.props[item.name];
-            }
-            else if (item.name == 'chooseColumn') {
+            } else if (item.name == 'chooseColumn') {
                 defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn + ' 列';
             }
         }
@@ -971,12 +1032,12 @@ class PropertyView extends React.Component {
         }
         else if(item.type === propertyType.Number) {
             defaultValue = node.props[item.name];
-            if (item.name == 'totalTime' && node.props[item.name+'Key']) {
-                defaultValue = node.props[item.name+'Key'];
+            if (['totalTime','marginUp','marginDown','marginLeft','marginRight','paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(item.name)>=0 && node.props[item.name+'Key']) {
+                defaultValue = node.props[item.name + 'Key'];
             }
         }
         else if(item.type === propertyType.Boolean) {
-            defaultValue = item.default;
+            defaultValue = node.node[item.name];
             if(item.name=='flexWrap' && node.props[item.name+'Key']){
                 defaultValue =node.props[item.name+'Key'];
             }
@@ -1047,6 +1108,7 @@ class PropertyView extends React.Component {
                 }
             }
         } else if (item.type === propertyType.Number) {
+            defaultProp.name =item.name;
             defaultProp.value = defaultValue;
         } else if (item.type == propertyType.Dropdown) {
             defaultProp.value = defaultValue;
@@ -1183,11 +1245,14 @@ class PropertyView extends React.Component {
         let hasTwin; //左右结构显示
         let hasOne=false;  //独占一栏结构显示,用于兼容旋转度属性独占一栏的样式
         let isBody= className == "body"?true:false;  //对body对象定制样式
+        let isFlex= className =='flex'?true:false;
+
+
         let isAutoGravity = item.name == 'autoGravity'?true:false;
         let tdColorSwitch =className == "table" && ['fontFill','fillColor','altColor'].indexOf(item.name)>=0?true: false;
 
 
-        let hasPx = ['X', 'Y', 'W', 'H', '网格大小'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
+        let hasPx = ['X', 'Y', 'W', 'H', '网格大小' ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
         let hasDegree = ['旋转度'].indexOf(item.showName) >= 0; //判断input中是否添加°单位
         let hasLock = item.showLock == true; //判断是否在元素前添加锁图标
 
@@ -1202,11 +1267,15 @@ class PropertyView extends React.Component {
             hasOne = item.name == 'rotation'?true:false;
         }
         else if (['container', 'canvas', 'flex', 'world'].indexOf(className) >= 0) {
-            hasTwin = ['X', 'Y', 'W', 'H', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '北墙', '南墙', '西墙', '东墙'].indexOf(item.showName) >= 0;
+            hasTwin = ['X', 'Y', 'W', 'H', 'shapeW', 'shapeH', 'scaleX', 'scaleY',
+                    '原始宽', '原始高', '北墙', '南墙', '西墙', '东墙'
+                    ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'
+                ].indexOf(item.showName) >= 0;
             hasOne = item.name == 'rotation'?true:false;
         }
         else {
-            hasTwin = ['X', 'Y', 'W', 'H', '旋转度', '中心点', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '固定x坐标', '固定y坐标', '碰撞反应', '圆形边界'].indexOf(item.showName) >= 0;
+            hasTwin = ['X', 'Y', 'W', 'H', '旋转度', '中心点', 'shapeW', 'shapeH', 'scaleX', 'scaleY',
+                    '原始宽', '原始高', '固定x坐标', '固定y坐标', '碰撞反应', '圆形边界'].indexOf(item.showName) >= 0;
         }
 
 
@@ -1226,7 +1295,7 @@ class PropertyView extends React.Component {
                 : <label>{item.showName}</label>
         }
 
-        //todo:可以设置一个标志位,在这个标志位下设定样式
+        //todo:志颖,这设置一个标志位,在这个标志位下设定样式,这样我们就统一流程了,看到后有空讨论下
         let style = {};
         if (item.tbCome) {
             defaultProp.tbCome = item.tbCome;

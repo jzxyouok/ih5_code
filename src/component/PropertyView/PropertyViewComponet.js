@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
+import  $ from 'jquery';
+import WidgetActions from '../../actions/WidgetActions';
 const MenuItem = Menu.Item;
 let count=0;
 
@@ -218,32 +220,43 @@ class ConInputNumber extends React.Component {
         this.inputObj=null;
        this.onMousedown=this.onMousedown.bind(this);
        this.onMouseUp=this.onMouseUp.bind(this);
-
-
     }
     componentDidMount() {
-
         this.fatherObj=document.getElementsByClassName('conInputNumber'+this.state.count)[0];
         this.downBtn =this.fatherObj.getElementsByClassName('ant-input-number-handler-down')[0];
         this.upBtn =this.fatherObj.getElementsByClassName('ant-input-number-handler-up')[0];
         this.btnWraper= this.fatherObj.getElementsByClassName('ant-input-number-handler-wrap')[0];
         this.inputObj=this.fatherObj.getElementsByClassName('ant-input-number-input')[0];
 
-
-
-        this.downBtn .addEventListener('mousedown',this.onMousedown);
-        this.upBtn .addEventListener('mousedown',this.onMousedown);
+        this.downBtn.addEventListener('mousedown',this.onMousedown);
+        this.upBtn.addEventListener('mousedown',this.onMousedown);
         this.downBtn .addEventListener('mouseout',this.onMouseUp);
         this.upBtn .addEventListener('mouseout',this.onMouseUp);
         document.addEventListener('mouseup',this.onMouseUp);
+       let thisObj=this;
+       $('.conInputNumber'+this.state.count+' .ant-input-number-input').change(function () {
+            let str=$(this).val();
+            let pObj=$('.conInputNumber'+thisObj.state.count).parent();
+            if(str.indexOf('%')>=0){
+                pObj.removeClass('ant-input-px');
+                pObj.addClass('ant-input-rate');
+                $(this).val(str.split('%')[0]);
+                WidgetActions['addProps']({name:'isRate',value:true});
+            }else if(str.indexOf('px')>=0){
+                pObj.addClass('ant-input-px');
+                pObj.removeClass('ant-input-rate');
+                $(this).val(str.split('px')[0]);
+                WidgetActions['addProps']({name:'isRate',value:false});
+            }
+       })
     }
     componentWillUnmount() {
-
         this.downBtn.removeEventListener('mousedown',this.onMousedown);
         this.upBtn.removeEventListener('mousedown',this.onMousedown);
         this.downBtn .removeEventListener('mouseout',this.onMouseUp);
         this.upBtn .removeEventListener('mouseout',this.onMouseUp);
         document.removeEventListener('mouseup',this.onMouseUp);
+        $('.conInputNumber'+this.state.count+' .ant-input-number-input').unbind();
     }
     onMousedown(e){
         let type= e.currentTarget.classList[1]=='ant-input-number-handler-down'?'downBtn':'upBtn';
@@ -252,7 +265,6 @@ class ConInputNumber extends React.Component {
                 this[type].click();
             }.bind(this),100);
         }.bind(this),300);
-
     }
     onMouseUp(){
         clearTimeout(this.TOut);
@@ -263,10 +275,9 @@ class ConInputNumber extends React.Component {
 
     }
 
-
     render() {
         return (
-            <div className={'conInputNumber'+this.state.count}> <InputNumber  {...this.props}   /></div>
+            <div className={'conInputNumber'+this.state.count} > <InputNumber  {...this.props} /></div>
         );
     }
 }
