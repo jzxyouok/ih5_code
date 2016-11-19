@@ -230,6 +230,17 @@ class ConInputNumber extends React.Component {
             con_currentWidget=widget.selectWidget;
         }
     }
+    fnIsFlex(node) {
+        if (node.className == 'flex') {
+            return true;
+        }
+        else if (node.className == 'root') {
+            return false;
+        }
+        else {
+            return this.fnIsFlex(node.parent);
+        }
+    }
     componentDidMount() {
 
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
@@ -246,17 +257,13 @@ class ConInputNumber extends React.Component {
         this.upBtn .addEventListener('mouseout',this.onMouseUp);
         document.addEventListener('mouseup',this.onMouseUp);
        let thisObj=this;
+       let fnIsFlex=this.fnIsFlex.bind(this);
 
        $('.conInputNumber'+this.state.count+' .ant-input-number-input').change(function () {
            //只在flex和flex的container下触发px和%的切换,并去掉百分比的影响
            //widgtStore里面的updateProperties,判断条件需要保持一致,应当一个地方设定,别的地方都可以用
 
-           let className=con_currentWidget?con_currentWidget.className:null;
-
-           if(className&&(className=='flex'||( className=='container'&& con_currentWidget.node.padding!==undefined))&& ['width','height'
-                   ,'marginUp','marginDown','marginLeft','marginRight'
-                   ,'paddingUp','paddingDown','paddingLeft','paddingRight'
-               ].indexOf(thisObj.props.name)>=0) {
+           if(con_currentWidget && fnIsFlex(con_currentWidget)) {
                let str = $(this).val();
                let pObj = $('.conInputNumber' + thisObj.state.count).parent();
                if (str.indexOf('%') >= 0) {

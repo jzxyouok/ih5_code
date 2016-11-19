@@ -2475,7 +2475,7 @@ export default Reflux.createStore({
             return false;
         }
         else {
-          return  this.fnIsFlex(node.parent);
+            return  this.fnIsFlex(node.parent);
         }
     },
     updateProperties: function(obj, skipRender, skipProperty, special) {
