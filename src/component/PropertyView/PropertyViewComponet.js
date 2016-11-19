@@ -253,7 +253,10 @@ class ConInputNumber extends React.Component {
 
            let className=con_currentWidget?con_currentWidget.className:null;
 
-           if(className&&(className=='flex'||( className=='container'&& con_currentWidget.node.padding!==undefined))&& ['positionX','positionY','alpha','rotation','backgroundColor'].indexOf(thisObj.props.name)<0) {
+           if(className&&(className=='flex'||( className=='container'&& con_currentWidget.node.padding!==undefined))&& ['width','height'
+                   ,'marginUp','marginDown','marginLeft','marginRight'
+                   ,'paddingUp','paddingDown','paddingLeft','paddingRight'
+               ].indexOf(thisObj.props.name)>=0) {
                let str = $(this).val();
                let pObj = $('.conInputNumber' + thisObj.state.count).parent();
                if (str.indexOf('%') >= 0) {

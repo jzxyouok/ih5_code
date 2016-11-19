@@ -506,14 +506,15 @@ let modifyPropList = (list, className, type) => {
                 }
             }
         }
+
         if (['shapeWidth', 'shapeHeight', 'visible','viewBoxWidth','viewBoxHeight','globalVx','globalVy'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
         }
         if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
         }
-        if (['container','flex'].indexOf(className) >= 0 && ['margin', 'padding'].indexOf(v.name) >= 0) {
-         //   v.type = propertyType.Hidden;
+
+        if (['margin', 'padding'].indexOf(v.name) >= 0) {
             if(v.name=='margin'){
                 aLack=aLack.concat(['marginUp','marginDown','marginLeft','marginRight']);
             }

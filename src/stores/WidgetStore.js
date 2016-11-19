@@ -2466,6 +2466,18 @@ export default Reflux.createStore({
         //historyName = "重命名" + this.currentWidget.node.name;
         //this.updateHistoryRecord(historyName);
     },
+
+    fnIsFlex:function(node) {
+        if (node.className == 'flex') {
+            return true;
+        }
+        else if (node.className == 'root') {
+            return false;
+        }
+        else {
+          return  this.fnIsFlex(node.parent);
+        }
+    },
     updateProperties: function(obj, skipRender, skipProperty, special) {
         let isHistoryRecord = true;
         if(obj &&obj.alpha&& obj.alpha !== 0){
@@ -2485,8 +2497,10 @@ export default Reflux.createStore({
 
         //在flex 和flex下的container,需要设定百分比和px字符串,
         //注:提取成一个单独的方法,一个方法只做一件事
-        let className=this.currentWidget.className;
-        if((className=='flex'||( className=='container'&& this.currentWidget.node.padding!==undefined))&& obj.alpha===undefined&& obj.positionX===undefined&& obj.positionY===undefined&& obj.rotation===undefined&&obj.backgroundColor==undefined) {
+
+        let fnIsFlex=this.fnIsFlex.bind(this);
+
+        if(fnIsFlex(this.currentWidget)) {
             for (let i in obj) {
                 if (i == 'margin' || i == 'padding') {
                     let strArr = [];
@@ -2504,7 +2518,9 @@ export default Reflux.createStore({
                     if (this.currentWidget.props[i + 'isRate'] === true) {
                         obj[i] += '%';
                     } else {
-                        obj[i] += 'px';
+                        if(['width','height','minWidth','minHeight','maxWidth','maxHeight'].indexOf(i)>=0) {
+                            obj[i] += 'px';
+                        }
                     }
                     this.currentWidget.node[i]= obj[i];
                 }

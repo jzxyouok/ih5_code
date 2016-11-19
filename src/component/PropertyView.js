@@ -282,11 +282,15 @@ class PropertyView extends React.Component {
                     else if (['marginUp','marginDown','marginLeft','marginRight'
                         ].indexOf(prop.name)>=0) {
                         this.selectNode.props[prop.name+'Key'] = value;
-                        let $obj=$('.flexContainer:eq(4)');
-                        let a= $obj.find('.ant-input-number-input:eq(0)').val();
-                        let b= $obj.find(' .ant-input-number-input:eq(1)').val();
-                        let c= $obj.find('.ant-input-number-input:eq(2)').val();
-                        let d= $obj.find(' .ant-input-number-input:eq(3)').val();
+
+                        //外间距一定是排在内间距前面
+                        let index=0;
+                        let $obj=$('#PropertyViewBody');
+                        let a=   $($obj.find('.ant-form-item-label label:contains("边距上")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+                        let b=   $($obj.find('.ant-form-item-label label:contains("边距下")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+                        let c=  $($obj.find('.ant-form-item-label label:contains("边距左")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+                        let d=   $($obj.find('.ant-form-item-label label:contains("边距右")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+
                         a=a||0;
                         b=b||0;
                         c=c||0;
@@ -294,6 +298,7 @@ class PropertyView extends React.Component {
                         let obj={
                             margin:{marginUp:a,marginRight:d,marginDown:b,marginLeft:c}
                         }
+
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, false);
                         bTag = false;
@@ -301,17 +306,15 @@ class PropertyView extends React.Component {
                     else if (['paddingUp','paddingDown','paddingLeft','paddingRight'
                         ].indexOf(prop.name)>=0) {
                         this.selectNode.props[prop.name + 'Key'] = value;
-                        let $obj=null;
-                        if(this.selectNode.className=='flex'){
-                        $obj=$('.flexContainer:eq(4)');
-                        }else if(this.selectNode.className=='container') {
-                            $obj = $('.flexContainer:eq(7)');
-                        }
+                        let $obj=$('#PropertyViewBody');
+                        let len =$obj.find('.ant-form-item-label label:contains("边距上")').length;
+                        //内间距排在外间距后面
+                        let index=len==1?0:1;
+                        let a=   $($obj.find('.ant-form-item-label label:contains("边距上")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+                        let b=   $($obj.find('.ant-form-item-label label:contains("边距下")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+                        let c=  $($obj.find('.ant-form-item-label label:contains("边距左")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+                        let d=   $($obj.find('.ant-form-item-label label:contains("边距右")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
 
-                        let a= $obj.find('.ant-input-number-input:eq(0)').val();
-                        let b= $obj.find(' .ant-input-number-input:eq(1)').val();
-                        let c= $obj.find('.ant-input-number-input:eq(2)').val();
-                        let d= $obj.find(' .ant-input-number-input:eq(3)').val();
                         a=a||0;
                         b=b||0;
                         c=c||0;
@@ -1044,10 +1047,14 @@ class PropertyView extends React.Component {
             if (['totalTime','marginUp','marginDown','marginLeft','marginRight','paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(item.name)>=0 && node.props[item.name+'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
             }
+            if(typeof defaultValue == 'string'){
+                defaultValue=defaultValue.split('%')[0];
+                defaultValue=defaultValue.split('px')[0];
+            }
         }
         else if(item.type === propertyType.Boolean) {
             defaultValue = node.node[item.name];
-            if(item.name=='flexWrap' && node.props[item.name+'Key']){
+            if(item.name=='flexWrap' && node.props[item.name+'Key'] !==undefined){
                 defaultValue =node.props[item.name+'Key'];
             }
         }
@@ -1312,7 +1319,9 @@ class PropertyView extends React.Component {
         }
         else {
             hasTwin = ['X', 'Y', 'W', 'H', '旋转度', '中心点', 'shapeW', 'shapeH', 'scaleX', 'scaleY',
-                    '原始宽', '原始高', '固定x坐标', '固定y坐标', '碰撞反应', '圆形边界'].indexOf(item.showName) >= 0;
+                    '原始宽', '原始高', '固定x坐标', '固定y坐标', '碰撞反应', '圆形边界'
+                    ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'
+                ].indexOf(item.showName) >= 0;
         }
 
 
