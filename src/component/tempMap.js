@@ -3,7 +3,7 @@ import bridge from 'bridge';
 import {propertyMap, propertyType, backwardTransOptions, forwardTransOptions,
     effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags} from '../map';
 
-var FLAG_MASK = widgetFlags.Display | widgetFlags.Container;   //todo:是否不需要widgetFlags.Root
+var FLAG_MASK = widgetFlags.Display | widgetFlags.Container | widgetFlags.Page;
 
 let modeType = {
     flex: 'flex',
@@ -831,9 +831,6 @@ let checkChildClass = (selected, className) => {
         return false;
 
     if (type == 4 && ((requires & widgetFlags.Canvas) == 0))
-        return false;
-
-    if ((requires & widgetFlags.Page) && !(provides & widgetFlags.Page))
         return false;
 
     if ((requires & widgetFlags.Unique) != 0) {

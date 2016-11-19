@@ -105,7 +105,30 @@ function onSelect(isMulti) {
 const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer',
     'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'table'];
 var currentLoading;
+var addProps = ['positionX', 'positionY', 'rotation'];
+var mulProps = ['scaleX', 'scaleY'];
 
+function syncTrack(parent, props) {
+    if (props && props['prop'] && props['data'] && props['data'].length > 0) {
+        for (var i = 0; i < props['prop'].length; i++) {
+            if (addProps.indexOf(props['prop'][i]) >= 0) {
+                var delta = parent.node[props['prop'][i]] - props['data'][0][i + 1];
+                if (delta != 0) {
+                    for (var j = 0; j < props['data'].length; j++) {
+                        props['data'][j][i + 1] += delta;
+                    }
+                }
+            } else if (mulProps.indexOf(props['prop'][i]) >= 0) {
+                var delta = parent.node[props['prop'][i]] / props['data'][0][i + 1];
+                if (delta != 1) {
+                    for (var j = 0; j < props['data'].length; j++) {
+                        props['data'][j][i + 1] *= delta;
+                    }
+                }
+            }
+        }
+    }
+}
 function loadTree(parent, node, idList, initEl) {
   let current = {};
   current.parent = parent;
@@ -233,7 +256,13 @@ function loadTree(parent, node, idList, initEl) {
     if (idList !== undefined)
       idList[node['id']] = current;
   }
+    if (current.className == 'track') {
+        if (!parent.timerWidget)
+            syncTrack(parent, node['props']);
+        else if (node['props'])
+            delete(node['props']['totalTime']);
 
+    }
   current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl);
   current.timerWidget = bridge.isTimer(current.node) ? current : ((parent) ? parent.timerWidget : null);
 
@@ -1405,11 +1434,13 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
                 data['events'] = js;
         }
     } else {
-        props[name] = node.props[name];
+        props[name] = JSON.parse(JSON.stringify(node.props[name]));
     }
   }
   if (saveKey)
     props['key'] = node.key;
+    if (node.className == 'track' && node.timerWidget && node.timerWidget.props['totalTime'])
+        props['totalTime'] = node.timerWidget.props['totalTime'];
   if (props)
     data['props'] = props;
   // if (node.events)

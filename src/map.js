@@ -618,7 +618,7 @@ const propertyMap = {
                     { name: 'clipped', type: 4, default: false },
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 },
-                    { name: 'swipeType', type: 0, default: 0 } ],
+                    { name: 'swipeType', type: 0, default: 4 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -826,7 +826,7 @@ const propertyMap = {
             requires: 7172 } },
     'font':
     { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
+    { funcs: [],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'fontSize', type: 0, default: 26 },
@@ -836,7 +836,7 @@ const propertyMap = {
         provides: 0,
         requires: 0  },
         dom:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs: [ ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'fontSize', type: 0, default: 26 },
@@ -846,7 +846,7 @@ const propertyMap = {
             provides: 0,
             requires: 0 },
         canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
+        { funcs: [],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'fontSize', type: 0, default: 26 },
@@ -855,6 +855,49 @@ const propertyMap = {
             events: [],
             provides: 0,
             requires: 0  } },
+    'timermx':
+        { flex:
+            { funcs:
+                [ { name: 'play', info: '' },
+                    { name: 'replay', info: '' },
+                    { name: 'pause', info: '' },
+                    { name: 'seek', info: 't' } ],
+                props:
+                    [ { name: 'id', type: 2, default: '' },
+                        { name: 'autoPlay', type: 4, default: false },
+                        { name: 'loop', type: 4, default: false },
+                        { name: 'totalTime', type: 1, default: 10 } ],
+                events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+                provides: 0,
+                requires: 0 },
+            dom:
+                { funcs:
+                    [ { name: 'play', info: '' },
+                        { name: 'replay', info: '' },
+                        { name: 'pause', info: '' },
+                        { name: 'seek', info: 't' } ],
+                    props:
+                        [ { name: 'id', type: 2, default: '' },
+                            { name: 'autoPlay', type: 4, default: false },
+                            { name: 'loop', type: 4, default: false },
+                            { name: 'totalTime', type: 1, default: 10 } ],
+                    events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+                    provides: 0,
+                    requires: 0 },
+            canvas:
+                { funcs:
+                    [ { name: 'play', info: '' },
+                        { name: 'replay', info: '' },
+                        { name: 'pause', info: '' },
+                        { name: 'seek', info: 't' } ],
+                    props:
+                        [ { name: 'id', type: 2, default: '' },
+                            { name: 'autoPlay', type: 4, default: false },
+                            { name: 'loop', type: 4, default: false },
+                            { name: 'totalTime', type: 1, default: 10 } ],
+                    events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+                    provides: 0,
+                    requires: 0 } },
     'canvas':
     { flex:
     { funcs:
@@ -1138,7 +1181,7 @@ const propertyMap = {
                     { name: 'clipped', type: 4, default: false },
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 },
-                    { name: 'swipeType', type: 0, default: 0 },
+                    { name: 'swipeType', type: 0, default: 4 },
                     { name: 'scaleStage', type: 4, default: false } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
@@ -1700,6 +1743,7 @@ const propertyMap = {
                 { name: 'swipeRight', info: '' },
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' },
+                { name: 'loop', info: '' },
                 { name: 'stop', info: '' } ],
         provides: 134,
         requires: 6148 },
@@ -1737,6 +1781,7 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
+                    { name: 'loop', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134,
             requires: 6148},
@@ -1771,6 +1816,7 @@ const propertyMap = {
                     { name: 'swipeDown', info: '' },
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' },
+                    { name: 'loop', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134,
             requires: 6148} },
@@ -1817,6 +1863,7 @@ const propertyMap = {
                 { name: 'swipeRight', info: '' },
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' },
+                { name: 'loop', info: '' },
                 { name: 'stop', info: '' } ],
         provides: 134,
         requires: 6148 },
@@ -1859,6 +1906,7 @@ const propertyMap = {
                     { name: 'swipeRight', info: '' },
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' },
+                    { name: 'loop', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134,
             requires: 6148 },
@@ -1901,40 +1949,65 @@ const propertyMap = {
                     { name: 'swipeDown', info: '' },
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' },
+                    { name: 'loop', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134,
             requires: 6148  } },
     'track':
-    { flex:
-    { funcs: [ { name: 'delete', info: '' } ],
-        props:
-            [ { name: 'id', type: 2, default: '' },
-                { name: 'type', type: 0, default: 0 },
-                { name: 'startTime', type: 1, default: -1 },
-                { name: 'endTime', type: 1, default: -1 } ],
-        events: [],
-        provides: 0,
-        requires: 6146 },
-        dom:
-        { funcs: [ { name: 'delete', info: '' } ],
-            props:
-                [ { name: 'id', type: 2, default: '' },
-                    { name: 'type', type: 0, default: 0 },
-                    { name: 'startTime', type: 1, default: -1 },
-                    { name: 'endTime', type: 1, default: -1 } ],
-            events: [],
-            provides: 0,
-            requires: 6146 },
-        canvas:
-        { funcs: [ { name: 'delete', info: '' } ],
-            props:
-                [ { name: 'id', type: 2, default: '' },
-                    { name: 'type', type: 0, default: 0 },
-                    { name: 'startTime', type: 1, default: -1 },
-                    { name: 'endTime', type: 1, default: -1 } ],
-            events: [],
-            provides: 0,
-            requires: 6146} },
+        { flex:
+            { funcs:
+                [ { name: 'delete', info: '' },
+                    { name: 'play', info: '' },
+                    { name: 'replay', info: '' },
+                    { name: 'pause', info: '' },
+                    { name: 'seek', info: 't' } ],
+                props:
+                    [ { name: 'id', type: 2, default: '' },
+                        { name: 'autoPlay', type: 4, default: false },
+                        { name: 'loop', type: 4, default: false },
+                        { name: 'totalTime', type: 1, default: 10 },
+                        { name: 'type', type: 0, default: 0 },
+                        { name: 'startTime', type: 1, default: -1 },
+                        { name: 'endTime', type: 1, default: -1 } ],
+                events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+                provides: 0,
+                requires: 6658 },
+            dom:
+                { funcs:
+                    [ { name: 'delete', info: '' },
+                        { name: 'play', info: '' },
+                        { name: 'replay', info: '' },
+                        { name: 'pause', info: '' },
+                        { name: 'seek', info: 't' } ],
+                    props:
+                        [ { name: 'id', type: 2, default: '' },
+                            { name: 'autoPlay', type: 4, default: false },
+                            { name: 'loop', type: 4, default: false },
+                            { name: 'totalTime', type: 1, default: 10 },
+                            { name: 'type', type: 0, default: 0 },
+                            { name: 'startTime', type: 1, default: -1 },
+                            { name: 'endTime', type: 1, default: -1 } ],
+                    events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+                    provides: 0,
+                    requires: 6658 },
+            canvas:
+                { funcs:
+                    [ { name: 'delete', info: '' },
+                        { name: 'play', info: '' },
+                        { name: 'replay', info: '' },
+                        { name: 'pause', info: '' },
+                        { name: 'seek', info: 't' } ],
+                    props:
+                        [ { name: 'id', type: 2, default: '' },
+                            { name: 'autoPlay', type: 4, default: false },
+                            { name: 'loop', type: 4, default: false },
+                            { name: 'totalTime', type: 1, default: 10 },
+                            { name: 'type', type: 0, default: 0 },
+                            { name: 'startTime', type: 1, default: -1 },
+                            { name: 'endTime', type: 1, default: -1 } ],
+                    events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+                    provides: 0,
+                    requires: 6658 } },
     'qrcode':
     { flex:
     { funcs:
