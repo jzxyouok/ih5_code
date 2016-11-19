@@ -1060,7 +1060,7 @@ class PropertyView extends React.Component {
         }
         else if(item.type === propertyType.Integer) {
             defaultValue = node.props[item.name];
-            if ((className == 'flex'||(className == 'container')) && ['width','height'].indexOf(item.name)>=0 && typeof defaultValue == 'string') {
+            if (typeof defaultValue == 'string') {
                 defaultValue=defaultValue.split('%')[0];
                 defaultValue=defaultValue.split('px')[0];
             }
@@ -1285,7 +1285,7 @@ class PropertyView extends React.Component {
 
 
 
-        let hasPx = ['X', 'Y', 'W', 'H', '网格大小' ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
+        let hasPx = ['X', 'Y', 'W', 'H','原始宽', '原始高', '网格大小' ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
 
         let hasRate=false;//是否加%
         if(item.showName=='不透明度'){

@@ -507,8 +507,16 @@ let modifyPropList = (list, className, type) => {
             }
         }
 
-        if (['shapeWidth', 'shapeHeight', 'visible','viewBoxWidth','viewBoxHeight','globalVx','globalVy'].indexOf(v.name) >= 0) {
+        if ([ 'visible','viewBoxWidth','viewBoxHeight','globalVx','globalVy'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
+
+        }
+        if (['shapeWidth', 'shapeHeight'].indexOf(v.name) >= 0) {
+            if(type==modeType.flex && className=='rect'){
+               ;
+            }else{
+                v.type = propertyType.Hidden;
+            }
         }
         if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
