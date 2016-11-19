@@ -2467,71 +2467,25 @@ export default Reflux.createStore({
         //this.updateHistoryRecord(historyName);
     },
 
-    fnIsFlex:function(node) {
-        if (node.className == 'flex') {
-            return true;
-        }
-        else if (node.className == 'root') {
-            return false;
-        }
-        else {
-            return  this.fnIsFlex(node.parent);
-        }
-    },
     updateProperties: function(obj, skipRender, skipProperty, special) {
+        //更新属性时,prop和node都需要同时设定,不然看不到效果
+
         let isHistoryRecord = true;
-        if(obj &&obj.alpha&& obj.alpha !== 0){
-            let value = parseFloat(obj.alpha);
-            if(!value) {
-                obj.alpha = 1;
-            }
-        }
+        //设置透明度,用来兼容时间轴
+        //todo:志颖可以详细补充下
+        this.setAlpha(obj);
 
         //如果是this.selectWidgets更新的坐标属性，如果没有发生位移的改变则不需要更新历史记录
-        if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
-            if(this.currentWidget.props.positionX == obj.positionX && this.currentWidget.props.positionY == obj.positionY){
-                isHistoryRecord = false;
-            }
-        }
+        isHistoryRecord=this.setHistoryRecordByPos(obj);
 
+         //处理flex模式下的百分比和px
+         let isSkip= this.setFlexProps(obj);
+         if(isSkip) {
+            skipRender = false;
+            skipProperty = true;
+         }
 
-        //在flex 和flex下的container,需要设定百分比和px字符串,
-        //注:提取成一个单独的方法,一个方法只做一件事
-        let fnIsFlex=this.fnIsFlex.bind(this);
-        if(fnIsFlex(this.currentWidget)) {
-            for (let i in obj) {
-                if (i == 'margin' || i == 'padding') {
-                    let strArr = [];
-                    for (let v in obj[i]) {
-                        if (this.currentWidget.props[v + 'isRate'] === true) {
-                            obj[i][v] =obj[i][v] + '%';
-                        } else {
-                            obj[i][v]+='px';
-                        }
-                        strArr.push(obj[i][v])
-                    }
-                    obj[i] = strArr.join(' ');
-                    this.currentWidget.node[i]=strArr.join(' ');
-                    this.currentWidget.props[i]=strArr.join(' ');
-
-                }else{
-                    if (this.currentWidget.props[i + 'isRate'] === true) {
-                        obj[i] += '%';
-                    } else {
-                        if(['width','height','minWidth','minHeight','maxWidth','maxHeight'].indexOf(i)>=0) {
-                            obj[i] += 'px';
-                        }
-                    }
-                    this.currentWidget.node[i]= obj[i];
-                    this.currentWidget.props[i]= obj[i];
-                }
-            }
-            skipRender=false;
-            skipProperty=true;
-        }
-
-
-         console.log(obj,this.currentWidget );
+         //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2549,6 +2503,86 @@ export default Reflux.createStore({
             this.updateHistoryRecord(historyName);
         }
     },
+/********updateProperties,内部工具方法,start***********************************************************************/
+    /**
+     * luozheao,20161119
+     * 功能:
+     * 处理alpha的值,兼容时间轴?
+     */
+      setAlpha:function(obj){
+        if(obj &&obj.alpha&& obj.alpha !== 0){
+            let value = parseFloat(obj.alpha);
+            if(!value) {
+                obj.alpha = 1;
+            }
+        }
+       },
+
+        /**
+         * luozheao,20161119
+         * 功能:
+         * 处理flex模式下的百分比和px
+         */
+          setFlexProps:function (obj) {
+            let fnIsFlex = this.fnIsFlex;
+            if (fnIsFlex(this.currentWidget)) {
+                for (let i in obj) {
+                    if (i == 'margin' || i == 'padding') {
+                        let strArr = [];
+                        for (let v in obj[i]) {
+                            if (this.currentWidget.props[v + 'isRate'] === true) {
+                                obj[i][v] = obj[i][v] + '%';
+                            } else {
+                                obj[i][v] += 'px';
+                            }
+                            strArr.push(obj[i][v])
+                        }
+                        obj[i] = strArr.join(' ');
+                        //node 和props都需要设定,node控制舞台的显示,props控制初始化时的显示
+                        this.currentWidget.node[i] = strArr.join(' ');
+                        this.currentWidget.props[i] = strArr.join(' ');
+                    } else {
+                        if (this.currentWidget.props[i + 'isRate'] === true) {
+                            obj[i] += '%';
+                        } else {
+                            if (['width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight'].indexOf(i) >= 0) {
+                                obj[i] += 'px';
+                            }
+                        }
+                        this.currentWidget.node[i] = obj[i];
+                        this.currentWidget.props[i] = obj[i];
+                    }
+                }
+                return true;
+            }
+            return false;
+        },
+            //判断是否处于flex模式下,可拓展改写
+           fnIsFlex:function(node) {
+        if (node.className == 'flex') {
+            return true;
+        }
+        else if (node.className == 'root') {
+            return false;
+        }
+        else {
+            return  this.fnIsFlex(node.parent);
+        }
+    },
+     /**
+     * luozheao,20161119
+     * 功能:
+     * 当舞台中对象的坐标没发生改变,则不更新历史记录
+     */
+         setHistoryRecordByPos:function (obj) {
+         if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
+             if(this.currentWidget.props.positionX == obj.positionX && this.currentWidget.props.positionY == obj.positionY){
+                  return false;
+             }
+             return true;
+         }
+     },
+    /********updateProperties,内部工具方法,end*******************************************************************************/
     reorderEventTreeList: function () {
         if(this.currentWidget&&this.currentWidget.rootWidget) {
             this.eventTreeList = [];

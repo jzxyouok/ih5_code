@@ -260,8 +260,8 @@ class ConInputNumber extends React.Component {
        let fnIsFlex=this.fnIsFlex.bind(this);
 
        $('.conInputNumber'+this.state.count+' .ant-input-number-input').change(function () {
-           //只在flex和flex的container下触发px和%的切换,并去掉百分比的影响
-           //widgtStore里面的updateProperties,判断条件需要保持一致,应当一个地方设定,别的地方都可以用
+          //todo:怎么能拿到当前节点
+           //todo:100%和100px 更改不触发
 
            if(con_currentWidget && fnIsFlex(con_currentWidget)) {
                let str = $(this).val();
