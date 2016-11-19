@@ -1434,7 +1434,12 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
                 data['events'] = js;
         }
     } else {
-        props[name] = JSON.parse(JSON.stringify(node.props[name]));
+       // console.log(node.node[name],name,node.node,node.props)
+        props[name] = node.props[name];
+      // props[name] = JSON.parse(JSON.stringify(node.props[name]));
+      //    props[name] =node.props[name]?
+      //                  JSON.parse(JSON.stringify(node.props[name])):(node.node[name]? JSON.parse(JSON.stringify(node.node[name])):'');
+
     }
   }
   if (saveKey)
@@ -2481,7 +2486,7 @@ export default Reflux.createStore({
         //在flex 和flex下的container,需要设定百分比和px字符串,
         //注:提取成一个单独的方法,一个方法只做一件事
         let className=this.currentWidget.className;
-        if((className=='flex'||( className=='container'&& this.currentWidget.node.padding!==undefined))&& obj.alpha===undefined&& obj.positionX===undefined&& obj.positionY===undefined&& obj.rotation===undefined) {
+        if((className=='flex'||( className=='container'&& this.currentWidget.node.padding!==undefined))&& obj.alpha===undefined&& obj.positionX===undefined&& obj.positionY===undefined&& obj.rotation===undefined&&obj.backgroundColor==undefined) {
             for (let i in obj) {
                 if (i == 'margin' || i == 'padding') {
                     let strArr = [];
@@ -2489,25 +2494,28 @@ export default Reflux.createStore({
                         if (this.currentWidget.props[v + 'isRate'] === true) {
                             obj[i][v] =obj[i][v] + '%';
                         } else {
-                            obj[i][v] =obj[i][v]+ 'px';
+                            obj[i][v]+='px';
                         }
                         strArr.push(obj[i][v])
                     }
                     obj[i] = strArr.join(' ');
+                    this.currentWidget.node[i]=strArr.join(' ');
                 }else{
                     if (this.currentWidget.props[i + 'isRate'] === true) {
                         obj[i] += '%';
                     } else {
                         obj[i] += 'px';
                     }
+                    this.currentWidget.node[i]= obj[i];
                 }
             }
             skipRender=false;
+            skipProperty=false;
         }
 
 
 
-         console.log(obj,this.currentWidget.props);
+         console.log(obj,this.currentWidget,skipRender,skipProperty);
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -3572,6 +3580,7 @@ export default Reflux.createStore({
         trimTree(stageTree[0].tree); //处理图片链接
         generateId(stageTree[0].tree);//给树中涉及到的对象加上id
         saveTree(data['stage'], stageTree[0].tree);
+        let a=1;
         data['stage']['type'] = bridge.getRendererType(stageTree[0].tree.node);
 
         // data['stage']['links'] = stageTree[0].tree.imageList.length;
@@ -3709,8 +3718,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        //     xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
+           xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        //     xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)

@@ -257,12 +257,12 @@ class PropertyView extends React.Component {
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag = false;
                         break;
-                    }else if( this.selectNode.className=='container'&& this.selectNode.node.padding!==undefined){
+                    }
+                    else if( this.selectNode.className=='container'&& this.selectNode.node.padding!==undefined){
                         //flex下的container
-                        v=value;
+                        v=parseInt(value);
                         break;
                     }
-
                     v = parseInt(value);
                     break;
                 case propertyType.Number:
@@ -292,11 +292,10 @@ class PropertyView extends React.Component {
                         c=c||0;
                         d=d||0;
                         let obj={
-                            margin:{marginUp:a,marginDown:b,marginLeft:c,marginRight:d}
+                            margin:{marginUp:a,marginRight:d,marginDown:b,marginLeft:c}
                         }
-
                         this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, true);
+                        WidgetActions['updateProperties'](obj, false, false);
                         bTag = false;
                     }
                     else if (['paddingUp','paddingDown','paddingLeft','paddingRight'
@@ -318,10 +317,10 @@ class PropertyView extends React.Component {
                         c=c||0;
                         d=d||0;
                         let obj={
-                            padding:{paddingUp:a,paddingDown:b,paddingLeft:c,paddingRight:d}
+                            padding:{paddingUp:a,paddingRight:d,paddingDown:b,paddingLeft:c}
                         }
                         this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, true);
+                        WidgetActions['updateProperties'](obj, false, false);
                         bTag = false;
                     }
                         v = parseFloat(value);
@@ -1054,8 +1053,9 @@ class PropertyView extends React.Component {
         }
         else if(item.type === propertyType.Integer) {
             defaultValue = node.props[item.name];
-            if (className == 'flex' && ['width','height'].indexOf(item.name)>=0 && typeof defaultValue == 'string') {
+            if ((className == 'flex'||(className == 'container')) && ['width','height'].indexOf(item.name)>=0 && typeof defaultValue == 'string') {
                 defaultValue=defaultValue.split('%')[0];
+                defaultValue=defaultValue.split('px')[0];
             }
         }
         else if (node.props[item.name] === undefined) {

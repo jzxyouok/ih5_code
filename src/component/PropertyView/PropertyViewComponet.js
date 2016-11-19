@@ -251,9 +251,9 @@ class ConInputNumber extends React.Component {
            //只在flex和flex的container下触发px和%的切换,并去掉百分比的影响
            //widgtStore里面的updateProperties,判断条件需要保持一致,应当一个地方设定,别的地方都可以用
 
-           let className=con_currentWidget.className;
+           let className=con_currentWidget?con_currentWidget.className:null;
 
-           if((className=='flex'||( className=='container'&& con_currentWidget.node.padding!==undefined))&& ['positionX','positionY','alpha','rotation'].indexOf(thisObj.props.name)<0) {
+           if(className&&(className=='flex'||( className=='container'&& con_currentWidget.node.padding!==undefined))&& ['positionX','positionY','alpha','rotation','backgroundColor'].indexOf(thisObj.props.name)<0) {
                let str = $(this).val();
                let pObj = $('.conInputNumber' + thisObj.state.count).parent();
                if (str.indexOf('%') >= 0) {

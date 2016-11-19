@@ -151,7 +151,7 @@ let propMapping = {
 
     'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'PC', options:{'PC':'false','手机':'true'}},
 
-    'margin': {name:'margin', showName:'外间距', type: propertyType.String, default:'',group:'tools2'},
+    'margin': {name:'margin', showName:'外间距', type: propertyType.Hidden, default:'',group:'tools2'},
     'marginUp': {name:'marginUp', showName:'边距上', type: propertyType.Number, default:0,group:'tools2.1'},
     'marginDown': {name:'marginDown', showName:'边距下', type: propertyType.Number, default:0,group:'tools2.1'},
     'marginLeft': {name:'marginLeft', showName:'边距左', type: propertyType.Number, default:0,group:'tools2.1'},
@@ -164,7 +164,7 @@ let propMapping = {
     'alignSelf': {name:'alignSelf', showName:'副轴对齐', type: propertyType.Select, default:'自动',options:{'自动':'auto','靠前':'flex-start','靠后':'flex-end','居中':'center', '拉伸':'stretch','对齐文本':'baseline'},group:'tools2.3'},
     'flex': {name:'flex', showName:'自动伸缩', type: propertyType.Select, default:'允许缩小',options:{'无':'0 0 auto','允许缩小':'0 1 auto','允许拉伸':'1 0 auto', '自动伸缩':'1 1 auto'},group:'tools2.3'},
 
-    'padding': {name:'padding', showName:'内间距', type: propertyType.String, default:'',group:'tools3'},
+    'padding': {name:'padding', showName:'内间距', type: propertyType.Hidden, default:'',group:'tools3'},
     'paddingUp': {name:'paddingUp', showName:'边距上', type: propertyType.Number, default:0,group:'tools3'},
     'paddingDown': {name:'paddingDown', showName:'边距下', type: propertyType.Number, default:0,group:'tools3'},
     'paddingLeft': {name:'paddingLeft', showName:'边距左', type: propertyType.Number, default:0,group:'tools3'},
@@ -513,7 +513,7 @@ let modifyPropList = (list, className, type) => {
             v.type = propertyType.Hidden;
         }
         if (['container','flex'].indexOf(className) >= 0 && ['margin', 'padding'].indexOf(v.name) >= 0) {
-            v.type = propertyType.Hidden;
+         //   v.type = propertyType.Hidden;
             if(v.name=='margin'){
                 aLack=aLack.concat(['marginUp','marginDown','marginLeft','marginRight']);
             }
@@ -529,7 +529,6 @@ let modifyPropList = (list, className, type) => {
     if (originXTag && originYTag && ['timer','container', 'canvas', 'flex', 'world'].indexOf(className) < 0) {
         aLack.push('originPos');
     }
-
 
 
     list = list.concat(dealElementList(aLack, className, 'props', type));
