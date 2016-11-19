@@ -2498,8 +2498,9 @@ export default Reflux.createStore({
         //在flex 和flex下的container,需要设定百分比和px字符串,
         //注:提取成一个单独的方法,一个方法只做一件事
 
-        let fnIsFlex=this.fnIsFlex.bind(this);
 
+
+        let fnIsFlex=this.fnIsFlex.bind(this);
         if(fnIsFlex(this.currentWidget)) {
             for (let i in obj) {
                 if (i == 'margin' || i == 'padding') {
@@ -2514,6 +2515,8 @@ export default Reflux.createStore({
                     }
                     obj[i] = strArr.join(' ');
                     this.currentWidget.node[i]=strArr.join(' ');
+                    this.currentWidget.props[i]=strArr.join(' ');
+
                 }else{
                     if (this.currentWidget.props[i + 'isRate'] === true) {
                         obj[i] += '%';
@@ -2523,15 +2526,15 @@ export default Reflux.createStore({
                         }
                     }
                     this.currentWidget.node[i]= obj[i];
+                    this.currentWidget.props[i]= obj[i];
                 }
             }
             skipRender=false;
-            skipProperty=false;
+            skipProperty=true;
         }
 
 
-
-         console.log(obj,this.currentWidget,skipRender,skipProperty);
+         console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
