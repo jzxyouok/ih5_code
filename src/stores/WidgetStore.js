@@ -2497,9 +2497,6 @@ export default Reflux.createStore({
 
         //在flex 和flex下的container,需要设定百分比和px字符串,
         //注:提取成一个单独的方法,一个方法只做一件事
-
-
-
         let fnIsFlex=this.fnIsFlex.bind(this);
         if(fnIsFlex(this.currentWidget)) {
             for (let i in obj) {
