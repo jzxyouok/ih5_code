@@ -302,7 +302,14 @@ class PropertyView extends React.Component {
                     else if (['paddingUp','paddingDown','paddingLeft','paddingRight'
                         ].indexOf(prop.name)>=0) {
                         this.selectNode.props[prop.name + 'Key'] = value;
-                        let $obj=$('.flexContainer:eq(7)');
+                        let $obj=null;
+                        if(this.selectNode.className=='flex'){
+                        $obj=$('.flexContainer:eq(4)');
+                        }else if(this.selectNode.className=='container') {
+                            $obj = $('.flexContainer:eq(7)');
+                        }
+
+
                         let a= $obj.find('.ant-input-number-input:eq(0)').val();
                         let b= $obj.find(' .ant-input-number-input:eq(1)').val();
                         let c= $obj.find('.ant-input-number-input:eq(2)').val();
@@ -770,7 +777,7 @@ class PropertyView extends React.Component {
 
 
     getFields() {
-      //  console.log( this.selectNode);
+//       console.log( this.selectNode);
         let node = this.selectNode;
         if (!node)  return null;
 
@@ -822,6 +829,8 @@ class PropertyView extends React.Component {
      */
     getStyleObj(node){
         if(node.className=='container' && node.node.padding !==undefined){
+            return {name:'flexContainer',value:true}
+        }else  if(node.className=='flex'){
             return {name:'flexContainer',value:true}
         }
         return null
@@ -1044,6 +1053,12 @@ class PropertyView extends React.Component {
                 defaultValue =node.props[item.name+'Key'];
             }
         }
+        else if(item.type === propertyType.Integer) {
+            defaultValue = node.props[item.name];
+            if (className == 'flex' && ['width','height'].indexOf(item.name)>=0 && typeof defaultValue == 'string') {
+                defaultValue=defaultValue.split('%')[0];
+            }
+        }
         else if (node.props[item.name] === undefined) {
               if (className == "table" && item.name == "headerFontSize") {
                 defaultValue = 26;
@@ -1260,11 +1275,18 @@ class PropertyView extends React.Component {
         let isAutoGravity = item.name == 'autoGravity'?true:false;
         let tdColorSwitch =className == "table" && ['fontFill','fillColor','altColor'].indexOf(item.name)>=0?true: false;
 
-        let hasRate=false;//是否加%
+
+
+
+
         let hasPx = ['X', 'Y', 'W', 'H', '网格大小' ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
-        if(className=='flex' ||item.showName=='不透明度'){
-            hasPx = !(['W', 'H','不透明度'].indexOf(item.showName) >= 0);
-            hasRate =['W', 'H','不透明度'].indexOf(item.showName) >= 0;
+
+        let hasRate=false;//是否加%
+        if(item.showName=='不透明度'){
+            hasRate=true;
+        }else if(node.props[item.name+'isRate']===true) {
+            hasRate = true;
+            hasPx=false;
         }
 
 

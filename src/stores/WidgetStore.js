@@ -2478,21 +2478,30 @@ export default Reflux.createStore({
         }
 
 
-
-        for(let i in obj){
-           if(this.currentWidget.props[i+'isRate']){
-               obj[i]+='%';
-           }
-           if(i=='margin' || i=='padding'){
-               let strArr=[];
-               for(let v in obj[i]){
-                   if(this.currentWidget.props[v+'isRate']){
-                       obj[i][v]+='%';
-                   }
-                   strArr.push(obj[i][v])
-               }
-               obj[i]=strArr.join(' ');
-           }
+        //在flex 和flex下的container,需要设定百分比和px字符串,
+        //注:提取成一个单独的方法,一个方法只做一件事
+        let className=this.currentWidget.className;
+        if((className=='flex'||( className=='container'&& this.currentWidget.node.padding!==undefined))&& obj.alpha===undefined&& obj.positionX===undefined&& obj.positionY===undefined&& obj.rotation===undefined) {
+            for (let i in obj) {
+                if (i == 'margin' || i == 'padding') {
+                    let strArr = [];
+                    for (let v in obj[i]) {
+                        if (this.currentWidget.props[v + 'isRate'] === true) {
+                            obj[i][v] =obj[i][v] + '%';
+                        } else {
+                            obj[i][v] =obj[i][v]+ 'px';
+                        }
+                        strArr.push(obj[i][v])
+                    }
+                    obj[i] = strArr.join(' ');
+                }else{
+                    if (this.currentWidget.props[i + 'isRate'] === true) {
+                        obj[i] += '%';
+                    } else {
+                        obj[i] += 'px';
+                    }
+                }
+            }
         }
 
          console.log(obj,this.currentWidget.props);

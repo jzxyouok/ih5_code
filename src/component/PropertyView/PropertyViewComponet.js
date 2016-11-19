@@ -5,6 +5,7 @@ import React from 'react';
 import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
 import  $ from 'jquery';
 import WidgetActions from '../../actions/WidgetActions';
+import WidgetStore from '../../stores/WidgetStore';
 const MenuItem = Menu.Item;
 let count=0;
 
@@ -204,13 +205,15 @@ class DropDownInput extends React.Component {
     }
 }
 
-
+//巨坑:切换属性面板,react自身会判断哪些组件是你新增的,如果不是新增的,就不会触发onStatusChange
+let con_currentWidget=null;
 class ConInputNumber extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             count:count++
         };
+
 
         this.T=null;
         this.TOut=null;
@@ -222,7 +225,15 @@ class ConInputNumber extends React.Component {
        this.onMousedown=this.onMousedown.bind(this);
        this.onMouseUp=this.onMouseUp.bind(this);
     }
+    onStatusChange(widget) {
+        if(widget.selectWidget) {
+            con_currentWidget=widget.selectWidget;
+        }
+    }
     componentDidMount() {
+
+        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+
         this.fatherObj=document.getElementsByClassName('conInputNumber'+this.state.count)[0];
         this.downBtn =this.fatherObj.getElementsByClassName('ant-input-number-handler-down')[0];
         this.upBtn =this.fatherObj.getElementsByClassName('ant-input-number-handler-up')[0];
@@ -235,23 +246,34 @@ class ConInputNumber extends React.Component {
         this.upBtn .addEventListener('mouseout',this.onMouseUp);
         document.addEventListener('mouseup',this.onMouseUp);
        let thisObj=this;
+
        $('.conInputNumber'+this.state.count+' .ant-input-number-input').change(function () {
-            let str=$(this).val();
-            let pObj=$('.conInputNumber'+thisObj.state.count).parent();
-            if(str.indexOf('%')>=0){
-                pObj.removeClass('ant-input-px');
-                pObj.addClass('ant-input-rate');
-                $(this).val(str.split('%')[0]);
-                WidgetActions['addProps']({name:thisObj.props.name+'isRate',value:true});
-            }else if(str.indexOf('px')>=0){
-                pObj.addClass('ant-input-px');
-                pObj.removeClass('ant-input-rate');
-                $(this).val(str.split('px')[0]);
-                WidgetActions['addProps']({name:thisObj.props.name+'isRate',value:false});
-            }
-       })
+           //只在flex和flex的container下触发px和%的切换,并去掉百分比的影响
+           //widgtStore里面的updateProperties,判断条件需要保持一致,应当一个地方设定,别的地方都可以用
+
+           let className=con_currentWidget.className;
+
+           if((className=='flex'||( className=='container'&& con_currentWidget.node.padding!==undefined))&& ['positionX','positionY','alpha','rotation'].indexOf(thisObj.props.name)<0) {
+               let str = $(this).val();
+               let pObj = $('.conInputNumber' + thisObj.state.count).parent();
+               if (str.indexOf('%') >= 0) {
+                   pObj.removeClass('ant-input-px');
+                   pObj.addClass('ant-input-rate');
+                   $(this).val(str.split('%')[0]);
+                   WidgetActions['addProps']({name: thisObj.props.name + 'isRate', value: true});
+               } else if (str.indexOf('px') >= 0) {
+                   pObj.addClass('ant-input-px');
+                   pObj.removeClass('ant-input-rate');
+                   $(this).val(str.split('px')[0]);
+                   WidgetActions['addProps']({name: thisObj.props.name + 'isRate', value: false});
+               }
+           }
+       });
     }
     componentWillUnmount() {
+
+        this.unsubscribe();
+
         this.downBtn.removeEventListener('mousedown',this.onMousedown);
         this.upBtn.removeEventListener('mousedown',this.onMousedown);
         this.downBtn .removeEventListener('mouseout',this.onMouseUp);
