@@ -309,7 +309,6 @@ class PropertyView extends React.Component {
                             $obj = $('.flexContainer:eq(7)');
                         }
 
-
                         let a= $obj.find('.ant-input-number-input:eq(0)').val();
                         let b= $obj.find(' .ant-input-number-input:eq(1)').val();
                         let c= $obj.find('.ant-input-number-input:eq(2)').val();

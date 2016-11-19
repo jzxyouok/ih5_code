@@ -2502,7 +2502,10 @@ export default Reflux.createStore({
                     }
                 }
             }
+            skipRender=false;
         }
+
+
 
          console.log(obj,this.currentWidget.props);
 
