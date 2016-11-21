@@ -241,7 +241,7 @@ var DEFAULT_TOOLBOX = {
         gid:25,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.WORLD, name:'物理世界', icon: worldIcon, className:'world', param: {'value':0, 'fontSize':26, 'fontFill':'#000000'}}]
+            {cid:TOOL_ID.WORLD, name:'物理世界', icon: worldIcon, className:'world', param: {'value':0, 'fontSize':26, 'fontFill':'#000000', 'autoPlay':true}}]
     },{
         name:'数据库',
         key:16,
