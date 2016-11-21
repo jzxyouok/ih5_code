@@ -428,25 +428,21 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
-                    if (prop.name == 'scaleType') {
-                        console.log(value);
-                        //this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
-                        v = parseInt(value);
-                    }
-                    else if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
-                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                     if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
+                      //  this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                         this.selectNode.props[prop.name+'Key'] = value;
                         v = value;
                     }
                     else if (prop.name == 'swipeType') {
-                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                        this.selectNode.props[prop.name+'Key'] = value;
                         v = parseInt(value);
                     }
                     else if(prop.name == 'scaleStage'){
-                        this.selectNode.props.scaleStageKey = this.getScaleTypeDefault(value, prop.options);
+                         this.selectNode.props[prop.name+'Key'] = value;
                         v = value=='true'?true:false;
                     }
                     else if (prop.name == 'fontFamily') {
-                        this.selectNode.props.fontFamilyKey = this.getFontDefault(value);
+                         this.selectNode.props[prop.name+'Key']= this.getFontDefault(value);
                         v = value;
                     }
                     else if (prop.name == 'headerFontFamily') {
@@ -1013,7 +1009,6 @@ class PropertyView extends React.Component {
         else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
             defaultValue = item.default;
             //当originY时才会激活,而不是originPos
-            //'scaleType',
             if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
             } else if (item.name == 'fontFamily' && node.props.fontFamilyKey) {
