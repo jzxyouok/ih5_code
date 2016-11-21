@@ -1880,9 +1880,14 @@ export default Reflux.createStore({
               if(className === 'container') {
                   //如果在flex模式下，添加param:{'alignItems':'flex-start'}
                   props['alignItems'] = 'flex-start';
+                  props['alignItemsKey'] = '0 0 auto';
               } else {
                   props['flex'] = '0 0 auto';
+                  props['flexKey'] = '0 0 auto';
               }
+          } else if (className === 'world') {
+              props['autoPlay'] = true;
+              props['autoPlayKey'] = true;
           }
           historyName = "添加 "+ props.name;
       }
@@ -1945,18 +1950,6 @@ export default Reflux.createStore({
                 o.node['visible'] = originVisible;
                 o.node['scaleX'] = p.shapeWidth / o.node.width;
                 o.node['scaleY'] = o.node['scaleX'];
-                this.render();
-            });
-        } else if (isInFlex) {
-            process.nextTick(() => {
-                this.trigger(cmd);
-                this.getAllWidgets();
-                if(props['alignItems']) {
-                    o.node['alignItems'] = props['alignItems'];
-                }
-                if(props['flex']) {
-                    o.node['flex'] = props['flex'];
-                }
                 this.render();
             });
         } else {
