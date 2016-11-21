@@ -428,25 +428,21 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
-                    if (prop.name == 'scaleType') {
-                        console.log(value);
-                        //this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
-                        v = parseInt(value);
-                    }
-                    else if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
-                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                     if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
+                      //  this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                         this.selectNode.props[prop.name+'Key'] = value;
                         v = value;
                     }
                     else if (prop.name == 'swipeType') {
-                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                        this.selectNode.props[prop.name+'Key'] = value;
                         v = parseInt(value);
                     }
                     else if(prop.name == 'scaleStage'){
-                        this.selectNode.props.scaleStageKey = this.getScaleTypeDefault(value, prop.options);
+                         this.selectNode.props[prop.name+'Key'] = value;
                         v = value=='true'?true:false;
                     }
                     else if (prop.name == 'fontFamily') {
-                        this.selectNode.props.fontFamilyKey = this.getFontDefault(value);
+                         this.selectNode.props[prop.name+'Key']= this.getFontDefault(value);
                         v = value;
                     }
                     else if (prop.name == 'headerFontFamily') {
@@ -834,8 +830,12 @@ class PropertyView extends React.Component {
     getStyleObj(node){
         if(node.className=='container' && node.node.padding !==undefined){
             return {name:'flexContainer',value:true}
-        }else  if(node.className=='flex'){
+        }
+        else  if(node.className=='flex'){
             return {name:'flexContainer',value:true}
+        }
+        else  if(node.className=='root'){
+            return {name:'stageLoopSet',value:true}
         }
         return null
     }
@@ -1013,7 +1013,6 @@ class PropertyView extends React.Component {
         else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
             defaultValue = item.default;
             //当originY时才会激活,而不是originPos
-            //'scaleType',
             if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
             } else if (item.name == 'fontFamily' && node.props.fontFamilyKey) {
@@ -1074,9 +1073,13 @@ class PropertyView extends React.Component {
         }
         else if(item.type === propertyType.Boolean) {
             defaultValue = node.node[item.name];
-            if(item.name=='flexWrap' && node.props[item.name+'Key'] !==undefined){
+
+            if(node.props[item.name+'Key'] !==undefined){
                 defaultValue =node.props[item.name+'Key'];
             }
+            // if(item.name=='flexWrap' && node.props[item.name+'Key'] !==undefined){
+            //     defaultValue =node.props[item.name+'Key'];
+            // }
         }
 
         else if (node.props[item.name] === undefined) {
@@ -1299,8 +1302,6 @@ class PropertyView extends React.Component {
 
         let isAutoGravity = item.name == 'autoGravity'?true:false;
         let tdColorSwitch =className == "table" && ['fontFill','fillColor','altColor'].indexOf(item.name)>=0?true: false;
-
-
 
 
 

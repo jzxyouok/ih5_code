@@ -55,7 +55,6 @@ class PropertyViewSetUp extends React.Component {
         };
         let node = WidgetStore.getWidgetByKey(this.state.oKey);
 
-        //console.log(node,'node');
         let defaultValue=node?node.node[item.name]:'';
         //defaultProp特殊性处理
         switch(item.type) {
@@ -92,6 +91,12 @@ class PropertyViewSetUp extends React.Component {
                 break;
             case propertyType.FormulaInput:
                 defaultValue = {type: 1, value: defaultValue};
+                break;
+            case propertyType.Boolean:
+                if(item.name=='flexWrap'){
+                    defaultValue = defaultValue=='wrap'?true:false;
+                    console.log(node,defaultValue,item);
+                }
                 break;
             default:
                 break;
