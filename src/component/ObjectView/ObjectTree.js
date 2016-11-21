@@ -129,7 +129,7 @@ class ObjectTree extends React.Component {
                 {name:'relPaste',showName:'相对位置粘贴'},{name:'delete',showName:'删除'}],
             [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
             [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例粘贴'}],
-            [{name:'saveAsCom',showName:'另存为小模块'}]
+            [{name:'saveAsCom',showName:'生成小模块'}]
         ];
         this.relocateToolMenu = this.relocateToolMenu.bind(this);
         this.onRightClick = this.onRightClick.bind(this);
