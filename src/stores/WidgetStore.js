@@ -2480,7 +2480,7 @@ export default Reflux.createStore({
             skipProperty = true;
          }
 
-         //console.log(obj,this.currentWidget );
+         console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2540,9 +2540,7 @@ export default Reflux.createStore({
                         if (this.currentWidget.props[i + 'isRate'] === true) {
                             obj[i] += '%';
                         } else {
-                            if (['width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight'].indexOf(i) >= 0) {
-                                obj[i] += 'px';
-                            }
+                            obj[i] += 'px';
                         }
                         this.currentWidget.node[i] = obj[i];
                         this.currentWidget.props[i] = obj[i];

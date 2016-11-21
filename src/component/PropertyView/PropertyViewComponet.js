@@ -260,10 +260,13 @@ class ConInputNumber extends React.Component {
        let fnIsFlex=this.fnIsFlex.bind(this);
 
        $('.conInputNumber'+this.state.count+' .ant-input-number-input').change(function () {
-          //todo:怎么能拿到当前节点
+           //todo:怎么能拿到当前节点
            //todo:100%和100px 更改不触发
-
-           if(con_currentWidget && fnIsFlex(con_currentWidget)) {
+           if(con_currentWidget && fnIsFlex(con_currentWidget) &&['width', 'height'
+                   ,'minWidth', 'minHeight', 'maxWidth', 'maxHeight'
+                   ,'marginUp','marginDown','marginLeft','marginRight'
+                   ,'paddingUp','paddingDown','paddingLeft','paddingRight'
+               ].indexOf(thisObj.props.name) >= 0) {
                let str = $(this).val();
                let pObj = $('.conInputNumber' + thisObj.state.count).parent();
                if (str.indexOf('%') >= 0) {
@@ -276,6 +279,11 @@ class ConInputNumber extends React.Component {
                    pObj.removeClass('ant-input-rate');
                    $(this).val(str.split('px')[0]);
                    WidgetActions['addProps']({name: thisObj.props.name + 'isRate', value: false});
+               }else{
+                   //当不填写%和px,且isRate不存在时,设定isRate
+                   if(con_currentWidget.props[thisObj.props.name + 'isRate']===undefined){
+                       WidgetActions['addProps']({name: thisObj.props.name + 'isRate', value: false});
+                   }
                }
            }
        });
