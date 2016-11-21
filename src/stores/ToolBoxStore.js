@@ -5,7 +5,7 @@
 import Reflux from 'reflux';
 import Actions from '../actions/ToolBoxAction';
 import defaultTool from '../component/ToolBox/DEFAUL_TOOLBOX';
-import {checkChildClass, checkNotInDomMode, checkNotInCanvasMode} from '../component/tempMap';
+import {checkChildClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode} from '../component/tempMap';
 
 // 响应 点击二级（默认隐藏）工具菜单的事件
 var selectSecondary = function(config, gid, cid) {
@@ -80,7 +80,8 @@ export default Reflux.createStore({
                     toolBoxItem.data[i]['secondary'][j]['disabled'] = true;
                 }
                 if(checkNotInDomMode(widget, toolBoxItem.data[i]['secondary'][j].className)
-                    ||checkNotInCanvasMode(widget, toolBoxItem.data[i]['secondary'][j].className)) {
+                    ||checkNotInCanvasMode(widget, toolBoxItem.data[i]['secondary'][j].className)
+                    ||checkNotInFlexMode(widget, toolBoxItem.data[i]['secondary'][j].className)) {
                     allAreHidden++;
                     toolBoxItem.data[i]['secondary'][j]['hidden'] = true;
                 } else {

@@ -1437,12 +1437,15 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
       props[name] =  node.props[name] !==undefined? JSON.parse(JSON.stringify(node.props[name])):undefined;
     }
   }
-  if (saveKey)
-    props['key'] = node.key;
-    if (node.className == 'track' && node.timerWidget && node.timerWidget.props['totalTime'])
-        props['totalTime'] = node.timerWidget.props['totalTime'];
-  if (props)
-    data['props'] = props;
+  if (saveKey) {
+      props['key'] = node.key;
+  }
+  if (node.className == 'track' && node.timerWidget && node.timerWidget.props['totalTime']) {
+      props['totalTime'] = node.timerWidget.props['totalTime'];
+  }
+  if (props) {
+      data['props'] = props;
+  }
   // if (node.events)
   //   data['events'] = node.events;
   var list = [];
