@@ -30,6 +30,14 @@ const forbiddenColor = '#8F8F8F';
 
 const imgServerPrefix = imgServer;
 
+const originToolMenuList = [
+    [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'粘贴'},
+        {name:'relPaste',showName:'相对位置粘贴'},{name:'delete',showName:'删除'}],
+    [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
+    [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例粘贴'}],
+    [{name:'saveAsCom',showName:'生成小模块'}]
+];
+
 class ObjectTree extends React.Component {
     constructor (props) {
         super(props);
@@ -56,6 +64,7 @@ class ObjectTree extends React.Component {
             nids: [],   //多选的
 
             showToolMenu: false, //右键
+            toolMenuList: JSON.parse(JSON.stringify(originToolMenuList)) //menuList
         };
 
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -124,13 +133,7 @@ class ObjectTree extends React.Component {
         this.addModuleBtn = this.addModuleBtn.bind(this);
 
         //右键点击
-        this.toolMenuList = [
-            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'粘贴'},
-                {name:'relPaste',showName:'相对位置粘贴'},{name:'delete',showName:'删除'}],
-            [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
-            [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例粘贴'}],
-            [{name:'saveAsCom',showName:'生成小模块'}]
-        ];
+
         this.relocateToolMenu = this.relocateToolMenu.bind(this);
         this.onRightClick = this.onRightClick.bind(this);
         this.onHideToolMenu = this.onHideToolMenu.bind(this);
@@ -599,9 +602,14 @@ class ObjectTree extends React.Component {
         });
     }
 
-    relocateToolMenu(clientX, clientY) {
+    relocateToolMenu(className, clientX, clientY) {
+        let list = JSON.parse(JSON.stringify(originToolMenuList));
+        if(className === 'var' || className === 'func' || className === 'dbItem') {
+            list.splice(3,1);
+        }
         this.setState({
-            showToolMenu: true
+            showToolMenu: true,
+            toolMenuList: list
         },()=>{
             if(this.refs['objectTree']&&this.refs['toolMenu']) {
                 let containerWidth = this.refs['objectTree'].clientWidth;
@@ -609,10 +617,10 @@ class ObjectTree extends React.Component {
                 //菜单高度：278 宽度：132
                 let menuWidth = 132;
                 let menuHeight = 2;
-                this.toolMenuList.forEach((group, gIndex)=>{
+                this.state.toolMenuList.forEach((group, gIndex)=>{
                     menuHeight+=3*2; //padding
                     menuHeight+=group.length*20; //items
-                    if(gIndex!=this.toolMenuList.length-1) {
+                    if(gIndex!=this.state.toolMenuList.length-1) {
                         menuHeight+=1;
                     } //seperator
                 });
@@ -648,7 +656,8 @@ class ObjectTree extends React.Component {
         } else {
             this.fadeWidgetBtn(nid, data, type);
         }
-        this.relocateToolMenu(clientX, clientY);
+
+        this.relocateToolMenu(data.className, clientX, clientY);
     }
 
     onHideToolMenu() {
@@ -1722,9 +1731,9 @@ class ObjectTree extends React.Component {
                         : <div className="tool-menu"
                                ref="toolMenu">
                         {
-                            this.toolMenuList.map((v,i)=>{
+                            this.state.toolMenuList.map((v,i)=>{
                                 return <div key={i} className={$class("menu-group",
-                                    {'menu-group-border':i!=this.toolMenuList.length-1})}>
+                                    {'menu-group-border':i!=this.state.toolMenuList.length-1})}>
                                     {
                                         v.map((v1,i1)=>{
                                            return <div key={i1} className="menu-item f--hlc"
