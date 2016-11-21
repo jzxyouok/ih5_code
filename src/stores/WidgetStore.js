@@ -1,6 +1,6 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
-import {getPropertyMap} from '../component/PropertyMap'
+import {getPropertyMap, checkChildClass} from '../component/PropertyMap'
 
 var bridge = require('bridge');
 bridge.create();
@@ -1609,7 +1609,7 @@ function drop(e) {
     let x = e.clientX-left+document.body.scrollLeft;
     let y = e.clientY-top+document.body.scrollTop;
 
-    if (this.currentWidget && this.currentWidget.node['create']) {
+    if (this.currentWidget && checkChildClass(this.currentWidget, 'image')) {
     for (i = 0; i < files.length; i++) {
       file = files[i];
       if (file.type.match(/image.*/)) {
@@ -1930,7 +1930,7 @@ export default Reflux.createStore({
             cmd.updateProperties = {'originX':0.5, 'originY':0.5};
         }
 
-        if (className == 'image') {
+        if (className == 'image' && p.shapeWidth!==undefined) {
             let originVisible = o.node['visible'];
             if(originVisible) {
                 o.node['visible'] = false;
@@ -3354,13 +3354,15 @@ export default Reflux.createStore({
         }
         if(targetWidget.className=='body'){
             let conArr = this.getConditionOption(targetWidget.parent);
-            targetWidget.parent.props.eventTree.map((v,i)=>{
-                if(v.conFlag=='beginContact'||v.conFlag=='endContact'){
-                    v.conFlag='触发条件';
-                    delete v.needFill;
-                }
-                v.conOption = conArr;
-            });
+            if(targetWidget.parent.props.eventTree) {
+                targetWidget.parent.props.eventTree.map((v,i)=>{
+                    if(v.conFlag=='beginContact'||v.conFlag=='endContact'){
+                        v.conFlag='触发条件';
+                        delete v.needFill;
+                    }
+                    v.conOption = conArr;
+                });
+            }
             deleteBody=true;
         }
         this.trigger({deleteWidget:true,deleteBody:deleteBody});
