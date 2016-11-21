@@ -367,6 +367,7 @@ class PropertyView extends React.Component {
                 case propertyType.Dropdown:
                     if (prop.name == 'originPos') {
                         //数组
+                     //   value.key = value.key.replace(/，/g, ',');
                         let arr = value.key.split(',');
                         let x = parseFloat(arr[0]);
                         let y = parseFloat(arr[1]);
@@ -951,6 +952,9 @@ class PropertyView extends React.Component {
      * 设定模块内部组件需要显示的值
      * */
     setComponentDefaultValue(item,className,node){
+        //值的修改分为两种,一种是修改后就显示成什么,一种是修改后要转换一下才能显示,如中心点:选择左上,实际上输入0,0,显示的时候就不能用
+        // node.prop.originPos/node.node.originPos显示了,而是用node.node[node.node.props.name+'Key']来显示
+        //node.node[node.node.props.name+'Key']专门用来存储转换后的值,在onChangeProp中设置
         let defaultValue;
 
         if (item.readOnly) {
@@ -1052,19 +1056,26 @@ class PropertyView extends React.Component {
                 defaultValue=defaultValue.split('px')[0];
             }
         }
+        else if(item.type === propertyType.Integer) {
+            //初始化的时候,可能props在DEFAUL_TOOLBOX并没有设置初始值
+            //这时候需要调用node里面的东西,即后台默认设置的值
+             defaultValue = node.props[item.name];
+             if(defaultValue===undefined) {
+                 defaultValue = node.node[item.name];
+             }
+
+            if (typeof defaultValue == 'string') {
+                defaultValue=defaultValue.split('%')[0];
+                defaultValue=defaultValue.split('px')[0];
+            }
+        }
         else if(item.type === propertyType.Boolean) {
             defaultValue = node.node[item.name];
             if(item.name=='flexWrap' && node.props[item.name+'Key'] !==undefined){
                 defaultValue =node.props[item.name+'Key'];
             }
         }
-        else if(item.type === propertyType.Integer) {
-            defaultValue = node.props[item.name];
-            if (typeof defaultValue == 'string') {
-                defaultValue=defaultValue.split('%')[0];
-                defaultValue=defaultValue.split('px')[0];
-            }
-        }
+
         else if (node.props[item.name] === undefined) {
               if (className == "table" && item.name == "headerFontSize") {
                 defaultValue = 26;
@@ -1154,6 +1165,7 @@ class PropertyView extends React.Component {
             let selectClassName = '';
             defaultProp.options = [];
             defaultProp.value = defaultValue;
+            defaultProp.defaultValue=defaultValue;
             if (item.name == 'originY' || item.name == 'originPos') {
                 selectClassName = 'originIcon';
             }

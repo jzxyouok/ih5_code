@@ -1053,6 +1053,8 @@ function generateJsFunc(etree) {
                               if(formulaGenLine(prop.value)!=='') {
                                   lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ '('+formulaGenLine(prop.value)+')'+'/100');
                               }
+                          } else if(prop.name === 'flexWrap') {
+                              lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+JSON.stringify( prop.value ?'wrap':'nowrap'));
                           } else {
                               switch (prop.type) {
                                   case 12: //FormulaInput
@@ -2483,7 +2485,7 @@ export default Reflux.createStore({
             skipProperty = true;
          }
 
-         // console.log(obj,this.currentWidget );
+       console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2556,7 +2558,7 @@ export default Reflux.createStore({
             return false;
         },
             //判断是否处于flex模式下,可拓展改写
-           fnIsFlex:function(node) {
+          fnIsFlex:function(node) {
         if (node.className == 'flex') {
             return true;
         }

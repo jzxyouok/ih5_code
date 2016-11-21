@@ -185,10 +185,11 @@ class DropDownInput extends React.Component {
          let newVal=e.target.value;
          newVal =  newVal.replace(/，/g, ',');
          let arr =newVal.split(',');
-         var reg = /^[-]?[0-9]+$/;
+         //兼容正负数,小数点
+         var reg = /^[-]?[0-9]+[.]?[0-9]*$/;
 
          if(newVal!=this.oldVal && arr.length==2 && reg.test(arr[0]) && reg.test(arr[1])){
-             this.state.dropDownOnChange({key:e.target.value},this.state.item);
+             this.state.dropDownOnChange({key:newVal},this.state.item);
          }else{
              this.oldVal=null;
          }
@@ -258,8 +259,11 @@ class ConInputNumber extends React.Component {
         document.addEventListener('mouseup',this.onMouseUp);
        let thisObj=this;
        let fnIsFlex=this.fnIsFlex.bind(this);
+       let oldVal=null;//focus时的值
+       $('.conInputNumber'+this.state.count+' .ant-input-number-input').focus(function () {
+           oldVal = $(this).val();
+       }).change(function () {
 
-       $('.conInputNumber'+this.state.count+' .ant-input-number-input').change(function () {
            //todo:怎么能拿到当前节点
            //todo:100%和100px 更改不触发
            if(con_currentWidget && fnIsFlex(con_currentWidget) &&['width', 'height'
@@ -270,15 +274,28 @@ class ConInputNumber extends React.Component {
                let str = $(this).val();
                let pObj = $('.conInputNumber' + thisObj.state.count).parent();
                if (str.indexOf('%') >= 0) {
+                   let newVal =str.split('%')[0];
                    pObj.removeClass('ant-input-px');
                    pObj.addClass('ant-input-rate');
-                   $(this).val(str.split('%')[0]);
+                   $(this).val(newVal);
                    WidgetActions['addProps']({name: thisObj.props.name + 'isRate', value: true});
+                   //如果focus前的值和blur后的值一致的话,强制更新一次
+                   if(newVal==oldVal){
+                       console.log(thisObj.props);
+                       thisObj.props.onChange(newVal);
+                   }
+
                } else if (str.indexOf('px') >= 0) {
+                   let newVal =str.split('px')[0];
                    pObj.addClass('ant-input-px');
                    pObj.removeClass('ant-input-rate');
-                   $(this).val(str.split('px')[0]);
+                   $(this).val(newVal);
                    WidgetActions['addProps']({name: thisObj.props.name + 'isRate', value: false});
+                   //如果focus前的值和blur后的值一致的话,强制更新一次
+                   if(newVal==oldVal){
+                       console.log(thisObj.props);
+                       thisObj.props.onChange(newVal);
+                   }
                }else{
                    //当不填写%和px,且isRate不存在时,设定isRate
                    if(con_currentWidget.props[thisObj.props.name + 'isRate']===undefined){
