@@ -1753,7 +1753,9 @@ export default Reflux.createStore({
 
         this.listenTo(WidgetActions['setVersion'], this.setVersion);
 
-
+        this.listenTo(WidgetActions['addBlock'], this.addBlock);
+        this.listenTo(WidgetActions['editBlock'], this.editBlock);
+        this.listenTo(WidgetActions['activeBlockMode'], this.activeBlockMode);
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -3958,6 +3960,23 @@ export default Reflux.createStore({
     setVersion(v) {
         globalVersion = v;
     },
+
+    addBlock(block) {
+        this.currentWidget.props['block'] = block;
+        //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
+    },
+    editBlock(){
+        this.currentWidget.props['block'] = block;
+        //TODO: SAVE THIS WIDGET TO SERVER
+    },
+    activeBlockMode(value){
+        //let activeBlockModeKey = this.currentWidget.key;
+        //if(value) {
+            //activeBlockModeKey = null;
+        //}
+        //this.trigger({activeBlockMode: {on:value, key: activeBlockModeKey}});
+        this.trigger({activeBlockMode: {on:value}});
+    }
 });
 
 export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType, classList, selectableClass}

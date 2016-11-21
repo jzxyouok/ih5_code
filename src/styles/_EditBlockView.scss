@@ -1,0 +1,42 @@
+#EditBlockView {
+  position: fixed;
+  left: 37px;
+  top: 37px;
+  width: 260px;
+  //bottom: 1px;
+  //height: 600px;
+  background: #232323;
+  overflow: hidden;
+  z-index: 50;
+
+  &.keep {
+    height: 30px;
+    transition: 0.5s;
+  }
+
+  #EditBlockViewHeader {
+    width: 100%;
+    height: 30px;
+    background: #313131;
+
+    span {
+      font-size: 14px;//12px;
+      color: #b5b5b5;
+      padding: 4px 12px;
+    }
+
+    .btn {
+      width: 32px;
+      height: 26px;
+      background: url("img/button-icon.svg") no-repeat -1240px 0;
+
+      &:hover {
+        background: url("img/button-icon.svg") no-repeat -1240px -40px;
+      }
+    }
+  }
+  #EditBlockViewBody {
+    flex: 1;
+    overflow-y: auto;
+  }
+}

@@ -16,6 +16,7 @@ import FunctionView from './FunctionView/FunctionView';
 import VariableView from './VariableView/VariableView';
 import EditDb from './edit-db/index';
 import DBItemView from './DBItemView/DBItemView';
+import EditBlock from './Block/EditBlock';
 
 import WidgetStore from '../stores/WidgetStore';
 import ToolBoxStore from '../stores/ToolBoxStore';
@@ -31,7 +32,8 @@ class App extends React.Component {
             activeVar: null,
             activeDBItem: null,
             editDb : false,
-            lastSelectID :null
+            lastSelectID :null,
+            activeBlockMode: false
         };
         this.stageZoomPlus = this.stageZoomPlus.bind(this);
         this.stageZoomLess = this.stageZoomLess.bind(this);
@@ -109,6 +111,10 @@ class App extends React.Component {
                     lastSelectID : null
                 })
             }
+        } else if(widget.activeBlockMode) {
+            this.setState({
+                activeBlockMode: widget.activeBlockMode.on
+            })
         }
     }
 
@@ -192,33 +198,43 @@ class App extends React.Component {
                               || this.state.activeFunc != null
                               || this.state.activeVar != null
                               || this.state.activeDBItem != null
-                              || this.state.editDb} />
+                              || this.state.editDb
+                              || this.state.activeBlockMode }/>
 
                 <EventBox expanded={this.state.expandedToolbox}
-                          isHidden={!(this.state.activeEventKey != null)} />
+                          isHidden={!(this.state.activeEventKey != null)
+                          || this.state.activeBlockMode} />
 
                 <FunctionView expanded={this.state.expandedToolbox}
                               isHidden={!(this.state.activeFunc != null)
-                              ||this.state.activeEventKey != null}/>
+                              || this.state.activeEventKey != null
+                              || this.state.activeBlockMode}/>
 
                 <VariableView expanded={this.state.expandedToolbox}
                               isHidden={!(this.state.activeVar != null)
-                              ||this.state.activeEventKey != null}/>
+                              || this.state.activeEventKey != null
+                              || this.state.activeBlockMode}/>
 
                 <DBItemView expanded={this.state.expandedToolbox}
                             isHidden={!(this.state.activeDBItem != null)
-                            ||this.state.activeEventKey != null}/>
+                            || this.state.activeEventKey != null
+                            || this.state.activeBlockMode}/>
 
                 <ObjectView />
 
                 <TimelineView isHidden={this.state.activeFunc != null
                               || this.state.activeVar != null
                               || this.state.activeDBItem != null
-                              || this.state.activeEventKey != null}/>
+                              || this.state.activeEventKey != null
+                              || this.state.activeBlockMode}/>
 
                 <div className={$class({"hidden": !this.state.editDb})}>
                     <EditDb />
                 </div>
+
+                <EditBlock expanded={this.state.expandedToolbox}
+                           isHidden={!this.state.activeBlockMode}>
+                </EditBlock>
                 {
                     //<Row gutter={5}>
                     //    <Col span={3}><ComponentPanel /></Col>

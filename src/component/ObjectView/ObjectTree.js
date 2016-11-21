@@ -35,7 +35,7 @@ const originToolMenuList = [
         {name:'relPaste',showName:'相对位置粘贴'},{name:'delete',showName:'删除'}],
     [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
     [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例粘贴'}],
-    [{name:'saveAsCom',showName:'生成小模块'}]
+    [{name:'saveAsBlock',showName:'生成小模块'}]
 ];
 
 class ObjectTree extends React.Component {
@@ -64,7 +64,9 @@ class ObjectTree extends React.Component {
             nids: [],   //多选的
 
             showToolMenu: false, //右键
-            toolMenuList: JSON.parse(JSON.stringify(originToolMenuList)) //menuList
+            toolMenuList: JSON.parse(JSON.stringify(originToolMenuList)), //menuList
+
+            activeBlockMode: false,  //小模块激活模式
         };
 
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -197,6 +199,12 @@ class ObjectTree extends React.Component {
 
         else if(widget.skipProperty){
             this.forceUpdate();
+        }
+        else if (widget.activeBlockMode) {
+            this.setState({
+                activeBlockMode: widget.activeBlockMode.on,
+                activeBlockKey: widget.activeBlockMode.key,
+            })
         }
 
         else if(widget.selectWidget || widget.selectFunction || widget.selectVariable || widget.selectDBItem){
@@ -701,8 +709,8 @@ class ObjectTree extends React.Component {
             case 'crossPaste':
                 this.itemActions('crossPaste');
                 break;
-            case 'saveAsCom':
-                this.itemActions('saveAsCom');
+            case 'saveAsBlock':
+                this.itemActions('saveAsBlock');
                 break;
         }
     }
@@ -902,8 +910,8 @@ class ObjectTree extends React.Component {
             case 'crossPaste':
                 //TODO: WidgetActions['crossPasteTreeNode'](this.state.nodeType);
                 break;
-            case 'saveAsCom':
-                //TODO: WidgetActions['saveAsComTreeNode'](this.state.nodeType);
+            case 'saveAsBlock':
+                WidgetActions['activeBlockMode'](true);
                 break;
             default:
                 break;
