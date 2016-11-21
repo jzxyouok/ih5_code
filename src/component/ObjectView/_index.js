@@ -15,7 +15,7 @@ import WidgetStore from '../../stores/WidgetStore';
 
 import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
 
-import {checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode} from '../tempMap';
+import {checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode} from '../PropertyMap';
 
 class ObjectView extends React.Component {
     constructor (props) {

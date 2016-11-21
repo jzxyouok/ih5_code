@@ -3,7 +3,7 @@ import React from 'react';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {varType, isCustomizeWidget, nodeType} from '../../stores/WidgetStore';
-import {checkChildClass, checkEventClass, checkNotInDomMode} from '../tempMap';
+import {checkChildClass, checkEventClass, checkNotInDomMode} from '../PropertyMap';
 import $class from 'classnames';
 
 const animationData = [

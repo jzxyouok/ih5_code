@@ -1,6 +1,6 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
-import {getPropertyMap} from '../component/tempMap'
+import {getPropertyMap} from '../component/PropertyMap'
 
 var bridge = require('bridge');
 bridge.create();
@@ -2483,7 +2483,7 @@ export default Reflux.createStore({
             skipProperty = true;
          }
 
-         console.log(obj,this.currentWidget );
+         // console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -3766,8 +3766,7 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-
-        if(window.location.hostname==='localhost'){
+        if(window.location.hostname==='localhost'&&window.location.port!=='8050'){
             xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
         }else{
             xhr.open(method, url);

@@ -23,7 +23,7 @@ import WidgetStore, {nodeType} from '../stores/WidgetStore';
 import DbHeaderAction from '../actions/DbHeader'
 import DbHeaderStores from '../stores/DbHeader';
 import DrawRect from './ToolBox/DrawRect';
-import {checkChildClass} from './tempMap';
+import {checkChildClass} from './PropertyMap';
 import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';

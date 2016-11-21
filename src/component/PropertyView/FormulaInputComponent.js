@@ -11,7 +11,7 @@ import WidgetStore, {varType, dataType} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { ArrTableDropDown } from '../PropertyView/ArrTableDropDown';
-import { getPropertyMap, propertyType } from '../tempMap'
+import { getPropertyMap, propertyType } from '../PropertyMap'
 import SelectTargetAction from '../../actions/SelectTargetAction';
 
 import $ from 'jquery';
