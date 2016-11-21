@@ -3379,6 +3379,8 @@ export default Reflux.createStore({
         switch (type) {
             case 'image':
                 if (name&&link&&this.currentWidget.className==='image'){
+                    let oWidth = this.currentWidget.node.width;
+                    let oHeight = this.currentWidget.node.height;
                     let temp = this.currentWidget.rootWidget.imageList.push(link) - 1;
                     this.currentWidget.props['link'] =  temp;
                     this.currentWidget.node['link'] =  temp;
@@ -3392,13 +3394,11 @@ export default Reflux.createStore({
                     }
                     bridge.updateSelector(this.currentWidget.node);
                     process.nextTick(() => {
-                        let width = this.currentWidget.node.shapeWidth;
-                        let height = this.currentWidget.node.shapeHeight;
                         let tempW = this.currentWidget.node.width;
                         let tempH = this.currentWidget.node.height;
                         this.currentWidget.node['visible']= originVisible;
-                        this.currentWidget.node['scaleX'] = width/tempW;
-                        this.currentWidget.node['scaleY'] = this.currentWidget.node['scaleX'];
+                        this.currentWidget.node['scaleX'] = oWidth/tempW;
+                        this.currentWidget.node['scaleY'] = oHeight/tempH;
                         this.selectWidget(this.currentWidget);
                     });
                 }
