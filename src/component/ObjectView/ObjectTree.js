@@ -11,6 +11,10 @@ import {chooseFile} from  '../../utils/upload';
 
 import SelectTargetStore from '../../stores/SelectTargetStore'
 
+import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
+
+import {imgServer} from '../../api/BaseApi';
+
 const drapTipId = 'treeDragTip';
 const placeholderId = 'treeDragPlaceholder';
 const appId = 'iH5-App';
@@ -23,9 +27,8 @@ const tipAllow = '<span style="background-position:-40px -200px;"></span><div st
 const tipForbidden = '<span style="background-position:-40px -240px;"></span><div style="background-color:#b50000;">不可拖入</div>';
 const allowColor = '#FFA800';
 const forbiddenColor = '#8F8F8F';
-const imgServerPrefix = 'http://play.vt.vxplo.cn/v3data/files/';
 
-import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
+const imgServerPrefix = imgServer;
 
 class ObjectTree extends React.Component {
     constructor (props) {
