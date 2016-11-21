@@ -10,13 +10,14 @@ import ComponentPanel from '../ComponentPanel';
 import DbHeaderStores from '../../stores/DbHeader';
 
 import $ from 'jquery';
+import {imgServer} from '../../api/BaseApi';
 
 const objListType = {
     default: 0,
     noEvent: 1,
     search: 2,
 };
-const imgServerPrefix = 'http://play.vt.vxplo.cn/v3data/files/';
+const imgServerPrefix = imgServer;
 
 class EventBox extends React.Component {
     constructor (props) {

@@ -731,9 +731,28 @@ let checkLockClass = (selected) => {
 };
 
 let checkNotInDomMode = (selected, className) => {
-    var type = bridge.getRendererType(selected.node);
+    let selectWidget = selected;
+    if(selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        selectWidget = selected.widget;
+    } else {
+        selectWidget = selected;
+    }
+
     if(propertyMap[className]){
-        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+        var type = bridge.getRendererType(selectWidget.node);
+        var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
+        var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        if (className == 'world') {
+            return !(selectWidget.className == 'canvas');
+        }
+        if (className == 'container') {
+            return !provides & widgetFlags.Container;
+        }
+        if (requires & widgetFlags.Root) {
+            return !provides & widgetFlags.Root;
+        }
         if ((type == 4 && ((requires & widgetFlags.Canvas) == 0))|| (type == 1 && ((requires & widgetFlags.Flex) == 0))) {
             return true;
         }
@@ -744,9 +763,27 @@ let checkNotInDomMode = (selected, className) => {
 };
 
 let checkNotInCanvasMode = (selected, className) => {
-    var type = bridge.getRendererType(selected.node);
+    let selectWidget = selected;
+    if(selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        selectWidget = selected.widget;
+    } else {
+        selectWidget = selected;
+    }
     if(propertyMap[className]){
-        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+        var type = bridge.getRendererType(selectWidget.node);
+        var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
+        var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        if (className == 'world') {
+            return !(selectWidget.className == 'canvas');
+        }
+        if (className == 'container') {
+            return !provides & widgetFlags.Container;
+        }
+        if (requires & widgetFlags.Root) {
+            return !provides & widgetFlags.Root;
+        }
         if ((type == 2 && ((requires & widgetFlags.Dom) == 0)) || (type == 1 && ((requires & widgetFlags.Flex) == 0))) {
             return true;
         }
@@ -757,9 +794,27 @@ let checkNotInCanvasMode = (selected, className) => {
 };
 
 let checkNotInFlexMode = (selected, className) => {
-    var type = bridge.getRendererType(selected.node);
+    let selectWidget = selected;
+    if(selected.className === 'func'||
+        selected.className === 'var' ||
+        selected.className === 'dbItem'){
+        selectWidget = selected.widget;
+    } else {
+        selectWidget = selected;
+    }
     if(propertyMap[className]){
-        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+        var type = bridge.getRendererType(selectWidget.node);
+        var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
+        var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        if (className == 'world') {
+            return !(selectWidget.className == 'canvas');
+        }
+        if (className == 'container') {
+            return !provides & widgetFlags.Container;
+        }
+        if (requires & widgetFlags.Root) {
+            return !provides & widgetFlags.Root;
+        }
         if ((type == 2 && ((requires & widgetFlags.Dom) == 0)) || (type == 4 && ((requires & widgetFlags.Canvas) == 0))) {
             return true;
         }

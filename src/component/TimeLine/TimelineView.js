@@ -130,10 +130,12 @@ class TimelineView extends React.Component {
                         }
                         else {
                             //console.log(item);
-                            this.setState({
-                                startTime : 0,
-                                endTime : item.timerWidget.props.totalTime ? item.timerWidget.props.totalTime : 10
-                            })
+                            if(item.timerWidget) {
+                                this.setState({
+                                    startTime : 0,
+                                    endTime : item.timerWidget.props.totalTime ? item.timerWidget.props.totalTime : 10
+                                });
+                            }
                         }
 					}
 				});
@@ -154,10 +156,12 @@ class TimelineView extends React.Component {
                         }
                     }
                     else {
-                        this.setState({
-                            startTime : 0,
-                            endTime : node.timerWidget.props.totalTime ? node.timerWidget.props.totalTime : 10
-                        })
+                        if(node.timerWidget) {
+                            this.setState({
+                                startTime : 0,
+                                endTime : node.timerWidget.props.totalTime ? node.timerWidget.props.totalTime : 10
+                            })
+                        }
                     }
                 }
                 //console.log(changed.currentTrack);

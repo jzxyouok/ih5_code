@@ -11,6 +11,10 @@ import {chooseFile} from  '../../utils/upload';
 
 import SelectTargetStore from '../../stores/SelectTargetStore'
 
+import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
+
+import {imgServer} from '../../api/BaseApi';
+
 const drapTipId = 'treeDragTip';
 const placeholderId = 'treeDragPlaceholder';
 const appId = 'iH5-App';
@@ -23,9 +27,8 @@ const tipAllow = '<span style="background-position:-40px -200px;"></span><div st
 const tipForbidden = '<span style="background-position:-40px -240px;"></span><div style="background-color:#b50000;">不可拖入</div>';
 const allowColor = '#FFA800';
 const forbiddenColor = '#8F8F8F';
-const imgServerPrefix = 'http://play.vt.vxplo.cn/v3data/files/';
 
-import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
+const imgServerPrefix = imgServer;
 
 class ObjectTree extends React.Component {
     constructor (props) {
@@ -122,11 +125,11 @@ class ObjectTree extends React.Component {
 
         //右键点击
         this.toolMenuList = [
-            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'黏贴'},
-                {name:'relPaste',showName:'相对位置黏贴'},{name:'delete',showName:'删除'}],
+            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'粘贴'},
+                {name:'relPaste',showName:'相对位置粘贴'},{name:'delete',showName:'删除'}],
             [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
-            [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例黏贴'}],
-            [{name:'saveAsCom',showName:'另存为小模块'}]
+            [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例粘贴'}],
+            [{name:'saveAsCom',showName:'生成小模块'}]
         ];
         this.relocateToolMenu = this.relocateToolMenu.bind(this);
         this.onRightClick = this.onRightClick.bind(this);

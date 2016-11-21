@@ -1,6 +1,6 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
-import {getPropertyMap} from '../component/PropertyMap'
+import {getPropertyMap, checkChildClass} from '../component/PropertyMap'
 
 var bridge = require('bridge');
 bridge.create();
@@ -1611,7 +1611,7 @@ function drop(e) {
     let x = e.clientX-left+document.body.scrollLeft;
     let y = e.clientY-top+document.body.scrollTop;
 
-    if (this.currentWidget && this.currentWidget.node['create']) {
+    if (this.currentWidget && checkChildClass(this.currentWidget, 'image')) {
     for (i = 0; i < files.length; i++) {
       file = files[i];
       if (file.type.match(/image.*/)) {
@@ -1872,27 +1872,32 @@ export default Reflux.createStore({
       } else if(className == "sock"){
           props = this.addWidgetDefaultName(className, props, true, false, name);
           historyName = "添加 连接"+name;
-      } else if (!(className === 'image')) {
-          props = this.addWidgetDefaultName(className, props, true, false);
-          historyName = "添加 "+ props.name;
-      }
-      else {
+      } else if (className === 'image') {
           historyName = "添加图片 "+ props.name;
+      } else {
+          props = this.addWidgetDefaultName(className, props, true, false);
+          if(className === 'container') {
+              //如果在flex模式下，添加param:{'alignItems':'flex-start'}
+              if(bridge.getRendererType(this.currentWidget.node) == 1) {
+                  props['alignItems'] = 'flex-start';
+              }
+          }
+          historyName = "添加 "+ props.name;
       }
         
       if (className === 'track') {
-          if (!this.currentWidget.timerWidget ||
-              (this.currentWidget.className !== 'image'
-              && this.currentWidget.className !== 'imagelist'
-              && this.currentWidget.className !== 'text'
-              && this.currentWidget.className !== 'bitmaptext'
-              && this.currentWidget.className !== 'ellipse'
-              && this.currentWidget.className !== 'path'
-              && this.currentWidget.className !== 'qrcode'
-              && this.currentWidget.className !== 'counter'
-              && this.currentWidget.className !== 'rect'
-              && this.currentWidget.className !== 'container'))
-              return;
+          // if (!this.currentWidget.timerWidget ||
+          //     (this.currentWidget.className !== 'image'
+          //     && this.currentWidget.className !== 'imagelist'
+          //     && this.currentWidget.className !== 'text'
+          //     && this.currentWidget.className !== 'bitmaptext'
+          //     && this.currentWidget.className !== 'ellipse'
+          //     && this.currentWidget.className !== 'path'
+          //     && this.currentWidget.className !== 'qrcode'
+          //     && this.currentWidget.className !== 'counter'
+          //     && this.currentWidget.className !== 'rect'
+          //     && this.currentWidget.className !== 'container'))
+          //     return;
           let propList = ['positionX', 'positionY', 'scaleX', 'scaleY', 'rotation', 'alpha'];
           let dataList = [];   //let dataList = [[0], [1]];
           //for (let i = 0; i < propList.length; i++) {
@@ -1927,7 +1932,7 @@ export default Reflux.createStore({
             cmd.updateProperties = {'originX':0.5, 'originY':0.5};
         }
 
-        if (className == 'image') {
+        if (className == 'image' && p.shapeWidth!==undefined) {
             let originVisible = o.node['visible'];
             if(originVisible) {
                 o.node['visible'] = false;
@@ -3353,13 +3358,15 @@ export default Reflux.createStore({
         }
         if(targetWidget.className=='body'){
             let conArr = this.getConditionOption(targetWidget.parent);
-            targetWidget.parent.props.eventTree.map((v,i)=>{
-                if(v.conFlag=='beginContact'||v.conFlag=='endContact'){
-                    v.conFlag='触发条件';
-                    delete v.needFill;
-                }
-                v.conOption = conArr;
-            });
+            if(targetWidget.parent.props.eventTree) {
+                targetWidget.parent.props.eventTree.map((v,i)=>{
+                    if(v.conFlag=='beginContact'||v.conFlag=='endContact'){
+                        v.conFlag='触发条件';
+                        delete v.needFill;
+                    }
+                    v.conOption = conArr;
+                });
+            }
             deleteBody=true;
         }
         this.trigger({deleteWidget:true,deleteBody:deleteBody});
@@ -3378,6 +3385,8 @@ export default Reflux.createStore({
         switch (type) {
             case 'image':
                 if (name&&link&&this.currentWidget.className==='image'){
+                    let oWidth = this.currentWidget.node.width;
+                    let oHeight = this.currentWidget.node.height;
                     let temp = this.currentWidget.rootWidget.imageList.push(link) - 1;
                     this.currentWidget.props['link'] =  temp;
                     this.currentWidget.node['link'] =  temp;
@@ -3391,13 +3400,11 @@ export default Reflux.createStore({
                     }
                     bridge.updateSelector(this.currentWidget.node);
                     process.nextTick(() => {
-                        let width = this.currentWidget.node.shapeWidth;
-                        let height = this.currentWidget.node.shapeHeight;
                         let tempW = this.currentWidget.node.width;
                         let tempH = this.currentWidget.node.height;
                         this.currentWidget.node['visible']= originVisible;
-                        this.currentWidget.node['scaleX'] = width/tempW;
-                        this.currentWidget.node['scaleY'] = this.currentWidget.node['scaleX'];
+                        this.currentWidget.node['scaleX'] = oWidth/tempW;
+                        this.currentWidget.node['scaleY'] = oHeight/tempH;
                         this.selectWidget(this.currentWidget);
                     });
                 }
@@ -3477,7 +3484,14 @@ export default Reflux.createStore({
             , classList: classList
         });
 
-        this.selectWidget(stageTree[0].tree);
+        var selected = stageTree[0].tree;
+        for (var n in stageTree[0].tree.children) {
+            if (stageTree[0].tree.children[n].className == 'page') {
+                selected = stageTree[0].tree.children[n];
+                break;
+            }
+        }
+        this.selectWidget(selected);
         this.getAllWidgets();
     },
     addClass: function(name, bool) {

@@ -71,34 +71,43 @@ export default Reflux.createStore({
 
     changeToolBoxItems: function(widget) {
         //change items here 用secondary的去比对；
-        for (let i = 0; i < toolBoxItem.data.length; i++) {
-            let allAreHidden = 0;
-            for (let j = 0; j < toolBoxItem.data[i]['secondary'].length; j++) {
-                if (checkChildClass(widget, toolBoxItem.data[i]['secondary'][j].className)) {
-                    toolBoxItem.data[i]['secondary'][j]['disabled'] = false;
+        toolBoxItem.data.forEach((v)=> {
+            let hiddenList = [];
+            let primary = 0;
+            v['secondary'].forEach((item, index)=> {
+                if (checkChildClass(widget, item.className)) {
+                    item['disabled'] = false;
                 } else {
-                    toolBoxItem.data[i]['secondary'][j]['disabled'] = true;
+                    item['disabled'] = true;
                 }
-                if(checkNotInDomMode(widget, toolBoxItem.data[i]['secondary'][j].className)
-                    ||checkNotInCanvasMode(widget, toolBoxItem.data[i]['secondary'][j].className)
-                    ||checkNotInFlexMode(widget, toolBoxItem.data[i]['secondary'][j].className)) {
-                    allAreHidden++;
-                    toolBoxItem.data[i]['secondary'][j]['hidden'] = true;
+                if (checkNotInDomMode(widget, item.className)
+                    || checkNotInCanvasMode(widget, item.className)
+                    || checkNotInFlexMode(widget, item.className)) {
+                    item['hidden'] = true;
+                    hiddenList.push(item);
+                    //如果是primary隐藏就要处理相关内部的item
+                    if(index==primary&&(index+1<v['secondary'].length-1)) {
+                        primary = index+1;
+                    } else {
+                        primary = 0;
+                    }
                 } else {
-                    toolBoxItem.data[i]['secondary'][j]['hidden'] = false;
+                    item['hidden'] = false;
                 }
 
-                if( toolBoxItem.data[i]['secondary'][j].className == 'module'){
-                    toolBoxItem.data[i]['secondary'][j]['disabled'] = false;
-                    toolBoxItem.data[i]['secondary'][j]['hidden'] = false;
+                if (item.className == 'module') {
+                    item['disabled'] = false;
+                    item['hidden'] = false;
                 }
-            }
-            if (toolBoxItem.data[i]['secondary'].length>0 && allAreHidden === toolBoxItem.data[i]['secondary'].length) {
-                toolBoxItem.data[i].hidden = true;
+            });
+            v.primary = primary;
+            v.name = v['secondary'][primary]['name'];
+            if (v['secondary'].length > 0 && hiddenList.length === v['secondary'].length) {
+                v.hidden = true;
             } else {
-                toolBoxItem.data[i].hidden = false;
+                v.hidden = false;
             }
-        }
+        });
         toolBoxConfig.data = toolBoxItem;
         this.trigger(toolBoxConfig, true);
     },
