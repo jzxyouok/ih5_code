@@ -1870,12 +1870,17 @@ export default Reflux.createStore({
       } else if(className == "sock"){
           props = this.addWidgetDefaultName(className, props, true, false, name);
           historyName = "添加 连接"+name;
-      } else if (!(className === 'image')) {
-          props = this.addWidgetDefaultName(className, props, true, false);
-          historyName = "添加 "+ props.name;
-      }
-      else {
+      } else if (className === 'image') {
           historyName = "添加图片 "+ props.name;
+      } else {
+          props = this.addWidgetDefaultName(className, props, true, false);
+          if(className === 'container') {
+              //如果在flex模式下，添加param:{'alignItems':'flex-start'}
+              if(bridge.getRendererType(this.currentWidget.node) == 1) {
+                  props['alignItems'] = 'flex-start';
+              }
+          }
+          historyName = "添加 "+ props.name;
       }
         
       if (className === 'track') {
