@@ -1434,12 +1434,7 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
                 data['events'] = js;
         }
     } else {
-       // console.log(node.node[name],name,node.node,node.props)
-        props[name] = node.props[name];
-      // props[name] = JSON.parse(JSON.stringify(node.props[name]));
-      //    props[name] =node.props[name]?
-      //                  JSON.parse(JSON.stringify(node.props[name])):(node.node[name]? JSON.parse(JSON.stringify(node.node[name])):'');
-
+      props[name] =  node.props[name] !==undefined? JSON.parse(JSON.stringify(node.props[name])):undefined;
     }
   }
   if (saveKey) {
@@ -1448,7 +1443,6 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
   if (node.className == 'track' && node.timerWidget && node.timerWidget.props['totalTime']) {
       props['totalTime'] = node.timerWidget.props['totalTime'];
   }
-
   if (props) {
       data['props'] = props;
   }
@@ -3772,8 +3766,13 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-        // xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        xhr.open(method, url);  //WARNING: 上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
+
+        if(window.location.hostname==='localhost'){
+            xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        }else{
+            xhr.open(method, url);
+        }
+
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
