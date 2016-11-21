@@ -739,9 +739,20 @@ let checkNotInDomMode = (selected, className) => {
     } else {
         selectWidget = selected;
     }
+
     if(propertyMap[className]){
         var type = bridge.getRendererType(selectWidget.node);
+        var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
         var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        if (className == 'world') {
+            return !(selectWidget.className == 'canvas');
+        }
+        if (className == 'container') {
+            return !provides & widgetFlags.Container;
+        }
+        if (requires & widgetFlags.Root) {
+            return !provides & widgetFlags.Root;
+        }
         if ((type == 4 && ((requires & widgetFlags.Canvas) == 0))|| (type == 1 && ((requires & widgetFlags.Flex) == 0))) {
             return true;
         }
@@ -762,7 +773,17 @@ let checkNotInCanvasMode = (selected, className) => {
     }
     if(propertyMap[className]){
         var type = bridge.getRendererType(selectWidget.node);
+        var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
         var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        if (className == 'world') {
+            return !(selectWidget.className == 'canvas');
+        }
+        if (className == 'container') {
+            return !provides & widgetFlags.Container;
+        }
+        if (requires & widgetFlags.Root) {
+            return !provides & widgetFlags.Root;
+        }
         if ((type == 2 && ((requires & widgetFlags.Dom) == 0)) || (type == 1 && ((requires & widgetFlags.Flex) == 0))) {
             return true;
         }
@@ -783,7 +804,17 @@ let checkNotInFlexMode = (selected, className) => {
     }
     if(propertyMap[className]){
         var type = bridge.getRendererType(selectWidget.node);
+        var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
         var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        if (className == 'world') {
+            return !(selectWidget.className == 'canvas');
+        }
+        if (className == 'container') {
+            return !provides & widgetFlags.Container;
+        }
+        if (requires & widgetFlags.Root) {
+            return !provides & widgetFlags.Root;
+        }
         if ((type == 2 && ((requires & widgetFlags.Dom) == 0)) || (type == 4 && ((requires & widgetFlags.Canvas) == 0))) {
             return true;
         }
