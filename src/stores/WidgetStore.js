@@ -2542,11 +2542,13 @@ export default Reflux.createStore({
                     } else {
                         if (this.currentWidget.props[i + 'isRate'] === true) {
                             obj[i] += '%';
-                        } else {
+                            this.currentWidget.node[i] = obj[i];
+                            this.currentWidget.props[i] = obj[i];
+                        } else if (this.currentWidget.props[i + 'isRate'] === false){
                             obj[i] += 'px';
+                            this.currentWidget.node[i] = obj[i];
+                            this.currentWidget.props[i] = obj[i];
                         }
-                        this.currentWidget.node[i] = obj[i];
-                        this.currentWidget.props[i] = obj[i];
                     }
                 }
                 return true;
