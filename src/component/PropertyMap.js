@@ -35,7 +35,7 @@ let propMapping = {
     'width': {name:'width', showName:'W', type: propertyType.Integer, default: 0, group:'position'},
     'height': {name:'height', showName:'H',type: propertyType.Integer, default: 0, group:'position'},
     'scaleType': {name:'scaleType', showName:'适配', type: propertyType.Select, default:'满屏', options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools',order:1},
-    'swipeType': {name:'swipeType', showName:'滑动翻页', type: propertyType.Select, default:'上', options:{'无':0,'上':4,'下':3,'左':2,'右':1}},
+    'swipeType': {name:'swipeType', showName:'滑动翻页', type: propertyType.Select, default:'4', options:{'无':0,'上':4,'下':3,'左':2,'右':1}},
     'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'tools',order:2},
     'clipped': {name:'clipped', showName:'剪切', type: propertyType.Boolean, default: false, group:'tools',order:3},
 
@@ -149,7 +149,7 @@ let propMapping = {
     //关于flex的请看：https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex
 
 
-    'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'PC', options:{'PC':'false','手机':'true'}},
+    'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'false', options:{'PC':'false','手机':'true'}},
 
     'margin': {name:'margin', showName:'外间距', type: propertyType.Hidden, default:'',group:'tools2'},
     'marginUp': {name:'marginUp', showName:'边距上', type: propertyType.Number, default:0,group:'tools2.1'},
@@ -161,8 +161,8 @@ let propMapping = {
     'minWidth': {name:'minWidth', showName:'最小宽', type: propertyType.Number, default:0,group:'tools2.2'},
     'maxHeight': {name:'maxHeight', showName:'最大高', type: propertyType.Number, default:0,group:'tools2.2'},
     'minHeight': {name:'minHeight', showName:'最小高', type: propertyType.Number, default:0,group:'tools2.2'},
-    'alignSelf': {name:'alignSelf', showName:'副轴对齐', type: propertyType.Select, default:'自动',options:{'自动':'auto','靠前':'flex-start','靠后':'flex-end','居中':'center', '拉伸':'stretch','对齐文本':'baseline'},group:'tools2.3'},
-    'flex': {name:'flex', showName:'自动伸缩', type: propertyType.Select, default:'允许缩小',options:{'无':'0 0 auto','允许缩小':'0 1 auto','允许拉伸':'1 0 auto', '自动伸缩':'1 1 auto'},group:'tools2.3'},
+    'alignSelf': {name:'alignSelf', showName:'副轴对齐', type: propertyType.Select, default:'auto',options:{'自动':'auto','靠前':'flex-start','靠后':'flex-end','居中':'center', '拉伸':'stretch','对齐文本':'baseline'},group:'tools2.3'},
+    'flex': {name:'flex', showName:'自动伸缩', type: propertyType.Select, default:'0 1 auto',options:{'无':'0 0 auto','允许缩小':'0 1 auto','允许拉伸':'1 0 auto', '自动伸缩':'1 1 auto'},group:'tools2.3'},
 
     'padding': {name:'padding', showName:'内间距', type: propertyType.Hidden, default:'',group:'tools3'},
     'paddingUp': {name:'paddingUp', showName:'边距上', type: propertyType.Number, default:0,group:'tools3'},
@@ -170,9 +170,9 @@ let propMapping = {
     'paddingLeft': {name:'paddingLeft', showName:'边距左', type: propertyType.Number, default:0,group:'tools3'},
     'paddingRight': {name:'paddingRight', showName:'边距右', type: propertyType.Number, default:0,group:'tools3'},
 
-    'flexDirection': {name:'flexDirection', showName:'主轴方向', type: propertyType.Select, default: '左右',options:{'上下':'column','下上':'column-reverse','左右':'row', '右左':'row-reverse'},group:'tools3.1'},
-    'justifyContent': {name:'justifyContent', showName:'主轴对齐', type: propertyType.Select, default:'靠前', options:{'靠前':'flex-start','靠后':'flex-end','居中':'center', '均分（靠边）':'space-between','均分（不靠边）':'space-around'},group:'tools3.1'},
-    'alignItems': {name:'alignItems', showName:'副轴对齐', type: propertyType.Select, default:'靠前',options:{'靠前':'flex-start','靠后':'flex-end','居中':'center'},group:'tools3.1'},
+    'flexDirection': {name:'flexDirection', showName:'主轴方向', type: propertyType.Select, default: 'row',options:{'上下':'column','下上':'column-reverse','左右':'row', '右左':'row-reverse'},group:'tools3.1'},
+    'justifyContent': {name:'justifyContent', showName:'主轴对齐', type: propertyType.Select, default:'flex-start', options:{'靠前':'flex-start','靠后':'flex-end','居中':'center', '均分（靠边）':'space-between','均分（不靠边）':'space-around'},group:'tools3.1'},
+    'alignItems': {name:'alignItems', showName:'副轴对齐', type: propertyType.Select, default:'flex-start',options:{'靠前':'flex-start','靠后':'flex-end','居中':'center'},group:'tools3.1'},
     'alignContent':{name:'alignContent',showName:'alignContent',type: propertyType.Hidden, default:'',group:'tools3.1'},
     'flexWrap': {name:'flexWrap', showName:'自动换行', type: propertyType.Boolean, default:false,group:'tools3.1'}
 };

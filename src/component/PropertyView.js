@@ -146,6 +146,7 @@ class PropertyView extends React.Component {
                     style['width'] = "125px";
                     style['maxWidth'] = "125px";
                 }
+
                 return <div className={cls({"flex-1": defaultProp.tbCome == "tbF"})}>
                     <Select {...defaultProp} style={style}>
                         {defaultProp.options}
@@ -427,24 +428,21 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
-                    if (prop.name == 'scaleType') {
-                        this.selectNode.props.scaleTypeKey = this.getScaleTypeDefault(value, prop.options);
-                        v = parseInt(value);
-                    }
-                    else if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
-                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                     if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
+                      //  this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                         this.selectNode.props[prop.name+'Key'] = value;
                         v = value;
                     }
                     else if (prop.name == 'swipeType') {
-                        this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                        this.selectNode.props[prop.name+'Key'] = value;
                         v = parseInt(value);
                     }
                     else if(prop.name == 'scaleStage'){
-                        this.selectNode.props.scaleStageKey = this.getScaleTypeDefault(value, prop.options);
+                         this.selectNode.props[prop.name+'Key'] = value;
                         v = value=='true'?true:false;
                     }
                     else if (prop.name == 'fontFamily') {
-                        this.selectNode.props.fontFamilyKey = this.getFontDefault(value);
+                         this.selectNode.props[prop.name+'Key']= this.getFontDefault(value);
                         v = value;
                     }
                     else if (prop.name == 'headerFontFamily') {
@@ -1011,7 +1009,7 @@ class PropertyView extends React.Component {
         else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
             defaultValue = item.default;
             //当originY时才会激活,而不是originPos
-            if (['font', 'scaleStage', 'scaleType', 'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
+            if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
             } else if (item.name == 'fontFamily' && node.props.fontFamilyKey) {
                 defaultValue = node.props.fontFamily;
@@ -1165,7 +1163,6 @@ class PropertyView extends React.Component {
             let selectClassName = '';
             defaultProp.options = [];
             defaultProp.value = defaultValue;
-            defaultProp.defaultValue=defaultValue;
             if (item.name == 'originY' || item.name == 'originPos') {
                 selectClassName = 'originIcon';
             }
@@ -1193,11 +1190,16 @@ class PropertyView extends React.Component {
                     defaultProp.options.push(<Option key={item.options[i]} className={selectClassName}>{i}</Option>);
                 }
             }
+
             if (defaultProp.options.length == 0) {
+                //优化:设置了value的值
                 for (var i in  item.options) {
-                    defaultProp.options.push(<Option key={item.options[i]}>
+                    defaultProp.options.push(
+                        <Option
+                            key={item.options[i]}>
                         <div className={selectClassName}></div>
-                        {i}</Option>);
+                        {i}</Option>
+                    );
                 }
             }
             if (item.name == 'chooseColumn') {
@@ -1392,7 +1394,7 @@ class PropertyView extends React.Component {
                     <div className={cls('ant-form-item-control',
                         {'ant-input-degree': hasDegree},
                         {'ant-input-px': hasPx},
-                        {'ant-input-rate': hasRate},
+                        {'ant-input-rate': hasRate}
                     )}>
                         {this.getInputBox(item.type, defaultProp)}
                     </div>
