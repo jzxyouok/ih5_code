@@ -306,19 +306,19 @@ const propertyMap = {
         props: [ { name: 'id', type: 2, default: '' } ],
         events: [],
         provides: 0,
-        requires: 0  },
+        requires: 0 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
             props: [ { name: 'id', type: 2, default: '' } ],
             events: [],
             provides: 0,
-            requires: 0  },
+            requires: 0 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props: [ { name: 'id', type: 2, default: '' } ],
             events: [],
             provides: 0,
-            requires: 0  } },
+            requires: 0 } },
     'display':
     { flex:
     { funcs:
@@ -462,7 +462,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 2,
-            requires: 4  },
+            requires: 4 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -495,7 +495,7 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 2,
-            requires: 4  } },
+            requires: 4 } },
     'container':
     { flex:
     { funcs:
@@ -520,7 +520,9 @@ const propertyMap = {
                 { name: 'justifyContent', type: 2, default: '' },
                 { name: 'alignItems', type: 2, default: '' },
                 { name: 'alignContent', type: 2, default: '' },
-                { name: 'flexWrap', type: 2, default: '' } ],
+                { name: 'flexWrap', type: 2, default: '' },
+                { name: 'bgImage', type: 2, default: '' },
+                { name: 'clipped', type: 4, default: false } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
                 { name: 'touchDown', info: 'globalX, globalY' },
@@ -559,7 +561,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 6,
-            requires: 4  },
+            requires: 4 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -592,7 +594,7 @@ const propertyMap = {
         props: [ { name: 'id', type: 2, default: '' } ],
         events: [],
         provides: 32,
-        requires: 2048},
+        requires: 2048 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -618,7 +620,8 @@ const propertyMap = {
                     { name: 'clipped', type: 4, default: false },
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 },
-                    { name: 'swipeType', type: 0, default: 4 } ],
+                    { name: 'swipeType', type: 0, default: 4 },
+                    { name: 'loop', type: 4, default: false } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -628,7 +631,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 38,
-            requires: 2052  },
+            requires: 2052 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props: [ { name: 'id', type: 2, default: '' } ],
@@ -735,7 +738,7 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 2,
-            requires: 7172  } },
+            requires: 7172 } },
     'sprite':
     { flex:
     { funcs:
@@ -793,7 +796,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 2,
-            requires: 7172  },
+            requires: 7172 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -834,9 +837,9 @@ const propertyMap = {
                 { name: 'fontFill', type: 6, default: '' } ],
         events: [],
         provides: 0,
-        requires: 0  },
+        requires: 0 },
         dom:
-        { funcs: [ ],
+        { funcs: [],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'fontSize', type: 0, default: 26 },
@@ -854,50 +857,50 @@ const propertyMap = {
                     { name: 'fontFill', type: 6, default: '' } ],
             events: [],
             provides: 0,
-            requires: 0  } },
+            requires: 0 } },
     'timermx':
-        { flex:
-            { funcs:
-                [ { name: 'play', info: '' },
-                    { name: 'replay', info: '' },
-                    { name: 'pause', info: '' },
-                    { name: 'seek', info: 't' } ],
-                props:
-                    [ { name: 'id', type: 2, default: '' },
-                        { name: 'autoPlay', type: 4, default: false },
-                        { name: 'loop', type: 4, default: false },
-                        { name: 'totalTime', type: 1, default: 10 } ],
-                events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
-                provides: 0,
-                requires: 0 },
-            dom:
-                { funcs:
-                    [ { name: 'play', info: '' },
-                        { name: 'replay', info: '' },
-                        { name: 'pause', info: '' },
-                        { name: 'seek', info: 't' } ],
-                    props:
-                        [ { name: 'id', type: 2, default: '' },
-                            { name: 'autoPlay', type: 4, default: false },
-                            { name: 'loop', type: 4, default: false },
-                            { name: 'totalTime', type: 1, default: 10 } ],
-                    events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
-                    provides: 0,
-                    requires: 0 },
-            canvas:
-                { funcs:
-                    [ { name: 'play', info: '' },
-                        { name: 'replay', info: '' },
-                        { name: 'pause', info: '' },
-                        { name: 'seek', info: 't' } ],
-                    props:
-                        [ { name: 'id', type: 2, default: '' },
-                            { name: 'autoPlay', type: 4, default: false },
-                            { name: 'loop', type: 4, default: false },
-                            { name: 'totalTime', type: 1, default: 10 } ],
-                    events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
-                    provides: 0,
-                    requires: 0 } },
+    { flex:
+    { funcs:
+        [ { name: 'play', info: '' },
+            { name: 'replay', info: '' },
+            { name: 'pause', info: '' },
+            { name: 'seek', info: 't' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'autoPlay', type: 4, default: false },
+                { name: 'loop', type: 4, default: false },
+                { name: 'totalTime', type: 1, default: 10 } ],
+        events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+        provides: 0,
+        requires: 0 },
+        dom:
+        { funcs:
+            [ { name: 'play', info: '' },
+                { name: 'replay', info: '' },
+                { name: 'pause', info: '' },
+                { name: 'seek', info: 't' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'autoPlay', type: 4, default: false },
+                    { name: 'loop', type: 4, default: false },
+                    { name: 'totalTime', type: 1, default: 10 } ],
+            events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+            provides: 0,
+            requires: 0 },
+        canvas:
+        { funcs:
+            [ { name: 'play', info: '' },
+                { name: 'replay', info: '' },
+                { name: 'pause', info: '' },
+                { name: 'seek', info: 't' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'autoPlay', type: 4, default: false },
+                    { name: 'loop', type: 4, default: false },
+                    { name: 'totalTime', type: 1, default: 10 } ],
+            events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+            provides: 0,
+            requires: 0 } },
     'canvas':
     { flex:
     { funcs:
@@ -926,7 +929,7 @@ const propertyMap = {
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' } ],
         provides: 14,
-        requires: 2052 },
+        requires: 3076 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -955,7 +958,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 14,
-            requires: 2052  },
+            requires: 3076 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -984,7 +987,7 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 14,
-            requires: 2052 } },
+            requires: 3076 } },
     'flex':
     { flex:
     { funcs:
@@ -1013,7 +1016,7 @@ const propertyMap = {
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' } ],
         provides: 14,
-        requires: 2052  },
+        requires: 2052 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1074,7 +1077,7 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 14,
-            requires: 2052  } },
+            requires: 2052 } },
     'dom':
     { flex:
     { funcs:
@@ -1103,7 +1106,7 @@ const propertyMap = {
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' } ],
         provides: 14,
-        requires: 4 },
+        requires: 1028 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1130,7 +1133,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 14,
-            requires: 4 },
+            requires: 1028 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1156,14 +1159,14 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 14,
-            requires: 4 } },
+            requires: 1028 } },
     'root':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
         props: [ { name: 'id', type: 2, default: '' } ],
         events: [ { name: 'init', info: '' } ],
         provides: 49,
-        requires: 2048  },
+        requires: 2048 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1182,6 +1185,7 @@ const propertyMap = {
                     { name: 'width', type: 0, default: 0 },
                     { name: 'height', type: 0, default: 0 },
                     { name: 'swipeType', type: 0, default: 4 },
+                    { name: 'loop', type: 4, default: false },
                     { name: 'scaleStage', type: 4, default: false } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
@@ -1193,7 +1197,7 @@ const propertyMap = {
                     { name: 'swipeDown', info: '' },
                     { name: 'init', info: '' } ],
             provides: 55,
-            requires: 2052  },
+            requires: 2052 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props: [ { name: 'id', type: 2, default: '' } ],
@@ -1228,7 +1232,7 @@ const propertyMap = {
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' } ],
         provides: 2,
-        requires: 7172},
+        requires: 7172 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1287,7 +1291,7 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 2,
-            requires: 7172} },
+            requires: 7172 } },
     'text':
     { flex:
     { funcs:
@@ -1387,7 +1391,7 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 2,
-            requires: 7172} },
+            requires: 7172 } },
     'rect':
     { flex:
     { funcs:
@@ -1421,7 +1425,7 @@ const propertyMap = {
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' } ],
         provides: 2,
-        requires: 7172},
+        requires: 7172 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1455,7 +1459,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 2,
-            requires: 7172},
+            requires: 7172 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1557,7 +1561,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 2,
-            requires: 7172},
+            requires: 7172 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1664,7 +1668,7 @@ const propertyMap = {
                     { name: 'swipeUp', info: '' },
                     { name: 'swipeDown', info: '' } ],
             provides: 2,
-            requires: 7172},
+            requires: 7172 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1702,7 +1706,7 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 2,
-            requires: 7172} },
+            requires: 7172 } },
     'timer':
     { flex:
     { funcs:
@@ -1732,6 +1736,8 @@ const propertyMap = {
                 { name: 'alignItems', type: 2, default: '' },
                 { name: 'alignContent', type: 2, default: '' },
                 { name: 'flexWrap', type: 2, default: '' },
+                { name: 'bgImage', type: 2, default: '' },
+                { name: 'clipped', type: 4, default: false },
                 { name: 'autoPlay', type: 4, default: false },
                 { name: 'loop', type: 4, default: false },
                 { name: 'totalTime', type: 1, default: 10 } ],
@@ -1784,7 +1790,7 @@ const propertyMap = {
                     { name: 'loop', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134,
-            requires: 6148},
+            requires: 6148 },
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -1819,7 +1825,7 @@ const propertyMap = {
                     { name: 'loop', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134,
-            requires: 6148} },
+            requires: 6148 } },
     'slidetimer':
     { flex:
     { funcs:
@@ -1849,6 +1855,8 @@ const propertyMap = {
                 { name: 'alignItems', type: 2, default: '' },
                 { name: 'alignContent', type: 2, default: '' },
                 { name: 'flexWrap', type: 2, default: '' },
+                { name: 'bgImage', type: 2, default: '' },
+                { name: 'clipped', type: 4, default: false },
                 { name: 'loop', type: 4, default: false },
                 { name: 'totalTime', type: 1, default: 10 },
                 { name: 'shapeWidth', type: 0, default: 0 },
@@ -1952,62 +1960,62 @@ const propertyMap = {
                     { name: 'loop', info: '' },
                     { name: 'stop', info: '' } ],
             provides: 134,
-            requires: 6148  } },
+            requires: 6148 } },
     'track':
-        { flex:
-            { funcs:
-                [ { name: 'delete', info: '' },
-                    { name: 'play', info: '' },
-                    { name: 'replay', info: '' },
-                    { name: 'pause', info: '' },
-                    { name: 'seek', info: 't' } ],
-                props:
-                    [ { name: 'id', type: 2, default: '' },
-                        { name: 'autoPlay', type: 4, default: false },
-                        { name: 'loop', type: 4, default: false },
-                        { name: 'totalTime', type: 1, default: 10 },
-                        { name: 'type', type: 0, default: 0 },
-                        { name: 'startTime', type: 1, default: -1 },
-                        { name: 'endTime', type: 1, default: -1 } ],
-                events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
-                provides: 0,
-                requires: 6658 },
-            dom:
-                { funcs:
-                    [ { name: 'delete', info: '' },
-                        { name: 'play', info: '' },
-                        { name: 'replay', info: '' },
-                        { name: 'pause', info: '' },
-                        { name: 'seek', info: 't' } ],
-                    props:
-                        [ { name: 'id', type: 2, default: '' },
-                            { name: 'autoPlay', type: 4, default: false },
-                            { name: 'loop', type: 4, default: false },
-                            { name: 'totalTime', type: 1, default: 10 },
-                            { name: 'type', type: 0, default: 0 },
-                            { name: 'startTime', type: 1, default: -1 },
-                            { name: 'endTime', type: 1, default: -1 } ],
-                    events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
-                    provides: 0,
-                    requires: 6658 },
-            canvas:
-                { funcs:
-                    [ { name: 'delete', info: '' },
-                        { name: 'play', info: '' },
-                        { name: 'replay', info: '' },
-                        { name: 'pause', info: '' },
-                        { name: 'seek', info: 't' } ],
-                    props:
-                        [ { name: 'id', type: 2, default: '' },
-                            { name: 'autoPlay', type: 4, default: false },
-                            { name: 'loop', type: 4, default: false },
-                            { name: 'totalTime', type: 1, default: 10 },
-                            { name: 'type', type: 0, default: 0 },
-                            { name: 'startTime', type: 1, default: -1 },
-                            { name: 'endTime', type: 1, default: -1 } ],
-                    events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
-                    provides: 0,
-                    requires: 6658 } },
+    { flex:
+    { funcs:
+        [ { name: 'delete', info: '' },
+            { name: 'play', info: '' },
+            { name: 'replay', info: '' },
+            { name: 'pause', info: '' },
+            { name: 'seek', info: 't' } ],
+        props:
+            [ { name: 'id', type: 2, default: '' },
+                { name: 'autoPlay', type: 4, default: false },
+                { name: 'loop', type: 4, default: false },
+                { name: 'totalTime', type: 1, default: 10 },
+                { name: 'type', type: 0, default: 0 },
+                { name: 'startTime', type: 1, default: -1 },
+                { name: 'endTime', type: 1, default: -1 } ],
+        events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+        provides: 0,
+        requires: 6658 },
+        dom:
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'play', info: '' },
+                { name: 'replay', info: '' },
+                { name: 'pause', info: '' },
+                { name: 'seek', info: 't' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'autoPlay', type: 4, default: false },
+                    { name: 'loop', type: 4, default: false },
+                    { name: 'totalTime', type: 1, default: 10 },
+                    { name: 'type', type: 0, default: 0 },
+                    { name: 'startTime', type: 1, default: -1 },
+                    { name: 'endTime', type: 1, default: -1 } ],
+            events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+            provides: 0,
+            requires: 6658 },
+        canvas:
+        { funcs:
+            [ { name: 'delete', info: '' },
+                { name: 'play', info: '' },
+                { name: 'replay', info: '' },
+                { name: 'pause', info: '' },
+                { name: 'seek', info: 't' } ],
+            props:
+                [ { name: 'id', type: 2, default: '' },
+                    { name: 'autoPlay', type: 4, default: false },
+                    { name: 'loop', type: 4, default: false },
+                    { name: 'totalTime', type: 1, default: 10 },
+                    { name: 'type', type: 0, default: 0 },
+                    { name: 'startTime', type: 1, default: -1 },
+                    { name: 'endTime', type: 1, default: -1 } ],
+            events: [ { name: 'loop', info: '' }, { name: 'stop', info: '' } ],
+            provides: 0,
+            requires: 6658 } },
     'qrcode':
     { flex:
     { funcs:
@@ -2039,7 +2047,7 @@ const propertyMap = {
                 { name: 'swipeUp', info: '' },
                 { name: 'swipeDown', info: '' } ],
         provides: 2,
-        requires: 7172},
+        requires: 7172 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -2207,14 +2215,14 @@ const propertyMap = {
                     { name: 'beginContact', info: '' },
                     { name: 'endContact', info: '' } ],
             provides: 2,
-            requires: 7172  } },
+            requires: 7172 } },
     'world':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
         props: [ { name: 'id', type: 2, default: '' } ],
         events: [],
         provides: 256,
-        requires: 4096  },
+        requires: 4096 },
         dom:
         { funcs: [ { name: 'delete', info: '' } ],
             props: [ { name: 'id', type: 2, default: '' } ],
@@ -2244,7 +2252,7 @@ const propertyMap = {
                     { name: 'eastWall', type: 4, default: true },
                     { name: 'autoGravity', type: 4, default: false },
                     { name: 'gravityX', type: 1, default: 0 },
-                    { name: 'gravityY', type: 1, default: 0 } ],
+                    { name: 'gravityY', type: 1, default: 100 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -2303,7 +2311,7 @@ const propertyMap = {
                 { name: 'dbid', type: 2, default: '' } ],
         events: [],
         provides: 0,
-        requires: 1  },
+        requires: 1 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -2337,7 +2345,7 @@ const propertyMap = {
                 { name: 'listened', type: 4, default: false } ],
         events: [],
         provides: 0,
-        requires: 1  },
+        requires: 1 },
         dom:
         { funcs: [ { name: 'delete', info: '' }, { name: 'send', info: 'data' } ],
             props:
@@ -2355,14 +2363,14 @@ const propertyMap = {
                     { name: 'listened', type: 4, default: false } ],
             events: [],
             provides: 0,
-            requires: 1  } },
+            requires: 1 } },
     'page':
     { flex:
     { funcs: [ { name: 'delete', info: '' } ],
         props: [ { name: 'id', type: 2, default: '' } ],
         events: [],
         provides: 0,
-        requires: 2080},
+        requires: 2080 },
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
@@ -2371,15 +2379,7 @@ const propertyMap = {
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'visible', type: 4, default: true },
                     { name: 'alpha', type: 5, default: 1 },
-                    { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
-                    { name: 'positionX', type: 0, default: 0 },
-                    { name: 'positionY', type: 0, default: 0 },
-                    { name: 'scaleX', type: 1, default: 1 },
-                    { name: 'scaleY', type: 1, default: 1 },
-                    { name: 'originX', type: 1, default: 0 },
-                    { name: 'originY', type: 1, default: 0 },
-                    { name: 'rotation', type: 1, default: 0 },
                     { name: 'bgImage', type: 2, default: '' },
                     { name: 'clipped', type: 4, default: false },
                     { name: 'forwardTransition', type: 0, default: 0 },
@@ -2443,7 +2443,7 @@ const propertyMap = {
                     { name: 'change', info: '' },
                     { name: 'input', info: '' } ],
             provides: 2,
-            requires: 2052},
+            requires: 2052 },
         canvas:
         { funcs: [ { name: 'delete', info: '' } ],
             props: [ { name: 'id', type: 2, default: '' } ],

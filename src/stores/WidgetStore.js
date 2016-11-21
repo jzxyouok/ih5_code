@@ -3480,7 +3480,14 @@ export default Reflux.createStore({
             , classList: classList
         });
 
-        this.selectWidget(stageTree[0].tree);
+        var selected = stageTree[0].tree;
+        for (var n in stageTree[0].tree.children) {
+            if (stageTree[0].tree.children[n].className == 'page') {
+                selected = stageTree[0].tree.children[n];
+                break;
+            }
+        }
+        this.selectWidget(selected);
         this.getAllWidgets();
     },
     addClass: function(name, bool) {
