@@ -4,7 +4,7 @@ import $class from 'classnames'
 import Property from './Property'
 import WidgetStore, {funcType, nodeType, nodeAction} from '../../stores/WidgetStore'
 import WidgetActions from '../../actions/WidgetActions'
-import {propertyType, getPropertyMap} from '../tempMap'
+import {propertyType, getPropertyMap} from '../PropertyMap'
 import { FormulaInput } from '../PropertyView/FormulaInputComponent';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { Menu, Dropdown, Icon ,InputNumber,Input,Select} from 'antd';

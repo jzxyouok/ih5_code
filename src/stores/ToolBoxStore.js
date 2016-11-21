@@ -5,7 +5,7 @@
 import Reflux from 'reflux';
 import Actions from '../actions/ToolBoxAction';
 import defaultTool from '../component/ToolBox/DEFAUL_TOOLBOX';
-import {checkChildClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode} from '../component/tempMap';
+import {checkChildClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode} from '../component/PropertyMap';
 
 // 响应 点击二级（默认隐藏）工具菜单的事件
 var selectSecondary = function(config, gid, cid) {

@@ -6,7 +6,7 @@ import $ from 'jquery';
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget, selectableClass} from '../../stores/WidgetStore';
-import {checkChildClass} from '../tempMap';
+import {checkChildClass} from '../PropertyMap';
 import {chooseFile} from  '../../utils/upload';
 
 import SelectTargetStore from '../../stores/SelectTargetStore'

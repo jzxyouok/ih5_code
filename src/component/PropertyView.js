@@ -13,7 +13,7 @@ import cls from 'classnames';
 import { SwitchMore,DropDownInput ,ConInputNumber} from  './PropertyView/PropertyViewComponet';
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
-import {propertyType, getPropertyMap} from './tempMap'
+import {propertyType, getPropertyMap} from './PropertyMap'
 import {chooseFile} from  '../utils/upload';
 require("jscolor/jscolor");
 import TbCome from './TbCome';

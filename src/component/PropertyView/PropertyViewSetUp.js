@@ -14,7 +14,7 @@ import { FormulaInput } from './FormulaInputComponent';
 
 import WidgetStore, {dataType} from '../../stores/WidgetStore';
 import WidgetActions from '../../actions/WidgetActions';
-import {propertyType} from '../tempMap';
+import {propertyType} from '../PropertyMap';
 import {chooseFile} from  '../../utils/upload';
 require("jscolor/jscolor");
 import TbCome from '../TbCome';

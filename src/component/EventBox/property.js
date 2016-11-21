@@ -11,8 +11,8 @@ import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import { RangeComponent } from '../PropertyView/RangeComponent';
 import { DBOrderComponent } from '../PropertyView/DBOrderComponent';
 import { DBConsComponent } from '../PropertyView/DBConsComponent';
-import { checkChildClass, checkIsClassType } from '../tempMap'
-import { getPropertyMap, propertyMap, propertyType} from '../tempMap'
+import { checkChildClass, checkIsClassType } from '../PropertyMap'
+import { getPropertyMap, propertyMap, propertyType} from '../PropertyMap'
 import  PropertyViewSetUp from '../PropertyView/PropertyViewSetUp';
 import  $ from 'jquery';
 
