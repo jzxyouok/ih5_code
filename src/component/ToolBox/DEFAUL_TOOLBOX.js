@@ -186,7 +186,7 @@ var DEFAULT_TOOLBOX = {
         primary: 0,
         secondary: [
             {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'},
-            {cid:TOOL_ID.PAGECONTAINER,name:'页面容器',icon:pageContainerIcon, className:'pagecontainer', param: {'swipeType': 4,'width':200,'height':200}}
+            {cid:TOOL_ID.PAGECONTAINER,name:'页面容器',icon:pageContainerIcon, className:'pagecontainer', param: {'swipeType': 4,'width':200,'height':200,'clipped':true}}
         ]
     },{
         name:'容器',
