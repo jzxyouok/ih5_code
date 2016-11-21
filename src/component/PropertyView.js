@@ -1399,7 +1399,7 @@ class PropertyView extends React.Component {
                     <div className={cls('ant-form-item-control',
                         {'ant-input-degree': hasDegree},
                         {'ant-input-px': hasPx},
-                        {'ant-input-rate': hasRate},
+                        {'ant-input-rate': hasRate}
                     )}>
                         {this.getInputBox(item.type, defaultProp)}
                     </div>
