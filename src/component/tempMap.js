@@ -604,26 +604,6 @@ let modifyElementList = (list, className, elementType, type)=>{
     }
 };
 
-let sortElementByClassName = (className, elType, element)=>{
-    //sort list by order
-    let compare = (property)=>{
-        return function(a,b){
-            var value1 = a[property];
-            var value2 = b[property];
-            return value1 - value2;
-        };
-    };
-    console.log(element[elType].sort(compare('order')));
-    switch (elType) {
-        case 'props':
-            break;
-        case 'events':
-            break;
-        case 'funcs':
-            break;
-    }
-};
-
 function dealWithElement(el, map) {
     if(map) {
         let m = map[el.name];
@@ -751,12 +731,41 @@ let checkLockClass = (selected) => {
 };
 
 let checkNotInDomMode = (selected, className) => {
-    //TODO
+    var type = bridge.getRendererType(selected.node);
+    if(propertyMap[className]){
+        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+        if ((type == 4 && ((requires & widgetFlags.Canvas) == 0))|| (type == 1 && ((requires & widgetFlags.Flex) == 0))) {
+            return true;
+        }
+    } else {
+        return false;
+    }
     return false;
 };
 
 let checkNotInCanvasMode = (selected, className) => {
-    //TODO
+    var type = bridge.getRendererType(selected.node);
+    if(propertyMap[className]){
+        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+        if ((type == 2 && ((requires & widgetFlags.Dom) == 0)) || (type == 1 && ((requires & widgetFlags.Flex) == 0))) {
+            return true;
+        }
+    } else {
+        return false;
+    }
+    return false;
+};
+
+let checkNotInFlexMode = (selected, className) => {
+    var type = bridge.getRendererType(selected.node);
+    if(propertyMap[className]){
+        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+        if ((type == 2 && ((requires & widgetFlags.Dom) == 0)) || (type == 4 && ((requires & widgetFlags.Canvas) == 0))) {
+            return true;
+        }
+    } else {
+        return false;
+    }
     return false;
 };
 
@@ -775,23 +784,14 @@ let checkIsClassType = (className) => {
 
 let checkChildClass = (selected, className) => {
     // 对函数,变量,自定义函数等的处理
-    var type = bridge.getRendererType(selected.node);
-    var provides = bridge.getMap(selected.node, propertyMap[selected.className]).provides;
-    if(propertyMap[className]){
-        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
-    }else{
-        return false;
-    }
-
-
+    //先处理自定义的伪对象
     if(className ==='dbItem'){
         if(selected.className === 'db'){
             return true;
         } else {
             return false;
         }
-    }
-    if(className === 'func'){
+    } else if(className === 'func'){
         if(selected.className === 'func' ||
             selected.className === 'var' ||
             selected.className === 'dbItem'||
@@ -800,8 +800,7 @@ let checkChildClass = (selected, className) => {
         } else {
             return true;
         }
-    }
-    if(className === 'var') {
+    } else if(className === 'var') {
         if( selected.className === 'counter' ||
             selected.className === 'func' ||
             selected.className === 'var' ||
@@ -811,15 +810,22 @@ let checkChildClass = (selected, className) => {
         } else {
             return true;
         }
-    }
-    if (selected.className === 'func' ||
+    } else if (selected.className === 'func' ||
         selected.className === 'var' ||
         selected.className === 'dbItem' ||
         selected.className.substr(0,1)==='_' ||    //自定义class
         (selected.className === 'data'&&(selected.props.type==='oneDArr'||selected.props.type==='twoDArr'))) {
         return false;
     }
-    //20161118,luozheao,新增
+
+    var type = bridge.getRendererType(selected.node);
+    var provides = bridge.getMap(selected.node, propertyMap[selected.className]).provides;
+    if(propertyMap[className]){
+        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
+    } else {
+        return false;
+    }
+
     if (className == 'world')
         return (selected.className == 'canvas');
 
@@ -847,7 +853,6 @@ let checkChildClass = (selected, className) => {
                 return false;
         }
     }
-    //TODO
     return true;
 };
 
@@ -856,4 +861,4 @@ dealWithOriginalPropertyMap();
 //添加伪对象的属性
 addCustomWidgetProperties();
 
-export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkIsClassType};
+export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType};

@@ -1442,12 +1442,16 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
 
     }
   }
-  if (saveKey)
-    props['key'] = node.key;
-    if (node.className == 'track' && node.timerWidget && node.timerWidget.props['totalTime'])
-        props['totalTime'] = node.timerWidget.props['totalTime'];
-  if (props)
-    data['props'] = props;
+  if (saveKey) {
+      props['key'] = node.key;
+  }
+  if (node.className == 'track' && node.timerWidget && node.timerWidget.props['totalTime']) {
+      props['totalTime'] = node.timerWidget.props['totalTime'];
+  }
+
+  if (props) {
+      data['props'] = props;
+  }
   // if (node.events)
   //   data['events'] = node.events;
   var list = [];
@@ -3768,8 +3772,8 @@ export default Reflux.createStore({
             else
               callback(xhr.responseText);
         };
-           xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
-        //     xhr.open(method, url);  //上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
+        // xhr.open(method, "http://test-beta.ih5.cn/editor3b/" + url);
+        xhr.open(method, url);  //WARNING: 上传到服务器时,去掉这个注释,大家一定要记得啊!!!!
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
