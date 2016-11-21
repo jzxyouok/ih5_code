@@ -830,8 +830,12 @@ class PropertyView extends React.Component {
     getStyleObj(node){
         if(node.className=='container' && node.node.padding !==undefined){
             return {name:'flexContainer',value:true}
-        }else  if(node.className=='flex'){
+        }
+        else  if(node.className=='flex'){
             return {name:'flexContainer',value:true}
+        }
+        else  if(node.className=='root'){
+            return {name:'stageLoopSet',value:true}
         }
         return null
     }
@@ -1069,9 +1073,13 @@ class PropertyView extends React.Component {
         }
         else if(item.type === propertyType.Boolean) {
             defaultValue = node.node[item.name];
-            if(item.name=='flexWrap' && node.props[item.name+'Key'] !==undefined){
+
+            if(node.props[item.name+'Key'] !==undefined){
                 defaultValue =node.props[item.name+'Key'];
             }
+            // if(item.name=='flexWrap' && node.props[item.name+'Key'] !==undefined){
+            //     defaultValue =node.props[item.name+'Key'];
+            // }
         }
 
         else if (node.props[item.name] === undefined) {
@@ -1294,8 +1302,6 @@ class PropertyView extends React.Component {
 
         let isAutoGravity = item.name == 'autoGravity'?true:false;
         let tdColorSwitch =className == "table" && ['fontFill','fillColor','altColor'].indexOf(item.name)>=0?true: false;
-
-
 
 
 

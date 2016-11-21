@@ -87,6 +87,7 @@ $toBottom:14px;
             }
         }
     }
+
 	.ant-form-half{
 		&.ant-body{
 			.ant-form-item-label{
@@ -233,6 +234,18 @@ $toBottom:14px;
 			display: table;
 			clear: both;
 		}
+
+		&.stageLoopSet:nth-child(4){
+			  .ant-form-full:nth-child(3){
+				.ant-form-item-label{
+					label{
+						width:85px;
+						text-align: left;
+					}
+				}
+			}
+		}
+
 		&.flexContainer{
 			position: relative;
 			width: 98%;
