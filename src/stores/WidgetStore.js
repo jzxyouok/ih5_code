@@ -2487,7 +2487,7 @@ export default Reflux.createStore({
          let isSkip= this.setFlexProps(obj);
          if(isSkip) {
             skipRender = false;
-            skipProperty = true;
+            skipProperty = false;
          }
 
        console.log(obj,this.currentWidget );
@@ -2549,13 +2549,11 @@ export default Reflux.createStore({
                     } else {
                         if (this.currentWidget.props[i + 'isRate'] === true) {
                             obj[i] += '%';
-                            this.currentWidget.node[i] = obj[i];
-                            this.currentWidget.props[i] = obj[i];
-                        } else if (this.currentWidget.props[i + 'isRate'] === false){
+                        } else if (this.currentWidget.props[i + 'isRate'] === false) {
                             obj[i] += 'px';
-                            this.currentWidget.node[i] = obj[i];
-                            this.currentWidget.props[i] = obj[i];
                         }
+                        this.currentWidget.node[i] = obj[i];
+                        this.currentWidget.props[i] = obj[i];
                     }
                 }
                 return true;
@@ -2563,7 +2561,7 @@ export default Reflux.createStore({
             return false;
         },
             //判断是否处于flex模式下,可拓展改写
-          fnIsFlex:function(node) {
+       fnIsFlex:function(node) {
         if (node.className == 'flex') {
             return true;
         }
