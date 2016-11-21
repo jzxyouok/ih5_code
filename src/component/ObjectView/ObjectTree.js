@@ -122,10 +122,10 @@ class ObjectTree extends React.Component {
 
         //右键点击
         this.toolMenuList = [
-            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'黏贴'},
-                {name:'relPaste',showName:'相对位置黏贴'},{name:'delete',showName:'删除'}],
+            [{name:'copy',showName:'复制'},{name:'cut',showName:'剪切'},{name:'paste',showName:'粘贴'},
+                {name:'relPaste',showName:'相对位置粘贴'},{name:'delete',showName:'删除'}],
             [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
-            [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例黏贴'}],
+            [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例粘贴'}],
             [{name:'saveAsCom',showName:'另存为小模块'}]
         ];
         this.relocateToolMenu = this.relocateToolMenu.bind(this);
