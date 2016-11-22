@@ -108,6 +108,8 @@ var currentLoading;
 var addProps = ['positionX', 'positionY', 'rotation'];
 var mulProps = ['scaleX', 'scaleY'];
 
+var saveEffect = {};
+
 function syncTrack(parent, props) {
     if (props && props['prop'] && props['data'] && props['data'].length > 0) {
         for (var i = 0; i < props['prop'].length; i++) {
@@ -1753,7 +1755,9 @@ export default Reflux.createStore({
 
         this.listenTo(WidgetActions['setVersion'], this.setVersion);
 
-
+        this.listenTo(WidgetActions['saveEffect'], this.saveEffect);
+        this.listenTo(WidgetActions['loadEffect'], this.loadEffect);
+        this.listenTo(WidgetActions['addEffect'], this.addEffect);
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -2016,6 +2020,49 @@ export default Reflux.createStore({
             }
         };
         loopDelete(w);
+    },
+    saveEffect: function(){
+        if (this.currentWidget && this.currentWidget.parent) {
+            saveEffect = {};
+            saveTree(saveEffect, this.currentWidget, true, false);
+            this.trigger({saveEffect : saveEffect})
+        }
+    },
+    loadEffect: function(){
+        if (this.currentWidget) {
+            let effect = cpJson(saveEffect);
+            if (!effect.className&&!effect.cls) {
+                return;
+            }
+            loadTree(this.currentWidget, effect);
+            if(effect.props.eventTree){
+                this.reorderEventTreeList();
+            }
+            this.trigger({selectWidget: this.currentWidget});
+            this.trigger({redrawEventTree: true});
+            this.render();
+        }
+    },
+    addEffect : function(data){
+        console.log(data);
+        if (this.currentWidget) {
+            let effect = cpJson(data);
+            if (!effect.className&&!effect.cls) {
+                return;
+            }
+            // 重命名要黏贴的widget
+            if (effect.props['key'] === undefined) {
+                //copy
+                effect.props = this.addWidgetDefaultName(effect.cls, effect.props, false, true, effect.name);
+            }
+            loadTree(this.currentWidget, effect);
+            if(effect.props.eventTree){
+                this.reorderEventTreeList();
+            }
+            this.trigger({selectWidget: this.currentWidget});
+            this.trigger({redrawEventTree: true});
+            this.render();
+        }
     },
     copyWidget: function(shouldCut) {
         if (this.currentWidget && this.currentWidget.parent) {
@@ -2454,7 +2501,12 @@ export default Reflux.createStore({
                 }
             });
             props['name'] = props.type + cOrder;
-        } else {
+        }
+        else if(className == "track" && name){
+            props['name'] = name;
+            props['trackType'] = "effect";
+        }
+        else {
             if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
                 props['name'] = props.value;
             } else {

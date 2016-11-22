@@ -386,12 +386,11 @@ let specialCaseElementMapping = (className, type)=> {
         return {
             props: {
                 'type': {name:'type', showName:'类型', type: propertyType.Select, default:'linear',options:{'直线':'linear','曲线':'ease','贝塞尔曲线':'cubic-bezier'},group:'tools',order:2},
-                '_editTrack': {name:'_editTrack', showName:'编辑运动轨迹',styleName:'hahah1',type: propertyType.Button,default:'',group:'buttonArea'},
-                '_saveTrack': {name:'_saveTrack', showName:'保存',styleName:'hahah2',type: propertyType.Button,default:'',group:'buttonArea'},
-                '_saveAsTrack': {name:'_saveAsTrack', showName:'另存为',styleName:'hahah3',type: propertyType.Button,default:'',group:'buttonArea'},
-                '_cancelTrack': {name:'_cancelTrack', showName:'取消',styleName:'hahah4',type: propertyType.Button,default:'',group:'buttonArea'},
-            },
-
+                '_editTrack': {name:'_editTrack', showName:'编辑运动轨迹',styleName:'edit-btn',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_saveTrack': {name:'_saveTrack', showName:'保存',styleName:'save-btn',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_saveAsTrack': {name:'_saveAsTrack', showName:'另存为',styleName:'saveAs-btn',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_cancelTrack': {name:'_cancelTrack', showName:'取消',styleName:'cancel-btn',type: propertyType.Button,default:'',group:'buttonArea'}
+            }
         };
     } else if (isInCLList(className, ['table'])) {
         return {

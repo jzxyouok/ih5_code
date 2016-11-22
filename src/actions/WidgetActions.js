@@ -81,4 +81,8 @@ export default Reflux.createActions([
   'addProps',                 //给this.selectNode 添加一个属性
   'setVersion',                 //版本
   'changeResource',             //修改资源入口
+
+  'saveEffect',               //保存动效
+  'loadEffect',               //读取动效
+  'addEffect'                 //添加动效
 ]);

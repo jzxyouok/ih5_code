@@ -1085,7 +1085,12 @@ class PropertyView extends React.Component {
             //     defaultValue =node.props[item.name+'Key'];
             // }
         }
-
+        else if(item.type == propertyType.Button){
+            if(className == "track"){
+                //if(this.selectNode.timerWidget.className == "timer")
+                console.log(this.selectNode,item)
+            }
+        }
         else if (node.props[item.name] === undefined) {
               if (className == "table" && item.name == "headerFontSize") {
                 defaultValue = 26;

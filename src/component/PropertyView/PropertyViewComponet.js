@@ -344,28 +344,19 @@ class ConButton extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            curNode:props.curNode
+            curNode:props.curNode             //选中组件的属性
+
         };
     }
 
     componentDidMount() {
-         let thisObj=this;
-         let className= this.state.curNode.className;
-         if(className=='track') {
-            $('.' + thisObj.props.item.styleName).click(function () {
-                alert(thisObj.props.item.styleName);
-            });
-        }
-    }
 
-    componentWillReceiveProps(nextProps){
-        let thisObj=this;
-        $('.' + thisObj.props.item.styleName).unbind();
     }
 
     componentWillUnmount() {
 
     }
+
     render() {
         return (
             <button className={this.props.item.styleName}>

@@ -29,6 +29,8 @@ import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
 import CreateModuleStore from '../stores/CreateModuleStore';
+import EffectAction from '../actions/effectAction';
+import EffectStore from '../stores/effectStore';
 
 const orderType = [
     {name: '左对齐', className: 'left-icon', type:1},
@@ -191,6 +193,7 @@ class NavBar extends React.Component {
         document.body.addEventListener('keyup', this.onKeyHistory);
         document.body.addEventListener('keydown', this.onKeyDown);
 
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
         //window.onbeforeunload = ()=>{
         //    var n = window.event.screenX - window.screenLeft;
         //    //鼠标在当前窗口内时，n<m，b为false；鼠标在当前窗口外时，n>m，b为true。20这个值是指关闭按钮的宽度
@@ -243,6 +246,7 @@ class NavBar extends React.Component {
         localStorage.setItem("workID", null);
         document.body.removeEventListener('keyup', this.onKeyHistory);
         document.body.removeEventListener('keydown', this.onKeyDown);
+        this.effectChange();
     }
 
     onStatusChange(widget) {
@@ -1195,6 +1199,15 @@ class NavBar extends React.Component {
         this.setState({
             isArrangeEffect : false
         })
+    }
+
+    effectChangeFuc(data){
+        console.log(data);
+        if(data.effectList){
+            this.setState({
+                effectList : data.effectList
+            })
+        }
     }
 
     render() {

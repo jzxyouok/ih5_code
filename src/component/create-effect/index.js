@@ -4,6 +4,8 @@ import $class from 'classnames';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
+import EffectAction from '../../actions/effectAction';
+import EffectStore from '../../stores/effectStore';
 
 class CreateModule extends React.Component {
     constructor (props) {
@@ -11,7 +13,9 @@ class CreateModule extends React.Component {
         this.state = {
             isTop : false,
             error : "动效名称不能为空",
-            isError : false
+            isError : false,
+            show : false,
+            effectList : []
         };
 
         this.isTopSet = this.isTopSet.bind(this);
@@ -20,25 +24,34 @@ class CreateModule extends React.Component {
     }
 
     componentDidMount() {
-        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
     }
 
     componentWillUnmount() {
-        this.unsubscribe();
+        this.effectChange();
     }
 
-    onStatusChange(widget) {
-
+    effectChangeFuc(data) {
+        if(data.effectList){
+            this.setState({
+                effectList : data.effectList
+            })
+        }
+        if(data.createEffect){
+            this.setState({
+                show : true
+            })
+        }
     }
 
     closeClassBtn(){
-        this.state = {
+        this.setState({
             isTop : false,
             error : "动效名称不能为空",
-            isError : false
-        };
+            isError : false,
+            show : false
+        });
         this.refs.name.value = "";
-        this.props.closeClassBtn();
     }
 
     isTopSet(){
@@ -48,7 +61,36 @@ class CreateModule extends React.Component {
     }
 
     addEffect(){
+        let name = this.refs.name.value;
+        let sameName = false;
+        let effectList = this.state.effectList;
+        let error = (data)=>{
+            this.setState({
+                isError : true,
+                error : data
+            })
+        };
 
+        effectList.map((v,i)=>{
+            if(v.name == name){
+                sameName = true
+            }
+        });
+
+        if(name.length == 0){
+            error("动效名称不能为空");
+        }
+        else if(sameName){
+            error("该动效已存在");
+        }
+        else {
+            if(this.state.isTop){
+                effectList.unshift()
+            }
+            else {
+                effectList.push()
+            }
+        }
     }
 
     render() {
@@ -72,7 +114,7 @@ class CreateModule extends React.Component {
 
                         <div className="btn-group f--hcc">
                             <button className="btn btn-clear cancel-btn" onClick={ this.closeClassBtn }>取消</button>
-                            <button className="btn btn-clear sure-btn" onClick={ this.addClass }>确定</button>
+                            <button className="btn btn-clear sure-btn" onClick={ this.addEffect }>确定</button>
                         </div>
                     </div>
 
