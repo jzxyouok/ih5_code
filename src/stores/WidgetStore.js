@@ -1805,6 +1805,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setVersion'], this.setVersion);
 
         this.listenTo(WidgetActions['addOrEditBlock'], this.addOrEditBlock);
+        this.listenTo(WidgetActions['removeBlock'], this.removeBlock);
         this.listenTo(WidgetActions['activeBlockMode'], this.activeBlockMode);
 
         this.eventTreeList = [];
@@ -4037,19 +4038,27 @@ export default Reflux.createStore({
     addOrEditBlock(block) {
         //TODO:还需其他么？到设置属性的时候再考虑
         //到时还要check id
-        if(this.currentWidget.props['block']){
-            //编辑
-            this.currentWidget.props['block']['name'] = block.name;
-            this.currentWidget.props['block']['mapping'] = block.mapping;
-        } else {
-            //新建
-            this.currentWidget.props['block'] = {
-                'name': block.name,
-                'mapping': block.mapping
+        if(this.currentWidget) {
+            if(this.currentWidget.props['block']){
+                //编辑
+                this.currentWidget.props['block']['name'] = block.name;
+                this.currentWidget.props['block']['mapping'] = block.mapping;
+            } else {
+                //新建
+                this.currentWidget.props['block'] = {
+                    'name': block.name,
+                    'mapping': block.mapping
+                }
             }
         }
         this.activeBlockMode(false);
         //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
+    },
+    removeBlock(block) {
+        if(this.currentWidget&&this.currentWidget.props['block']){
+            delete this.currentWidget.props['block'];
+            this.trigger({selectWidget:this.currentWidget});
+        }
     },
     activeBlockMode(value){
         //let activeBlockModeKey = this.currentWidget.key;

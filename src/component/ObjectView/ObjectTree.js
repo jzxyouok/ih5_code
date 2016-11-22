@@ -654,6 +654,7 @@ class ObjectTree extends React.Component {
         } else {
             if(obj.props.block) {
                 list[3][0].showName = '编辑小模块';
+                list[3].push({name:'removeBlock',showName:'展开小模块'});
             }
         }
         this.setState({
@@ -752,6 +753,11 @@ class ObjectTree extends React.Component {
                 break;
             case 'saveAsBlock':
                 this.itemActions('saveAsBlock');
+                break;
+            case 'removeBlock':
+                this.itemActions('removeBlock');
+                break;
+            default:
                 break;
         }
     }
@@ -953,6 +959,9 @@ class ObjectTree extends React.Component {
                 break;
             case 'saveAsBlock':
                 WidgetActions['activeBlockMode'](true);
+                break;
+            case 'removeBlock':
+                WidgetActions['removeBlock']();
                 break;
             default:
                 break;
