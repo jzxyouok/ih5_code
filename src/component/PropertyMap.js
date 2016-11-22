@@ -82,7 +82,7 @@ let propMapping = {
     'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 10},
     'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '垂直',options:{'垂直':true,'水平':false}},
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
-    'loop': {name:'loop', showName:'循环播放', type: propertyType.Boolean, group:'tools', default: false},
+    'loop': {name:'loop', showName:'滑动页面循环', type: propertyType.Boolean, group:'tools', default: false},
 
     'src': {name:'src', type: propertyType.String, default:''},
     'shapeWidth': {name:'shapeWidth', showName:'原始宽', type: propertyType.Integer, default: 0, group:'position'},
@@ -147,6 +147,7 @@ let propMapping = {
     'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
 
     //关于flex的请看：https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex
+
 
 
     'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'false', options:{'PC':'false','手机':'true'}},
