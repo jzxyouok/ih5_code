@@ -1212,6 +1212,12 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
                 item.needFill.map((v, i)=> {
                     if(judges.className == 'input' && v.type=='select'){
                         judges.conFlag =v.default;
+                        if(v.default=='输入完成'){
+                            judges.conFlag='change'
+                        }
+                        else  if(v.default=='内容改变'){
+                            judges.conFlag='input'
+                        }
                     }
                     else if (judges.className === 'sock' && v.actionName === 'message') {
                         let valueObj = keyMap[v.default];

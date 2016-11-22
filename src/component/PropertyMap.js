@@ -223,24 +223,10 @@ let eventMapping = {
     'even': {name:'even', showName:'为偶数'},
     'remainder': {name:'remainder', showName:'余数为', needFill:[{showName:'除数',type:'number',default:''}, {showName:'余数',type:'number',default:''}]},
 
-    'isEmpty': {name:'isEmpty', showName:'为空',needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isNotEmpty': {name:'isNotEmpty', showName:'不为空', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isContain': {name:'isContain', showName:'包含文本', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},
-    'lenEqual': {name:'lenEqual', showName:'长度等于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenUnEqual': {name:'lenUnEqual', showName:'长度不等于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenBigThan': {name:'lenBigThan', showName:'长度大于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenLessThan': {name:'lenLessThan', showName:'长度小于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'isNum': {name:'isNum', showName:'是数字', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isNotNum': {name:'isNotNum', showName:'不是数字', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isLetter': {name:'isLetter', showName:'是字母', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isNotLetter': {name:'isNotLetter', showName:'不是字母', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-
     'loop': {name:'loop', showName:'重复播放'},
     'stop': {name:'stop', showName:'停止'},
     'tick': {name:'tick', showName:'每一帧'},
-
     'complete':{name:'complete', showName:'播放完成'},
-
     'message':{name:'message', showName:'消息', info:'data', needFill:[{showName:'值',type:'var',default:null, actionName:'message'}]}
 };
 
@@ -365,8 +351,20 @@ let specialCaseElementMapping = (className, type)=> {
                 'shapeHeight': {name:'shapeHeight', type: propertyType.Hidden, default: 0, group:'position'},
                 'color': {name:'color', showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF'}},
             events: {
-                'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},
-                'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},}
+                'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'},{showName:'文本',type:'string',default:''}]},
+                'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'},{showName:'文本',type:'string',default:''}]},
+                'isEmpty': {name:'isEmpty', showName:'为空',needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'}]},
+                'isNotEmpty': {name:'isNotEmpty', showName:'不为空', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'}]},
+                'isContain': {name:'isContain', showName:'包含文本', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'},{showName:'文本',type:'string',default:''}]},
+                'lenEqual': {name:'lenEqual', showName:'长度等于', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+                'lenUnEqual': {name:'lenUnEqual', showName:'长度不等于', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+                'lenBigThan': {name:'lenBigThan', showName:'长度大于', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+                'lenLessThan': {name:'lenLessThan', showName:'长度小于', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'},{showName:'长度值',type:'number',default:''}]},
+                'isNum': {name:'isNum', showName:'是数字', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'}]},
+                'isNotNum': {name:'isNotNum', showName:'不是数字', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'}]},
+                'isLetter': {name:'isLetter', showName:'是字母', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'}]},
+                'isNotLetter': {name:'isNotLetter', showName:'不是字母', needFill:[{type:'select', option:['输入完成','内容改变'],default:'change'}]}
+            }
         };
     } else if (isInCLList(className, ['easing'])) {
         return {
