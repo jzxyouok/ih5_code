@@ -369,7 +369,7 @@ class EditBlock extends React.Component {
                 <span className="flex-1">自定义小模块</span>
                 <button className='btn btn-clear' title='收起' onClick={this.toggle}/>
             </div>
-            <div id='EditBlockViewBody'>
+            <div id='EditBlockViewBody' className={$class({'hidden':this.state.minSize})}>
                 <div id='edit-block-body-layer' className={$class("edit-block-body-layer",{'hidden':this.state.minSize})}>
                     <Form horizontal>
                         <div className={$class('f--hlc','ant-row','ant-form-item','ant-form-full')}>
