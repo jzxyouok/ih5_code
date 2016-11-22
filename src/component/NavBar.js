@@ -15,6 +15,7 @@ import CreateDb from './create-db/index'
 import ArrangeDb from './arrange-db/index'
 import CreateSock from './create-sock/index'
 import pathData from './path-data'
+import ArrangeEffect from './arrange-effect/index'
 
 import bridge from 'bridge';
 const PREFIX = 'app/';
@@ -28,8 +29,6 @@ import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
 import CreateModuleStore from '../stores/CreateModuleStore';
-
-
 
 const orderType = [
     {name: '左对齐', className: 'left-icon', type:1},
@@ -97,7 +96,10 @@ class NavBar extends React.Component {
             historyLayerHide : false,
             isShowRulerLine:true,
             activeKey: null,
-            selectWidgets: []
+            selectWidgets: [],
+            effectList : [],
+            isAddEffect : true,
+            isArrangeEffect : false
         };
 
         this.onLogout = this.onLogout.bind(this);
@@ -150,13 +152,13 @@ class NavBar extends React.Component {
         this.historyLayerHide = this.historyLayerHide.bind(this);
         this.historyShow = this.historyShow.bind(this);
         this.onEvent = this.onEvent.bind(this);
-
         this.onKeyHistory = this.onKeyHistory.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
-
-
         this.onClickAlignWidgets = this.onClickAlignWidgets.bind(this);
         this.onClickDistributeWidgets = this.onClickDistributeWidgets.bind(this);
+        this.addEffectFuc = this.addEffectFuc.bind(this);
+        this.arrangeEffectShow = this.arrangeEffectShow.bind(this);
+        this.arrangeEffectHide = this.arrangeEffectHide.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -241,7 +243,6 @@ class NavBar extends React.Component {
         localStorage.setItem("workID", null);
         document.body.removeEventListener('keyup', this.onKeyHistory);
         document.body.removeEventListener('keydown', this.onKeyDown);
-
     }
 
     onStatusChange(widget) {
@@ -256,7 +257,8 @@ class NavBar extends React.Component {
                 selectWidget : widget.selectWidget,
                 nodeType: nodeType.widget,
                 isAddShape : checkChildClass(widget.selectWidget, 'path'),
-                selectWidgets: []
+                selectWidgets: [],
+                isAddEffect : checkChildClass(widget.selectWidget, 'track')
             });
             if(widget.selectWidget.className == "root"){
                 let data = widget.selectWidget.children;
@@ -358,7 +360,8 @@ class NavBar extends React.Component {
                     workList: result['list'].reverse(),
                     fontList: result['font'],
                     dbList: result['db'],
-                    sockList: result['sock']
+                    sockList: result['sock'],
+                    effectList: result['effect'] ? result['effect'] : []
                 });
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
@@ -1176,6 +1179,24 @@ class NavBar extends React.Component {
         })
     }
 
+    addEffectFuc(){
+        //if(this.state.isAddEffect){
+        //    WidgetActions['addWidget']('track');
+        //}
+    }
+
+    arrangeEffectShow(){
+        this.setState({
+            isArrangeEffect : true
+        })
+    }
+
+    arrangeEffectHide(){
+        this.setState({
+            isArrangeEffect : false
+        })
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -1463,6 +1484,46 @@ class NavBar extends React.Component {
                                     </div>
                                 </div>
                             </div>
+
+                            <div className='dropDown-btn effect-dropDown f--hlc'>
+                                <button className='btn btn-clear effect-btn' title='动效' onMouseOver={ this.addPanelShow }>
+                                    <span className="icon" />
+                                    <span className="title">动效</span>
+                                </button>
+
+                                <div className={$class('dropDownToggle',{"hidden": !this.state.addPanel})}>
+                                    <div className="dropDownToggle-main">
+                                        <div className="dropDown-title f--hlc">
+                                            <span className="flex-1">全部动效：</span>
+                                            <span className="set-btn" onClick={ this.arrangeEffectShow } />
+                                        </div>
+
+                                        <div className="dropDown-main">
+                                            <div className="dropDown-scroll">
+                                                <ul className="dropDown-content">
+                                                    {
+                                                        this.state.effectList.length > 0
+                                                            ? this.state.effectList.map((v,i)=>{
+                                                                return  <li key={i}
+                                                                            className={$class({"not-active" : !this.state.isAddEffect})}
+                                                                            onClick={this.addEffectFuc} >
+                                                                            <div className="title f--hlc">
+                                                                                <span className="li-icon" />
+                                                                                <div className="TitleName">{ v.name }</div>
+                                                                            </div>
+                                                                        </li>
+                                                                })
+                                                            : null
+                                                    }
+                                                    {
+                                                        moduleFuc(this.state.effectList.length, 15)
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1708,6 +1769,11 @@ class NavBar extends React.Component {
                                 createDbShow={ this.createDbShow }
                                 onUpdateDb={this.onUpdateDb.bind(this)}
                                 dbList = { this.state.dbList } />
+                </div>
+
+                <div className={$class({"hidden": !this.state.isArrangeEffect})}>
+                    <ArrangeEffect  arrangeEffectHide={ this.arrangeEffectHide }
+                                    arrangeEffectShow={ this.arrangeEffectShow } />
                 </div>
 
                 <div className={$class("historyRecord", {"hidden" : !this.state.historyShow},

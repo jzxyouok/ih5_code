@@ -187,6 +187,12 @@
                     &:active .icon{ background-position: 0 -280px; }
                 }
 
+                &.effect-btn {
+                    .icon{ background-position: -320px -360px; }
+                    &:hover .icon{ background-position: -320px -400px; }
+                    &:active .icon{ background-position: -320px -440; }
+                }
+
                 .title{
                     height: 24px;
                     line-height: 24px;
@@ -631,6 +637,29 @@
                             transform-origin: 2.5px 2px;
                             display: block;
                         }
+                    }
+                }
+            }
+
+            .effect-dropDown{
+                .dropDown-content{
+                    li {
+                        &.not-active .title{
+                            background: #232323 !important;
+                            color: #454545 !important;
+                            cursor: not-allowed;
+                            .li-icon{ background-position: -400px -440px !important; }
+                        }
+                        .li-icon {
+                            width: 30px;
+                            height: 30px;
+                            background: url("img/button-icon.svg") no-repeat -400px -360px;
+                            display: block;
+                            margin: 0;
+                        }
+
+                        .title:hover .li-icon{ background-position: -400px -400px; }
+                        .title:active .li-icon{ background-position: -400px -440px; }
                     }
                 }
             }
