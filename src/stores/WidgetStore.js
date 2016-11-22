@@ -1592,10 +1592,10 @@ bridge.setGenerateText(function(widget, callback) {
   if (globalToken)
       xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
   var form = new FormData();
-  form.append('font', widget['font']);
+  form.append('font', widget['fontFamily']);
   form.append('text', widget['value']);
-  form.append('size', widget['size']);
-  form.append('color', widget['color']);
+  form.append('size', widget['fontSize']);
+  form.append('color', widget['fontFill']);
   form.append('lineHeight', widget['lineHeight']);
   xhr.responseType = 'arraybuffer';
   xhr.onload = function(e) {
@@ -3677,13 +3677,29 @@ export default Reflux.createStore({
                 result.push(count);
                 count = 0;
               }
-              if (n == 0 || item[0].substr(0, 5) == 'data:') {
-                result.push(-n);
-                for (var j = 0; j < n; j++) {
-                  array.push(item[j]);
-                }
+              if (n == 0) {
+                  result.push(0);
               } else {
-                result.push(item);
+                  var c = 0;
+                  var r = [];
+                  for (var j = 0; j < n; j++) {
+                      if (item[j].substr(0, 5) == 'data:') {
+                          array.push(item[j]);
+                          c++;
+                      } else {
+                          if (c)
+                              r.push(c);
+                          c = 0;
+                          r.push(item[j]);
+                      }
+                  }
+                  if (r.length == 0)
+                      result.push(-n);
+                  else {
+                      if (c)
+                          r.push(c);
+                      result.push(r);
+                  }
               }
             }
           }
@@ -3747,7 +3763,7 @@ export default Reflux.createStore({
     },
     setFont: function(font) {
       if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
-        this.updateProperties({'font':font});
+        this.updateProperties({'fontFamily':font});
       }
     },
     setImageText:function(data) {
