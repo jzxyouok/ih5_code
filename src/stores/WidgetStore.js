@@ -841,6 +841,8 @@ function generateJsFunc(etree) {
     if (item.judges.conFlag !='触发条件' && item.enable) {
       // var out = '';
       var lines = [];
+      var marginArr=[];
+      var paddingArr=[];
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
@@ -1049,17 +1051,33 @@ function generateJsFunc(etree) {
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originX')+'='+ arr[0]);
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originY')+'='+ arr[1]);
                           } else if(prop.name === 'alpha') {
-                              //FormulaInput
                               if(formulaGenLine(prop.value)!=='') {
                                   lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ '('+formulaGenLine(prop.value)+')'+'/100');
                               }
                           } else if(prop.name === 'flexWrap') {
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+JSON.stringify( prop.value ?'wrap':'nowrap'));
-                          } else {
+                          }
+                          else {
                               switch (prop.type) {
                                   case 12: //FormulaInput
                                       if(formulaGenLine(prop.value)!=='') {
-                                          lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                         if(['marginUp','marginDown','marginLeft','marginRight'].indexOf(prop.name)>=0){
+                                             let oVal={}
+                                             oVal['head']=getIdsName(cmd.sObjId[0],cmd.sObjId[2],'margin')+'=';
+                                             oVal['value']= formulaGenLine(prop.value);
+                                             oVal['name']=prop.name;
+                                             marginArr.push(oVal);
+                                         }else if(['paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(prop.name)>=0){
+                                             let oVal={}
+                                             oVal['head']=getIdsName(cmd.sObjId[0],cmd.sObjId[2],'padding')+'=';
+                                             oVal['value']= formulaGenLine(prop.value);
+                                             oVal['name']=prop.name;
+                                             paddingArr.push(oVal);
+                                         }else if(['minWidth', 'minHeight', 'maxWidth', 'maxHeight'].indexOf(prop.name)>=0){
+                                             lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+JSON.stringify(formulaGenLine(prop.value)));
+                                         }else{
+                                             lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                         }
                                       }
                                       break;
                                   default:
@@ -1125,7 +1143,10 @@ function generateJsFunc(etree) {
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
-        // lines.push('console.log(ids)');
+
+        lines=getSpacingStr(lines,marginArr,['marginUp','marginRight','marginDown','marginLeft']);
+        lines=getSpacingStr(lines,paddingArr,['paddingUp','paddingRight','paddingDown','paddingLeft']);
+
       if (lines.length) {
         var out = '';
         if (conditions.length == 1) {
@@ -1155,6 +1176,30 @@ function generateJsFunc(etree) {
   });
   console.log(output);
   return output;
+}
+
+function getSpacingStr(lines,spacingArr,arr) {
+    let sMargin=[0,0,0,0];
+    let sHead='';
+    spacingArr.map((v,i)=>{
+        sHead=v.head;
+        if(v.name==arr[0]){
+            sMargin[0]=v.value;
+        }
+        else if(v.name==arr[1]){
+            sMargin[1]=v.value;
+        }
+        else if(v.name==arr[2]){
+            sMargin[2]=v.value;
+        }
+        else if(v.name==arr[3]){
+            sMargin[3]=v.value;
+        }
+    });
+    if(spacingArr.length>0){
+        lines.push(sHead+JSON.stringify(sMargin.join(' ')));
+    }
+    return lines;
 }
 
 function saveTree(data, node, saveKey, saveEventObjKeys) {
@@ -2499,8 +2544,8 @@ export default Reflux.createStore({
          //处理flex模式下的百分比和px
          let isSkip= this.setFlexProps(obj);
          if(isSkip) {
-            skipRender = false;
-            skipProperty = false;
+             skipRender = false;
+             skipProperty = false;
          }
 
        console.log(obj,this.currentWidget );

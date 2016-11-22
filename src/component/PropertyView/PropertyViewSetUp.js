@@ -45,11 +45,18 @@ class PropertyViewSetUp extends React.Component {
 
     }
 
+    /**
+     *功能:设置defaultProp
+     * 内部逻辑:
+     * 如果item.value存在,则使用item.value作为defaultValue值
+     * item.value只有在设置过后才会存在,会被保存下来.
+     * 如果设置后,刷新打开不出现设置的值,那就是item.value保存到值
+     */
     getDefaultProp(item){
         //设置通用默认参数和事件
         let defaultProp = {
             size: 'small',
-            placeholder: item.default,
+           // placeholder: item.default,
             disabled: (item.readOnly === true) || this.props.disabled,
             onChange:  this.onChangePropDom.bind(this, item)
         };
@@ -92,22 +99,19 @@ class PropertyViewSetUp extends React.Component {
             case propertyType.FormulaInput:
                 defaultValue = {type: 1, value: defaultValue};
                 break;
-            case propertyType.Boolean:
-                if(item.name=='flexWrap'){
-                  //  defaultValue = defaultValue=='wrap'?true:false;
-                    console.log(node,defaultValue,item);
-                }
-                break;
             default:
                 break;
         }
-
+         defaultProp.value=''; //初次打开不显示默认值
         if(item.value !==undefined){
-            //defaultValue =item.value;
+           defaultValue =item.value;
             //设置之后的特殊处理
              switch (item.type){
                  case  propertyType.Dropdown:
                      defaultValue = this.getSelectDefault(item.value,item.options);
+                     break;
+                 case  propertyType.Boolean:
+                     defaultProp.defaultChecked=item.value;
                      break;
                  case propertyType.FormulaInput:
                      if((defaultValue&&!defaultValue.type) || !defaultValue) {
@@ -117,8 +121,9 @@ class PropertyViewSetUp extends React.Component {
                  default:
                      break;
              }
+            defaultProp.value= defaultValue;
         }
-        defaultProp.value= defaultValue;
+
         return defaultProp;
     }
 
@@ -196,9 +201,7 @@ class PropertyViewSetUp extends React.Component {
                         </div>;
             case propertyType.Text:
                 return <Input type="textarea" {...defaultProp} />;
-
             case propertyType.Color:
-                // <Switch       {...defaultProp}      className='visible-switch ant-switch-small' />
                 return <div>
                     <Input ref={(inputDom) => {
                         if (inputDom) {
@@ -310,7 +313,7 @@ class PropertyViewSetUp extends React.Component {
         }
     }
 
-    /********辅助方法区*********/
+    /********辅助方法区,start*********/
     //获取中心点下拉框默认值
     getSelectDefault(originPos,options){
         let arr =originPos.split(',');
@@ -321,7 +324,7 @@ class PropertyViewSetUp extends React.Component {
         }
         return originPos.x+','+originPos.y;
     }
-
+    /********辅助方法区,end*********/
     render() {
         return <div className='propertySet'>{this.getComponent()}</div>
     }

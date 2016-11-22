@@ -284,7 +284,6 @@ class ConInputNumber extends React.Component {
                        console.log(thisObj.props);
                        thisObj.props.onChange(newVal);
                    }
-
                } else if (str.indexOf('px') >= 0) {
                    let newVal =str.split('px')[0];
                    pObj.addClass('ant-input-px');

@@ -247,7 +247,13 @@ class Property extends React.Component {
         if(className=='table'){
             className='tableForSet';
         }
-        let formulaInputType = ['width', 'height', 'positionX', 'positionY', 'rotation', 'alpha', 'value', 'fontSize'];
+        let formulaInputType = [
+            'width', 'height', 'positionX', 'positionY'
+            ,'rotation', 'alpha', 'value', 'fontSize'
+            ,'minWidth', 'minHeight', 'maxWidth', 'maxHeight'
+            ,'marginUp','marginDown','marginLeft','marginRight'
+            ,'paddingUp','paddingDown','paddingLeft','paddingRight'
+        ];
         let mappingList = getPropertyMap(node, className, 'props');
         if(type === 'change') {
             //对父级的类别进行处理
@@ -258,7 +264,7 @@ class Property extends React.Component {
             }
         }
         mappingList.map((v,i)=>{
-            if(v.type !== propertyType.Hidden&&!v.readOnly&&v.name !='id'){
+            if(v.type !== propertyType.Hidden&&!v.readOnly&&v.name !='id' && v.type !== propertyType.Button){
                 let vObj=JSON.parse(JSON.stringify(v));
                 vObj.isProp=true;
                 if(vObj.name=='scaleX'){
@@ -266,6 +272,13 @@ class Property extends React.Component {
                 }else if(v.name=='scaleY') {
                     vObj.name = 'height';
                 }
+
+               if(['marginUp','marginDown','marginLeft','marginRight'].indexOf(v.name)>=0 && v.showName.indexOf('外')<0){
+                    v.showName='外'+v.showName;
+               }else if(['paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(v.name)>=0&& v.showName.indexOf('内')<0){
+                   v.showName='内'+v.showName;
+               }
+
                 if(formulaInputType.indexOf(vObj.name)>=0) {
                     vObj.type = propertyType.FormulaInput;
                 }
