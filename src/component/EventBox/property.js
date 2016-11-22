@@ -273,10 +273,10 @@ class Property extends React.Component {
                     vObj.name = 'height';
                 }
 
-               if(['marginUp','marginDown','marginLeft','marginRight'].indexOf(v.name)>=0 && v.showName.indexOf('外')<0){
-                    v.showName='外'+v.showName;
-               }else if(['paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(v.name)>=0&& v.showName.indexOf('内')<0){
-                   v.showName='内'+v.showName;
+               if(['marginUp','marginDown','marginLeft','marginRight'].indexOf(vObj.name)>=0 && vObj.showName.indexOf('外')<0){
+                   vObj.showName='外'+vObj.showName;
+               }else if(['paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(vObj.name)>=0&& vObj.showName.indexOf('内')<0){
+                   vObj.showName='内'+vObj.showName;
                }
 
                 if(formulaInputType.indexOf(vObj.name)>=0) {
