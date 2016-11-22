@@ -161,7 +161,7 @@ class ArrangeBlock extends React.Component {
                     <div className="AM-content">
                         <div className="AM-title">全部小模块：</div>
 
-                        <div className="AM-block" >
+                        <div className="AM-module" >
                             <div className="AM-scroll">
                                 <ul className="AM-table">
                                     {

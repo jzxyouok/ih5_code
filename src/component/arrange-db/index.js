@@ -221,7 +221,7 @@ class ArrangeDb extends React.Component {
                     <div className="AM-content">
                         <div className="AM-title">全部数据库：</div>
 
-                        <div className="AM-block" >
+                        <div className="AM-module" >
                             <div className="AM-scroll">
                                 <ul className="AM-table">
                                     {
