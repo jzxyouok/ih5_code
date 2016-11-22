@@ -135,12 +135,14 @@ class ObjectTree extends React.Component {
         this.addModuleBtn = this.addModuleBtn.bind(this);
 
         //右键点击
-
         this.relocateToolMenu = this.relocateToolMenu.bind(this);
         this.onRightClick = this.onRightClick.bind(this);
         this.onHideToolMenu = this.onHideToolMenu.bind(this);
         this.onClickToolMenuItem = this.onClickToolMenuItem.bind(this);
         this.onMouseDownToolMenuItem = this.onMouseDownToolMenuItem.bind(this);
+
+        //block相关
+        this.toggleWidgetAllIds = this.toggleWidgetAllIds.bind(this);
     }
 
     componentDidMount() {
@@ -201,9 +203,12 @@ class ObjectTree extends React.Component {
             this.forceUpdate();
         }
         else if (widget.activeBlockMode) {
-            this.setState({
-                activeBlockMode: widget.activeBlockMode.on
-            })
+            if(this.state.selectWidget) {
+                this.toggleWidgetAllIds(widget.activeBlockMode.on);
+                this.setState({
+                    activeBlockMode: widget.activeBlockMode.on
+                })
+            }
         }
 
         else if(widget.selectWidget || widget.selectFunction || widget.selectVariable || widget.selectDBItem){
@@ -230,7 +235,9 @@ class ObjectTree extends React.Component {
                     nids: []
                 };
                 activeFocus(content);
-                this.addOpenId();
+                if(!widget.selectWidget.props.block) {
+                    this.addOpenId();
+                }
             } else if (widget.selectFunction) {
                 let content = {
                     selectWidget: null,
@@ -295,6 +302,36 @@ class ObjectTree extends React.Component {
             this.forceUpdate();
         }
     }
+
+    toggleWidgetAllIds(open){
+        let openData = this.state.openData;
+        let keys = [];
+        let getAllChildKeys = (widget)=>{
+            if(widget.children) {
+                keys.push(widget.key);
+                widget.children.forEach((v)=>{
+                    getAllChildKeys(v);
+                });
+            }
+        };
+        getAllChildKeys(this.state.selectWidget);
+        if(open){
+            keys.forEach((key)=>{
+                if(openData.indexOf(key)<0) {
+                    openData.push(key);
+                }
+            });
+        } else {
+            keys.forEach((key)=>{
+                if(openData.indexOf(key)>=0) {
+                    openData.splice(openData.indexOf(key),1);
+                }
+            });
+        }
+        this.setState({
+           openData: openData
+        });
+    };
 
     addOpenId(){
         let data = this.state.widgetTree;
@@ -609,10 +646,15 @@ class ObjectTree extends React.Component {
         });
     }
 
-    relocateToolMenu(className, clientX, clientY) {
+    relocateToolMenu(obj, className, clientX, clientY) {
         let list = JSON.parse(JSON.stringify(originToolMenuList));
-        if(className === 'var' || className === 'func' || className === 'dbItem') {
+        if(className === 'var' || className === 'func' || className === 'dbItem'
+            || className === 'root' || className === 'db' || className === 'sock') {
             list.splice(3,1);
+        } else {
+            if(obj.props.block) {
+                list[3][0].showName = '编辑小模块';
+            }
         }
         this.setState({
             showToolMenu: true,
@@ -664,7 +706,7 @@ class ObjectTree extends React.Component {
             this.fadeWidgetBtn(nid, data, type);
         }
 
-        this.relocateToolMenu(data.className, clientX, clientY);
+        this.relocateToolMenu(data, data.className, clientX, clientY);
     }
 
     onHideToolMenu() {
@@ -1553,7 +1595,9 @@ class ObjectTree extends React.Component {
                         }
 
                         {
-                            v.children.length > 0
+                            v.props.block&&!this.state.activeBlockMode
+                            ? icon(0 , v.key)
+                            : v.children.length > 0
                             ||v.funcList.length > 0
                             ||v.intVarList.length > 0
                             ||v.strVarList.length > 0
@@ -1562,7 +1606,9 @@ class ObjectTree extends React.Component {
                                 : icon( 0 , v.key)
                         }
                         {
-                            picIsImage
+                            v.props.block&&!this.state.activeBlockMode
+                                ? <span className={$class('item-icon', 'component-icon')}/>
+                                : picIsImage
                                 ? <span className="item-icon2">
                                     <img className="item-img" src={ pic } onDoubleClick={this.onChangeReSrc.bind(this, v)}/>
                                   </span>
@@ -1573,7 +1619,11 @@ class ObjectTree extends React.Component {
                                 ? <div className='item-name-wrap'>
                                     <p>{v.props.name}</p>
                                   </div>
-                                : <div className='item-name-wrap'
+                                : v.props.block&&!this.state.activeBlockMode
+                                    ?<div className='item-name-wrap'>
+                                        <p>{v.props.block.name}</p>
+                                     </div>
+                                    :<div className='item-name-wrap'
                                        onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>
                                     <p className={$class({'hidden':((v.key === this.state.nid)&&this.state.editMode)})} >{v.props.name}</p>
                                     <input id={'item-name-input-'+v.key} type="text"
