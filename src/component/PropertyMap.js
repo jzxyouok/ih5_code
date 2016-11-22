@@ -86,9 +86,6 @@ let propMapping = {
 
     'radius': {name:'radius', showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools'},
 
-
-
-
     'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '垂直',options:{'垂直':true,'水平':false}},
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
 
@@ -160,7 +157,6 @@ let propMapping = {
     'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
 
     //关于flex的请看：https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex
-
 
 
     'scaleStage': {name:'scaleStage', showName:'播放模式', type: propertyType.Select,default:'false', options:{'PC':'false','手机':'true'}},
@@ -525,7 +521,8 @@ let modifyPropList = (list, className, type) => {
             }
         }
 
-        if(className =='flex' || className == 'pagecontainer'){
+
+      if(['flex','canvas','dom','pagecontainer'].indexOf(className)>=0){
             if(scaleXTag && widthTag) {
                 if (v.name == 'width' || v.name == 'height') {
                     v.type = propertyType.Integer;

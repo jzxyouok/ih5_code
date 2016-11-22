@@ -1179,21 +1179,21 @@ function generateJsFunc(etree) {
 }
 
 function getSpacingStr(lines,spacingArr,arr) {
-    let sMargin=[0,0,0,0];
+    let sMargin=["0px","0px","0px","0px"];
     let sHead='';
     spacingArr.map((v,i)=>{
         sHead=v.head;
         if(v.name==arr[0]){
-            sMargin[0]=v.value;
+            sMargin[0]=JSON.parse(v.value);
         }
         else if(v.name==arr[1]){
-            sMargin[1]=v.value;
+            sMargin[1]=JSON.parse(v.value);
         }
         else if(v.name==arr[2]){
-            sMargin[2]=v.value;
+            sMargin[2]=JSON.parse(v.value);
         }
         else if(v.name==arr[3]){
-            sMargin[3]=v.value;
+            sMargin[3]=JSON.parse(v.value);
         }
     });
     if(spacingArr.length>0){
@@ -1685,6 +1685,20 @@ function drop(e) {
   }
 }
 
+function fnIsFlex(node) {
+    if (node.className == 'flex') {
+        return true;
+    }
+    else if (node.className == 'root') {
+        return false;
+    }
+    else if (node.className == 'canvas') {
+        return true;
+    }
+    else {
+        return  fnIsFlex(node.parent);
+    }
+}
 /*
 function downloadFile(filename, text) {
     var pom = document.createElement('a');
@@ -2587,7 +2601,6 @@ export default Reflux.createStore({
          * 处理flex模式下的百分比和px
          */
           setFlexProps:function (obj) {
-            let fnIsFlex = this.fnIsFlex;
             if (fnIsFlex(this.currentWidget)) {
                 for (let i in obj) {
                     if (i == 'margin' || i == 'padding') {
@@ -2618,18 +2631,6 @@ export default Reflux.createStore({
             }
             return false;
         },
-            //判断是否处于flex模式下,可拓展改写
-       fnIsFlex:function(node) {
-        if (node.className == 'flex') {
-            return true;
-        }
-        else if (node.className == 'root') {
-            return false;
-        }
-        else {
-            return  this.fnIsFlex(node.parent);
-        }
-    },
      /**
      * luozheao,20161119
      * 功能:
@@ -4018,4 +4019,4 @@ export default Reflux.createStore({
     },
 });
 
-export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType, classList, selectableClass}
+export {globalToken, nodeType, nodeAction, varType, funcType, keepType,fnIsFlex, isCustomizeWidget, dataType, classList, selectableClass}
