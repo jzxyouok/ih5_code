@@ -79,10 +79,18 @@ let propMapping = {
 
     'radius': {name:'radius', showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools'},
 
-    'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 10},
+
+
+
     'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '垂直',options:{'垂直':true,'水平':false}},
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
-    'loop': {name:'loop', showName:'滑动页面循环', type: propertyType.Boolean, group:'tools', default: false},
+
+    'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 0,order:1},
+    'type': {name:'type', showName:'类型', type: propertyType.Select, default:'linear',options:{'直线':'linear','曲线':'ease','贝塞尔曲线':'cubic-bezier'},group:'tools',order:2},
+    'startTime': {name:'startTime',showName:'开始时间', type: propertyType.Number,group:'tools', default: 0,order:3},
+    'endTime': {name:'endTime', showName:'结束时间',type: propertyType.Number,group:'tools', default: 0,order:4},
+    'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false},
+    'loop': {name:'loop', showName:'循环播放', type: propertyType.Boolean, group:'tools', default: false},
 
     'src': {name:'src', type: propertyType.String, default:''},
     'shapeWidth': {name:'shapeWidth', showName:'原始宽', type: propertyType.Integer, default: 0, group:'position'},
@@ -94,7 +102,6 @@ let propMapping = {
     'forwardTransition': {name:'forwardTransition', showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:forwardTransOptions,order:2},
 
 
-    'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false},
 
     'autoGravity': {name:'autoGravity', showName:'自动计算重力方向', type: propertyType.Boolean,group:'tools', default: false},
     'gravityX': {name:'gravityX', showName:'水平重力', type: propertyType.Number,group:'tools', default: 0},
@@ -126,8 +133,8 @@ let propMapping = {
     'count': {name:'count', showName:'播放次数', type: propertyType.Integer, default: 1},
     'initHide': {name:'initHide', showName:'初始隐藏', type: propertyType.Boolean, default: false},
 
-    'startTime': {name:'startTime', type: propertyType.Number, default: 0},
-    'endTime': {name:'endTime', type: propertyType.Number, default: 0},
+
+
 
     'sockName' : {name:'sockName', showName:'名称',  type: propertyType.String, default: null, readOnly:true },
     'listened': {name:'listened', showName:'是否监听', type: propertyType.Boolean, default: false},
@@ -309,7 +316,13 @@ let specialCaseElementMapping = (className, type)=> {
             events: {
                 'change': {name:'change', showName:'数值改变'}}
         };
-    } else if (isInCLList(className, ['qrcode'])) {
+    } else if (isInCLList(className, ['root'])) {
+        return {
+            props: {
+                'loop': {name:'loop', showName:'滑动页面循环', type: propertyType.Boolean, group:'tools', default: false}}
+        };
+    }
+    else if (isInCLList(className, ['qrcode'])) {
         return {
             props: {
                 'value': {name:'value', showName:'数据', type: propertyType.String, default:''}}
@@ -361,7 +374,7 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['track'])) {
         return {
             props: {
-                'type': {name:'type', type: propertyType.String, default: ''}}
+                'type': {name:'type', showName:'类型', type: propertyType.Select, default:'linear',options:{'直线':'linear','曲线':'ease','贝塞尔曲线':'cubic-bezier'},group:'tools',order:2}}
         };
     } else if (isInCLList(className, ['table'])) {
         return {

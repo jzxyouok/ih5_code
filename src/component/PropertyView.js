@@ -146,7 +146,6 @@ class PropertyView extends React.Component {
                     style['width'] = "125px";
                     style['maxWidth'] = "125px";
                 }
-
                 return <div className={cls({"flex-1": defaultProp.tbCome == "tbF"})}>
                     <Select {...defaultProp} style={style}>
                         {defaultProp.options}
@@ -428,8 +427,7 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
-                     if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
-                      //  this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
+                     if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems'|| prop.name == 'type') {
                          this.selectNode.props[prop.name+'Key'] = value;
                         v = value;
                     }
@@ -1013,15 +1011,13 @@ class PropertyView extends React.Component {
         else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
             defaultValue = item.default;
             //当originY时才会激活,而不是originPos
-            if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
+            if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems','type'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
             } else if (item.name == 'fontFamily' && node.props.fontFamilyKey) {
                 defaultValue = node.props.fontFamily;
             } else if ((item.name == 'forwardTransition' || item.name == 'backwardTransition') && node.props[item.name + '_val']) {
                 defaultValue = node.props[item.name + '_val'];
-            } else if (item.name == 'type' && node.props.type) {
-                defaultValue = node.props.type;
-            } else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
+            }  else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
                 defaultValue = node.props.headerFontFamily;
             } else if (item.name == 'vertical' && node.props[item.name]) {
                 defaultValue = node.props[item.name];
@@ -1072,7 +1068,7 @@ class PropertyView extends React.Component {
             }
         }
         else if(item.type === propertyType.Boolean) {
-            defaultValue = node.node[item.name];
+            defaultValue = node.props[item.name];
 
             if(node.props[item.name+'Key'] !==undefined){
                 defaultValue =node.props[item.name+'Key'];
@@ -1297,13 +1293,8 @@ class PropertyView extends React.Component {
         let hasOne=false;  //独占一栏结构显示,用于兼容旋转度属性独占一栏的样式
         let isBody= className == "body"?true:false;  //对body对象定制样式
 
-
-
-
         let isAutoGravity = item.name == 'autoGravity'?true:false;
         let tdColorSwitch =className == "table" && ['fontFill','fillColor','altColor'].indexOf(item.name)>=0?true: false;
-
-
 
         let hasPx = ['X', 'Y', 'W', 'H','原始宽', '原始高', '网格大小' ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
 
@@ -1315,8 +1306,6 @@ class PropertyView extends React.Component {
             hasPx=false;
         }
 
-
-
         let hasDegree = ['旋转度'].indexOf(item.showName) >= 0; //判断input中是否添加°单位
         let hasLock = item.showLock == true; //判断是否在元素前添加锁图标
 
@@ -1326,7 +1315,7 @@ class PropertyView extends React.Component {
         else if (className === 'twoDArr') {
             hasTwin = ['行', '列'].indexOf(item.showName) >= 0;
         }
-        else if (className == "timer") {
+        else if (className == "timer"||className == "track") {
             hasTwin = ['X', 'Y', 'W', 'H', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '自动播放', '循环播放'].indexOf(item.showName) >= 0;
             hasOne = item.name == 'rotation'?true:false;
         }
@@ -1343,7 +1332,6 @@ class PropertyView extends React.Component {
                     ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'
                 ].indexOf(item.showName) >= 0;
         }
-
 
        //拼接图标样式
         let htmlStr;
@@ -1377,7 +1365,6 @@ class PropertyView extends React.Component {
                 style['lineHeight'] = "22px";
             }
         }
-
 
         groups[groupName].push(
             <div key={item.name}

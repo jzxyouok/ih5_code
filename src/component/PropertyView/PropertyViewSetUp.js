@@ -94,7 +94,7 @@ class PropertyViewSetUp extends React.Component {
                 break;
             case propertyType.Boolean:
                 if(item.name=='flexWrap'){
-                    defaultValue = defaultValue=='wrap'?true:false;
+                  //  defaultValue = defaultValue=='wrap'?true:false;
                     console.log(node,defaultValue,item);
                 }
                 break;
@@ -103,7 +103,7 @@ class PropertyViewSetUp extends React.Component {
         }
 
         if(item.value !==undefined){
-            defaultValue =item.value;
+            //defaultValue =item.value;
             //设置之后的特殊处理
              switch (item.type){
                  case  propertyType.Dropdown:
