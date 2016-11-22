@@ -284,7 +284,6 @@ class ConInputNumber extends React.Component {
                        console.log(thisObj.props);
                        thisObj.props.onChange(newVal);
                    }
-
                } else if (str.indexOf('px') >= 0) {
                    let newVal =str.split('px')[0];
                    pObj.addClass('ant-input-px');
@@ -340,6 +339,39 @@ class ConInputNumber extends React.Component {
     }
 }
 
+class ConButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            curNode:props.curNode
+        };
+    }
 
+    componentDidMount() {
+         let thisObj=this;
+         let className= this.state.curNode.className;
+         if(className=='track') {
+            $('.' + thisObj.props.item.styleName).click(function () {
+                alert(thisObj.props.item.styleName);
+            });
+        }
+    }
 
-export {SwitchMore,SwitchTwo,DropDownInput,ConInputNumber};
+    componentWillReceiveProps(nextProps){
+        let thisObj=this;
+        $('.' + thisObj.props.item.styleName).unbind();
+    }
+
+    componentWillUnmount() {
+
+    }
+    render() {
+        return (
+            <button className={this.props.item.styleName}>
+                {this.props.item.showName}
+            </button>
+        );
+    }
+}
+
+export {SwitchMore,SwitchTwo,DropDownInput,ConInputNumber,ConButton};

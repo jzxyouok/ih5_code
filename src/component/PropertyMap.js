@@ -20,7 +20,14 @@ let isInCLList = (className, classNameList)=>{
     //检查是否在所需的classnamelist内
     return classNameList.indexOf(className)>=0;
 };
-
+/**
+ * luozheao,20161122
+ * 功能:
+ * 1 用于PropertyView属性面板中模块的排序,数组中排最前面则显示在属性面板的最上面
+ * 2 需要什么模块分组,则在数组中添加
+ * 用在
+ * */
+let sortGroupArr=['basic', 'position', 'display', 'tools','tools2','tools2.1','tools2.2','tools2.3','tools3','tools3.1', 'dArr','buttonArea'];
 /**
 * luozheao,20161115
 * 备注:添加了order字段,用于给模块内部的组件排序
@@ -79,10 +86,17 @@ let propMapping = {
 
     'radius': {name:'radius', showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools'},
 
-    'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 10},
+
+
+
     'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '垂直',options:{'垂直':true,'水平':false}},
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
-    'loop': {name:'loop', showName:'滑动页面循环', type: propertyType.Boolean, group:'tools', default: false},
+
+    'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 0,order:1},
+    'startTime': {name:'startTime',showName:'开始时间', type: propertyType.Number,group:'tools', default: 0,order:3},
+    'endTime': {name:'endTime', showName:'结束时间',type: propertyType.Number,group:'tools', default: 0,order:4},
+    'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false},
+    'loop': {name:'loop', showName:'循环播放', type: propertyType.Boolean, group:'tools', default: false},
 
     'src': {name:'src', type: propertyType.String, default:''},
     'shapeWidth': {name:'shapeWidth', showName:'原始宽', type: propertyType.Integer, default: 0, group:'position'},
@@ -94,7 +108,6 @@ let propMapping = {
     'forwardTransition': {name:'forwardTransition', showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:forwardTransOptions,order:2},
 
 
-    'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false},
 
     'autoGravity': {name:'autoGravity', showName:'自动计算重力方向', type: propertyType.Boolean,group:'tools', default: false},
     'gravityX': {name:'gravityX', showName:'水平重力', type: propertyType.Number,group:'tools', default: 0},
@@ -126,8 +139,8 @@ let propMapping = {
     'count': {name:'count', showName:'播放次数', type: propertyType.Integer, default: 1},
     'initHide': {name:'initHide', showName:'初始隐藏', type: propertyType.Boolean, default: false},
 
-    'startTime': {name:'startTime', type: propertyType.Number, default: 0},
-    'endTime': {name:'endTime', type: propertyType.Number, default: 0},
+
+
 
     'sockName' : {name:'sockName', showName:'名称',  type: propertyType.String, default: null, readOnly:true },
     'listened': {name:'listened', showName:'是否监听', type: propertyType.Boolean, default: false},
@@ -210,24 +223,10 @@ let eventMapping = {
     'even': {name:'even', showName:'为偶数'},
     'remainder': {name:'remainder', showName:'余数为', needFill:[{showName:'除数',type:'number',default:''}, {showName:'余数',type:'number',default:''}]},
 
-    'isEmpty': {name:'isEmpty', showName:'为空',needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isNotEmpty': {name:'isNotEmpty', showName:'不为空', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isContain': {name:'isContain', showName:'包含文本', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},
-    'lenEqual': {name:'lenEqual', showName:'长度等于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenUnEqual': {name:'lenUnEqual', showName:'长度不等于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenBigThan': {name:'lenBigThan', showName:'长度大于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'lenLessThan': {name:'lenLessThan', showName:'长度小于', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'长度值',type:'number',default:''}]},
-    'isNum': {name:'isNum', showName:'是数字', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isNotNum': {name:'isNotNum', showName:'不是数字', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isLetter': {name:'isLetter', showName:'是字母', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-    'isNotLetter': {name:'isNotLetter', showName:'不是字母', needFill:[{type:'select', option:['change','input'],default:'change'}]},
-
     'loop': {name:'loop', showName:'重复播放'},
-    'stop': {name:'stop', showName:'停止'},
+    'stop': {name:'stop', showName:'结束'},
     'tick': {name:'tick', showName:'每一帧'},
-
     'complete':{name:'complete', showName:'播放完成'},
-
     'message':{name:'message', showName:'消息', info:'data', needFill:[{showName:'值',type:'var',default:null, actionName:'message'}]}
 };
 
@@ -299,7 +298,12 @@ let funcMapping = {
     'nextResult': {name:'nextResult', showName:'获取下一页数据'},
     'prevResult': {name:'prevResult', showName:'获取上一页数据'},
 };
-
+/***
+ *luozheao,20161122
+ * 备注:
+ *1  map中没有的属性,我们自己添加的属性,一律用_开头,如_editTrack
+ *2  要将我们自己添加的属性显示出来,还要在modifyPropList方法中追加进去
+ */
 let specialCaseElementMapping = (className, type)=> {
     //以后还要对不同的type进行修正(modeType)
     if(isInCLList(className, ['counter'])) {
@@ -309,7 +313,13 @@ let specialCaseElementMapping = (className, type)=> {
             events: {
                 'change': {name:'change', showName:'数值改变'}}
         };
-    } else if (isInCLList(className, ['qrcode'])) {
+    } else if (isInCLList(className, ['root'])) {
+        return {
+            props: {
+                'loop': {name:'loop', showName:'滑动页面循环', type: propertyType.Boolean, group:'tools', default: false}}
+        };
+    }
+    else if (isInCLList(className, ['qrcode'])) {
         return {
             props: {
                 'value': {name:'value', showName:'数据', type: propertyType.String, default:''}}
@@ -341,8 +351,20 @@ let specialCaseElementMapping = (className, type)=> {
                 'shapeHeight': {name:'shapeHeight', type: propertyType.Hidden, default: 0, group:'position'},
                 'color': {name:'color', showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF'}},
             events: {
-                'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},
-                'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['change','input'],default:'change'},{showName:'文本',type:'string',default:''}]},}
+                'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'文本',type:'string',default:''}]},
+                'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'文本',type:'string',default:''}]},
+                'isEmpty': {name:'isEmpty', showName:'为空',needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'}]},
+                'isNotEmpty': {name:'isNotEmpty', showName:'不为空', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'}]},
+                'isContain': {name:'isContain', showName:'包含文本', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'文本',type:'string',default:''}]},
+                'lenEqual': {name:'lenEqual', showName:'长度等于', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'长度值',type:'number',default:''}]},
+                'lenUnEqual': {name:'lenUnEqual', showName:'长度不等于', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'长度值',type:'number',default:''}]},
+                'lenBigThan': {name:'lenBigThan', showName:'长度大于', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'长度值',type:'number',default:''}]},
+                'lenLessThan': {name:'lenLessThan', showName:'长度小于', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'长度值',type:'number',default:''}]},
+                'isNum': {name:'isNum', showName:'是数字', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'}]},
+                'isNotNum': {name:'isNotNum', showName:'不是数字', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'}]},
+                'isLetter': {name:'isLetter', showName:'是字母', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'}]},
+                'isNotLetter': {name:'isNotLetter', showName:'不是字母', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'}]}
+            }
         };
     } else if (isInCLList(className, ['easing'])) {
         return {
@@ -361,7 +383,13 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['track'])) {
         return {
             props: {
-                'type': {name:'type', type: propertyType.String, default: ''}}
+                'type': {name:'type', showName:'类型', type: propertyType.Select, default:'linear',options:{'直线':'linear','曲线':'ease','贝塞尔曲线':'cubic-bezier'},group:'tools',order:2},
+                '_editTrack': {name:'_editTrack', showName:'编辑运动轨迹',styleName:'hahah1',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_saveTrack': {name:'_saveTrack', showName:'保存',styleName:'hahah2',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_saveAsTrack': {name:'_saveAsTrack', showName:'另存为',styleName:'hahah3',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_cancelTrack': {name:'_cancelTrack', showName:'取消',styleName:'hahah4',type: propertyType.Button,default:'',group:'buttonArea'},
+            },
+
         };
     } else if (isInCLList(className, ['table'])) {
         return {
@@ -531,6 +559,7 @@ let modifyPropList = (list, className, type) => {
                 aLack=aLack.concat(['paddingUp','paddingDown','paddingLeft','paddingRight']);
             }
         }
+
         if(!v.showName){
             v.showName=v.name;
         }
@@ -538,6 +567,10 @@ let modifyPropList = (list, className, type) => {
     //部分属性面板才有中心点
     if (originXTag && originYTag && ['timer','container', 'canvas', 'flex', 'world'].indexOf(className) < 0) {
         aLack.push('originPos');
+    }
+
+    if(className=='track'){
+        aLack.push('_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
     }
 
 
@@ -917,4 +950,4 @@ dealWithOriginalPropertyMap();
 //添加伪对象的属性
 addCustomWidgetProperties();
 
-export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType};
+export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType,sortGroupArr};

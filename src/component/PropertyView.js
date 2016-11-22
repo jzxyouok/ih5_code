@@ -10,10 +10,10 @@ const Option = Select.Option;
 const Panel = Collapse.Panel;
 const MenuItem = Menu.Item;
 import cls from 'classnames';
-import { SwitchMore,DropDownInput ,ConInputNumber} from  './PropertyView/PropertyViewComponet';
+import { SwitchMore,DropDownInput ,ConInputNumber,ConButton} from  './PropertyView/PropertyViewComponet';
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
-import {propertyType, getPropertyMap} from './PropertyMap'
+import {propertyType, getPropertyMap,sortGroupArr} from './PropertyMap'
 import {chooseFile} from  '../utils/upload';
 require("jscolor/jscolor");
 import TbCome from './TbCome';
@@ -62,7 +62,7 @@ class PropertyView extends React.Component {
     }
 
     //获取封装的form组件
-    getInputBox(type, defaultProp) {
+    getInputBox(type, defaultProp,item) {
         let style = {};
         let defaultData =  defaultProp;
         switch (type) {
@@ -75,8 +75,11 @@ class PropertyView extends React.Component {
                     return <ConInputNumber {...defaultProp} />;
                 }
             case propertyType.Float:
-
                 return <ConInputNumber {...defaultProp}  />;
+            case propertyType.Button:
+                defaultProp.item=item;
+                defaultProp.curNode=this.selectNode;
+                return <ConButton {...defaultProp} />;
             case propertyType.Number:
                 let step=1;
                 if(defaultProp.name=='totalTime'){
@@ -146,7 +149,6 @@ class PropertyView extends React.Component {
                     style['width'] = "125px";
                     style['maxWidth'] = "125px";
                 }
-
                 return <div className={cls({"flex-1": defaultProp.tbCome == "tbF"})}>
                     <Select {...defaultProp} style={style}>
                         {defaultProp.options}
@@ -428,9 +430,8 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
-                     if ( prop.name == 'alignSelf'|| prop.name == 'flex'|| prop.name == 'flexDirection'|| prop.name == 'justifyContent'|| prop.name == 'alignItems') {
-                      //  this.selectNode.props[prop.name+'Key'] = this.getScaleTypeDefault(value, prop.options);
-                         this.selectNode.props[prop.name+'Key'] = value;
+                    if (['alignSelf','flex','flexDirection','justifyContent','alignItems','type'].indexOf(prop.name)>=0) {
+                        this.selectNode.props[prop.name+'Key'] = value;
                         v = value;
                     }
                     else if (prop.name == 'swipeType') {
@@ -454,13 +455,18 @@ class PropertyView extends React.Component {
                         v = value;
                     }
                     else if (prop.name == 'type') {
-                        this.selectNode.props.type = this.getScaleTypeDefault(value, prop.options);
-                        //属于第一组则设置初始隐藏,否则设置隐藏
-                        this.selectNode.props.initHide = false;
-                        for (let i in   prop.optionsToJudge) {
-                            if (prop.optionsToJudge[i] == value) {
-                                this.selectNode.props.initHide = true;
-                                break;
+                        let className = this.selectNode.className;
+                        if (className == 'track') {
+                            this.selectNode.props[prop.name+'Key'] = value;
+                        } else {
+                            this.selectNode.props.type = this.getScaleTypeDefault(value, prop.options);
+                            //属于第一组则设置初始隐藏,否则设置隐藏
+                            this.selectNode.props.initHide = false;
+                            for (let i in prop.optionsToJudge) {
+                                if (prop.optionsToJudge[i] == value) {
+                                    this.selectNode.props.initHide = true;
+                                    break;
+                                }
                             }
                         }
                         v = value;
@@ -908,8 +914,8 @@ class PropertyView extends React.Component {
     * 给属性面板各模块和模块内部组件排序
     * */
     sortGroups(groups) {
-       // console.log(groups);
-        let sortArr = ['basic', 'position', 'display', 'tools','tools2','tools2.1','tools2.2','tools2.3','tools3','tools3.1', 'dArr'];
+
+        let sortArr = sortGroupArr;
         let obj={};
         //模块排序
         sortArr.map((v,i)=>{
@@ -1013,15 +1019,13 @@ class PropertyView extends React.Component {
         else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
             defaultValue = item.default;
             //当originY时才会激活,而不是originPos
-            if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
+            if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems','type'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
-            } else if (item.name == 'fontFamily' && node.props.fontFamilyKey) {
+            } else if (item.name == 'fontFamily' && node.props[item.name + 'Key']) {
                 defaultValue = node.props.fontFamily;
             } else if ((item.name == 'forwardTransition' || item.name == 'backwardTransition') && node.props[item.name + '_val']) {
                 defaultValue = node.props[item.name + '_val'];
-            } else if (item.name == 'type' && node.props.type) {
-                defaultValue = node.props.type;
-            } else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
+            }  else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
                 defaultValue = node.props.headerFontFamily;
             } else if (item.name == 'vertical' && node.props[item.name]) {
                 defaultValue = node.props[item.name];
@@ -1072,7 +1076,7 @@ class PropertyView extends React.Component {
             }
         }
         else if(item.type === propertyType.Boolean) {
-            defaultValue = node.node[item.name];
+            defaultValue = node.props[item.name];
 
             if(node.props[item.name+'Key'] !==undefined){
                 defaultValue =node.props[item.name+'Key'];
@@ -1297,13 +1301,8 @@ class PropertyView extends React.Component {
         let hasOne=false;  //独占一栏结构显示,用于兼容旋转度属性独占一栏的样式
         let isBody= className == "body"?true:false;  //对body对象定制样式
 
-
-
-
         let isAutoGravity = item.name == 'autoGravity'?true:false;
         let tdColorSwitch =className == "table" && ['fontFill','fillColor','altColor'].indexOf(item.name)>=0?true: false;
-
-
 
         let hasPx = ['X', 'Y', 'W', 'H','原始宽', '原始高', '网格大小' ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'].indexOf(item.showName) >= 0; //判断input中是否添加px单位
 
@@ -1315,8 +1314,6 @@ class PropertyView extends React.Component {
             hasPx=false;
         }
 
-
-
         let hasDegree = ['旋转度'].indexOf(item.showName) >= 0; //判断input中是否添加°单位
         let hasLock = item.showLock == true; //判断是否在元素前添加锁图标
 
@@ -1326,7 +1323,7 @@ class PropertyView extends React.Component {
         else if (className === 'twoDArr') {
             hasTwin = ['行', '列'].indexOf(item.showName) >= 0;
         }
-        else if (className == "timer") {
+        else if (className == "timer"||className == "track") {
             hasTwin = ['X', 'Y', 'W', 'H', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '自动播放', '循环播放'].indexOf(item.showName) >= 0;
             hasOne = item.name == 'rotation'?true:false;
         }
@@ -1343,7 +1340,6 @@ class PropertyView extends React.Component {
                     ,'边距上','边距下','边距左','边距右','最大宽','最小宽','最大高','最小高'
                 ].indexOf(item.showName) >= 0;
         }
-
 
        //拼接图标样式
         let htmlStr;
@@ -1378,7 +1374,6 @@ class PropertyView extends React.Component {
             }
         }
 
-
         groups[groupName].push(
             <div key={item.name}
                  order={item.order}
@@ -1394,7 +1389,7 @@ class PropertyView extends React.Component {
                  )}
                  style={style}>
                 <div
-                    className={cls('ant-col-l ant-form-item-label', {"hidden": defaultProp.tbCome == "tbS"})}>{htmlStr}</div>
+                    className={cls('ant-col-l ant-form-item-label', {"hidden": defaultProp.tbCome == "tbS" || item.type== propertyType.Button  })}>{htmlStr}</div>
                 <div
                     className={cls('ant-col-r', {"tbSSStyle": defaultProp.tbCome == "tbS"}, {"tbFSStyle": defaultProp.tbCome == "tbF"})}>
                     <div className={cls('ant-form-item-control',
@@ -1402,7 +1397,7 @@ class PropertyView extends React.Component {
                         {'ant-input-px': hasPx},
                         {'ant-input-rate': hasRate}
                     )}>
-                        {this.getInputBox(item.type, defaultProp)}
+                        {this.getInputBox(item.type, defaultProp,item)}
                     </div>
                 </div>
             </div>
