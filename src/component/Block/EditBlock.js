@@ -15,6 +15,7 @@ class EditBlock extends React.Component {
             name: '',
             props: [],
             eventTree: [],
+            selectWidget: null
         };
 
         this.toggle = this.toggle.bind(this);
@@ -38,7 +39,11 @@ class EditBlock extends React.Component {
     }
 
     onStatusChange(widget) {
-
+        if(widget.selectWidget) {
+            this.setState({
+                selectWidget : widget.selectWidget
+            });
+        }
     }
 
     saveBlock() {

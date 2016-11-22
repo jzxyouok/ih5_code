@@ -92,7 +92,7 @@ class ObjectTree extends React.Component {
         this.itemActions = this.itemActions.bind(this);
         this.itemWindowKeyAction = this.itemWindowKeyAction.bind(this);
 
-        this.didPressMacCmdKey = false;
+        this.didPressCmdKey = false;
         this.checkPressCmdKey = this.checkPressCmdKey.bind(this);
         this.resetCmdKey = this.resetCmdKey.bind(this);
 
@@ -202,8 +202,7 @@ class ObjectTree extends React.Component {
         }
         else if (widget.activeBlockMode) {
             this.setState({
-                activeBlockMode: widget.activeBlockMode.on,
-                activeBlockKey: widget.activeBlockMode.key,
+                activeBlockMode: widget.activeBlockMode.on
             })
         }
 
