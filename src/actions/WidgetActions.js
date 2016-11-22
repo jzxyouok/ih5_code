@@ -82,7 +82,6 @@ export default Reflux.createActions([
   'setVersion',                 //版本
   'changeResource',             //修改资源入口
 
-  'addBlock',                  //添加小模块
-  'editBlock',                 //编辑小模块
+  'addOrEditBlock',                  //添加/编辑小模块
   'activeBlockMode',           //小模块编辑模式
 ]);

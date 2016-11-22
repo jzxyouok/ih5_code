@@ -1639,7 +1639,8 @@ class ObjectTree extends React.Component {
 
         return (
             <div id={'ObjectTree'} className={$class('ObjectTree',
-                {'selectTargetMode': this.state.selectTargetMode})} ref="objectTree">
+                {'selectTargetMode': this.state.selectTargetMode})} ref="objectTree"
+                 style={{'overflow':this.state.selectTargetMode?'hidden':'visible'}}>
                 <div className={$class("stage")} >
                 {
                      !allTreeData
