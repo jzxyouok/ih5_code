@@ -111,7 +111,7 @@ class TimelineView extends React.Component {
 			const changed = {currentTrack:null};
 			let node = widget.selectWidget;
 			if (node) {
-                //console.log(node);
+                console.log(node);
 				node.children.map(item => {
 					if (item.className === 'track') {
 						changed.currentTrack = item;

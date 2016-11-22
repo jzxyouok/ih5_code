@@ -2,5 +2,8 @@ import Reflux from 'reflux';
 
 export default Reflux.createActions([
     'getEffectList',
-    'createEffect'
+    'createEffectShow',
+    'createEffect',
+    'updateEffect',
+    'deleteEffect'
 ]);

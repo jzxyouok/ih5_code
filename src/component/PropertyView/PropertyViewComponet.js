@@ -345,8 +345,14 @@ class ConButton extends React.Component {
         super(props);
         this.state = {
             curNode:props.curNode             //选中组件的属性
-
         };
+        this.buttonAllFuc = this.buttonAllFuc.bind(this);   //总入口
+
+        this.trackToggle = this.trackToggle.bind(this);     //动效转轨迹模式,轨迹模式转动效
+        this.trackEdit = this.trackEdit.bind(this);         //编辑
+        this.trackSave = this.trackSave.bind(this);         //保存
+        this.trackSaveAs = this.trackSaveAs.bind(this);     //另保存
+        this.trackCancel = this.trackCancel.bind(this);     //取消
     }
 
     componentDidMount() {
@@ -357,9 +363,54 @@ class ConButton extends React.Component {
 
     }
 
+    buttonAllFuc(){
+        if(props.curNode.timerWidget == null){
+            switch (this.props.item.name){
+                case "_editTrack" :
+                    this.trackEdit();
+                break;
+                case "_saveTrack" :
+                    this.trackSave();
+                break;
+                case "_saveAsTrack" :
+                    this.trackSaveAs();
+                break;
+                case "_cancelTrack" :
+                    this.trackCancel();
+                break;
+            }
+        }
+    }
+
+    trackToggle(bool){
+        if(bool){
+            this.curNode.props.trackType = "track";
+        }
+        else {
+            this.curNode.props.trackType = "effect";
+        }
+    }
+
+    trackEdit(){
+        this.trackToggle(true);
+    }
+
+    trackSave(){
+        this.trackToggle(false);
+    }
+
+    trackSaveAs(){
+        this.trackToggle(false);
+    }
+
+    trackCancel(){
+        this.trackToggle(false);
+
+    }
+
     render() {
         return (
-            <button className={this.props.item.styleName}>
+            <button className={this.props.item.styleName} onClick={ this.buttonAllFuc }>
                 {this.props.item.showName}
             </button>
         );

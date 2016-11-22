@@ -811,7 +811,7 @@ class PropertyView extends React.Component {
         return Object.keys(groups).map((name,index) =>{
             let insertClassName =  className + "-" + 'form_'+name;//插入一个按钮
             return <Form horizontal
-                         className={cls('form_'+name,styleObj)}
+                         className={cls('form_'+name,styleObj,{ "hidden" : node.timerWidget !==null && name == "buttonArea" })}
                          key={index}>
                 {groups[name].map((input, i) => input)}
                 {
@@ -1087,8 +1087,29 @@ class PropertyView extends React.Component {
         }
         else if(item.type == propertyType.Button){
             if(className == "track"){
-                //if(this.selectNode.timerWidget.className == "timer")
-                console.log(this.selectNode,item)
+                //console.log(this.selectNode,item);
+                if(this.selectNode.timerWidget == null){
+                    // "track" 是轨迹 ， "effect" 是动效
+                    if(this.selectNode.props.trackType == "track"){
+                        if(item.name == "_editTrack"){
+                            item.styleName = item.olderClassName + " hidden";
+                        }
+                        else {
+                            item.styleName = item.olderClassName;
+                        }
+                    }
+                    else{
+                        if(item.name != "_editTrack"){
+                            item.styleName = item.olderClassName + " hidden";
+                        }
+                        else {
+                            item.styleName = item.olderClassName;
+                        }
+                    }
+                }
+                else {
+                   item.styleName = item.olderClassName + " hidden";
+                }
             }
         }
         else if (node.props[item.name] === undefined) {
@@ -1376,6 +1397,17 @@ class PropertyView extends React.Component {
                 style['marginLeft'] = "3px";
                 style['height'] = "22px";
                 style['lineHeight'] = "22px";
+            }
+        }
+        else if(className == "track" && this.selectNode.timerWidget == null
+                && (item.name == "_editTrack" || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") ){
+            style['margin'] = "0";
+            if(item.name == "_saveTrack" || item.name == "_saveAsTrack"){
+                style['width'] = "50%";
+                style['float'] = "left";
+            }
+            else {
+                style['width'] = "100%";
             }
         }
 

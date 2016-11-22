@@ -1922,9 +1922,10 @@ export default Reflux.createStore({
           //  dataList[0].push(d);
           //  //dataList[1].push(d);
           //}
+          let trackType = this.currentWidget.timerWidget == null ? props.trackType : "timer";
           let track = loadTree(this.currentWidget, {
               'cls': className,
-              'props': {'prop': propList, 'data': dataList, 'name': props['name']}
+              'props': {'prop': propList, 'data': dataList, 'name': props['name'], 'trackType' : trackType}
           });
           this.trigger({redrawTree: true, updateTrack: track});
           // } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
@@ -2508,9 +2509,23 @@ export default Reflux.createStore({
             });
             props['name'] = props.type + cOrder;
         }
-        else if(className == "track" && name){
-            props['name'] = name;
-            props['trackType'] = "effect";
+        else if(className == "track" && this.currentWidget.timerWidget == null){
+            if(name){
+                props['name'] = name;
+                props['trackType'] = "effect";
+            }
+            else {
+                let cOrder = 1;
+                //查找当前widget有多少个相同className的，然后＋1处理名字
+                this.currentWidget.children.forEach(cW => {
+                    if(cW.className === className) {
+                        cOrder+=1;
+                    }
+                });
+                props['name'] = className + cOrder;
+                props['trackType'] = "track";
+            }
+            //console.log(props['trackType']);
         }
         else {
             if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){

@@ -194,6 +194,7 @@ class NavBar extends React.Component {
         document.body.addEventListener('keydown', this.onKeyDown);
 
         this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
+        EffectAction['getEffectList']();
         //window.onbeforeunload = ()=>{
         //    var n = window.event.screenX - window.screenLeft;
         //    //鼠标在当前窗口内时，n<m，b为false；鼠标在当前窗口外时，n>m，b为true。20这个值是指关闭按钮的宽度
@@ -364,8 +365,7 @@ class NavBar extends React.Component {
                     workList: result['list'].reverse(),
                     fontList: result['font'],
                     dbList: result['db'],
-                    sockList: result['sock'],
-                    effectList: result['effect'] ? result['effect'] : []
+                    sockList: result['sock']
                 });
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
