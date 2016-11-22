@@ -642,9 +642,7 @@ class Event extends React.Component {
                 if (item.showName == '碰撞对象') {
                     //获取的其他body
                     let keyList = [];
-
                     let curBodyKey ;
-
                     this.state.selectWidget.children.map((v,i)=>{
                         if(v.className=='body'){
                             curBodyKey=v.key;
@@ -689,6 +687,9 @@ class Event extends React.Component {
                     item.option.map((v, i)=> {
                         optionArr.push(<Option key={i} value={v}  className='dropDown-input-option'>{v}</Option>);
                     });
+
+
+
                     return <Select disabled={!obj.enable} className='dropDown-input-content' value={item.default}
                                    onChange={this.onChangeProp.bind(this, index, item)}>{optionArr}</Select>
                 }

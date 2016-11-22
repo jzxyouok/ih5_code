@@ -1021,7 +1021,7 @@ class PropertyView extends React.Component {
             //当originY时才会激活,而不是originPos
             if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems','type'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
-            } else if (item.name == 'fontFamily' && ode.props[item.name + 'Key']) {
+            } else if (item.name == 'fontFamily' && node.props[item.name + 'Key']) {
                 defaultValue = node.props.fontFamily;
             } else if ((item.name == 'forwardTransition' || item.name == 'backwardTransition') && node.props[item.name + '_val']) {
                 defaultValue = node.props[item.name + '_val'];
