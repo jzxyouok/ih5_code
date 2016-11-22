@@ -25,6 +25,7 @@ const propertyType = {
     Remove:-2,
     Boolean3:22,
     ObjectSelect:23,
+    Button:24
 };
 
 const backwardTransOptions = {

@@ -20,7 +20,14 @@ let isInCLList = (className, classNameList)=>{
     //检查是否在所需的classnamelist内
     return classNameList.indexOf(className)>=0;
 };
-
+/**
+ * luozheao,20161122
+ * 功能:
+ * 1 用于PropertyView属性面板中模块的排序,数组中排最前面则显示在属性面板的最上面
+ * 2 需要什么模块分组,则在数组中添加
+ * 用在
+ * */
+let sortGroupArr=['basic', 'position', 'display', 'tools','tools2','tools2.1','tools2.2','tools2.3','tools3','tools3.1', 'dArr','buttonArea'];
 /**
 * luozheao,20161115
 * 备注:添加了order字段,用于给模块内部的组件排序
@@ -86,7 +93,6 @@ let propMapping = {
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
 
     'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 0,order:1},
-    'type': {name:'type', showName:'类型', type: propertyType.Select, default:'linear',options:{'直线':'linear','曲线':'ease','贝塞尔曲线':'cubic-bezier'},group:'tools',order:2},
     'startTime': {name:'startTime',showName:'开始时间', type: propertyType.Number,group:'tools', default: 0,order:3},
     'endTime': {name:'endTime', showName:'结束时间',type: propertyType.Number,group:'tools', default: 0,order:4},
     'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false},
@@ -306,7 +312,12 @@ let funcMapping = {
     'nextResult': {name:'nextResult', showName:'获取下一页数据'},
     'prevResult': {name:'prevResult', showName:'获取上一页数据'},
 };
-
+/***
+ *luozheao,20161122
+ * 备注:
+ *1  map中没有的属性,我们自己添加的属性,一律用_开头,如_editTrack
+ *2  要将我们自己添加的属性显示出来,还要在modifyPropList方法中追加进去
+ */
 let specialCaseElementMapping = (className, type)=> {
     //以后还要对不同的type进行修正(modeType)
     if(isInCLList(className, ['counter'])) {
@@ -374,7 +385,13 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['track'])) {
         return {
             props: {
-                'type': {name:'type', showName:'类型', type: propertyType.Select, default:'linear',options:{'直线':'linear','曲线':'ease','贝塞尔曲线':'cubic-bezier'},group:'tools',order:2}}
+                'type': {name:'type', showName:'类型', type: propertyType.Select, default:'linear',options:{'直线':'linear','曲线':'ease','贝塞尔曲线':'cubic-bezier'},group:'tools',order:2},
+                '_editTrack': {name:'_editTrack', showName:'编辑运动轨迹',styleName:'hahah1',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_saveTrack': {name:'_saveTrack', showName:'保存',styleName:'hahah2',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_saveAsTrack': {name:'_saveAsTrack', showName:'另存为',styleName:'hahah3',type: propertyType.Button,default:'',group:'buttonArea'},
+                '_cancelTrack': {name:'_cancelTrack', showName:'取消',styleName:'hahah4',type: propertyType.Button,default:'',group:'buttonArea'},
+            },
+
         };
     } else if (isInCLList(className, ['table'])) {
         return {
@@ -544,6 +561,7 @@ let modifyPropList = (list, className, type) => {
                 aLack=aLack.concat(['paddingUp','paddingDown','paddingLeft','paddingRight']);
             }
         }
+
         if(!v.showName){
             v.showName=v.name;
         }
@@ -551,6 +569,10 @@ let modifyPropList = (list, className, type) => {
     //部分属性面板才有中心点
     if (originXTag && originYTag && ['timer','container', 'canvas', 'flex', 'world'].indexOf(className) < 0) {
         aLack.push('originPos');
+    }
+
+    if(className=='track'){
+        aLack.push('_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
     }
 
 
@@ -930,4 +952,4 @@ dealWithOriginalPropertyMap();
 //添加伪对象的属性
 addCustomWidgetProperties();
 
-export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType};
+export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType,sortGroupArr};
