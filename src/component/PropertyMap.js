@@ -205,8 +205,8 @@ let eventMapping = {
     'isMatch': {name:'isMatch', showName:'匹配', needFill:[{showName:'文本',type:'string',default:''}]},
     'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{showName:'文本',type:'string',default:''}]},
     'Contain': {name:'Contain', showName:'包含文本', needFill:[{showName:'文本',type:'string',default:''}]},
-    'change': {name:'change', showName:'内容改变'},
-    'input': {name:'input', showName:'输入'},
+    'change': {name:'change', showName:'输入完成'},
+    'input': {name:'input', showName:'内容改变'},
 
     '==': {name:'==', showName:'等于', needFill:[{showName:'值',type:'number',default:''}]},
     '!=': {name:'!=', showName:'不等于', needFill:[{showName:'值',type:'number',default:''}]},
