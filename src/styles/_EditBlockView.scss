@@ -1,0 +1,297 @@
+#EditBlockView {
+  position: fixed;
+  left: 37px;
+  top: 37px;
+  width: 420px;
+  bottom: 1px;
+  //height: 600px;
+  background: #232323;
+  overflow: hidden;
+  z-index: 50;
+
+  &.keep {
+    height: 30px;
+    transition: 0.5s;
+  }
+
+  #EditBlockViewHeader {
+    width: 100%;
+    height: 30px;
+    background: #313131;
+
+    span {
+      font-size: 12px;//12px;
+      color: #b5b5b5;
+      padding: 4px 12px;
+    }
+
+    .btn {
+      width: 32px;
+      height: 26px;
+      background: url("img/button-icon.svg") no-repeat -1240px 0;
+
+      &:hover {
+        background: url("img/button-icon.svg") no-repeat -1240px -40px;
+      }
+    }
+  }
+  #EditBlockViewBody {
+    position: relative;
+    height: 100%;
+    .edit-block-body-layer {
+      padding: 10px 0;
+      position: absolute;
+      left: 0;
+      right: -20px;
+      top: 0;
+      bottom: 0;
+      overflow-y: scroll;
+
+      input {
+        color: #b5b5b5;
+      }
+      .item-name {
+        width: 120px;
+      }
+
+      .ant-dropdown-menu    {
+        background: #353535;
+        border: none;
+        box-shadow: none;
+        margin-top: -4px;
+        border-radius: 0 0 2px 2px;
+      }
+      .ant-dropdown-menu-item {
+        color: #b5b5b5;
+        padding: 2px 14px;
+      }
+      .ant-dropdown-menu-item-active {
+        background: #151515;
+      }
+      .ant-dropdown-menu-item:first-child {
+        border-radius: 0;
+      }
+      .ant-dropdown-menu-item:last-child {
+        border-radius: 0 0 2px 2px;
+      }
+
+      .ant-form-horizontal {
+        padding-right: 13px;
+      }
+
+      .customize-params-form {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+
+      .ant-form-horizontal,
+      .ant-form {
+        .ant-form-item-label {
+          label {
+            width: 46px;
+          }
+        }
+        .params-title {
+          margin-bottom: 5px;
+        }
+        .params-item {
+          margin-bottom: 5px;
+          .ant-form-item-control {
+            display: inline-block;
+            width: 200px;
+
+            .ant-input {
+              width: 100%;
+            }
+          }
+          .ant-col-r {
+            background-color: #353535;
+            border-radius: 2px;
+            .right-col-container{
+              position: relative;
+              padding: 1px 0;
+              label {
+                width: 46px;
+              }
+              .ant-form-item-label-mapping {
+                label {
+                  width: 70px;
+                }
+              }
+            }
+          }
+          .ant-form-item-control {
+            background-color: #232323;
+            border-radius: 2px;
+          }
+          .ant-input {
+            border: 1px solid #232323;
+            background-color: #232323;
+          }
+          .params-delete {
+            width: 20px;
+            height: 26px;
+            text-align: center;
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            right: 1.5px;
+            background: url("img/button-icon.svg") no-repeat -480px -360px;
+            &:hover{ background-position: -480px -400px; }
+            &:active{ background-position: -480px -440px; }
+          }
+          .params-name {
+            width: 120px;
+          }
+          .params-dropdown {
+            cursor: pointer;
+            width: 150px;
+            line-height: 22px;
+
+            .obj-select {
+              cursor: pointer;
+              width: 23px;
+              height: 18px;
+              outline: 0;
+              margin-left: 2px;
+              z-index: 1;
+              border: 1px solid #353535;
+              border-radius: 2px;
+              background: url("img/button-icon.svg") no-repeat -441px -361px;
+
+              &:hover {
+                background: url("img/button-icon.svg") no-repeat -441px -401px;
+              }
+              &:active {
+                background: url("img/button-icon.svg") no-repeat -441px -441px;
+                border:1px solid #0f1620;
+              }
+              &:disabled{
+                filter: alpha(opacity=60);
+                opacity: 0.6;
+                cursor: not-allowed !important;
+              }
+              &.active {
+                border: 1px solid #7b5815;
+                background: url("img/button-icon.svg") no-repeat -441px -441px;
+              }
+            }
+
+            .dropDown-div {
+              border: 1px solid #353535;
+              border-radius: 2px;
+              &.active {
+                border: 1px solid #7b5815;
+              }
+              .title-name {
+                padding-left: 2px;
+                width: 100%;
+              }
+            }
+            .icon {
+              //position: absolute;
+              right: 0;
+              top: 0;
+              width: 22px;
+              height: 22px;
+              background: url("img/button-icon.svg") no-repeat -563px -360px;
+              display: block;
+            }
+            .title-group {
+              border: 1px solid #353535;
+              border-radius: 2px;
+              .obj-select {
+                width: 18px;
+              }
+              .title-obj,
+              .title-detail{
+                width: 50px;
+                color: #b5b5b5;
+                padding: 0 5px;
+                @extend %font-omitted;
+              }
+              .title-detail {
+                width: auto;
+                max-width: 67px;
+              }
+              .title-dot {
+                width: 11px;
+                height: 22px;
+                background: url("img/button-icon.svg") no-repeat -520px -360px;
+              }
+              .detail-dropDown-div {
+                padding: 0 2px;
+                border: 1px solid #353535;
+                border-radius: 2px;
+                background: #353535;
+                .option-select-title {
+                  height: 16px;
+                }
+                .icon {
+                  width: 12px;
+                }
+              }
+             }
+          }
+        }
+
+        .add-btn {
+          width: 100%;
+          height: 18px;
+          cursor: pointer;
+
+          &:hover .btn-layer span { background: #b5b5b5; }
+          &:active .btn-layer span { background: #fff; }
+
+          .btn-layer {
+            @include border-radius(8px);
+            position: relative;
+            width: 16px;
+            height: 16px;
+            background: #2e2e2e;
+            margin: 0 auto;
+
+            span{
+              position: absolute;
+              background: #626262;
+            }
+
+            .heng {
+              left: 3px;
+              top: 7px;
+              width: 10px;
+              height: 2px;
+            }
+
+            .shu {
+              left: 7px;
+              top: 3px;
+              width: 2px;
+              height: 10px;
+            }
+          }
+        }}
+
+      .action-part {
+        padding-top: 10px;
+        .action-btn {
+          cursor: pointer;
+          outline: 0;
+          width: 100px;
+          height: 22px;
+          border-radius: 2px;
+          background-color: #858585;
+          margin-right: 10px;
+          color: #151515;
+          border: 1px solid #858585;
+          &.cancel-btn {
+            background-color: #232323;
+            margin-right: 0;
+            color: #7b7b7b;
+            border: 1px solid #7b7b7b;
+          }
+        }
+      }
+    }
+  }
+}

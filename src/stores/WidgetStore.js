@@ -1592,10 +1592,10 @@ bridge.setGenerateText(function(widget, callback) {
   if (globalToken)
       xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
   var form = new FormData();
-  form.append('font', widget['font']);
+  form.append('font', widget['fontFamily']);
   form.append('text', widget['value']);
-  form.append('size', widget['size']);
-  form.append('color', widget['color']);
+  form.append('size', widget['fontSize']);
+  form.append('color', widget['fontFill']);
   form.append('lineHeight', widget['lineHeight']);
   xhr.responseType = 'arraybuffer';
   xhr.onload = function(e) {
@@ -1818,7 +1818,8 @@ export default Reflux.createStore({
 
         this.listenTo(WidgetActions['setVersion'], this.setVersion);
 
-
+        this.listenTo(WidgetActions['addOrEditBlock'], this.addOrEditBlock);
+        this.listenTo(WidgetActions['activeBlockMode'], this.activeBlockMode);
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -3677,13 +3678,29 @@ export default Reflux.createStore({
                 result.push(count);
                 count = 0;
               }
-              if (n == 0 || item[0].substr(0, 5) == 'data:') {
-                result.push(-n);
-                for (var j = 0; j < n; j++) {
-                  array.push(item[j]);
-                }
+              if (n == 0) {
+                  result.push(0);
               } else {
-                result.push(item);
+                  var c = 0;
+                  var r = [];
+                  for (var j = 0; j < n; j++) {
+                      if (item[j].substr(0, 5) == 'data:') {
+                          array.push(item[j]);
+                          c++;
+                      } else {
+                          if (c)
+                              r.push(c);
+                          c = 0;
+                          r.push(item[j]);
+                      }
+                  }
+                  if (r.length == 0)
+                      result.push(-n);
+                  else {
+                      if (c)
+                          r.push(c);
+                      result.push(r);
+                  }
               }
             }
           }
@@ -3747,7 +3764,7 @@ export default Reflux.createStore({
     },
     setFont: function(font) {
       if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
-        this.updateProperties({'font':font});
+        this.updateProperties({'fontFamily':font});
       }
     },
     setImageText:function(data) {
@@ -4017,6 +4034,32 @@ export default Reflux.createStore({
     setVersion(v) {
         globalVersion = v;
     },
+
+    addOrEditBlock(block) {
+        //TODO:还需其他么？到设置属性的时候再考虑
+        //到时还要check id
+        if(this.currentWidget.props['block']){
+            //编辑
+            this.currentWidget.props['block']['name'] = block.name;
+            this.currentWidget.props['block']['mapping'] = block.mapping;
+        } else {
+            //新建
+            this.currentWidget.props['block'] = {
+                'name': block.name,
+                'mapping': block.mapping
+            }
+        }
+        this.activeBlockMode(false);
+        //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
+    },
+    activeBlockMode(value){
+        //let activeBlockModeKey = this.currentWidget.key;
+        //if(value) {
+            //activeBlockModeKey = null;
+        //}
+        //this.trigger({activeBlockMode: {on:value, key: activeBlockModeKey}});
+        this.trigger({activeBlockMode: {on:value}});
+    }
 });
 
 export {globalToken, nodeType, nodeAction, varType, funcType, keepType,fnIsFlex, isCustomizeWidget, dataType, classList, selectableClass}
