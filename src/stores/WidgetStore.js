@@ -1821,8 +1821,9 @@ export default Reflux.createStore({
         this.eventTreeList = [];
         this.historyRoad;
     },
-    selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
+    selectWidget: function(oWidget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
+        let widget = oWidget;
 
         //如果父中有检查出有小模块就不能被选择
         if(widget&&widget.parent) {
@@ -1831,12 +1832,13 @@ export default Reflux.createStore({
             while (temp&&(temp.parent || parentIsBlock == true)) {
                 if(temp.parent&&temp.parent.props.block) {
                     parentIsBlock = true;
+                    widget = temp.parent;
                 }
                 temp = temp.parent;
             }
-            if(parentIsBlock) {
-                return;
-            }
+            // if(parentIsBlock) {
+            //     return;
+            // }
         }
 
         if (widget) {
