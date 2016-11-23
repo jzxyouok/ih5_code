@@ -437,7 +437,11 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
-                    if (['alignSelf','flex','flexDirection','justifyContent','alignItems','type'].indexOf(prop.name)>=0) {
+                    if(['type'].indexOf(prop.name)>=0 && this.selectNode.className=='track'){
+                        this.selectNode.props[prop.name+'Key'] = value;
+                        v = parseInt(value);
+                    }
+                    else if (['alignSelf','flex','flexDirection','justifyContent','alignItems','type'].indexOf(prop.name)>=0) {
                         this.selectNode.props[prop.name+'Key'] = value;
                         v = value;
                     }
@@ -749,26 +753,6 @@ class PropertyView extends React.Component {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
             this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
         }
-        // else if(item.type === propertyType.Color || item.type === propertyType.TbColor){
-        //     if(typeof value == 'boolean'){
-        //         let colorStr;
-        //         if(value){
-        //             colorStr =this.selectNode.props[item.name+'_originColor'];
-        //             this.selectNode.props[item.name+'_originColor']=null;
-        //         }else{
-        //             colorStr='transparent';
-        //             this.selectNode.props[item.name+'_originColor'] = this.selectNode.props[item.name];
-        //         }
-        //         this.onChangeProp(item,colorStr);
-        //     }else{
-        //
-        //         if(this.selectNode.props[item.name+'_originColor']){
-        //             this.selectNode.props[item.name+'_originColor']=value.target.value
-        //         }else{
-        //             this.onChangeProp(item,value.target.value);
-        //         }
-        //     }
-        // }
         else{
             this.onChangeProp(item,value);
         }

@@ -381,7 +381,7 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['track'])) {
         return {
             props: {
-                'type': {name:'type', showName:'类型', type: propertyType.Select, default:'linear',options:{'直线':'linear','曲线':'ease','贝塞尔曲线':'cubic-bezier'},group:'tools',order:2},
+                'type': {name:'type', showName:'类型', type: propertyType.Select, default:'0',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
                 '_editTrack': {name:'_editTrack', showName:'编辑运动轨迹',styleName:'edit-btn',olderClassName:"edit-btn",
                                 type: propertyType.Button,default:'',group:'buttonArea'},
 
