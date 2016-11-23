@@ -1066,13 +1066,13 @@ function generateJsFunc(etree) {
                                          if(['marginUp','marginDown','marginLeft','marginRight'].indexOf(prop.name)>=0){
                                              let oVal={}
                                              oVal['head']=getIdsName(cmd.sObjId[0],cmd.sObjId[2],'margin')+'=';
-                                             oVal['value']= formulaGenLine(prop.value);
+                                             oVal['value']= formulaGenLine(prop.value)==''?'0px':formulaGenLine(prop.value);
                                              oVal['name']=prop.name;
                                              marginArr.push(oVal);
                                          }else if(['paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(prop.name)>=0){
                                              let oVal={}
                                              oVal['head']=getIdsName(cmd.sObjId[0],cmd.sObjId[2],'padding')+'=';
-                                             oVal['value']= formulaGenLine(prop.value);
+                                             oVal['value']= formulaGenLine(prop.value)==''?'0px':formulaGenLine(prop.value);
                                              oVal['name']=prop.name;
                                              paddingArr.push(oVal);
                                          }else if(['minWidth', 'minHeight', 'maxWidth', 'maxHeight'].indexOf(prop.name)>=0){
@@ -1176,7 +1176,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-  //console.log(output);
+  console.log(output);
   return output;
 }
 
@@ -1186,20 +1186,22 @@ function getSpacingStr(lines,spacingArr,arr) {
     spacingArr.map((v,i)=>{
         sHead=v.head;
         if(v.name==arr[0]){
-            sMargin[0]=JSON.parse(v.value);
+            sMargin[0]=(v.value);
         }
         else if(v.name==arr[1]){
-            sMargin[1]=JSON.parse(v.value);
+            sMargin[1]=(v.value);
         }
         else if(v.name==arr[2]){
-            sMargin[2]=JSON.parse(v.value);
+            sMargin[2]=(v.value);
         }
         else if(v.name==arr[3]){
-            sMargin[3]=JSON.parse(v.value);
+            sMargin[3]=(v.value);
         }
     });
     if(spacingArr.length>0){
-        lines.push(sHead+JSON.stringify(sMargin.join(' ')));
+        let abc=sMargin.join(' ');
+        abc= abc.replace('\"','');
+        lines.push(sHead+JSON.stringify(abc));
     }
     return lines;
 }
@@ -1819,22 +1821,25 @@ export default Reflux.createStore({
         this.eventTreeList = [];
         this.historyRoad;
     },
-    selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
+    selectWidget: function(oWidget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
+        let widget = oWidget;
 
         //如果父中有检查出有小模块就不能被选择
         if(widget&&widget.parent) {
             let temp = widget;
-            let parentIsBlock = false;
-            while (temp&&(temp.parent || parentIsBlock == true)) {
+            // let parentIsBlock = false;
+            while (temp&&temp.parent) {
+            // while (temp&&(temp.parent || parentIsBlock == true)) {
                 if(temp.parent&&temp.parent.props.block) {
-                    parentIsBlock = true;
+                    // parentIsBlock = true;
+                    widget = temp.parent;
                 }
                 temp = temp.parent;
             }
-            if(parentIsBlock) {
-                return;
-            }
+            // if(parentIsBlock) {
+            //     return;
+            // }
         }
 
         if (widget) {
@@ -2774,17 +2779,29 @@ export default Reflux.createStore({
         if(this.currentWidget&&this.currentWidget.rootWidget) {
             this.eventTreeList = [];
             //母节点
-            if(this.currentWidget.rootWidget.props.eventTree){
-                this.eventTreeList.push(this.currentWidget.rootWidget);
+            if(this.currentWidget.rootWidget.props.block) {
+                if(this.currentWidget.rootWidget.props.block.eventTree){
+                    this.eventTreeList.push(this.currentWidget.rootWidget);
+                }
+            } else {
+                if(this.currentWidget.rootWidget.props.eventTree){
+                    this.eventTreeList.push(this.currentWidget.rootWidget);
+                }
             }
             //递归遍历添加有事件widget到eventTreeList
             let loopEventTree = (children) => {
                 children.forEach(ch => {
-                    if(ch.props.eventTree){
-                        this.eventTreeList.push(ch);
-                    }
-                    if(ch.children&&ch.children.length>0) {
-                        loopEventTree(ch.children);
+                    if(ch.props.block){
+                        if(ch.props.block.eventTree) {
+                            this.eventTreeList.push(ch);
+                        }
+                    } else {
+                        if(ch.props.eventTree) {
+                            this.eventTreeList.push(ch);
+                        }
+                        if(ch.children&&ch.children.length>0) {
+                            loopEventTree(ch.children);
+                        }
                     }
                 });
             };
@@ -2834,34 +2851,42 @@ export default Reflux.createStore({
             let widgetList = [];
             //母节点
             if(this.currentWidget.rootWidget){
-                widgetList.push(root);
-                if(root.intVarList.length>0){
-                    root.intVarList.forEach(v => {
-                        widgetList.push(v);
-                    });
-                }
-                if(root.strVarList.length>0){
-                    root.strVarList.forEach(v => {
-                        widgetList.push(v);
-                    });
+                if(this.currentWidget.rootWidget.props.block) {
+                    widgetList.push(root);
+                } else {
+                    widgetList.push(root);
+                    if(root.intVarList.length>0){
+                        root.intVarList.forEach(v => {
+                            widgetList.push(v);
+                        });
+                    }
+                    if(root.strVarList.length>0){
+                        root.strVarList.forEach(v => {
+                            widgetList.push(v);
+                        });
+                    }
                 }
             }
             //递归遍历添加有事件widget到eventTreeList
             let loopWidgetTree = (children) => {
                 children.forEach(ch=>{
-                    widgetList.push(ch);
-                    if(ch.intVarList.length>0){
-                        ch.intVarList.forEach(v=> {
-                            widgetList.push(v);
-                        });
-                    }
-                    if(ch.strVarList.length>0){
-                        ch.strVarList.forEach(v=> {
-                            widgetList.push(v);
-                        });
-                    }
-                    if (ch.children && ch.children.length > 0) {
-                        loopWidgetTree(ch.children);
+                    if(ch.props.block) {
+                        widgetList.push(ch);
+                    } else {
+                        widgetList.push(ch);
+                        if(ch.intVarList.length>0){
+                            ch.intVarList.forEach(v=> {
+                                widgetList.push(v);
+                            });
+                        }
+                        if(ch.strVarList.length>0){
+                            ch.strVarList.forEach(v=> {
+                                widgetList.push(v);
+                            });
+                        }
+                        if (ch.children && ch.children.length > 0) {
+                            loopWidgetTree(ch.children);
+                        }
                     }
                 });
             };
@@ -2871,9 +2896,15 @@ export default Reflux.createStore({
     },
     initEventTree: function(className, props) {
         if (this.currentWidget) {
-            this.currentWidget.props['enableEventTree'] = true;
-            this.currentWidget.props['eventTree'] = [];
-            this.currentWidget.props['eventTree'].push(this.emptyEvent());
+            if(this.currentWidget.props.block) {
+                this.currentWidget.props.block['enableEventTree'] = true;
+                this.currentWidget.props.block['eventTree'] = [];
+                this.currentWidget.props.block['eventTree'].push(this.emptyEvent());
+            } else {
+                this.currentWidget.props['enableEventTree'] = true;
+                this.currentWidget.props['eventTree'] = [];
+                this.currentWidget.props['eventTree'].push(this.emptyEvent()); 
+            }
             this.activeEventTree(this.currentWidget.key);
             this.trigger({redrawWidget: this.currentWidget});
         }
@@ -2882,8 +2913,13 @@ export default Reflux.createStore({
     },
     removeEventTree: function() {
         if (this.currentWidget) {
-            delete this.currentWidget.props['eventTree'];
-            delete this.currentWidget.props['enableEventTree'];
+            if(this.currentWidget.props.block) {
+                delete this.currentWidget.props.block['eventTree'];
+                delete this.currentWidget.props.block['enableEventTree'];
+            } else {
+                delete this.currentWidget.props['eventTree'];
+                delete this.currentWidget.props['enableEventTree'];
+            }
         }
         this.trigger({redrawTree: true});
         this.reorderEventTreeList();
@@ -2894,13 +2930,26 @@ export default Reflux.createStore({
     enableEventTree: function (skipSetEventList, enableValue) {
         if (this.currentWidget) {
             if(enableValue!==undefined) {
-                this.currentWidget.props['enableEventTree'] = enableValue;
+                if(this.currentWidget.props.block) {
+                    this.currentWidget.props.block['enableEventTree'] = enableValue;
+                } else {
+                    this.currentWidget.props['enableEventTree'] = enableValue;
+                }
             } else {
-                this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+                if(this.currentWidget.props.block) {
+                    this.currentWidget.props.block['enableEventTree'] = !this.currentWidget.props.block['enableEventTree'];
+                } else {
+                    this.currentWidget.props['enableEventTree'] = !this.currentWidget.props['enableEventTree'];
+                }
             }
             let isEnable = this.currentWidget.props['enableEventTree'];
-            if(!skipSetEventList&&this.currentWidget.props.eventTree&&this.currentWidget.props.eventTree.length>0){
-                this.currentWidget.props.eventTree.forEach(event=>{
+            let eventTree = this.currentWidget.props.eventTree;
+            if(this.currentWidget.props.block) {
+                isEnable = this.currentWidget.props.block['enableEventTree'];
+                eventTree = this.currentWidget.props.block.eventTree;
+            }
+            if(!skipSetEventList&&eventTree&&eventTree.length>0){
+                eventTree.forEach(event=>{
                     event.enable = isEnable;
                     if(event.children&&event.children.length>0) {
                         event.children.forEach(eventChildren => {
@@ -2974,10 +3023,14 @@ export default Reflux.createStore({
         }
     },
     changeEventTreeEnableByEvents: function () {
-        if(this.currentWidget.props['eventTree']) {
+        let eventTree = this.currentWidget.props['eventTree'];
+        if(this.currentWidget.props.block) {
+            eventTree = this.currentWidget.props.block['eventTree'];
+        }
+        if(eventTree) {
             let enableLength = 0;
             let disableLength = 0;
-            this.currentWidget.props.eventTree.forEach(event=>{
+            eventTree.forEach(event=>{
                 if(event.enable) {
                     enableLength++;
                 } else {
@@ -2987,7 +3040,7 @@ export default Reflux.createStore({
             if(enableLength=== 0||
                 disableLength=== 0){
                 this.enableEventTree(true, disableLength===0);
-            } else if (!this.currentWidget.props['enableEventTree']) {
+            } else if (!eventTree) {
                 this.enableEventTree(true, true);
             }
         }
@@ -2997,7 +3050,11 @@ export default Reflux.createStore({
         if(len>1){
             eventList.splice(index,1);
         }else if (this.currentWidget) {
-            this.currentWidget.props['eventTree'] = [this.emptyEvent()];
+            if(this.currentWidget.props.block) {
+                this.currentWidget.props.block['eventTree'] = [this.emptyEvent()];
+            } else {
+                this.currentWidget.props['eventTree'] = [this.emptyEvent()];
+            }
         }
 
         this.changeEventTreeEnableByEvents();

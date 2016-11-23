@@ -7,7 +7,7 @@ import { message } from 'antd';
 
 message.config({
     top: 37,
-    duration: 1.5,
+    duration: 3,
 });
 
 class DesignView extends React.Component {
@@ -335,7 +335,7 @@ class DesignView extends React.Component {
     }
 
     blockModeWarning() {
-        message.warning('自定义小模块编辑中...');
+        message.warning("自定义小模块编辑中，请点击'取消'退出编辑模式");
     }
 
     render() {

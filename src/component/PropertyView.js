@@ -48,7 +48,7 @@ class PropertyView extends React.Component {
             {name:'新宋体',file:'NSimSun'},
             {name:'仿宋',file:'FangSong'},
             {name:'楷体',file:'KaiTi'},
-            {name:'仿宋_GB2312',file:'FangSong_GB2312 '},
+            {name:'仿宋_GB2312',file:'FangSong_GB2312'},
             {name:'楷体_GB2312',file:'KaiTi_GB2312 '},
             {name:'微软雅黑体',file:'Microsoft YaHei'}
         ];
@@ -115,7 +115,6 @@ class PropertyView extends React.Component {
                     return <ConInputNumber  step={step} {...defaultProp}  />;
                 }
             case propertyType.Percentage:
-                // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                 return  <div>
                             <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                             <Slider step={1}
@@ -484,7 +483,7 @@ class PropertyView extends React.Component {
                     }
                     else if(prop.name == 'scaleStage'){
                          node.props[prop.name+'Key'] = value;
-                        v = value=='true'?true:false;
+                         v = value=='true'?true:false;
                     }
                     else if (prop.name == 'headerFontFamily') {
                         node.props.headerFontFamily = this.getFontDefault(value);
@@ -608,6 +607,10 @@ class PropertyView extends React.Component {
                     });
 
                     bTag = false;
+                    break;
+                case propertyType.Color2:
+                    node.props[prop.name+'Key'] = value;
+                    v = value;
                     break;
                 case propertyType.Color:
                 case propertyType.TbColor:
@@ -741,8 +744,8 @@ class PropertyView extends React.Component {
         const obj = {};
         let v = parseFloat(event) / 100 ;
         obj['alpha'] = v;
-        this.selectNode.props.alpha = v;
-        this.selectNode.node.alpha = v;
+        node.props.alpha = v;
+        node.node.alpha = v;
         this.onStatusChange({updateProperties: obj, changeNode: node});
         WidgetActions['updateProperties'](obj, false, true, undefined, node);
     }
@@ -764,8 +767,8 @@ class PropertyView extends React.Component {
         let v = parseInt(this.state.tbHeadHeight);
         const obj = {};
         obj['headerHeight'] = v;
-        this.selectNode.props.headerHeight = v;
-        this.selectNode.node.headerHeight = v;
+        node.props.headerHeight = v;
+        node.node.headerHeight = v;
         this.onStatusChange({updateProperties: obj, changeNode: node});
         WidgetActions['updateProperties'](obj, false, true, undefined, node);
     }
@@ -785,7 +788,7 @@ class PropertyView extends React.Component {
         let v = parseInt(this.state.tbLineWidth) ;
 
         const obj = {};
-        let header = this.selectNode.props.header;
+        let header = node.props.header;
         if(header !== undefined){
             header = header.split(",");
             if(this.state.tbWhichColumn == 0){
@@ -810,8 +813,8 @@ class PropertyView extends React.Component {
             }
             //console.log(header.join(","));
             obj['header'] = header.join(",");
-            this.selectNode.props.header = header.join(",");
-            this.selectNode.node.header = header.join(",");
+            node.props.header = header.join(",");
+            node.node.header = header.join(",");
             this.onStatusChange({
                 updateProperties: obj,
                 changeNode: node
@@ -1639,7 +1642,7 @@ class PropertyView extends React.Component {
             let needRender = (widget.skipRender === undefined);
 
             let selectNode = this.selectNode;
-            if(widget.changeNode) {
+            if(this.selectNode.props.block &&  widget.changeNode) {
                 selectNode = widget.changeNode;
             }
             let obj = widget.updateProperties;
