@@ -24,11 +24,14 @@ var chooseFileCallback = (w)=> {  //tag
         if (!allowExt || allowExt.indexOf(ext) >= 0) {
             if (w.userUpload) {
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'app/uploadFile');
+                if(window.location.hostname==='localhost'&&window.location.port!=='8050'){
+                    xhr.open('POST', 'http://test-beta.ih5.cn/editor3b/'+'app/uploadFile');
+                }else{
+                    xhr.open('POST', 'app/uploadFile');
+                }
                 if (globalToken){
                     xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
                 }
-
                 var form = new FormData();
                 form.append('type', w.userType);
                 form.append('file', w.files[0]);

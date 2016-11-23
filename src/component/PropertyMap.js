@@ -329,7 +329,9 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['bitmaptext'])) {
         return {
             props: {
-                'color': {name:'color', showName:'文字颜色', type: propertyType.Color, default:'',group:'tools'},}
+                'color': {name:'color', showName:'文字颜色', type: propertyType.Color, default:'',group:'tools'},
+                'fontFamily': {name:'fontFamily', showName:'字体',type: propertyType.Select, default:'上传字体',group:'tools'}
+            }
         };
     } else if (isInCLList(className, ['html'])) {
         return {

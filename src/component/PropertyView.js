@@ -155,7 +155,7 @@ class PropertyView extends React.Component {
                     <Select {...defaultProp} style={style}>
                         {defaultProp.options}
                     </Select>
-                    <div id={cls({'ant-progress':defaultProp.name=='font'})}>
+                    <div id={cls({'ant-progress':defaultProp.name=='fontFamily'})}>
                         <div className='ant-progress-bar'></div>
                         <div className='ant-progress-txt'>上传 10%</div>
                     </div>
@@ -459,10 +459,6 @@ class PropertyView extends React.Component {
                          this.selectNode.props[prop.name+'Key'] = value;
                         v = value=='true'?true:false;
                     }
-                    else if (prop.name == 'fontFamily') {
-                         this.selectNode.props[prop.name+'Key']= this.getFontDefault(value);
-                        v = value;
-                    }
                     else if (prop.name == 'headerFontFamily') {
                         this.selectNode.props.headerFontFamily = this.getFontDefault(value);
                         v = value;
@@ -492,7 +488,7 @@ class PropertyView extends React.Component {
                         this.selectNode.props[prop.name + '_val'] = this.getScaleTypeDefault(value, prop.options);
                         v = parseInt(value);
                     }
-                    else if (prop.name == 'font') {
+                    else if (prop.name == 'fontFamily'&& this.selectNode.className=='bitmaptext') {
                         if (value == 0) {
                             chooseFile('font', true, function () {
                                 let fontObj = eval("(" + arguments[1] + ")");
@@ -500,7 +496,7 @@ class PropertyView extends React.Component {
                                 //回调完成
                                 oProgress.style.display = 'none';
                                 //设置默认值
-                                this.selectNode.props.fontKey = fontObj.name;
+                                this.selectNode.props[prop.name+'Key'] = fontObj.name;
                                 //更新属性面板
                                 const obj = {};
                                 obj[prop.name] = fontObj.file;
@@ -521,9 +517,13 @@ class PropertyView extends React.Component {
                             bTag = false;
                         }
                         else {
-                            this.selectNode.props.fontKey = this.getFontDefault(value);
+                            this.selectNode.props[prop.name+'Key'] = this.getFontDefault(value);
                             v = value;
                         }
+                    }
+                    else if (prop.name == 'fontFamily') {
+                        this.selectNode.props[prop.name+'Key']= this.getFontDefault(value);
+                        v = value;
                     }
                     else {
                         v = parseInt(value);
@@ -1039,7 +1039,11 @@ class PropertyView extends React.Component {
             //当originY时才会激活,而不是originPos
             if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems','type'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
-            } else if (item.name == 'fontFamily' && node.props[item.name + 'Key']) {
+            }
+            else if (item.name == 'fontFamily' && node.props[item.name + 'Key'] && this.selectNode.className=='bitmaptext') {
+                defaultValue = node.props[item.name + 'Key'];
+            }
+            else if (item.name == 'fontFamily' && node.props[item.name + 'Key']) {
                 defaultValue = node.props.fontFamily;
             } else if ((item.name == 'forwardTransition' || item.name == 'backwardTransition') && node.props[item.name + '_val']) {
                 defaultValue = node.props[item.name + '_val'];
@@ -1196,18 +1200,18 @@ class PropertyView extends React.Component {
             if (item.name == 'originY' || item.name == 'originPos') {
                 selectClassName = 'originIcon';
             }
-            else if (item.name == 'fontFamily' || item.name == 'headerFontFamily') {
+            else if (item.name == 'fontFamily' && this.selectNode.className=='bitmaptext') {
+                defaultProp.name = item.name;
+                defaultProp.options.push(<Option key={0}>
+                    <div className={selectClassName}></div>
+                    上传字体</Option>);
                 for (let i in this.fontList) {
                     defaultProp.options.push(<Option key={this.fontList[i].file}>
                         <div className={selectClassName}></div>
                         {this.fontList[i].name}</Option>);
                 }
             }
-            else if (item.name == 'font') {
-                defaultProp.name = item.name;
-                defaultProp.options.push(<Option key={0}>
-                    <div className={selectClassName}></div>
-                    上传字体</Option>);
+            else if (item.name == 'fontFamily' || item.name == 'headerFontFamily') {
                 for (let i in this.fontList) {
                     defaultProp.options.push(<Option key={this.fontList[i].file}>
                         <div className={selectClassName}></div>

@@ -1588,7 +1588,11 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
 
 bridge.setGenerateText(function(widget, callback) {
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'app/generateText');
+    if(window.location.hostname==='localhost'&&window.location.port!=='8050'){
+        xhr.open('POST', 'http://test-beta.ih5.cn/editor3b/'+'app/generateText');
+    }else{
+        xhr.open('POST', 'app/generateText');
+    }
   if (globalToken)
       xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
   var form = new FormData();
