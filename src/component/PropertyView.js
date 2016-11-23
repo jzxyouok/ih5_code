@@ -238,6 +238,7 @@ class PropertyView extends React.Component {
 
     onChangeProp(prop, value) {
         let v;
+        let node = this.selectNode;
         var bTag = true; //开关,控制执行
         if (value === undefined) {
             v = null;
@@ -249,24 +250,24 @@ class PropertyView extends React.Component {
                         const obj = {};
                         obj[prop.name] = v;
                         obj.scaleY = obj.scaleX = 1;
-                        delete this.selectNode.node.defaultData;
+                        delete node.node.defaultData;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag = false;
                         break;
                     } else if (prop.name == 'shapeWidth' || prop.name == 'shapeHeight') {
                         v = parseInt(value);
-                        this.selectNode.props.height = this.selectNode.props.width = null;
+                        node.props.height = node.props.width = null;
                         const obj = {};
                         obj[prop.name] = v;
                         obj.scaleY = obj.scaleX = 1;
-                        delete this.selectNode.node.defaultData;
+                        delete node.node.defaultData;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag = false;
                         break;
                     }
-                    else if(fnIsFlex(this.selectNode)){
+                    else if(fnIsFlex(node)){
                         let obj={};
                         obj[prop.name] =  parseInt(value);
                         WidgetActions['updateProperties'](obj, false, false);
@@ -280,18 +281,18 @@ class PropertyView extends React.Component {
                         let obj = {};
                         obj[prop.name] = parseInt(value);
                         obj.scaleY = obj.scaleX = 1;
-                        delete this.selectNode.node.defaultData;
+                        delete node.node.defaultData;
                         this.onStatusChange({updateProperties: obj});
                         WidgetActions['updateProperties'](obj, false, true);
                         bTag = false;
                         break;
                     }
                     else if(prop.name == 'totalTime' ){
-                        this.selectNode.props[prop.name+'Key'] = value;
+                        node.props[prop.name+'Key'] = value;
                     }
                     else if (['marginUp','marginDown','marginLeft','marginRight'
                         ].indexOf(prop.name)>=0) {
-                        this.selectNode.props[prop.name+'Key'] = value;
+                        node.props[prop.name+'Key'] = value;
 
                         //外间距一定是排在内间距前面
                         let index=0;
@@ -315,7 +316,7 @@ class PropertyView extends React.Component {
                     }
                     else if (['paddingUp','paddingDown','paddingLeft','paddingRight'
                         ].indexOf(prop.name)>=0) {
-                        this.selectNode.props[prop.name + 'Key'] = value;
+                        node.props[prop.name + 'Key'] = value;
                         let $obj=$('#PropertyViewBody');
                         let len =$obj.find('.ant-form-item-label label:contains("边距上")').length;
                         //内间距排在外间距后面
@@ -342,12 +343,12 @@ class PropertyView extends React.Component {
                     v = (prop.name == 'alpha') ? parseFloat(value) / 100 : parseFloat(value);
                     break;
                 case propertyType.Float:
-                    let defaultWidth = this.selectNode.node.defaultData.width;
-                    let defaultHeight = this.selectNode.node.defaultData.height;
-                    if (this.selectNode.node.keepRatio) {
+                    let defaultWidth = node.node.defaultData.width;
+                    let defaultHeight = node.node.defaultData.height;
+                    if (node.node.keepRatio) {
                         //修改之前的宽度和高度
-                        let oldWidth = this.selectNode.node.width;
-                        let oldHeight = this.selectNode.node.height;
+                        let oldWidth = node.node.width;
+                        let oldHeight = node.node.height;
                         //修改后的宽度 和应该显示的高度
                         if ('scaleX' == prop.name) {
                             let obj = {}
@@ -367,10 +368,10 @@ class PropertyView extends React.Component {
                     } else {
                         if ('scaleX' == prop.name) {
                             v = parseInt(value) / defaultWidth;
-                            this.selectNode.node.width = value;
+                            node.node.width = value;
                         } else if ('scaleY' == prop.name) {
                             v = parseInt(value) / defaultHeight;
-                            this.selectNode.node.height = value;
+                            node.node.height = value;
                         }
                     }
                     break;
@@ -381,8 +382,8 @@ class PropertyView extends React.Component {
                         let arr = value.key.split(',');
                         let x = parseFloat(arr[0]);
                         let y = parseFloat(arr[1]);
-                        let propsObj = this.selectNode.props;
-                        let nodeObj = this.selectNode.node;
+                        let propsObj = node.props;
+                        let nodeObj = node.node;
                         let oldOrigin = this.getOldOrigin(propsObj.originPosKey, prop.options);
                         let w = nodeObj.width * (x - parseFloat(oldOrigin[0]));
                         let h = nodeObj.height * (parseFloat(oldOrigin[1]) - y);
@@ -437,41 +438,43 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
+
                     if(['type'].indexOf(prop.name)>=0 && this.selectNode.className=='track'){
                         this.selectNode.props[prop.name+'Key'] = value;
                         v = parseInt(value);
                     }
                     else if (['alignSelf','flex','flexDirection','justifyContent','alignItems','type'].indexOf(prop.name)>=0) {
                         this.selectNode.props[prop.name+'Key'] = value;
+
                         v = value;
                     }
                     else if (prop.name == 'swipeType') {
-                        this.selectNode.props[prop.name+'Key'] = value;
+                        node.props[prop.name+'Key'] = value;
                         v = parseInt(value);
                     }
                     else if(prop.name == 'scaleStage'){
-                         this.selectNode.props[prop.name+'Key'] = value;
+                         node.props[prop.name+'Key'] = value;
                         v = value=='true'?true:false;
                     }
                     else if (prop.name == 'headerFontFamily') {
-                        this.selectNode.props.headerFontFamily = this.getFontDefault(value);
+                        node.props.headerFontFamily = this.getFontDefault(value);
                         v = value;
                     }
                     else if(prop.name=='vertical') {
-                        this.selectNode.props[prop.name] = value=='true'?'垂直':'水平';
+                        node.props[prop.name] = value=='true'?'垂直':'水平';
                         v = value;
                     }
                     else if (prop.name == 'type') {
-                        let className = this.selectNode.className;
+                        let className = node.className;
                         if (className == 'track') {
-                            this.selectNode.props[prop.name+'Key'] = value;
+                            node.props[prop.name+'Key'] = value;
                         } else {
-                            this.selectNode.props.type = this.getScaleTypeDefault(value, prop.options);
+                            node.props.type = this.getScaleTypeDefault(value, prop.options);
                             //属于第一组则设置初始隐藏,否则设置隐藏
-                            this.selectNode.props.initHide = false;
+                            node.props.initHide = false;
                             for (let i in prop.optionsToJudge) {
                                 if (prop.optionsToJudge[i] == value) {
-                                    this.selectNode.props.initHide = true;
+                                    node.props.initHide = true;
                                     break;
                                 }
                             }
@@ -479,10 +482,10 @@ class PropertyView extends React.Component {
                         v = value;
                     }
                     else if (prop.name == 'forwardTransition' || prop.name == 'backwardTransition') {
-                        this.selectNode.props[prop.name + '_val'] = this.getScaleTypeDefault(value, prop.options);
+                        node.props[prop.name + '_val'] = this.getScaleTypeDefault(value, prop.options);
                         v = parseInt(value);
                     }
-                    else if (prop.name == 'fontFamily'&& this.selectNode.className=='bitmaptext') {
+                    else if (prop.name == 'fontFamily'&& node.className=='bitmaptext') {
                         if (value == 0) {
                             chooseFile('font', true, function () {
                                 let fontObj = eval("(" + arguments[1] + ")");
@@ -490,7 +493,7 @@ class PropertyView extends React.Component {
                                 //回调完成
                                 oProgress.style.display = 'none';
                                 //设置默认值
-                                this.selectNode.props[prop.name+'Key'] = fontObj.name;
+                                node.props[prop.name+'Key'] = fontObj.name;
                                 //更新属性面板
                                 const obj = {};
                                 obj[prop.name] = fontObj.file;
@@ -511,12 +514,12 @@ class PropertyView extends React.Component {
                             bTag = false;
                         }
                         else {
-                            this.selectNode.props[prop.name+'Key'] = this.getFontDefault(value);
+                            node.props[prop.name+'Key'] = this.getFontDefault(value);
                             v = value;
                         }
                     }
                     else if (prop.name == 'fontFamily') {
-                        this.selectNode.props[prop.name+'Key']=value
+                        node.props[prop.name+'Key']=value
                         v = value;
                     }
                     else {
@@ -524,7 +527,7 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Boolean:
-                    this.selectNode.props[prop.name+'Key'] = value;
+                    node.props[prop.name+'Key'] = value;
                     if(prop.name == 'flexWrap'){
                         value = value ?'wrap':'nowrap'
                     }
@@ -532,15 +535,15 @@ class PropertyView extends React.Component {
                     break;
                 case propertyType.Boolean2:
                     if (value === null) {
-                        delete  this.selectNode.props.initVisible;
+                        delete  node.props.initVisible;
                     }
                     else {
-                        this.selectNode.props.initVisible = value;
+                        node.props.initVisible = value;
                     }
                     bTag = false;
                     break;
                 case propertyType.TbSelect:
-                    let header = this.selectNode.props.header;
+                    let header = node.props.header;
                     let tbWidth;
                     value = parseInt(value);
                     if(header !== undefined) {
@@ -581,16 +584,16 @@ class PropertyView extends React.Component {
                     if(typeof value == 'boolean'){
                         let colorStr;
                         if(value){
-                            colorStr =this.selectNode.props[prop.name+'_originColor'];
-                            this.selectNode.props[prop.name+'_originColor']=null;
+                            colorStr =node.props[prop.name+'_originColor'];
+                            node.props[prop.name+'_originColor']=null;
                         }else{
                             colorStr='transparent';
-                            this.selectNode.props[prop.name+'_originColor'] = this.selectNode.props[prop.name];
+                            node.props[prop.name+'_originColor'] = node.props[prop.name];
                         }
                         v=colorStr;
                     }else{
-                        if(this.selectNode.props[prop.name+'_originColor']){
-                            this.selectNode.props[prop.name+'_originColor']=value.target.value
+                        if(node.props[prop.name+'_originColor']){
+                            node.props[prop.name+'_originColor']=value.target.value
                         }else{
                             v=value.target.value;
                         }
@@ -605,9 +608,9 @@ class PropertyView extends React.Component {
 
         if(bTag){
             let obj = {};
-            if(this.selectNode.className == "table" && prop.name == "header"){
+            if(node.className == "table" && prop.name == "header"){
                 if(v <= 0 || v == null) return;
-                let header = this.selectNode.props.header;
+                let header = node.props.header;
                 if(header !== undefined){
                     header = header.split(",");
                     let b = v - header.length;
@@ -629,23 +632,23 @@ class PropertyView extends React.Component {
                     }
                 }
                 obj[prop.name] = header.join(",");
-                this.selectNode.props.header = header.join(",");
-                this.selectNode.node.header = header.join(",");
+                node.props.header = header.join(",");
+                node.node.header = header.join(",");
                 this.onStatusChange({updateProperties: obj});
                 WidgetActions['updateProperties'](obj, false, true);
                 this.refs.TbCome.updateColumn(v,header);
             }
-            else if(this.selectNode.className == "table" && prop.name == "head"){
+            else if(node.className == "table" && prop.name == "head"){
                 obj['headerColor'] = v;
-                this.selectNode.props.headerColor = v;
-                this.selectNode.node.headerColor = v;
+                node.props.headerColor = v;
+                node.node.headerColor = v;
                 this.onStatusChange({updateProperties: obj});
                 WidgetActions['updateProperties'](obj, false, true);
             }
-            else if(this.selectNode.className == "table" && prop.name == "showHeader"){
+            else if(node.className == "table" && prop.name == "showHeader"){
                 obj[prop.name] = v;
-                this.selectNode.props.showHeader = v;
-                this.selectNode.node.showHeader = v;
+                node.props.showHeader = v;
+                node.node.showHeader = v;
                 this.onStatusChange({updateProperties: obj});
                 WidgetActions['updateProperties'](obj, false, true);
                 this.setState({
@@ -1036,7 +1039,7 @@ class PropertyView extends React.Component {
             if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems','type'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
             }
-            else if (item.name == 'fontFamily' && node.props[item.name + 'Key'] && this.selectNode.className=='bitmaptext') {
+            else if (item.name == 'fontFamily' && node.props[item.name + 'Key'] && node.className=='bitmaptext') {
                 defaultValue = node.props[item.name + 'Key'];
             }
             else if (item.name == 'fontFamily' && node.props[item.name + 'Key']) {
@@ -1107,9 +1110,9 @@ class PropertyView extends React.Component {
         else if(item.type == propertyType.Button){
             if(className == "track"){
                 //console.log(this.selectNode,item);
-                if(this.selectNode.timerWidget == null){
+                if(node.timerWidget == null){
                     // "track" 是轨迹 ， "effect" 是动效
-                    if(this.selectNode.props.trackType == "track"){
+                    if(node.props.trackType == "track"){
                         if(item.name == "_editTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
@@ -1134,15 +1137,15 @@ class PropertyView extends React.Component {
         else if (node.props[item.name] === undefined) {
               if (className == "table" && item.name == "headerFontSize") {
                 defaultValue = 26;
-                this.selectNode.props.headerFontSize = 26;
-                this.selectNode.node.headerFontSize = 26;
+                node.props.headerFontSize = 26;
+                node.node.headerFontSize = 26;
                 let obj = {};
                 obj['headerFontSize'] = 26;
                 WidgetActions['updateProperties'](obj, false, true);
             } else if (className == "table" && item.name == "fontSize") {
                 defaultValue = 26;
-                this.selectNode.props.fontSize = 26;
-                this.selectNode.node.fontSize = 26;
+                node.props.fontSize = 26;
+                node.node.fontSize = 26;
                 let obj = {};
                 obj['fontSize'] = 26;
                 WidgetActions['updateProperties'](obj, false, true);
@@ -1223,7 +1226,7 @@ class PropertyView extends React.Component {
             if (item.name == 'originY' || item.name == 'originPos') {
                 selectClassName = 'originIcon';
             }
-            else if (item.name == 'fontFamily' && this.selectNode.className=='bitmaptext') {
+            else if (item.name == 'fontFamily' && node.className=='bitmaptext') {
                 defaultProp.name = item.name;
                 defaultProp.options.push(<Option key={0}>
                     <div className={selectClassName}></div>
@@ -1418,7 +1421,7 @@ class PropertyView extends React.Component {
                 style['lineHeight'] = "22px";
             }
         }
-        else if(className == "track" && this.selectNode.timerWidget == null
+        else if(className == "track" && node.timerWidget == null
                 && (item.name == "_editTrack" || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") ){
             style['margin'] = "0";
             if(item.name == "_saveTrack" || item.name == "_saveAsTrack"){
