@@ -189,7 +189,10 @@ class TimelineView extends React.Component {
                     }
                 }
 			}
-            if(changed.currentTrack && changed.currentTrack.props && changed.currentTrack.props.trackType != "track"){
+            if(changed.currentTrack && changed.currentTrack.props && changed.currentTrack.props.trackType == "effect"){
+                this.setState({
+                    timerNode : null
+                });
                 return;
             }
 			if (node)

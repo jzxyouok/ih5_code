@@ -2135,6 +2135,20 @@ export default Reflux.createStore({
             } else {
                 saveTree(copyObj, this.currentWidget, false, true);
             }
+            //console.log(copyObj);
+
+            //复制时间轴轨迹的时候改变轨迹属性
+            if(copyObj.children && copyObj.children.length> 0){
+                copyObj.children.map((v,i)=>{
+                    if(v.cls == 'track' && v.props.trackType == "timer"){
+                        v.props.trackType = "track";
+                    }
+                });
+            }
+            if(copyObj.cls == 'track' && copyObj.props.trackType == "timer"){
+                copyObj.props.trackType = "track";
+            };
+            //console.log(copyObj);
         }
     },
     pasteWidget: function() {
@@ -2496,6 +2510,21 @@ export default Reflux.createStore({
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
+                console.log(1,obj);
+
+                //把时间轴轨迹从时间轴里面拖拽出来的时候改变轨迹属性，或则只是拖拽轨迹
+                if(obj.timerWidget == null){
+                    if(obj.className == "track"){
+                        obj.props.trackType = "track";
+                    }
+                    else {
+                        obj.children.map((v,i)=>{
+                            if(v.className == 'track'){
+                                v.props.trackType = "track";
+                            }
+                        })
+                    }
+                }
 
                 var destIndex = dest.children.indexOf(obj);
                 if (destIndex != index) {
@@ -2630,7 +2659,20 @@ export default Reflux.createStore({
              skipProperty = false;
          }
 
-       //console.log(obj,this.currentWidget );
+
+        //当轨迹处于时间轴外面的时候,并且处于动态模式,移动位置，所有关键点也移动位置
+        if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
+            if(tempWidget.props.positionX != obj.positionX && tempWidget.props.positionY != obj.positionY){
+                if(tempWidget.timerWidget == null && tempWidget.props.trackType == "effect"){
+                    tempWidget.children.map((v,i)=>{
+                        if(v.className == "track"){
+                            syncTrack(tempWidget, v.props)
+                        }
+                    })
+                }
+            }
+        }
+        //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {

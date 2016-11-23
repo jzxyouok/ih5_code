@@ -65,7 +65,6 @@ class CreateModule extends React.Component {
                     EffectAction['updateEffect'](id,effectData)
                 }
             }
-
             this.setState({
                 show : isCreate
             })
@@ -191,7 +190,7 @@ class CreateModule extends React.Component {
 
     render() {
         return (
-            <div className={ $class("CreateModule f--hcc",{"hidden": !this.state.show })}>
+            <div className={ $class("CreateEffect f--hcc",{"hidden": !this.state.show })}>
                 <div className="CM-layer"></div>
 
                 <div className="CM-main">
