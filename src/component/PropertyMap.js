@@ -62,8 +62,8 @@ let propMapping = {
 
     'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools'},
 
-    'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体'},
     'fontSize': {name:'fontSize', showName:'字体大小', type: propertyType.Number,group:'tools', default: 26},
+    'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体'},
     'fontFill': {name:'fontFill', showName:'字体颜色', type: propertyType.Color,group:'tools', default: '#000000'},
 
     'value': {name:'value', showName:'内容', type: propertyType.Text,  default: ''},
@@ -516,13 +516,11 @@ let modifyPropList = (list, className, type) => {
     //不显示出来的属性
     //list的元素可能没有showName,暂时用name替代.遇到这种情况,应在propMapping中添加进去
     list.map((v, i) => {
-
         if (v.name == 'width' || v.name == 'height') {
             if(scaleXTag && widthTag) {
                 v.type = propertyType.Hidden;
             }
         }
-
 
       if(['flex','canvas','dom','pagecontainer'].indexOf(className)>=0){
             if(scaleXTag && widthTag) {
@@ -541,6 +539,8 @@ let modifyPropList = (list, className, type) => {
         }
         if (['shapeWidth', 'shapeHeight'].indexOf(v.name) >= 0) {
             if(type==modeType.flex && className=='rect'){
+               ;
+            }else if((type==modeType.dom||type==modeType.canvas) && className=='container'){
                ;
             }else{
                 v.type = propertyType.Hidden;
@@ -949,4 +949,46 @@ dealWithOriginalPropertyMap();
 //添加伪对象的属性
 addCustomWidgetProperties();
 
-export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType,sortGroupArr};
+
+/**
+ * PropertyView WidgetStore PropertyViewComponet都会用到
+ * 用于判断对象是否处于flex模式下 和 本身是canvas
+ * 如果满足上述条件,其自身可以添加%或px
+*/
+function fnIsFlex(node,firstNodeClassName=node.className) {
+
+
+    if(firstNodeClassName=='canvas') {
+        return true;
+    }
+
+    if (node.className == 'flex') {
+        return true;
+    }
+    else if (node.className == 'canvas') {
+        return false;
+    }
+    else if (node.className == 'root') {
+        return false;
+    }
+    else {
+        return  fnIsFlex(node.parent,firstNodeClassName);
+    }
+};
+/**
+ * PropertyViewComponet用到
+ * 用于判断canvas是否处于flex模式下,如果是,则不能填写%.搞得这么复杂,真无奈啊
+ * */
+function fnCanvasIsUnderFlex(node,firstNodeClassName=node.className){
+    if(firstNodeClassName=='canvas') {
+        if(node.className=='flex'){
+            return true;
+        } else if (node.className == 'root') {
+            return false;
+        }else {
+            return  fnCanvasIsUnderFlex(node.parent,firstNodeClassName);
+        }
+    }
+}
+
+export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType,sortGroupArr,fnIsFlex,fnCanvasIsUnderFlex};

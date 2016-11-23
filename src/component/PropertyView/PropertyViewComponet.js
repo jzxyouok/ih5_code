@@ -6,23 +6,9 @@ import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu
 import  $ from 'jquery';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
+import {fnIsFlex,fnCanvasIsUnderFlex} from '../PropertyMap'
 const MenuItem = Menu.Item;
 let count=0;
-
-function fnIsFlex(node) {
-    if (node.className == 'flex') {
-        return true;
-    }
-    else if (node.className == 'root') {
-        return false;
-    }
-    else if (node.className == 'canvas') {
-        return true;
-    }
-    else {
-        return  fnIsFlex(node.parent);
-    }
-}
 
 class SwitchMore extends React.Component {
     constructor(props) {
@@ -270,7 +256,7 @@ class ConInputNumber extends React.Component {
        }).change(function () {
 
            //todo:怎么能拿到当前节点
-           //todo:100%和100px 更改不触发
+
            if(con_currentWidget && fnIsFlex(con_currentWidget) &&['width', 'height'
                    ,'minWidth', 'minHeight', 'maxWidth', 'maxHeight'
                    ,'marginUp','marginDown','marginLeft','marginRight'
@@ -278,7 +264,7 @@ class ConInputNumber extends React.Component {
                ].indexOf(thisObj.props.name) >= 0) {
                let str = $(this).val();
                let pObj = $('.conInputNumber' + thisObj.state.count).parent();
-               if (str.indexOf('%') >= 0) {
+               if (str.indexOf('%') >= 0 && !fnCanvasIsUnderFlex(con_currentWidget)) {
                    let newVal =str.split('%')[0];
                    pObj.removeClass('ant-input-px');
                    pObj.addClass('ant-input-rate');

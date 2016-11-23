@@ -1,6 +1,6 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
-import {getPropertyMap, checkChildClass} from '../component/PropertyMap'
+import {getPropertyMap, checkChildClass,fnIsFlex} from '../component/PropertyMap'
 
 var bridge = require('bridge');
 bridge.create();
@@ -1688,21 +1688,6 @@ function drop(e) {
     }
   }
 }
-
-function fnIsFlex(node) {
-    if (node.className == 'flex') {
-        return true;
-    }
-    else if (node.className == 'root') {
-        return false;
-    }
-    else if (node.className == 'canvas') {
-        return true;
-    }
-    else {
-        return  fnIsFlex(node.parent);
-    }
-}
 /*
 function downloadFile(filename, text) {
     var pom = document.createElement('a');
@@ -1952,6 +1937,11 @@ export default Reflux.createStore({
                   //如果在flex模式下，添加param:{'alignItems':'flex-start'}
                   props['alignItems'] = 'flex-start';
                   props['alignItemsKey'] = '0 0 auto';
+              }else if(className==='canvas'){
+                  props['width'] = '640px';
+                  props['height'] = '1040px';
+                  props['widthisRate'] = false;
+                  props['heightisRate'] = false;
               } else {
                   props['flex'] = '0 0 auto';
                   props['flexKey'] = '0 0 auto';
@@ -4075,4 +4065,4 @@ export default Reflux.createStore({
     }
 });
 
-export {globalToken, nodeType, nodeAction, varType, funcType, keepType,fnIsFlex, isCustomizeWidget, dataType, classList, selectableClass}
+export {globalToken, nodeType, nodeAction, varType, funcType, keepType,isCustomizeWidget, dataType, classList, selectableClass}

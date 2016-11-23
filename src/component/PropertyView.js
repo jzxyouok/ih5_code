@@ -13,7 +13,7 @@ import cls from 'classnames';
 import { SwitchMore,DropDownInput ,ConInputNumber,ConButton} from  './PropertyView/PropertyViewComponet';
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
-import {propertyType, getPropertyMap,sortGroupArr} from './PropertyMap'
+import {propertyType, getPropertyMap,sortGroupArr,fnIsFlex} from './PropertyMap'
 import {chooseFile} from  '../utils/upload';
 require("jscolor/jscolor");
 import TbCome from './TbCome';
@@ -232,20 +232,7 @@ class PropertyView extends React.Component {
                 return <Input {...defaultProp} />;
         }
     }
-    fnIsFlex(node) {
-    if (node.className == 'flex') {
-        return true;
-    }
-    else if (node.className == 'root') {
-        return false;
-    }
-    else if (node.className == 'canvas') {
-        return true;
-    }
-    else {
-        return  this.fnIsFlex(node.parent);
-    }
-}
+
     onChangeProp(prop, value) {
         let v;
         var bTag = true; //开关,控制执行
@@ -276,7 +263,7 @@ class PropertyView extends React.Component {
                         bTag = false;
                         break;
                     }
-                    else if(this.fnIsFlex(this.selectNode)){
+                    else if(fnIsFlex(this.selectNode)){
                         let obj={};
                         obj[prop.name] =  parseInt(value);
                         WidgetActions['updateProperties'](obj, false, false);
@@ -522,7 +509,7 @@ class PropertyView extends React.Component {
                         }
                     }
                     else if (prop.name == 'fontFamily') {
-                        this.selectNode.props[prop.name+'Key']= this.getFontDefault(value);
+                        this.selectNode.props[prop.name+'Key']=value
                         v = value;
                     }
                     else {
@@ -579,7 +566,28 @@ class PropertyView extends React.Component {
                     },()=>{
                         this.setState({fields: this.getFields()});
                     });
+
                     bTag = false;
+                    break;
+                case propertyType.Color:
+                case propertyType.TbColor:
+                    if(typeof value == 'boolean'){
+                        let colorStr;
+                        if(value){
+                            colorStr =this.selectNode.props[prop.name+'_originColor'];
+                            this.selectNode.props[prop.name+'_originColor']=null;
+                        }else{
+                            colorStr='transparent';
+                            this.selectNode.props[prop.name+'_originColor'] = this.selectNode.props[prop.name];
+                        }
+                        v=colorStr;
+                    }else{
+                        if(this.selectNode.props[prop.name+'_originColor']){
+                            this.selectNode.props[prop.name+'_originColor']=value.target.value
+                        }else{
+                            v=value.target.value;
+                        }
+                    }
                     break;
                 default:
                     v = value;
@@ -642,8 +650,11 @@ class PropertyView extends React.Component {
             else {
                 let obj={};
                 obj[prop.name] = v;
+
                 this.onStatusChange({updateProperties: obj});
+
                 WidgetActions['updateProperties'](obj, false, true);
+
             }
         }
 
@@ -738,26 +749,28 @@ class PropertyView extends React.Component {
     onChangePropDom(item, value) {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
             this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
-        }else if(item.type === propertyType.Color || item.type === propertyType.TbColor){
-            if(typeof value == 'boolean'){
-                let colorStr;
-                if(value){
-                    colorStr =this.selectNode.props[item.name+'_originColor'];
-                    this.selectNode.props[item.name+'_originColor']=null;
-                }else{
-                    colorStr='transparent';
-                    this.selectNode.props[item.name+'_originColor'] = this.selectNode.props[item.name];
-                }
-                this.onChangeProp(item,colorStr);
-            }else{
-
-                if(this.selectNode.props[item.name+'_originColor']){
-                    this.selectNode.props[item.name+'_originColor']=value.target.value
-                }else{
-                    this.onChangeProp(item,value.target.value);
-                }
-            }
-        } else{
+        }
+        // else if(item.type === propertyType.Color || item.type === propertyType.TbColor){
+        //     if(typeof value == 'boolean'){
+        //         let colorStr;
+        //         if(value){
+        //             colorStr =this.selectNode.props[item.name+'_originColor'];
+        //             this.selectNode.props[item.name+'_originColor']=null;
+        //         }else{
+        //             colorStr='transparent';
+        //             this.selectNode.props[item.name+'_originColor'] = this.selectNode.props[item.name];
+        //         }
+        //         this.onChangeProp(item,colorStr);
+        //     }else{
+        //
+        //         if(this.selectNode.props[item.name+'_originColor']){
+        //             this.selectNode.props[item.name+'_originColor']=value.target.value
+        //         }else{
+        //             this.onChangeProp(item,value.target.value);
+        //         }
+        //     }
+        // }
+        else{
             this.onChangeProp(item,value);
         }
     }
@@ -1044,7 +1057,8 @@ class PropertyView extends React.Component {
                 defaultValue = node.props[item.name + 'Key'];
             }
             else if (item.name == 'fontFamily' && node.props[item.name + 'Key']) {
-                defaultValue = node.props.fontFamily;
+              //  defaultValue = node.props.fontFamily;
+                defaultValue = node.props[item.name + 'Key'];
             } else if ((item.name == 'forwardTransition' || item.name == 'backwardTransition') && node.props[item.name + '_val']) {
                 defaultValue = node.props[item.name + '_val'];
             }  else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
