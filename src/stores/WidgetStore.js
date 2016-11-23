@@ -1828,10 +1828,11 @@ export default Reflux.createStore({
         //如果父中有检查出有小模块就不能被选择
         if(widget&&widget.parent) {
             let temp = widget;
-            let parentIsBlock = false;
-            while (temp&&(temp.parent || parentIsBlock == true)) {
+            // let parentIsBlock = false;
+            while (temp&&temp.parent) {
+            // while (temp&&(temp.parent || parentIsBlock == true)) {
                 if(temp.parent&&temp.parent.props.block) {
-                    parentIsBlock = true;
+                    // parentIsBlock = true;
                     widget = temp.parent;
                 }
                 temp = temp.parent;

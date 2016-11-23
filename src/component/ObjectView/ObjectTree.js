@@ -307,10 +307,14 @@ class ObjectTree extends React.Component {
         let keys = [];
         let getAllChildKeys = (widget)=>{
             if(widget.children) {
-                keys.push(widget.key);
-                widget.children.forEach((v)=>{
-                    getAllChildKeys(v);
-                });
+                if(widget.key===this.state.selectWidget.key
+                    ||(widget.key!==this.state.selectWidget.key&&!widget.props.block)) {
+                    keys.push(widget.key);
+                    widget.children.forEach((v)=>{
+                        getAllChildKeys(v);
+                    });
+                }
+
             }
         };
         getAllChildKeys(this.state.selectWidget);
