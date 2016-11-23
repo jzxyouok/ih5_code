@@ -6,6 +6,7 @@ import $ from 'jquery'
 
 //let domainName = "http://test-beta.ih5.cn/editor3b/";
 let ContentType = "application/json";
+let systemList = [];
 
 export default Reflux.createStore({
     init: function() {
@@ -17,7 +18,19 @@ export default Reflux.createStore({
         this.listenTo(Actions['toggleMode'], this.toggleMode);
         this.listenTo(Actions['loadEffect'], this.loadEffect);
         this.listenTo(Actions['getSpecificEffect'], this.getSpecificEffect);
+        this.listenTo(Actions['returnStart'], this.returnStart);
         this.token = Cookies.get('ih5token');
+        this.system();
+    },
+
+    system: function(){
+        WidgetActions['ajaxSend'](this.token, 'POST', 'app/effectSystemList', null, null, function(text) {
+            let result = JSON.parse(text);
+            //console.log(result);
+            if (result) {
+                systemList = result;
+            }
+        }.bind(this));
     },
 
     getEffectList: function() {
@@ -25,7 +38,10 @@ export default Reflux.createStore({
             let result = JSON.parse(text);
             //console.log(result);
             if (result) {
-                this.trigger({effectList : result});
+                let allData = systemList;
+                Array.prototype.push.apply(allData, result);
+                //console.log(Array);
+                this.trigger({effectList : allData});
             }
         }.bind(this));
     },
@@ -89,6 +105,10 @@ export default Reflux.createStore({
                 }
             }
         }.bind(this));
+    },
+
+    returnStart:function(){
+        this.trigger({returnStart : true});
     }
 });
 

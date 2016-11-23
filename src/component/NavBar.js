@@ -1178,9 +1178,22 @@ class NavBar extends React.Component {
         })
     }
 
-    addEffectFuc(id){
+    addEffectFuc(id,is_system){
         if(this.state.isAddEffect){
-            EffectAction['getSpecificEffect'](true,id);
+            if(is_system == 0){
+                EffectAction['getSpecificEffect'](true,id);
+            }
+            else {
+                this.state.effectList.map((v,i)=>{
+                    if(v.id == id){
+                        let effectData = JSON.parse(v.data);
+                        effectData.props.key = undefined;
+                        effectData.props.trackType = "effect";
+                        effectData.props.is_system = 1;
+                        WidgetActions['addEffect'](effectData);
+                    }
+                })
+            }
         }
     }
 
@@ -1205,8 +1218,10 @@ class NavBar extends React.Component {
         }
         if (data.addSpecificEffect) {
             let effectData = JSON.parse(data.addSpecificEffect.data);
+            //console.log(effectData);
             effectData.props.key = undefined;
             effectData.props.trackType = "effect";
+            effectData.props.is_system = 0;
             WidgetActions['addEffect'](effectData);
         }
     }
@@ -1518,7 +1533,7 @@ class NavBar extends React.Component {
                                                             ? this.state.effectList.map((v,i)=>{
                                                                 return  <li key={i}
                                                                             className={$class({"not-active" : !this.state.isAddEffect})}
-                                                                            onClick={this.addEffectFuc.bind(this, v.id)} >
+                                                                            onClick={this.addEffectFuc.bind(this, v.id,v.is_system)} >
                                                                             <div className="title f--hlc">
                                                                                 <span className="li-icon" />
                                                                                 <div className="TitleName">{ v.name }</div>
