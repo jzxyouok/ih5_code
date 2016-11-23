@@ -75,7 +75,11 @@ class PropertyView extends React.Component {
     }
 
     //获取封装的form组件
-    getInputBox(type, defaultProp,item) {
+    getInputBox(type,defaultProp,item,cNode) {
+        let node = this.selectNode;
+        if(cNode) {
+            node = cNode;
+        }
         let style = {};
         let defaultData =  defaultProp;
         switch (type) {
@@ -119,8 +123,8 @@ class PropertyView extends React.Component {
                                     min={0}
                                     {...defaultProp}
                                     className='slider-per'
-                                    onChange = { this.sliderChange.bind(this) }
-                                    onAfterChange={ this.sliderUp.bind(this) } />
+                                    onChange = { this.sliderChange.bind(this, node) }
+                                    onAfterChange={ this.sliderUp.bind(this, node) } />
                         </div>;
 
             case propertyType.Text:
@@ -185,7 +189,7 @@ class PropertyView extends React.Component {
                     <div style={{ width: "58px", marginLeft: "3px", position:"relative"}}>
                         <Input value={ this.state.tbLineWidth }
                                onChange={ this.tbLineWidthInput.bind(this) }
-                               onBlur={ this.tbLineWidth.bind(this) }
+                               onBlur={ this.tbLineWidth.bind(this, node) }
                                style={{height:"22px",padding:"0 7px"}} />
                         <span className="TbSelect-icon" />
                     </div>
@@ -212,7 +216,7 @@ class PropertyView extends React.Component {
                     <div style={{ width: "58px", marginLeft: "3px",height:"22px" }}>
                         <Input placeholder={ defaultProp.tbHeight }
                                onChange={ this.tbHeadHeightInput.bind(this) }
-                               onBlur={ this.tbHeadHeight.bind(this) }
+                               onBlur={ this.tbHeadHeight.bind(this, node) }
                                style={{height:"22px",padding:"0 7px"}} />
                         <span className="TbColor-icon" />
                     </div>
@@ -259,9 +263,13 @@ class PropertyView extends React.Component {
         }
     }
 
-    onChangeProp(prop, value) {
+    onChangeProp(prop, cNode, value) {
         let v;
         let node = this.selectNode;
+        if(cNode) {
+            node = cNode;
+        }
+        //let
         var bTag = true; //开关,控制执行
         if (value === undefined) {
             v = null;
@@ -274,8 +282,8 @@ class PropertyView extends React.Component {
                         obj[prop.name] = v;
                         obj.scaleY = obj.scaleX = 1;
                         delete node.node.defaultData;
-                        this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, true);
+                        this.onStatusChange({updateProperties: obj, changeNode:node});
+                        WidgetActions['updateProperties'](obj, false, true, undefined, node);
                         bTag = false;
                         break;
                     } else if (prop.name == 'shapeWidth' || prop.name == 'shapeHeight') {
@@ -285,15 +293,15 @@ class PropertyView extends React.Component {
                         obj[prop.name] = v;
                         obj.scaleY = obj.scaleX = 1;
                         delete node.node.defaultData;
-                        this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, true);
+                        this.onStatusChange({updateProperties: obj, changeNode:node});
+                        WidgetActions['updateProperties'](obj, false, true, undefined, node);
                         bTag = false;
                         break;
                     }
                     else if(fnIsFlex(node)){
                         let obj={};
                         obj[prop.name] =  parseInt(value);
-                        WidgetActions['updateProperties'](obj, false, false);
+                        WidgetActions['updateProperties'](obj, false, false, undefined, node);
                         bTag = false;
                         break;
                     }
@@ -305,8 +313,8 @@ class PropertyView extends React.Component {
                         obj[prop.name] = parseInt(value);
                         obj.scaleY = obj.scaleX = 1;
                         delete node.node.defaultData;
-                        this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, true);
+                        this.onStatusChange({updateProperties: obj, changeNode:node});
+                        WidgetActions['updateProperties'](obj, false, true, undefined, node);
                         bTag = false;
                         break;
                     }
@@ -331,10 +339,10 @@ class PropertyView extends React.Component {
                         d=d||0;
                         let obj={
                             margin:{marginUp:a,marginRight:d,marginDown:b,marginLeft:c}
-                        }
+                        };
 
-                        this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, false);
+                        this.onStatusChange({updateProperties: obj, changeNode:node});
+                        WidgetActions['updateProperties'](obj, false, false, undefined, node);
                         bTag = false;
                     }
                     else if (['paddingUp','paddingDown','paddingLeft','paddingRight'
@@ -356,8 +364,8 @@ class PropertyView extends React.Component {
                         let obj={
                             padding:{paddingUp:a,paddingRight:d,paddingDown:b,paddingLeft:c}
                         }
-                        this.onStatusChange({updateProperties: obj});
-                        WidgetActions['updateProperties'](obj, false, false);
+                        this.onStatusChange({updateProperties: obj, changeNode:node});
+                        WidgetActions['updateProperties'](obj, false, false, undefined, node);
                         bTag = false;
                     }
                         v = parseFloat(value);
@@ -377,14 +385,14 @@ class PropertyView extends React.Component {
                             let obj = {}
                             obj.scaleX = parseInt(value) / defaultWidth;
                             obj.scaleY = ( oldHeight * value) / (oldWidth * defaultHeight);
-                            this.onStatusChange({updateProperties: obj});
-                            WidgetActions['updateProperties'](obj, false, false);
+                            this.onStatusChange({updateProperties: obj, changeNode:node});
+                            WidgetActions['updateProperties'](obj, false, false, undefined, node);
                         } else if ('scaleY' == prop.name) {
                             let obj = {}
                             obj.scaleY = parseInt(value) / defaultHeight;
                             obj.scaleX = ( oldWidth * value) / (oldHeight * defaultWidth);
-                            this.onStatusChange({updateProperties: obj});
-                            WidgetActions['updateProperties'](obj, false, false);
+                            this.onStatusChange({updateProperties: obj, changeNode:node});
+                            WidgetActions['updateProperties'](obj, false, false, undefined, node);
                         }
                         bTag = false;
                         break;
@@ -456,7 +464,7 @@ class PropertyView extends React.Component {
                             originY:y,
                             positionX:posX,
                             positionY:posY
-                        }, true, false);
+                        }, true, false, undefined, node);
                         bTag = false;
                     }
                     break;
@@ -519,8 +527,8 @@ class PropertyView extends React.Component {
                                 //更新属性面板
                                 const obj = {};
                                 obj[prop.name] = fontObj.file;
-                                this.onStatusChange({updateProperties: obj});
-                                WidgetActions['updateProperties'](obj, false, true);
+                                this.onStatusChange({updateProperties: obj, changeNode:node});
+                                WidgetActions['updateProperties'](obj, false, true, undefined, node);
 
                             }.bind(this), function (evt) {
                                 let oProgress = document.getElementById('ant-progress');
@@ -541,7 +549,7 @@ class PropertyView extends React.Component {
                         }
                     }
                     else if (prop.name == 'fontFamily') {
-                        node.props[prop.name+'Key']=value
+                        node.props[prop.name+'Key']=value;
                         v = value;
                     }
                     else {
@@ -694,23 +702,23 @@ class PropertyView extends React.Component {
                 obj[prop.name] = header.join(",");
                 node.props.header = header.join(",");
                 node.node.header = header.join(",");
-                this.onStatusChange({updateProperties: obj});
-                WidgetActions['updateProperties'](obj, false, true);
+                this.onStatusChange({updateProperties: obj, changeNode:node});
+                WidgetActions['updateProperties'](obj, false, true, undefined, node);
                 this.refs.TbCome.updateColumn(v,header);
             }
             else if(node.className == "table" && prop.name == "head"){
                 obj['headerColor'] = v;
                 node.props.headerColor = v;
                 node.node.headerColor = v;
-                this.onStatusChange({updateProperties: obj});
-                WidgetActions['updateProperties'](obj, false, true);
+                this.onStatusChange({updateProperties: obj, changeNode:node});
+                WidgetActions['updateProperties'](obj, false, true, undefined, node);
             }
             else if(node.className == "table" && prop.name == "showHeader"){
                 obj[prop.name] = v;
                 node.props.showHeader = v;
                 node.node.showHeader = v;
-                this.onStatusChange({updateProperties: obj});
-                WidgetActions['updateProperties'](obj, false, true);
+                this.onStatusChange({updateProperties: obj, changeNode:node});
+                WidgetActions['updateProperties'](obj, false, true, undefined, node);
                 this.setState({
                     tbHeaderToggle : !v
                 },()=>{
@@ -721,45 +729,45 @@ class PropertyView extends React.Component {
                 let obj={};
                 obj[prop.name] = v;
 
-                this.onStatusChange({updateProperties: obj});
+                this.onStatusChange({updateProperties: obj, changeNode:node});
 
-                WidgetActions['updateProperties'](obj, false, true);
+                WidgetActions['updateProperties'](obj, false, true, undefined, node);
 
             }
         }
 
     }
-    sliderUp(event){
+    sliderUp(node,event){
         const obj = {};
         let v = parseFloat(event) / 100 ;
         obj['alpha'] = v;
         this.selectNode.props.alpha = v;
         this.selectNode.node.alpha = v;
-        this.onStatusChange({updateProperties: obj});
-        WidgetActions['updateProperties'](obj, false, true);
+        this.onStatusChange({updateProperties: obj, changeNode: node});
+        WidgetActions['updateProperties'](obj, false, true, undefined, node);
     }
-    sliderChange(event){
+    sliderChange(node, event){
         const obj = {};
         let v = parseFloat(event) / 100 ;
         obj['alpha'] = v;
-        this.selectNode.props.alpha = v;
-        this.selectNode.node.alpha = v;
-        this.onStatusChange({updateProperties: obj});
-        WidgetActions['updateProperties'](obj, false, true,true);
+        node.props.alpha = v;
+        node.node.alpha = v;
+        this.onStatusChange({updateProperties: obj, changeNode: node});
+        WidgetActions['updateProperties'](obj, false, true, true, node);
     }
     tbHeadHeightInput(event){
         this.setState({
             tbHeadHeight : event.target.value
         })
     }
-    tbHeadHeight(){
+    tbHeadHeight(node){
         let v = parseInt(this.state.tbHeadHeight);
         const obj = {};
         obj['headerHeight'] = v;
         this.selectNode.props.headerHeight = v;
         this.selectNode.node.headerHeight = v;
-        this.onStatusChange({updateProperties: obj});
-        WidgetActions['updateProperties'](obj, false, true);
+        this.onStatusChange({updateProperties: obj, changeNode: node});
+        WidgetActions['updateProperties'](obj, false, true, undefined, node);
     }
 
     tbLineWidthInput(event){
@@ -770,7 +778,7 @@ class PropertyView extends React.Component {
         })
     }
 
-    tbLineWidth(){
+    tbLineWidth(node){
         if(this.state.tbLineWidth == "自动") return;
         if(this.state.tbLineWidth >= this.selectNode.props.width) return;
 
@@ -805,19 +813,20 @@ class PropertyView extends React.Component {
             this.selectNode.props.header = header.join(",");
             this.selectNode.node.header = header.join(",");
             this.onStatusChange({
-                updateProperties: obj
+                updateProperties: obj,
+                changeNode: node
             });
-            WidgetActions['updateProperties'](obj, false, true);
+            WidgetActions['updateProperties'](obj, false, true, undefined, node);
             //this.setState({fields: this.getFields()});
         }
     }
 
-    onChangePropDom(item, value) {
+    onChangePropDom(item, node, value) {
         if(item.type === propertyType.String || item.type === propertyType.Text ||item.type === propertyType.Color2){
-            this.onChangeProp(item, (value && value.target.value !== '') ? value.target.value : undefined);
+            this.onChangeProp(item, node, (value && value.target.value !== '') ? value.target.value : undefined);
         }
         else{
-            this.onChangeProp(item,value);
+            this.onChangeProp(item, node, value);
         }
     }
 
@@ -867,12 +876,12 @@ class PropertyView extends React.Component {
         let className=this.generateClassName(node);//生成className
         if(!className)  return null;
 
-        this.lockRatio(node);//初始化时,锁定部分属性面板的宽高比
-
+        if(!node.props.block) {
+            this.lockRatio(node);//初始化时,锁定部分属性面板的宽高比
+        }
         let groups = {};
         this.generateGroups(node,className,groups);//生成groups,其中涉及到html的拼接
         groups = this.sortGroups(groups);//排序groups
-
 
         let styleObj={
             "active" : !this.state.tbHeaderToggle
@@ -1176,9 +1185,17 @@ class PropertyView extends React.Component {
             if(className == "track"){
                 //console.log(this.selectNode,item);
                 if(node.timerWidget == null){
-                    // "track" 是轨迹 ， "effect" 是动效
+                    // "track" 是轨迹 ， "effect" 是动效 , "editEffect" 是 编辑动效
                     if(node.props.trackType == "track"){
-                        if(item.name == "_editTrack"){
+                        if(item.name != "_createEffect"){
+                            item.styleName = item.olderClassName + " hidden";
+                        }
+                        else {
+                            item.styleName = item.olderClassName;
+                        }
+                    }
+                    else if(node.props.trackType == "effect"){
+                        if(item.name != "_editTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else {
@@ -1186,7 +1203,7 @@ class PropertyView extends React.Component {
                         }
                     }
                     else{
-                        if(item.name != "_editTrack"){
+                        if(item.name == "_editTrack" || item.name == "_createEffect"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else {
@@ -1206,14 +1223,14 @@ class PropertyView extends React.Component {
                 node.node.headerFontSize = 26;
                 let obj = {};
                 obj['headerFontSize'] = 26;
-                WidgetActions['updateProperties'](obj, false, true);
+                WidgetActions['updateProperties'](obj, false, true, undefined, node);
             } else if (className == "table" && item.name == "fontSize") {
                 defaultValue = 26;
                 node.props.fontSize = 26;
                 node.node.fontSize = 26;
                 let obj = {};
                 obj['fontSize'] = 26;
-                WidgetActions['updateProperties'](obj, false, true);
+                WidgetActions['updateProperties'](obj, false, true, undefined, node);
             } else {
                 // defaultValue='';
                 defaultValue = node.node[item.name];
@@ -1391,16 +1408,21 @@ class PropertyView extends React.Component {
      * generateGroups中调用
      * 拼接出属性模块,并注入到groups里面
      * */
-    getInput(item,className, groups){
-
+    getInput(item,className, groups, cNode){
         let node=this.selectNode;
+        //小模块处理
+        if(cNode) {
+            //对不同mapping属性属性的处理
+            node = cNode;
+        }
+
         //设置通用默认参数和事件
         let defaultProp = {
             size: 'small',
             placeholder: item.default,
             name:item.name,
             disabled: item.readOnly === true,
-            onChange: this.onChangePropDom.bind(this, item)
+            onChange: this.onChangePropDom.bind(this, item, node)
         };
         let defaultValue =this.setComponentDefaultValue(item,className,node);
 
@@ -1487,7 +1509,9 @@ class PropertyView extends React.Component {
             }
         }
         else if(className == "track" && node.timerWidget == null
-                && (item.name == "_editTrack" || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") ){
+                && ( item.name == '_createEffect' || item.name == "_editTrack"
+                        || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") )
+        {
             style['margin'] = "0";
             if(item.name == "_saveTrack" || item.name == "_saveAsTrack"){
                 style['width'] = "50%";
@@ -1499,7 +1523,7 @@ class PropertyView extends React.Component {
         }
 
         groups[groupName].push(
-            <div key={item.name}
+            <div key={item.name+item.showName}
                  order={item.order}
                  className={cls('f--hlc', 'ant-row', 'ant-form-item',
                      {
@@ -1521,7 +1545,7 @@ class PropertyView extends React.Component {
                         {'ant-input-px': hasPx},
                         {'ant-input-rate': hasRate}
                     )}>
-                        {this.getInputBox(item.type, defaultProp,item)}
+                        {this.getInputBox(item.type, defaultProp, item, cNode)}
                     </div>
                 </div>
             </div>
@@ -1541,10 +1565,11 @@ class PropertyView extends React.Component {
                 let obj = WidgetStore.getWidgetByKey(item.objKey);
                 let copy = JSON.parse(JSON.stringify(item.detail));
                 if (obj && copy && copy.name && copy.type !== propertyType.Hidden) {
-                    //copy.value = obj.props[copy.name];
-                    copy.default = obj.props[copy.name];
+                    delete copy.imgClassName;
                     copy.showName = item.name;
-                    getInput(copy,className, groups);
+                    copy.default = obj.props[copy.name]?obj.props[copy.name]:copy.default;
+                    copy.value = obj.props[copy.name];
+                    getInput(copy,className, groups, obj);
                 }
             });
         } else {
@@ -1611,14 +1636,15 @@ class PropertyView extends React.Component {
             let needRender = (widget.skipRender === undefined);
 
             let selectNode = this.selectNode;
+            if(widget.changeNode) {
+                selectNode = widget.changeNode;
+            }
             let obj = widget.updateProperties;
             let className = selectNode.className;
             if (className.charAt(0) == '_')  className = 'class';
-
-           // console.log( getPropertyMap(selectNode, className, 'props'));
-
+            // console.log( getPropertyMap(selectNode, className, 'props'));
             getPropertyMap(selectNode, className, 'props').map(item => {
-               // console.log(item,obj,selectNode,needRender);
+                // console.log(item,obj,selectNode,needRender);
                 if (item.type !== propertyType.Hidden&&obj[item.name] !== undefined) {
                     if (obj[item.name] === null) {
                         delete(selectNode.props[item.name]);
@@ -1632,7 +1658,6 @@ class PropertyView extends React.Component {
                     }
                 }
             });
-
             if (needRender)
                 WidgetActions['render']();
             this.setState({fields: this.getFields()});
@@ -1746,8 +1771,8 @@ class PropertyView extends React.Component {
     }
 
     effectToggleTrack(){
-        this.selectNode.props.trackType = "track";
-        this.selectNode.node.trackType = "track";
+        this.selectNode.props.trackType = "editEffect";
+        this.selectNode.node.trackType = "editEffect";
         let obj = {};
         obj['trackType'] = "track";
         WidgetActions['updateProperties'](obj, false, true);

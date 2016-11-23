@@ -2135,6 +2135,20 @@ export default Reflux.createStore({
             } else {
                 saveTree(copyObj, this.currentWidget, false, true);
             }
+            //console.log(copyObj);
+
+            //复制时间轴轨迹的时候改变轨迹属性
+            if(copyObj.children && copyObj.children.length> 0){
+                copyObj.children.map((v,i)=>{
+                    if(v.cls == 'track' && v.props.trackType == "timer"){
+                        v.props.trackType = "track";
+                    }
+                });
+            }
+            if(copyObj.cls == 'track' && copyObj.props.trackType == "timer"){
+                copyObj.props.trackType = "track";
+            };
+            //console.log(copyObj);
         }
     },
     pasteWidget: function() {
@@ -2496,6 +2510,21 @@ export default Reflux.createStore({
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
+                console.log(1,obj);
+
+                //把时间轴轨迹从时间轴里面拖拽出来的时候改变轨迹属性，或则只是拖拽轨迹
+                if(obj.timerWidget == null){
+                    if(obj.className == "track"){
+                        obj.props.trackType = "track";
+                    }
+                    else {
+                        obj.children.map((v,i)=>{
+                            if(v.className == 'track'){
+                                v.props.trackType = "track";
+                            }
+                        })
+                    }
+                }
 
                 var destIndex = dest.children.indexOf(obj);
                 if (destIndex != index) {
@@ -2608,8 +2637,12 @@ export default Reflux.createStore({
         //this.updateHistoryRecord(historyName);
     },
 
-    updateProperties: function(obj, skipRender, skipProperty, special) {
+    updateProperties: function(obj, skipRender, skipProperty, special, widget) {
         //更新属性时,prop和node都需要同时设定,不然看不到效果
+        let tempWidget = this.currentWidget;
+        if(widget) {
+            tempWidget = widget;
+        }
 
         let isHistoryRecord = true;
         //设置透明度,用来兼容时间轴
@@ -2617,92 +2650,113 @@ export default Reflux.createStore({
         this.setAlpha(obj);
 
         //如果是this.selectWidgets更新的坐标属性，如果没有发生位移的改变则不需要更新历史记录
-        isHistoryRecord=this.setHistoryRecordByPos(obj);
+        isHistoryRecord=this.setHistoryRecordByPos(obj, tempWidget);
 
          //处理flex模式下的百分比和px
-         let isSkip= this.setFlexProps(obj);
+         let isSkip= this.setFlexProps(obj, tempWidget);
          if(isSkip) {
              skipRender = false;
              skipProperty = false;
          }
 
-        console.log(obj,this.currentWidget );
+
+        //当轨迹处于时间轴外面的时候,并且处于动态模式,移动位置，所有关键点也移动位置
+        if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
+            if(tempWidget.props.positionX != obj.positionX && tempWidget.props.positionY != obj.positionY){
+                if(tempWidget.timerWidget == null && tempWidget.props.trackType == "effect"){
+                    tempWidget.children.map((v,i)=>{
+                        if(v.className == "track"){
+                            syncTrack(tempWidget, v.props)
+                        }
+                    })
+                }
+            }
+        }
+        //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
             p.skipRender = true;
-            bridge.updateSelector(this.currentWidget.node);
+            bridge.updateSelector(tempWidget.node);
         }
         if (skipProperty) {
             p.skipProperty = true;
-            bridge.updateSelector(this.currentWidget.node);
+            bridge.updateSelector(tempWidget.node);
         }
         this.trigger(p);
 
         if(isHistoryRecord && special == undefined){
-            historyName = "更改属性" + this.currentWidget.node.name;
+            historyName = "更改属性" + tempWidget.node.name;
             this.updateHistoryRecord(historyName);
         }
     },
-/********updateProperties,内部工具方法,start***********************************************************************/
+    /********updateProperties,内部工具方法,start***********************************************************************/
     /**
      * luozheao,20161119
      * 功能:
      * 处理alpha的值,兼容时间轴?
      */
-      setAlpha:function(obj){
+    setAlpha:function(obj){
         if(obj &&obj.alpha&& obj.alpha !== 0){
             let value = parseFloat(obj.alpha);
             if(!value) {
                 obj.alpha = 1;
             }
         }
-       },
+    },
 
-        /**
-         * luozheao,20161119
-         * 功能:
-         * 处理flex模式下的百分比和px
-         */
-          setFlexProps:function (obj) {
-            if (fnIsFlex(this.currentWidget)) {
-                for (let i in obj) {
-                    if (i == 'margin' || i == 'padding') {
-                        let strArr = [];
-                        for (let v in obj[i]) {
-                            if (this.currentWidget.props[v + 'isRate'] === true) {
-                                obj[i][v] = obj[i][v] + '%';
-                            } else {
-                                obj[i][v] += 'px';
-                            }
-                            strArr.push(obj[i][v])
+    /**
+     * luozheao,20161119
+     * 功能:
+     * 处理flex模式下的百分比和px
+     */
+    setFlexProps:function (obj, widget) {
+        let cWidget = this.currentWidget;
+        if(widget) {
+            cWidget = widget;
+        }
+        if (fnIsFlex(cWidget)) {
+            for (let i in obj) {
+                if (i == 'margin' || i == 'padding') {
+                    let strArr = [];
+                    for (let v in obj[i]) {
+                        if (cWidget.props[v + 'isRate'] === true) {
+                            obj[i][v] = obj[i][v] + '%';
+                        } else {
+                            obj[i][v] += 'px';
                         }
-                        obj[i] = strArr.join(' ');
-                        //node 和props都需要设定,node控制舞台的显示,props控制初始化时的显示
-                        this.currentWidget.node[i] = strArr.join(' ');
-                        this.currentWidget.props[i] = strArr.join(' ');
-                    } else {
-                        if (this.currentWidget.props[i + 'isRate'] === true) {
-                            obj[i] += '%';
-                        } else if (this.currentWidget.props[i + 'isRate'] === false) {
-                            obj[i] += 'px';
-                        }
-                        this.currentWidget.node[i] = obj[i];
-                        this.currentWidget.props[i] = obj[i];
+                        strArr.push(obj[i][v])
                     }
+                    obj[i] = strArr.join(' ');
+                    //node 和props都需要设定,node控制舞台的显示,props控制初始化时的显示
+                    cWidget.node[i] = strArr.join(' ');
+                    cWidget.props[i] = strArr.join(' ');
+                } else {
+                    if (cWidget.props[i + 'isRate'] === true) {
+                        obj[i] += '%';
+                    } else if (cWidget.props[i + 'isRate'] === false) {
+                        obj[i] += 'px';
+                    }
+                    cWidget.node[i] = obj[i];
+                    cWidget.props[i] = obj[i];
                 }
-                return true;
             }
-            return false;
-        },
+            return true;
+        }
+        return false;
+    },
      /**
      * luozheao,20161119
      * 功能:
      * 当舞台中对象的坐标没发生改变,则不更新历史记录
      */
-         setHistoryRecordByPos:function (obj) {
+     setHistoryRecordByPos:function (obj, widget) {
+         let cWidget = this.currentWidget;
+         if(widget) {
+             cWidget = widget;
+         }
          if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
-             if(this.currentWidget.props.positionX == obj.positionX && this.currentWidget.props.positionY == obj.positionY){
+             if(cWidget.props.positionX == obj.positionX && cWidget.props.positionY == obj.positionY){
                   return false;
              }
              return true;
@@ -4119,6 +4173,9 @@ export default Reflux.createStore({
                     'blockId': 'tempTesting'
                 }
             }
+            if(this.currentWidget.props['backUpBlock']) {
+                delete this.currentWidget.props['backUpBlock'];
+            }
         }
         this.activeBlockMode(false);
         this.trigger({selectWidget:this.currentWidget});
@@ -4126,19 +4183,15 @@ export default Reflux.createStore({
     },
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){
+            let copyBlock = cpJson(this.currentWidget.props['block']);
+            this.currentWidget.props['backUpBlock'] = copyBlock;
             delete this.currentWidget.props['block'];
             this.activeBlockMode(false);
             this.trigger({selectWidget:this.currentWidget});
         }
     },
     activeBlockMode(value){
-        //let activeBlockModeKey = this.currentWidget.key;
-        //if(value) {
-            //activeBlockModeKey = null;
-        //}
-        //this.trigger({activeBlockMode: {on:value, key: activeBlockModeKey}});
         if(value) {
-            //重新赋值
             this.activeBlock = true;
             this.trigger({selectWidget:this.currentWidget});
         } else {

@@ -357,6 +357,10 @@ class ConButton extends React.Component {
     buttonAllFuc(){
         if(this.props.curNode.timerWidget == null){
             switch (this.props.item.name){
+                case "_createEffect":
+                    WidgetActions['saveEffect']();
+                    this.trackSaveAs();
+                break;
                 case "_editTrack" :
                     this.trackEdit();
                 break;
