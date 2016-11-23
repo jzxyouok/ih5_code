@@ -1111,9 +1111,17 @@ class PropertyView extends React.Component {
             if(className == "track"){
                 //console.log(this.selectNode,item);
                 if(node.timerWidget == null){
-                    // "track" 是轨迹 ， "effect" 是动效
+                    // "track" 是轨迹 ， "effect" 是动效 , "editEffect" 是 编辑动效
                     if(node.props.trackType == "track"){
-                        if(item.name == "_editTrack"){
+                        if(item.name != "_createEffect"){
+                            item.styleName = item.olderClassName + " hidden";
+                        }
+                        else {
+                            item.styleName = item.olderClassName;
+                        }
+                    }
+                    else if(node.props.trackType == "effect"){
+                        if(item.name != "_editTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else {
@@ -1121,7 +1129,7 @@ class PropertyView extends React.Component {
                         }
                     }
                     else{
-                        if(item.name != "_editTrack"){
+                        if(item.name == "_editTrack" || item.name == "_createEffect"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else {
@@ -1422,7 +1430,9 @@ class PropertyView extends React.Component {
             }
         }
         else if(className == "track" && node.timerWidget == null
-                && (item.name == "_editTrack" || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") ){
+                && ( item.name == '_createEffect' || item.name == "_editTrack"
+                        || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") )
+        {
             style['margin'] = "0";
             if(item.name == "_saveTrack" || item.name == "_saveAsTrack"){
                 style['width'] = "50%";
@@ -1681,8 +1691,8 @@ class PropertyView extends React.Component {
     }
 
     effectToggleTrack(){
-        this.selectNode.props.trackType = "track";
-        this.selectNode.node.trackType = "track";
+        this.selectNode.props.trackType = "editEffect";
+        this.selectNode.node.trackType = "editEffect";
         let obj = {};
         obj['trackType'] = "track";
         WidgetActions['updateProperties'](obj, false, true);

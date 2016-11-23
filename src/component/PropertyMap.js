@@ -382,6 +382,9 @@ let specialCaseElementMapping = (className, type)=> {
         return {
             props: {
                 'type': {name:'type', showName:'类型', type: propertyType.Select, default:'0',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
+                '_createEffect': {name:'_createEffect', showName:'生成动效',styleName:'create-btn',olderClassName:"create-btn",
+                    type: propertyType.Button,default:'',group:'buttonArea'},
+
                 '_editTrack': {name:'_editTrack', showName:'编辑运动轨迹',styleName:'edit-btn',olderClassName:"edit-btn",
                                 type: propertyType.Button,default:'',group:'buttonArea'},
 
@@ -575,7 +578,7 @@ let modifyPropList = (list, className, type) => {
     }
 
     if(className=='track'){
-        aLack.push('_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
+        aLack.push('_createEffect','_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
     }
 
 
