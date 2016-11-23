@@ -1176,7 +1176,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-  //console.log(output);
+  console.log(output);
   return output;
 }
 
