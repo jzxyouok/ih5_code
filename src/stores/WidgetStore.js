@@ -4036,7 +4036,7 @@ export default Reflux.createStore({
         globalVersion = v;
     },
 
-    addOrEditBlock(block) {
+    addOrEditBlock(block, saveAsNew) {
         //TODO:还需其他么？到设置属性的时候再考虑
         //到时还要check id
         if(this.currentWidget) {
@@ -4048,7 +4048,8 @@ export default Reflux.createStore({
                 //新建
                 this.currentWidget.props['block'] = {
                     'name': block.name,
-                    'mapping': block.mapping
+                    'mapping': block.mapping,
+                    'blockId': 'tempTesting'
                 }
             }
         }
@@ -4058,6 +4059,7 @@ export default Reflux.createStore({
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){
             delete this.currentWidget.props['block'];
+            this.activeBlockMode(false);
             this.trigger({selectWidget:this.currentWidget});
         }
     },
@@ -4067,6 +4069,10 @@ export default Reflux.createStore({
             //activeBlockModeKey = null;
         //}
         //this.trigger({activeBlockMode: {on:value, key: activeBlockModeKey}});
+        if(value) {
+            //重新赋值
+            this.trigger({selectWidget:this.currentWidget});
+        }
         this.trigger({activeBlockMode: {on:value}});
     }
 });
