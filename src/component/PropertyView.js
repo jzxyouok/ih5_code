@@ -19,6 +19,8 @@ require("jscolor/jscolor");
 import TbCome from './TbCome';
 import {PropertyViewMove} from  './PropertyView/MoudleMove';
 import DbHeaderStores from '../stores/DbHeader';
+import EffectAction from '../actions/effectAction';
+import EffectStore from '../stores/effectStore';
 
 class PropertyView extends React.Component {
     constructor(props) {
@@ -59,6 +61,7 @@ class PropertyView extends React.Component {
         this.tbLineWidth = this.tbLineWidth.bind(this);
         this.sliderUp = this.sliderUp.bind(this);
         this.sliderChange = this.sliderChange.bind(this);
+        this.effectToggleTrack = this.effectToggleTrack.bind(this);
     }
 
     //获取封装的form组件
@@ -79,7 +82,7 @@ class PropertyView extends React.Component {
             case propertyType.Button:
                 defaultProp.item=item;
                 defaultProp.curNode=this.selectNode;
-                return <ConButton {...defaultProp} />;
+                return <ConButton {...defaultProp} effectToggleTrack={this.effectToggleTrack} />;
             case propertyType.Number:
                 let step=1;
                 if(defaultProp.name=='totalTime'){
@@ -1590,6 +1593,7 @@ class PropertyView extends React.Component {
     }
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         this.moudleMove = new PropertyViewMove('PropertyViewHeader', this);
         $('#PropertyView').on('focus','textarea,input',function () {
@@ -1598,6 +1602,7 @@ class PropertyView extends React.Component {
     }
     componentWillUnmount() {
         this.unsubscribe();
+        this.effectChange();
         DbHeaderStores.removeListener(this.DbHeaderData.bind(this));
         this.moudleMove.unBind();
         $('#PropertyView').unbind();
@@ -1612,6 +1617,40 @@ class PropertyView extends React.Component {
             column = header.split(',').length;
         }
         this.refs.TbCome.show(data,column,header);
+    }
+
+    effectChangeFuc(data){
+        if(data.createEffect){
+            this.selectNode.props.trackType = "effect";
+            this.selectNode.node.trackType = "effect";
+            this.selectNode.props.name = data.createEffect;
+            this.selectNode.node.name = data.createEffect;
+            let obj = {};
+            obj['trackType'] = "effect";
+            obj['name'] = data.createEffect;
+            WidgetActions['updateProperties'](obj, false, true);
+            EffectAction['toggleMode']("effect");
+            this.setState({fields: this.getFields()});
+        }
+        if(data.updateEffect){
+            this.selectNode.props.trackType = "effect";
+            this.selectNode.node.trackType = "effect";
+            let obj = {};
+            obj['trackType'] = "effect";
+            WidgetActions['updateProperties'](obj, false, true);
+            EffectAction['toggleMode']("effect");
+            this.setState({fields: this.getFields()});
+        }
+    }
+
+    effectToggleTrack(){
+        this.selectNode.props.trackType = "track";
+        this.selectNode.node.trackType = "track";
+        let obj = {};
+        obj['trackType'] = "track";
+        WidgetActions['updateProperties'](obj, false, true);
+        EffectAction['toggleMode']("track");
+        this.setState({fields: this.getFields()});
     }
 
     render() {

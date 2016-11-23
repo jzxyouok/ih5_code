@@ -5,5 +5,8 @@ export default Reflux.createActions([
     'createEffectShow',
     'createEffect',
     'updateEffect',
-    'deleteEffect'
+    'deleteEffect',
+    'toggleMode',
+    'loadEffect',
+    'getSpecificEffect'
 ]);

@@ -1183,10 +1183,10 @@ class NavBar extends React.Component {
         })
     }
 
-    addEffectFuc(){
-        //if(this.state.isAddEffect){
-        //    WidgetActions['addWidget']('track');
-        //}
+    addEffectFuc(id){
+        if(this.state.isAddEffect){
+            EffectAction['getSpecificEffect'](true,id);
+        }
     }
 
     arrangeEffectShow(){
@@ -1202,11 +1202,17 @@ class NavBar extends React.Component {
     }
 
     effectChangeFuc(data){
-        console.log(data);
+        //console.log(data);
         if(data.effectList){
             this.setState({
                 effectList : data.effectList
             })
+        }
+        if(data.addSpecificEffect){
+            let effectData = JSON.parse(data.addSpecificEffect.data);
+            effectData.props.key =  undefined;
+            effectData.props.trackType = "effect";
+            WidgetActions['addEffect'](effectData);
         }
     }
 
@@ -1519,7 +1525,7 @@ class NavBar extends React.Component {
                                                             ? this.state.effectList.map((v,i)=>{
                                                                 return  <li key={i}
                                                                             className={$class({"not-active" : !this.state.isAddEffect})}
-                                                                            onClick={this.addEffectFuc} >
+                                                                            onClick={this.addEffectFuc.bind(this, v.id)} >
                                                                             <div className="title f--hlc">
                                                                                 <span className="li-icon" />
                                                                                 <div className="TitleName">{ v.name }</div>

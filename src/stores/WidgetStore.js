@@ -1155,7 +1155,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-  console.log(output);
+  //console.log(output);
   return output;
 }
 
@@ -1762,7 +1762,6 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['setVersion'], this.setVersion);
 
         this.listenTo(WidgetActions['saveEffect'], this.saveEffect);
-        this.listenTo(WidgetActions['loadEffect'], this.loadEffect);
         this.listenTo(WidgetActions['addEffect'], this.addEffect);
 
         this.eventTreeList = [];
@@ -2035,23 +2034,7 @@ export default Reflux.createStore({
             this.trigger({saveEffect : saveEffect})
         }
     },
-    loadEffect: function(){
-        if (this.currentWidget) {
-            let effect = cpJson(saveEffect);
-            if (!effect.className&&!effect.cls) {
-                return;
-            }
-            loadTree(this.currentWidget, effect);
-            if(effect.props.eventTree){
-                this.reorderEventTreeList();
-            }
-            this.trigger({selectWidget: this.currentWidget});
-            this.trigger({redrawEventTree: true});
-            this.render();
-        }
-    },
     addEffect : function(data){
-        console.log(data);
         if (this.currentWidget) {
             let effect = cpJson(data);
             if (!effect.className&&!effect.cls) {
@@ -2060,7 +2043,7 @@ export default Reflux.createStore({
             // 重命名要黏贴的widget
             if (effect.props['key'] === undefined) {
                 //copy
-                effect.props = this.addWidgetDefaultName(effect.cls, effect.props, false, true, effect.name);
+                effect.props = this.addWidgetDefaultName(effect.cls, effect.props, false, true, effect.props.name);
             }
             loadTree(this.currentWidget, effect);
             if(effect.props.eventTree){
@@ -2570,7 +2553,7 @@ export default Reflux.createStore({
             skipProperty = false;
          }
 
-       console.log(obj,this.currentWidget );
+       //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -3865,7 +3848,6 @@ export default Reflux.createStore({
         }else{
             xhr.open(method, url);
         }
-
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
@@ -3877,7 +3859,7 @@ export default Reflux.createStore({
             xhr.upload.onprogress = updateProgress;
         }
         xhr.send(data);
-    },
+},
     getStore: function() {
       //this.selectWidget(stageTree[0].tree);
       return {initTree: stageTree, classList: classList};

@@ -9,6 +9,9 @@ import WidgetStore from '../../stores/WidgetStore';
 const MenuItem = Menu.Item;
 let count=0;
 
+import EffectAction from '../../actions/effectAction';
+import EffectStore from '../../stores/effectStore';
+
 class SwitchMore extends React.Component {
     constructor(props) {
         super(props);
@@ -347,8 +350,6 @@ class ConButton extends React.Component {
             curNode:props.curNode             //选中组件的属性
         };
         this.buttonAllFuc = this.buttonAllFuc.bind(this);   //总入口
-
-        this.trackToggle = this.trackToggle.bind(this);     //动效转轨迹模式,轨迹模式转动效
         this.trackEdit = this.trackEdit.bind(this);         //编辑
         this.trackSave = this.trackSave.bind(this);         //保存
         this.trackSaveAs = this.trackSaveAs.bind(this);     //另保存
@@ -364,15 +365,17 @@ class ConButton extends React.Component {
     }
 
     buttonAllFuc(){
-        if(props.curNode.timerWidget == null){
+        if(this.props.curNode.timerWidget == null){
             switch (this.props.item.name){
                 case "_editTrack" :
                     this.trackEdit();
                 break;
                 case "_saveTrack" :
+                    WidgetActions['saveEffect']();
                     this.trackSave();
                 break;
                 case "_saveAsTrack" :
+                    WidgetActions['saveEffect']();
                     this.trackSaveAs();
                 break;
                 case "_cancelTrack" :
@@ -382,30 +385,22 @@ class ConButton extends React.Component {
         }
     }
 
-    trackToggle(bool){
-        if(bool){
-            this.curNode.props.trackType = "track";
-        }
-        else {
-            this.curNode.props.trackType = "effect";
-        }
-    }
-
     trackEdit(){
-        this.trackToggle(true);
+        this.props.effectToggleTrack();
     }
 
     trackSave(){
-        this.trackToggle(false);
+        let name =this.props.curNode.props.name;
+        EffectAction['createEffectShow'](true,name);
     }
 
     trackSaveAs(){
-        this.trackToggle(false);
+        EffectAction['createEffectShow'](true);
     }
 
     trackCancel(){
-        this.trackToggle(false);
-
+        let name =this.props.curNode.props.name;
+        EffectAction['loadEffect'](true,name);
     }
 
     render() {

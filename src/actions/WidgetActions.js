@@ -83,6 +83,5 @@ export default Reflux.createActions([
   'changeResource',             //修改资源入口
 
   'saveEffect',               //保存动效
-  'loadEffect',               //读取动效
   'addEffect'                 //添加动效
 ]);
