@@ -662,7 +662,6 @@ class PropertyView extends React.Component {
         }
 
     }
-
     sliderUp(event){
         const obj = {};
         let v = parseFloat(event) / 100 ;
@@ -672,7 +671,6 @@ class PropertyView extends React.Component {
         this.onStatusChange({updateProperties: obj});
         WidgetActions['updateProperties'](obj, false, true);
     }
-
     sliderChange(event){
         const obj = {};
         let v = parseFloat(event) / 100 ;
@@ -682,13 +680,11 @@ class PropertyView extends React.Component {
         this.onStatusChange({updateProperties: obj});
         WidgetActions['updateProperties'](obj, false, true,true);
     }
-
     tbHeadHeightInput(event){
         this.setState({
             tbHeadHeight : event.target.value
         })
     }
-
     tbHeadHeight(){
         let v = parseInt(this.state.tbHeadHeight);
         const obj = {};
