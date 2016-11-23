@@ -5,7 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import  $ from 'jquery';
-import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu} from 'antd';
+import { Form, Input, InputNumber, Slider, Switch, Collapse,Select,Dropdown,Menu,Button} from 'antd';
 const Option = Select.Option;
 const Panel = Collapse.Panel;
 const MenuItem = Menu.Item;
@@ -42,6 +42,16 @@ class PropertyView extends React.Component {
         this.selectNode = null;
         this.currentPage = null;
         this.fontList=[];
+        this.fontFamilyList=[
+            {name:'黑体',file:'SimHei'},
+            {name:'宋体',file:'SimSun'},
+            {name:'新宋体',file:'NSimSun'},
+            {name:'仿宋',file:'FangSong'},
+            {name:'楷体',file:'KaiTi'},
+            {name:'仿宋_GB2312',file:'FangSong_GB2312 '},
+            {name:'楷体_GB2312',file:'KaiTi_GB2312 '},
+            {name:'微软雅黑体',file:'Microsoft YaHei'}
+        ];
         this.textSizeObj=null;
 
         this.defaultData = {
@@ -216,6 +226,19 @@ class PropertyView extends React.Component {
                 </div>;
             case propertyType.Dropdown:
                 return  <DropDownInput {...defaultProp} />;
+            case propertyType.Button2:
+                if(defaultProp.name=='bgImage'){
+                    defaultProp.onClick=defaultProp.onChange;
+                    delete  defaultProp.onChange;
+                }
+                return <div className="pr">
+                    <Button  {...defaultProp} >{defaultProp.value}</Button>
+                      <div className="btn_del" onClick={defaultProp.onClick}></div>
+                      <div id={cls({'ant-progress':defaultProp.name=='bgImage'})}>
+                           <div className='ant-progress-bar'></div>
+                           <div className='ant-progress-txt'>上传 10%</div>
+                     </div>
+                </div>
             case propertyType.dbSelect:
                 if(!defaultProp.value){
                     defaultProp.value = null;
@@ -445,7 +468,6 @@ class PropertyView extends React.Component {
                     }
                     else if (['alignSelf','flex','flexDirection','justifyContent','alignItems','type'].indexOf(prop.name)>=0) {
                         this.selectNode.props[prop.name+'Key'] = value;
-
                         v = value;
                     }
                     else if (prop.name == 'swipeType') {
@@ -598,6 +620,44 @@ class PropertyView extends React.Component {
                             v=value.target.value;
                         }
                     }
+                    break;
+                case  propertyType.Button2:
+                    if(prop.name == 'bgImage'){
+                        if (value.target.getAttribute('class') ==='btn_del') {
+                            //删除
+                            value=null;
+                            node.props[prop.name+'Key']='上传图片';
+                        }
+                        else {
+                            //上传
+                            chooseFile('image', true, function () {
+                                console.log(arguments);
+                                let imgObj = eval("(" + arguments[1] + ")");
+                                let oProgress = document.getElementById('ant-progress');
+                                //回调完成
+                                oProgress.style.display = 'none';
+                                //设置默认值
+                                node.props[prop.name+'Key'] = imgObj.name;
+                                //更新属性面板
+                                const obj = {};
+                                obj[prop.name] = imgObj.file;
+                                this.onStatusChange({updateProperties: obj});
+                                WidgetActions['updateProperties'](obj, false, true);
+                            }.bind(this), function (evt) {
+                                let oProgress = document.getElementById('ant-progress');
+                                if (evt.lengthComputable && oProgress) {
+                                    oProgress.style.display = 'block';
+                                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                                    oProgress.childNodes[1].innerHTML = '上传 ' + percentComplete + '%';
+                                    oProgress.childNodes[0].style.width = percentComplete + '%';
+                                } else {
+                                    //console.log('failed');
+                                }
+                            });
+                            bTag = false;
+                        }
+                    }
+                    v = value;
                     break;
                 default:
                     v = value;
@@ -988,6 +1048,12 @@ class PropertyView extends React.Component {
                 defaultValue = this.state.sockName
             }
         }
+        else if(item.type == propertyType.Button2){
+              defaultValue=item.ButtonName;
+              if (item.name == 'bgImage' && node.props[item.name + 'Key']) {
+                defaultValue = node.props[item.name + 'Key'];
+              }
+        }
         else if (item.type == propertyType.Float) {
             if (node.className == 'html') {
                 let str = item.name == 'scaleX' ? 'shapeWidth' : 'shapeHeight';
@@ -1043,7 +1109,6 @@ class PropertyView extends React.Component {
                 defaultValue = node.props[item.name + 'Key'];
             }
             else if (item.name == 'fontFamily' && node.props[item.name + 'Key']) {
-              //  defaultValue = node.props.fontFamily;
                 defaultValue = node.props[item.name + 'Key'];
             } else if ((item.name == 'forwardTransition' || item.name == 'backwardTransition') && node.props[item.name + '_val']) {
                 defaultValue = node.props[item.name + '_val'];
@@ -1238,10 +1303,10 @@ class PropertyView extends React.Component {
                 }
             }
             else if (item.name == 'fontFamily' || item.name == 'headerFontFamily') {
-                for (let i in this.fontList) {
-                    defaultProp.options.push(<Option key={this.fontList[i].file}>
+                for (let i in this.fontFamilyList) {
+                    defaultProp.options.push(<Option key={this.fontFamilyList[i].file}>
                         <div className={selectClassName}></div>
-                        {this.fontList[i].name}</Option>);
+                        {this.fontFamilyList[i].name}</Option>);
                 }
             }
             else if (item.name == 'type') {

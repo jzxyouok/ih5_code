@@ -771,6 +771,51 @@ $toBottom:14px;
 		float: left;
 
 	  }
+		.pr{
+			position: relative;
+			&:hover{
+				.btn_del{
+					background-position:  -600px -400px;
+				}
+			}
+			.btn_del{
+				width: 22px;
+				height: 22px;
+				cursor: pointer;
+				background:url('./img/button-icon.svg') ;
+				background-position: -600px -360px;
+				position: absolute;
+				right: 0;
+				top: 0;
+				&:hover{
+					background-position:  -600px -440px;
+				}
+			}
+		}
+		.ant-btn-sm{
+			height: 22px;
+			width: 185px;
+			padding: 0;
+			border-radius: 2px;
+			background-color: #353535;
+			border: 1px solid #444;
+			&:hover{
+              color:#858585;
+			}
+			&.ant-btn-clicked:after{
+				content:'';
+			}
+			span{
+				width: 87%;
+				margin: 0 auto;
+				height: 100%;
+				line-height: 22px;
+				display: block;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
 	  .visible-switch{
 		float: left;
 		margin-left: 20px;
