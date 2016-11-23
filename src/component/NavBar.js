@@ -158,6 +158,8 @@ class NavBar extends React.Component {
         this.arrangeEffectShow = this.arrangeEffectShow.bind(this);
         this.arrangeEffectHide = this.arrangeEffectHide.bind(this);
 
+        this.isBlock = this.isBlock.bind(this);
+
         this.token = null;
         this.playUrl = null;
         this.fileUrl = null;
@@ -1189,6 +1191,10 @@ class NavBar extends React.Component {
         })
     }
 
+    isBlock() {
+        return (this.state.selectWidget&&this.state.selectWidget.props.block);
+    }
+
     render() {
         //console.log(this.state.workList);
         let moduleFuc = (num, min)=>{
@@ -1287,7 +1293,7 @@ class NavBar extends React.Component {
                                 <span className="title">事件</span>
                             </button>
 
-                            <div className='dropDown-btn block-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn block-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear block-btn' title='小模块' style={{width: '70px'}}>
                                     <span className="icon" />
                                     <span className="title">小模块</span>
@@ -1306,7 +1312,7 @@ class NavBar extends React.Component {
                                                     {
                                                         this.state.blockList.length > 0
                                                         ? this.state.blockList.map((v,i)=>{
-                                                            let name = "_" + v;
+                                                            let name = v;
                                                             return  <li className="f--hlc" key={i}>
                                                                         <div className="flex-1 f--hlc title" onClick={ this.addBlock.bind(this, name) }>
                                                                             <span className="li-icon" />
@@ -1328,7 +1334,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn db-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn db-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }} onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">数据库</span>
@@ -1380,7 +1386,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn link-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn link-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear link-btn' title='连接' onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">连接</span>
@@ -1428,7 +1434,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn shape-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn shape-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear shape-btn' title='形状'>
                                     <span className="icon" />
                                     <span className="title">形状</span>
@@ -1471,7 +1477,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn effect-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn effect-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear effect-btn' title='动效' onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">动效</span>

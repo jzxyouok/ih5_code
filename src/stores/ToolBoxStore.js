@@ -99,6 +99,9 @@ export default Reflux.createStore({
                     item['disabled'] = false;
                     item['hidden'] = false;
                 }
+                if(widget.props.block) {
+                    item['disabled'] = true;
+                }
             });
             v.primary = primary;
             v.name = v['secondary'][primary]['name'];

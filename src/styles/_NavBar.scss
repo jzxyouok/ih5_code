@@ -249,6 +249,24 @@
                     }
                 }
 
+                &.dropDown-disable {
+                    &:hover {
+                        &:before {
+                            display: none;
+                        }
+                        .dropDownToggle{
+                            height: 0;
+                        }
+                        .block-btn,
+                        .data-btn,
+                        .link-btn,
+                        .shape-btn,
+                        .effect-btn{
+                            cursor: not-allowed;
+                        }
+                    }
+                }
+
                 &:before{
                     @include triangle(24px, #454545 ,up);
                     content: "";

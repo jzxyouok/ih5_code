@@ -1827,6 +1827,26 @@ export default Reflux.createStore({
     },
     selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
+
+        //自定义小模块模式
+        if (this.activeBlock) {
+            return;
+        }
+        //如果父中有检查出有小模块就不能被选择
+        if(widget&&widget.parent) {
+            let temp = widget;
+            let parentIsBlock = false;
+            while (temp&&(temp.parent || parentIsBlock == true)) {
+                if(temp.parent&&temp.parent.props.block) {
+                    parentIsBlock = true;
+                }
+                temp = temp.parent;
+            }
+            if(parentIsBlock) {
+                return;
+            }
+        }
+
         if (widget) {
             // if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
             //     render = true;
@@ -4071,7 +4091,10 @@ export default Reflux.createStore({
         //this.trigger({activeBlockMode: {on:value, key: activeBlockModeKey}});
         if(value) {
             //重新赋值
+            this.activeBlock = true;
             this.trigger({selectWidget:this.currentWidget});
+        } else {
+            this.activeBlock = false;
         }
         this.trigger({activeBlockMode: {on:value}});
     }
