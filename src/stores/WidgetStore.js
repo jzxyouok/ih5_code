@@ -1828,10 +1828,6 @@ export default Reflux.createStore({
     selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
 
-        //自定义小模块模式
-        if (this.activeBlock) {
-            return;
-        }
         //如果父中有检查出有小模块就不能被选择
         if(widget&&widget.parent) {
             let temp = widget;
@@ -2823,6 +2819,9 @@ export default Reflux.createStore({
         //     this.reorderEventTreeList();
         //     this.getAllWidgets();
         // }
+        if(this.activeBlock) {
+            this.activeBlockMode(false);
+        }
         //激活事件树
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
@@ -3419,6 +3418,9 @@ export default Reflux.createStore({
     deleteTreeNode: function (type) {
         let targetWidget =this.currentWidget;
         let deleteBody=false;
+        if(this.activeBlock) {
+            this.activeBlockMode(false);
+        }
         switch(type){
             case nodeType.func:
                 this.removeFunction();
