@@ -1624,7 +1624,7 @@ class ObjectTree extends React.Component {
                         }
 
                         {
-                            v.props.block&&!this.state.activeBlockMode
+                            (v.props.block&&!this.state.activeBlockMode) || (v.props.block&&v.key!==this.state.nid&&this.state.activeBlockMode)
                             ? icon(0 , v.key)
                             : v.children.length > 0
                             ||v.funcList.length > 0
@@ -1635,7 +1635,7 @@ class ObjectTree extends React.Component {
                                 : icon( 0 , v.key)
                         }
                         {
-                            v.props.block&&!this.state.activeBlockMode
+                            (v.props.block&&!this.state.activeBlockMode) || (v.props.block&&v.key!==this.state.nid&&this.state.activeBlockMode)
                                 ? <span className={$class('item-icon', 'component-icon')}/>
                                 : picIsImage
                                 ? <span className="item-icon2">
@@ -1648,7 +1648,7 @@ class ObjectTree extends React.Component {
                                 ? <div className='item-name-wrap'>
                                     <p>{v.props.name}</p>
                                   </div>
-                                : v.props.block&&!this.state.activeBlockMode
+                                : (v.props.block&&!this.state.activeBlockMode) || (v.props.block&&v.key!==this.state.nid&&this.state.activeBlockMode)
                                     ?<div className='item-name-wrap'>
                                         <p>{v.props.block.name}</p>
                                      </div>
@@ -1669,7 +1669,7 @@ class ObjectTree extends React.Component {
                     </div>
                     <div className={$class('item-event')}>
                         {
-                            v.props.block&&!this.state.activeBlockMode
+                            (v.props.block&&!this.state.activeBlockMode) || (v.props.block&&v.key!==this.state.nid&&this.state.activeBlockMode)
                             ? v.props.block.eventTree
                                 ? enableEventTreeBtn(v.key, v)
                                 : <div className={$class('item-event-empty',{'active': v.key === this.state.nid||this.isInMultiList(v.key)})}

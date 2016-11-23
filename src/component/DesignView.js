@@ -333,7 +333,7 @@ class DesignView extends React.Component {
     }
 
     blockModeWarning() {
-        message.warning('自定义小模块模式中...');
+        message.warning('自定义小模块编辑中...');
     }
 
     render() {
