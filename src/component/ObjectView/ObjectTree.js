@@ -1474,8 +1474,8 @@ class ObjectTree extends React.Component {
         let enableEventTreeBtn = (nid,data)=> {
             //0为没有事件, 1为有事件正常状态
             let btn = <div className={$class('event-icon',
-                    {'event-icon-normal':data.props['enableEventTree']},
-                    {'event-icon-disable':!data.props['enableEventTree']},
+                    {'event-icon-normal':data.props.block?data.props.block['enableEventTree']:data.props['enableEventTree']},
+                    {'event-icon-disable':data.props.block?!data.props.block['enableEventTree']:!data.props['enableEventTree']},
                     {'active':this.state.activeEventTreeKey==nid})}
                            onClick={this.eventBtn.bind(this,nid,data)}
                            onContextMenu={this.onRightClick.bind(this, nid, data, nodeType.widget)}></div>;
