@@ -3545,7 +3545,7 @@ export default Reflux.createStore({
 
         var selected = stageTree[0].tree;
         for (var n in stageTree[0].tree.children) {
-            if (stageTree[0].tree.children[n].className == 'page') {
+            if (stageTree[0].tree.children[n].className == 'page'&&!stageTree[0].tree.children[n].props.block) {
                 selected = stageTree[0].tree.children[n];
                 break;
             }

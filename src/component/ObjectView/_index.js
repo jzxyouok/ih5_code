@@ -73,8 +73,8 @@ class ObjectView extends React.Component {
         if(widget.selectWidget){
             this.setState({
                 currentNode : widget.selectWidget,
-                enableContainer: checkChildClass(widget.selectWidget, 'container'),
-                enablePage: checkChildClass(widget.selectWidget, 'page')
+                enableContainer: widget.selectWidget.props.block?false:checkChildClass(widget.selectWidget, 'container'),
+                enablePage: widget.selectWidget.props.block?false:checkChildClass(widget.selectWidget, 'page')
             });
             if(widget.selectWidget.parent){
                 this.setState({
@@ -127,8 +127,8 @@ class ObjectView extends React.Component {
         if(!checkEventClass(selectWidget)) {
             canHaveEventTree = false;
             hasEventTree = false;
-        } else
-        if (selectWidget.props.eventTree) {
+        } else if ((!selectWidget.props.block&&selectWidget.props.eventTree)
+            || (selectWidget.props.block&&selectWidget.props.block.eventTree)) {
             hasEventTree = true;
         }
         this.setState({

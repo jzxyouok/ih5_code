@@ -192,13 +192,13 @@ class ObjectTree extends React.Component {
             });
             this.addOpenId();
         }
-
         //redrawTree : 重新加载对象树
         else if (widget.redrawTree !== undefined){
             this.forceUpdate();
-            this.addOpenId();
+            if(this.state.selectWidget&&!this.state.selectWidget.props.block) {
+                this.addOpenId();
+            }
         }
-
         else if(widget.skipProperty){
             this.forceUpdate();
         }
@@ -210,7 +210,6 @@ class ObjectTree extends React.Component {
                 })
             }
         }
-
         else if(widget.selectWidget || widget.selectFunction || widget.selectVariable || widget.selectDBItem){
             //触发失焦
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
@@ -1670,7 +1669,13 @@ class ObjectTree extends React.Component {
                     </div>
                     <div className={$class('item-event')}>
                         {
-                            v.props.eventTree
+                            v.props.block&&!this.state.activeBlockMode
+                            ? v.props.block.eventTree
+                                ? enableEventTreeBtn(v.key, v)
+                                : <div className={$class('item-event-empty',{'active': v.key === this.state.nid||this.isInMultiList(v.key)})}
+                                       onClick={this.chooseBtn.bind(this,v.key, v)}
+                                       onContextMenu={this.onRightClick.bind(this, v.key, v, nodeType.widget)}></div>
+                            : v.props.eventTree
                                 ? enableEventTreeBtn(v.key, v)
                                 : <div className={$class('item-event-empty',{'active': v.key === this.state.nid||this.isInMultiList(v.key)})}
                                        onClick={this.chooseBtn.bind(this,v.key, v)}
