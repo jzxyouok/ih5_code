@@ -187,8 +187,10 @@ class EditBlock extends React.Component {
     getParamsDetailList(obj,type) {
         let list = [];
         getPropertyMap(obj, obj.className, type).map((item) => {
-            let temp = JSON.parse(JSON.stringify(item));
-            list.push(temp);
+            if(item.type !== propertyType.Hidden&&!item.readOnly&&item.name !='id' && item.type !== propertyType.Button){
+                let temp = JSON.parse(JSON.stringify(item));
+                list.push(temp);
+            }
         });
         return list;
     }

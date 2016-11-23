@@ -1429,11 +1429,25 @@ class PropertyView extends React.Component {
      */
     generateGroups(node,className,groups){
         let getInput=this.getInput.bind(this);
-        getPropertyMap(node, className, 'props').forEach((item, index) => {
-            if (item.type !== propertyType.Hidden) {
-                getInput(item,className, groups);
-            }
-        });
+        if(node.props.block) {
+            //小模块的获取属性
+            node.props.block.mapping.props.forEach((item) =>{
+                let obj = WidgetStore.getWidgetByKey(item.objKey);
+                let copy = JSON.parse(JSON.stringify(item.detail));
+                if (obj && copy && copy.name && copy.type !== propertyType.Hidden) {
+                    //copy.value = obj.props[copy.name];
+                    copy.default = obj.props[copy.name];
+                    copy.showName = item.name;
+                    getInput(copy,className, groups);
+                }
+            });
+        } else {
+            getPropertyMap(node, className, 'props').forEach((item, index) => {
+                if (item.type !== propertyType.Hidden) {
+                    getInput(item,className, groups);
+                }
+            });
+        }
     }
     /****************工具方法区域,end**********************************/
 
@@ -1458,7 +1472,11 @@ class PropertyView extends React.Component {
 
         if (widget.selectWidget !== undefined){
             this.selectNode = widget.selectWidget;
-            this.setState({fields: this.getFields(),propertyName:this.selectNode.props.name});
+            let propertyName = this.selectNode.props.name;
+            if(this.selectNode.props.block) {
+                propertyName = this.selectNode.props.block.name;
+            }
+            this.setState({fields: this.getFields(),propertyName:propertyName});
             let node = this.selectNode;
 
             while (node != null) {

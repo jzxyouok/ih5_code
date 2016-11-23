@@ -91,8 +91,10 @@ class DesignView extends React.Component {
             setTimeout(function () {
                 //点击舞台后,整个页面会渲染一遍,导致浏览器失焦,导致ctrl+s的时候不能阻止默认的保存事件,导致要写下面无奈的代码
                 let oPropertyView =  document.getElementById('PropertyView').getElementsByClassName('ant-input')[0];
-                oPropertyView.focus();
-                oPropertyView.blur();
+                if(oPropertyView){
+                    oPropertyView.focus();
+                    oPropertyView.blur();
+                }
             },300)
         } else if (widget.activeBlockMode) {
             this.setState({
