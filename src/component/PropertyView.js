@@ -741,8 +741,8 @@ class PropertyView extends React.Component {
         const obj = {};
         let v = parseFloat(event) / 100 ;
         obj['alpha'] = v;
-        this.selectNode.props.alpha = v;
-        this.selectNode.node.alpha = v;
+        node.props.alpha = v;
+        node.node.alpha = v;
         this.onStatusChange({updateProperties: obj, changeNode: node});
         WidgetActions['updateProperties'](obj, false, true, undefined, node);
     }
@@ -764,8 +764,8 @@ class PropertyView extends React.Component {
         let v = parseInt(this.state.tbHeadHeight);
         const obj = {};
         obj['headerHeight'] = v;
-        this.selectNode.props.headerHeight = v;
-        this.selectNode.node.headerHeight = v;
+        node.props.headerHeight = v;
+        node.node.headerHeight = v;
         this.onStatusChange({updateProperties: obj, changeNode: node});
         WidgetActions['updateProperties'](obj, false, true, undefined, node);
     }
@@ -785,7 +785,7 @@ class PropertyView extends React.Component {
         let v = parseInt(this.state.tbLineWidth) ;
 
         const obj = {};
-        let header = this.selectNode.props.header;
+        let header = node.props.header;
         if(header !== undefined){
             header = header.split(",");
             if(this.state.tbWhichColumn == 0){
@@ -810,8 +810,8 @@ class PropertyView extends React.Component {
             }
             //console.log(header.join(","));
             obj['header'] = header.join(",");
-            this.selectNode.props.header = header.join(",");
-            this.selectNode.node.header = header.join(",");
+            node.props.header = header.join(",");
+            node.node.header = header.join(",");
             this.onStatusChange({
                 updateProperties: obj,
                 changeNode: node
