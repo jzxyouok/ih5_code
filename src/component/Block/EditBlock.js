@@ -82,13 +82,20 @@ class EditBlock extends React.Component {
             let funcs = [{name: '', objKey: null, detail: null}];
             let name = '';
             let blockId = null;
-            if(widget.selectWidget.props&&widget.selectWidget.props.block) {
-                let block = JSON.parse(JSON.stringify(widget.selectWidget.props.block));
-                props = block.mapping.props;
-                events = block.mapping.events;
-                funcs = block.mapping.funcs;
-                name = block.name;
-                blockId = block.blockId?block.blockId:null;
+            if(widget.selectWidget.props) {
+                let block = null;
+                if(widget.selectWidget.props.block) {
+                    block = JSON.parse(JSON.stringify(widget.selectWidget.props.block));
+                } else if(widget.selectWidget.props.backUpBlock) {
+                    block = JSON.parse(JSON.stringify(widget.selectWidget.props.backUpBlock));
+                }
+                if(block) {
+                    props = block.mapping.props;
+                    events = block.mapping.events;
+                    funcs = block.mapping.funcs;
+                    name = block.name;
+                    blockId = block.blockId?block.blockId:null;
+                }
             }
             //获取对象列表
             this.setState({

@@ -4173,6 +4173,9 @@ export default Reflux.createStore({
                     'blockId': 'tempTesting'
                 }
             }
+            if(this.currentWidget.props['backUpBlock']) {
+                delete this.currentWidget.props['backUpBlock'];
+            }
         }
         this.activeBlockMode(false);
         this.trigger({selectWidget:this.currentWidget});
@@ -4180,19 +4183,15 @@ export default Reflux.createStore({
     },
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){
+            let copyBlock = cpJson(this.currentWidget.props['block']);
+            this.currentWidget.props['backUpBlock'] = copyBlock;
             delete this.currentWidget.props['block'];
             this.activeBlockMode(false);
             this.trigger({selectWidget:this.currentWidget});
         }
     },
     activeBlockMode(value){
-        //let activeBlockModeKey = this.currentWidget.key;
-        //if(value) {
-            //activeBlockModeKey = null;
-        //}
-        //this.trigger({activeBlockMode: {on:value, key: activeBlockModeKey}});
         if(value) {
-            //重新赋值
             this.activeBlock = true;
             this.trigger({selectWidget:this.currentWidget});
         } else {
