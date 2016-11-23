@@ -43,7 +43,7 @@ let propMapping = {
     'height': {name:'height', showName:'H',type: propertyType.Integer, default: 0, group:'position'},
     'scaleType': {name:'scaleType', showName:'适配', type: propertyType.Select, default:'满屏', options:{'居上':2,'居中':3,'居下':4,'满屏':5}, group:'tools',order:1},
     'swipeType': {name:'swipeType', showName:'滑动翻页', type: propertyType.Select, default:'4', options:{'无':0,'上':4,'下':3,'左':2,'右':1}},
-    'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'tools',order:2},
+
     'clipped': {name:'clipped', showName:'剪切', type: propertyType.Boolean, default: false, group:'tools',order:3},
 
     'title': {name:'title', showName:'标题', type: propertyType.String, default: ''},
@@ -58,6 +58,8 @@ let propMapping = {
     'originPos': {name:'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',order:5},
     'rotation': {name:'rotation', showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position',order:6},
     'alpha': {name:'alpha', showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display',order:1 },
+    'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'tools',order:2},
+    'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
     'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.Button2,ButtonName:'上传图片', default:'',group:'display',order:2},
 
     'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools'},
@@ -154,7 +156,7 @@ let propMapping = {
     'headerFontSize': {name:'headerFontSize', showName:'图表字体大小', type: propertyType.Number,group:'tableH', default: 24, tbCome:"tbS" },
     'headerFontFill': {name:'headerFontFill', showName:'文字颜色', type: propertyType.Color,group:'tableH', default: '#FFA800'},
     'altColor': {name:'altColor', showName:'隔行颜色', type: propertyType.Color,group:'display', default: ''},
-    'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
+
 
     //关于flex的请看：https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex
 

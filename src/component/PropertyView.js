@@ -115,7 +115,6 @@ class PropertyView extends React.Component {
                     return <ConInputNumber  step={step} {...defaultProp}  />;
                 }
             case propertyType.Percentage:
-                // <InputNumber step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                 return  <div>
                             <ConInputNumber  step={1} max={100} min={0}  {...defaultProp}  className='slider-input' />
                             <Slider step={1}
@@ -484,7 +483,7 @@ class PropertyView extends React.Component {
                     }
                     else if(prop.name == 'scaleStage'){
                          node.props[prop.name+'Key'] = value;
-                        v = value=='true'?true:false;
+                         v = value=='true'?true:false;
                     }
                     else if (prop.name == 'headerFontFamily') {
                         node.props.headerFontFamily = this.getFontDefault(value);
@@ -608,6 +607,10 @@ class PropertyView extends React.Component {
                     });
 
                     bTag = false;
+                    break;
+                case propertyType.Color2:
+                    node.props[prop.name+'Key'] = value;
+                    v = value;
                     break;
                 case propertyType.Color:
                 case propertyType.TbColor:
@@ -1636,7 +1639,7 @@ class PropertyView extends React.Component {
             let needRender = (widget.skipRender === undefined);
 
             let selectNode = this.selectNode;
-            if(widget.changeNode) {
+            if(this.selectNode.props.block &&  widget.changeNode) {
                 selectNode = widget.changeNode;
             }
             let obj = widget.updateProperties;

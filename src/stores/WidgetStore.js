@@ -2672,7 +2672,7 @@ export default Reflux.createStore({
                 }
             }
         }
-        //console.log(obj,this.currentWidget );
+        console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
