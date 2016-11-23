@@ -469,12 +469,12 @@ class PropertyView extends React.Component {
                     break;
                 case propertyType.Select:
 
-                    if(['type'].indexOf(prop.name)>=0 && this.selectNode.className=='track'){
-                        this.selectNode.props[prop.name+'Key'] = value;
+                    if(['type'].indexOf(prop.name)>=0 && node.className=='track'){
+                        node.props[prop.name+'Key'] = value;
                         v = parseInt(value);
                     }
                     else if (['alignSelf','flex','flexDirection','justifyContent','alignItems','type'].indexOf(prop.name)>=0) {
-                        this.selectNode.props[prop.name+'Key'] = value;
+                        node.props[prop.name+'Key'] = value;
                         v = value;
                     }
                     else if (prop.name == 'swipeType') {
@@ -783,7 +783,7 @@ class PropertyView extends React.Component {
 
     tbLineWidth(node){
         if(this.state.tbLineWidth == "自动") return;
-        if(this.state.tbLineWidth >= this.selectNode.props.width) return;
+        if(this.state.tbLineWidth >= node.props.width) return;
 
         let v = parseInt(this.state.tbLineWidth) ;
 
