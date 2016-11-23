@@ -2610,10 +2610,8 @@ export default Reflux.createStore({
 
     updateProperties: function(obj, skipRender, skipProperty, special) {
         //更新属性时,prop和node都需要同时设定,不然看不到效果
-
         let isHistoryRecord = true;
-        //设置透明度,用来兼容时间轴
-        //todo:志颖可以详细补充下
+        //设置透明度,用来兼容时间轴,解决非法的透明度值导致出错的问题
         this.setAlpha(obj);
 
         //如果是this.selectWidgets更新的坐标属性，如果没有发生位移的改变则不需要更新历史记录
@@ -2626,7 +2624,19 @@ export default Reflux.createStore({
              skipProperty = false;
          }
 
-       //console.log(obj,this.currentWidget );
+        //当轨迹处于时间轴外面的时候,移动位置，所有关键点也移动位置
+        if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
+            if(this.currentWidget.props.positionX != obj.positionX && this.currentWidget.props.positionY != obj.positionY){
+                if(this.currentWidget.timerWidget == null){
+                    this.currentWidget.children.map((v,i)=>{
+                        if(v.className == "track"){
+                            syncTrack(this.currentWidget, v.props)
+                        }
+                    })
+                }
+            }
+        }
+        //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2700,7 +2710,7 @@ export default Reflux.createStore({
      * 功能:
      * 当舞台中对象的坐标没发生改变,则不更新历史记录
      */
-         setHistoryRecordByPos:function (obj) {
+     setHistoryRecordByPos:function (obj) {
          if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
              if(this.currentWidget.props.positionX == obj.positionX && this.currentWidget.props.positionY == obj.positionY){
                   return false;
