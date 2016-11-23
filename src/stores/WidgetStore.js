@@ -2663,9 +2663,9 @@ export default Reflux.createStore({
         //当轨迹处于时间轴外面的时候,并且处于动态模式,移动位置，所有关键点也移动位置
         if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
             if(tempWidget.props.positionX != obj.positionX && tempWidget.props.positionY != obj.positionY){
-                if(tempWidget.timerWidget == null && tempWidget.props.trackType == "effect"){
+                if(tempWidget.timerWidget == null){
                     tempWidget.children.map((v,i)=>{
-                        if(v.className == "track"){
+                        if(v.className == "track" && v.props.trackType == "effect"){
                             syncTrack(tempWidget, v.props)
                         }
                     })

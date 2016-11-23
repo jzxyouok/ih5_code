@@ -25,7 +25,8 @@ const propertyType = {
     Remove:-2,
     Boolean3:22,
     ObjectSelect:23,
-    Button:24
+    Button:24,    //自定义
+    Button2:25   //蚂蚁的button
 };
 
 const backwardTransOptions = {

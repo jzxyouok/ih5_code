@@ -141,7 +141,7 @@ class ArrangeModule extends React.Component {
         };
 
         return (
-            <div className='ArrangeModule f--hcc'>
+            <div className='ArrangeEffect f--hcc'>
                 <div className="AM-layer"></div>
 
                 <div className="AM-main">
