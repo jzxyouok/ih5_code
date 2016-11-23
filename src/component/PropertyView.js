@@ -1209,6 +1209,9 @@ class PropertyView extends React.Component {
                         if(item.name == "_editTrack" || item.name == "_createEffect"){
                             item.styleName = item.olderClassName + " hidden";
                         }
+                        else if(item.name == "_saveTrack" && node.props.is_system == 1 ){
+                            item.styleName = item.olderClassName + " hidden";
+                        }
                         else {
                             item.styleName = item.olderClassName;
                         }

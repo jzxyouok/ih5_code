@@ -2005,6 +2005,7 @@ export default Reflux.createStore({
               'props': {'prop': propList, 'data': dataList, 'name': props['name'], 'trackType' : trackType}
           });
           this.trigger({redrawTree: true, updateTrack: track});
+          this.selectWidget(this.currentWidget);
           // } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
       } else {
         let p;
@@ -2666,18 +2667,24 @@ export default Reflux.createStore({
 
 
         //当轨迹处于时间轴外面的时候,并且处于动态模式,移动位置，所有关键点也移动位置
+        let updateSyncTrack = ()=>{
+            if(tempWidget.timerWidget == null){
+                tempWidget.children.map((v,i)=>{
+                    if(v.className == "track" && v.props.trackType == "effect"){
+                        syncTrack(tempWidget, v.props)
+                    }
+                })
+            }
+        };
         if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
             if(tempWidget.props.positionX != obj.positionX && tempWidget.props.positionY != obj.positionY){
-                if(tempWidget.timerWidget == null){
-                    tempWidget.children.map((v,i)=>{
-                        if(v.className == "track" && v.props.trackType == "effect"){
-                            syncTrack(tempWidget, v.props)
-                        }
-                    })
-                }
+                updateSyncTrack();
             }
         }
-        console.log(obj,this.currentWidget );
+        else {
+            updateSyncTrack();
+        }
+        //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
