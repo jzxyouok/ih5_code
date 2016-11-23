@@ -2624,6 +2624,7 @@ export default Reflux.createStore({
              skipProperty = false;
          }
 
+
         //当轨迹处于时间轴外面的时候,移动位置，所有关键点也移动位置
         if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
             if(this.currentWidget.props.positionX != obj.positionX && this.currentWidget.props.positionY != obj.positionY){
