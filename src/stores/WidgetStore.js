@@ -1066,13 +1066,13 @@ function generateJsFunc(etree) {
                                          if(['marginUp','marginDown','marginLeft','marginRight'].indexOf(prop.name)>=0){
                                              let oVal={}
                                              oVal['head']=getIdsName(cmd.sObjId[0],cmd.sObjId[2],'margin')+'=';
-                                             oVal['value']= formulaGenLine(prop.value);
+                                             oVal['value']= formulaGenLine(prop.value)==''?'0px':formulaGenLine(prop.value);
                                              oVal['name']=prop.name;
                                              marginArr.push(oVal);
                                          }else if(['paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(prop.name)>=0){
                                              let oVal={}
                                              oVal['head']=getIdsName(cmd.sObjId[0],cmd.sObjId[2],'padding')+'=';
-                                             oVal['value']= formulaGenLine(prop.value);
+                                             oVal['value']= formulaGenLine(prop.value)==''?'0px':formulaGenLine(prop.value);
                                              oVal['name']=prop.name;
                                              paddingArr.push(oVal);
                                          }else if(['minWidth', 'minHeight', 'maxWidth', 'maxHeight'].indexOf(prop.name)>=0){
@@ -1176,7 +1176,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-  //console.log(output);
+  console.log(output);
   return output;
 }
 
@@ -1186,20 +1186,22 @@ function getSpacingStr(lines,spacingArr,arr) {
     spacingArr.map((v,i)=>{
         sHead=v.head;
         if(v.name==arr[0]){
-            sMargin[0]=JSON.parse(v.value);
+            sMargin[0]=(v.value);
         }
         else if(v.name==arr[1]){
-            sMargin[1]=JSON.parse(v.value);
+            sMargin[1]=(v.value);
         }
         else if(v.name==arr[2]){
-            sMargin[2]=JSON.parse(v.value);
+            sMargin[2]=(v.value);
         }
         else if(v.name==arr[3]){
-            sMargin[3]=JSON.parse(v.value);
+            sMargin[3]=(v.value);
         }
     });
     if(spacingArr.length>0){
-        lines.push(sHead+JSON.stringify(sMargin.join(' ')));
+        let abc=sMargin.join(' ');
+        abc= abc.replace('\"','');
+        lines.push(sHead+JSON.stringify(abc));
     }
     return lines;
 }

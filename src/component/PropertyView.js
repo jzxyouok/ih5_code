@@ -48,7 +48,7 @@ class PropertyView extends React.Component {
             {name:'新宋体',file:'NSimSun'},
             {name:'仿宋',file:'FangSong'},
             {name:'楷体',file:'KaiTi'},
-            {name:'仿宋_GB2312',file:'FangSong_GB2312 '},
+            {name:'仿宋_GB2312',file:'FangSong_GB2312'},
             {name:'楷体_GB2312',file:'KaiTi_GB2312 '},
             {name:'微软雅黑体',file:'Microsoft YaHei'}
         ];
