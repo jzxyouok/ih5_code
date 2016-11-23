@@ -19,6 +19,8 @@ require("jscolor/jscolor");
 import TbCome from './TbCome';
 import {PropertyViewMove} from  './PropertyView/MoudleMove';
 import DbHeaderStores from '../stores/DbHeader';
+import EffectAction from '../actions/effectAction';
+import EffectStore from '../stores/effectStore';
 
 class PropertyView extends React.Component {
     constructor(props) {
@@ -59,6 +61,7 @@ class PropertyView extends React.Component {
         this.tbLineWidth = this.tbLineWidth.bind(this);
         this.sliderUp = this.sliderUp.bind(this);
         this.sliderChange = this.sliderChange.bind(this);
+        this.effectToggleTrack = this.effectToggleTrack.bind(this);
     }
 
     //获取封装的form组件
@@ -79,7 +82,7 @@ class PropertyView extends React.Component {
             case propertyType.Button:
                 defaultProp.item=item;
                 defaultProp.curNode=this.selectNode;
-                return <ConButton {...defaultProp} />;
+                return <ConButton {...defaultProp} effectToggleTrack={this.effectToggleTrack} />;
             case propertyType.Number:
                 let step=1;
                 if(defaultProp.name=='totalTime'){
@@ -842,7 +845,7 @@ class PropertyView extends React.Component {
         return Object.keys(groups).map((name,index) =>{
             let insertClassName =  className + "-" + 'form_'+name;//插入一个按钮
             return <Form horizontal
-                         className={cls('form_'+name,styleObj)}
+                         className={cls('form_'+name,styleObj,{ "hidden" : node.timerWidget !==null && name == "buttonArea" })}
                          key={index}>
                 {groups[name].map((input, i) => input)}
                 {
@@ -1121,7 +1124,33 @@ class PropertyView extends React.Component {
             //     defaultValue =node.props[item.name+'Key'];
             // }
         }
-
+        else if(item.type == propertyType.Button){
+            if(className == "track"){
+                //console.log(this.selectNode,item);
+                if(this.selectNode.timerWidget == null){
+                    // "track" 是轨迹 ， "effect" 是动效
+                    if(this.selectNode.props.trackType == "track"){
+                        if(item.name == "_editTrack"){
+                            item.styleName = item.olderClassName + " hidden";
+                        }
+                        else {
+                            item.styleName = item.olderClassName;
+                        }
+                    }
+                    else{
+                        if(item.name != "_editTrack"){
+                            item.styleName = item.olderClassName + " hidden";
+                        }
+                        else {
+                            item.styleName = item.olderClassName;
+                        }
+                    }
+                }
+                else {
+                   item.styleName = item.olderClassName + " hidden";
+                }
+            }
+        }
         else if (node.props[item.name] === undefined) {
               if (className == "table" && item.name == "headerFontSize") {
                 defaultValue = 26;
@@ -1409,6 +1438,17 @@ class PropertyView extends React.Component {
                 style['lineHeight'] = "22px";
             }
         }
+        else if(className == "track" && this.selectNode.timerWidget == null
+                && (item.name == "_editTrack" || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") ){
+            style['margin'] = "0";
+            if(item.name == "_saveTrack" || item.name == "_saveAsTrack"){
+                style['width'] = "50%";
+                style['float'] = "left";
+            }
+            else {
+                style['width'] = "100%";
+            }
+        }
 
         groups[groupName].push(
             <div key={item.name}
@@ -1447,11 +1487,25 @@ class PropertyView extends React.Component {
      */
     generateGroups(node,className,groups){
         let getInput=this.getInput.bind(this);
-        getPropertyMap(node, className, 'props').forEach((item, index) => {
-            if (item.type !== propertyType.Hidden) {
-                getInput(item,className, groups);
-            }
-        });
+        if(node.props.block) {
+            //小模块的获取属性
+            node.props.block.mapping.props.forEach((item) =>{
+                let obj = WidgetStore.getWidgetByKey(item.objKey);
+                let copy = JSON.parse(JSON.stringify(item.detail));
+                if (obj && copy && copy.name && copy.type !== propertyType.Hidden) {
+                    //copy.value = obj.props[copy.name];
+                    copy.default = obj.props[copy.name];
+                    copy.showName = item.name;
+                    getInput(copy,className, groups);
+                }
+            });
+        } else {
+            getPropertyMap(node, className, 'props').forEach((item, index) => {
+                if (item.type !== propertyType.Hidden) {
+                    getInput(item,className, groups);
+                }
+            });
+        }
     }
     /****************工具方法区域,end**********************************/
 
@@ -1476,7 +1530,11 @@ class PropertyView extends React.Component {
 
         if (widget.selectWidget !== undefined){
             this.selectNode = widget.selectWidget;
-            this.setState({fields: this.getFields(),propertyName:this.selectNode.props.name});
+            let propertyName = this.selectNode.props.name;
+            if(this.selectNode.props.block) {
+                propertyName = this.selectNode.props.block.name;
+            }
+            this.setState({fields: this.getFields(),propertyName:propertyName});
             let node = this.selectNode;
 
             while (node != null) {
@@ -1589,6 +1647,7 @@ class PropertyView extends React.Component {
     }
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         this.moudleMove = new PropertyViewMove('PropertyViewHeader', this);
         $('#PropertyView').on('focus','textarea,input',function () {
@@ -1597,6 +1656,7 @@ class PropertyView extends React.Component {
     }
     componentWillUnmount() {
         this.unsubscribe();
+        this.effectChange();
         DbHeaderStores.removeListener(this.DbHeaderData.bind(this));
         this.moudleMove.unBind();
         $('#PropertyView').unbind();
@@ -1611,6 +1671,40 @@ class PropertyView extends React.Component {
             column = header.split(',').length;
         }
         this.refs.TbCome.show(data,column,header);
+    }
+
+    effectChangeFuc(data){
+        if(data.createEffect){
+            this.selectNode.props.trackType = "effect";
+            this.selectNode.node.trackType = "effect";
+            this.selectNode.props.name = data.createEffect;
+            this.selectNode.node.name = data.createEffect;
+            let obj = {};
+            obj['trackType'] = "effect";
+            obj['name'] = data.createEffect;
+            WidgetActions['updateProperties'](obj, false, true);
+            EffectAction['toggleMode']("effect");
+            this.setState({fields: this.getFields()});
+        }
+        if(data.updateEffect){
+            this.selectNode.props.trackType = "effect";
+            this.selectNode.node.trackType = "effect";
+            let obj = {};
+            obj['trackType'] = "effect";
+            WidgetActions['updateProperties'](obj, false, true);
+            EffectAction['toggleMode']("effect");
+            this.setState({fields: this.getFields()});
+        }
+    }
+
+    effectToggleTrack(){
+        this.selectNode.props.trackType = "track";
+        this.selectNode.node.trackType = "track";
+        let obj = {};
+        obj['trackType'] = "track";
+        WidgetActions['updateProperties'](obj, false, true);
+        EffectAction['toggleMode']("track");
+        this.setState({fields: this.getFields()});
     }
 
     render() {

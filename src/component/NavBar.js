@@ -28,6 +28,9 @@ import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
 
+import EffectAction from '../actions/effectAction';
+import EffectStore from '../stores/effectStore';
+
 const orderType = [
     {name: '左对齐', className: 'left-icon', type:1},
     {name: '左右居中', className: 'zhong-icon', type:2},
@@ -158,6 +161,8 @@ class NavBar extends React.Component {
         this.arrangeEffectShow = this.arrangeEffectShow.bind(this);
         this.arrangeEffectHide = this.arrangeEffectHide.bind(this);
 
+        this.isBlock = this.isBlock.bind(this);
+
         this.token = null;
         this.playUrl = null;
         this.fileUrl = null;
@@ -188,6 +193,8 @@ class NavBar extends React.Component {
         document.body.addEventListener('keyup', this.onKeyHistory);
         document.body.addEventListener('keydown', this.onKeyDown);
 
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
+        EffectAction['getEffectList']();
         //window.onbeforeunload = ()=>{
         //    var n = window.event.screenX - window.screenLeft;
         //    //鼠标在当前窗口内时，n<m，b为false；鼠标在当前窗口外时，n>m，b为true。20这个值是指关闭按钮的宽度
@@ -240,6 +247,7 @@ class NavBar extends React.Component {
         localStorage.setItem("workID", null);
         document.body.removeEventListener('keyup', this.onKeyHistory);
         document.body.removeEventListener('keydown', this.onKeyDown);
+        this.effectChange();
     }
 
     onStatusChange(widget) {
@@ -352,8 +360,7 @@ class NavBar extends React.Component {
                     workList: result['list'].reverse(),
                     fontList: result['font'],
                     dbList: result['db'],
-                    sockList: result['sock'],
-                    effectList: result['effect'] ? result['effect'] : []
+                    sockList: result['sock']
                 });
                 DbHeaderAction['DbHeaderData'](result['db'],false);
                 WidgetActions['saveFontList'](result['font']);
@@ -1171,10 +1178,10 @@ class NavBar extends React.Component {
         })
     }
 
-    addEffectFuc(){
-        //if(this.state.isAddEffect){
-        //    WidgetActions['addWidget']('track');
-        //}
+    addEffectFuc(id){
+        if(this.state.isAddEffect){
+            EffectAction['getSpecificEffect'](true,id);
+        }
     }
 
     arrangeEffectShow(){
@@ -1187,6 +1194,25 @@ class NavBar extends React.Component {
         this.setState({
             isArrangeEffect : false
         })
+    }
+
+    effectChangeFuc(data) {
+        //console.log(data);
+        if (data.effectList) {
+            this.setState({
+                effectList: data.effectList
+            })
+        }
+        if (data.addSpecificEffect) {
+            let effectData = JSON.parse(data.addSpecificEffect.data);
+            effectData.props.key = undefined;
+            effectData.props.trackType = "effect";
+            WidgetActions['addEffect'](effectData);
+        }
+    }
+
+    isBlock() {
+        return (this.state.selectWidget&&this.state.selectWidget.props.block);
     }
 
     render() {
@@ -1287,7 +1313,7 @@ class NavBar extends React.Component {
                                 <span className="title">事件</span>
                             </button>
 
-                            <div className='dropDown-btn block-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn block-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear block-btn' title='小模块' style={{width: '70px'}}>
                                     <span className="icon" />
                                     <span className="title">小模块</span>
@@ -1306,7 +1332,7 @@ class NavBar extends React.Component {
                                                     {
                                                         this.state.blockList.length > 0
                                                         ? this.state.blockList.map((v,i)=>{
-                                                            let name = "_" + v;
+                                                            let name = v;
                                                             return  <li className="f--hlc" key={i}>
                                                                         <div className="flex-1 f--hlc title" onClick={ this.addBlock.bind(this, name) }>
                                                                             <span className="li-icon" />
@@ -1328,7 +1354,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn db-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn db-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }} onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">数据库</span>
@@ -1380,7 +1406,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn link-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn link-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear link-btn' title='连接' onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">连接</span>
@@ -1428,7 +1454,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn shape-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn shape-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear shape-btn' title='形状'>
                                     <span className="icon" />
                                     <span className="title">形状</span>
@@ -1471,7 +1497,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn effect-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn effect-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear effect-btn' title='动效' onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">动效</span>
@@ -1492,7 +1518,7 @@ class NavBar extends React.Component {
                                                             ? this.state.effectList.map((v,i)=>{
                                                                 return  <li key={i}
                                                                             className={$class({"not-active" : !this.state.isAddEffect})}
-                                                                            onClick={this.addEffectFuc} >
+                                                                            onClick={this.addEffectFuc.bind(this, v.id)} >
                                                                             <div className="title f--hlc">
                                                                                 <span className="li-icon" />
                                                                                 <div className="TitleName">{ v.name }</div>

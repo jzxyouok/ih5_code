@@ -16,6 +16,8 @@ import FunctionView from './FunctionView/FunctionView';
 import VariableView from './VariableView/VariableView';
 import EditDb from './edit-db/index';
 import DBItemView from './DBItemView/DBItemView';
+
+import CreateEffect from './create-effect/index'
 import EditBlock from './Block/EditBlock';
 
 import WidgetStore from '../stores/WidgetStore';
@@ -231,6 +233,8 @@ class App extends React.Component {
                 <div className={$class({"hidden": !this.state.editDb})}>
                     <EditDb />
                 </div>
+
+                <CreateEffect />
 
                 <EditBlock expanded={this.state.expandedToolbox}
                            isHidden={!this.state.activeBlockMode}>

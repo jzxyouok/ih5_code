@@ -108,6 +108,8 @@ var currentLoading;
 var addProps = ['positionX', 'positionY', 'rotation'];
 var mulProps = ['scaleX', 'scaleY'];
 
+var saveEffect = {};
+
 function syncTrack(parent, props) {
     if (props && props['prop'] && props['data'] && props['data'].length > 0) {
         for (var i = 0; i < props['prop'].length; i++) {
@@ -1174,7 +1176,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-  console.log(output);
+  //console.log(output);
   return output;
 }
 
@@ -1807,6 +1809,9 @@ export default Reflux.createStore({
 
         this.listenTo(WidgetActions['setVersion'], this.setVersion);
 
+        this.listenTo(WidgetActions['saveEffect'], this.saveEffect);
+        this.listenTo(WidgetActions['addEffect'], this.addEffect);
+
         this.listenTo(WidgetActions['addOrEditBlock'], this.addOrEditBlock);
         this.listenTo(WidgetActions['removeBlock'], this.removeBlock);
         this.listenTo(WidgetActions['activeBlockMode'], this.activeBlockMode);
@@ -1816,6 +1821,22 @@ export default Reflux.createStore({
     },
     selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
+
+        //如果父中有检查出有小模块就不能被选择
+        if(widget&&widget.parent) {
+            let temp = widget;
+            let parentIsBlock = false;
+            while (temp&&(temp.parent || parentIsBlock == true)) {
+                if(temp.parent&&temp.parent.props.block) {
+                    parentIsBlock = true;
+                }
+                temp = temp.parent;
+            }
+            if(parentIsBlock) {
+                return;
+            }
+        }
+
         if (widget) {
             // if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
             //     render = true;
@@ -1973,9 +1994,10 @@ export default Reflux.createStore({
           //  dataList[0].push(d);
           //  //dataList[1].push(d);
           //}
+          let trackType = this.currentWidget.timerWidget == null ? props.trackType : "timer";
           let track = loadTree(this.currentWidget, {
               'cls': className,
-              'props': {'prop': propList, 'data': dataList, 'name': props['name']}
+              'props': {'prop': propList, 'data': dataList, 'name': props['name'], 'trackType' : trackType}
           });
           this.trigger({redrawTree: true, updateTrack: track});
           // } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
@@ -2077,6 +2099,33 @@ export default Reflux.createStore({
             }
         };
         loopDelete(w);
+    },
+    saveEffect: function(){
+        if (this.currentWidget && this.currentWidget.parent) {
+            saveEffect = {};
+            saveTree(saveEffect, this.currentWidget, true, false);
+            this.trigger({saveEffect : saveEffect})
+        }
+    },
+    addEffect : function(data){
+        if (this.currentWidget) {
+            let effect = cpJson(data);
+            if (!effect.className&&!effect.cls) {
+                return;
+            }
+            // 重命名要黏贴的widget
+            if (effect.props['key'] === undefined) {
+                //copy
+                effect.props = this.addWidgetDefaultName(effect.cls, effect.props, false, true, effect.props.name);
+            }
+            loadTree(this.currentWidget, effect);
+            if(effect.props.eventTree){
+                this.reorderEventTreeList();
+            }
+            this.trigger({selectWidget: this.currentWidget});
+            this.trigger({redrawEventTree: true});
+            this.render();
+        }
     },
     copyWidget: function(shouldCut) {
         if (this.currentWidget && this.currentWidget.parent) {
@@ -2515,7 +2564,26 @@ export default Reflux.createStore({
                 }
             });
             props['name'] = props.type + cOrder;
-        } else {
+        }
+        else if(className == "track" && this.currentWidget.timerWidget == null){
+            if(name){
+                props['name'] = name;
+                props['trackType'] = "effect";
+            }
+            else {
+                let cOrder = 1;
+                //查找当前widget有多少个相同className的，然后＋1处理名字
+                this.currentWidget.children.forEach(cW => {
+                    if(cW.className === className) {
+                        cOrder+=1;
+                    }
+                });
+                props['name'] = className + cOrder;
+                props['trackType'] = "track";
+            }
+            //console.log(props['trackType']);
+        }
+        else {
             if ((className === 'text' || className === 'bitmaptext') && props.value && valueAsTextName){
                 props['name'] = props.value;
             } else {
@@ -2558,7 +2626,7 @@ export default Reflux.createStore({
              skipProperty = false;
          }
 
-       console.log(obj,this.currentWidget );
+       //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2797,6 +2865,9 @@ export default Reflux.createStore({
         //     this.reorderEventTreeList();
         //     this.getAllWidgets();
         // }
+        if(this.activeBlock) {
+            this.activeBlockMode(false);
+        }
         //激活事件树
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
@@ -3393,6 +3464,9 @@ export default Reflux.createStore({
     deleteTreeNode: function (type) {
         let targetWidget =this.currentWidget;
         let deleteBody=false;
+        if(this.activeBlock) {
+            this.activeBlockMode(false);
+        }
         switch(type){
             case nodeType.func:
                 this.removeFunction();
@@ -3539,7 +3613,7 @@ export default Reflux.createStore({
 
         var selected = stageTree[0].tree;
         for (var n in stageTree[0].tree.children) {
-            if (stageTree[0].tree.children[n].className == 'page') {
+            if (stageTree[0].tree.children[n].className == 'page'&&!stageTree[0].tree.children[n].props.block) {
                 selected = stageTree[0].tree.children[n];
                 break;
             }
@@ -3856,7 +3930,6 @@ export default Reflux.createStore({
         }else{
             xhr.open(method, url);
         }
-
         if (binary)
           xhr.responseType = "arraybuffer";
         if (type)
@@ -3868,7 +3941,7 @@ export default Reflux.createStore({
             xhr.upload.onprogress = updateProgress;
         }
         xhr.send(data);
-    },
+},
     getStore: function() {
       //this.selectWidget(stageTree[0].tree);
       return {initTree: stageTree, classList: classList};
@@ -4030,7 +4103,7 @@ export default Reflux.createStore({
         globalVersion = v;
     },
 
-    addOrEditBlock(block) {
+    addOrEditBlock(block, saveAsNew) {
         //TODO:还需其他么？到设置属性的时候再考虑
         //到时还要check id
         if(this.currentWidget) {
@@ -4042,16 +4115,19 @@ export default Reflux.createStore({
                 //新建
                 this.currentWidget.props['block'] = {
                     'name': block.name,
-                    'mapping': block.mapping
+                    'mapping': block.mapping,
+                    'blockId': 'tempTesting'
                 }
             }
         }
         this.activeBlockMode(false);
+        this.trigger({selectWidget:this.currentWidget});
         //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
     },
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){
             delete this.currentWidget.props['block'];
+            this.activeBlockMode(false);
             this.trigger({selectWidget:this.currentWidget});
         }
     },
@@ -4061,6 +4137,13 @@ export default Reflux.createStore({
             //activeBlockModeKey = null;
         //}
         //this.trigger({activeBlockMode: {on:value, key: activeBlockModeKey}});
+        if(value) {
+            //重新赋值
+            this.activeBlock = true;
+            this.trigger({selectWidget:this.currentWidget});
+        } else {
+            this.activeBlock = false;
+        }
         this.trigger({activeBlockMode: {on:value}});
     }
 });

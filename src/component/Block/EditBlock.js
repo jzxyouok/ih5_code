@@ -24,11 +24,12 @@ class EditBlock extends React.Component {
             minSize: false,
             blockId: null,
             name: '',
-            props: [{name: null, objKey:null, detail:null}],
-            events: [{name: null, objKey: null, detail: null}],
-            funcs: [{name: null, objKey: null, detail: null}],
+            props: [{name: '', objKey:null, detail:null}],
+            events: [{name: '', objKey: null, detail: null}],
+            funcs: [{name: '', objKey: null, detail: null}],
             selectWidget: null,
-            objectList: []
+            objectList: [],
+            showNameWarning: false,
         };
 
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -76,16 +77,18 @@ class EditBlock extends React.Component {
 
     onStatusChange(widget) {
         if(widget.selectWidget) {
-            let props = [{name: null, objKey:null, detail:null}];
-            let events = [{name: null, objKey: null, detail: null}];
-            let funcs = [{name: null, objKey: null, detail: null}];
+            let props = [{name: '', objKey:null, detail:null}];
+            let events = [{name: '', objKey: null, detail: null}];
+            let funcs = [{name: '', objKey: null, detail: null}];
             let name = '';
+            let blockId = null;
             if(widget.selectWidget.props&&widget.selectWidget.props.block) {
                 let block = JSON.parse(JSON.stringify(widget.selectWidget.props.block));
                 props = block.mapping.props;
                 events = block.mapping.events;
                 funcs = block.mapping.funcs;
                 name = block.name;
+                blockId = block.blockId?block.blockId:null;
             }
             //获取对象列表
             this.setState({
@@ -95,10 +98,13 @@ class EditBlock extends React.Component {
                 events: events,
                 funcs: funcs,
                 name: name,
+                blockId: blockId,
+                showNameWarning: false
             });
         } else if (widget.allWidgets) {
             this.setState({
-                objectList: this.getAllObjects(this.state.selectWidget)
+                objectList: this.getAllObjects(this.state.selectWidget),
+                showNameWarning: false
             })
         }
     }
@@ -142,6 +148,7 @@ class EditBlock extends React.Component {
     onChangeBlockName(e) {
         let value = e.target.value;
         this.setState({
+            showNameWarning: false,
             name: value
         })
     }
@@ -180,8 +187,10 @@ class EditBlock extends React.Component {
     getParamsDetailList(obj,type) {
         let list = [];
         getPropertyMap(obj, obj.className, type).map((item) => {
-            let temp = JSON.parse(JSON.stringify(item));
-            list.push(temp);
+            if(item.type !== propertyType.Hidden&&!item.readOnly&&item.name !='id' && item.type !== propertyType.Button){
+                let temp = JSON.parse(JSON.stringify(item));
+                list.push(temp);
+            }
         });
         return list;
     }
@@ -196,7 +205,7 @@ class EditBlock extends React.Component {
 
     onAddParamsBtn(type, e) {
         let list = this.getParamList(type);
-        list.push({name: null, objKey:null, detail:null});
+        list.push({name: '', objKey:null, detail:null});
         this.setParamListState(type,list);
     }
 
@@ -210,7 +219,7 @@ class EditBlock extends React.Component {
     onRemoveParamsBtn(index, type, e) {
         let list = this.getParamList(type);
         if(list.length === 1) {
-            list=[{name: null, objKey:null, detail:null}];
+            list=[{name: '', objKey:null, detail:null}];
         } else {
             list.splice(index,1);
         }
@@ -233,7 +242,20 @@ class EditBlock extends React.Component {
         };
     }
 
+    checkEmptyString(string) {
+        if (string.replace(/(^s*)|(s*$)/g, "").length == 0) {
+            return true;
+        }
+        return false;
+    }
+
     saveBlock() {
+        if(this.checkEmptyString(this.state.name)) {
+            this.setState({
+                showNameWarning: true
+            });
+            return;
+        }
         WidgetActions['addOrEditBlock'](
             {
                 name:this.state.name,
@@ -242,11 +264,25 @@ class EditBlock extends React.Component {
                     events:this.state.events,
                     funcs:this.state.funcs
                 }
-            });
+            }, false);
     }
 
     saveAsNewBlock() {
-
+        if(this.checkEmptyString(this.state.name)) {
+            this.setState({
+                showNameWarning: true
+            });
+            return;
+        }
+        WidgetActions['addOrEditBlock'](
+            {
+                name:this.state.name,
+                mapping:{
+                    props:this.state.props,
+                    events:this.state.events,
+                    funcs:this.state.funcs
+                }
+            }, true);
     }
 
     cancel() {
@@ -376,7 +412,7 @@ class EditBlock extends React.Component {
                             <div className='ant-col-l ant-form-item-label'>
                                 <label>名称</label>
                             </div>
-                            <div className='ant-col-r'>
+                            <div className='ant-col-r ant-name-col-r'>
                                 <div className= {$class('ant-form-item-control')}>
                                     <Input type="text" size="small" placeholder="请输入模块名称"
                                            className="item-name"
@@ -384,6 +420,11 @@ class EditBlock extends React.Component {
                                            value={this.state.name}/>
                                 </div>
                             </div>
+                            {
+                                this.state.showNameWarning
+                                    ? <span className="warning">*模块名不能为空</span>
+                                    : null
+                            }
                         </div>
                     </Form>
                     <Form horizontal className="customize-params-form">
@@ -430,7 +471,11 @@ class EditBlock extends React.Component {
                     </Form>
                     <div className="action-part f--hcc">
                         <button className="action-btn" onClick={this.saveBlock}>保存</button>
-                        <button className="action-btn" onClick={this.saveAsNewBlock}>另存为</button>
+                        {
+                            this.state.blockId
+                                ? <button className="action-btn" onClick={this.saveAsNewBlock}>另存为</button>
+                                : null
+                        }
                         <button className="action-btn cancel-btn" onClick={this.cancel}>取消</button>
                     </div>
                 </div>

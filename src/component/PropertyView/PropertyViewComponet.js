@@ -10,6 +10,11 @@ import {fnIsFlex,fnCanvasIsUnderFlex} from '../PropertyMap'
 const MenuItem = Menu.Item;
 let count=0;
 
+
+import EffectAction from '../../actions/effectAction';
+import EffectStore from '../../stores/effectStore';
+
+
 class SwitchMore extends React.Component {
     constructor(props) {
         super(props);
@@ -254,9 +259,7 @@ class ConInputNumber extends React.Component {
        $('.conInputNumber'+this.state.count+' .ant-input-number-input').focus(function () {
            oldVal = $(this).val();
        }).change(function () {
-
            //todo:怎么能拿到当前节点
-
            if(con_currentWidget && fnIsFlex(con_currentWidget) &&['width', 'height'
                    ,'minWidth', 'minHeight', 'maxWidth', 'maxHeight'
                    ,'marginUp','marginDown','marginLeft','marginRight'
@@ -334,31 +337,65 @@ class ConButton extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            curNode:props.curNode
+            curNode:props.curNode             //选中组件的属性
         };
+        this.buttonAllFuc = this.buttonAllFuc.bind(this);   //总入口
+        this.trackEdit = this.trackEdit.bind(this);         //编辑
+        this.trackSave = this.trackSave.bind(this);         //保存
+        this.trackSaveAs = this.trackSaveAs.bind(this);     //另保存
+        this.trackCancel = this.trackCancel.bind(this);     //取消
     }
 
     componentDidMount() {
-         let thisObj=this;
-         let className= this.state.curNode.className;
-         if(className=='track') {
-            $('.' + thisObj.props.item.styleName).click(function () {
-                alert(thisObj.props.item.styleName);
-            });
-        }
-    }
 
-    componentWillReceiveProps(nextProps){
-        let thisObj=this;
-        $('.' + thisObj.props.item.styleName).unbind();
     }
 
     componentWillUnmount() {
 
     }
+
+    buttonAllFuc(){
+        if(this.props.curNode.timerWidget == null){
+            switch (this.props.item.name){
+                case "_editTrack" :
+                    this.trackEdit();
+                break;
+                case "_saveTrack" :
+                    WidgetActions['saveEffect']();
+                    this.trackSave();
+                break;
+                case "_saveAsTrack" :
+                    WidgetActions['saveEffect']();
+                    this.trackSaveAs();
+                break;
+                case "_cancelTrack" :
+                    this.trackCancel();
+                break;
+            }
+        }
+    }
+
+    trackEdit(){
+        this.props.effectToggleTrack();
+    }
+
+    trackSave(){
+        let name =this.props.curNode.props.name;
+        EffectAction['createEffectShow'](true,name);
+    }
+
+    trackSaveAs(){
+        EffectAction['createEffectShow'](true);
+    }
+
+    trackCancel(){
+        let name =this.props.curNode.props.name;
+        EffectAction['loadEffect'](true,name);
+    }
+
     render() {
         return (
-            <button className={this.props.item.styleName}>
+            <button className={this.props.item.styleName} onClick={ this.buttonAllFuc }>
                 {this.props.item.showName}
             </button>
         );

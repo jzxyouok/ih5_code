@@ -3,14 +3,20 @@ import cls from 'classnames';
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
 import {DesignViewMove,DesignViewLineMove} from './PropertyView/MoudleMove';
+import { message } from 'antd';
 
+message.config({
+    top: 37,
+    duration: 1.5,
+});
 
 class DesignView extends React.Component {
     constructor(props) {
         super(props);
         this.state={
             space:false,
-            isDown:false
+            isDown:false,
+            activeBlockMode: false
         };
 
         this.count=0;
@@ -26,10 +32,8 @@ class DesignView extends React.Component {
         this.stageZoomLeft=0;
         this.keyboard=false;
 
-
         this.moudleMove=null;
         this.designViewLineMove=null;
-
 
         this.scroll = this.scroll.bind(this);
         this.onKeyScroll = this.onKeyScroll.bind(this);
@@ -37,10 +41,11 @@ class DesignView extends React.Component {
         this.onresize=this.onresize.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.isShowRulerLine = this.isShowRulerLine.bind(this);
+
+        this.blockModeWarning = this.blockModeWarning.bind(this);
     }
 
     componentDidMount() {
-
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
         this.onStatusChange(WidgetStore.getStore());
         window.onresize=this.onresize;
@@ -58,10 +63,8 @@ class DesignView extends React.Component {
         document.body.removeEventListener('keydown', this.onKeyScroll);
         document.body.removeEventListener('keyup', this.onKeyUp);
 
-
         this.moudleMove.unBind();
         this.designViewLineMove.unBind();
-
     }
 
     onStatusChange(widget) {
@@ -88,16 +91,19 @@ class DesignView extends React.Component {
             setTimeout(function () {
                 //点击舞台后,整个页面会渲染一遍,导致浏览器失焦,导致ctrl+s的时候不能阻止默认的保存事件,导致要写下面无奈的代码
                 let oPropertyView =  document.getElementById('PropertyView').getElementsByClassName('ant-input')[0];
-                oPropertyView.focus();
-                oPropertyView.blur();
+                if(oPropertyView){
+                    oPropertyView.focus();
+                    oPropertyView.blur();
+                }
             },300)
+        } else if (widget.activeBlockMode) {
+            this.setState({
+                activeBlockMode: widget.activeBlockMode.on
+            })
         }
-
         if(widget.setRulerLine){
             this.isShowRulerLine(widget.setRulerLine.isShow);
         }
-
-
 
         if(widget.updateProperties && (widget.updateProperties .width || widget.updateProperties .height)){
             let iWidthSum =Math.floor(widget.updateProperties .width/100);
@@ -110,11 +116,9 @@ class DesignView extends React.Component {
         }else{
             this.keyboard=false;
         }
-
     }
 
     stageZoomChange(){
-
         if(this.selectNode && this.stageZoom != this.props.stageZoom){
 
             this.stageZoom = this.props.stageZoom;
@@ -130,7 +134,6 @@ class DesignView extends React.Component {
     }
 
     setRuler(iWidthSum,iHeightSum){
-
         let oWidth =document.getElementById('h_ruler');
         let oHeight =document.getElementById('v_ruler');
 
@@ -154,9 +157,7 @@ class DesignView extends React.Component {
 
     scroll(event) {
         // event.preventDefault();
-
         event.stopPropagation();
-
 
         let y  = event.deltaY;
         //let x  = event.deltaX;
@@ -272,7 +273,6 @@ class DesignView extends React.Component {
     }
 
     drawLine(aODiv){
-
         let $this =this;
 
         //清空
@@ -334,6 +334,10 @@ class DesignView extends React.Component {
 
     }
 
+    blockModeWarning() {
+        message.warning('自定义小模块编辑中...');
+    }
+
     render() {
         //缩放后设置参考线位置
         this.stageZoomChange();
@@ -355,6 +359,7 @@ class DesignView extends React.Component {
                       <ul id='v_ruler'></ul>
                     </div>
                 </div>
+                <div onClick={this.blockModeWarning} className={cls('block-mode-cover', {'cover-show':this.state.activeBlockMode})}></div>
             </div>
         );
     }

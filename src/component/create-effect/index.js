@@ -4,6 +4,8 @@ import $class from 'classnames';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
+import EffectAction from '../../actions/effectAction';
+import EffectStore from '../../stores/effectStore';
 
 class CreateModule extends React.Component {
     constructor (props) {
@@ -11,7 +13,11 @@ class CreateModule extends React.Component {
         this.state = {
             isTop : false,
             error : "动效名称不能为空",
-            isError : false
+            isError : false,
+            show : false,
+            effectList : [],
+            effectData : null,
+            selectWidget : []
         };
 
         this.isTopSet = this.isTopSet.bind(this);
@@ -20,25 +26,118 @@ class CreateModule extends React.Component {
     }
 
     componentDidMount() {
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
     }
 
     componentWillUnmount() {
+        this.effectChange();
         this.unsubscribe();
     }
 
-    onStatusChange(widget) {
+    effectChangeFuc(data) {
+        if(data.effectList){
+            this.setState({
+                effectList : data.effectList
+            })
+        }
+        //if(data.createEffectShow){
+        //    this.setState({
+        //        show : true
+        //    })
+        //}
+        if(data.createEffectShow){
+            let isCreate = true;
+            if(data.effectName !== undefined){
+                let id = null;
+                this.state.effectList.map((v,i)=>{
+                    if(v.name == data.effectName) {
+                        id = v.id;
+                        return isCreate = false;
+                    }
+                });
 
+                if(!isCreate){
+                    let data = JSON.stringify(this.state.effectData);
+                    let effectData = {
+                        data : data
+                    };
+                    EffectAction['updateEffect'](id,effectData)
+                }
+            }
+
+            this.setState({
+                show : isCreate
+            })
+        }
+        if(data.createEffect){
+            //this.state.selectWidget.props.trackType = "effect";
+            //this.state.selectWidget.node.trackType = "effect";
+            //this.state.selectWidget.props.name = data.createEffect;
+            //this.state.selectWidget.node.name = data.createEffect;
+            //let obj = {};
+            //obj['trackType'] = "effect";
+            //obj['name'] = data.createEffect;
+            //WidgetActions['updateProperties'](obj, false, true);
+
+            this.setState({
+                show : false
+            });
+        }
+        if(data.loadEffect){
+            this.setState({
+                show : false
+            });
+            let isCreate = false;
+            let effectData = null;
+            this.state.effectList.map((v,i)=>{
+                if(v.name == data.effectName) {
+                    EffectAction['getSpecificEffect'](false,v.id);
+                    return isCreate = true;
+                }
+            });
+
+            if(!isCreate){
+                effectData = {"cls":"track","props":{"prop":["positionX","positionY","scaleX","scaleY","rotation","alpha"],
+                    "data":[], "name":data.effectName,"trackType":"track","locked":false,"key": this.state.selectWidget.key}};
+                WidgetActions['deleteTreeNode'](this.state.selectWidget.className);
+                WidgetActions['addEffect'](effectData);
+            }
+        }
+
+        if(data.loadSpecificEffect){
+            let effectData = JSON.parse(data.loadSpecificEffect.data);
+            effectData.props.key =  this.state.selectWidget.key;
+            WidgetActions['deleteTreeNode'](this.state.selectWidget.className);
+            WidgetActions['addEffect'](effectData);
+        }
+    }
+
+    onStatusChange(data){
+        if(data.saveEffect){
+            this.setState({
+                effectData : data.saveEffect
+            })
+        }
+        if(data.selectWidget){
+            let selectWidget = data.selectWidget;
+            if(selectWidget.className == "track" && selectWidget.timerWidget == null){
+                this.setState({
+                    selectWidget : selectWidget
+                })
+            }
+        }
     }
 
     closeClassBtn(){
-        this.state = {
+        this.setState({
             isTop : false,
             error : "动效名称不能为空",
-            isError : false
-        };
+            isError : false,
+            show : false,
+            effectData : null
+        });
         this.refs.name.value = "";
-        this.props.closeClassBtn();
     }
 
     isTopSet(){
@@ -48,12 +147,51 @@ class CreateModule extends React.Component {
     }
 
     addEffect(){
+        let name = this.refs.name.value;
+        let sameName = false;
+        let effectList = this.state.effectList;
+        let error = (data)=>{
+            this.setState({
+                isError : true,
+                error : data
+            })
+        };
 
+        effectList.map((v,i)=>{
+            if(v.name == name){
+                sameName = true
+            }
+        });
+
+        if(name.length == 0){
+            error("动效名称不能为空");
+        }
+        else if(sameName){
+            error("该动效已存在");
+        }
+        else if(name.substring(0,5) == "track"){
+            error("动效名称不能以track为开头");
+        }
+        else {
+            let data = JSON.stringify(this.state.effectData);
+            let effectData = {
+                name : name,
+                data : data
+            };
+            //console.log(effectData);
+            EffectAction['createEffect'](effectData);
+            //if(this.state.isTop){
+            //    effectList.unshift()
+            //}
+            //else {
+            //    effectList.push()
+            //}
+        }
     }
 
     render() {
         return (
-            <div className='CreateModule f--hcc'>
+            <div className={ $class("CreateModule f--hcc",{"hidden": !this.state.show })}>
                 <div className="CM-layer"></div>
 
                 <div className="CM-main">
@@ -62,17 +200,20 @@ class CreateModule extends React.Component {
                         创建动效
                     </div>
 
-                    <div className="CM-content">
+                    <div className="CM-content" style={{ paddingBottom : "20px"}}>
                         <div className="name">动效名称：</div>
                         <input placeholder="请输入名称" ref="name" />
-                        <div className="top-btn f--hlc" onClick={ this.isTopSet }>
-                            是否置顶：
-                            <span className={$class({"active" : this.state.isTop})}/>
+                        <div className="top-btn f--hlc" style={{ height : "20px"}}>
+                            {
+                                //onClick={ this.isTopSet }
+                                //是否置顶：
+                                //<span className={$class({"active" : this.state.isTop})}/>
+                            }
                         </div>
 
                         <div className="btn-group f--hcc">
                             <button className="btn btn-clear cancel-btn" onClick={ this.closeClassBtn }>取消</button>
-                            <button className="btn btn-clear sure-btn" onClick={ this.addClass }>确定</button>
+                            <button className="btn btn-clear sure-btn" onClick={ this.addEffect }>确定</button>
                         </div>
                     </div>
 

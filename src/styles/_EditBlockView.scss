@@ -84,6 +84,16 @@
         padding-bottom: 5px;
       }
 
+      .ant-form-item {
+        .warning {
+          padding-left: 5px;
+          color: #FFA800;
+        }
+      }
+      .ant-name-col-r {
+        flex: none;
+      }
+
       .ant-form-horizontal,
       .ant-form {
         .ant-form-item-label {

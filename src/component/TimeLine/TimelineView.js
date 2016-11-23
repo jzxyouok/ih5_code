@@ -9,6 +9,8 @@ import WidgetActions from '../../actions/WidgetActions';
 import TimelineStores from '../../stores/Timeline';
 import TimelineAction from '../../actions/TimelineAction';
 import changeKeyAction from '../../actions/changeKeyAction';
+import EffectAction from '../../actions/effectAction';
+import EffectStore from '../../stores/effectStore';
 
 import VxSlider from '../VxSlider';
 import ComponentPanel from '../ComponentPanel';
@@ -19,7 +21,6 @@ var timerCallback = {};
  * 时间轴组件
  */
 class TimelineView extends React.Component {
-
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -54,7 +55,8 @@ class TimelineView extends React.Component {
             leftAddRight:37 + 281,
             whichKey : null,
             startKey : 0,
-            isInput : false
+            isInput : false,
+            selectWidget : []
 		};
 
         this.flag = 0;
@@ -83,6 +85,7 @@ class TimelineView extends React.Component {
 
 	componentDidMount() {
 		this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
         TimelineStores.listen(this.ChangeKeyframe.bind(this));
         this.dragZoom();
         this.dragTimeline();
@@ -90,8 +93,18 @@ class TimelineView extends React.Component {
 
 	componentWillUnmount() {
 		this.unsubscribe();
+        this.effectChange();
         //TimelineStores.removeListener(this.ChangeKeyframe.bind(this));
 	}
+
+    effectChangeFuc(data){
+        if(data.toggleMode){
+            this.setState({
+                timerNode : null
+            });
+            WidgetActions['selectWidget'](this.state.selectWidget);
+        }
+    }
 
 	onStatusChange(widget) {
 		//console.log('w2', widget);
@@ -108,8 +121,11 @@ class TimelineView extends React.Component {
 		//	});
 		//}
 		if (widget.selectWidget !== undefined) {
-			const changed = {currentTrack:null};
+            const changed = {currentTrack:null};
 			let node = widget.selectWidget;
+            this.setState({
+                selectWidget : widget.selectWidget
+            });
 			if (node) {
                 //console.log(node);
 				node.children.map(item => {
@@ -130,12 +146,16 @@ class TimelineView extends React.Component {
                         }
                         else {
                             //console.log(item);
-                            if(item.timerWidget) {
-                                this.setState({
-                                    startTime : 0,
-                                    endTime : item.timerWidget.props.totalTime ? item.timerWidget.props.totalTime : 10
-                                });
-                            }
+                            this.setState({
+                                startTime : 0,
+                                endTime : 10
+                            });
+                            //if(item.timerWidget) {
+                            //    this.setState({
+                            //        startTime : 0,
+                            //        endTime : item.timerWidget.props.totalTime ? item.timerWidget.props.totalTime : 10
+                            //    });
+                            //}
                         }
 					}
 				});
@@ -156,18 +176,24 @@ class TimelineView extends React.Component {
                         }
                     }
                     else {
-                        if(node.timerWidget) {
-                            this.setState({
-                                startTime : 0,
-                                endTime : node.timerWidget.props.totalTime ? node.timerWidget.props.totalTime : 10
-                            })
-                        }
+                        this.setState({
+                            startTime : 0,
+                            endTime : 10
+                        });
+                        //if(node.timerWidget) {
+                        //    this.setState({
+                        //        startTime : 0,
+                        //        endTime : node.timerWidget.props.totalTime ? node.timerWidget.props.totalTime : 10
+                        //    })
+                        //}
                     }
                 }
-                //console.log(changed.currentTrack);
 			}
+            if(changed.currentTrack && changed.currentTrack.props && changed.currentTrack.props.trackType != "track"){
+                return;
+            }
 			if (node)
-				node = node.timerWidget;
+				node = node.timerWidget || changed.currentTrack;
 			if (node !== this.state.timerNode) {
 				if (node) {
 					bridge.timerAddCallback(node.node, timerCallback, this.onTimer);
@@ -185,7 +211,7 @@ class TimelineView extends React.Component {
                 if(this.state.nowLayerId !== nowID){
                     this.setState({
                         isChangeKey : false,
-                        nowLayerId : nowID
+                        nowLayerId : nowID,
                     })
                 }
             }
@@ -205,12 +231,12 @@ class TimelineView extends React.Component {
 		}
 
         if(widget.updateProperties){
-            if(widget.updateProperties.startTime){
+            if(widget.updateProperties.startTime || widget.updateProperties.startTime == 0){
                 this.setState({
                     startTime : parseFloat(widget.updateProperties.startTime)
                 })
             }
-            if(widget.updateProperties.endTime) {
+            if(widget.updateProperties.endTime || widget.updateProperties.startTime == 0) {
                 this.setState({
                     endTime : parseFloat(widget.updateProperties.endTime)
                 })
@@ -660,51 +686,22 @@ class TimelineView extends React.Component {
         }
 
         if(data){
-            if(data.timerWidget){
-                totalTime = data.timerWidget.props.totalTime ? data.timerWidget.props.totalTime : 10;
-                let maxWidth  =  window.innerWidth-this.state.leftAddRight-170;
-                let multiple = this.state.multiple;
-                let allWidth;
-                if(multiple < 0){
-                    allWidth = 61 * totalTime / (- this.state.multiple)
-                }
-                else {
-                    allWidth = 61 * totalTime * this.state.multiple
-                }
-                //console.log('ooo',allWidth,this.state.multiple, maxWidth);
-                if( allWidth > maxWidth ){
-                    let percentage = (allWidth + 20) / maxWidth;
-                    percentage.toFixed(3);
-                    //console.log(percentage);
-                    if(percentage <=0){
-                        this.setState({
-                            percentage : null,
-                            movableDistance : 0,
-                            overallWidth : 100 + "%",
-                            allWidth : allWidth,
-                            marginLeft : 0
-                        },()=>{
-                            if(isScroll){
-                                this.scrollBtn();
-                            }
-                        });
-                    }
-                    else {
-                        let width =  maxWidth / percentage;
-                        width.toFixed(3);
-                        this.setState({
-                            percentage : percentage,
-                            overallWidth : width + "px",
-                            movableDistance : maxWidth - width,
-                            allWidth : allWidth
-                        },()=>{
-                            if(isScroll){
-                                this.scrollBtn();
-                            }
-                        });
-                    }
-                }
-                else {
+            totalTime = data.node.totalTime ? data.node.totalTime : 10;
+            let maxWidth  =  window.innerWidth-this.state.leftAddRight-170;
+            let multiple = this.state.multiple;
+            let allWidth;
+            if(multiple < 0){
+                allWidth = 61 * totalTime / (- this.state.multiple)
+            }
+            else {
+                allWidth = 61 * totalTime * this.state.multiple
+            }
+            //console.log('ooo',allWidth,this.state.multiple, maxWidth);
+            if( allWidth > maxWidth ){
+                let percentage = (allWidth + 20) / maxWidth;
+                percentage.toFixed(3);
+                //console.log(percentage);
+                if(percentage <=0){
                     this.setState({
                         percentage : null,
                         movableDistance : 0,
@@ -717,6 +714,33 @@ class TimelineView extends React.Component {
                         }
                     });
                 }
+                else {
+                    let width =  maxWidth / percentage;
+                    width.toFixed(3);
+                    this.setState({
+                        percentage : percentage,
+                        overallWidth : width + "px",
+                        movableDistance : maxWidth - width,
+                        allWidth : allWidth
+                    },()=>{
+                        if(isScroll){
+                            this.scrollBtn();
+                        }
+                    });
+                }
+            }
+            else {
+                this.setState({
+                    percentage : null,
+                    movableDistance : 0,
+                    overallWidth : 100 + "%",
+                    allWidth : allWidth,
+                    marginLeft : 0
+                },()=>{
+                    if(isScroll){
+                        this.scrollBtn();
+                    }
+                });
             }
         }
     }
@@ -920,7 +944,6 @@ class TimelineView extends React.Component {
         TimelineViewStyle['left'] = this.state.dragTimelineLeft;
         TimelineViewStyle['right'] = this.state.dragTimelineRight;
         TimelineViewStyle['bottom'] = this.state.dragTimelineBottom;
-
         return (
             <div id='TimelineView'
                  className={ cls({"hidden":!this.state.timerNode||this.props.isHidden })}

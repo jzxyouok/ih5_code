@@ -449,7 +449,50 @@ $toBottom:14px;
             .ant-select-enabled{width: 60px;}
 		}
 
+        .edit-btn,
+        .save-btn,
+        .saveAs-btn,
+        .cancel-btn{
+            @include border-radius(2px);
+            height: 22px;
+            line-height: 20px;
+            font-size: 12px;
+            outline: none;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+        .edit-btn {
+            width: 170px;
+            background: #858585;
+            color: #151515;
+            margin-left: 40px;
 
+            &:hover { background: #fff; }
+            &:active { background: #545454; }
+        }
+
+        .save-btn,.saveAs-btn {
+            width: 103px;
+            background: #858585;
+            color: #151515;
+            margin-bottom: 6px;
+            &:hover { background: #fff; }
+            &:active { background: #545454; }
+        }
+
+        .save-btn {  margin-left: 15px; }
+        .saveAs-btn {  margin-left: 9px; }
+
+        .cancel-btn {
+            width: 220px;
+            border: 1px solid #7b7b7b;
+            color: #7b7b7b;
+            margin-left: 15px;
+
+            &:hover { background: #7b7b7b; color: #151515; }
+            &:active { background: #545454; border-color: #545454; color: #151515; }
+        }
 
 		.ant-form-item-label {
 		    padding: 0;

@@ -2,14 +2,14 @@
 import React from 'react';
 import $class from 'classnames';
 
-import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore from '../../stores/WidgetStore';
+import EffectAction from '../../actions/effectAction';
+import EffectStore from '../../stores/effectStore';
 
 class ArrangeModule extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            eventList : [],
+            effectList : [],
             error : "请选择动效",
             isError : false,
             chooseId : [],
@@ -24,15 +24,19 @@ class ArrangeModule extends React.Component {
     }
 
     componentDidMount() {
-        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
     }
 
     componentWillUnmount() {
-        this.unsubscribe();
+        this.effectChange();
     }
 
-    onStatusChange(widget) {
-
+    effectChangeFuc(data) {
+        if(data.effectList){
+            this.setState({
+                effectList : data.effectList
+            })
+        }
     }
 
     closeArrangeEffectBtn(){
@@ -83,7 +87,14 @@ class ArrangeModule extends React.Component {
             })
         }
         else {
-            //WidgetActions['deleteClass'](this.state.chooseId);
+            this.state.effectList.map((v,i)=>{
+               this.state.chooseId.forEach((v1,i1)=>{
+                   if(v1 == v.id){
+                       EffectAction['deleteEffect'](v.id)
+                   }
+               })
+            });
+
             this.deleteLayerHide();
             this.setState({
                 isError : false,
@@ -147,15 +158,15 @@ class ArrangeModule extends React.Component {
                             <div className="AM-scroll">
                                 <ul className="AM-table">
                                     {
-                                        this.state.eventList.length > 0
-                                            ?   this.state.eventList.map((v,i)=>{
-                                                    return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v) >= 0})}
+                                        this.state.effectList.length > 0
+                                            ?   this.state.effectList.map((v,i)=>{
+                                                    return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v.id) >= 0})}
                                                                 key={i}
-                                                                onClick={ this.chooseBtn.bind(this, v)}>
+                                                                onClick={ this.chooseBtn.bind(this, v.id)}>
 
                                                                 <div className="flex-1 f--hlc title">
                                                                     <span className="li-icon" />
-                                                                    <div className="TitleName">{v}</div>
+                                                                    <div className="TitleName">{v.name}</div>
                                                                 </div>
                                                                 <span className="choose-btn" />
                                                             </li>
@@ -163,7 +174,7 @@ class ArrangeModule extends React.Component {
                                             : null
                                     }
                                     {
-                                        moduleFuc(this.state.eventList.length)
+                                        moduleFuc(this.state.effectList.length)
                                     }
                                 </ul>
                             </div>
