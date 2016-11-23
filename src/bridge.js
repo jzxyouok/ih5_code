@@ -20,6 +20,7 @@ module.exports = {
     'selectWidget':bridge.selectWidget,
     'reorderWidget':bridge.reorderWidget,
     'updateSelector':bridge.updateSelector,
+    'showTrack':bridge.showTrack,
     'addMouseDownHandler':bridge.addMouseDownHandler,
     // 'isDom':bridge.isDom,
     'setGenerateText':bridge.setGenerateText,
