@@ -1056,7 +1056,7 @@ class PropertyView extends React.Component {
             if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems','type'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
             }
-            else if (item.name == 'fontFamily' && node.props[item.name + 'Key'] && this.selectNode.className=='bitmaptext') {
+            else if (item.name == 'fontFamily' && node.props[item.name + 'Key'] && node.className=='bitmaptext') {
                 defaultValue = node.props[item.name + 'Key'];
             }
             else if (item.name == 'fontFamily' && node.props[item.name + 'Key']) {
@@ -1127,9 +1127,9 @@ class PropertyView extends React.Component {
         else if(item.type == propertyType.Button){
             if(className == "track"){
                 //console.log(this.selectNode,item);
-                if(this.selectNode.timerWidget == null){
+                if(node.timerWidget == null){
                     // "track" 是轨迹 ， "effect" 是动效
-                    if(this.selectNode.props.trackType == "track"){
+                    if(node.props.trackType == "track"){
                         if(item.name == "_editTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
@@ -1154,15 +1154,15 @@ class PropertyView extends React.Component {
         else if (node.props[item.name] === undefined) {
               if (className == "table" && item.name == "headerFontSize") {
                 defaultValue = 26;
-                this.selectNode.props.headerFontSize = 26;
-                this.selectNode.node.headerFontSize = 26;
+                node.props.headerFontSize = 26;
+                node.node.headerFontSize = 26;
                 let obj = {};
                 obj['headerFontSize'] = 26;
                 WidgetActions['updateProperties'](obj, false, true);
             } else if (className == "table" && item.name == "fontSize") {
                 defaultValue = 26;
-                this.selectNode.props.fontSize = 26;
-                this.selectNode.node.fontSize = 26;
+                node.props.fontSize = 26;
+                node.node.fontSize = 26;
                 let obj = {};
                 obj['fontSize'] = 26;
                 WidgetActions['updateProperties'](obj, false, true);
@@ -1243,7 +1243,7 @@ class PropertyView extends React.Component {
             if (item.name == 'originY' || item.name == 'originPos') {
                 selectClassName = 'originIcon';
             }
-            else if (item.name == 'fontFamily' && this.selectNode.className=='bitmaptext') {
+            else if (item.name == 'fontFamily' && node.className=='bitmaptext') {
                 defaultProp.name = item.name;
                 defaultProp.options.push(<Option key={0}>
                     <div className={selectClassName}></div>
@@ -1438,7 +1438,7 @@ class PropertyView extends React.Component {
                 style['lineHeight'] = "22px";
             }
         }
-        else if(className == "track" && this.selectNode.timerWidget == null
+        else if(className == "track" && node.timerWidget == null
                 && (item.name == "_editTrack" || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") ){
             style['margin'] = "0";
             if(item.name == "_saveTrack" || item.name == "_saveAsTrack"){
