@@ -843,6 +843,8 @@ function generateJsFunc(etree) {
     if (item.judges.conFlag !='触发条件' && item.enable) {
       // var out = '';
       var lines = [];
+      var marginArr=[];
+      var paddingArr=[];
       var conditions = [];
       if (item.judges.children.length) {
         item.judges.children.forEach(function(c) {
@@ -1051,17 +1053,33 @@ function generateJsFunc(etree) {
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originX')+'='+ arr[0]);
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],'originY')+'='+ arr[1]);
                           } else if(prop.name === 'alpha') {
-                              //FormulaInput
                               if(formulaGenLine(prop.value)!=='') {
                                   lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ '('+formulaGenLine(prop.value)+')'+'/100');
                               }
                           } else if(prop.name === 'flexWrap') {
                               lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+JSON.stringify( prop.value ?'wrap':'nowrap'));
-                          } else {
+                          }
+                          else {
                               switch (prop.type) {
                                   case 12: //FormulaInput
                                       if(formulaGenLine(prop.value)!=='') {
-                                          lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                         if(['marginUp','marginDown','marginLeft','marginRight'].indexOf(prop.name)>=0){
+                                             let oVal={}
+                                             oVal['head']=getIdsName(cmd.sObjId[0],cmd.sObjId[2],'margin')+'=';
+                                             oVal['value']= formulaGenLine(prop.value);
+                                             oVal['name']=prop.name;
+                                             marginArr.push(oVal);
+                                         }else if(['paddingUp','paddingDown','paddingLeft','paddingRight'].indexOf(prop.name)>=0){
+                                             let oVal={}
+                                             oVal['head']=getIdsName(cmd.sObjId[0],cmd.sObjId[2],'padding')+'=';
+                                             oVal['value']= formulaGenLine(prop.value);
+                                             oVal['name']=prop.name;
+                                             paddingArr.push(oVal);
+                                         }else if(['minWidth', 'minHeight', 'maxWidth', 'maxHeight'].indexOf(prop.name)>=0){
+                                             lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+JSON.stringify(formulaGenLine(prop.value)));
+                                         }else{
+                                             lines.push(getIdsName(cmd.sObjId[0],cmd.sObjId[2],prop.name)+'='+ formulaGenLine(prop.value));
+                                         }
                                       }
                                       break;
                                   default:
@@ -1127,7 +1145,10 @@ function generateJsFunc(etree) {
           lines.push(getIdsName(cmd.action.funcId[0], cmd.action.funcId[2]) + '(' + ps.join(',') + ')');
         }
       });
-        // lines.push('console.log(ids)');
+
+        lines=getSpacingStr(lines,marginArr,['marginUp','marginRight','marginDown','marginLeft']);
+        lines=getSpacingStr(lines,paddingArr,['paddingUp','paddingRight','paddingDown','paddingLeft']);
+
       if (lines.length) {
         var out = '';
         if (conditions.length == 1) {
@@ -1157,6 +1178,30 @@ function generateJsFunc(etree) {
   });
   //console.log(output);
   return output;
+}
+
+function getSpacingStr(lines,spacingArr,arr) {
+    let sMargin=["0px","0px","0px","0px"];
+    let sHead='';
+    spacingArr.map((v,i)=>{
+        sHead=v.head;
+        if(v.name==arr[0]){
+            sMargin[0]=JSON.parse(v.value);
+        }
+        else if(v.name==arr[1]){
+            sMargin[1]=JSON.parse(v.value);
+        }
+        else if(v.name==arr[2]){
+            sMargin[2]=JSON.parse(v.value);
+        }
+        else if(v.name==arr[3]){
+            sMargin[3]=JSON.parse(v.value);
+        }
+    });
+    if(spacingArr.length>0){
+        lines.push(sHead+JSON.stringify(sMargin.join(' ')));
+    }
+    return lines;
 }
 
 function saveTree(data, node, saveKey, saveEventObjKeys) {
@@ -1549,10 +1594,10 @@ bridge.setGenerateText(function(widget, callback) {
   if (globalToken)
       xhr.setRequestHeader('Authorization', 'Bearer {' + globalToken + '}');
   var form = new FormData();
-  form.append('font', widget['font']);
+  form.append('font', widget['fontFamily']);
   form.append('text', widget['value']);
-  form.append('size', widget['size']);
-  form.append('color', widget['color']);
+  form.append('size', widget['fontSize']);
+  form.append('color', widget['fontFill']);
   form.append('lineHeight', widget['lineHeight']);
   xhr.responseType = 'arraybuffer';
   xhr.onload = function(e) {
@@ -1642,6 +1687,20 @@ function drop(e) {
   }
 }
 
+function fnIsFlex(node) {
+    if (node.className == 'flex') {
+        return true;
+    }
+    else if (node.className == 'root') {
+        return false;
+    }
+    else if (node.className == 'canvas') {
+        return true;
+    }
+    else {
+        return  fnIsFlex(node.parent);
+    }
+}
 /*
 function downloadFile(filename, text) {
     var pom = document.createElement('a');
@@ -1764,11 +1823,31 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['saveEffect'], this.saveEffect);
         this.listenTo(WidgetActions['addEffect'], this.addEffect);
 
+        this.listenTo(WidgetActions['addOrEditBlock'], this.addOrEditBlock);
+        this.listenTo(WidgetActions['removeBlock'], this.removeBlock);
+        this.listenTo(WidgetActions['activeBlockMode'], this.activeBlockMode);
+
         this.eventTreeList = [];
         this.historyRoad;
     },
     selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
+
+        //如果父中有检查出有小模块就不能被选择
+        if(widget&&widget.parent) {
+            let temp = widget;
+            let parentIsBlock = false;
+            while (temp&&(temp.parent || parentIsBlock == true)) {
+                if(temp.parent&&temp.parent.props.block) {
+                    parentIsBlock = true;
+                }
+                temp = temp.parent;
+            }
+            if(parentIsBlock) {
+                return;
+            }
+        }
+
         if (widget) {
             // if (!this.currentWidget || this.currentWidget.rootWidget != widget.rootWidget) {
             //     render = true;
@@ -2549,8 +2628,8 @@ export default Reflux.createStore({
          //处理flex模式下的百分比和px
          let isSkip= this.setFlexProps(obj);
          if(isSkip) {
-            skipRender = false;
-            skipProperty = false;
+             skipRender = false;
+             skipProperty = false;
          }
 
        //console.log(obj,this.currentWidget );
@@ -2592,7 +2671,6 @@ export default Reflux.createStore({
          * 处理flex模式下的百分比和px
          */
           setFlexProps:function (obj) {
-            let fnIsFlex = this.fnIsFlex;
             if (fnIsFlex(this.currentWidget)) {
                 for (let i in obj) {
                     if (i == 'margin' || i == 'padding') {
@@ -2623,18 +2701,6 @@ export default Reflux.createStore({
             }
             return false;
         },
-            //判断是否处于flex模式下,可拓展改写
-       fnIsFlex:function(node) {
-        if (node.className == 'flex') {
-            return true;
-        }
-        else if (node.className == 'root') {
-            return false;
-        }
-        else {
-            return  this.fnIsFlex(node.parent);
-        }
-    },
      /**
      * luozheao,20161119
      * 功能:
@@ -2805,6 +2871,9 @@ export default Reflux.createStore({
         //     this.reorderEventTreeList();
         //     this.getAllWidgets();
         // }
+        if(this.activeBlock) {
+            this.activeBlockMode(false);
+        }
         //激活事件树
         if (nid!=null||nid!=undefined) {
             this.currentActiveEventTreeKey = nid;
@@ -3401,6 +3470,9 @@ export default Reflux.createStore({
     deleteTreeNode: function (type) {
         let targetWidget =this.currentWidget;
         let deleteBody=false;
+        if(this.activeBlock) {
+            this.activeBlockMode(false);
+        }
         switch(type){
             case nodeType.func:
                 this.removeFunction();
@@ -3547,7 +3619,7 @@ export default Reflux.createStore({
 
         var selected = stageTree[0].tree;
         for (var n in stageTree[0].tree.children) {
-            if (stageTree[0].tree.children[n].className == 'page') {
+            if (stageTree[0].tree.children[n].className == 'page'&&!stageTree[0].tree.children[n].props.block) {
                 selected = stageTree[0].tree.children[n];
                 break;
             }
@@ -3681,13 +3753,29 @@ export default Reflux.createStore({
                 result.push(count);
                 count = 0;
               }
-              if (n == 0 || item[0].substr(0, 5) == 'data:') {
-                result.push(-n);
-                for (var j = 0; j < n; j++) {
-                  array.push(item[j]);
-                }
+              if (n == 0) {
+                  result.push(0);
               } else {
-                result.push(item);
+                  var c = 0;
+                  var r = [];
+                  for (var j = 0; j < n; j++) {
+                      if (item[j].substr(0, 5) == 'data:') {
+                          array.push(item[j]);
+                          c++;
+                      } else {
+                          if (c)
+                              r.push(c);
+                          c = 0;
+                          r.push(item[j]);
+                      }
+                  }
+                  if (r.length == 0)
+                      result.push(-n);
+                  else {
+                      if (c)
+                          r.push(c);
+                      result.push(r);
+                  }
               }
             }
           }
@@ -3751,7 +3839,7 @@ export default Reflux.createStore({
     },
     setFont: function(font) {
       if (this.currentWidget && this.currentWidget.className == 'bitmaptext') {
-        this.updateProperties({'font':font});
+        this.updateProperties({'fontFamily':font});
       }
     },
     setImageText:function(data) {
@@ -4020,6 +4108,50 @@ export default Reflux.createStore({
     setVersion(v) {
         globalVersion = v;
     },
+
+    addOrEditBlock(block, saveAsNew) {
+        //TODO:还需其他么？到设置属性的时候再考虑
+        //到时还要check id
+        if(this.currentWidget) {
+            if(this.currentWidget.props['block']){
+                //编辑
+                this.currentWidget.props['block']['name'] = block.name;
+                this.currentWidget.props['block']['mapping'] = block.mapping;
+            } else {
+                //新建
+                this.currentWidget.props['block'] = {
+                    'name': block.name,
+                    'mapping': block.mapping,
+                    'blockId': 'tempTesting'
+                }
+            }
+        }
+        this.activeBlockMode(false);
+        this.trigger({selectWidget:this.currentWidget});
+        //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
+    },
+    removeBlock(block) {
+        if(this.currentWidget&&this.currentWidget.props['block']){
+            delete this.currentWidget.props['block'];
+            this.activeBlockMode(false);
+            this.trigger({selectWidget:this.currentWidget});
+        }
+    },
+    activeBlockMode(value){
+        //let activeBlockModeKey = this.currentWidget.key;
+        //if(value) {
+            //activeBlockModeKey = null;
+        //}
+        //this.trigger({activeBlockMode: {on:value, key: activeBlockModeKey}});
+        if(value) {
+            //重新赋值
+            this.activeBlock = true;
+            this.trigger({selectWidget:this.currentWidget});
+        } else {
+            this.activeBlock = false;
+        }
+        this.trigger({activeBlockMode: {on:value}});
+    }
 });
 
-export {globalToken, nodeType, nodeAction, varType, funcType, keepType, isCustomizeWidget, dataType, classList, selectableClass}
+export {globalToken, nodeType, nodeAction, varType, funcType, keepType,fnIsFlex, isCustomizeWidget, dataType, classList, selectableClass}

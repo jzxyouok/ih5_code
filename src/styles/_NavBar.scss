@@ -160,7 +160,7 @@
                     &:hover .icon{ background-position: -80px -40px; }
                     &:active .icon{ background-position: -80px 0; }
                 }
-                &.module-btn{
+                &.block-btn{
                     .icon{ background-position: -400px -200px; }
                     &:hover .icon{ background-position: -400px -240px; }
                     &:active .icon{ background-position: -400px -280; }
@@ -246,6 +246,24 @@
 
                     .dropDownToggle{
                         height: 189px;
+                    }
+                }
+
+                &.dropDown-disable {
+                    &:hover {
+                        &:before {
+                            display: none;
+                        }
+                        .dropDownToggle{
+                            height: 0;
+                        }
+                        .block-btn,
+                        .data-btn,
+                        .link-btn,
+                        .shape-btn,
+                        .effect-btn{
+                            cursor: not-allowed;
+                        }
                     }
                 }
 

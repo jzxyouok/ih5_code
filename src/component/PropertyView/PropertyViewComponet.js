@@ -12,6 +12,21 @@ let count=0;
 import EffectAction from '../../actions/effectAction';
 import EffectStore from '../../stores/effectStore';
 
+function fnIsFlex(node) {
+    if (node.className == 'flex') {
+        return true;
+    }
+    else if (node.className == 'root') {
+        return false;
+    }
+    else if (node.className == 'canvas') {
+        return true;
+    }
+    else {
+        return  fnIsFlex(node.parent);
+    }
+}
+
 class SwitchMore extends React.Component {
     constructor(props) {
         super(props);
@@ -234,17 +249,7 @@ class ConInputNumber extends React.Component {
             con_currentWidget=widget.selectWidget;
         }
     }
-    fnIsFlex(node) {
-        if (node.className == 'flex') {
-            return true;
-        }
-        else if (node.className == 'root') {
-            return false;
-        }
-        else {
-            return this.fnIsFlex(node.parent);
-        }
-    }
+
     componentDidMount() {
 
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
@@ -261,7 +266,7 @@ class ConInputNumber extends React.Component {
         this.upBtn .addEventListener('mouseout',this.onMouseUp);
         document.addEventListener('mouseup',this.onMouseUp);
        let thisObj=this;
-       let fnIsFlex=this.fnIsFlex.bind(this);
+
        let oldVal=null;//focus时的值
        $('.conInputNumber'+this.state.count+' .ant-input-number-input').focus(function () {
            oldVal = $(this).val();
@@ -287,7 +292,6 @@ class ConInputNumber extends React.Component {
                        console.log(thisObj.props);
                        thisObj.props.onChange(newVal);
                    }
-
                } else if (str.indexOf('px') >= 0) {
                    let newVal =str.split('px')[0];
                    pObj.addClass('ant-input-px');

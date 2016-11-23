@@ -119,4 +119,24 @@ $lineColor:#4AFFFF;
             line-height: 1.5;
         }
     }
+    .block-mode-cover {
+        background-color: rgba(0, 0, 0, 0.6);
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        display: none;
+
+        &.cover-show {
+            display: block;
+        }
+    }
+}
+
+.ant-message-notice-content {
+    border-radius: 2px;
+    background-color: #232323;
+    border: 1px solid #313131;
+    color: #b5b5b5;
 }

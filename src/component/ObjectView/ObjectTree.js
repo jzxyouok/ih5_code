@@ -35,7 +35,7 @@ const originToolMenuList = [
         {name:'relPaste',showName:'相对位置粘贴'},{name:'delete',showName:'删除'}],
     [{name:'originSize',showName:'原始大小'},{name:'originPercent',showName:'原始比例'}],
     [{name:'crossCopy',showName:'跨案例复制'},{name:'crossPaste',showName:'跨案例粘贴'}],
-    [{name:'saveAsCom',showName:'生成小模块'}]
+    [{name:'saveAsBlock',showName:'生成小模块'}]
 ];
 
 class ObjectTree extends React.Component {
@@ -64,7 +64,9 @@ class ObjectTree extends React.Component {
             nids: [],   //多选的
 
             showToolMenu: false, //右键
-            toolMenuList: JSON.parse(JSON.stringify(originToolMenuList)) //menuList
+            toolMenuList: JSON.parse(JSON.stringify(originToolMenuList)), //menuList
+
+            activeBlockMode: false,  //小模块激活模式
         };
 
         this.chooseBtn = this.chooseBtn.bind(this);
@@ -90,7 +92,7 @@ class ObjectTree extends React.Component {
         this.itemActions = this.itemActions.bind(this);
         this.itemWindowKeyAction = this.itemWindowKeyAction.bind(this);
 
-        this.didPressMacCmdKey = false;
+        this.didPressCmdKey = false;
         this.checkPressCmdKey = this.checkPressCmdKey.bind(this);
         this.resetCmdKey = this.resetCmdKey.bind(this);
 
@@ -133,12 +135,14 @@ class ObjectTree extends React.Component {
         this.addModuleBtn = this.addModuleBtn.bind(this);
 
         //右键点击
-
         this.relocateToolMenu = this.relocateToolMenu.bind(this);
         this.onRightClick = this.onRightClick.bind(this);
         this.onHideToolMenu = this.onHideToolMenu.bind(this);
         this.onClickToolMenuItem = this.onClickToolMenuItem.bind(this);
         this.onMouseDownToolMenuItem = this.onMouseDownToolMenuItem.bind(this);
+
+        //block相关
+        this.toggleWidgetAllIds = this.toggleWidgetAllIds.bind(this);
     }
 
     componentDidMount() {
@@ -188,17 +192,24 @@ class ObjectTree extends React.Component {
             });
             this.addOpenId();
         }
-
         //redrawTree : 重新加载对象树
         else if (widget.redrawTree !== undefined){
             this.forceUpdate();
-            this.addOpenId();
+            if(this.state.selectWidget&&!this.state.selectWidget.props.block) {
+                this.addOpenId();
+            }
         }
-
         else if(widget.skipProperty){
             this.forceUpdate();
         }
-
+        else if (widget.activeBlockMode) {
+            if(this.state.selectWidget) {
+                this.toggleWidgetAllIds(widget.activeBlockMode.on);
+                this.setState({
+                    activeBlockMode: widget.activeBlockMode.on
+                })
+            }
+        }
         else if(widget.selectWidget || widget.selectFunction || widget.selectVariable || widget.selectDBItem){
             //触发失焦
             if(this.state.nid&&document.getElementById('tree-item-'+this.state.nid)){
@@ -223,7 +234,9 @@ class ObjectTree extends React.Component {
                     nids: []
                 };
                 activeFocus(content);
-                this.addOpenId();
+                if(!widget.selectWidget.props.block) {
+                    this.addOpenId();
+                }
             } else if (widget.selectFunction) {
                 let content = {
                     selectWidget: null,
@@ -288,6 +301,36 @@ class ObjectTree extends React.Component {
             this.forceUpdate();
         }
     }
+
+    toggleWidgetAllIds(open){
+        let openData = this.state.openData;
+        let keys = [];
+        let getAllChildKeys = (widget)=>{
+            if(widget.children) {
+                keys.push(widget.key);
+                widget.children.forEach((v)=>{
+                    getAllChildKeys(v);
+                });
+            }
+        };
+        getAllChildKeys(this.state.selectWidget);
+        if(open){
+            keys.forEach((key)=>{
+                if(openData.indexOf(key)<0) {
+                    openData.push(key);
+                }
+            });
+        } else {
+            keys.forEach((key)=>{
+                if(openData.indexOf(key)>=0) {
+                    openData.splice(openData.indexOf(key),1);
+                }
+            });
+        }
+        this.setState({
+           openData: openData
+        });
+    };
 
     addOpenId(){
         let data = this.state.widgetTree;
@@ -433,7 +476,8 @@ class ObjectTree extends React.Component {
         if(e.target.nodeName==='INPUT' || e.target.nodeName==='TEXTAREA') {
             return;
         }
-        if(this.state.selectTargetMode) {
+        if(this.state.selectTargetMode
+            ||this.state.activeBlockMode) {
             return;
         }
         e = e || window.event;
@@ -488,6 +532,9 @@ class ObjectTree extends React.Component {
             if(event){ event.stopPropagation(); }
             return false;
         }
+        if(this.state.activeBlockMode) {
+            return false;
+        }
         if(event){ event.stopPropagation(); }
         this.setState({
             showToolMenu:false,
@@ -517,7 +564,8 @@ class ObjectTree extends React.Component {
             event.stopPropagation();
             return false;
         }
-        if(this.state.multiSelectMode) {
+        if(this.state.activeBlockMode
+            ||this.state.multiSelectMode) {
             return false;
         }
         //console.log(data);
@@ -532,7 +580,8 @@ class ObjectTree extends React.Component {
             event.stopPropagation();
             return false;
         }
-        if(this.state.multiSelectMode) {
+        if(this.state.activeBlockMode
+            ||this.state.multiSelectMode) {
             return false;
         }
         if(nid === this.state.nid){
@@ -546,7 +595,8 @@ class ObjectTree extends React.Component {
             event.stopPropagation();
             return false;
         }
-        if(this.state.multiSelectMode&&this.state.nids.length>0) {
+        if(this.state.activeBlockMode
+            ||(this.state.multiSelectMode&&this.state.nids.length>0)) {
             return false;
         }
         //分情况处理
@@ -572,7 +622,8 @@ class ObjectTree extends React.Component {
             event.stopPropagation();
             return false;
         }
-        if(this.state.multiSelectMode&&this.state.nids.length>0) {
+        if(this.state.activeBlockMode
+            ||(this.state.multiSelectMode&&this.state.nids.length>0)) {
             return false;
         }
         if(data.className === 'image'||data.className === 'video') {
@@ -602,10 +653,16 @@ class ObjectTree extends React.Component {
         });
     }
 
-    relocateToolMenu(className, clientX, clientY) {
+    relocateToolMenu(obj, className, clientX, clientY) {
         let list = JSON.parse(JSON.stringify(originToolMenuList));
-        if(className === 'var' || className === 'func' || className === 'dbItem') {
+        if(className === 'var' || className === 'func' || className === 'dbItem'
+            || className === 'root' || className === 'db' || className === 'sock') {
             list.splice(3,1);
+        } else {
+            if(obj.props.block) {
+                list[3][0].showName = '编辑小模块';
+                list[3].push({name:'removeBlock',showName:'展开小模块'});
+            }
         }
         this.setState({
             showToolMenu: true,
@@ -646,7 +703,8 @@ class ObjectTree extends React.Component {
         if(this.onSelectTargetMode(data)) {
             return false;
         }
-        if(this.state.multiSelectMode&&this.state.nids.length>0) {
+        if(this.state.activeBlockMode
+            ||(this.state.multiSelectMode&&this.state.nids.length>0)) {
             return false;
         }
         let clientX = e.clientX;
@@ -657,7 +715,7 @@ class ObjectTree extends React.Component {
             this.fadeWidgetBtn(nid, data, type);
         }
 
-        this.relocateToolMenu(data.className, clientX, clientY);
+        this.relocateToolMenu(data, data.className, clientX, clientY);
     }
 
     onHideToolMenu() {
@@ -701,8 +759,13 @@ class ObjectTree extends React.Component {
             case 'crossPaste':
                 this.itemActions('crossPaste');
                 break;
-            case 'saveAsCom':
-                this.itemActions('saveAsCom');
+            case 'saveAsBlock':
+                this.itemActions('saveAsBlock');
+                break;
+            case 'removeBlock':
+                this.itemActions('removeBlock');
+                break;
+            default:
                 break;
         }
     }
@@ -746,7 +809,9 @@ class ObjectTree extends React.Component {
     }
 
     startEditObjName(id, data, event) {
-        if(this.state.selectTargetMode||this.state.multiSelectMode){
+        if(this.state.selectTargetMode
+            ||this.state.multiSelectMode
+            ||this.state.activeBlockMode){
             return;
         }
 
@@ -902,8 +967,11 @@ class ObjectTree extends React.Component {
             case 'crossPaste':
                 //TODO: WidgetActions['crossPasteTreeNode'](this.state.nodeType);
                 break;
-            case 'saveAsCom':
-                //TODO: WidgetActions['saveAsComTreeNode'](this.state.nodeType);
+            case 'saveAsBlock':
+                WidgetActions['activeBlockMode'](true);
+                break;
+            case 'removeBlock':
+                WidgetActions['removeBlock']();
                 break;
             default:
                 break;
@@ -916,8 +984,10 @@ class ObjectTree extends React.Component {
             return;
         }
 
-        if(this.state.selectTargetMode||
-            this.state.editMode||this.state.nids.length>0) {
+        if(this.state.selectTargetMode
+            ||this.state.activeBlockMode
+            ||this.state.editMode
+            ||this.state.nids.length>0) {
             return;
         }
 
@@ -960,7 +1030,9 @@ class ObjectTree extends React.Component {
 
     itemKeyAction(event){
         event.stopPropagation();
-        if(this.state.selectTargetMode||this.state.nids.length>0) {
+        if(this.state.selectTargetMode
+            ||this.state.activeBlockMode
+            ||this.state.nids.length>0) {
             return;
         }
 
@@ -1016,8 +1088,10 @@ class ObjectTree extends React.Component {
 
     itemDragStart(nid, data, e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode|| this.state.selectTargetMode
-            ||this.state.selectTargetMode||this.state.nids.length>0){
+        if(this.state.editMode
+            || this.state.selectTargetMode
+            ||this.state.activeBlockMode
+            ||this.state.nids.length>0){
             e.preventDefault();
             return;
         }
@@ -1045,8 +1119,10 @@ class ObjectTree extends React.Component {
 
     itemDragEnd(e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode|| this.state.selectTargetMode
-            ||this.state.selectTargetMode||this.state.nids.length>0){
+        if(this.state.editMode
+            ||this.state.selectTargetMode
+            ||this.state.activeBlockMode
+            ||this.state.nids.length>0){
             e.preventDefault();
             return;
         }
@@ -1176,8 +1252,10 @@ class ObjectTree extends React.Component {
 
     itemDragOver(e){
         //如果是edit模式，不做任何事情
-        if(this.state.editMode||this.state.selectTargetMode
-            ||this.state.selectTargetMode||this.state.nids.length>0){
+        if(this.state.editMode
+            ||this.state.selectTargetMode
+            ||this.state.activeBlockMode
+            ||this.state.nids.length>0){
             e.preventDefault();
             return;
         }
@@ -1546,7 +1624,9 @@ class ObjectTree extends React.Component {
                         }
 
                         {
-                            v.children.length > 0
+                            (v.props.block&&!this.state.activeBlockMode) || (v.props.block&&v.key!==this.state.nid&&this.state.activeBlockMode)
+                            ? icon(0 , v.key)
+                            : v.children.length > 0
                             ||v.funcList.length > 0
                             ||v.intVarList.length > 0
                             ||v.strVarList.length > 0
@@ -1555,7 +1635,9 @@ class ObjectTree extends React.Component {
                                 : icon( 0 , v.key)
                         }
                         {
-                            picIsImage
+                            (v.props.block&&!this.state.activeBlockMode) || (v.props.block&&v.key!==this.state.nid&&this.state.activeBlockMode)
+                                ? <span className={$class('item-icon', 'component-icon')}/>
+                                : picIsImage
                                 ? <span className="item-icon2">
                                     <img className="item-img" src={ pic } onDoubleClick={this.onChangeReSrc.bind(this, v)}/>
                                   </span>
@@ -1566,7 +1648,11 @@ class ObjectTree extends React.Component {
                                 ? <div className='item-name-wrap'>
                                     <p>{v.props.name}</p>
                                   </div>
-                                : <div className='item-name-wrap'
+                                : (v.props.block&&!this.state.activeBlockMode) || (v.props.block&&v.key!==this.state.nid&&this.state.activeBlockMode)
+                                    ?<div className='item-name-wrap'>
+                                        <p>{v.props.block.name}</p>
+                                     </div>
+                                    :<div className='item-name-wrap'
                                        onDoubleClick={this.startEditObjName.bind(this, v.key, v)}>
                                     <p className={$class({'hidden':((v.key === this.state.nid)&&this.state.editMode)})} >{v.props.name}</p>
                                     <input id={'item-name-input-'+v.key} type="text"
@@ -1583,7 +1669,13 @@ class ObjectTree extends React.Component {
                     </div>
                     <div className={$class('item-event')}>
                         {
-                            v.props.eventTree
+                            (v.props.block&&!this.state.activeBlockMode) || (v.props.block&&v.key!==this.state.nid&&this.state.activeBlockMode)
+                            ? v.props.block.eventTree
+                                ? enableEventTreeBtn(v.key, v)
+                                : <div className={$class('item-event-empty',{'active': v.key === this.state.nid||this.isInMultiList(v.key)})}
+                                       onClick={this.chooseBtn.bind(this,v.key, v)}
+                                       onContextMenu={this.onRightClick.bind(this, v.key, v, nodeType.widget)}></div>
+                            : v.props.eventTree
                                 ? enableEventTreeBtn(v.key, v)
                                 : <div className={$class('item-event-empty',{'active': v.key === this.state.nid||this.isInMultiList(v.key)})}
                                        onClick={this.chooseBtn.bind(this,v.key, v)}
@@ -1632,7 +1724,8 @@ class ObjectTree extends React.Component {
 
         return (
             <div id={'ObjectTree'} className={$class('ObjectTree',
-                {'selectTargetMode': this.state.selectTargetMode})} ref="objectTree">
+                {'selectTargetMode': this.state.selectTargetMode})} ref="objectTree"
+                 style={{'overflow':this.state.selectTargetMode?'hidden':'visible'}}>
                 <div className={$class("stage")} >
                 {
                      !allTreeData

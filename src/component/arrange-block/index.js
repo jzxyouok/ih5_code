@@ -1,24 +1,24 @@
-//管理组件
+//管理小模块
 import React from 'react';
 import $class from 'classnames';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
 
-class ArrangeModule extends React.Component {
+class ArrangeBlock extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            classList : [],
-            error : "组件名称未能为空",
+            blockList : [],
+            error : "小模块名称未能为空",
             isError : false,
             chooseId : [],
             isDelete : false
         };
-        this.createClassBtn = this.createClassBtn.bind(this);
+        // this.createClassBtn = this.createClassBtn.bind(this);
         this.chooseBtn = this.chooseBtn.bind(this);
         this.topBtn = this.topBtn.bind(this);
-        this.closeArrangeModuleBtn = this.closeArrangeModuleBtn.bind(this);
+        this.closeArrangeBlockBtn = this.closeArrangeBlockBtn.bind(this);
         this.deleteBtn = this.deleteBtn.bind(this);
         this.deleteLayerShow = this.deleteLayerShow.bind(this);
         this.deleteLayerHide = this.deleteLayerHide.bind(this);
@@ -33,31 +33,31 @@ class ArrangeModule extends React.Component {
     }
 
     onStatusChange(widget) {
-        if (widget.classList !== undefined) {
-            //console.log(1,widget.classList);
-            this.setState({
-                classList: widget.classList
-            });
-        }
+        // if (widget.blockList !== undefined) {
+        //     //console.log(1,widget.blockList);
+        //     this.setState({
+        //         blockList: widget.blockList
+        //     });
+        // }
         if(widget.historyPropertiesUpdate){
             this.forceUpdate();
         }
     }
 
-    closeArrangeModuleBtn(){
+    closeArrangeBlockBtn(){
         this.setState({
-            error : "组件名称未能为空",
+            error : "小模块名称未能为空",
             isError : false,
             chooseId : [],
             isDelete : false
         });
-        this.props.closeArrangeModuleBtn();
+        this.props.closeArrangeBlockBtn();
     }
 
-    createClassBtn(){
-        this.props.createClassBtn();
-        this.props.closeArrangeModuleBtn();
-    }
+    // createClassBtn(){
+    //     this.props.createClassBtn();
+    //     this.props.closeArrangeBlockBtn();
+    // }
 
     chooseBtn(id){
         let array = this.state.chooseId;
@@ -78,14 +78,14 @@ class ArrangeModule extends React.Component {
     topBtn(){
         if(this.state.chooseId.length == 0){
             this.setState({
-                error : "请选择组件",
+                error : "请选择小模块",
                 isError : true
             })
         }
         else {
             WidgetActions['sortClass'](this.state.chooseId);
             this.setState({
-                error : "组件名称未能为空",
+                error : "小模块名称未能为空",
                 isError : false,
                 chooseId : []
             });
@@ -95,7 +95,7 @@ class ArrangeModule extends React.Component {
     deleteBtn(){
         if(this.state.chooseId.length == 0){
             this.setState({
-                error : "请选择组件",
+                error : "请选择小模块",
                 isError : true
             })
         }
@@ -103,7 +103,7 @@ class ArrangeModule extends React.Component {
             WidgetActions['deleteClass'](this.state.chooseId);
             this.deleteLayerHide();
             this.setState({
-                error : "组件名称未能为空",
+                error : "小模块名称未能为空",
                 isError : false,
                 chooseId : []
             });
@@ -148,25 +148,25 @@ class ArrangeModule extends React.Component {
         };
 
         return (
-            <div className='ArrangeModule f--hcc'>
+            <div className='ArrangeBlock f--hcc'>
                 <div className="AM-layer"></div>
 
                 <div className="AM-main">
                     <div className="AM-header f--hlc">
                         <span className="icon" />
-                        <span className="flex-1"> 组件整理</span>
-                        <span className="close-btn" onClick={ this.closeArrangeModuleBtn} />
+                        <span className="flex-1"> 小模块整理</span>
+                        <span className="close-btn" onClick={ this.closeArrangeBlockBtn} />
                     </div>
 
                     <div className="AM-content">
-                        <div className="AM-title">全部组件：</div>
+                        <div className="AM-title">全部小模块：</div>
 
                         <div className="AM-module" >
                             <div className="AM-scroll">
                                 <ul className="AM-table">
                                     {
-                                        this.state.classList.length > 0
-                                        ?   this.state.classList.map((v,i)=>{
+                                        this.state.blockList.length > 0
+                                        ?   this.state.blockList.map((v,i)=>{
                                                 return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v) >= 0})}
                                                             key={i}
                                                             onClick={ this.chooseBtn.bind(this, v)}>
@@ -180,14 +180,8 @@ class ArrangeModule extends React.Component {
                                             })
                                         : null
                                     }
-                                    <li className="add-btn f--hcc" onClick={ this.createClassBtn }>
-                                        <div className="icon">
-                                            <span className="heng" />
-                                            <span className="shu" />
-                                        </div>
-                                    </li>
                                     {
-                                        moduleFuc(this.state.classList.length)
+                                        moduleFuc(this.state.blockList.length)
                                     }
                                 </ul>
                             </div>
@@ -213,7 +207,7 @@ class ArrangeModule extends React.Component {
                             <div className="delete-content">
                                 <span />
 
-                                <p>确定删除选中的组件？</p>
+                                <p>确定删除选中的小模块？</p>
 
                                 <div className="btn-group f--hcc">
                                     <button className="btn btn-clear delete-btn" onClick={ this.deleteBtn }>删除</button>
@@ -228,5 +222,5 @@ class ArrangeModule extends React.Component {
     }
 }
 
-module.exports = ArrangeModule;
+module.exports = ArrangeBlock;
 

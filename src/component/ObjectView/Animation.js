@@ -70,7 +70,8 @@ class Animation extends React.Component {
         if(!checkEventClass(selectWidget)) {
             canHaveEventTree = false;
             hasEventTree = false;
-        } else if (selectWidget.props.eventTree) {
+        } else if ((!selectWidget.props.block&&selectWidget.props.eventTree)
+            || (selectWidget.props.block&&selectWidget.props.block.eventTree)) {
             hasEventTree = true;
         }
         this.setState({
@@ -111,6 +112,10 @@ class Animation extends React.Component {
                 ) {
                     data[i].hidden = true;
                 }
+            }
+            //小模块就直接disable
+            if(widget.props.block){
+                data[i].disabled = true;
             }
         }
         this.setState({

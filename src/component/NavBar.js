@@ -9,8 +9,7 @@ import LoginDialog from './LoginDialog';
 import $ from 'jquery'
 import $class from 'classnames'
 
-import CreateModule from './create-module/index'
-import ArrangeModule from './arrange-module/index'
+import ArrangeBlock from './arrange-block/index'
 import CreateDb from './create-db/index'
 import ArrangeDb from './arrange-db/index'
 import CreateSock from './create-sock/index'
@@ -28,7 +27,7 @@ import {checkChildClass} from './PropertyMap';
 import getSockListAction from '../actions/getSockListAction';
 import getSockListStore from '../stores/getSockListStore';
 import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
-import CreateModuleStore from '../stores/CreateModuleStore';
+
 import EffectAction from '../actions/effectAction';
 import EffectStore from '../stores/effectStore';
 
@@ -56,11 +55,11 @@ class NavBar extends React.Component {
             saveVisible: false,
             importVisible: false,
             workList:[],
-            classList:[],
+            blockList:[],
             fontList:[],
             dropDownState : 0,
             createClass : false,
-            arrangeModule : false,
+            arrangeBlock : false,
             dbList : [],
             createDb : false,
             selectWidget : null,
@@ -116,9 +115,9 @@ class NavBar extends React.Component {
         this.clickOthersHide = this.clickOthersHide.bind(this);
         this.createClassBtn = this.createClassBtn.bind(this);
         this.closeClassBtn = this.closeClassBtn.bind(this);
-        this.addClass = this.addClass.bind(this);
-        this.arrangeModuleBtn = this.arrangeModuleBtn.bind(this);
-        this.closeArrangeModuleBtn = this.closeArrangeModuleBtn.bind(this);
+        this.addBlock = this.addBlock.bind(this);
+        this.arrangeBlockBtn = this.arrangeBlockBtn.bind(this);
+        this.closeArrangeBlockBtn = this.closeArrangeBlockBtn.bind(this);
         this.createDbShow = this.createDbShow.bind(this);
         this.createDbHide = this.createDbHide.bind(this);
         this.onUpdateDb = this.onUpdateDb.bind(this);
@@ -162,6 +161,8 @@ class NavBar extends React.Component {
         this.arrangeEffectShow = this.arrangeEffectShow.bind(this);
         this.arrangeEffectHide = this.arrangeEffectHide.bind(this);
 
+        this.isBlock = this.isBlock.bind(this);
+
         this.token = null;
         this.playUrl = null;
         this.fileUrl = null;
@@ -189,7 +190,6 @@ class NavBar extends React.Component {
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         getSockListStore.listen(this.getSockList.bind(this));
         ReDbOrSockIdStore.listen(this.reDbOrSockId.bind(this));
-        CreateModuleStore.listen(this.createModule.bind(this));
         document.body.addEventListener('keyup', this.onKeyHistory);
         document.body.addEventListener('keydown', this.onKeyDown);
 
@@ -252,11 +252,6 @@ class NavBar extends React.Component {
 
     onStatusChange(widget) {
         //console.log(widget);
-        if (widget.classList !== undefined) {
-            this.setState({
-                classList: widget.classList
-            });
-        }
         if(widget.selectWidget){
             this.setState({
                 selectWidget : widget.selectWidget,
@@ -791,20 +786,20 @@ class NavBar extends React.Component {
         })
     }
 
-    addClass(name){
-        //console.log(key);
-        WidgetActions['addWidget'](name);
+    addBlock(name){
+    //     console.log(key);
+    //     WidgetActions['addWidget'](name);
     }
 
-    arrangeModuleBtn(){
+    arrangeBlockBtn(){
         this.setState({
-            arrangeModule : true
+            arrangeBlock : true
         })
     }
 
-    closeArrangeModuleBtn(){
+    closeArrangeBlockBtn(){
         this.setState({
-            arrangeModule : false
+            arrangeBlock : false
         })
     }
 
@@ -1084,7 +1079,7 @@ class NavBar extends React.Component {
         })
     }
 
-    createModule(bool){
+    createBlock(bool){
         if(bool){
             this.createClassBtn();
         }
@@ -1201,19 +1196,23 @@ class NavBar extends React.Component {
         })
     }
 
-    effectChangeFuc(data){
+    effectChangeFuc(data) {
         //console.log(data);
-        if(data.effectList){
+        if (data.effectList) {
             this.setState({
-                effectList : data.effectList
+                effectList: data.effectList
             })
         }
-        if(data.addSpecificEffect){
+        if (data.addSpecificEffect) {
             let effectData = JSON.parse(data.addSpecificEffect.data);
-            effectData.props.key =  undefined;
+            effectData.props.key = undefined;
             effectData.props.trackType = "effect";
             WidgetActions['addEffect'](effectData);
         }
+    }
+
+    isBlock() {
+        return (this.state.selectWidget&&this.state.selectWidget.props.block);
     }
 
     render() {
@@ -1314,28 +1313,28 @@ class NavBar extends React.Component {
                                 <span className="title">事件</span>
                             </button>
 
-                            <div className='dropDown-btn module-dropDown f--hlc'>
-                                <button className='btn btn-clear module-btn' title='组件'>
+                            <div className={$class('dropDown-btn block-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
+                                <button className='btn btn-clear block-btn' title='小模块' style={{width: '70px'}}>
                                     <span className="icon" />
-                                    <span className="title">组件</span>
+                                    <span className="title">小模块</span>
                                 </button>
 
                                 <div className='dropDownToggle'>
                                     <div className="dropDownToggle-main">
                                         <div className="dropDown-title f--hlc">
-                                            <span className="flex-1">全部组件：</span>
-                                            <span className="set-btn" onClick={ this.arrangeModuleBtn } />
+                                            <span className="flex-1">全部小模块：</span>
+                                            <span className="set-btn" onClick={ this.arrangeBlockBtn } />
                                         </div>
 
                                         <div className="dropDown-main">
                                             <div className="dropDown-scroll">
                                                 <ul className="dropDown-content">
                                                     {
-                                                        this.state.classList.length > 0
-                                                        ? this.state.classList.map((v,i)=>{
-                                                            let name = "_" + v;
+                                                        this.state.blockList.length > 0
+                                                        ? this.state.blockList.map((v,i)=>{
+                                                            let name = v;
                                                             return  <li className="f--hlc" key={i}>
-                                                                        <div className="flex-1 f--hlc title" onClick={ this.addClass.bind(this, name) }>
+                                                                        <div className="flex-1 f--hlc title" onClick={ this.addBlock.bind(this, name) }>
                                                                             <span className="li-icon" />
                                                                             <div className="TitleName">{v}</div>
                                                                         </div>
@@ -1345,14 +1344,8 @@ class NavBar extends React.Component {
                                                           })
                                                         : null
                                                     }
-                                                    <li className="add-btn f--hcc" onClick={ this.createClassBtn }>
-                                                        <div className="icon">
-                                                            <span className="heng" />
-                                                            <span className="shu" />
-                                                        </div>
-                                                    </li>
                                                     {
-                                                        moduleFuc(this.state.classList.length, 14)
+                                                        moduleFuc(this.state.blockList.length, 15)
                                                     }
                                                 </ul>
                                             </div>
@@ -1361,7 +1354,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn db-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn db-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear data-btn' title='数据库' style={{ width : "70px" }} onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">数据库</span>
@@ -1413,7 +1406,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn link-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn link-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear link-btn' title='连接' onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">连接</span>
@@ -1461,7 +1454,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn shape-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn shape-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear shape-btn' title='形状'>
                                     <span className="icon" />
                                     <span className="title">形状</span>
@@ -1504,7 +1497,7 @@ class NavBar extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='dropDown-btn effect-dropDown f--hlc'>
+                            <div className={$class('dropDown-btn effect-dropDown f--hlc', {'dropDown-disable':this.isBlock()})}>
                                 <button className='btn btn-clear effect-btn' title='动效' onMouseOver={ this.addPanelShow }>
                                     <span className="icon" />
                                     <span className="title">动效</span>
@@ -1765,14 +1758,13 @@ class NavBar extends React.Component {
                              editText2={null}
                              onEditDone={this.onLoginDone.bind(this)} />
 
-                <div className={$class({"hidden": !this.state.createClass}) }>
-                    <CreateModule closeClassBtn={ this.closeClassBtn }
-                                  classList = { this.state.classList }  />
-                </div>
+                {/*<div className={$class({"hidden": !this.state.createClass}) }>*/}
+                    {/*<CreateBlock closeClassBtn={ this.closeClassBtn }*/}
+                                  {/*blockList = { this.state.blockList }  />*/}
+                {/*</div>*/}
 
-                <div className={$class({"hidden": !this.state.arrangeModule }) }>
-                    <ArrangeModule closeArrangeModuleBtn={ this.closeArrangeModuleBtn }
-                                   createClassBtn={ this.createClassBtn } />
+                <div className={$class({"hidden": !this.state.arrangeBlock }) }>
+                    <ArrangeBlock closeArrangeBlockBtn={ this.closeArrangeBlockBtn }/>
                 </div>
 
                 {

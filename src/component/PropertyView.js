@@ -144,8 +144,10 @@ class PropertyView extends React.Component {
                 }}  {...defaultData}   /> ;
 
             case propertyType.Boolean:
+                defaultProp.defaultChecked=defaultProp.checked;
                 return <Switch   {...defaultProp} />;
             case propertyType.Boolean2:
+                defaultProp.defaultChecked=defaultProp.checked;
                 return <SwitchMore   {...defaultProp} />;
             case propertyType.Select:
                 if(defaultProp.tbCome == "tbF"){
@@ -233,7 +235,20 @@ class PropertyView extends React.Component {
                 return <Input {...defaultProp} />;
         }
     }
-
+    fnIsFlex(node) {
+    if (node.className == 'flex') {
+        return true;
+    }
+    else if (node.className == 'root') {
+        return false;
+    }
+    else if (node.className == 'canvas') {
+        return true;
+    }
+    else {
+        return  this.fnIsFlex(node.parent);
+    }
+}
     onChangeProp(prop, value) {
         let v;
         var bTag = true; //开关,控制执行
@@ -264,16 +279,18 @@ class PropertyView extends React.Component {
                         bTag = false;
                         break;
                     }
-                    else if( this.selectNode.className=='container'&& this.selectNode.node.padding!==undefined){
-                        //flex下的container
-                        v=parseInt(value);
+                    else if(this.fnIsFlex(this.selectNode)){
+                        let obj={};
+                        obj[prop.name] =  parseInt(value);
+                        WidgetActions['updateProperties'](obj, false, false);
+                        bTag = false;
                         break;
                     }
                     v = parseInt(value);
                     break;
                 case propertyType.Number:
                     if (prop.name == 'fontSize' || prop.name == 'headerFontSize') {
-                        const obj = {};
+                        let obj = {};
                         obj[prop.name] = parseInt(value);
                         obj.scaleY = obj.scaleX = 1;
                         delete this.selectNode.node.defaultData;
@@ -516,8 +533,8 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Boolean:
+                    this.selectNode.props[prop.name+'Key'] = value;
                     if(prop.name == 'flexWrap'){
-                        this.selectNode.props[prop.name+'Key'] = value;
                         value = value ?'wrap':'nowrap'
                     }
                     v = value;
@@ -575,7 +592,7 @@ class PropertyView extends React.Component {
 
 
         if(bTag){
-            const obj = {};
+            let obj = {};
             if(this.selectNode.className == "table" && prop.name == "header"){
                 if(v <= 0 || v == null) return;
                 let header = this.selectNode.props.header;
@@ -626,6 +643,7 @@ class PropertyView extends React.Component {
                 });
             }
             else {
+                let obj={};
                 obj[prop.name] = v;
                 this.onStatusChange({updateProperties: obj});
                 WidgetActions['updateProperties'](obj, false, true);
@@ -786,7 +804,7 @@ class PropertyView extends React.Component {
 
 
     getFields() {
-//       console.log( this.selectNode);
+    //    console.log( this.selectNode);
         let node = this.selectNode;
         if (!node)  return null;
 
@@ -1451,11 +1469,25 @@ class PropertyView extends React.Component {
      */
     generateGroups(node,className,groups){
         let getInput=this.getInput.bind(this);
-        getPropertyMap(node, className, 'props').forEach((item, index) => {
-            if (item.type !== propertyType.Hidden) {
-                getInput(item,className, groups);
-            }
-        });
+        if(node.props.block) {
+            //小模块的获取属性
+            node.props.block.mapping.props.forEach((item) =>{
+                let obj = WidgetStore.getWidgetByKey(item.objKey);
+                let copy = JSON.parse(JSON.stringify(item.detail));
+                if (obj && copy && copy.name && copy.type !== propertyType.Hidden) {
+                    //copy.value = obj.props[copy.name];
+                    copy.default = obj.props[copy.name];
+                    copy.showName = item.name;
+                    getInput(copy,className, groups);
+                }
+            });
+        } else {
+            getPropertyMap(node, className, 'props').forEach((item, index) => {
+                if (item.type !== propertyType.Hidden) {
+                    getInput(item,className, groups);
+                }
+            });
+        }
     }
     /****************工具方法区域,end**********************************/
 
@@ -1480,7 +1512,11 @@ class PropertyView extends React.Component {
 
         if (widget.selectWidget !== undefined){
             this.selectNode = widget.selectWidget;
-            this.setState({fields: this.getFields(),propertyName:this.selectNode.props.name});
+            let propertyName = this.selectNode.props.name;
+            if(this.selectNode.props.block) {
+                propertyName = this.selectNode.props.block.name;
+            }
+            this.setState({fields: this.getFields(),propertyName:propertyName});
             let node = this.selectNode;
 
             while (node != null) {
