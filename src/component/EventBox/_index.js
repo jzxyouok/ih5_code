@@ -168,8 +168,14 @@ class EventBox extends React.Component {
         let noEventObjList = [];
         if(this.state.allWidgetList) {
             this.state.allWidgetList.forEach((v,i)=>{
-                if(!(v.props.eventTree&&v.props.eventTree.length>0)&&v.className!=='var') {
-                    noEventObjList.push(v);
+                if(v.props.block) {
+                    if(!(v.props.block.eventTree&&v.props.block.eventTree.length>0)&&v.className!=='var') {
+                        noEventObjList.push(v);
+                    }
+                } else {
+                    if(!(v.props.eventTree&&v.props.eventTree.length>0)&&v.className!=='var') {
+                        noEventObjList.push(v);
+                    }
                 }
             });
         }
@@ -180,9 +186,17 @@ class EventBox extends React.Component {
         let searchObjList = [];
         if(this.state.allWidgetList) {
             this.state.allWidgetList.forEach((v,i)=>{
-                if(v.props.eventTree&&v.props.eventTree.length>0&&v.className!=='var') {
-                    if(v.props.name.indexOf(search)>=0) {
-                        searchObjList.push(v);
+                if(v.props.block) {
+                    if(v.props.block.eventTree&&v.props.block.eventTree.length>0&&v.className!=='var') {
+                        if(v.props.block.name.indexOf(search)>=0) {
+                            searchObjList.push(v);
+                        }
+                    }
+                } else {
+                    if(v.props.eventTree&&v.props.eventTree.length>0&&v.className!=='var') {
+                        if(v.props.name.indexOf(search)>=0) {
+                            searchObjList.push(v);
+                        }
                     }
                 }
             });
@@ -304,6 +318,9 @@ class EventBox extends React.Component {
                     pic = v1.icon;
                 }
             }
+            if(obj.props.block) {
+                pic = 'component-icon';
+            }
         });
         return {picIsImage:picIsImage, pic:pic};
     }
@@ -393,7 +410,7 @@ class EventBox extends React.Component {
                                                             </span>
                                                             : <span className={$class('item-icon', picProps.pic)} />
                                                     }
-                                                        <div className="text">{v.props.name}</div>
+                                                        <div className="text">{v.props.block?v.props.block.name:v.props.name}</div>
                                                     </div>
                                             })
                                             : (<div className="no-item">暂无相关对象</div>)
@@ -413,8 +430,8 @@ class EventBox extends React.Component {
                                 : this.state.eventTreeList.map((v,i)=>{
                                     return <Event key={i}
                                                   widget={v}
-                                                  eventList={v.props.eventTree}
-                                                  name={v.props.name}
+                                                  eventList={v.props.block?v.props.block.eventTree:v.props.eventTree}
+                                                  name={v.props.block?v.props.block.name:v.props.name}
                                                   wKey={v.key}
                                                   dbList={this.state.dbList}
                                                   activeKey={this.state.activeKey}
