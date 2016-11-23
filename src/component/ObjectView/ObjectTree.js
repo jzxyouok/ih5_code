@@ -660,8 +660,9 @@ class ObjectTree extends React.Component {
             list.splice(3,1);
         } else {
             if(obj.props.block) {
-                list[3][0].showName = '编辑小模块';
-                list[3].push({name:'removeBlock',showName:'展开小模块'});
+                list[3][0].showName = '展开小模块';
+                list[3][0].name = 'removeBlock';
+                // list[3].push({name:'removeBlock',showName:'展开小模块'});
             }
         }
         this.setState({
