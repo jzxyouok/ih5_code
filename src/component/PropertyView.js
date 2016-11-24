@@ -236,14 +236,14 @@ class PropertyView extends React.Component {
             case propertyType.Dropdown:
                 return  <DropDownInput {...defaultProp} />;
             case propertyType.Button2:
-                if(defaultProp.name=='bgImage'){
+                if(defaultProp.name=='bgLink'){
                     defaultProp.onClick=defaultProp.onChange;
                     delete  defaultProp.onChange;
                 }
                 return <div className="pr">
                     <Button  {...defaultProp} >{defaultProp.value}</Button>
                       <div className="btn_del" onClick={defaultProp.onClick}></div>
-                      <div id={cls({'ant-progress':defaultProp.name=='bgImage'})}>
+                      <div id={cls({'ant-progress':defaultProp.name=='bgLink'})}>
                            <div className='ant-progress-bar'></div>
                            <div className='ant-progress-txt'>上传 10%</div>
                      </div>
@@ -638,7 +638,7 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case  propertyType.Button2:
-                    if(prop.name == 'bgImage'){
+                    if(prop.name == 'bgLink'){
                         if (value.target.getAttribute('class') ==='btn_del') {
                             //删除
                             value=null;
@@ -1067,7 +1067,7 @@ class PropertyView extends React.Component {
         }
         else if(item.type == propertyType.Button2){
               defaultValue=item.ButtonName;
-              if (item.name == 'bgImage' && node.props[item.name + 'Key']) {
+              if (item.name == 'bgLink' && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
               }
         }
