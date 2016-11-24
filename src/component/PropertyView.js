@@ -641,37 +641,34 @@ class PropertyView extends React.Component {
                     if(prop.name == 'bgLink'){
                         if (value.target.getAttribute('class') ==='btn_del') {
                             //删除
-                            value=null;
+                            value='';
                             node.props[prop.name+'Key']='上传图片';
                         }
                         else {
                             //上传
-                            chooseFile('image', true, function () {
-                                 console.log(arguments);
-                              //   let index=node.rootWidget.imageList.length-1;
-                              //   let imgObj = eval("(" + arguments[1] + ")");
-                              //   let oProgress = document.getElementById('ant-progress');
-                              //   //回调完成
-                              //   oProgress.style.display = 'none';
-                              //   //设置默认值
-                              //   node.props[prop.name+'Key'] = imgObj.name;
-                              //   //更新属性面板
-                              //   const obj = {};
-                              //   obj[prop.name] = imgObj.file;
-                              //   this.onStatusChange({updateProperties: obj});
-                              //   WidgetActions['updateProperties'](obj, false, true);
-
-
-
-                            }.bind(this), function (evt) {
-                                let oProgress = document.getElementById('ant-progress');
-                                if (evt.lengthComputable && oProgress) {
-                                    oProgress.style.display = 'block';
-                                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                                    oProgress.childNodes[1].innerHTML = '上传 ' + percentComplete + '%';
-                                    oProgress.childNodes[0].style.width = percentComplete + '%';
-                                } else {
-                                    //console.log('failed');
+                            let thisObj=this;
+                            if(node.rootWidget.imageList===undefined){
+                                node.rootWidget.imageList=[];
+                            }
+                            chooseFile('image', false, (w) => {
+                                if (w.files.length) {
+                                    let fileName = w.files[0].name;
+                                    let dot = fileName.lastIndexOf('.');
+                                    if (dot > 0) {
+                                        var ext = fileName.substr(dot + 1).toLowerCase();
+                                        if (ext == 'png' || ext == 'jpeg' || ext == 'jpg') {
+                                            fileName = fileName.substr(0, dot);
+                                        }
+                                    }
+                                    var reader = new FileReader();
+                                    let obj = {'bgLink': node.rootWidget.imageList.length};
+                                    reader.onload = function (e) {
+                                        node.props[prop.name + 'Key'] = fileName;
+                                        node.rootWidget.imageList.push(e.target.result);
+                                        thisObj.onStatusChange({updateProperties: obj});
+                                        WidgetActions['updateProperties'](obj, false, true);
+                                    };
+                                    reader.readAsDataURL(w.files[0]);
                                 }
                             });
                             bTag = false;

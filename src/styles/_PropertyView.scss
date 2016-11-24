@@ -777,6 +777,7 @@ $toBottom:14px;
 			position: relative;
 			&:hover{
 				.btn_del{
+					display: block;
 					background-position:  -600px -400px;
 				}
 			}
@@ -789,6 +790,7 @@ $toBottom:14px;
 				position: absolute;
 				right: 0;
 				top: 0;
+				display: none;
 				&:hover{
 					background-position:  -600px -440px;
 				}
@@ -808,8 +810,8 @@ $toBottom:14px;
 				content:'';
 			}
 			span{
-				width: 87%;
-				margin-left:6px;
+				width: 180px;
+				margin: 0 auto;
 				height: 100%;
 				line-height: 22px;
 				display: block;
