@@ -41,8 +41,8 @@ export default Reflux.createStore({
             //console.log(result);
             if (result) {
                 let allData = [];
-                Array.prototype.push.apply(allData, systemList);
                 Array.prototype.push.apply(allData, result);
+                Array.prototype.push.apply(allData, systemList);
                 //console.log(Array);
                 this.trigger({effectList : allData});
             }

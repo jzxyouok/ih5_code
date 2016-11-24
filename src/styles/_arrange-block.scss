@@ -114,6 +114,7 @@
                         }
 
                         &.not-active {
+                            .li-icon{ display: none; }
                             .choose-btn{ display: none; }
                         }
 
