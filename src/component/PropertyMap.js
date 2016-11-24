@@ -567,9 +567,12 @@ let modifyPropList = (list, className, type) => {
                 v.type = propertyType.Hidden;
             }
         }
-        if (['timer'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
-            v.type = propertyType.Hidden;
+        if(['timer'].indexOf(className) >= 0) {
+            if (['scaleX', 'scaleY','backgroundColor','clipped'].indexOf(v.name) >= 0) {
+                v.type = propertyType.Hidden;
+            }
         }
+
 
         if (['margin', 'padding'].indexOf(v.name) >= 0) {
             if(v.name=='margin'){
