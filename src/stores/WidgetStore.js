@@ -1125,6 +1125,12 @@ function generateJsFunc(etree) {
               // let props = propsList.length>0 ? ('{'+ propsList.join(',') +'}') : null;
               let props = ('{'+ propsList.join(',') +'}');
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'find') + '('+props+callBack+')');
+          } else if (cmd.action.name === 'show') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + 'true');
+          } else if (cmd.action.name === 'hide') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + 'false');
+          } else if (cmd.action.name === 'toggleVisible') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + '!('+ getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible')+')');
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {

@@ -640,7 +640,7 @@ let modifyFuncList = (list, className, type) => {
         list = list.concat(temp);
     }
     if(isInCLList(className, visibleWidgetList)) {
-        let temp = dealElementList(['show','hide'], className, 'funcs', type);
+        let temp = dealElementList(['show','hide','toggleVisible'], className, 'funcs', type);
         list = list.concat(temp);
     }
     return list;
