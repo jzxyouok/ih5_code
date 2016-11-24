@@ -15,6 +15,8 @@ import TimelineAction from '../actions/TimelineAction';
 import ChangeKeyStore from '../stores/ChangeKeyStore';
 import changeKeyAction from '../actions/changeKeyAction';
 
+import bridge from 'bridge';
+
 function noop() {
 }
 
@@ -120,6 +122,8 @@ class VxRcSlider extends RcSlider {
         this.isHaveTrunBtn = this.isHaveTrunBtn.bind(this);
         this.dragLeftBtn = this.dragLeftBtn.bind(this);
         this.dragRightBtn = this.dragRightBtn.bind(this);
+
+        this.trackSelect = this.trackSelect.bind(this);
     }
 
     componentDidMount() {
@@ -350,6 +354,7 @@ class VxRcSlider extends RcSlider {
                 if (obj[props[i]] !== undefined)
                     points[this.state.currentHandle][i + 1] = obj[props[i]];
             }
+            bridge.showTrack(this.props.refTrack.node, this.trackSelect);
         }
         if (widget.syncTrack !== undefined && this.props.isCurrent) {
             let props = this.props.refTrack.props['prop'];
@@ -365,7 +370,7 @@ class VxRcSlider extends RcSlider {
             this.props.refTrack.props['data'] = points;
             this.props.refTrack.node['data'] = points;
             this.setState({currentHandle: -1});
-
+            bridge.showTrack(this.props.refTrack.node, this.trackSelect);
             let historyName = "删除关键帧" + this.props.refTrack.parent.props.name;
             WidgetActions['updateHistoryRecord'](historyName);
         }
@@ -544,6 +549,10 @@ class VxRcSlider extends RcSlider {
         });
     }
 
+    trackSelect(index) {
+        this.onHandleClick(this.handles[index]);
+    }
+
   	render() {
         //console.log(this.state.changeKeyValue);
         const points = this.props.points;
@@ -553,7 +562,7 @@ class VxRcSlider extends RcSlider {
 		const handleClassName = prefixCls + '-handle';
 		const isNoTip = (step === null) || (tipFormatter === null);
 
-        let handles = [];
+        this.handles = [];
 
         const lowerBound = points[0] ?  points[0][0] : 0;
         const upperBound = points[points.length - 1] ? points[points.length - 1][0] : 0;
@@ -586,7 +595,7 @@ class VxRcSlider extends RcSlider {
                 }
             }
 
-            handles.push(<VxHandle
+            this.handles.push(<VxHandle
                 className={handleClassName}
                 noTip={isNoTip}
                 tipTransitionName={tipTransitionName}
@@ -613,8 +622,10 @@ class VxRcSlider extends RcSlider {
 
         const style = {};
         style['width'] = '100%';
+        bridge.setTrackIndex(this.state.currentHandle);
         if (this.props.isCurrent){
             style['borderColor'] = '#CCC';
+            bridge.showTrack(this.props.refTrack.node, this.trackSelect);
         }
 
         //console.log(this.props.refTrack);
@@ -711,7 +722,7 @@ class VxRcSlider extends RcSlider {
 
                                 <div onTouchStart={disabled ? noop : this.onTouchStart.bind(this)}
                                      onMouseDown={disabled ? noop : this.onMouseDown.bind(this)} data-name='slider'>
-                                    {handles}
+                                    {this.handles}
                                 </div>
 
                                 <Track className={prefixCls + '-track'}

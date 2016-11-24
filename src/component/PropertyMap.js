@@ -106,8 +106,6 @@ let propMapping = {
     'backwardTransition': {name:'backwardTransition', showName:'前翻效果',  type: propertyType.Select, default:'同上一页',options:backwardTransOptions,order:1},
     'forwardTransition': {name:'forwardTransition', showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:forwardTransOptions,order:2},
 
-
-
     'autoGravity': {name:'autoGravity', showName:'自动计算重力方向', type: propertyType.Boolean,group:'tools', default: false},
     'gravityX': {name:'gravityX', showName:'水平重力', type: propertyType.Number,group:'tools', default: 0},
     'gravityY': {name:'gravityY', showName:'垂直重力', type: propertyType.Number,group:'tools', default: 100},
@@ -137,9 +135,6 @@ let propMapping = {
 
     'count': {name:'count', showName:'播放次数', type: propertyType.Integer, default: 1},
     'initHide': {name:'initHide', showName:'初始隐藏', type: propertyType.Boolean, default: false},
-
-
-
 
     'sockName' : {name:'sockName', showName:'名称',  type: propertyType.String, default: null, readOnly:true },
     'listened': {name:'listened', showName:'是否监听', type: propertyType.Boolean, default: false},
@@ -417,6 +412,12 @@ let specialCaseElementMapping = (className, type)=> {
                 'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
                 'fontSize': {name:'fontSize', showName:'字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
         };
+    } else if (isInCLList(className, ['slidetimer', 'pagecontainer'])){
+      return {
+          props: {
+              'originPos': {name:'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',order:5},
+          }
+      } ;
     } else {
         return {};
     }

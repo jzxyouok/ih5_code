@@ -22,7 +22,6 @@ class EditBlock extends React.Component {
         super(props);
         this.state = {
             minSize: false,
-            blockId: null,
             name: '',
             props: [{name: '', objKey:null, detail:null}],
             events: [{name: '', objKey: null, detail: null}],
@@ -30,6 +29,7 @@ class EditBlock extends React.Component {
             selectWidget: null,
             objectList: [],
             showNameWarning: false,
+            sameNameType: null
         };
 
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -58,6 +58,9 @@ class EditBlock extends React.Component {
 
         this.getParamList = this.getParamList.bind(this);
         this.setParamListState = this.setParamListState.bind(this);
+
+        this.isEmptyString = this.isEmptyString.bind(this);
+        this.hasSameNameParams = this.hasSameNameParams.bind(this);
     }
 
     toggle(){
@@ -81,7 +84,6 @@ class EditBlock extends React.Component {
             let events = [{name: '', objKey: null, detail: null}];
             let funcs = [{name: '', objKey: null, detail: null}];
             let name = '';
-            let blockId = null;
             if(widget.selectWidget.props) {
                 let block = null;
                 if(widget.selectWidget.props.block) {
@@ -94,7 +96,6 @@ class EditBlock extends React.Component {
                     events = block.mapping.events;
                     funcs = block.mapping.funcs;
                     name = block.name;
-                    blockId = block.blockId?block.blockId:null;
                 }
             }
             //获取对象列表
@@ -105,13 +106,14 @@ class EditBlock extends React.Component {
                 events: events,
                 funcs: funcs,
                 name: name,
-                blockId: blockId,
-                showNameWarning: false
+                showNameWarning: false,
+                sameNameType: null
             });
         } else if (widget.allWidgets) {
             this.setState({
                 objectList: this.getAllObjects(this.state.selectWidget),
-                showNameWarning: false
+                showNameWarning: false,
+                sameNameType: null
             })
         }
     }
@@ -164,16 +166,18 @@ class EditBlock extends React.Component {
         let objectList = [];
         if(widget) {
             objectList.push(widget);
-            //递归遍历添加有事件widget到eventTreeList
+            //递归遍历添加有事件widget到eventTreeList,(有block的就不用再添加其子对象了)
             let loopWidgetTree = (children) => {
                 children.forEach(ch=>{
                     objectList.push(ch);
-                    if (ch.children && ch.children.length > 0) {
+                    if (ch.children && ch.children.length > 0 && !ch.props.block) {
                         loopWidgetTree(ch.children);
                     }
                 });
             };
-            loopWidgetTree(widget.children);
+            if(!widget.props.block) {
+                loopWidgetTree(widget.children);
+            }
         }
         return objectList;
     }
@@ -193,12 +197,47 @@ class EditBlock extends React.Component {
 
     getParamsDetailList(obj,type) {
         let list = [];
-        getPropertyMap(obj, obj.className, type).map((item) => {
-            if(item.type !== propertyType.Hidden&&!item.readOnly&&item.name !='id' && item.type !== propertyType.Button){
-                let temp = JSON.parse(JSON.stringify(item));
-                list.push(temp);
+        if(obj.props.block) {
+            switch(type) {
+                case 'props':
+                    obj.props.block.mapping.props.forEach((v)=>{
+                        let temp = JSON.parse(JSON.stringify(v.detail));
+                        if(temp!=null&&v.name) {
+                            temp.showName = v.name;
+                            list.push(temp);
+                        }
+                    });
+                    break;
+                case 'events':
+                    obj.props.block.mapping.events.forEach((v)=>{
+                        let temp = JSON.parse(JSON.stringify(v.detail));
+                        if(temp!=null&&v.name) {
+                            temp.showName = v.name;
+                            list.push(temp);
+                        }
+                    });
+                    break;
+                case 'funcs':
+                    obj.props.block.mapping.funcs.forEach((v)=>{
+                        let temp = JSON.parse(JSON.stringify(v.detail));
+                        if(temp!=null&&v.name) {
+                            temp.showName = v.name;
+                            list.push(temp);
+                        }
+                    });
+                    break;
             }
-        });
+        } else {
+            getPropertyMap(obj, obj.className, type).map((item) => {
+                if(item.type !== propertyType.Hidden&&item.type !== propertyType.Button){
+                    if((!item.readOnly&&item.name !='id'&&type==='props')||type==='events'||type==='funcs') {
+                        let temp = JSON.parse(JSON.stringify(item));
+                        list.push(temp);
+                    }
+                }
+            });
+        }
+
         return list;
     }
 
@@ -249,18 +288,72 @@ class EditBlock extends React.Component {
         };
     }
 
-    checkEmptyString(string) {
+    isEmptyString(string) {
         if (string.replace(/(^s*)|(s*$)/g, "").length == 0) {
             return true;
         }
         return false;
     }
 
+    hasSameNameParams() {
+        //查找每个列表的名字是否重复
+        let hasSameName = false;
+        let sameType = null;
+        let nameList = [];
+        this.state.props.forEach((v)=>{
+            if(v.name&&!this.isEmptyString(v.name)) {
+                if(nameList.indexOf(v.name)>=0) {
+                    sameType = 'props';
+                    hasSameName = true;
+                } else {
+                    nameList.push(v.name);
+                }
+            }
+        });
+
+        if(!hasSameName) {
+            nameList = [];
+            this.state.events.forEach((v)=>{
+                if(v.name&&!this.isEmptyString(v.name)) {
+                    if (nameList.indexOf(v.name) >= 0) {
+                        sameType = 'events';
+                        hasSameName = true;
+                    } else {
+                        nameList.push(v.name);
+                    }
+                }
+            });
+        }
+
+        if(!hasSameName) {
+            nameList = [];
+            this.state.funcs.forEach((v)=>{
+                if(v.name&&!this.isEmptyString(v.name)) {
+                    if (nameList.indexOf(v.name) >= 0) {
+                        sameType = 'funcs';
+                        hasSameName = true;
+                    } else {
+                        nameList.push(v.name);
+                    }
+                }
+            });
+        }
+
+        this.setState({
+            sameNameType: sameType
+        });
+
+        return hasSameName;
+    }
+
     saveBlock() {
-        if(this.checkEmptyString(this.state.name)) {
+        if(this.isEmptyString(this.state.name)) {
             this.setState({
                 showNameWarning: true
             });
+            return;
+        }
+        if(this.hasSameNameParams()) {
             return;
         }
         WidgetActions['addOrEditBlock'](
@@ -275,10 +368,13 @@ class EditBlock extends React.Component {
     }
 
     saveAsNewBlock() {
-        if(this.checkEmptyString(this.state.name)) {
+        if(this.isEmptyString(this.state.name)) {
             this.setState({
                 showNameWarning: true
             });
+            return;
+        }
+        if(this.hasSameNameParams()) {
             return;
         }
         WidgetActions['addOrEditBlock'](
@@ -298,7 +394,7 @@ class EditBlock extends React.Component {
 
     render() {
         let objItem = (v,i)=>{
-            return  <MenuItem key={i} obj={v}>{v.props.name}</MenuItem>
+            return  <MenuItem key={i} obj={v}>{v.props.block?v.props.block.name:v.props.name}</MenuItem>
         };
 
         let detailItem = (v,i)=>{
@@ -372,7 +468,7 @@ class EditBlock extends React.Component {
                                                         targetList={this.state.objectList}
                                                         onClick={this.onPropsObjButtonClick.bind(this, i1, type)}
                                                         getResult={this.onPropsObjResultGet.bind(this, i1, type)} />
-                                        <div className="title-obj">{paramObj.props.name}</div>
+                                        <div className="title-obj">{paramObj.props.block?paramObj.props.block.name:paramObj.props.name}</div>
                                         <div className="title-dot"></div>
                                         {
                                             v1.detail
@@ -478,13 +574,14 @@ class EditBlock extends React.Component {
                     </Form>
                     <div className="action-part f--hcc">
                         <button className="action-btn" onClick={this.saveBlock}>保存</button>
-                        {
-                            this.state.blockId
-                                ? <button className="action-btn" onClick={this.saveAsNewBlock}>另存为</button>
-                                : null
-                        }
+                        <button className="action-btn" onClick={this.saveAsNewBlock}>另存为</button>
                         <button className="action-btn cancel-btn" onClick={this.cancel}>取消</button>
                     </div>
+                    {
+                        this.state.sameNameType
+                            ? <div className="same-name-warning f--hcc">*有重复的自定义{typeMap[this.state.sameNameType]}名称</div>
+                            : null
+                    }
                 </div>
             </div>
         </div>

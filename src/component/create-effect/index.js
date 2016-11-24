@@ -17,7 +17,8 @@ class CreateModule extends React.Component {
             show : false,
             effectList : [],
             effectData : null,
-            selectWidget : []
+            selectWidget : [],
+            allTreeData : null
         };
 
         this.isTopSet = this.isTopSet.bind(this);
@@ -58,11 +59,32 @@ class CreateModule extends React.Component {
                 });
 
                 if(!isCreate){
-                    let data = JSON.stringify(this.state.effectData);
+                    let createData = JSON.stringify(this.state.effectData);
                     let effectData = {
-                        data : data
+                        data : createData
                     };
-                    EffectAction['updateEffect'](id,effectData)
+                    EffectAction['returnStart']();
+                    EffectAction['updateEffect'](id,effectData);
+
+                    let fuc = (test)=>{
+                        test.map((v,i)=>{
+                            if(v.className == "track" && v.timerWidget == null && v.props.name == data.effectName){
+                                let updateData = this.state.effectData;
+                                updateData.props.key =  undefined;
+                                WidgetActions['selectWidget'](v);
+                                WidgetActions['deleteTreeNode'](v.className);
+                                WidgetActions['addEffect'](updateData);
+                            }
+                            if( v.children && v.children.length > 0){
+                                fuc(v.children);
+                            }
+                        })
+                    };
+                    this.state.allTreeData.map((v,i)=>{
+                        if(v.tree && v.tree.children && v.tree.children.length > 0){
+                            fuc(v.tree.children);
+                        }
+                    });
                 }
             }
             this.setState({
@@ -91,7 +113,16 @@ class CreateModule extends React.Component {
             let effectData = null;
             this.state.effectList.map((v,i)=>{
                 if(v.name == data.effectName) {
-                    EffectAction['getSpecificEffect'](false,v.id);
+                    if(v.is_system == 1){
+                        let effectData = JSON.parse(v.data);
+                        effectData.props.key = undefined;
+                        effectData.props.trackType = "effect";
+                        WidgetActions['deleteTreeNode'](this.state.selectWidget.className);
+                        WidgetActions['addEffect'](effectData);
+                    }
+                    else {
+                        EffectAction['getSpecificEffect'](false,v.id);
+                    }
                     return isCreate = true;
                 }
             });
@@ -125,6 +156,12 @@ class CreateModule extends React.Component {
                     selectWidget : selectWidget
                 })
             }
+        }
+        if (data.initTree !== undefined){
+            console.log(data.initTree);
+            this.setState({
+                allTreeData : data.initTree
+            });
         }
     }
 
@@ -172,12 +209,16 @@ class CreateModule extends React.Component {
             error("动效名称不能以track为开头");
         }
         else {
-            let data = JSON.stringify(this.state.effectData);
+            let testDate = this.state.effectData;
+            testDate.props.name = name;
+            let data = JSON.stringify(testDate);
+            //data.props.name = name;
             let effectData = {
                 name : name,
                 data : data
             };
             //console.log(effectData);
+            EffectAction['returnStart']();
             EffectAction['createEffect'](effectData);
             //if(this.state.isTop){
             //    effectList.unshift()

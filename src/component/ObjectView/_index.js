@@ -17,6 +17,9 @@ import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
 
 import {checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode} from '../PropertyMap';
 
+import DrawRect from '../ToolBox/DrawRect';
+import bridge from 'bridge';
+
 class ObjectView extends React.Component {
     constructor (props) {
         super(props);
@@ -49,6 +52,9 @@ class ObjectView extends React.Component {
         this.onInitDelete = this.onInitDelete.bind(this);
         this.onInitDomType = this.onInitDomType.bind(this);
         this.onInitButtons = this.onInitButtons.bind(this);
+
+        this.drawRect = null;
+        this.onDrawRect = this.onDrawRect.bind(this);
     }
 
     componentDidMount() {
@@ -124,7 +130,9 @@ class ObjectView extends React.Component {
     onInitHasEventTree(selectWidget){
         let hasEventTree = false;
         let canHaveEventTree = true;
-        if(!checkEventClass(selectWidget)) {
+        // 暂时小模块去除
+        // if(!checkEventClass(selectWidget)) {
+        if(!checkEventClass(selectWidget)||selectWidget.props.block) {
             canHaveEventTree = false;
             hasEventTree = false;
         } else if ((!selectWidget.props.block&&selectWidget.props.eventTree)
@@ -174,8 +182,50 @@ class ObjectView extends React.Component {
         })
     }
 
+    onDrawRect(className,param) {
+        this.drawRect = new DrawRect();
+        this.drawRect.start();
+        this.drawRect.def.promise().then(data => {
+            if(param) {
+                param.positionX = data.positionX;
+                param.positionY = data.positionY;
+                param.shapeWidth = data.shapeWidth;
+                param.shapeHeight = data.shapeHeight;
+                // param.width = param.width?param.width:data.width;
+                // param.height = param.height?param.height:data.height;
+                param.originX = 0.5;
+                param.originY = 0.5;
+                param.positionX += param.shapeWidth*0.5;
+                param.positionY += param.shapeHeight*0.5;
+            }
+            WidgetActions['addWidget'](className, param);
+            this.drawRect.end();
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        },(() => {
+            this.drawRect.end();
+            this.drawRect.cleanUp();
+            this.drawRect = null;
+        }));
+    }
+
     create(className,param){
-        WidgetActions['addWidget'](className,param);
+        let widget =  this.state.currentNode;
+        if(this.state.currentNode) {
+            if(widget.className === 'var'||widget.className === 'func'||widget.className === 'DBItem') {
+                widget = widget.widget;
+            }
+        }
+        let isInDom = bridge.getRendererType(widget.node) == 2;
+        let isInCanvas = bridge.getRendererType(widget.node) == 4;
+        if(className==='container'&&(isInDom||isInCanvas)) {
+            //点击的时候清除一下overlay
+            new DrawRect().cleanUp();
+            //某些情况的画框处理
+            this.onDrawRect(className,param);
+        } else {
+            WidgetActions['addWidget'](className,param);
+        }
     }
 
     initEvent(className,param) {
@@ -286,7 +336,7 @@ class ObjectView extends React.Component {
                             {'not-allowed':!this.state.enableContainer})}
                             title='容器'
                             disabled={!this.state.enableContainer}
-                            onClick={ this.create.bind(this,'container',null)} />
+                            onClick={ this.create.bind(this,'container',{})} />
                     <button className={$class('btn btn-clear event-btn',
                             {'not-allowed': !this.state.canHaveEventTree||this.state.hasEventTree})}
                             title='事件'

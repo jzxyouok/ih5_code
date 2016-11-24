@@ -471,12 +471,12 @@ class PropertyView extends React.Component {
                     break;
                 case propertyType.Select:
 
-                    if(['type'].indexOf(prop.name)>=0 && this.selectNode.className=='track'){
-                        this.selectNode.props[prop.name+'Key'] = value;
+                    if(['type'].indexOf(prop.name)>=0 && node.className=='track'){
+                        node.props[prop.name+'Key'] = value;
                         v = parseInt(value);
                     }
                     else if (['alignSelf','flex','flexDirection','justifyContent','alignItems','type'].indexOf(prop.name)>=0) {
-                        this.selectNode.props[prop.name+'Key'] = value;
+                        node.props[prop.name+'Key'] = value;
                         v = value;
                     }
                     else if (prop.name == 'swipeType') {
@@ -785,7 +785,7 @@ class PropertyView extends React.Component {
 
     tbLineWidth(node){
         if(this.state.tbLineWidth == "自动") return;
-        if(this.state.tbLineWidth >= this.selectNode.props.width) return;
+        if(this.state.tbLineWidth >= node.props.width) return;
 
         let v = parseInt(this.state.tbLineWidth) ;
 
@@ -1209,6 +1209,9 @@ class PropertyView extends React.Component {
                     }
                     else{
                         if(item.name == "_editTrack" || item.name == "_createEffect"){
+                            item.styleName = item.olderClassName + " hidden";
+                        }
+                        else if(item.name == "_saveTrack" && node.props.is_system == 1 ){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else {
@@ -1783,6 +1786,9 @@ class PropertyView extends React.Component {
             WidgetActions['updateProperties'](obj, false, true);
             EffectAction['toggleMode']("effect");
             this.setState({fields: this.getFields()});
+        }
+        if(data.effectToggleTrack){
+            this.effectToggleTrack();
         }
     }
 

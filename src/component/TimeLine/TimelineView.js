@@ -104,6 +104,9 @@ class TimelineView extends React.Component {
             });
             WidgetActions['selectWidget'](this.state.selectWidget);
         }
+        if(data.returnStart){
+            this.onTimerChange(0);
+        }
     }
 
 	onStatusChange(widget) {

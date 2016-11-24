@@ -471,6 +471,49 @@ function resolveEventTree(node, list) {
   }
 }
 
+
+function resolveBlock(node, list) {
+    let genBlockKey = (block)=> {
+        block.mapping.props.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+        });
+        block.mapping.events.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+        });
+        block.mapping.funcs.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+        });
+        return block;
+    };
+    if(node.props.block) {
+        //是小模块
+        node.props.block = genBlockKey(node.props.block);
+    } else if(node.props.backUpBlock) {
+        //备份的block
+        node.props.backUpBlock = genBlockKey(node.props.backUpBlock);
+    }
+    if (node.children.length > 0) {
+        node.children.map(item => {
+            resolveBlock(item, list);
+        });
+    }
+}
+
 function resolveDBItemList(node, list) {
     if (node.dbItemList) {
         node.dbItemList.forEach(v => {
@@ -666,6 +709,28 @@ function generateId(node) {
       });
 
     });
+  }
+  if(node.props.block) {
+      node.props.block.mapping.props.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+      node.props.block.mapping.events.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+      node.props.block.mapping.funcs.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+  }
+  if(node.props.backUpBlock) {
+      node.props.backUpBlock.mapping.props.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+      node.props.backUpBlock.mapping.events.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+      node.props.backUpBlock.mapping.funcs.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
   }
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
@@ -1206,6 +1271,42 @@ function getSpacingStr(lines,spacingArr,arr) {
     return lines;
 }
 
+function saveTransBlock(block, saveKey){
+    let temp = {};
+    temp.name = block.name;
+    temp.blockId = block.blockId;
+    let tempProps = [];
+    block.mapping.props.forEach((v)=>{
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        tempProps.push(tempV);
+    });
+    let tempEvents = [];
+    block.mapping.events.forEach((v)=>{
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        tempEvents.push(tempV);
+    });
+    let tempFuncs = [];
+    block.mapping.funcs.forEach((v)=>{
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        tempFuncs.push(tempV);
+    });
+    temp.mapping = {
+        props: tempProps,
+        events: tempEvents,
+        funcs: tempFuncs
+    };
+    return temp;
+}
+
 function saveTree(data, node, saveKey, saveEventObjKeys) {
   data['cls'] = node.className;
 
@@ -1502,6 +1603,11 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
   }
   if (props) {
       data['props'] = props;
+      if(data['props']['block']) {
+          data['props']['block'] = saveTransBlock(data['props']['block'], saveKey);
+      } else if(data['props']['backUpBlock']) {
+          data['props']['backUpBlock'] = saveTransBlock(data['props']['backUpBlock'], saveKey);
+      }
   }
   // if (node.events)
   //   data['events'] = node.events;
@@ -1821,22 +1927,25 @@ export default Reflux.createStore({
         this.eventTreeList = [];
         this.historyRoad;
     },
-    selectWidget: function(widget, shouldTrigger, keepValueType, isMulti) {
+    selectWidget: function(oWidget, shouldTrigger, keepValueType, isMulti) {
         var render = false;
+        let widget = oWidget;
 
         //如果父中有检查出有小模块就不能被选择
         if(widget&&widget.parent) {
             let temp = widget;
-            let parentIsBlock = false;
-            while (temp&&(temp.parent || parentIsBlock == true)) {
+            // let parentIsBlock = false;
+            while (temp&&temp.parent) {
+            // while (temp&&(temp.parent || parentIsBlock == true)) {
                 if(temp.parent&&temp.parent.props.block) {
-                    parentIsBlock = true;
+                    // parentIsBlock = true;
+                    widget = temp.parent;
                 }
                 temp = temp.parent;
             }
-            if(parentIsBlock) {
-                return;
-            }
+            // if(parentIsBlock) {
+            //     return;
+            // }
         }
 
         if (widget) {
@@ -1933,7 +2042,8 @@ export default Reflux.createStore({
                     }
                 }.bind(this));
             } else {
-                  bridge.selectWidget([widget.node]);
+                  //bridge.selectWidget([widget.node]);
+                bridge.selectWidget(null);
             }
             if (render)
                 this.render();
@@ -2002,6 +2112,7 @@ export default Reflux.createStore({
               'props': {'prop': propList, 'data': dataList, 'name': props['name'], 'trackType' : trackType}
           });
           this.trigger({redrawTree: true, updateTrack: track});
+          this.selectWidget(this.currentWidget);
           // } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
       } else {
         let p;
@@ -2053,6 +2164,7 @@ export default Reflux.createStore({
         }
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;
+            bridge.selectWidget(null);
             bridge.removeWidget(this.currentWidget.node);
 
             let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
@@ -2505,6 +2617,7 @@ export default Reflux.createStore({
             if (src&&dest) {
                 var saved = {};
                 saveTree(saved, src, true);
+                bridge.selectWidget(null);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
@@ -2663,18 +2776,24 @@ export default Reflux.createStore({
 
 
         //当轨迹处于时间轴外面的时候,并且处于动态模式,移动位置，所有关键点也移动位置
+        let updateSyncTrack = ()=>{
+            if(tempWidget.timerWidget == null){
+                tempWidget.children.map((v,i)=>{
+                    if(v.className == "track" && v.props.trackType == "effect"){
+                        syncTrack(tempWidget, v.props)
+                    }
+                })
+            }
+        };
         if(obj && Object.getOwnPropertyNames(obj).length == 2 && obj.positionX !== undefined && obj.positionY !== undefined){
             if(tempWidget.props.positionX != obj.positionX && tempWidget.props.positionY != obj.positionY){
-                if(tempWidget.timerWidget == null){
-                    tempWidget.children.map((v,i)=>{
-                        if(v.className == "track" && v.props.trackType == "effect"){
-                            syncTrack(tempWidget, v.props)
-                        }
-                    })
-                }
+                updateSyncTrack();
             }
         }
-        console.log(obj,this.currentWidget );
+        else {
+            updateSyncTrack();
+        }
+        //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2842,7 +2961,8 @@ export default Reflux.createStore({
             //母节点
             if(this.currentWidget.rootWidget){
                 if(this.currentWidget.rootWidget.props.block) {
-                    widgetList.push(root);
+                    // 暂时小模块去除
+                    // widgetList.push(root);
                 } else {
                     widgetList.push(root);
                     if(root.intVarList.length>0){
@@ -2861,7 +2981,8 @@ export default Reflux.createStore({
             let loopWidgetTree = (children) => {
                 children.forEach(ch=>{
                     if(ch.props.block) {
-                        widgetList.push(ch);
+                        // 暂时小模块去除
+                        // widgetList.push(ch);
                     } else {
                         widgetList.push(ch);
                         if(ch.intVarList.length>0){
@@ -2983,10 +3104,18 @@ export default Reflux.createStore({
     },
     addEvent: function () {
         if (this.currentWidget) {
-            this.currentWidget.props['eventTree'].push(this.emptyEvent());
-            if(!this.currentWidget.props['enableEventTree']) {
-                this.currentWidget.props['enableEventTree'] = true;
-                this.trigger({redrawTree: true});
+            if(this.currentWidget.props.block) {
+                this.currentWidget.props.block['eventTree'].push(this.emptyEvent());
+                if(!this.currentWidget.props.block['enableEventTree']) {
+                    this.currentWidget.props.block['enableEventTree'] = true;
+                    this.trigger({redrawTree: true});
+                }
+            } else {
+                this.currentWidget.props['eventTree'].push(this.emptyEvent());
+                if(!this.currentWidget.props['enableEventTree']) {
+                    this.currentWidget.props['enableEventTree'] = true;
+                    this.trigger({redrawTree: true});
+                }
             }
         }
         this.trigger({redrawEventTreeList:true});
@@ -3696,6 +3825,7 @@ export default Reflux.createStore({
                 tree = loadTree(null, data['defs'][n], idList, rootDiv);
                 stageTree.push({name: n, tree: tree});
                 resolveEventTree(tree, idList);
+                resolveBlock(tree, idList);
                 resolveDBItemList(tree, idList);
             }
         }
@@ -3709,6 +3839,7 @@ export default Reflux.createStore({
         }
         tree = loadTree(null, data['stage'], idList, rootDiv);
         resolveEventTree(tree, idList);
+        resolveBlock(tree, idList);
         resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
         rootDiv.lastChild.style.position='relative';
@@ -4234,6 +4365,7 @@ export default Reflux.createStore({
         this.activeBlockMode(false);
         this.trigger({selectWidget:this.currentWidget});
         //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
+        this.ajaxSend()
     },
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){
