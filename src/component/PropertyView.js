@@ -1220,7 +1220,7 @@ class PropertyView extends React.Component {
                         }
                     }
                     else if(node.props.trackType == "effect"){
-                        if(item.name != "_editTrack"){
+                        if(item.name != "_editTrack" && item.name != "_playTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else {
@@ -1228,11 +1228,14 @@ class PropertyView extends React.Component {
                         }
                     }
                     else{
-                        if(item.name == "_editTrack" || item.name == "_createEffect"){
+                        if(item.name == "_editTrack" || item.name == "_createEffect" || item.name != "_playTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else if(item.name == "_saveTrack" && node.props.is_system == 1 ){
                             item.styleName = item.olderClassName + " hidden";
+                        }
+                        else if(item.name == "_saveAsTrack" && node.props.is_system == 1 ){
+                            item.styleName = item.olderClassName + " is_system";
                         }
                         else {
                             item.styleName = item.olderClassName;
@@ -1544,11 +1547,11 @@ class PropertyView extends React.Component {
             }
         }
         else if(className == "track" && node.timerWidget == null
-                && ( item.name == '_createEffect' || item.name == "_editTrack"
+                && ( item.name == '_createEffect' || item.name == "_editTrack" || item.name == "_playTrack"
                         || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") )
         {
             style['margin'] = "0";
-            if(item.name == "_saveTrack" || item.name == "_saveAsTrack"){
+            if(item.name == "_saveTrack" || item.name == "_saveAsTrack"  || item.name == "_editTrack" || item.name == "_playTrack"){
                 style['width'] = "50%";
                 style['float'] = "left";
             }

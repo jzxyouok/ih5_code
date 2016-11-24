@@ -107,6 +107,9 @@ class TimelineView extends React.Component {
         if(data.returnStart){
             this.onTimerChange(0);
         }
+        if(data.playTrack){
+            //this.onPlayOrPause();
+        }
     }
 
 	onStatusChange(widget) {
