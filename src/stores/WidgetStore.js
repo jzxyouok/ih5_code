@@ -1936,7 +1936,8 @@ export default Reflux.createStore({
                     }
                 }.bind(this));
             } else {
-                  bridge.selectWidget([widget.node]);
+                  //bridge.selectWidget([widget.node]);
+                bridge.selectWidget(null);
             }
             if (render)
                 this.render();
@@ -2057,6 +2058,7 @@ export default Reflux.createStore({
         }
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;
+            bridge.selectWidget(null);
             bridge.removeWidget(this.currentWidget.node);
 
             let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
@@ -2509,6 +2511,7 @@ export default Reflux.createStore({
             if (src&&dest) {
                 var saved = {};
                 saveTree(saved, src, true);
+                bridge.selectWidget(null);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 

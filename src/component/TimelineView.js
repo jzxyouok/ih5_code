@@ -65,16 +65,19 @@ class TimelineView extends React.Component {
 
     onTimer(p) {
         this.setState({currentTime:p});
-        WidgetActions['syncTrack']();
+        //WidgetActions['syncTrack']();
     }
 
     onPlay() {
         WidgetActions['resetTrack']();
         this.state.timerNode.node['play']();
+        if (this.state.currentTrack)
+            bridge.hideSelector(this.state.currentTrack.parent.node);
     }
 
     onPause() {
         this.state.timerNode.node['pause']();
+        WidgetActions['syncTrack']();
     }
 
     onTimerChange(value) {
