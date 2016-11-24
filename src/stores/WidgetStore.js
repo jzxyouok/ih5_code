@@ -2695,6 +2695,7 @@ export default Reflux.createStore({
                 var saved = {};
                 saveTree(saved, src, true);
                 bridge.selectWidget(null);
+                bridge.showTrack(null);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 

@@ -99,7 +99,7 @@ class PropertyView extends React.Component {
                 return <ConButton {...defaultProp} effectToggleTrack={this.effectToggleTrack} />;
             case propertyType.Number:
                 let step=1;
-                if(['totalTime','startTime','endTime'].indexOf(defaultProp.name)>0){
+                if(['totalTime','startTime','endTime','delay'].indexOf(defaultProp.name)>0){
                     step=0.1;
                 }
                 if(defaultProp.tbCome == "tbS"){
