@@ -88,7 +88,7 @@ let propMapping = {
 
     'radius': {name:'radius', showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools'},
 
-    'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '3',options:{'无':0,'左':1,'右':2,'上':3,'下':4}},
+    'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '3',options:{'无':'0','左':'1','右':'2','上':'3','下':'4'}},
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
 
     'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 0,order:1},
