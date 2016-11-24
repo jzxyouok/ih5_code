@@ -47,8 +47,20 @@ export default Reflux.createStore({
         }.bind(this));
     },
 
-    deleteBlock: function (id) {
-
+    deleteBlock: function (ids) {
+        let finished = 0;
+        ids.forEach((id)=>{
+            WidgetActions['ajaxSend'](this.token, 'POST', 'app/sModlDelete/'+ id, null, null, function(text) {
+                let result = JSON.parse(text);
+                //console.log(result);
+                if (result) {
+                    finished +=1;
+                    if(ids.length === finished) {
+                        this.getBlockList();
+                    }
+                }
+            }.bind(this));
+        })
     },
 
     getBlockSpec: function (id) {

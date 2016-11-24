@@ -97,7 +97,7 @@ class ArrangeBlock extends React.Component {
             })
         }
         else {
-            // WidgetActions['deleteClass'](this.state.chooseId);
+            BlockAction['deleteBlock'](this.state.chooseId);
             this.deleteLayerHide();
             this.setState({
                 error : "小模块名称未能为空",
@@ -164,9 +164,9 @@ class ArrangeBlock extends React.Component {
                                     {
                                         this.state.blockList.length > 0
                                         ?   this.state.blockList.map((v,i)=>{
-                                                return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v) >= 0})}
+                                                return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v.id) >= 0})}
                                                             key={i}
-                                                            onClick={ this.chooseBtn.bind(this, v.name, v.id)}>
+                                                            onClick={ this.chooseBtn.bind(this, v.id)}>
 
                                                             <div className="flex-1 f--hlc title">
                                                                 <span className="li-icon" />
@@ -186,7 +186,7 @@ class ArrangeBlock extends React.Component {
 
                         <div className="btn-group f--hcc">
                             <button className="btn btn-clear delete-btn" onClick={ this.deleteLayerShow }>删除</button>
-                            <button className="btn btn-clear top-btn" onClick={ this.topBtn } >置顶</button>
+                            {/*<button className="btn btn-clear top-btn" onClick={ this.topBtn } >置顶</button>*/}
                         </div>
                     </div>
 

@@ -884,9 +884,9 @@ class PropertyView extends React.Component {
         let className=this.generateClassName(node);//生成className
         if(!className)  return null;
 
-        if(!node.props.block) {
+        // if(!node.props.block) {
             this.lockRatio(node);//初始化时,锁定部分属性面板的宽高比
-        }
+        // }
         let groups = {};
         this.generateGroups(node,className,groups);//生成groups,其中涉及到html的拼接
         groups = this.sortGroups(groups);//排序groups
