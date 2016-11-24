@@ -76,7 +76,7 @@ let propMapping = {
 
     'link': {name:'link', showName:'资源', type: propertyType.Integer, default:0},
 
-    'delay': {name:'delay', showName:'延时', type: propertyType.Number, default: 0.2},
+    'delay': {name:'delay', showName:'时间间隔', type: propertyType.Number, default: 0.2},
 
     'font': {name:'font', showName:'字体',type: propertyType.Select, default:'上传字体',group:'tools'},
     'size': {name:'size', showName:'文字大小',type: propertyType.Integer, default:26,group:'tools'},
@@ -88,7 +88,7 @@ let propMapping = {
 
     'radius': {name:'radius', showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools'},
 
-    'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '3',options:{'无':0,'左':1,'右':2,'上':3,'下':4}},
+    'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '3',options:{'无':'0','左':'1','右':'2','上':'3','下':'4'}},
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
 
     'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 0,order:1},

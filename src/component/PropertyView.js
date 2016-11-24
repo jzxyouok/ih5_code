@@ -99,7 +99,7 @@ class PropertyView extends React.Component {
                 return <ConButton {...defaultProp} effectToggleTrack={this.effectToggleTrack} />;
             case propertyType.Number:
                 let step=1;
-                if(['totalTime','startTime','endTime'].indexOf(defaultProp.name)>0){
+                if(['totalTime','startTime','endTime','delay'].indexOf(defaultProp.name)>0){
                     step=0.1;
                 }
                 if(defaultProp.tbCome == "tbS"){
@@ -242,7 +242,11 @@ class PropertyView extends React.Component {
                 }
                 return <div className="pr">
                     <Button  {...defaultProp} >{defaultProp.value}</Button>
-                      <div className="btn_del" onClick={defaultProp.onClick}></div>
+                    {
+                        defaultProp.value=='上传图片'
+                            ?''
+                            :  <div className={cls('btn_del')} onClick={defaultProp.onClick}></div>
+                    }
                       <div id={cls({'ant-progress':defaultProp.name=='bgLink'})}>
                            <div className='ant-progress-bar'></div>
                            <div className='ant-progress-txt'>上传 10%</div>
@@ -495,8 +499,8 @@ class PropertyView extends React.Component {
                         v = value;
                     }
                     else if(prop.name=='vertical') {
-                        node.props[prop.name] = value=='true'?'垂直':'水平';
-                        v = value;
+                        node.props[prop.name+'Key'] = value;
+                       v =parseInt(value);
                     }
                     else if (prop.name == 'type') {
                         let className = node.className;
@@ -1144,8 +1148,8 @@ class PropertyView extends React.Component {
                 defaultValue = node.props[item.name + '_val'];
             }  else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
                 defaultValue = node.props.headerFontFamily;
-            } else if (item.name == 'vertical' && node.props[item.name]) {
-                defaultValue = node.props[item.name];
+            } else if (item.name == 'vertical' && node.props[item.name+'Key']) {
+                defaultValue = node.props[item.name+'Key'];
             } else if (item.name == 'chooseColumn') {
                 defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn + ' 列';
             }

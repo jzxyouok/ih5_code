@@ -49,7 +49,9 @@ class ArrangeModule extends React.Component {
         this.props.arrangeEffectHide();
     }
 
-    chooseBtn(id){
+    chooseBtn(id ,is_system){
+        if(is_system == 1) return;
+
         let array = this.state.chooseId;
         let index = array.indexOf(id);
         //console.log(index);
@@ -160,9 +162,12 @@ class ArrangeModule extends React.Component {
                                     {
                                         this.state.effectList.length > 0
                                             ?   this.state.effectList.map((v,i)=>{
-                                                    return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v.id) >= 0})}
+                                                    return  <li className={ $class("f--hlc",
+                                                                    {"active": this.state.chooseId.indexOf(v.id) >= 0}
+                                                                    ,{"not-active": v.is_system == 1}
+                                                                )}
                                                                 key={i}
-                                                                onClick={ this.chooseBtn.bind(this, v.id)}>
+                                                                onClick={ this.chooseBtn.bind(this, v.id ,v.is_system)}>
 
                                                                 <div className="flex-1 f--hlc title">
                                                                     <span className="li-icon" />

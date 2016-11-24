@@ -35,11 +35,13 @@ export default Reflux.createStore({
     },
 
     getEffectList: function() {
+
         WidgetActions['ajaxSend'](this.token, 'POST', 'app/effectList', null, null, function(text) {
             let result = JSON.parse(text);
             //console.log(result);
             if (result) {
-                let allData = systemList;
+                let allData = [];
+                Array.prototype.push.apply(allData, systemList);
                 Array.prototype.push.apply(allData, result);
                 //console.log(Array);
                 this.trigger({effectList : allData});
