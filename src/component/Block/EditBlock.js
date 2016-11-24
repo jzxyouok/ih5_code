@@ -170,16 +170,18 @@ class EditBlock extends React.Component {
         let objectList = [];
         if(widget) {
             objectList.push(widget);
-            //递归遍历添加有事件widget到eventTreeList
+            //递归遍历添加有事件widget到eventTreeList,(有block的就不用再添加其子对象了)
             let loopWidgetTree = (children) => {
                 children.forEach(ch=>{
                     objectList.push(ch);
-                    if (ch.children && ch.children.length > 0) {
+                    if (ch.children && ch.children.length > 0 && !ch.props.block) {
                         loopWidgetTree(ch.children);
                     }
                 });
             };
-            loopWidgetTree(widget.children);
+            if(!widget.props.block) {
+                loopWidgetTree(widget.children);
+            }
         }
         return objectList;
     }
@@ -199,14 +201,47 @@ class EditBlock extends React.Component {
 
     getParamsDetailList(obj,type) {
         let list = [];
-        getPropertyMap(obj, obj.className, type).map((item) => {
-            if(item.type !== propertyType.Hidden&&item.type !== propertyType.Button){
-                if((!item.readOnly&&item.name !='id'&&type==='props')||type==='events'||type==='funcs') {
-                    let temp = JSON.parse(JSON.stringify(item));
-                    list.push(temp);
-                }
+        if(obj.props.block) {
+            switch(type) {
+                case 'props':
+                    obj.props.block.mapping.props.forEach((v)=>{
+                        let temp = JSON.parse(JSON.stringify(v.detail));
+                        if(temp!=null&&v.name) {
+                            temp.showName = v.name;
+                            list.push(temp);
+                        }
+                    });
+                    break;
+                case 'events':
+                    obj.props.block.mapping.events.forEach((v)=>{
+                        let temp = JSON.parse(JSON.stringify(v.detail));
+                        if(temp!=null&&v.name) {
+                            temp.showName = v.name;
+                            list.push(temp);
+                        }
+                    });
+                    break;
+                case 'funcs':
+                    obj.props.block.mapping.funcs.forEach((v)=>{
+                        let temp = JSON.parse(JSON.stringify(v.detail));
+                        if(temp!=null&&v.name) {
+                            temp.showName = v.name;
+                            list.push(temp);
+                        }
+                    });
+                    break;
             }
-        });
+        } else {
+            getPropertyMap(obj, obj.className, type).map((item) => {
+                if(item.type !== propertyType.Hidden&&item.type !== propertyType.Button){
+                    if((!item.readOnly&&item.name !='id'&&type==='props')||type==='events'||type==='funcs') {
+                        let temp = JSON.parse(JSON.stringify(item));
+                        list.push(temp);
+                    }
+                }
+            });
+        }
+
         return list;
     }
 
@@ -363,7 +398,7 @@ class EditBlock extends React.Component {
 
     render() {
         let objItem = (v,i)=>{
-            return  <MenuItem key={i} obj={v}>{v.props.name}</MenuItem>
+            return  <MenuItem key={i} obj={v}>{v.props.block?v.props.block.name:v.props.name}</MenuItem>
         };
 
         let detailItem = (v,i)=>{
@@ -437,7 +472,7 @@ class EditBlock extends React.Component {
                                                         targetList={this.state.objectList}
                                                         onClick={this.onPropsObjButtonClick.bind(this, i1, type)}
                                                         getResult={this.onPropsObjResultGet.bind(this, i1, type)} />
-                                        <div className="title-obj">{paramObj.props.name}</div>
+                                        <div className="title-obj">{paramObj.props.block?paramObj.props.block.name:paramObj.props.name}</div>
                                         <div className="title-dot"></div>
                                         {
                                             v1.detail
