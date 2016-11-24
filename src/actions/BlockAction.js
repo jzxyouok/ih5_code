@@ -6,4 +6,5 @@ export default Reflux.createActions([
     'updateBlock',
     'deleteBlock',
     'getBlockSpec',
+    'addBlockToWidget',
 ]);

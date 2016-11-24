@@ -1276,7 +1276,6 @@ function getSpacingStr(lines,spacingArr,arr) {
 function saveTransBlock(block, saveKey){
     let temp = {};
     temp.name = block.name;
-    temp.blockId = block.blockId;
     let tempProps = [];
     block.mapping.props.forEach((v)=>{
         let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
@@ -1925,6 +1924,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addOrEditBlock'], this.addOrEditBlock);
         this.listenTo(WidgetActions['removeBlock'], this.removeBlock);
         this.listenTo(WidgetActions['activeBlockMode'], this.activeBlockMode);
+        this.listenTo(WidgetActions['addBlockToCurrentWidget'], this.addBlockToCurrentWidget);
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -4345,9 +4345,7 @@ export default Reflux.createStore({
         globalVersion = v;
     },
 
-    addOrEditBlock(block, saveAsNew) {
-        //TODO:还需其他么？到设置属性的时候再考虑
-        //到时还要check id
+    addOrEditBlock(block, id) {
         if(this.currentWidget) {
             if(this.currentWidget.props['block']){
                 //编辑
@@ -4357,18 +4355,40 @@ export default Reflux.createStore({
                 //新建
                 this.currentWidget.props['block'] = {
                     'name': block.name,
-                    'mapping': block.mapping,
-                    'blockId': 'tempTesting'
-                }
+                    'mapping': block.mapping
+                };
             }
             if(this.currentWidget.props['backUpBlock']) {
                 delete this.currentWidget.props['backUpBlock'];
             }
         }
+
+        let saveBlock = {};
+        generateId(this.currentWidget);//给对象加上id
+        //保存小模块
+        saveTree(saveBlock, this.currentWidget, false, false);
+        //到时还要check id
+        let isEdit = false;
+        let type = 'create';
+        if(id) {
+            isEdit = true;
+            type = 'update';
+        }
+        this.trigger({saveBlock : saveBlock, type:type, name: block.name, id: id});
         this.activeBlockMode(false);
         this.trigger({selectWidget:this.currentWidget});
-        //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
-        this.ajaxSend()
+    },
+    addBlockToCurrentWidget(data) {
+        let block = cpJson(data);
+        if(block&&block!==''){
+            let idList = [];
+            let widget = loadTree(this.currentWidget, block, idList);
+            resolveEventTree(widget, idList);
+            resolveBlock(widget, idList);
+            resolveDBItemList(widget, idList);
+            this.trigger({redrawTree:true});
+            this.render();
+        }
     },
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){

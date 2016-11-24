@@ -2,8 +2,8 @@
 import React from 'react';
 import $class from 'classnames';
 
-import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore from '../../stores/WidgetStore';
+import BlockAction from '../../actions/BlockAction';
+import BlockStore from '../../stores/BlockStore';
 
 class ArrangeBlock extends React.Component {
     constructor (props) {
@@ -25,22 +25,19 @@ class ArrangeBlock extends React.Component {
     }
 
     componentDidMount() {
-        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.unsubscribe = BlockStore.listen(this.onStatusChange.bind(this));
     }
 
     componentWillUnmount() {
         this.unsubscribe();
     }
 
-    onStatusChange(widget) {
-        // if (widget.blockList !== undefined) {
-        //     //console.log(1,widget.blockList);
-        //     this.setState({
-        //         blockList: widget.blockList
-        //     });
-        // }
-        if(widget.historyPropertiesUpdate){
-            this.forceUpdate();
+    onStatusChange(data) {
+        if (data.blockList !== undefined) {
+            //console.log(1,widget.blockList);
+            this.setState({
+                blockList: data.blockList
+            });
         }
     }
 
@@ -83,7 +80,7 @@ class ArrangeBlock extends React.Component {
             })
         }
         else {
-            WidgetActions['sortClass'](this.state.chooseId);
+            // WidgetActions['sortClass'](this.state.chooseId);
             this.setState({
                 error : "小模块名称未能为空",
                 isError : false,
@@ -100,7 +97,7 @@ class ArrangeBlock extends React.Component {
             })
         }
         else {
-            WidgetActions['deleteClass'](this.state.chooseId);
+            BlockAction['deleteBlock'](this.state.chooseId);
             this.deleteLayerHide();
             this.setState({
                 error : "小模块名称未能为空",
@@ -167,13 +164,13 @@ class ArrangeBlock extends React.Component {
                                     {
                                         this.state.blockList.length > 0
                                         ?   this.state.blockList.map((v,i)=>{
-                                                return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v) >= 0})}
+                                                return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v.id) >= 0})}
                                                             key={i}
-                                                            onClick={ this.chooseBtn.bind(this, v)}>
+                                                            onClick={ this.chooseBtn.bind(this, v.id)}>
 
                                                             <div className="flex-1 f--hlc title">
                                                                 <span className="li-icon" />
-                                                                <div className="TitleName">{v}</div>
+                                                                <div className="TitleName">{v.name}</div>
                                                             </div>
                                                             <span className="choose-btn" />
                                                         </li>
@@ -189,7 +186,7 @@ class ArrangeBlock extends React.Component {
 
                         <div className="btn-group f--hcc">
                             <button className="btn btn-clear delete-btn" onClick={ this.deleteLayerShow }>删除</button>
-                            <button className="btn btn-clear top-btn" onClick={ this.topBtn } >置顶</button>
+                            {/*<button className="btn btn-clear top-btn" onClick={ this.topBtn } >置顶</button>*/}
                         </div>
                     </div>
 
