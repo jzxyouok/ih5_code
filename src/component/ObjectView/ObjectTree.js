@@ -15,6 +15,8 @@ import ReDbOrSockIdAction from "../../actions/ReDbOrSockIdAction";
 
 import {imgServer} from '../../api/BaseApi';
 
+import EffectAction from '../../actions/effectAction';
+
 const drapTipId = 'treeDragTip';
 const placeholderId = 'treeDragPlaceholder';
 const appId = 'iH5-App';
@@ -662,7 +664,26 @@ class ObjectTree extends React.Component {
         if(className === 'var' || className === 'func' || className === 'dbItem'
             || className === 'root' || className === 'db' || className === 'sock') {
             list.splice(3,1);
-        } else {
+        } else if(className == "track" && obj.timerWidget == null){
+            //动效右键菜单
+            // track 显示生成动效, effect 显示编辑动效， editEffect 显示保存动效
+            let trackShowName;
+            let trackName;
+            if(obj.props.trackType == "track"){
+                trackShowName = "生成动效";
+                trackName = "saveEffect";
+            }
+            else if(obj.props.trackType == "effect"){
+                trackShowName = "编辑动效";
+                trackName = "editEffect";
+            }
+            else {
+                trackShowName = "保存动效";
+                trackName = "saveEffect";
+            }
+            list[3][0].showName = trackShowName;
+            list[3][0].name = trackName;
+        }else {
             if(obj.props.block) {
                 list[3][0].showName = '展开小模块';
                 list[3][0].name = 'removeBlock';
@@ -769,6 +790,12 @@ class ObjectTree extends React.Component {
                 break;
             case 'removeBlock':
                 this.itemActions('removeBlock');
+                break;
+            case 'saveEffect':
+                this.itemActions('saveEffect');
+                break;
+            case 'editEffect':
+                this.itemActions('editEffect');
                 break;
             default:
                 break;
@@ -977,6 +1004,14 @@ class ObjectTree extends React.Component {
                 break;
             case 'removeBlock':
                 WidgetActions['removeBlock']();
+                break;
+            case 'saveEffect':
+                let trackName = this.state.selectWidget.props.name;
+                WidgetActions['saveEffect']();
+                EffectAction['createEffectShow'](true,trackName);
+                break;
+            case 'editEffect':
+                EffectAction['effectToggleTrack']();
                 break;
             default:
                 break;

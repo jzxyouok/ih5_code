@@ -1774,6 +1774,9 @@ class PropertyView extends React.Component {
             EffectAction['toggleMode']("effect");
             this.setState({fields: this.getFields()});
         }
+        if(data.effectToggleTrack){
+            this.effectToggleTrack();
+        }
     }
 
     effectToggleTrack(){

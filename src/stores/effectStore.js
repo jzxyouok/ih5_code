@@ -19,6 +19,7 @@ export default Reflux.createStore({
         this.listenTo(Actions['loadEffect'], this.loadEffect);
         this.listenTo(Actions['getSpecificEffect'], this.getSpecificEffect);
         this.listenTo(Actions['returnStart'], this.returnStart);
+        this.listenTo(Actions['effectToggleTrack'], this.effectToggleTrack);
         this.token = Cookies.get('ih5token');
         this.system();
     },
@@ -109,6 +110,10 @@ export default Reflux.createStore({
 
     returnStart:function(){
         this.trigger({returnStart : true});
+    },
+
+    effectToggleTrack:function(){
+        this.trigger({effectToggleTrack : true});
     }
 });
 
