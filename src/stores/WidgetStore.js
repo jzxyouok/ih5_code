@@ -471,6 +471,49 @@ function resolveEventTree(node, list) {
   }
 }
 
+
+function resolveBlock(node, list) {
+    let genBlockKey = (block)=> {
+        block.mapping.props.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+        });
+        block.mapping.events.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+        });
+        block.mapping.funcs.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+        });
+        return block;
+    };
+    if(node.props.block) {
+        //是小模块
+        node.props.block = genBlockKey(node.props.block);
+    } else if(node.props.backUpBlock) {
+        //备份的block
+        node.props.backUpBlock = genBlockKey(node.props.backUpBlock);
+    }
+    if (node.children.length > 0) {
+        node.children.map(item => {
+            resolveBlock(item, list);
+        });
+    }
+}
+
 function resolveDBItemList(node, list) {
     if (node.dbItemList) {
         node.dbItemList.forEach(v => {
@@ -666,6 +709,28 @@ function generateId(node) {
       });
 
     });
+  }
+  if(node.props.block) {
+      node.props.block.mapping.props.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+      node.props.block.mapping.events.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+      node.props.block.mapping.funcs.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+  }
+  if(node.props.backUpBlock) {
+      node.props.backUpBlock.mapping.props.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+      node.props.backUpBlock.mapping.events.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
+      node.props.backUpBlock.mapping.funcs.forEach(item=> {
+          specGenIdsData(item.objKey);
+      });
   }
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
@@ -1206,6 +1271,42 @@ function getSpacingStr(lines,spacingArr,arr) {
     return lines;
 }
 
+function saveTransBlock(block, saveKey){
+    let temp = {};
+    temp.name = block.name;
+    temp.blockId = block.blockId;
+    let tempProps = [];
+    block.mapping.props.forEach((v)=>{
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        tempProps.push(tempV);
+    });
+    let tempEvents = [];
+    block.mapping.events.forEach((v)=>{
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        tempEvents.push(tempV);
+    });
+    let tempFuncs = [];
+    block.mapping.funcs.forEach((v)=>{
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        tempFuncs.push(tempV);
+    });
+    temp.mapping = {
+        props: tempProps,
+        events: tempEvents,
+        funcs: tempFuncs
+    };
+    return temp;
+}
+
 function saveTree(data, node, saveKey, saveEventObjKeys) {
   data['cls'] = node.className;
 
@@ -1502,6 +1603,11 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
   }
   if (props) {
       data['props'] = props;
+      if(data['props']['block']) {
+          data['props']['block'] = saveTransBlock(data['props']['block'], saveKey);
+      } else if(data['props']['backUpBlock']) {
+          data['props']['backUpBlock'] = saveTransBlock(data['props']['backUpBlock'], saveKey);
+      }
   }
   // if (node.events)
   //   data['events'] = node.events;
@@ -3719,6 +3825,7 @@ export default Reflux.createStore({
                 tree = loadTree(null, data['defs'][n], idList, rootDiv);
                 stageTree.push({name: n, tree: tree});
                 resolveEventTree(tree, idList);
+                resolveBlock(tree, idList);
                 resolveDBItemList(tree, idList);
             }
         }
@@ -3732,6 +3839,7 @@ export default Reflux.createStore({
         }
         tree = loadTree(null, data['stage'], idList, rootDiv);
         resolveEventTree(tree, idList);
+        resolveBlock(tree, idList);
         resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
         rootDiv.lastChild.style.position='relative';
