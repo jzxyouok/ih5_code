@@ -604,7 +604,6 @@ class VxRcSlider extends RcSlider {
                 offset={offset}
                 value={points[i][0]}
                 dragging={false}
-                {/*isCurrent={isCurrentBool}*/}
                 isCurrent={this.props.isCurrent && (this.state.currentHandle == i)}
                 key={i}
                 handleIndex={i}
