@@ -194,7 +194,7 @@ var DEFAULT_TOOLBOX = {
         gid:11,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.CONTAINER,name:'容器',icon:containerIcon, className:'container'}
+            {cid:TOOL_ID.CONTAINER,name:'容器',icon:containerIcon, className:'container', param: {}}
         ]
     },{
         name:'排版容器',
@@ -230,7 +230,7 @@ var DEFAULT_TOOLBOX = {
         gid:14,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.TIMER, name:'添加时间轴', icon:timerIcon, className:'timer'},
+            {cid:TOOL_ID.TIMER, name:'添加时间轴', icon:timerIcon, className:'timer', param: {'totalTime': 10}},
             //{cid:TOOL_ID.TRACK, name:'轨迹', icon: trackIcon, className: 'track'},
             // {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
             // {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},

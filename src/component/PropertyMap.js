@@ -138,9 +138,6 @@ let propMapping = {
     'count': {name:'count', showName:'播放次数', type: propertyType.Integer, default: 1},
     'initHide': {name:'initHide', showName:'初始隐藏', type: propertyType.Boolean, default: false},
 
-
-
-
     'sockName' : {name:'sockName', showName:'名称',  type: propertyType.String, default: null, readOnly:true },
     'listened': {name:'listened', showName:'是否监听', type: propertyType.Boolean, default: false},
 
