@@ -36,6 +36,8 @@ class TimelineView extends React.Component {
                     }
                 });
             }
+            if (!changed.currentTrack)
+                bridge.showTrack(null);
             if (node)
                 node = node.timerWidget || changed.currentTrack;
             if (node !== this.state.timerNode) {
