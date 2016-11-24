@@ -811,9 +811,8 @@ class NavBar extends React.Component {
         })
     }
 
-    addBlock(name){
-    //     console.log(key);
-    //     WidgetActions['addWidget'](name);
+    addBlock(name, id){
+        BlockStore['addBlockToWidget'](name, id);
     }
 
     arrangeBlockBtn(){

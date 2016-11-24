@@ -4376,8 +4376,15 @@ export default Reflux.createStore({
         this.activeBlockMode(false);
         this.trigger({selectWidget:this.currentWidget});
     },
-    addBlockToCurrentWidget(block) {
-
+    addBlockToCurrentWidget(data) {
+        let block = cpJson(data);
+        if(block&&block!==''){
+            let idList = [];
+            let widget = loadTree(this.currentWidget, block, idList);
+            resolveEventTree(widget, idList);
+            resolveBlock(widget, idList);
+            resolveDBItemList(widget, idList);
+        }
     },
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){

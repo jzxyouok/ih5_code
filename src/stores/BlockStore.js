@@ -47,4 +47,13 @@ export default Reflux.createStore({
     getBlockSpec: function (id) {
 
     },
+
+    addBlockToWidget: function (name, id) {
+        WidgetActions['ajaxSend'](this.token, 'POST', 'app/sModlGet/'+ id, null, null, function(text) {
+            let result = JSON.parse(text);
+            if (result) {
+                WidgetActions['addBlockToCurrentWidget'](result.data);
+            }
+        }.bind(this));
+    },
 })
