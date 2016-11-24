@@ -594,6 +594,8 @@ let modifyPropList = (list, className, type) => {
     }
 
 
+
+
     list = list.concat(dealElementList(aLack, className, 'props', type));
     return list;
 };
@@ -1011,5 +1013,21 @@ function fnCanvasIsUnderFlex(node,firstNodeClassName=node.className){
         }
     }
 }
+/**
+ * PropertyView
+ * 用于判断是否处于时间轴下面
+ */
+function fnIsUnderTimer(node){
+    if (node.className == 'timer') {
+        return true;
+    }
+    else if (node.className == 'root') {
+        return false;
+    }
+    else {
+        return  fnIsUnderTimer(node.parent);
+    }
+}
 
-export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType,sortGroupArr,fnIsFlex,fnCanvasIsUnderFlex};
+
+export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType,sortGroupArr,fnIsFlex,fnCanvasIsUnderFlex,fnIsUnderTimer};

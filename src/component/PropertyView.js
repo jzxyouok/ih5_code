@@ -13,7 +13,7 @@ import cls from 'classnames';
 import { SwitchMore,DropDownInput ,ConInputNumber,ConButton} from  './PropertyView/PropertyViewComponet';
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
-import {propertyType, getPropertyMap,sortGroupArr,fnIsFlex} from './PropertyMap'
+import {propertyType, getPropertyMap,sortGroupArr,fnIsFlex,fnIsUnderTimer} from './PropertyMap'
 import {chooseFile} from  '../utils/upload';
 require("jscolor/jscolor");
 import TbCome from './TbCome';
@@ -149,12 +149,15 @@ class PropertyView extends React.Component {
                 return  <Input ref={(inputDom) => {
                     if (inputDom) {
                         var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                        dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'white';
                         if (!dom.jscolor) {
                             dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                             dom.jscolor.onFineChange = defaultProp.onChange;
                             dom.jscolor.closeText='jsColorCloseBtn';
-
                         }
+
+
+
                     }
                 }}  {...defaultData}   /> ;
 
@@ -233,14 +236,14 @@ class PropertyView extends React.Component {
             case propertyType.Dropdown:
                 return  <DropDownInput {...defaultProp} />;
             case propertyType.Button2:
-                if(defaultProp.name=='bgImage'){
+                if(defaultProp.name=='bgLink'){
                     defaultProp.onClick=defaultProp.onChange;
                     delete  defaultProp.onChange;
                 }
                 return <div className="pr">
                     <Button  {...defaultProp} >{defaultProp.value}</Button>
                       <div className="btn_del" onClick={defaultProp.onClick}></div>
-                      <div id={cls({'ant-progress':defaultProp.name=='bgImage'})}>
+                      <div id={cls({'ant-progress':defaultProp.name=='bgLink'})}>
                            <div className='ant-progress-bar'></div>
                            <div className='ant-progress-txt'>上传 10%</div>
                      </div>
@@ -635,7 +638,7 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case  propertyType.Button2:
-                    if(prop.name == 'bgImage'){
+                    if(prop.name == 'bgLink'){
                         if (value.target.getAttribute('class') ==='btn_del') {
                             //删除
                             value=null;
@@ -1064,7 +1067,7 @@ class PropertyView extends React.Component {
         }
         else if(item.type == propertyType.Button2){
               defaultValue=item.ButtonName;
-              if (item.name == 'bgImage' && node.props[item.name + 'Key']) {
+              if (item.name == 'bgLink' && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
               }
         }
@@ -1418,6 +1421,11 @@ class PropertyView extends React.Component {
      * */
     getInput(item,className, groups, cNode){
         let node=this.selectNode;
+
+        if(className=='track'&& (item.name=='autoPlay'||item.name=='loop') && fnIsUnderTimer(node)){
+            return '';
+        }
+
         //小模块处理
         if(cNode) {
             //对不同mapping属性属性的处理
@@ -1500,7 +1508,9 @@ class PropertyView extends React.Component {
                 : <label>{item.showName}</label>
         }
 
-        //todo:志颖,这设置一个标志位,在这个标志位下设定样式,这样我们就统一流程了,看到后有空讨论下
+
+
+
         let style = {};
         if (item.tbCome) {
             defaultProp.tbCome = item.tbCome;
@@ -1591,7 +1601,7 @@ class PropertyView extends React.Component {
     /****************工具方法区域,end**********************************/
 
     onStatusChange(widget) {
-        console.log(widget)
+
 
         //处理颜色板在点击舞台对象和右边树对象后不消失的bug
         // if(widget.selectWidget||widget.updateProperties){

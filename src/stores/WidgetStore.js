@@ -537,6 +537,8 @@ function resolveDBItemList(node, list) {
 function trimTreeNode(node, links) {
   if (node.props['link'] !== undefined)
     node.props['link'] = links.push(node.rootWidget.imageList[node.props['link']]) - 1;
+    if (node.props['bgLink'] !== undefined)
+        node.props['bgLink'] = links.push(node.rootWidget.imageList[node.props['bgLink']]) - 1;
   if (node.children.length > 0) {
     node.children.map(item => {
       trimTreeNode(item, links);
@@ -2165,6 +2167,7 @@ export default Reflux.createStore({
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;
             bridge.selectWidget(null);
+            bridge.showTrack(null);
             bridge.removeWidget(this.currentWidget.node);
 
             let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
@@ -2793,7 +2796,7 @@ export default Reflux.createStore({
         else {
             updateSyncTrack();
         }
-        //console.log(obj,this.currentWidget );
+        console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
