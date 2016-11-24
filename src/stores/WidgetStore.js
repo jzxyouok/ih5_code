@@ -2069,7 +2069,7 @@ export default Reflux.createStore({
               if(className === 'container') {
                   //如果在flex模式下，添加param:{'alignItems':'flex-start'}
                   props['alignItems'] = 'flex-start';
-                  props['alignItemsKey'] = '0 0 auto';
+                  props['alignItemsKey'] = 'flex-start';
               }else if(className==='canvas'){
                   props['width'] = '640px';
                   props['height'] = '1040px';

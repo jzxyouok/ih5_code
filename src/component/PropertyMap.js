@@ -378,7 +378,7 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['track'])) {
         return {
             props: {
-                'type': {name:'type', showName:'类型', type: propertyType.Select, default:'0',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
+                'type': {name:'type', showName:'轨迹类型', type: propertyType.Select, default:'0',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
                 '_createEffect': {name:'_createEffect', showName:'生成动效',styleName:'create-btn',olderClassName:"create-btn",
                     type: propertyType.Button,default:'',group:'buttonArea'},
 
@@ -544,21 +544,30 @@ let modifyPropList = (list, className, type) => {
                 }
             }
         }
+        if((type==modeType.dom||type==modeType.canvas)&&['container'].indexOf(className)>=0) {
+            if (v.name == 'width' || v.name == 'height') {
+                v.type = propertyType.Hidden;
+            }
+            if (v.name == 'scaleX' || v.name == 'scaleY') {
+                v.type = propertyType.Float;
+            }
+        }
 
         if ([ 'visible','viewBoxWidth','viewBoxHeight','globalVx','globalVy'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
-
         }
         if (['shapeWidth', 'shapeHeight'].indexOf(v.name) >= 0) {
             if(type==modeType.flex && className=='rect'){
                ;
             }else if((type==modeType.dom||type==modeType.canvas) && className=='container'){
                ;
+            }else if(type==modeType.flex && className=='ellipse'){
+                ;
             }else{
                 v.type = propertyType.Hidden;
             }
         }
-        if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
+        if (['timer'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
         }
 
