@@ -265,7 +265,11 @@ function loadTree(parent, node, idList, initEl) {
             delete(node['props']['totalTime']);
 
     }
-    current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl, (parent) ? null : (node['links'] || []));
+
+    if (!parent)
+        current.imageList = node['links'];
+
+    current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl, current.imageList);
     current.timerWidget = bridge.isTimer(current.node) ? current : ((parent) ? parent.timerWidget : null);
 
   // var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
@@ -286,11 +290,11 @@ function loadTree(parent, node, idList, initEl) {
     //   current.rootWidget.rendererList.unshift(renderer);
   } else {
     current.rootWidget = current;
-    //current.imageList = node['links'] || [];
-    // current.rendererList = [renderer];
-   // bridge.setLinks(current.node, current.imageList);
-    // bridge.createSelector(current.node);
-      current.imageList = current.node['links'];
+      //current.imageList = node['links'] || [];
+      // current.rendererList = [renderer];
+      // bridge.setLinks(current.node, current.imageList);
+      // bridge.createSelector(current.node);
+      // current.imageList = current.node['links'];
   }
 
   if (selectableClass.indexOf(current.className) >= 0) {

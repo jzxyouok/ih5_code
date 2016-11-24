@@ -624,7 +624,7 @@ class VxRcSlider extends RcSlider {
         const style = {};
         style['width'] = '100%';
         bridge.setTrackIndex(this.state.currentHandle);
-        if (this.props.isCurrent){
+        if (this.props.isCurrent && !this.props.isPlaying){
             style['borderColor'] = '#CCC';
             bridge.showTrack(this.props.refTrack.node, this.trackSelect);
         }
