@@ -2,8 +2,8 @@
 import React from 'react';
 import $class from 'classnames';
 
-import WidgetActions from '../../actions/WidgetActions';
-import WidgetStore from '../../stores/WidgetStore';
+import BlockAction from '../../actions/BlockAction';
+import BlockStore from '../../stores/BlockStore';
 
 class ArrangeBlock extends React.Component {
     constructor (props) {
@@ -25,22 +25,19 @@ class ArrangeBlock extends React.Component {
     }
 
     componentDidMount() {
-        this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
+        this.unsubscribe = BlockStore.listen(this.onStatusChange.bind(this));
     }
 
     componentWillUnmount() {
         this.unsubscribe();
     }
 
-    onStatusChange(widget) {
-        // if (widget.blockList !== undefined) {
-        //     //console.log(1,widget.blockList);
-        //     this.setState({
-        //         blockList: widget.blockList
-        //     });
-        // }
-        if(widget.historyPropertiesUpdate){
-            this.forceUpdate();
+    onStatusChange(data) {
+        if (data.blockList !== undefined) {
+            //console.log(1,widget.blockList);
+            this.setState({
+                blockList: data.blockList
+            });
         }
     }
 
@@ -100,7 +97,7 @@ class ArrangeBlock extends React.Component {
             })
         }
         else {
-            WidgetActions['deleteClass'](this.state.chooseId);
+            // WidgetActions['deleteClass'](this.state.chooseId);
             this.deleteLayerHide();
             this.setState({
                 error : "小模块名称未能为空",

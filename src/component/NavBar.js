@@ -31,6 +31,9 @@ import ReDbOrSockIdStore from '../stores/ReDbOrSockIdStore';
 import EffectAction from '../actions/effectAction';
 import EffectStore from '../stores/effectStore';
 
+import BlockAction from '../actions/BlockAction';
+import BlockStore from '../stores/BlockStore';
+
 const orderType = [
     {name: '左对齐', className: 'left-icon', type:1},
     {name: '左右居中', className: 'zhong-icon', type:2},
@@ -162,6 +165,7 @@ class NavBar extends React.Component {
         this.arrangeEffectHide = this.arrangeEffectHide.bind(this);
 
         this.isBlock = this.isBlock.bind(this);
+        this.onBlockStatusChange = this.onBlockStatusChange.bind(this);
 
         this.token = null;
         this.playUrl = null;
@@ -195,6 +199,10 @@ class NavBar extends React.Component {
 
         this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
         EffectAction['getEffectList']();
+
+        this.blockChange = BlockStore.listen(this.onBlockStatusChange.bind(this));
+        this.onBlockStatusChange(BlockStore.getBlockList());
+
         //window.onbeforeunload = ()=>{
         //    var n = window.event.screenX - window.screenLeft;
         //    //鼠标在当前窗口内时，n<m，b为false；鼠标在当前窗口外时，n>m，b为true。20这个值是指关闭按钮的宽度
@@ -248,6 +256,23 @@ class NavBar extends React.Component {
         document.body.removeEventListener('keyup', this.onKeyHistory);
         document.body.removeEventListener('keydown', this.onKeyDown);
         this.effectChange();
+        this.blockChange();
+    }
+
+    onBlockStatusChange(block) {
+        if (block&&block.blockList) {
+            this.setState({
+                blockList: block.blockList
+            })
+        }
+        // if (data.addSpecificEffect) {
+        //     let effectData = JSON.parse(data.addSpecificEffect.data);
+        //     //console.log(effectData);
+        //     effectData.props.key = undefined;
+        //     effectData.props.trackType = "effect";
+        //     effectData.props.is_system = 0;
+        //     WidgetActions['addEffect'](effectData);
+        // }
     }
 
     onStatusChange(widget) {

@@ -7,7 +7,10 @@ import { Menu, Dropdown } from 'antd';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
+import BlockAction from '../../actions/BlockAction';
+import BlockStore from '../../stores/BlockStore';
 import { getPropertyMap, propertyType} from '../PropertyMap'
+
 
 const MenuItem = Menu.Item;
 
@@ -29,10 +32,12 @@ class EditBlock extends React.Component {
             selectWidget: null,
             objectList: [],
             showNameWarning: false,
-            sameNameType: null
+            sameNameType: null,
+            blockList: [],
         };
 
         this.onStatusChange = this.onStatusChange.bind(this);
+        this.onBlockStatusChange = this.onBlockStatusChange.bind(this);
 
         this.toggle = this.toggle.bind(this);
         this.saveBlock = this.saveBlock.bind(this);
@@ -71,11 +76,14 @@ class EditBlock extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.bunsubscribe = BlockStore.listen(this.onBlockStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+        this.onBlockStatusChange(BlockStore.getBlockList());
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+        this.bunsubscribe();
     }
 
     onStatusChange(widget) {
@@ -115,6 +123,14 @@ class EditBlock extends React.Component {
                 showNameWarning: false,
                 sameNameType: null
             })
+        }
+    }
+
+    onBlockStatusChange(data) {
+        if (data&&data.blockList !== undefined) {
+            this.setState({
+                blockList: data.blockList
+            });
         }
     }
 
