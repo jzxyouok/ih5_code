@@ -18,6 +18,7 @@ export default Reflux.createStore({
     getBlockList: function() {
         WidgetActions['ajaxSend'](this.token, 'POST', 'app/sModlList', null, null, function(text) {
             let result = JSON.parse(text);
+            debugger;
             if (result) {
                 let allData = result;
                 this.trigger({blockList : allData});
@@ -25,19 +26,26 @@ export default Reflux.createStore({
         }.bind(this));
     },
 
-    createBlock: function() {
+    createBlock: function(name, data) {
+        let temp = {name: name, data: data};
+        let blockData = JSON.stringify(temp);
+        WidgetActions['ajaxSend'](this.token, 'POST', 'app/sModlCreate', ContentType, blockData, function(text){
+            let result = JSON.parse(text);
+            if (result) {
+                this.getBlockList();
+            }
+        }.bind(this));
+    },
+
+    updateBlock: function (data,id) {
 
     },
 
-    updateBlock: function () {
+    deleteBlock: function (id) {
 
     },
 
-    deleteBlock: function () {
-
-    },
-
-    getBlockSpec: function () {
+    getBlockSpec: function (id) {
 
     },
 })

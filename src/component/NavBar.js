@@ -1372,14 +1372,12 @@ class NavBar extends React.Component {
                                                     {
                                                         this.state.blockList.length > 0
                                                         ? this.state.blockList.map((v,i)=>{
-                                                            let name = v;
                                                             return  <li className="f--hlc" key={i}>
-                                                                        <div className="flex-1 f--hlc title" onClick={ this.addBlock.bind(this, name) }>
+                                                                        <div className="flex-1 f--hlc title" onClick={ this.addBlock.bind(this, v.name, v.id) }>
                                                                             <span className="li-icon" />
-                                                                            <div className="TitleName">{v}</div>
+                                                                            <div className="TitleName">{v.name}</div>
                                                                         </div>
-
-                                                                        <span className="edit-btn" />
+                                                                        {/*<span className="edit-btn" />*/}
                                                                     </li>
                                                           })
                                                         : null

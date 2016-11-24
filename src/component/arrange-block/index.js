@@ -80,7 +80,7 @@ class ArrangeBlock extends React.Component {
             })
         }
         else {
-            WidgetActions['sortClass'](this.state.chooseId);
+            // WidgetActions['sortClass'](this.state.chooseId);
             this.setState({
                 error : "小模块名称未能为空",
                 isError : false,
@@ -166,11 +166,11 @@ class ArrangeBlock extends React.Component {
                                         ?   this.state.blockList.map((v,i)=>{
                                                 return  <li className={ $class("f--hlc",{"active": this.state.chooseId.indexOf(v) >= 0})}
                                                             key={i}
-                                                            onClick={ this.chooseBtn.bind(this, v)}>
+                                                            onClick={ this.chooseBtn.bind(this, v.name, v.id)}>
 
                                                             <div className="flex-1 f--hlc title">
                                                                 <span className="li-icon" />
-                                                                <div className="TitleName">{v}</div>
+                                                                <div className="TitleName">{v.name}</div>
                                                             </div>
                                                             <span className="choose-btn" />
                                                         </li>

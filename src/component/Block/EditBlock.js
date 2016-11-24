@@ -123,6 +123,12 @@ class EditBlock extends React.Component {
                 showNameWarning: false,
                 sameNameType: null
             })
+        } else if (widget.saveBlock) {
+            if(widget.type === 'create') {
+                BlockAction['createBlock'](widget.name, widget.saveBlock);
+            } else {
+                BlockAction['updateBlock'](widget.name, widget.saveBlock);
+            }
         }
     }
 
