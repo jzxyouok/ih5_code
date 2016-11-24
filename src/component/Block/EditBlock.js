@@ -30,6 +30,7 @@ class EditBlock extends React.Component {
             selectWidget: null,
             objectList: [],
             showNameWarning: false,
+            sameNameType: null
         };
 
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -58,6 +59,9 @@ class EditBlock extends React.Component {
 
         this.getParamList = this.getParamList.bind(this);
         this.setParamListState = this.setParamListState.bind(this);
+
+        this.isEmptyString = this.isEmptyString.bind(this);
+        this.hasSameNameParams = this.hasSameNameParams.bind(this);
     }
 
     toggle(){
@@ -106,12 +110,14 @@ class EditBlock extends React.Component {
                 funcs: funcs,
                 name: name,
                 blockId: blockId,
-                showNameWarning: false
+                showNameWarning: false,
+                sameNameType: null
             });
         } else if (widget.allWidgets) {
             this.setState({
                 objectList: this.getAllObjects(this.state.selectWidget),
-                showNameWarning: false
+                showNameWarning: false,
+                sameNameType: null
             })
         }
     }
@@ -194,9 +200,11 @@ class EditBlock extends React.Component {
     getParamsDetailList(obj,type) {
         let list = [];
         getPropertyMap(obj, obj.className, type).map((item) => {
-            if(item.type !== propertyType.Hidden&&!item.readOnly&&item.name !='id' && item.type !== propertyType.Button){
-                let temp = JSON.parse(JSON.stringify(item));
-                list.push(temp);
+            if(item.type !== propertyType.Hidden&&item.type !== propertyType.Button){
+                if((!item.readOnly&&item.name !='id'&&type==='props')||type==='events'||type==='funcs') {
+                    let temp = JSON.parse(JSON.stringify(item));
+                    list.push(temp);
+                }
             }
         });
         return list;
@@ -249,18 +257,72 @@ class EditBlock extends React.Component {
         };
     }
 
-    checkEmptyString(string) {
+    isEmptyString(string) {
         if (string.replace(/(^s*)|(s*$)/g, "").length == 0) {
             return true;
         }
         return false;
     }
 
+    hasSameNameParams() {
+        //查找每个列表的名字是否重复
+        let hasSameName = false;
+        let sameType = null;
+        let nameList = [];
+        this.state.props.forEach((v)=>{
+            if(v.name&&!this.isEmptyString(v.name)) {
+                if(nameList.indexOf(v.name)>=0) {
+                    sameType = 'props';
+                    hasSameName = true;
+                } else {
+                    nameList.push(v.name);
+                }
+            }
+        });
+
+        if(!hasSameName) {
+            nameList = [];
+            this.state.events.forEach((v)=>{
+                if(v.name&&!this.isEmptyString(v.name)) {
+                    if (nameList.indexOf(v.name) >= 0) {
+                        sameType = 'events';
+                        hasSameName = true;
+                    } else {
+                        nameList.push(v.name);
+                    }
+                }
+            });
+        }
+
+        if(!hasSameName) {
+            nameList = [];
+            this.state.funcs.forEach((v)=>{
+                if(v.name&&!this.isEmptyString(v.name)) {
+                    if (nameList.indexOf(v.name) >= 0) {
+                        sameType = 'funcs';
+                        hasSameName = true;
+                    } else {
+                        nameList.push(v.name);
+                    }
+                }
+            });
+        }
+
+        this.setState({
+            sameNameType: sameType
+        });
+
+        return hasSameName;
+    }
+
     saveBlock() {
-        if(this.checkEmptyString(this.state.name)) {
+        if(this.isEmptyString(this.state.name)) {
             this.setState({
                 showNameWarning: true
             });
+            return;
+        }
+        if(this.hasSameNameParams()) {
             return;
         }
         WidgetActions['addOrEditBlock'](
@@ -275,10 +337,13 @@ class EditBlock extends React.Component {
     }
 
     saveAsNewBlock() {
-        if(this.checkEmptyString(this.state.name)) {
+        if(this.isEmptyString(this.state.name)) {
             this.setState({
                 showNameWarning: true
             });
+            return;
+        }
+        if(this.hasSameNameParams()) {
             return;
         }
         WidgetActions['addOrEditBlock'](
@@ -485,6 +550,11 @@ class EditBlock extends React.Component {
                         }
                         <button className="action-btn cancel-btn" onClick={this.cancel}>取消</button>
                     </div>
+                    {
+                        this.state.sameNameType
+                            ? <div className="same-name-warning f--hcc">*有重复的自定义{typeMap[this.state.sameNameType]}名称</div>
+                            : null
+                    }
                 </div>
             </div>
         </div>
