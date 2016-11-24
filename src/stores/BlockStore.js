@@ -42,7 +42,7 @@ export default Reflux.createStore({
         WidgetActions['ajaxSend'](this.token, 'POST', 'app/sModlUpdate/'+ id, ContentType, blockData, function(text) {
             let result = JSON.parse(text);
             if (result) {
-                this.getEffectList();
+                this.getBlockList();
             }
         }.bind(this));
     },
