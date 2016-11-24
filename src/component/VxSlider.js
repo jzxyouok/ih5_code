@@ -603,8 +603,7 @@ class VxRcSlider extends RcSlider {
                 vertical={vertical}
                 offset={offset}
                 value={points[i][0]}
-                dragging={false}
-                {/*isCurrent={isCurrentBool}*/}
+                dragging={false} 
                 isCurrent={this.props.isCurrent && (this.state.currentHandle == i)}
                 key={i}
                 handleIndex={i}
@@ -612,6 +611,7 @@ class VxRcSlider extends RcSlider {
                 selectTrack={this.selectTrack}
                 onHandleClick={this.onHandleClick} />)
         }
+
 
 		const sliderClassName = classNames({
 			[prefixCls]: true,

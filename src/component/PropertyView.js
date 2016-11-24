@@ -647,18 +647,22 @@ class PropertyView extends React.Component {
                         else {
                             //上传
                             chooseFile('image', true, function () {
-                                console.log(arguments);
-                                let imgObj = eval("(" + arguments[1] + ")");
-                                let oProgress = document.getElementById('ant-progress');
-                                //回调完成
-                                oProgress.style.display = 'none';
-                                //设置默认值
-                                node.props[prop.name+'Key'] = imgObj.name;
-                                //更新属性面板
-                                const obj = {};
-                                obj[prop.name] = imgObj.file;
-                                this.onStatusChange({updateProperties: obj});
-                                WidgetActions['updateProperties'](obj, false, true);
+                                 console.log(arguments);
+                              //   let index=node.rootWidget.imageList.length-1;
+                              //   let imgObj = eval("(" + arguments[1] + ")");
+                              //   let oProgress = document.getElementById('ant-progress');
+                              //   //回调完成
+                              //   oProgress.style.display = 'none';
+                              //   //设置默认值
+                              //   node.props[prop.name+'Key'] = imgObj.name;
+                              //   //更新属性面板
+                              //   const obj = {};
+                              //   obj[prop.name] = imgObj.file;
+                              //   this.onStatusChange({updateProperties: obj});
+                              //   WidgetActions['updateProperties'](obj, false, true);
+
+
+
                             }.bind(this), function (evt) {
                                 let oProgress = document.getElementById('ant-progress');
                                 if (evt.lengthComputable && oProgress) {

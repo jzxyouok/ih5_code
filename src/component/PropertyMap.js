@@ -60,7 +60,7 @@ let propMapping = {
     'alpha': {name:'alpha', showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display',order:1 },
     'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'tools',order:2},
     'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
-    'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.Button2,ButtonName:'上传图片', default:'',group:'display',order:2},
+    'bgLink': {name:'bgLink', showName:'背景图片', type: propertyType.Button2,ButtonName:'上传图片', default:'',group:'display',order:2},
 
     'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools'},
 
