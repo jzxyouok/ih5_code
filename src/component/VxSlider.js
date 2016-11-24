@@ -612,6 +612,7 @@ class VxRcSlider extends RcSlider {
                 onHandleClick={this.onHandleClick} />)
         }
 
+
 		const sliderClassName = classNames({
 			[prefixCls]: true,
 			[prefixCls + '-disabled']: disabled,
