@@ -316,9 +316,8 @@ class TimelineView extends React.Component {
 
 	onPlay() {
 		WidgetActions['resetTrack']();
-		this.state.timerNode.node['play']();
 		this.setState({isPlaying:true});
-
+        this.state.timerNode.node['play']();
         let movableDistance = this.state.movableDistance;
         let marginLeft = this.state.marginLeft;
         let maxWidth  =  window.innerWidth-this.state.leftAddRight-170;
@@ -343,6 +342,9 @@ class TimelineView extends React.Component {
                     marginLeft : 0
                 })
             }
+        }
+        if (this.state.currentTrack) {
+            bridge.hideSelector(this.state.currentTrack.parent.node);
         }
 	}
 
@@ -895,6 +897,7 @@ class TimelineView extends React.Component {
                         percentage = { this.state.percentage}
                         multiple = { this.state.multiple}
                         changSwitchState={ this.changSwitchState }
+                        isPlaying={this.state.isPlaying}
                         propsNowLayerId = { this.state.currentTrack !== null ? this.state.currentTrack.parent.key : null }
                         isCurrent={node === this.state.currentTrack} />);
             }

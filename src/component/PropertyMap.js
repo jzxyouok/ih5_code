@@ -947,10 +947,10 @@ let checkChildClass = (selected, className) => {
         return (selected.className == 'canvas');
 
     if (className == 'container')
-        return provides & widgetFlags.Container;
+        return (provides & widgetFlags.Container);
 
     if (requires & widgetFlags.Root)
-        return provides & widgetFlags.Root;
+        return (provides & widgetFlags.Root);
 
     if ((~(provides & FLAG_MASK) & (requires & FLAG_MASK)) != 0)
         return false;
