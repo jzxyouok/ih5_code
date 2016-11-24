@@ -18,7 +18,6 @@ export default Reflux.createStore({
     getBlockList: function() {
         WidgetActions['ajaxSend'](this.token, 'POST', 'app/sModlList', null, null, function(text) {
             let result = JSON.parse(text);
-            debugger;
             if (result) {
                 let allData = result;
                 this.trigger({blockList : allData});
