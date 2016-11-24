@@ -482,6 +482,10 @@ function resolveBlock(node, list) {
                 item.objKey = null;
             }
             delete(item.objId);
+            if(item.detail&&item.detail.mappingId) {
+                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
+                delete(item.detail.mappingId);
+            }
         });
         block.mapping.events.forEach((item)=>{
             if(item.objId) {
@@ -490,6 +494,10 @@ function resolveBlock(node, list) {
                 item.objKey = null;
             }
             delete(item.objId);
+            if(item.detail&&item.detail.mappingId) {
+                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
+                delete(item.detail.mappingId);
+            }
         });
         block.mapping.funcs.forEach((item)=>{
             if(item.objId) {
@@ -498,6 +506,10 @@ function resolveBlock(node, list) {
                 item.objKey = null;
             }
             delete(item.objId);
+            if(item.detail&&item.detail.mappingId) {
+                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
+                delete(item.detail.mappingId);
+            }
         });
         return block;
     };
@@ -716,23 +728,41 @@ function generateId(node) {
   if(node.props.block) {
       node.props.block.mapping.props.forEach(item=> {
           specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
       });
       node.props.block.mapping.events.forEach(item=> {
           specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
       });
       node.props.block.mapping.funcs.forEach(item=> {
           specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
       });
   }
   if(node.props.backUpBlock) {
       node.props.backUpBlock.mapping.props.forEach(item=> {
           specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
       });
       node.props.backUpBlock.mapping.events.forEach(item=> {
           specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
       });
       node.props.backUpBlock.mapping.funcs.forEach(item=> {
           specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
       });
   }
   if(node.dbItemList){
@@ -1096,6 +1126,12 @@ function generateJsFunc(etree) {
               // let props = propsList.length>0 ? ('{'+ propsList.join(',') +'}') : null;
               let props = ('{'+ propsList.join(',') +'}');
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'find') + '('+props+callBack+')');
+          } else if (cmd.action.name === 'show') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + 'true');
+          } else if (cmd.action.name === 'hide') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + 'false');
+          } else if (cmd.action.name === 'toggleVisible') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + '!('+ getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible')+')');
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -1279,26 +1315,50 @@ function saveTransBlock(block, saveKey){
     temp.name = block.name;
     let tempProps = [];
     block.mapping.props.forEach((v)=>{
-        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        let detail = cpJson(v.detail);
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
         if(saveKey) {
             tempV.objKey = v.objKey;
         }
+        if(detail&&detail.mappingKey) {
+            detail.mappingId = objectKeyToId(detail.mappingKey);
+            if(!saveKey) {
+                delete detail.mappingKey;
+            }
+        }
+        tempV.detail = detail;
         tempProps.push(tempV);
     });
     let tempEvents = [];
     block.mapping.events.forEach((v)=>{
-        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        let detail = cpJson(v.detail);
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
         if(saveKey) {
             tempV.objKey = v.objKey;
         }
+        if(detail&&detail.mappingKey) {
+            detail.mappingId = objectKeyToId(detail.mappingKey);
+            if(!saveKey) {
+                delete detail.mappingKey;
+            }
+        }
+        tempV.detail = detail;
         tempEvents.push(tempV);
     });
     let tempFuncs = [];
     block.mapping.funcs.forEach((v)=>{
-        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:v.detail};
+        let detail = cpJson(v.detail);
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
         if(saveKey) {
             tempV.objKey = v.objKey;
         }
+        if(detail&&detail.mappingKey) {
+            detail.mappingId = objectKeyToId(detail.mappingKey);
+            if(!saveKey) {
+                delete detail.mappingKey;
+            }
+        }
+        tempV.detail = detail;
         tempFuncs.push(tempV);
     });
     temp.mapping = {

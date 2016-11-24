@@ -227,6 +227,9 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
+                            if(!temp.mappingKey) {
+                                temp.mappingKey = temp.objKey;
+                            }
                             list.push(temp);
                         }
                     });
@@ -236,6 +239,9 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
+                            if(!temp.mappingKey) {
+                                temp.mappingKey = temp.objKey;
+                            }
                             list.push(temp);
                         }
                     });
@@ -245,6 +251,9 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
+                            if(!temp.mappingKey) {
+                                temp.mappingKey = temp.objKey;
+                            }
                             list.push(temp);
                         }
                     });
