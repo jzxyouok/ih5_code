@@ -4365,6 +4365,7 @@ export default Reflux.createStore({
         this.activeBlockMode(false);
         this.trigger({selectWidget:this.currentWidget});
         //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
+        this.ajaxSend()
     },
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){

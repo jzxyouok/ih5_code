@@ -22,7 +22,6 @@ class EditBlock extends React.Component {
         super(props);
         this.state = {
             minSize: false,
-            blockId: null,
             name: '',
             props: [{name: '', objKey:null, detail:null}],
             events: [{name: '', objKey: null, detail: null}],
@@ -85,7 +84,6 @@ class EditBlock extends React.Component {
             let events = [{name: '', objKey: null, detail: null}];
             let funcs = [{name: '', objKey: null, detail: null}];
             let name = '';
-            let blockId = null;
             if(widget.selectWidget.props) {
                 let block = null;
                 if(widget.selectWidget.props.block) {
@@ -98,7 +96,6 @@ class EditBlock extends React.Component {
                     events = block.mapping.events;
                     funcs = block.mapping.funcs;
                     name = block.name;
-                    blockId = block.blockId?block.blockId:null;
                 }
             }
             //获取对象列表
@@ -109,7 +106,6 @@ class EditBlock extends React.Component {
                 events: events,
                 funcs: funcs,
                 name: name,
-                blockId: blockId,
                 showNameWarning: false,
                 sameNameType: null
             });
@@ -578,11 +574,7 @@ class EditBlock extends React.Component {
                     </Form>
                     <div className="action-part f--hcc">
                         <button className="action-btn" onClick={this.saveBlock}>保存</button>
-                        {
-                            this.state.blockId
-                                ? <button className="action-btn" onClick={this.saveAsNewBlock}>另存为</button>
-                                : null
-                        }
+                        <button className="action-btn" onClick={this.saveAsNewBlock}>另存为</button>
                         <button className="action-btn cancel-btn" onClick={this.cancel}>取消</button>
                     </div>
                     {
