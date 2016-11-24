@@ -641,8 +641,20 @@ class PropertyView extends React.Component {
                     if(prop.name == 'bgLink'){
                         if (value.target.getAttribute('class') ==='btn_del') {
                             //删除
-                            value='';
+                            value=null;
                             node.props[prop.name+'Key']='上传图片';
+                            let obj={
+                                bgLink:null
+                            }
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, true);
+
+                            let obj2={
+                                backgroundColor:node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF'
+                            }
+                            this.onStatusChange({updateProperties: obj2});
+                            WidgetActions['updateProperties'](obj2, false, true);
+                            bTag = false;
                         }
                         else {
                             //上传
