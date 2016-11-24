@@ -99,7 +99,7 @@ class PropertyView extends React.Component {
                 return <ConButton {...defaultProp} effectToggleTrack={this.effectToggleTrack} />;
             case propertyType.Number:
                 let step=1;
-                if(defaultProp.name=='totalTime'){
+                if(['totalTime','startTime','endTime'].indexOf(defaultProp.name)>0){
                     step=0.1;
                 }
                 if(defaultProp.tbCome == "tbS"){
@@ -111,7 +111,6 @@ class PropertyView extends React.Component {
                     return <ConInputNumber  {...defaultData} style={style} />;
                 }
                 else {
-
                     return <ConInputNumber  step={step} {...defaultProp}  />;
                 }
             case propertyType.Percentage:
@@ -137,6 +136,7 @@ class PropertyView extends React.Component {
                             if (!dom.jscolor) {
                                 dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                 dom.jscolor.onFineChange = defaultProp.onChange;
+                                dom.jscolor.closeText='jsColorCloseBtn';
                             }
                         }
                     }} {...defaultProp}   className='color-input' />
@@ -152,6 +152,8 @@ class PropertyView extends React.Component {
                         if (!dom.jscolor) {
                             dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                             dom.jscolor.onFineChange = defaultProp.onChange;
+                            dom.jscolor.closeText='jsColorCloseBtn';
+
                         }
                     }
                 }}  {...defaultData}   /> ;
@@ -204,6 +206,7 @@ class PropertyView extends React.Component {
                                     if (!dom.jscolor) {
                                         dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                         dom.jscolor.onFineChange = defaultProp.onChange;
+                                        dom.jscolor.closeText='jsColorCloseBtn';
                                     }
                                 }
                             }}
@@ -256,7 +259,6 @@ class PropertyView extends React.Component {
                         }
                     </Select>
                 </div>;
-                // return <div>数据库选择</div>;
             default:
                 return <Input {...defaultProp} />;
         }
@@ -329,7 +331,7 @@ class PropertyView extends React.Component {
                         let $obj=$('#PropertyViewBody');
                         let a=   $($obj.find('.ant-form-item-label label:contains("边距上")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
                         let b=   $($obj.find('.ant-form-item-label label:contains("边距下")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
-                        let c=  $($obj.find('.ant-form-item-label label:contains("边距左")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+                        let c=   $($obj.find('.ant-form-item-label label:contains("边距左")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
                         let d=   $($obj.find('.ant-form-item-label label:contains("边距右")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
 
                         a=a||0;
@@ -984,7 +986,7 @@ class PropertyView extends React.Component {
     * 其中isCanKeepRatio跟历史记录功能有关
     * */
     lockRatio(node){
-        let isKeepRatioArr=['qrcode','rect','image','bitmaptext','imagelist','ellipse','path'];
+        let isKeepRatioArr=['qrcode','rect','image','bitmaptext','imagelist','ellipse','path','container'];
         if( node.node.keepRatio ===undefined && isKeepRatioArr.indexOf(node.node.class)>=0){
             this.isCanKeepRatio = true;
         }
@@ -1586,6 +1588,15 @@ class PropertyView extends React.Component {
     /****************工具方法区域,end**********************************/
 
     onStatusChange(widget) {
+        console.log(widget)
+
+        //处理颜色板在点击舞台对象和右边树对象后不消失的bug
+        // if(widget.selectWidget||widget.updateProperties){
+        //
+        //     alert($($('span:contains("jsColorCloseBtn")')[0]).parent().parent().html());
+        //
+        // }
+
         if(widget.fontListObj){
             this.fontList =  widget.fontListObj.fontList;
         }
@@ -1597,6 +1608,8 @@ class PropertyView extends React.Component {
                 })
             }
         }
+
+
 
         if(widget.imageTextSizeObj){
             this.textSizeObj = widget.imageTextSizeObj;
