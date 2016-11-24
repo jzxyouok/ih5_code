@@ -76,7 +76,7 @@ let propMapping = {
 
     'link': {name:'link', showName:'资源', type: propertyType.Integer, default:0},
 
-    'delay': {name:'delay', showName:'延时', type: propertyType.Number, default: 0.2},
+    'delay': {name:'delay', showName:'时间间隔', type: propertyType.Number, default: 0.2},
 
     'font': {name:'font', showName:'字体',type: propertyType.Select, default:'上传字体',group:'tools'},
     'size': {name:'size', showName:'文字大小',type: propertyType.Integer, default:26,group:'tools'},
