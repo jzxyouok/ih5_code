@@ -2852,7 +2852,8 @@ export default Reflux.createStore({
             //母节点
             if(this.currentWidget.rootWidget){
                 if(this.currentWidget.rootWidget.props.block) {
-                    widgetList.push(root);
+                    // 暂时小模块去除
+                    // widgetList.push(root);
                 } else {
                     widgetList.push(root);
                     if(root.intVarList.length>0){
@@ -2871,7 +2872,8 @@ export default Reflux.createStore({
             let loopWidgetTree = (children) => {
                 children.forEach(ch=>{
                     if(ch.props.block) {
-                        widgetList.push(ch);
+                        // 暂时小模块去除
+                        // widgetList.push(ch);
                     } else {
                         widgetList.push(ch);
                         if(ch.intVarList.length>0){
@@ -2993,10 +2995,18 @@ export default Reflux.createStore({
     },
     addEvent: function () {
         if (this.currentWidget) {
-            this.currentWidget.props['eventTree'].push(this.emptyEvent());
-            if(!this.currentWidget.props['enableEventTree']) {
-                this.currentWidget.props['enableEventTree'] = true;
-                this.trigger({redrawTree: true});
+            if(this.currentWidget.props.block) {
+                this.currentWidget.props.block['eventTree'].push(this.emptyEvent());
+                if(!this.currentWidget.props.block['enableEventTree']) {
+                    this.currentWidget.props.block['enableEventTree'] = true;
+                    this.trigger({redrawTree: true});
+                }
+            } else {
+                this.currentWidget.props['eventTree'].push(this.emptyEvent());
+                if(!this.currentWidget.props['enableEventTree']) {
+                    this.currentWidget.props['enableEventTree'] = true;
+                    this.trigger({redrawTree: true});
+                }
             }
         }
         this.trigger({redrawEventTreeList:true});

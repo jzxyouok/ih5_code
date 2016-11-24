@@ -124,7 +124,9 @@ class ObjectView extends React.Component {
     onInitHasEventTree(selectWidget){
         let hasEventTree = false;
         let canHaveEventTree = true;
-        if(!checkEventClass(selectWidget)) {
+        // 暂时小模块去除
+        // if(!checkEventClass(selectWidget)) {
+        if(!checkEventClass(selectWidget)||selectWidget.props.block) {
             canHaveEventTree = false;
             hasEventTree = false;
         } else if ((!selectWidget.props.block&&selectWidget.props.eventTree)
