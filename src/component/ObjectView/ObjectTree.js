@@ -17,6 +17,8 @@ import {imgServer} from '../../api/BaseApi';
 
 import EffectAction from '../../actions/effectAction';
 
+import bridge from 'bridge';
+
 const drapTipId = 'treeDragTip';
 const placeholderId = 'treeDragPlaceholder';
 const appId = 'iH5-App';
@@ -683,7 +685,13 @@ class ObjectTree extends React.Component {
             }
             list[3][0].showName = trackShowName;
             list[3][0].name = trackName;
-        }else {
+        } else if (className === 'canvas') {
+            if(bridge.getRendererType(obj.parent.node,className) == 2){
+                list[1].splice(1,1);
+                list[1][0].showName = "设为全屏";
+                list[1][0].name = "setAsFullScreen";
+            }
+        } else {
             if(obj.props.block) {
                 list[3][0].showName = '展开小模块';
                 list[3][0].name = 'removeBlock';
@@ -796,6 +804,9 @@ class ObjectTree extends React.Component {
                 break;
             case 'editEffect':
                 this.itemActions('editEffect');
+                break;
+            case 'setAsFullScreen':
+                this.itemActions('setAsFullScreen');
                 break;
             default:
                 break;
@@ -1013,6 +1024,8 @@ class ObjectTree extends React.Component {
             case 'editEffect':
                 EffectAction['effectToggleTrack']();
                 break;
+            case 'setAsFullScreen':
+                WidgetActions['setAsFullScreenTreeNode'](this.state.nodeType);
             default:
                 break;
         }

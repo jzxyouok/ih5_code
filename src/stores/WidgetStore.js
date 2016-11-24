@@ -1952,6 +1952,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
         this.listenTo(WidgetActions['originSizeTreeNode'], this.originSizeTreeNode);
         this.listenTo(WidgetActions['originPercentTreeNode'], this.originPercentTreeNode);
+        this.listenTo(WidgetActions['setAsFullScreenTreeNode'], this.setAsFullScreenTreeNode);
 
         //修改widget的资源入口
         this.listenTo(WidgetActions['changeResource'], this.changeResource);
@@ -2369,6 +2370,14 @@ export default Reflux.createStore({
     originPercentWidget: function() {
         if(this.currentWidget&&(this.currentWidget.node['scaleX']|| this.currentWidget.node['scaleX']===0)) {
             this.updateProperties({'scaleY':this.currentWidget.node['scaleX']});
+            bridge.updateSelector(this.currentWidget.node);
+            this.render();
+        }
+    },
+    setAsFullScreenWidget: function() {
+        if(this.currentWidget) {
+            this.updateProperties({'width':'100%', 'height':'100%', 'widthisRate': true, 'heightisRate': true,
+                'positionX': 0, 'positionY': 0});
             bridge.updateSelector(this.currentWidget.node);
             this.render();
         }
@@ -3811,6 +3820,11 @@ export default Reflux.createStore({
     originPercentTreeNode: function(type) {
         if(type === nodeType.widget) {
             this.originPercentWidget();
+        }
+    },
+    setAsFullScreenTreeNode: function(type) {
+        if(type === nodeType.widget) {
+            this.setAsFullScreenWidget();
         }
     },
     changeResource: function(name, link, type) {
