@@ -13,7 +13,7 @@ import cls from 'classnames';
 import { SwitchMore,DropDownInput ,ConInputNumber,ConButton} from  './PropertyView/PropertyViewComponet';
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
-import {propertyType, getPropertyMap,sortGroupArr,fnIsFlex} from './PropertyMap'
+import {propertyType, getPropertyMap,sortGroupArr,fnIsFlex,fnIsUnderTimer} from './PropertyMap'
 import {chooseFile} from  '../utils/upload';
 require("jscolor/jscolor");
 import TbCome from './TbCome';
@@ -149,12 +149,15 @@ class PropertyView extends React.Component {
                 return  <Input ref={(inputDom) => {
                     if (inputDom) {
                         var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                        dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'white';
                         if (!dom.jscolor) {
                             dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                             dom.jscolor.onFineChange = defaultProp.onChange;
                             dom.jscolor.closeText='jsColorCloseBtn';
-
                         }
+
+
+
                     }
                 }}  {...defaultData}   /> ;
 
@@ -1418,6 +1421,11 @@ class PropertyView extends React.Component {
      * */
     getInput(item,className, groups, cNode){
         let node=this.selectNode;
+
+        if(className=='track'&& (item.name=='autoPlay'||item.name=='loop') && fnIsUnderTimer(node)){
+            return '';
+        }
+
         //小模块处理
         if(cNode) {
             //对不同mapping属性属性的处理
@@ -1500,7 +1508,9 @@ class PropertyView extends React.Component {
                 : <label>{item.showName}</label>
         }
 
-        //todo:志颖,这设置一个标志位,在这个标志位下设定样式,这样我们就统一流程了,看到后有空讨论下
+
+
+
         let style = {};
         if (item.tbCome) {
             defaultProp.tbCome = item.tbCome;
@@ -1591,7 +1601,7 @@ class PropertyView extends React.Component {
     /****************工具方法区域,end**********************************/
 
     onStatusChange(widget) {
-        console.log(widget)
+
 
         //处理颜色板在点击舞台对象和右边树对象后不消失的bug
         // if(widget.selectWidget||widget.updateProperties){
