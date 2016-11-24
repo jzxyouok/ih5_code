@@ -60,7 +60,7 @@ let propMapping = {
     'alpha': {name:'alpha', showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display',order:1 },
     'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'tools',order:2},
     'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
-    'bgImage': {name:'bgImage', showName:'背景图片', type: propertyType.Button2,ButtonName:'上传图片', default:'',group:'display',order:2},
+    'bgLink': {name:'bgLink', showName:'背景图片', type: propertyType.Button2,ButtonName:'上传图片', default:'',group:'display',order:2},
 
     'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools'},
 
@@ -88,7 +88,7 @@ let propMapping = {
 
     'radius': {name:'radius', showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools'},
 
-    'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '垂直',options:{'垂直':true,'水平':false}},
+    'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '3',options:{'无':'0','左':'1','右':'2','上':'3','下':'4'}},
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
 
     'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 0,order:1},
@@ -105,8 +105,6 @@ let propMapping = {
 
     'backwardTransition': {name:'backwardTransition', showName:'前翻效果',  type: propertyType.Select, default:'同上一页',options:backwardTransOptions,order:1},
     'forwardTransition': {name:'forwardTransition', showName:'后翻效果', type: propertyType.Select, default:'同上一页',options:forwardTransOptions,order:2},
-
-
 
     'autoGravity': {name:'autoGravity', showName:'自动计算重力方向', type: propertyType.Boolean,group:'tools', default: false},
     'gravityX': {name:'gravityX', showName:'水平重力', type: propertyType.Number,group:'tools', default: 0},
@@ -137,9 +135,6 @@ let propMapping = {
 
     'count': {name:'count', showName:'播放次数', type: propertyType.Integer, default: 1},
     'initHide': {name:'initHide', showName:'初始隐藏', type: propertyType.Boolean, default: false},
-
-
-
 
     'sockName' : {name:'sockName', showName:'名称',  type: propertyType.String, default: null, readOnly:true },
     'listened': {name:'listened', showName:'是否监听', type: propertyType.Boolean, default: false},
@@ -383,7 +378,7 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['track'])) {
         return {
             props: {
-                'type': {name:'type', showName:'类型', type: propertyType.Select, default:'0',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
+                'type': {name:'type', showName:'轨迹类型', type: propertyType.Select, default:'0',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
                 '_createEffect': {name:'_createEffect', showName:'生成动效',styleName:'create-btn',olderClassName:"create-btn",
                     type: propertyType.Button,default:'',group:'buttonArea'},
 
@@ -417,6 +412,12 @@ let specialCaseElementMapping = (className, type)=> {
                 'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
                 'fontSize': {name:'fontSize', showName:'字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
         };
+    } else if (isInCLList(className, ['slidetimer', 'pagecontainer'])){
+      return {
+          props: {
+              'originPos': {name:'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',order:5},
+          }
+      } ;
     } else {
         return {};
     }
@@ -543,23 +544,35 @@ let modifyPropList = (list, className, type) => {
                 }
             }
         }
+        if((type==modeType.dom||type==modeType.canvas)&&['container'].indexOf(className)>=0) {
+            if (v.name == 'width' || v.name == 'height') {
+                v.type = propertyType.Hidden;
+            }
+            if (v.name == 'scaleX' || v.name == 'scaleY') {
+                v.type = propertyType.Float;
+            }
+        }
 
         if ([ 'visible','viewBoxWidth','viewBoxHeight','globalVx','globalVy'].indexOf(v.name) >= 0) {
             v.type = propertyType.Hidden;
-
         }
         if (['shapeWidth', 'shapeHeight'].indexOf(v.name) >= 0) {
             if(type==modeType.flex && className=='rect'){
                ;
             }else if((type==modeType.dom||type==modeType.canvas) && className=='container'){
                ;
+            }else if(type==modeType.flex && className=='ellipse'){
+                ;
             }else{
                 v.type = propertyType.Hidden;
             }
         }
-        if (['timer', 'container'].indexOf(className) >= 0 && ['scaleX', 'scaleY'].indexOf(v.name) >= 0) {
-            v.type = propertyType.Hidden;
+        if(['timer'].indexOf(className) >= 0) {
+            if (['scaleX', 'scaleY','backgroundColor','clipped'].indexOf(v.name) >= 0) {
+                v.type = propertyType.Hidden;
+            }
         }
+
 
         if (['margin', 'padding'].indexOf(v.name) >= 0) {
             if(v.name=='margin'){
@@ -582,6 +595,8 @@ let modifyPropList = (list, className, type) => {
     if(className=='track'){
         aLack.push('_createEffect','_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
     }
+
+
 
 
     list = list.concat(dealElementList(aLack, className, 'props', type));
@@ -628,7 +643,7 @@ let modifyFuncList = (list, className, type) => {
         list = list.concat(temp);
     }
     if(isInCLList(className, visibleWidgetList)) {
-        let temp = dealElementList(['show','hide'], className, 'funcs', type);
+        let temp = dealElementList(['show','hide','toggleVisible'], className, 'funcs', type);
         list = list.concat(temp);
     }
     return list;
@@ -1001,5 +1016,21 @@ function fnCanvasIsUnderFlex(node,firstNodeClassName=node.className){
         }
     }
 }
+/**
+ * PropertyView
+ * 用于判断是否处于时间轴下面
+ */
+function fnIsUnderTimer(node){
+    if (node.className == 'timer') {
+        return true;
+    }
+    else if (node.className == 'root') {
+        return false;
+    }
+    else {
+        return  fnIsUnderTimer(node.parent);
+    }
+}
 
-export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType,sortGroupArr,fnIsFlex,fnCanvasIsUnderFlex};
+
+export {propertyMap, propertyType, getPropertyMap, checkChildClass, checkEventClass, checkLockClass, checkNotInDomMode, checkNotInCanvasMode, checkNotInFlexMode, checkIsClassType,sortGroupArr,fnIsFlex,fnCanvasIsUnderFlex,fnIsUnderTimer};

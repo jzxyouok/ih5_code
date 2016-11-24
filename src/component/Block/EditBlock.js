@@ -7,7 +7,10 @@ import { Menu, Dropdown } from 'antd';
 import { SelectTargetButton } from '../PropertyView/SelectTargetButton';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
+import BlockAction from '../../actions/BlockAction';
+import BlockStore from '../../stores/BlockStore';
 import { getPropertyMap, propertyType} from '../PropertyMap'
+
 
 const MenuItem = Menu.Item;
 
@@ -22,18 +25,19 @@ class EditBlock extends React.Component {
         super(props);
         this.state = {
             minSize: false,
-            blockId: null,
             name: '',
             props: [{name: '', objKey:null, detail:null}],
             events: [{name: '', objKey: null, detail: null}],
             funcs: [{name: '', objKey: null, detail: null}],
             selectWidget: null,
             objectList: [],
-            showNameWarning: false,
-            sameNameType: null
+            showNameWarning: null,
+            sameNameType: null,
+            blockList: [],
         };
 
         this.onStatusChange = this.onStatusChange.bind(this);
+        this.onBlockStatusChange = this.onBlockStatusChange.bind(this);
 
         this.toggle = this.toggle.bind(this);
         this.saveBlock = this.saveBlock.bind(this);
@@ -61,6 +65,7 @@ class EditBlock extends React.Component {
         this.setParamListState = this.setParamListState.bind(this);
 
         this.isEmptyString = this.isEmptyString.bind(this);
+        this.hasSameNameInBlockList = this.hasSameNameInBlockList.bind(this);
         this.hasSameNameParams = this.hasSameNameParams.bind(this);
     }
 
@@ -72,11 +77,14 @@ class EditBlock extends React.Component {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.bunsubscribe = BlockStore.listen(this.onBlockStatusChange);
         this.onStatusChange(WidgetStore.getStore());
+        this.onBlockStatusChange(BlockStore.getBlockList());
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+        this.bunsubscribe();
     }
 
     onStatusChange(widget) {
@@ -85,7 +93,6 @@ class EditBlock extends React.Component {
             let events = [{name: '', objKey: null, detail: null}];
             let funcs = [{name: '', objKey: null, detail: null}];
             let name = '';
-            let blockId = null;
             if(widget.selectWidget.props) {
                 let block = null;
                 if(widget.selectWidget.props.block) {
@@ -98,7 +105,6 @@ class EditBlock extends React.Component {
                     events = block.mapping.events;
                     funcs = block.mapping.funcs;
                     name = block.name;
-                    blockId = block.blockId?block.blockId:null;
                 }
             }
             //获取对象列表
@@ -109,7 +115,6 @@ class EditBlock extends React.Component {
                 events: events,
                 funcs: funcs,
                 name: name,
-                blockId: blockId,
                 showNameWarning: false,
                 sameNameType: null
             });
@@ -119,6 +124,20 @@ class EditBlock extends React.Component {
                 showNameWarning: false,
                 sameNameType: null
             })
+        } else if (widget.saveBlock) {
+            if(widget.type === 'create') {
+                BlockAction['createBlock'](widget.name, widget.saveBlock);
+            } else {
+                BlockAction['updateBlock'](widget.name, widget.id, widget.saveBlock);
+            }
+        }
+    }
+
+    onBlockStatusChange(data) {
+        if (data&&data.blockList !== undefined) {
+            this.setState({
+                blockList: data.blockList
+            });
         }
     }
 
@@ -208,6 +227,9 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
+                            if(!temp.mappingKey) {
+                                temp.mappingKey = temp.objKey;
+                            }
                             list.push(temp);
                         }
                     });
@@ -217,6 +239,9 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
+                            if(!temp.mappingKey) {
+                                temp.mappingKey = temp.objKey;
+                            }
                             list.push(temp);
                         }
                     });
@@ -226,6 +251,9 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
+                            if(!temp.mappingKey) {
+                                temp.mappingKey = temp.objKey;
+                            }
                             list.push(temp);
                         }
                     });
@@ -350,13 +378,29 @@ class EditBlock extends React.Component {
         return hasSameName;
     }
 
+    hasSameNameInBlockList(name) {
+        let hasSameName =false;
+        this.state.blockList.forEach((v)=>{
+            if(v.name === name) {
+                hasSameName = true;
+            }
+        });
+        return hasSameName;
+    }
+
     saveBlock() {
         if(this.isEmptyString(this.state.name)) {
             this.setState({
-                showNameWarning: true
+                showNameWarning: ''
             });
             return;
         }
+        let id = null;
+        this.state.blockList.forEach((v)=>{
+            if(v.name === this.state.name) {
+                id = v.id;
+            }
+        });
         if(this.hasSameNameParams()) {
             return;
         }
@@ -368,15 +412,24 @@ class EditBlock extends React.Component {
                     events:this.state.events,
                     funcs:this.state.funcs
                 }
-            }, false);
+            }, id);
     }
 
     saveAsNewBlock() {
         if(this.isEmptyString(this.state.name)) {
             this.setState({
-                showNameWarning: true
+                showNameWarning: '*模块名不能为空'
             });
             return;
+        } else if (this.hasSameNameInBlockList(this.state.name)) {
+            this.setState({
+                showNameWarning: '*该模块名已存在，请修改'
+            });
+            return;
+        } else {
+            this.setState({
+                showNameWarning: null
+            });
         }
         if(this.hasSameNameParams()) {
             return;
@@ -389,7 +442,7 @@ class EditBlock extends React.Component {
                     events:this.state.events,
                     funcs:this.state.funcs
                 }
-            }, true);
+            }, null);
     }
 
     cancel() {
@@ -529,7 +582,7 @@ class EditBlock extends React.Component {
                             </div>
                             {
                                 this.state.showNameWarning
-                                    ? <span className="warning">*模块名不能为空</span>
+                                    ? <span className="warning">{this.state.showNameWarning}</span>
                                     : null
                             }
                         </div>
@@ -578,11 +631,7 @@ class EditBlock extends React.Component {
                     </Form>
                     <div className="action-part f--hcc">
                         <button className="action-btn" onClick={this.saveBlock}>保存</button>
-                        {
-                            this.state.blockId
-                                ? <button className="action-btn" onClick={this.saveAsNewBlock}>另存为</button>
-                                : null
-                        }
+                        <button className="action-btn" onClick={this.saveAsNewBlock}>另存为</button>
                         <button className="action-btn cancel-btn" onClick={this.cancel}>取消</button>
                     </div>
                     {

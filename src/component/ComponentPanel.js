@@ -58,7 +58,7 @@ class ComponentPanel extends React.Component {
                 {cid:this.cid++,icon:"rectIcon", className:'rect', drawRect:true, param: this.shapeParam},
                 {cid:this.cid++,icon:"ellipseIcon", className:'ellipse', drawRect:true, param: this.shapeParam},
                 {cid:this.cid++,icon:"curveIcon", className:'path', drawRect:true, param: this.shapeParam},
-                {cid:this.cid++,icon:"slidetimerIcon", className:'slidetimer', drawRect:true, param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}},
+                {cid:this.cid++,icon:"slidetimerIcon", className:'slidetimer', drawRect:true, param: {'shapeWidth': 300, 'shapeHeight': 300, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10}},
                 {cid:this.cid++,icon:"textIcon", className:'text', drawRectText:true, param: {'text': 'Text'}},
                 {cid:this.cid++,icon:"videoIcon", className:'video', drawRect:true, upload:true,},
                 {cid:this.cid++,icon:"audioIcon", className:'audio'},

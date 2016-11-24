@@ -346,7 +346,7 @@ class VxRcSlider extends RcSlider {
                 })
             }
         }
-        if (widget.updateProperties !== undefined && widget.skipRender === undefined && this.state.currentHandle >= 0) {
+        if (widget.updateProperties !== undefined && widget.skipRender === undefined && this.props.isCurrent && this.state.currentHandle >= 0) {
             let obj = widget.updateProperties;
             let points = this.props.points;
             let props = this.props.refTrack.props['prop'];
@@ -604,13 +604,14 @@ class VxRcSlider extends RcSlider {
                 offset={offset}
                 value={points[i][0]}
                 dragging={false}
-                isCurrent={isCurrentBool}
+                isCurrent={this.props.isCurrent && (this.state.currentHandle == i)}
                 key={i}
                 handleIndex={i}
                 whichKey={ this.state.currentHandle }
                 selectTrack={this.selectTrack}
                 onHandleClick={this.onHandleClick} />)
         }
+
 
 		const sliderClassName = classNames({
 			[prefixCls]: true,
@@ -622,7 +623,8 @@ class VxRcSlider extends RcSlider {
 
         const style = {};
         style['width'] = '100%';
-        if (this.props.isCurrent){
+        bridge.setTrackIndex(this.state.currentHandle);
+        if (this.props.isCurrent && !this.props.isPlaying){
             style['borderColor'] = '#CCC';
             bridge.showTrack(this.props.refTrack.node, this.trackSelect);
         }

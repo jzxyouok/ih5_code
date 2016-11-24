@@ -12,7 +12,11 @@ import DbHeaderAction from '../../actions/DbHeader'
 import DbHeaderStores from '../../stores/DbHeader';
 import getSockListAction from '../../actions/getSockListAction';
 import getSockListStore from '../../stores/getSockListStore';
-import CreateModuleAction from '../../actions/CreateModuleAction'
+// import CreateModuleAction from '../../actions/CreateModuleAction';
+
+import WidgetStore from '../../stores/WidgetStore';
+
+import bridge from 'bridge';
 
 var PREFIX = 'app/';
 
@@ -42,12 +46,14 @@ class ToolBoxButton extends Component {
     }
 
     componentDidMount() {
+        this.wunsubscribe = WidgetStore.listen(this.onWidgetStatusChange.bind(this));
         this.unsubscribe = ToolBoxStore.listen(this.onStatusChange.bind(this));
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
         getSockListStore.listen(this.getSockList.bind(this));
     }
 
     componentWillUnmount() {
+        this.wunsubscribe();
         this.unsubscribe();
     }
 
@@ -57,7 +63,11 @@ class ToolBoxButton extends Component {
         this.setState({
             selected: status
         });
-        if(store.selectWidget){
+
+    }
+
+    onWidgetStatusChange(widget) {
+        if(widget.selectWidget){
             this.setState({
                 selectWidget : widget.selectWidget
             })
@@ -83,7 +93,19 @@ class ToolBoxButton extends Component {
         if(this.state.selected&&(this.props.level==1||(this.props.expanded&&this.props.level==2))) {
             ToolBoxAction['deselect']();
         } else {
-            if(this.props.drawRect || this.props.drawRectText){
+            //对dom，flex，container画框的特殊处理
+            let isInFlex = bridge.getRendererType(this.state.selectWidget.node) == 1;
+            let isInDom = bridge.getRendererType(this.state.selectWidget.node) == 2;
+            let isInCanvas = bridge.getRendererType(this.state.selectWidget.node) == 4;
+            if((this.props.className === 'dom'&&isInFlex)
+                ||this.props.className === 'canvas'&&(isInDom||isInFlex)
+                ||this.props.className === 'container'&&(isInDom||isInCanvas)) {
+                this.canDrawRect = true;
+            } else {
+                this.canDrawRect = false;
+            }
+
+            if(this.props.drawRect || this.props.drawRectText || this.canDrawRect){
                 //点击时才清除原来有的，再创建drawRect对象
                 this.onDrawRect();
             }
@@ -138,10 +160,10 @@ class ToolBoxButton extends Component {
 
                     }.bind(this));
             }
-            else if(this.props.className === "module"){
-                CreateModuleAction['createModule'](true);
-                ToolBoxAction['deselect']();
-            }
+            // else if(this.props.className === "module"){
+            //     CreateModuleAction['createModule'](true);
+            //     ToolBoxAction['deselect']();
+            // }
             else {
                 WidgetActions['addWidget'](this.props.className, this.props.param);
                 ToolBoxAction['deselect']();
@@ -172,11 +194,17 @@ class ToolBoxButton extends Component {
                 this.props.param.shapeHeight = data.shapeHeight;
                 this.props.param.width = this.props.param.width?this.props.param.width:data.width;
                 this.props.param.height = this.props.param.height?this.props.param.height:data.height;
-                if(this.props.upload||this.props.drawRectText||this.props.drawRect) {
+                if(this.props.upload||this.props.drawRectText||this.props.drawRect||this.canDrawRect) {
                     this.props.param.originX = 0.5;
                     this.props.param.originY = 0.5;
                     this.props.param.positionX += this.props.param.shapeWidth*0.5;
                     this.props.param.positionY += this.props.param.shapeHeight*0.5;
+                }
+                if(this.props.className === 'slidetimer'){
+                    this.props.param.originX = 0.0;
+                    this.props.param.originY = 0.0;
+                    this.props.param.positionX = data.positionX;
+                    this.props.param.positionY = data.positionY;
                 }
             }
             if (this.props.upload) {
@@ -196,7 +224,7 @@ class ToolBoxButton extends Component {
                         value: ''
                     }
                 });
-            } else if (this.props.drawRect) {
+            } else if (this.props.drawRect || this.canDrawRect) {
                 //普通画框
                 if(this.props.className === 'qrcode') {
                     //qrcode处理
@@ -205,6 +233,12 @@ class ToolBoxButton extends Component {
                 if(this.props.className === 'table'){
                     this.props.param.width = data.shapeWidth;
                     this.props.param.height = data.shapeHeight;
+                }
+                if(this.props.className === 'dom'||this.props.className === 'canvas') {
+                    this.props.param.width = data.shapeWidth+'px';
+                    this.props.param.widthisRate = false;
+                    this.props.param.height = data.shapeHeight+'px';
+                    this.props.param.heightisRate = false;
                 }
                 WidgetActions['addWidget'](this.props.className, this.props.param);
                 ToolBoxAction['deselect']();

@@ -13,7 +13,7 @@ import cls from 'classnames';
 import { SwitchMore,DropDownInput ,ConInputNumber,ConButton} from  './PropertyView/PropertyViewComponet';
 import WidgetStore, {dataType} from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
-import {propertyType, getPropertyMap,sortGroupArr,fnIsFlex} from './PropertyMap'
+import {propertyType, getPropertyMap,sortGroupArr,fnIsFlex,fnIsUnderTimer} from './PropertyMap'
 import {chooseFile} from  '../utils/upload';
 require("jscolor/jscolor");
 import TbCome from './TbCome';
@@ -99,7 +99,7 @@ class PropertyView extends React.Component {
                 return <ConButton {...defaultProp} effectToggleTrack={this.effectToggleTrack} />;
             case propertyType.Number:
                 let step=1;
-                if(defaultProp.name=='totalTime'){
+                if(['totalTime','startTime','endTime'].indexOf(defaultProp.name)>0){
                     step=0.1;
                 }
                 if(defaultProp.tbCome == "tbS"){
@@ -111,7 +111,6 @@ class PropertyView extends React.Component {
                     return <ConInputNumber  {...defaultData} style={style} />;
                 }
                 else {
-
                     return <ConInputNumber  step={step} {...defaultProp}  />;
                 }
             case propertyType.Percentage:
@@ -137,6 +136,7 @@ class PropertyView extends React.Component {
                             if (!dom.jscolor) {
                                 dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                 dom.jscolor.onFineChange = defaultProp.onChange;
+                                dom.jscolor.closeText='jsColorCloseBtn';
                             }
                         }
                     }} {...defaultProp}   className='color-input' />
@@ -149,10 +149,15 @@ class PropertyView extends React.Component {
                 return  <Input ref={(inputDom) => {
                     if (inputDom) {
                         var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                        dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'white';
                         if (!dom.jscolor) {
                             dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                             dom.jscolor.onFineChange = defaultProp.onChange;
+                            dom.jscolor.closeText='jsColorCloseBtn';
                         }
+
+
+
                     }
                 }}  {...defaultData}   /> ;
 
@@ -204,6 +209,7 @@ class PropertyView extends React.Component {
                                     if (!dom.jscolor) {
                                         dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                         dom.jscolor.onFineChange = defaultProp.onChange;
+                                        dom.jscolor.closeText='jsColorCloseBtn';
                                     }
                                 }
                             }}
@@ -230,14 +236,18 @@ class PropertyView extends React.Component {
             case propertyType.Dropdown:
                 return  <DropDownInput {...defaultProp} />;
             case propertyType.Button2:
-                if(defaultProp.name=='bgImage'){
+                if(defaultProp.name=='bgLink'){
                     defaultProp.onClick=defaultProp.onChange;
                     delete  defaultProp.onChange;
                 }
                 return <div className="pr">
                     <Button  {...defaultProp} >{defaultProp.value}</Button>
-                      <div className="btn_del" onClick={defaultProp.onClick}></div>
-                      <div id={cls({'ant-progress':defaultProp.name=='bgImage'})}>
+                    {
+                        defaultProp.value=='上传图片'
+                            ?''
+                            :  <div className={cls('btn_del')} onClick={defaultProp.onClick}></div>
+                    }
+                      <div id={cls({'ant-progress':defaultProp.name=='bgLink'})}>
                            <div className='ant-progress-bar'></div>
                            <div className='ant-progress-txt'>上传 10%</div>
                      </div>
@@ -256,7 +266,6 @@ class PropertyView extends React.Component {
                         }
                     </Select>
                 </div>;
-                // return <div>数据库选择</div>;
             default:
                 return <Input {...defaultProp} />;
         }
@@ -329,7 +338,7 @@ class PropertyView extends React.Component {
                         let $obj=$('#PropertyViewBody');
                         let a=   $($obj.find('.ant-form-item-label label:contains("边距上")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
                         let b=   $($obj.find('.ant-form-item-label label:contains("边距下")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
-                        let c=  $($obj.find('.ant-form-item-label label:contains("边距左")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
+                        let c=   $($obj.find('.ant-form-item-label label:contains("边距左")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
                         let d=   $($obj.find('.ant-form-item-label label:contains("边距右")')[index]).parents('.ant-form-item').find('.ant-input-number-input').val();
 
                         a=a||0;
@@ -490,8 +499,8 @@ class PropertyView extends React.Component {
                         v = value;
                     }
                     else if(prop.name=='vertical') {
-                        node.props[prop.name] = value=='true'?'垂直':'水平';
-                        v = value;
+                        node.props[prop.name+'Key'] = value;
+                       v =parseInt(value);
                     }
                     else if (prop.name == 'type') {
                         let className = node.className;
@@ -633,36 +642,49 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case  propertyType.Button2:
-                    if(prop.name == 'bgImage'){
+                    if(prop.name == 'bgLink'){
                         if (value.target.getAttribute('class') ==='btn_del') {
                             //删除
                             value=null;
                             node.props[prop.name+'Key']='上传图片';
+                            let obj={
+                                bgLink:null
+                            }
+                            this.onStatusChange({updateProperties: obj});
+                            WidgetActions['updateProperties'](obj, false, true);
+
+                            let obj2={
+                                backgroundColor:node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF'
+                            }
+                            this.onStatusChange({updateProperties: obj2});
+                            WidgetActions['updateProperties'](obj2, false, true);
+                            bTag = false;
                         }
                         else {
                             //上传
-                            chooseFile('image', true, function () {
-                                console.log(arguments);
-                                let imgObj = eval("(" + arguments[1] + ")");
-                                let oProgress = document.getElementById('ant-progress');
-                                //回调完成
-                                oProgress.style.display = 'none';
-                                //设置默认值
-                                node.props[prop.name+'Key'] = imgObj.name;
-                                //更新属性面板
-                                const obj = {};
-                                obj[prop.name] = imgObj.file;
-                                this.onStatusChange({updateProperties: obj});
-                                WidgetActions['updateProperties'](obj, false, true);
-                            }.bind(this), function (evt) {
-                                let oProgress = document.getElementById('ant-progress');
-                                if (evt.lengthComputable && oProgress) {
-                                    oProgress.style.display = 'block';
-                                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                                    oProgress.childNodes[1].innerHTML = '上传 ' + percentComplete + '%';
-                                    oProgress.childNodes[0].style.width = percentComplete + '%';
-                                } else {
-                                    //console.log('failed');
+                            let thisObj=this;
+                            if(node.rootWidget.imageList===undefined){
+                                node.rootWidget.imageList=[];
+                            }
+                            chooseFile('image', false, (w) => {
+                                if (w.files.length) {
+                                    let fileName = w.files[0].name;
+                                    let dot = fileName.lastIndexOf('.');
+                                    if (dot > 0) {
+                                        var ext = fileName.substr(dot + 1).toLowerCase();
+                                        if (ext == 'png' || ext == 'jpeg' || ext == 'jpg') {
+                                            fileName = fileName.substr(0, dot);
+                                        }
+                                    }
+                                    var reader = new FileReader();
+                                    let obj = {'bgLink': node.rootWidget.imageList.length};
+                                    reader.onload = function (e) {
+                                        node.props[prop.name + 'Key'] = fileName;
+                                        node.rootWidget.imageList.push(e.target.result);
+                                        thisObj.onStatusChange({updateProperties: obj});
+                                        WidgetActions['updateProperties'](obj, false, true);
+                                    };
+                                    reader.readAsDataURL(w.files[0]);
                                 }
                             });
                             bTag = false;
@@ -879,9 +901,9 @@ class PropertyView extends React.Component {
         let className=this.generateClassName(node);//生成className
         if(!className)  return null;
 
-        if(!node.props.block) {
+        // if(!node.props.block) {
             this.lockRatio(node);//初始化时,锁定部分属性面板的宽高比
-        }
+        // }
         let groups = {};
         this.generateGroups(node,className,groups);//生成groups,其中涉及到html的拼接
         groups = this.sortGroups(groups);//排序groups
@@ -984,7 +1006,7 @@ class PropertyView extends React.Component {
     * 其中isCanKeepRatio跟历史记录功能有关
     * */
     lockRatio(node){
-        let isKeepRatioArr=['qrcode','rect','image','bitmaptext','imagelist','ellipse','path'];
+        let isKeepRatioArr=['qrcode','rect','image','bitmaptext','imagelist','ellipse','path','container'];
         if( node.node.keepRatio ===undefined && isKeepRatioArr.indexOf(node.node.class)>=0){
             this.isCanKeepRatio = true;
         }
@@ -1062,7 +1084,7 @@ class PropertyView extends React.Component {
         }
         else if(item.type == propertyType.Button2){
               defaultValue=item.ButtonName;
-              if (item.name == 'bgImage' && node.props[item.name + 'Key']) {
+              if (item.name == 'bgLink' && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
               }
         }
@@ -1126,8 +1148,8 @@ class PropertyView extends React.Component {
                 defaultValue = node.props[item.name + '_val'];
             }  else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
                 defaultValue = node.props.headerFontFamily;
-            } else if (item.name == 'vertical' && node.props[item.name]) {
-                defaultValue = node.props[item.name];
+            } else if (item.name == 'vertical' && node.props[item.name+'Key']) {
+                defaultValue = node.props[item.name+'Key'];
             } else if (item.name == 'chooseColumn') {
                 defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn + ' 列';
             }
@@ -1416,6 +1438,11 @@ class PropertyView extends React.Component {
      * */
     getInput(item,className, groups, cNode){
         let node=this.selectNode;
+
+        if(className=='track'&& (item.name=='autoPlay'||item.name=='loop') && fnIsUnderTimer(node)){
+            return '';
+        }
+
         //小模块处理
         if(cNode) {
             //对不同mapping属性属性的处理
@@ -1498,7 +1525,9 @@ class PropertyView extends React.Component {
                 : <label>{item.showName}</label>
         }
 
-        //todo:志颖,这设置一个标志位,在这个标志位下设定样式,这样我们就统一流程了,看到后有空讨论下
+
+
+
         let style = {};
         if (item.tbCome) {
             defaultProp.tbCome = item.tbCome;
@@ -1569,6 +1598,9 @@ class PropertyView extends React.Component {
             //小模块的获取属性
             node.props.block.mapping.props.forEach((item) =>{
                 let obj = WidgetStore.getWidgetByKey(item.objKey);
+                if(item.detail&&item.detail.mappingKey) {
+                    obj = WidgetStore.getWidgetByKey(item.detail.mappingKey);
+                }
                 let copy = JSON.parse(JSON.stringify(item.detail));
                 if (obj && copy && copy.name && copy.type !== propertyType.Hidden) {
                     delete copy.imgClassName;
@@ -1589,6 +1621,15 @@ class PropertyView extends React.Component {
     /****************工具方法区域,end**********************************/
 
     onStatusChange(widget) {
+
+
+        //处理颜色板在点击舞台对象和右边树对象后不消失的bug
+        // if(widget.selectWidget||widget.updateProperties){
+        //
+        //     alert($($('span:contains("jsColorCloseBtn")')[0]).parent().parent().html());
+        //
+        // }
+
         if(widget.fontListObj){
             this.fontList =  widget.fontListObj.fontList;
         }
@@ -1600,6 +1641,8 @@ class PropertyView extends React.Component {
                 })
             }
         }
+
+
 
         if(widget.imageTextSizeObj){
             this.textSizeObj = widget.imageTextSizeObj;

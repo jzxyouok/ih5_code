@@ -13,7 +13,7 @@ var timerCallback = {};
 class TimelineView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {timerNode: null, currentTime:0, currentTrack: null};
+        this.state = {timerNode: null, currentTime:0, currentTrack: null, playing:false};
         this.onTimer = this.onTimer.bind(this);
     }
 
@@ -65,16 +65,21 @@ class TimelineView extends React.Component {
 
     onTimer(p) {
         this.setState({currentTime:p});
-        WidgetActions['syncTrack']();
+        //WidgetActions['syncTrack']();
     }
 
     onPlay() {
         WidgetActions['resetTrack']();
+        this.setState({playing:true});
         this.state.timerNode.node['play']();
+        if (this.state.currentTrack)
+            bridge.hideSelector(this.state.currentTrack.parent.node);
     }
 
     onPause() {
+        this.setState({playing:false});
         this.state.timerNode.node['pause']();
+        WidgetActions['syncTrack']();
     }
 
     onTimerChange(value) {
@@ -117,7 +122,8 @@ class TimelineView extends React.Component {
             if (node.className === 'track') {
                 tracks.push(<VxSlider key={index++} max={1} step={0.001} 
                     refTrack={node} refTimer={this.state.timerNode} 
-                    points={node.props.data} isCurrent={node === this.state.currentTrack} />);
+                    points={node.props.data} isCurrent={node === this.state.currentTrack}
+                    isPlaying={this.state.playing}/>);
             }
             node.children.map(item => getTracks(item));
         };

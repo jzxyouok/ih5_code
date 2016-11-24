@@ -265,8 +265,12 @@ function loadTree(parent, node, idList, initEl) {
             delete(node['props']['totalTime']);
 
     }
-  current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl);
-  current.timerWidget = bridge.isTimer(current.node) ? current : ((parent) ? parent.timerWidget : null);
+
+    if (!parent)
+        current.imageList = node['links'];
+
+    current.node = bridge.addWidget((parent) ? parent.node : null, node['cls'], null, node['props'], initEl, current.imageList);
+    current.timerWidget = bridge.isTimer(current.node) ? current : ((parent) ? parent.timerWidget : null);
 
   // var renderer = bridge.getRenderer((parent) ? parent.node : null, node);
 
@@ -286,10 +290,11 @@ function loadTree(parent, node, idList, initEl) {
     //   current.rootWidget.rendererList.unshift(renderer);
   } else {
     current.rootWidget = current;
-    current.imageList = node['links'] || [];
-    // current.rendererList = [renderer];
-    bridge.setLinks(current.node, current.imageList);
-    // bridge.createSelector(current.node);
+      //current.imageList = node['links'] || [];
+      // current.rendererList = [renderer];
+      // bridge.setLinks(current.node, current.imageList);
+      // bridge.createSelector(current.node);
+      // current.imageList = current.node['links'];
   }
 
   if (selectableClass.indexOf(current.className) >= 0) {
@@ -471,6 +476,61 @@ function resolveEventTree(node, list) {
   }
 }
 
+
+function resolveBlock(node, list) {
+    let genBlockKey = (block)=> {
+        block.mapping.props.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+            if(item.detail&&item.detail.mappingId) {
+                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
+                delete(item.detail.mappingId);
+            }
+        });
+        block.mapping.events.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+            if(item.detail&&item.detail.mappingId) {
+                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
+                delete(item.detail.mappingId);
+            }
+        });
+        block.mapping.funcs.forEach((item)=>{
+            if(item.objId) {
+                item.objKey = idToObjectKey(list, item.objId[0], item.objId[1]);
+            } else {
+                item.objKey = null;
+            }
+            delete(item.objId);
+            if(item.detail&&item.detail.mappingId) {
+                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
+                delete(item.detail.mappingId);
+            }
+        });
+        return block;
+    };
+    if(node.props.block) {
+        //是小模块
+        node.props.block = genBlockKey(node.props.block);
+    } else if(node.props.backUpBlock) {
+        //备份的block
+        node.props.backUpBlock = genBlockKey(node.props.backUpBlock);
+    }
+    if (node.children.length > 0) {
+        node.children.map(item => {
+            resolveBlock(item, list);
+        });
+    }
+}
+
 function resolveDBItemList(node, list) {
     if (node.dbItemList) {
         node.dbItemList.forEach(v => {
@@ -494,6 +554,8 @@ function resolveDBItemList(node, list) {
 function trimTreeNode(node, links) {
   if (node.props['link'] !== undefined)
     node.props['link'] = links.push(node.rootWidget.imageList[node.props['link']]) - 1;
+    if (node.props['bgLink'] !== undefined)
+        node.props['bgLink'] = links.push(node.rootWidget.imageList[node.props['bgLink']]) - 1;
   if (node.children.length > 0) {
     node.children.map(item => {
       trimTreeNode(item, links);
@@ -666,6 +728,46 @@ function generateId(node) {
       });
 
     });
+  }
+  if(node.props.block) {
+      node.props.block.mapping.props.forEach(item=> {
+          specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
+      });
+      node.props.block.mapping.events.forEach(item=> {
+          specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
+      });
+      node.props.block.mapping.funcs.forEach(item=> {
+          specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
+      });
+  }
+  if(node.props.backUpBlock) {
+      node.props.backUpBlock.mapping.props.forEach(item=> {
+          specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
+      });
+      node.props.backUpBlock.mapping.events.forEach(item=> {
+          specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
+      });
+      node.props.backUpBlock.mapping.funcs.forEach(item=> {
+          specGenIdsData(item.objKey);
+          if(item.detail&&item.detail.mappingKey) {
+              specGenIdsData(item.detail.mappingKey);
+          }
+      });
   }
   if(node.dbItemList){
       node.dbItemList.forEach(item => {
@@ -1028,6 +1130,12 @@ function generateJsFunc(etree) {
               // let props = propsList.length>0 ? ('{'+ propsList.join(',') +'}') : null;
               let props = ('{'+ propsList.join(',') +'}');
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'find') + '('+props+callBack+')');
+          } else if (cmd.action.name === 'show') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + 'true');
+          } else if (cmd.action.name === 'hide') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + 'false');
+          } else if (cmd.action.name === 'toggleVisible') {
+              lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible') + '=' + '!('+ getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'visible')+')');
           } else if (cmd.action.name === 'add1') {
               lines.push(getIdsName(cmd.sObjId[0], cmd.sObjId[2], 'value') + '++');
           } else if (cmd.action.name === 'minus1') {
@@ -1204,6 +1312,65 @@ function getSpacingStr(lines,spacingArr,arr) {
         lines.push(sHead+JSON.stringify(abc));
     }
     return lines;
+}
+
+function saveTransBlock(block, saveKey){
+    let temp = {};
+    temp.name = block.name;
+    let tempProps = [];
+    block.mapping.props.forEach((v)=>{
+        let detail = cpJson(v.detail);
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        if(detail&&detail.mappingKey) {
+            detail.mappingId = objectKeyToId(detail.mappingKey);
+            if(!saveKey) {
+                delete detail.mappingKey;
+            }
+        }
+        tempV.detail = detail;
+        tempProps.push(tempV);
+    });
+    let tempEvents = [];
+    block.mapping.events.forEach((v)=>{
+        let detail = cpJson(v.detail);
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        if(detail&&detail.mappingKey) {
+            detail.mappingId = objectKeyToId(detail.mappingKey);
+            if(!saveKey) {
+                delete detail.mappingKey;
+            }
+        }
+        tempV.detail = detail;
+        tempEvents.push(tempV);
+    });
+    let tempFuncs = [];
+    block.mapping.funcs.forEach((v)=>{
+        let detail = cpJson(v.detail);
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
+        if(saveKey) {
+            tempV.objKey = v.objKey;
+        }
+        if(detail&&detail.mappingKey) {
+            detail.mappingId = objectKeyToId(detail.mappingKey);
+            if(!saveKey) {
+                delete detail.mappingKey;
+            }
+        }
+        tempV.detail = detail;
+        tempFuncs.push(tempV);
+    });
+    temp.mapping = {
+        props: tempProps,
+        events: tempEvents,
+        funcs: tempFuncs
+    };
+    return temp;
 }
 
 function saveTree(data, node, saveKey, saveEventObjKeys) {
@@ -1502,6 +1669,11 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
   }
   if (props) {
       data['props'] = props;
+      if(data['props']['block']) {
+          data['props']['block'] = saveTransBlock(data['props']['block'], saveKey);
+      } else if(data['props']['backUpBlock']) {
+          data['props']['backUpBlock'] = saveTransBlock(data['props']['backUpBlock'], saveKey);
+      }
   }
   // if (node.events)
   //   data['events'] = node.events;
@@ -1780,6 +1952,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['renameTreeNode'], this.renameTreeNode);
         this.listenTo(WidgetActions['originSizeTreeNode'], this.originSizeTreeNode);
         this.listenTo(WidgetActions['originPercentTreeNode'], this.originPercentTreeNode);
+        this.listenTo(WidgetActions['setAsFullScreenTreeNode'], this.setAsFullScreenTreeNode);
 
         //修改widget的资源入口
         this.listenTo(WidgetActions['changeResource'], this.changeResource);
@@ -1817,6 +1990,7 @@ export default Reflux.createStore({
         this.listenTo(WidgetActions['addOrEditBlock'], this.addOrEditBlock);
         this.listenTo(WidgetActions['removeBlock'], this.removeBlock);
         this.listenTo(WidgetActions['activeBlockMode'], this.activeBlockMode);
+        this.listenTo(WidgetActions['addBlockToCurrentWidget'], this.addBlockToCurrentWidget);
 
         this.eventTreeList = [];
         this.historyRoad;
@@ -1936,7 +2110,8 @@ export default Reflux.createStore({
                     }
                 }.bind(this));
             } else {
-                  bridge.selectWidget([widget.node]);
+                  //bridge.selectWidget([widget.node]);
+                bridge.selectWidget(null);
             }
             if (render)
                 this.render();
@@ -1962,7 +2137,7 @@ export default Reflux.createStore({
               if(className === 'container') {
                   //如果在flex模式下，添加param:{'alignItems':'flex-start'}
                   props['alignItems'] = 'flex-start';
-                  props['alignItemsKey'] = '0 0 auto';
+                  props['alignItemsKey'] = 'flex-start';
               }else if(className==='canvas'){
                   props['width'] = '640px';
                   props['height'] = '1040px';
@@ -2057,6 +2232,8 @@ export default Reflux.createStore({
         }
         if (this.currentWidget && this.currentWidget.parent) {
             //isModified = true;
+            bridge.selectWidget(null);
+            bridge.showTrack(null);
             bridge.removeWidget(this.currentWidget.node);
 
             let index = this.currentWidget.parent.children.indexOf(this.currentWidget);
@@ -2193,6 +2370,14 @@ export default Reflux.createStore({
     originPercentWidget: function() {
         if(this.currentWidget&&(this.currentWidget.node['scaleX']|| this.currentWidget.node['scaleX']===0)) {
             this.updateProperties({'scaleY':this.currentWidget.node['scaleX']});
+            bridge.updateSelector(this.currentWidget.node);
+            this.render();
+        }
+    },
+    setAsFullScreenWidget: function() {
+        if(this.currentWidget) {
+            this.updateProperties({'width':'100%', 'height':'100%', 'widthisRate': true, 'heightisRate': true,
+                'positionX': 0, 'positionY': 0});
             bridge.updateSelector(this.currentWidget.node);
             this.render();
         }
@@ -2509,6 +2694,7 @@ export default Reflux.createStore({
             if (src&&dest) {
                 var saved = {};
                 saveTree(saved, src, true);
+                bridge.selectWidget(null);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
@@ -2684,7 +2870,7 @@ export default Reflux.createStore({
         else {
             updateSyncTrack();
         }
-        //console.log(obj,this.currentWidget );
+        console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -3636,6 +3822,11 @@ export default Reflux.createStore({
             this.originPercentWidget();
         }
     },
+    setAsFullScreenTreeNode: function(type) {
+        if(type === nodeType.widget) {
+            this.setAsFullScreenWidget();
+        }
+    },
     changeResource: function(name, link, type) {
         switch (type) {
             case 'image':
@@ -3716,6 +3907,7 @@ export default Reflux.createStore({
                 tree = loadTree(null, data['defs'][n], idList, rootDiv);
                 stageTree.push({name: n, tree: tree});
                 resolveEventTree(tree, idList);
+                resolveBlock(tree, idList);
                 resolveDBItemList(tree, idList);
             }
         }
@@ -3729,6 +3921,7 @@ export default Reflux.createStore({
         }
         tree = loadTree(null, data['stage'], idList, rootDiv);
         resolveEventTree(tree, idList);
+        resolveBlock(tree, idList);
         resolveDBItemList(tree, idList);
         stageTree.unshift({name: 'stage', tree: tree});
         rootDiv.lastChild.style.position='relative';
@@ -4231,9 +4424,7 @@ export default Reflux.createStore({
         globalVersion = v;
     },
 
-    addOrEditBlock(block, saveAsNew) {
-        //TODO:还需其他么？到设置属性的时候再考虑
-        //到时还要check id
+    addOrEditBlock(block, id) {
         if(this.currentWidget) {
             if(this.currentWidget.props['block']){
                 //编辑
@@ -4243,17 +4434,40 @@ export default Reflux.createStore({
                 //新建
                 this.currentWidget.props['block'] = {
                     'name': block.name,
-                    'mapping': block.mapping,
-                    'blockId': 'tempTesting'
-                }
+                    'mapping': block.mapping
+                };
             }
             if(this.currentWidget.props['backUpBlock']) {
                 delete this.currentWidget.props['backUpBlock'];
             }
         }
+
+        let saveBlock = {};
+        generateId(this.currentWidget);//给对象加上id
+        //保存小模块
+        saveTree(saveBlock, this.currentWidget, false, false);
+        //到时还要check id
+        let isEdit = false;
+        let type = 'create';
+        if(id) {
+            isEdit = true;
+            type = 'update';
+        }
+        this.trigger({saveBlock : saveBlock, type:type, name: block.name, id: id});
         this.activeBlockMode(false);
         this.trigger({selectWidget:this.currentWidget});
-        //TODO: SAVE THIS WIDGET TO SERVER AND CALL BACK
+    },
+    addBlockToCurrentWidget(data) {
+        let block = cpJson(data);
+        if(block&&block!==''){
+            let idList = [];
+            let widget = loadTree(this.currentWidget, block, idList);
+            resolveEventTree(widget, idList);
+            resolveBlock(widget, idList);
+            resolveDBItemList(widget, idList);
+            this.trigger({redrawTree:true});
+            this.render();
+        }
     },
     removeBlock(block) {
         if(this.currentWidget&&this.currentWidget.props['block']){
