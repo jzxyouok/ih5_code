@@ -4342,18 +4342,12 @@ export default Reflux.createStore({
         globalVersion = v;
     },
 
-    addOrEditBlock(block, saveAsNew) {
-        //TODO:还需其他么？到设置属性的时候再考虑
-        //到时还要check id
-        let isEdit = false;
-        let type = 'create';
+    addOrEditBlock(block, id) {
         if(this.currentWidget) {
             if(this.currentWidget.props['block']){
                 //编辑
                 this.currentWidget.props['block']['name'] = block.name;
                 this.currentWidget.props['block']['mapping'] = block.mapping;
-                isEdit = true;
-                type = 'update';
             } else {
                 //新建
                 this.currentWidget.props['block'] = {
@@ -4365,14 +4359,19 @@ export default Reflux.createStore({
                 delete this.currentWidget.props['backUpBlock'];
             }
         }
-        if(saveAsNew) {
-            isEdit = false;
-            type = 'create';
-        }
+
         let saveBlock = {};
-        saveTree(saveBlock, this.currentWidget, false, false);
+        generateId(this.currentWidget);//给对象加上id
         //保存小模块
-        this.trigger({saveBlock : saveBlock, type:type, name: block.name});
+        saveTree(saveBlock, this.currentWidget, false, false);
+        //到时还要check id
+        let isEdit = false;
+        let type = 'create';
+        if(id) {
+            isEdit = true;
+            type = 'update';
+        }
+        this.trigger({saveBlock : saveBlock, type:type, name: block.name, id: id});
         this.activeBlockMode(false);
         this.trigger({selectWidget:this.currentWidget});
     },
@@ -4384,6 +4383,8 @@ export default Reflux.createStore({
             resolveEventTree(widget, idList);
             resolveBlock(widget, idList);
             resolveDBItemList(widget, idList);
+            this.trigger({redrawTree:true});
+            this.render();
         }
     },
     removeBlock(block) {

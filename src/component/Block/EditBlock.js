@@ -31,7 +31,7 @@ class EditBlock extends React.Component {
             funcs: [{name: '', objKey: null, detail: null}],
             selectWidget: null,
             objectList: [],
-            showNameWarning: false,
+            showNameWarning: null,
             sameNameType: null,
             blockList: [],
         };
@@ -65,6 +65,7 @@ class EditBlock extends React.Component {
         this.setParamListState = this.setParamListState.bind(this);
 
         this.isEmptyString = this.isEmptyString.bind(this);
+        this.hasSameNameInBlockList = this.hasSameNameInBlockList.bind(this);
         this.hasSameNameParams = this.hasSameNameParams.bind(this);
     }
 
@@ -127,7 +128,7 @@ class EditBlock extends React.Component {
             if(widget.type === 'create') {
                 BlockAction['createBlock'](widget.name, widget.saveBlock);
             } else {
-                BlockAction['updateBlock'](widget.name, widget.saveBlock);
+                BlockAction['updateBlock'](widget.name, widget.id, widget.saveBlock);
             }
         }
     }
@@ -368,13 +369,29 @@ class EditBlock extends React.Component {
         return hasSameName;
     }
 
+    hasSameNameInBlockList(name) {
+        let hasSameName =false;
+        this.state.blockList.forEach((v)=>{
+            if(v.name === name) {
+                hasSameName = true;
+            }
+        });
+        return hasSameName;
+    }
+
     saveBlock() {
         if(this.isEmptyString(this.state.name)) {
             this.setState({
-                showNameWarning: true
+                showNameWarning: ''
             });
             return;
         }
+        let id = null;
+        this.state.blockList.forEach((v)=>{
+            if(v.name === this.state.name) {
+                id = v.id;
+            }
+        });
         if(this.hasSameNameParams()) {
             return;
         }
@@ -386,15 +403,24 @@ class EditBlock extends React.Component {
                     events:this.state.events,
                     funcs:this.state.funcs
                 }
-            }, false);
+            }, id);
     }
 
     saveAsNewBlock() {
         if(this.isEmptyString(this.state.name)) {
             this.setState({
-                showNameWarning: true
+                showNameWarning: '*模块名不能为空'
             });
             return;
+        } else if (this.hasSameNameInBlockList(this.state.name)) {
+            this.setState({
+                showNameWarning: '*该模块名已存在，请修改'
+            });
+            return;
+        } else {
+            this.setState({
+                showNameWarning: null
+            });
         }
         if(this.hasSameNameParams()) {
             return;
@@ -407,7 +433,7 @@ class EditBlock extends React.Component {
                     events:this.state.events,
                     funcs:this.state.funcs
                 }
-            }, true);
+            }, null);
     }
 
     cancel() {
@@ -547,7 +573,7 @@ class EditBlock extends React.Component {
                             </div>
                             {
                                 this.state.showNameWarning
-                                    ? <span className="warning">*模块名不能为空</span>
+                                    ? <span className="warning">{this.state.showNameWarning}</span>
                                     : null
                             }
                         </div>

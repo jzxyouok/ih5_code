@@ -36,8 +36,15 @@ export default Reflux.createStore({
         }.bind(this));
     },
 
-    updateBlock: function (data,id) {
-
+    updateBlock: function (name, id, data) {
+        let temp = {name: name, data: data};
+        let blockData = JSON.stringify(temp);
+        WidgetActions['ajaxSend'](this.token, 'POST', 'app/sModlUpdate/'+ id, ContentType, blockData, function(text) {
+            let result = JSON.parse(text);
+            if (result) {
+                this.getEffectList();
+            }
+        }.bind(this));
     },
 
     deleteBlock: function (id) {
