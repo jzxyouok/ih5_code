@@ -70,7 +70,7 @@ class CreateModule extends React.Component {
                         test.map((v,i)=>{
                             if(v.className == "track" && v.timerWidget == null && v.props.name == data.effectName){
                                 let updateData = this.state.effectData;
-                                updateData.props.key =  v.key;
+                                updateData.props.key =  undefined;
                                 WidgetActions['selectWidget'](v);
                                 WidgetActions['deleteTreeNode'](v.className);
                                 WidgetActions['addEffect'](updateData);
