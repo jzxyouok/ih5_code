@@ -89,4 +89,6 @@ export default Reflux.createActions([
   'removeBlock',               //删除小模块
   'activeBlockMode',           //小模块编辑模式
   'addBlockToCurrentWidget',   //添加小模块到现有的对象
+
+  'setAsFullScreenTreeNode'    //全屏
 ]);
