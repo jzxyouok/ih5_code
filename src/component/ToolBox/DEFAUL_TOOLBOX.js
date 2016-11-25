@@ -209,11 +209,11 @@ var DEFAULT_TOOLBOX = {
         gid:12,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.FLEX,name:'排版容器',icon:flexIcon, className:'flex', param: {'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true,'alignItems':'flex-start'}},
+            {cid:TOOL_ID.FLEX,name:'相对定位容器',icon:flexIcon, className:'flex', param: {'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true,'alignItems':'flex-start'}},
 
             {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param:{'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true, 'backgroundColor':'transparent'}},
 
-            {cid:TOOL_ID.DOM,name:'DOM',icon:domIcon, className:'dom', param:{'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true}}
+            {cid:TOOL_ID.DOM,name:'绝对定位容器',icon:domIcon, className:'dom', param:{'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true}}
         ]
     // },{
     //     name:'画布',
