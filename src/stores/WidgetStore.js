@@ -966,7 +966,7 @@ function generateJsFunc(etree) {
              //用户填写
              if (c.compareObjFlag && c.compareObjFlag.type) {
                  o += '('+formulaGenLine(c.compareObjFlag)+')';
-             } else {
+             } else  if(c.compareObjFlag !==null){
                  o += JSON.stringify(c.compareObjFlag);
              }
              conditions.push('(' + o + ')');
@@ -1401,16 +1401,7 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
                 judges.needFills = [];
 
                 item.needFill.map((v, i)=> {
-                    if(judges.className == 'input' && v.type=='select'){
-                        judges.conFlag =v.default;
-                        if(v.default=='输入完成'){
-                            judges.conFlag='change'
-                        }
-                        else  if(v.default=='内容改变'){
-                            judges.conFlag='input'
-                        }
-                    }
-                    else if (judges.className === 'sock' && v.actionName === 'message') {
+                    if (judges.className === 'sock' && v.actionName === 'message') {
                         let valueObj = keyMap[v.default];
                         if (valueObj) {
                             let o = objectToId(valueObj);
@@ -1434,6 +1425,7 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
 
                         obj.compareFlag = item.conFlag;
 
+
                         if ((judges.className == 'text' || judges.className == 'input') && (obj.compareFlag == 'isMatch' || obj.compareFlag == 'isUnMatch')) {
                             obj.compareFlag = obj.compareFlag == 'isMatch' ? '=' : '!=';
                         } else if (judges.className == 'counter' && ( obj.compareFlag == 'valRange')) {
@@ -1452,6 +1444,26 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
                         obj.showName = v.showName;
                         obj.type = v.type;
                         obj.compareObjFlag = v.default;
+
+
+                        if(judges.className == 'input' && v.type=='select'){
+
+                            //第一步,转译触发条件
+                            if(v.default=='输入完成'){
+                                judges.conFlag='change'
+                            }
+                            else  if(v.default=='内容改变'){
+                                judges.conFlag='input'
+                            }
+                            //第二步,判断neddFill.length时候为1,如果是,则要把obj.compareObjFlag设为''
+                            if(item.needFill.length==1){
+                                obj.compareObjFlag=null;
+                            }
+                        }
+
+
+
+
                         judges.children.push(obj);
                     }
                 });
@@ -2908,6 +2920,15 @@ export default Reflux.createStore({
              skipRender = false;
              skipProperty = false;
          }
+        //处理backgroundColor,如果为null,则变为transparent
+        // if(obj.backgroundColor ===null){
+        //     obj.backgroundColor='transparent';
+        //     tempWidget.node.backgroundColor='transparent';
+        //     tempWidget.props.backgroundColor='transparent';
+        //     tempWidget.props.backgroundColorKey='无';
+        // }
+
+
 
 
         //当轨迹处于时间轴外面的时候,并且处于动态模式,移动位置，所有关键点也移动位置
