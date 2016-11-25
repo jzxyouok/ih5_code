@@ -2369,7 +2369,7 @@ export default Reflux.createStore({
             }
         }
     },
-    pasteWidget: function(isAbsolutePosition) {
+    pasteWidget: function(isRelativePosition) {
         if (this.currentWidget) {
             let tempCopy = cpJson(copyObj);
             if (!tempCopy.className&&!tempCopy.cls) {
@@ -2394,8 +2394,8 @@ export default Reflux.createStore({
                 tempCopy.props = this.addWidgetDefaultName(tempCopy.cls, tempCopy.props, false, true);
             }
 
-            if(isAbsolutePosition) {
-                //获取其绝对位置
+            if(!isRelativePosition) {
+                //获取其绝对位置并转为相对位置
                 if (tempCopy.props.absolutePositionX || tempCopy.props.absolutePositionX === 0 &&
                     (tempCopy.props.absolutePositionY || tempCopy.props.absolutePositionY === 0)) {
                     let xy = getRelativePosition(tempCopy.props.absolutePositionX, tempCopy.props.absolutePositionY, this.currentWidget);
@@ -3806,7 +3806,7 @@ export default Reflux.createStore({
         }
         this.updateHistoryRecord(historyName);
     },
-    pasteTreeNode: function (isAbsolutePosition) {
+    pasteTreeNode: function (isRelativePosition) {
        switch (copyObj.className) {
            case nodeType.func:
                this.pasteFunction();
@@ -3818,7 +3818,7 @@ export default Reflux.createStore({
                //DBITEM DO NOTHING
                break;
            default:
-               this.pasteWidget(isAbsolutePosition);
+               this.pasteWidget(isRelativePosition);
                break;
        }
     },

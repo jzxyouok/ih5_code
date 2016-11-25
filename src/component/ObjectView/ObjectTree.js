@@ -987,7 +987,7 @@ class ObjectTree extends React.Component {
                 WidgetActions['copyTreeNode'](this.state.nodeType);
                 break;
             case 'paste':
-                WidgetActions['pasteTreeNode'](true);
+                WidgetActions['pasteTreeNode']();
                 break;
             case 'cut':
                 WidgetActions['cutTreeNode'](this.state.nodeType);
@@ -1002,7 +1002,7 @@ class ObjectTree extends React.Component {
                 WidgetActions['originPercentTreeNode'](this.state.nodeType);
                 break;
             case 'relPaste':
-                WidgetActions['pasteTreeNode']();
+                WidgetActions['pasteTreeNode'](true);
                 //TODO: WidgetActions['relPasteTreeNode'](this.state.nodeType);
                 break;
             case 'crossCopy':
