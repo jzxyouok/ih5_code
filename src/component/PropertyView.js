@@ -681,6 +681,12 @@ class PropertyView extends React.Component {
                                         node.rootWidget.imageList.push(e.target.result);
                                         thisObj.onStatusChange({updateProperties: obj});
                                         WidgetActions['updateProperties'](obj, false, true);
+
+                                        let obj2={
+                                            backgroundColor:node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF'
+                                        }
+                                        thisObj.onStatusChange({updateProperties: obj2});
+                                        WidgetActions['updateProperties'](obj2, false, true);
                                     };
                                     reader.readAsDataURL(w.files[0]);
                                 }

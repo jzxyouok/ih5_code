@@ -2949,7 +2949,7 @@ export default Reflux.createStore({
         else {
             updateSyncTrack();
         }
-        //console.log(obj,this.currentWidget );
+        console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
