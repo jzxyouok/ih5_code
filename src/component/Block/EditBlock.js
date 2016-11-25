@@ -171,6 +171,9 @@ class EditBlock extends React.Component {
             numberList.forEach(v=>{
                 max=Math.max(max, v);
             });
+            if(max <= 0) {
+                max = 0;
+            }
             name = name+(max+1)+'';
         }
         return name;
