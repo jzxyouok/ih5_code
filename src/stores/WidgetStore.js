@@ -1,6 +1,7 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
 import {getPropertyMap, checkChildClass,fnIsFlex} from '../component/PropertyMap'
+import {chooseFile} from  '../utils/upload';
 
 var bridge = require('bridge');
 bridge.create();
@@ -1780,65 +1781,56 @@ function dragover(e) {
   e.preventDefault();
 }
 
-function drop(e) {
-  e.stopPropagation();
-  e.preventDefault();
-
-  var dt = e.dataTransfer;
-  var files = dt.files;
-  var i;
-  var file;
-
-  /*
-  for (i = 0; i < files.length; i++) {
-    file = files[i];
-    if (file.type.match(/text\/html/)) {
-      let reader = new FileReader();
-      reader.onload = e => {
-        let s =window.atob(e.target.result.substr(22));
-        let re = /VXCORE\.load\((.*)\)\;\<\/script\>/;
-        let result = re.exec(s);
-        if (result[1]) {
-          let o = JSON.parse(result[1]);
-          if (o && o['stage']) {
-            this.currentWidget = null;
-            stageData = o['stage'];
-            WidgetActions['initTree'](true);
-          }
-        }
-      };
-      reader.readAsDataURL(file);
-      return;
-    }
-  }*/
+function dealImageFile(clientX, clientY, files, self) {
+    var i;
+    var file;
 
     let oDiv = document.getElementById("canvas-dom");
     let top = getY(oDiv);
     let left = getX(oDiv);
-    let x = e.clientX-left+document.body.scrollLeft;
-    let y = e.clientY-top+document.body.scrollTop;
+    let x = clientX-left+document.body.scrollLeft;
+    let y = clientY-top+document.body.scrollTop;
 
-    if (this.currentWidget && checkChildClass(this.currentWidget, 'image')) {
-    for (i = 0; i < files.length; i++) {
-      file = files[i];
-      if (file.type.match(/image.*/)) {
-          let fileName = file.name;
-          let dot = fileName.lastIndexOf('.');
-          if (dot>0) {
-              var ext = fileName.substr(dot + 1).toLowerCase();
-              if (ext == 'png' || ext == 'jpeg' || ext=='jpg') {
-                  fileName = fileName.substr(0, dot);
-              }
-          }
-        let reader = new FileReader();
-        reader.onload = e => {
-          let props = {name: fileName, originX:0.5, originY:0.5, positionX:x, positionY:y};
-          this.addWidget('image', props, e.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
+    if (self.currentWidget && checkChildClass(self.currentWidget, 'image') && !self.currentWidget.props.block) {
+        for (i = 0; i < files.length; i++) {
+            file = files[i];
+            if (file.type.match(/image.*/)) {
+                let fileName = file.name;
+                let dot = fileName.lastIndexOf('.');
+                if (dot > 0) {
+                    var ext = fileName.substr(dot + 1).toLowerCase();
+                    if (ext == 'png' || ext == 'jpeg' || ext == 'jpg') {
+                        fileName = fileName.substr(0, dot);
+                    }
+                }
+                let reader = new FileReader();
+                reader.onload = e => {
+                    let props = {name: fileName, originX: 0.5, originY: 0.5, positionX: x, positionY: y};
+                    self.addWidget('image', props, e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
     }
-  }
+}
+
+function uploadImage(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (this.currentWidget && checkChildClass(this.currentWidget, 'image') && !this.currentWidget.props.block) {
+        chooseFile('image', false, (w) => {
+            dealImageFile(e.clientX,e.clientY,w.files, this);
+        });
+    }
+
+}
+
+function drop(e) {
+  e.stopPropagation();
+  e.preventDefault();
+  var dt = e.dataTransfer;
+  var files = dt.files;
+  dealImageFile(e.clientX,e.clientY,files, this);
 }
 /*
 function downloadFile(filename, text) {
@@ -3863,6 +3855,7 @@ export default Reflux.createStore({
             rootDiv.addEventListener('dragenter', dragenter, false);
             rootDiv.addEventListener('dragover', dragover, false);
             rootDiv.addEventListener('drop', drop.bind(this), false);
+            rootDiv.addEventListener('dblclick', uploadImage.bind(this), false);
             rootDiv.addEventListener('mousedown', function(e) {
                 if(!(this.currentFunction|| this.currentVariable || this.currentDBItem)){
                     this.selectWidget(this.currentWidget);
