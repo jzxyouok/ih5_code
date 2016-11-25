@@ -1600,12 +1600,10 @@ class PropertyView extends React.Component {
         if(node.props.block) {
             //小模块的获取属性
             node.props.block.mapping.props.forEach((item) =>{
-                let obj = WidgetStore.getWidgetByKey(item.objKey);
-                if(item.detail&&item.detail.mappingKey) {
-                    obj = WidgetStore.getWidgetByKey(item.detail.mappingKey);
-                }
+                let obj = WidgetStore.getWidgetByKey(item.mappingKey);
+                let oObj = WidgetStore.getWidgetByKey(item.objKey);
                 let copy = JSON.parse(JSON.stringify(item.detail));
-                if (obj && copy && copy.name && copy.type !== propertyType.Hidden) {
+                if (oObj && obj && copy && copy.name && copy.type !== propertyType.Hidden) {
                     delete copy.imgClassName;
                     copy.showName = item.name;
                     copy.default = obj.props[copy.name]?obj.props[copy.name]:copy.default;
