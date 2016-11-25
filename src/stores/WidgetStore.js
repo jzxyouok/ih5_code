@@ -2,6 +2,7 @@ import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
 import {getPropertyMap, checkChildClass,fnIsFlex} from '../component/PropertyMap'
 import {chooseFile} from  '../utils/upload';
+import EffectAction from '../actions/effectAction';
 
 var bridge = require('bridge');
 bridge.create();
@@ -2210,6 +2211,7 @@ export default Reflux.createStore({
           });
           this.trigger({redrawTree: true, updateTrack: track});
           this.selectWidget(this.currentWidget);
+          EffectAction['returnStart']();
           // } else if (className === 'body' || className === 'easing' || className === 'effect' || this.currentWidget.node['create']) {
       } else {
         let p;
@@ -2966,8 +2968,7 @@ export default Reflux.createStore({
         //改变轨迹类型更新舞台轨迹
         if(tempWidget.className == "track"){
             if(obj.type == 0 || obj.type){
-                this.selectWidget(tempWidget.parent);
-                this.selectWidget(tempWidget);
+                EffectAction['changeTrackType'](true);
             }
         }
 

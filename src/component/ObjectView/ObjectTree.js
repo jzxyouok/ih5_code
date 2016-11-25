@@ -3,6 +3,7 @@ import React from 'react';
 import $class from 'classnames';
 import $ from 'jquery';
 
+
 import ComponentPanel from '../ComponentPanel';
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore, {nodeType, keepType, varType, dataType, isCustomizeWidget, selectableClass} from '../../stores/WidgetStore';
@@ -548,6 +549,43 @@ class ObjectTree extends React.Component {
             showToolMenu:false,
             editMode: false
         });
+
+        //选择非时间轨迹，时间轴变0
+        if(data.timerWidget == null && this.state.selectWidget){
+            if(this.state.selectWidget.className == "track"){
+                if(this.state.selectWidget.key !== nid && this.state.selectWidget.parent.key !== nid){
+                    EffectAction['returnStart']();
+                }
+            }
+            else if(this.state.selectWidget.children && this.state.selectWidget.children.length >0){
+                this.state.selectWidget.children.map((v,i)=>{
+                    if(v.className == "track"){
+                        if(v.key !== nid && v.parent.key !== nid){
+                            EffectAction['returnStart']();
+                        }
+                    }
+                })
+            }
+        }
+
+        let isOK = true;
+        if(data.className != "track" && data.children && data.children.length >0){
+            data.children.map((v,i)=>{
+                if(v.className == "track"){
+                    isOK = false;
+                }
+            });
+        }
+        if(isOK){
+            EffectAction['changeTrackType'](false);
+        }
+        else {
+            if(data.className == "track"){
+                if(data.props.trackType == "effect"){
+                    EffectAction['changeTrackType'](false);
+                }
+            }
+        }
 
         if(this.state.multiSelectMode) {
             if((selectableClass.indexOf(data.className)>=0||isCustomizeWidget(data.className))&&

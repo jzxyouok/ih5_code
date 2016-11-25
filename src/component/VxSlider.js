@@ -14,6 +14,7 @@ import TimelineStores from '../stores/Timeline';
 import TimelineAction from '../actions/TimelineAction';
 import ChangeKeyStore from '../stores/ChangeKeyStore';
 import changeKeyAction from '../actions/changeKeyAction';
+import EffectStore from '../stores/effectStore';
 
 import bridge from 'bridge';
 
@@ -128,6 +129,7 @@ class VxRcSlider extends RcSlider {
 
     componentDidMount() {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange);
+        this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
         this.onStatusChange(WidgetStore.getStore());
         TimelineStores.listen(this.ChangeKeyframe.bind(this));
         ChangeKeyStore.listen(this.ChangeKey.bind(this));
@@ -138,6 +140,7 @@ class VxRcSlider extends RcSlider {
 
     componentWillUnmount() {
         this.unsubscribe();
+        this.effectChange();
         //TimelineStores.removeListener(this.ChangeKeyframe.bind(this));
         //ChangeKeyStore.removeListener(this.ChangeKey.bind(this));
     }
@@ -566,8 +569,19 @@ class VxRcSlider extends RcSlider {
         }
     }
 
+    effectChangeFuc(res){
+        if(res.changeTrackType !== undefined){
+            console.log(res.changeTrackType);
+            if(res.changeTrackType){
+                bridge.showTrack(this.props.refTrack.node, this.trackSelect);
+            }
+            else {
+                bridge.showTrack(null);
+            }
+        }
+    }
+
   	render() {
-        //console.log(this.state.changeKeyValue);
         const points = this.props.points;
 		const {className, prefixCls, disabled, vertical, dots, included, range, step,
 			marks, max, min, tipTransitionName, tipFormatter, children} = this.props;
@@ -639,7 +653,12 @@ class VxRcSlider extends RcSlider {
         bridge.setTrackIndex(this.state.currentHandle);
         if (this.props.isCurrent && !this.props.isPlaying){
             style['borderColor'] = '#CCC';
-            bridge.showTrack(this.props.refTrack.node, this.trackSelect);
+            if(this.props.refTrack.props.trackType == "effect"){
+                bridge.showTrack(null);
+            }
+            else {
+                bridge.showTrack(this.props.refTrack.node, this.trackSelect);
+            }
         }
 
         //console.log(this.props.refTrack);
