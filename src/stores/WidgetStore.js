@@ -1280,7 +1280,7 @@ function generateJsFunc(etree) {
       }
     }
   });
-  console.log(output);
+  //console.log(output);
   return output;
 }
 
@@ -2976,7 +2976,7 @@ export default Reflux.createStore({
         }
 
 
-        console.log(obj,this.currentWidget ); //TODO:永远显示不能注释
+        //console.log(obj,this.currentWidget );
 
 
         let p = {updateProperties: obj};

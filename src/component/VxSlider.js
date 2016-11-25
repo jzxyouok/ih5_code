@@ -571,7 +571,7 @@ class VxRcSlider extends RcSlider {
 
     effectChangeFuc(res){
         if(res.changeTrackType !== undefined){
-            console.log(res.changeTrackType);
+            //console.log(res.changeTrackType);
             if(res.changeTrackType){
                 bridge.showTrack(this.props.refTrack.node, this.trackSelect);
             }
