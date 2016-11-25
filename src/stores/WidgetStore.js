@@ -2920,6 +2920,7 @@ export default Reflux.createStore({
              skipRender = false;
              skipProperty = false;
          }
+
         //处理backgroundColor,如果为null,则变为transparent
         // if(obj.backgroundColor ===null){
         //     obj.backgroundColor='transparent';
@@ -2949,7 +2950,18 @@ export default Reflux.createStore({
         else {
             updateSyncTrack();
         }
-        console.log(obj,this.currentWidget );
+
+        if(obj.backgroundColor ===null || obj.backgroundColor==='无'){
+            let color='transparent';
+            obj.backgroundColor=color;
+            tempWidget.node.backgroundColor=color;
+            tempWidget.props.backgroundColor=color;
+            tempWidget.props.backgroundColorKey='无';
+            skipRender = false;
+            skipProperty = false;
+        }
+
+        console.log(obj,tempWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
