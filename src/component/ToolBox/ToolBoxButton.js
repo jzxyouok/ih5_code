@@ -200,7 +200,9 @@ class ToolBoxButton extends Component {
                     this.props.param.positionX += this.props.param.shapeWidth*0.5;
                     this.props.param.positionY += this.props.param.shapeHeight*0.5;
                 }
-                if(this.props.className === 'slidetimer'){
+                if(this.props.className === 'slidetimer'
+                    ||this.props.className === 'container'
+                    ||this.props.className === 'pagecontainer'){
                     this.props.param.originX = 0.0;
                     this.props.param.originY = 0.0;
                     this.props.param.positionX = data.positionX;

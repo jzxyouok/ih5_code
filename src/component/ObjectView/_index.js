@@ -193,10 +193,10 @@ class ObjectView extends React.Component {
                 param.shapeHeight = data.shapeHeight;
                 // param.width = param.width?param.width:data.width;
                 // param.height = param.height?param.height:data.height;
-                param.originX = 0.5;
-                param.originY = 0.5;
-                param.positionX += param.shapeWidth*0.5;
-                param.positionY += param.shapeHeight*0.5;
+                param.originX = 0;
+                param.originY = 0;
+                // param.positionX += param.shapeWidth*0.5;
+                // param.positionY += param.shapeHeight*0.5;
             }
             WidgetActions['addWidget'](className, param);
             this.drawRect.end();
