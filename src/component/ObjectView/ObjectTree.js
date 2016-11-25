@@ -176,7 +176,7 @@ class ObjectTree extends React.Component {
 
         //右键menu
         window.removeEventListener('mousedown', this.onHideToolMenu);
-        window.addEventListener('click', this.onHideToolMenu);
+        window.removeEventListener('click', this.onHideToolMenu);
 
         //多选
         window.removeEventListener('blur', this.onMultiSelectKeyUp);
@@ -987,7 +987,7 @@ class ObjectTree extends React.Component {
                 WidgetActions['copyTreeNode'](this.state.nodeType);
                 break;
             case 'paste':
-                WidgetActions['pasteTreeNode'](true);
+                WidgetActions['pasteTreeNode']();
                 break;
             case 'cut':
                 WidgetActions['cutTreeNode'](this.state.nodeType);
@@ -1002,7 +1002,7 @@ class ObjectTree extends React.Component {
                 WidgetActions['originPercentTreeNode'](this.state.nodeType);
                 break;
             case 'relPaste':
-                WidgetActions['pasteTreeNode']();
+                WidgetActions['pasteTreeNode'](true);
                 //TODO: WidgetActions['relPasteTreeNode'](this.state.nodeType);
                 break;
             case 'crossCopy':

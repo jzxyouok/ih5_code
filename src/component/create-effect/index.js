@@ -158,7 +158,7 @@ class CreateModule extends React.Component {
             }
         }
         if (data.initTree !== undefined){
-            console.log(data.initTree);
+            //console.log(data.initTree);
             this.setState({
                 allTreeData : data.initTree
             });
