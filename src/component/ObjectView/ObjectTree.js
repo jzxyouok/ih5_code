@@ -176,7 +176,7 @@ class ObjectTree extends React.Component {
 
         //右键menu
         window.removeEventListener('mousedown', this.onHideToolMenu);
-        window.addEventListener('click', this.onHideToolMenu);
+        window.removeEventListener('click', this.onHideToolMenu);
 
         //多选
         window.removeEventListener('blur', this.onMultiSelectKeyUp);
