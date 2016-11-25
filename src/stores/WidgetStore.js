@@ -2765,6 +2765,15 @@ export default Reflux.createStore({
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
+                //相对舞台的绝对位置
+                let xy = getAbsolutePosition(src);
+                if(xy) {
+                    let rXy = getRelativePosition(xy.x, xy.y, dest);
+                    if(rXy) {
+                        saved.props.positionX = rXy.x;
+                        saved.props.positionY = rXy.y;
+                    }
+                }
                 //获取名字
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
