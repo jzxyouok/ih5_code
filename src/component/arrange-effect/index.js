@@ -171,7 +171,7 @@ class ArrangeModule extends React.Component {
 
                                                                 <div className="flex-1 f--hlc title">
                                                                     <span className="li-icon" />
-                                                                    <div className="TitleName">{v.name}</div>
+                                                                    <div className="TitleName">{v.is_system == 1 ? "" :v.name}</div>
                                                                 </div>
                                                                 <span className="choose-btn" />
                                                             </li>

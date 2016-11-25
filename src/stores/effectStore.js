@@ -20,6 +20,7 @@ export default Reflux.createStore({
         this.listenTo(Actions['getSpecificEffect'], this.getSpecificEffect);
         this.listenTo(Actions['returnStart'], this.returnStart);
         this.listenTo(Actions['effectToggleTrack'], this.effectToggleTrack);
+        this.listenTo(Actions['playTrack'], this.playTrack);
         this.token = Cookies.get('ih5token');
         this.system();
     },
@@ -41,8 +42,8 @@ export default Reflux.createStore({
             //console.log(result);
             if (result) {
                 let allData = [];
-                Array.prototype.push.apply(allData, systemList);
                 Array.prototype.push.apply(allData, result);
+                Array.prototype.push.apply(allData, systemList);
                 //console.log(Array);
                 this.trigger({effectList : allData});
             }
@@ -116,6 +117,10 @@ export default Reflux.createStore({
 
     effectToggleTrack:function(){
         this.trigger({effectToggleTrack : true});
+    },
+
+    playTrack:function(){
+        this.trigger({playTrack : true});
     }
 });
 

@@ -56,7 +56,7 @@ class TimelineView extends React.Component {
             whichKey : null,
             startKey : 0,
             isInput : false,
-            selectWidget : []
+            timeHidden : false
 		};
 
         this.flag = 0;
@@ -100,12 +100,15 @@ class TimelineView extends React.Component {
     effectChangeFuc(data){
         if(data.toggleMode){
             this.setState({
-                timerNode : null
+                timeHidden : true
             });
-            WidgetActions['selectWidget'](this.state.selectWidget);
+            WidgetActions['selectWidget'](this.state.timerNode);
         }
         if(data.returnStart){
             this.onTimerChange(0);
+        }
+        if(data.playTrack){
+            this.onPlayOrPause();
         }
     }
 
@@ -124,11 +127,13 @@ class TimelineView extends React.Component {
 		//	});
 		//}
 		if (widget.selectWidget !== undefined) {
+            if(this.state.isPlaying){
+                this.onPause();
+                this.onTimerChange(0);
+            }
+
             const changed = {currentTrack:null};
 			let node = widget.selectWidget;
-            this.setState({
-                selectWidget : widget.selectWidget
-            });
 			if (node) {
                 //console.log(node);
 				node.children.map(item => {
@@ -192,12 +197,19 @@ class TimelineView extends React.Component {
                     }
                 }
 			}
-            if(changed.currentTrack && changed.currentTrack.props && changed.currentTrack.props.trackType == "effect"){
-                this.setState({
-                    timerNode : null
-                });
-                return;
+            if(changed.currentTrack && changed.currentTrack.props){
+                if(changed.currentTrack.props.trackType == "effect"){
+                    this.setState({
+                        timeHidden : true
+                    });
+                }
+                else {
+                    this.setState({
+                        timeHidden : false
+                    });
+                }
             }
+
 			if (node)
 				node = node.timerWidget || changed.currentTrack;
 			if (node !== this.state.timerNode) {
@@ -217,7 +229,7 @@ class TimelineView extends React.Component {
                 if(this.state.nowLayerId !== nowID){
                     this.setState({
                         isChangeKey : false,
-                        nowLayerId : nowID,
+                        nowLayerId : nowID
                     })
                 }
             }
@@ -313,9 +325,8 @@ class TimelineView extends React.Component {
 
 	onPlay() {
 		WidgetActions['resetTrack']();
-		this.state.timerNode.node['play']();
 		this.setState({isPlaying:true});
-
+        this.state.timerNode.node['play']();
         let movableDistance = this.state.movableDistance;
         let marginLeft = this.state.marginLeft;
         let maxWidth  =  window.innerWidth-this.state.leftAddRight-170;
@@ -340,6 +351,9 @@ class TimelineView extends React.Component {
                     marginLeft : 0
                 })
             }
+        }
+        if (this.state.currentTrack) {
+            bridge.hideSelector(this.state.currentTrack.parent.node);
         }
 	}
 
@@ -427,6 +441,7 @@ class TimelineView extends React.Component {
 			this.state.currentTrack.node['data'] = data;
 			this.forceUpdate();
             TimelineAction['ChangeKeyframe'](false);
+            this.refs.VxSlider.selectKey(index);
 
             let historyName = "添加关键帧" + this.state.currentTrack.parent.props.name;
             WidgetActions['updateHistoryRecord'](historyName);
@@ -892,6 +907,7 @@ class TimelineView extends React.Component {
                         percentage = { this.state.percentage}
                         multiple = { this.state.multiple}
                         changSwitchState={ this.changSwitchState }
+                        isPlaying={this.state.isPlaying}
                         propsNowLayerId = { this.state.currentTrack !== null ? this.state.currentTrack.parent.key : null }
                         isCurrent={node === this.state.currentTrack} />);
             }
@@ -952,7 +968,7 @@ class TimelineView extends React.Component {
         TimelineViewStyle['bottom'] = this.state.dragTimelineBottom;
         return (
             <div id='TimelineView'
-                 className={ cls({"hidden":!this.state.timerNode||this.props.isHidden })}
+                 className={ cls({"hidden":!this.state.timerNode||this.props.isHidden || this.state.timeHidden })}
                  onMouseUp={ this.timeKeyUp }
                  style={TimelineViewStyle}>
 

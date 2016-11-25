@@ -185,8 +185,7 @@ var DEFAULT_TOOLBOX = {
         gid:10,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'},
-            {cid:TOOL_ID.PAGECONTAINER,name:'页面容器',icon:pageContainerIcon, className:'pagecontainer', param: {'swipeType': 4,'width':200,'height':200,'clipped':true, 'originX':0, 'originY':0}}
+            {cid:TOOL_ID.PAGE,name:'页面',icon:pageIcon, className:'page'}
         ]
     },{
         name:'容器',
@@ -197,6 +196,14 @@ var DEFAULT_TOOLBOX = {
             {cid:TOOL_ID.CONTAINER,name:'容器',icon:containerIcon, className:'container', param: {}}
         ]
     },{
+        name:'页面容器',
+        key:13,
+        gid:13,
+        primary: 0,
+        secondary: [
+            {cid:TOOL_ID.PAGECONTAINER,name:'页面容器',icon:pageContainerIcon, className:'pagecontainer', drawRect:true, param: {'swipeType': 4,'width':200,'height':200,'clipped':true, 'originX':0, 'originY':0}}
+        ]
+    },{
         name:'排版容器',
         key:12,
         gid:12,
@@ -204,7 +211,7 @@ var DEFAULT_TOOLBOX = {
         secondary: [
             {cid:TOOL_ID.FLEX,name:'排版容器',icon:flexIcon, className:'flex', param: {'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true,'alignItems':'flex-start'}},
 
-            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param:{'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true}},
+            {cid:TOOL_ID.CANVAS,name:'画布',icon:canvasIcon, className:'canvas', param:{'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true, 'backgroundColor':'transparent'}},
 
             {cid:TOOL_ID.DOM,name:'DOM',icon:domIcon, className:'dom', param:{'width': '100%', 'height': '100%','widthisRate':true,'heightisRate':true}}
         ]

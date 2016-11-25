@@ -1,6 +1,7 @@
 import Reflux from 'reflux';
 import WidgetActions from '../actions/WidgetActions';
 import {getPropertyMap, checkChildClass,fnIsFlex} from '../component/PropertyMap'
+import {chooseFile} from  '../utils/upload';
 
 var bridge = require('bridge');
 bridge.create();
@@ -486,10 +487,12 @@ function resolveBlock(node, list) {
                 item.objKey = null;
             }
             delete(item.objId);
-            if(item.detail&&item.detail.mappingId) {
-                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
-                delete(item.detail.mappingId);
+            if(item.mappingId) {
+                item.mappingKey = idToObjectKey(list, item.mappingId[0], item.mappingId[1]);
+            } else {
+                item.mappingKey = null
             }
+            delete(item.mappingId);
         });
         block.mapping.events.forEach((item)=>{
             if(item.objId) {
@@ -498,10 +501,12 @@ function resolveBlock(node, list) {
                 item.objKey = null;
             }
             delete(item.objId);
-            if(item.detail&&item.detail.mappingId) {
-                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
-                delete(item.detail.mappingId);
+            if(item.mappingId) {
+                item.mappingKey = idToObjectKey(list, item.mappingId[0], item.mappingId[1]);
+            } else {
+                item.mappingKey = null
             }
+            delete(item.mappingId);
         });
         block.mapping.funcs.forEach((item)=>{
             if(item.objId) {
@@ -510,10 +515,12 @@ function resolveBlock(node, list) {
                 item.objKey = null;
             }
             delete(item.objId);
-            if(item.detail&&item.detail.mappingId) {
-                item.detail.mappingKey = idToObjectKey(list, item.detail.mappingId[0], item.detail.mappingId[1]);
-                delete(item.detail.mappingId);
+            if(item.mappingId) {
+                item.mappingKey = idToObjectKey(list, item.mappingId[0], item.mappingId[1]);
+            } else {
+                item.mappingKey = null
             }
+            delete(item.mappingId);
         });
         return block;
     };
@@ -732,41 +739,29 @@ function generateId(node) {
   if(node.props.block) {
       node.props.block.mapping.props.forEach(item=> {
           specGenIdsData(item.objKey);
-          if(item.detail&&item.detail.mappingKey) {
-              specGenIdsData(item.detail.mappingKey);
-          }
+          specGenIdsData(item.mappingKey);
       });
       node.props.block.mapping.events.forEach(item=> {
           specGenIdsData(item.objKey);
-          if(item.detail&&item.detail.mappingKey) {
-              specGenIdsData(item.detail.mappingKey);
-          }
+          specGenIdsData(item.mappingKey);
       });
       node.props.block.mapping.funcs.forEach(item=> {
           specGenIdsData(item.objKey);
-          if(item.detail&&item.detail.mappingKey) {
-              specGenIdsData(item.detail.mappingKey);
-          }
+          specGenIdsData(item.mappingKey);
       });
   }
   if(node.props.backUpBlock) {
       node.props.backUpBlock.mapping.props.forEach(item=> {
           specGenIdsData(item.objKey);
-          if(item.detail&&item.detail.mappingKey) {
-              specGenIdsData(item.detail.mappingKey);
-          }
+          specGenIdsData(item.mappingKey);
       });
       node.props.backUpBlock.mapping.events.forEach(item=> {
           specGenIdsData(item.objKey);
-          if(item.detail&&item.detail.mappingKey) {
-              specGenIdsData(item.detail.mappingKey);
-          }
+          specGenIdsData(item.mappingKey);
       });
       node.props.backUpBlock.mapping.funcs.forEach(item=> {
           specGenIdsData(item.objKey);
-          if(item.detail&&item.detail.mappingKey) {
-              specGenIdsData(item.detail.mappingKey);
-          }
+          specGenIdsData(item.mappingKey);
       });
   }
   if(node.dbItemList){
@@ -1320,49 +1315,31 @@ function saveTransBlock(block, saveKey){
     let tempProps = [];
     block.mapping.props.forEach((v)=>{
         let detail = cpJson(v.detail);
-        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:detail, mappingId:objectKeyToId(v.mappingKey)};
         if(saveKey) {
             tempV.objKey = v.objKey;
+            tempV.mappingKey = v.mappingKey;
         }
-        if(detail&&detail.mappingKey) {
-            detail.mappingId = objectKeyToId(detail.mappingKey);
-            if(!saveKey) {
-                delete detail.mappingKey;
-            }
-        }
-        tempV.detail = detail;
         tempProps.push(tempV);
     });
     let tempEvents = [];
     block.mapping.events.forEach((v)=>{
         let detail = cpJson(v.detail);
-        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:detail, mappingId:objectKeyToId(v.mappingKey)};
         if(saveKey) {
             tempV.objKey = v.objKey;
+            tempV.mappingKey = v.mappingKey;
         }
-        if(detail&&detail.mappingKey) {
-            detail.mappingId = objectKeyToId(detail.mappingKey);
-            if(!saveKey) {
-                delete detail.mappingKey;
-            }
-        }
-        tempV.detail = detail;
         tempEvents.push(tempV);
     });
     let tempFuncs = [];
     block.mapping.funcs.forEach((v)=>{
         let detail = cpJson(v.detail);
-        let tempV = {name: v.name, objId: objectKeyToId(v.objKey)};
+        let tempV = {name: v.name, objId: objectKeyToId(v.objKey), detail:detail, mappingId:objectKeyToId(v.mappingKey)};
         if(saveKey) {
             tempV.objKey = v.objKey;
+            tempV.mappingKey = v.mappingKey;
         }
-        if(detail&&detail.mappingKey) {
-            detail.mappingId = objectKeyToId(detail.mappingKey);
-            if(!saveKey) {
-                delete detail.mappingKey;
-            }
-        }
-        tempV.detail = detail;
         tempFuncs.push(tempV);
     });
     temp.mapping = {
@@ -1816,65 +1793,106 @@ function dragover(e) {
   e.preventDefault();
 }
 
-function drop(e) {
-  e.stopPropagation();
-  e.preventDefault();
-
-  var dt = e.dataTransfer;
-  var files = dt.files;
-  var i;
-  var file;
-
-  /*
-  for (i = 0; i < files.length; i++) {
-    file = files[i];
-    if (file.type.match(/text\/html/)) {
-      let reader = new FileReader();
-      reader.onload = e => {
-        let s =window.atob(e.target.result.substr(22));
-        let re = /VXCORE\.load\((.*)\)\;\<\/script\>/;
-        let result = re.exec(s);
-        if (result[1]) {
-          let o = JSON.parse(result[1]);
-          if (o && o['stage']) {
-            this.currentWidget = null;
-            stageData = o['stage'];
-            WidgetActions['initTree'](true);
-          }
-        }
-      };
-      reader.readAsDataURL(file);
-      return;
+function getRelativePosition(x, y, widget) {
+    if((x!==null||x!==undefined)&&(y!==null||y!==undefined)) {
+        return null;
     }
-  }*/
+    if(widget&&widget.className !=='root') {
+        //计算当前widget的绝对位置然后算出画框的相对位置
+        let calWidget = widget;
+        let pPositionX = 0;
+        let pPositionY = 0;
+        while(calWidget&&calWidget.className!=='root') {
+            if(calWidget.props.positionX) {
+                pPositionX+=calWidget.props.positionX;
+            }
+            if(calWidget.props.positionY) {
+                pPositionY+=calWidget.props.positionY;
+            }
+            calWidget = calWidget.parent;
+        }
+        x -= pPositionX;
+        y -= pPositionY;
+        return {x:x, y:y};
+    }
+    return null;
+}
+
+function getAbsolutePosition(widget) {
+    if(widget&&widget.className !=='root') {
+        let x = 0;
+        let y = 0;
+        //计算当前widget的绝对位置然后算出画框的相对位置
+        let calWidget = widget;
+        while(calWidget&&calWidget.className!=='root') {
+            if(calWidget.props.positionX) {
+                x+=calWidget.props.positionX;
+            }
+            if(calWidget.props.positionY) {
+                y+=calWidget.props.positionY;
+            }
+            calWidget = calWidget.parent;
+        }
+        return {x:x, y:y};
+    }
+    return null;
+}
+
+function dealImageFile(clientX, clientY, files, self) {
+    var i;
+    var file;
 
     let oDiv = document.getElementById("canvas-dom");
     let top = getY(oDiv);
     let left = getX(oDiv);
-    let x = e.clientX-left+document.body.scrollLeft;
-    let y = e.clientY-top+document.body.scrollTop;
+    let x = clientX-left+document.body.scrollLeft;
+    let y = clientY-top+document.body.scrollTop;
 
-    if (this.currentWidget && checkChildClass(this.currentWidget, 'image')) {
-    for (i = 0; i < files.length; i++) {
-      file = files[i];
-      if (file.type.match(/image.*/)) {
-          let fileName = file.name;
-          let dot = fileName.lastIndexOf('.');
-          if (dot>0) {
-              var ext = fileName.substr(dot + 1).toLowerCase();
-              if (ext == 'png' || ext == 'jpeg' || ext=='jpg') {
-                  fileName = fileName.substr(0, dot);
-              }
-          }
-        let reader = new FileReader();
-        reader.onload = e => {
-          let props = {name: fileName, originX:0.5, originY:0.5, positionX:x, positionY:y};
-          this.addWidget('image', props, e.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
+    if (self.currentWidget && checkChildClass(self.currentWidget, 'image') && !self.currentWidget.props.block) {
+        let xy = getRelativePosition(x, y, self.currentWidget);
+        if(xy) {
+            x = xy.x;
+            y = xy.y;
+        }
+        for (i = 0; i < files.length; i++) {
+            file = files[i];
+            if (file.type.match(/image.*/)) {
+                let fileName = file.name;
+                let dot = fileName.lastIndexOf('.');
+                if (dot > 0) {
+                    var ext = fileName.substr(dot + 1).toLowerCase();
+                    if (ext == 'png' || ext == 'jpeg' || ext == 'jpg') {
+                        fileName = fileName.substr(0, dot);
+                    }
+                }
+                let reader = new FileReader();
+                reader.onload = e => {
+                    let props = {name: fileName, originX: 0.5, originY: 0.5, positionX: x, positionY: y};
+                    self.addWidget('image', props, e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
     }
-  }
+}
+
+function uploadImage(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (this.currentWidget && checkChildClass(this.currentWidget, 'image') && !this.currentWidget.props.block) {
+        chooseFile('image', false, (w) => {
+            dealImageFile(e.clientX,e.clientY,w.files, this);
+        });
+    }
+
+}
+
+function drop(e) {
+  e.stopPropagation();
+  e.preventDefault();
+  var dt = e.dataTransfer;
+  var files = dt.files;
+  dealImageFile(e.clientX,e.clientY,files, this);
 }
 /*
 function downloadFile(filename, text) {
@@ -2060,7 +2078,6 @@ export default Reflux.createStore({
                 this.selectFadeWidget(null, nodeType.dbItem);
             }
         }
-
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
             if (isMulti) {
@@ -2330,7 +2347,12 @@ export default Reflux.createStore({
             } else {
                 saveTree(copyObj, this.currentWidget, false, true);
             }
-            //console.log(copyObj);
+            //获取其相对舞台的绝对位置并存入copyObj
+            let xy = getAbsolutePosition(this.currentWidget);
+            if(xy){
+                copyObj.props.absolutePositionX = xy.x;
+                copyObj.props.absolutePositionY = xy.y;
+            }
 
             //复制时间轴轨迹的时候改变轨迹属性
             if(copyObj.children && copyObj.children.length> 0){
@@ -2342,20 +2364,49 @@ export default Reflux.createStore({
             }
             if(copyObj.cls == 'track' && copyObj.props.trackType == "timer"){
                 copyObj.props.trackType = "track";
-            };
-            //console.log(copyObj);
+            }
         }
     },
-    pasteWidget: function() {
+    pasteWidget: function(isAbsolutePosition) {
         if (this.currentWidget) {
             let tempCopy = cpJson(copyObj);
             if (!tempCopy.className&&!tempCopy.cls) {
                 return;
             }
+
+            //复制轨迹到时间轴的时候改变轨迹属性
+            if(copyObj.children && copyObj.children.length> 0){
+                copyObj.children.map((v,i)=>{
+                    if(v.cls == 'track' && v.props.trackType != "timer" && v.timerWidget !== null){
+                        v.props.trackType = "timer";
+                    }
+                });
+            }
+            if(copyObj.cls == 'track' && copyObj.props.trackType != "timer" && v.timerWidget !== null){
+                copyObj.props.trackType = "timer";
+            };
+
             // 重命名要黏贴的widget
             if (tempCopy.props['key'] === undefined) {
                 //copy
                 tempCopy.props = this.addWidgetDefaultName(tempCopy.cls, tempCopy.props, false, true);
+            }
+
+            if(isAbsolutePosition) {
+                //获取其绝对位置
+                if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
+                    tempCopy.props.positionX = tempCopy.props.absolutePositionX;
+                    delete  tempCopy.props.absolutePositionX;
+                } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
+                    tempCopy.props.positionY = tempCopy.props.absolutePositionY;
+                    delete  tempCopy.props.absolutePositionY;
+                }
+            } else {
+                if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
+                    delete  tempCopy.props.absolutePositionX;
+                } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
+                    delete  tempCopy.props.absolutePositionY;
+                }
             }
             loadTree(this.currentWidget, tempCopy);
             if(tempCopy.props.eventTree){
@@ -2707,6 +2758,7 @@ export default Reflux.createStore({
                 var saved = {};
                 saveTree(saved, src, true);
                 bridge.selectWidget(null);
+                bridge.showTrack(null);
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
@@ -2717,17 +2769,23 @@ export default Reflux.createStore({
                 console.log(1,obj);
 
                 //把时间轴轨迹从时间轴里面拖拽出来的时候改变轨迹属性，或则只是拖拽轨迹
-                if(obj.timerWidget == null){
+                let timeFuc = (timerType)=>{
                     if(obj.className == "track"){
-                        obj.props.trackType = "track";
+                        obj.props.trackType = timerType;
                     }
                     else {
                         obj.children.map((v,i)=>{
-                            if(v.className == 'track'){
-                                v.props.trackType = "track";
+                            if(v.className == "track"){
+                                v.props.trackType = timerType;
                             }
                         })
                     }
+                };
+                if(obj.timerWidget == null){
+                    timeFuc("track");
+                }
+                else {
+                    timeFuc("timer");
                 }
 
                 var destIndex = dest.children.indexOf(obj);
@@ -2891,7 +2949,7 @@ export default Reflux.createStore({
         else {
             updateSyncTrack();
         }
-        console.log(obj,this.currentWidget );
+        //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -3736,7 +3794,7 @@ export default Reflux.createStore({
         }
         this.updateHistoryRecord(historyName);
     },
-    pasteTreeNode: function () {
+    pasteTreeNode: function (isAbsolutePosition) {
        switch (copyObj.className) {
            case nodeType.func:
                this.pasteFunction();
@@ -3748,7 +3806,7 @@ export default Reflux.createStore({
                //DBITEM DO NOTHING
                break;
            default:
-               this.pasteWidget();
+               this.pasteWidget(isAbsolutePosition);
                break;
        }
     },
@@ -3907,6 +3965,7 @@ export default Reflux.createStore({
             rootDiv.addEventListener('dragenter', dragenter, false);
             rootDiv.addEventListener('dragover', dragover, false);
             rootDiv.addEventListener('drop', drop.bind(this), false);
+            rootDiv.addEventListener('dblclick', uploadImage.bind(this), false);
             rootDiv.addEventListener('mousedown', function(e) {
                 if(!(this.currentFunction|| this.currentVariable || this.currentDBItem)){
                     this.selectWidget(this.currentWidget);

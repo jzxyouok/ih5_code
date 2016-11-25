@@ -1219,7 +1219,7 @@ class PropertyView extends React.Component {
                         }
                     }
                     else if(node.props.trackType == "effect"){
-                        if(item.name != "_editTrack"){
+                        if(item.name != "_editTrack" && item.name != "_playTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else {
@@ -1227,11 +1227,14 @@ class PropertyView extends React.Component {
                         }
                     }
                     else{
-                        if(item.name == "_editTrack" || item.name == "_createEffect"){
+                        if(item.name == "_editTrack" || item.name == "_createEffect" || item.name == "_playTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else if(item.name == "_saveTrack" && node.props.is_system == 1 ){
                             item.styleName = item.olderClassName + " hidden";
+                        }
+                        else if(item.name == "_saveAsTrack" && node.props.is_system == 1 ){
+                            item.styleName = item.olderClassName + " is_system";
                         }
                         else {
                             item.styleName = item.olderClassName;
@@ -1544,11 +1547,11 @@ class PropertyView extends React.Component {
             }
         }
         else if(className == "track" && node.timerWidget == null
-                && ( item.name == '_createEffect' || item.name == "_editTrack"
+                && ( item.name == '_createEffect' || item.name == "_editTrack" || item.name == "_playTrack"
                         || item.name == "_saveTrack" || item.name == "_saveAsTrack" || item.name == "_cancelTrack") )
         {
             style['margin'] = "0";
-            if(item.name == "_saveTrack" || item.name == "_saveAsTrack"){
+            if(item.name == "_saveTrack" || item.name == "_saveAsTrack"  || item.name == "_editTrack" || item.name == "_playTrack"){
                 style['width'] = "50%";
                 style['float'] = "left";
             }
@@ -1597,12 +1600,10 @@ class PropertyView extends React.Component {
         if(node.props.block) {
             //小模块的获取属性
             node.props.block.mapping.props.forEach((item) =>{
-                let obj = WidgetStore.getWidgetByKey(item.objKey);
-                if(item.detail&&item.detail.mappingKey) {
-                    obj = WidgetStore.getWidgetByKey(item.detail.mappingKey);
-                }
+                let obj = WidgetStore.getWidgetByKey(item.mappingKey);
+                let oObj = WidgetStore.getWidgetByKey(item.objKey);
                 let copy = JSON.parse(JSON.stringify(item.detail));
-                if (obj && copy && copy.name && copy.type !== propertyType.Hidden) {
+                if (oObj && obj && copy && copy.name && copy.type !== propertyType.Hidden) {
                     delete copy.imgClassName;
                     copy.showName = item.name;
                     copy.default = obj.props[copy.name]?obj.props[copy.name]:copy.default;

@@ -453,6 +453,7 @@ $toBottom:14px;
         .edit-btn,
         .save-btn,
         .saveAs-btn,
+        .play-btn,
         .cancel-btn{
             @include border-radius(2px);
             height: 22px;
@@ -463,8 +464,7 @@ $toBottom:14px;
             background: none;
             cursor: pointer;
         }
-        .create-btn,
-        .edit-btn {
+        .create-btn{
             width: 170px;
             background: #858585;
             color: #151515;
@@ -474,7 +474,8 @@ $toBottom:14px;
             &:active { background: #545454; }
         }
 
-        .save-btn,.saveAs-btn {
+        .save-btn, .saveAs-btn,
+        .play-btn, .edit-btn{
             width: 103px;
             background: #858585;
             color: #151515;
@@ -483,8 +484,15 @@ $toBottom:14px;
             &:active { background: #545454; }
         }
 
-        .save-btn {  margin-left: 15px; }
-        .saveAs-btn {  margin-left: 9px; }
+        .save-btn , .play-btn{  margin-left: 15px; }
+        .saveAs-btn , .edit-btn{
+            margin-left: 9px;
+
+            &.is_system{
+                width: 220px;
+                margin-left: 15px;
+            }
+        }
 
         .cancel-btn {
             width: 220px;

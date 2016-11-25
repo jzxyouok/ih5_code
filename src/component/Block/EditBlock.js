@@ -26,9 +26,9 @@ class EditBlock extends React.Component {
         this.state = {
             minSize: false,
             name: '',
-            props: [{name: '', objKey:null, detail:null}],
-            events: [{name: '', objKey: null, detail: null}],
-            funcs: [{name: '', objKey: null, detail: null}],
+            props: [{name: '', objKey:null, detail:null, mappingKey:null}],
+            events: [{name: '', objKey: null, detail: null, mappingKey:null}],
+            funcs: [{name: '', objKey: null, detail: null, mappingKey:null}],
             selectWidget: null,
             objectList: [],
             showNameWarning: null,
@@ -89,9 +89,9 @@ class EditBlock extends React.Component {
 
     onStatusChange(widget) {
         if(widget.selectWidget) {
-            let props = [{name: '', objKey:null, detail:null}];
-            let events = [{name: '', objKey: null, detail: null}];
-            let funcs = [{name: '', objKey: null, detail: null}];
+            let props = [{name: '', objKey:null, detail:null, mappingKey:null}];
+            let events = [{name: '', objKey: null, detail: null, mappingKey:null}];
+            let funcs = [{name: '', objKey: null, detail: null, mappingKey:null}];
             let name = '';
             if(widget.selectWidget.props) {
                 let block = null;
@@ -208,6 +208,7 @@ class EditBlock extends React.Component {
     setObjectKey(index,type,key) {
         let list = this.getParamList(type);
         list[index].objKey = key;
+        list[index].mappingKey = key;
         list[index].detail = null;
         this.setParamListState(type,list);
     }
@@ -227,9 +228,7 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
-                            if(!temp.mappingKey) {
-                                temp.mappingKey = temp.objKey;
-                            }
+                            temp.mappingKey = v.mappingKey;
                             list.push(temp);
                         }
                     });
@@ -239,9 +238,7 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
-                            if(!temp.mappingKey) {
-                                temp.mappingKey = temp.objKey;
-                            }
+                            temp.mappingKey = v.mappingKey;
                             list.push(temp);
                         }
                     });
@@ -251,9 +248,7 @@ class EditBlock extends React.Component {
                         let temp = JSON.parse(JSON.stringify(v.detail));
                         if(temp!=null&&v.name) {
                             temp.showName = v.name;
-                            if(!temp.mappingKey) {
-                                temp.mappingKey = temp.objKey;
-                            }
+                            temp.mappingKey = v.mappingKey;
                             list.push(temp);
                         }
                     });
@@ -275,15 +270,19 @@ class EditBlock extends React.Component {
 
     onDetailSelect(index, type, e) {
         e.domEvent.stopPropagation();
-        let detail = e.item.props.detail;
+        let detail = JSON.parse(JSON.stringify(e.item.props.detail));
         let list = this.getParamList(type);
+        if(detail.mappingKey) {
+            list[index].mappingKey = detail.mappingKey;
+            delete detail.mappingKey;
+        }
         list[index].detail = detail;
         this.setParamListState(type,list);
     }
 
     onAddParamsBtn(type, e) {
         let list = this.getParamList(type);
-        list.push({name: '', objKey:null, detail:null});
+        list.push({name: '', objKey:null, detail:null, mappingKey:null});
         this.setParamListState(type,list);
     }
 
@@ -297,7 +296,7 @@ class EditBlock extends React.Component {
     onRemoveParamsBtn(index, type, e) {
         let list = this.getParamList(type);
         if(list.length === 1) {
-            list=[{name: '', objKey:null, detail:null}];
+            list=[{name: '', objKey:null, detail:null, mappingKey:null}];
         } else {
             list.splice(index,1);
         }

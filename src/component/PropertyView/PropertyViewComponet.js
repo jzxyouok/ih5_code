@@ -344,6 +344,7 @@ class ConButton extends React.Component {
         this.trackSave = this.trackSave.bind(this);         //保存
         this.trackSaveAs = this.trackSaveAs.bind(this);     //另保存
         this.trackCancel = this.trackCancel.bind(this);     //取消
+        this.trackplay = this.trackplay.bind(this);         //播放
     }
 
     componentDidMount() {
@@ -361,6 +362,9 @@ class ConButton extends React.Component {
                     WidgetActions['saveEffect']();
                     this.trackSaveAs();
                 break;
+                case "_playTrack" :
+                    this.trackplay();
+                    break;
                 case "_editTrack" :
                     this.trackEdit();
                 break;
@@ -395,6 +399,10 @@ class ConButton extends React.Component {
     trackCancel(){
         let name =this.props.curNode.props.name;
         EffectAction['loadEffect'](true,name);
+    }
+
+    trackplay(){
+        EffectAction['playTrack'](true);
     }
 
     render() {

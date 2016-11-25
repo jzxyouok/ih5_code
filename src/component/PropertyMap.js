@@ -384,7 +384,10 @@ let specialCaseElementMapping = (className, type)=> {
                 '_createEffect': {name:'_createEffect', showName:'生成动效',styleName:'create-btn',olderClassName:"create-btn",
                     type: propertyType.Button,default:'',group:'buttonArea'},
 
-                '_editTrack': {name:'_editTrack', showName:'编辑运动轨迹',styleName:'edit-btn',olderClassName:"edit-btn",
+                '_playTrack': {name:'_playTrack', showName:'播放轨迹',styleName:'play-btn',olderClassName:"play-btn",
+                    type: propertyType.Button,default:'',group:'buttonArea'},
+
+                '_editTrack': {name:'_editTrack', showName:'编辑轨迹',styleName:'edit-btn',olderClassName:"edit-btn",
                                 type: propertyType.Button,default:'',group:'buttonArea'},
 
                 '_saveTrack': {name:'_saveTrack', showName:'保存',styleName:'save-btn',olderClassName:'save-btn',
@@ -622,12 +625,10 @@ let modifyPropList = (list, className, type) => {
         aLack.push('originPos');
     }
 
-    if(className=='track') {
-        aLack.push('_createEffect', '_editTrack', '_saveTrack', '_saveAsTrack', '_cancelTrack');
+
+    if(className=='track'){
+        aLack.push('_createEffect','_playTrack','_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
     }
-
-
-
 
     list = list.concat(dealElementList(aLack, className, 'props', type));
     return list;
@@ -974,10 +975,10 @@ let checkChildClass = (selected, className) => {
         return (selected.className == 'canvas');
 
     if (className == 'container')
-        return provides & widgetFlags.Container;
+        return (provides & widgetFlags.Container);
 
     if (requires & widgetFlags.Root)
-        return provides & widgetFlags.Root;
+        return (provides & widgetFlags.Root);
 
     if ((~(provides & FLAG_MASK) & (requires & FLAG_MASK)) != 0)
         return false;

@@ -43,6 +43,14 @@ class ToolBoxButton extends Component {
         this.onModalClear = this.onModalClear.bind(this);
         this.onModalTextAreaChange = this.onModalTextAreaChange.bind(this);
         this.addDb = this.addDb.bind(this);
+
+        this.onClick = this.onClick.bind(this);
+        this.onRightClick = this.onRightClick.bind(this);
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
+        this.onMouseOut = this.onMouseOut.bind(this);
+        this.timeout = null;
+        this.didLongPress = false;
     }
 
     componentDidMount() {
@@ -80,7 +88,28 @@ class ToolBoxButton extends Component {
         })
     }
 
+    onMouseDown(e) {
+        let self = this;
+        this.timeout = setTimeout(function() {
+            self.didLongPress = true;
+            self.onRightClick();
+        }, 200);
+    }
+
+    onMouseUp(e) {
+        clearTimeout(this.timeout);
+    }
+
+    onMouseOut(e) {
+        this.didLongPress = false;
+        clearTimeout(this.timeout)
+    }
+
     onClick() {
+        if(this.didLongPress) {
+            this.didLongPress = false;
+            return;
+        }
         if(this.props.isPrimary) {
             ToolBoxAction['selectPrimary'](this.props.cid, null);
         } else {
@@ -172,8 +201,10 @@ class ToolBoxButton extends Component {
     }
 
     onRightClick(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         //第一层的时候点击右键，还原所有画框并弹出第二菜单
         if(this.props.level === 1) {
             //点击的时候清除一下overlay
@@ -185,7 +216,7 @@ class ToolBoxButton extends Component {
 
     onDrawRect() {
         this.drawRect = new DrawRect();
-        this.drawRect.start();
+        this.drawRect.start(this.state.selectWidget);
         this.drawRect.def.promise().then(data => {
             if(this.props.param) {
                 this.props.param.positionX = data.positionX;
@@ -200,7 +231,9 @@ class ToolBoxButton extends Component {
                     this.props.param.positionX += this.props.param.shapeWidth*0.5;
                     this.props.param.positionY += this.props.param.shapeHeight*0.5;
                 }
-                if(this.props.className === 'slidetimer'){
+                if(this.props.className === 'slidetimer'
+                    ||this.props.className === 'container'
+                    ||this.props.className === 'pagecontainer'){
                     this.props.param.originX = 0.0;
                     this.props.param.originY = 0.0;
                     this.props.param.positionX = data.positionX;
@@ -367,8 +400,11 @@ class ToolBoxButton extends Component {
                 {'hidden': this.props.hidden})}
                 title={this.props.name}
                 disabled={this.props.disabled}
-                onClick={this.onClick.bind(this)}
-                onContextMenu={this.onRightClick.bind(this)}>
+                onMouseDown={this.onMouseDown}
+                onMouseUp={this.onMouseUp}
+                onMouseOut={this.onMouseOut}
+                onClick={this.onClick}
+                onContextMenu={this.onRightClick}>
                 <img src={this.props.icon} />
                 <span className='ToolBoxButtonName'>{this.props.name}</span>
                 <Modal  visible={this.state.modal.isVisible}
