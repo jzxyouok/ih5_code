@@ -2962,7 +2962,7 @@ export default Reflux.createStore({
             updateSyncTrack();
         }
 
-<<<<<<< HEAD
+
         if(obj.backgroundColor ===null || obj.backgroundColor==='无'){
             let color='transparent';
             obj.backgroundColor=color;
@@ -2973,10 +2973,9 @@ export default Reflux.createStore({
             skipProperty = false;
         }
 
-        console.log(obj,tempWidget );
-=======
+
         console.log(obj,this.currentWidget ); //TODO:永远显示不能注释
->>>>>>> 53ddd12eb20118cbd17bc9c7f73ee00e56cf3cbc
+
 
         let p = {updateProperties: obj};
         if (skipRender) {

@@ -147,6 +147,7 @@ class PropertyView extends React.Component {
                 if(defaultProp.tbCome){
                     delete defaultData.tbCome;
                 }
+                node =this.selectNode;
                 return  <Input ref={(inputDom) => {
                     //这个属性很奇怪,显示值要在这内部设定
                     if (inputDom) {
@@ -157,8 +158,6 @@ class PropertyView extends React.Component {
                          dom.value = node.props.backgroundColor===undefined
                              ?defaultData.placeholder
                              :(node.props.backgroundColor=='transparent')?'无':node.props.backgroundColor;
-
-
 
                         //背景设定
                         if(node.props.backgroundColor=='transparent') {
