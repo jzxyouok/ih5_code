@@ -550,7 +550,20 @@ class VxRcSlider extends RcSlider {
     }
 
     trackSelect(index) {
-        this.onHandleClick(this.handles[index]);
+        //console.log(index,this.handles);
+        let cycle;
+        if(index >= this.handles.length){
+            let self = this;
+            cycle = setInterval(function(){
+                self.trackSelect(index);
+                if(index <= self.handles.length && self.handles.length > 0){
+                    clearInterval(cycle);
+                }
+            },100);
+        }
+        else {
+            this.onHandleClick(this.handles[index]);
+        }
     }
 
   	render() {
@@ -777,6 +790,18 @@ class VxRcSlider extends RcSlider {
 }
 
 class VxSlider extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+
+        };
+        this.selectKey = this.selectKey.bind(this);
+    }
+
+    selectKey(index){
+        this.refs.VxRcSlider.trackSelect(index);
+    }
+
 	render() {
         //console.log('props: ', this.props);
 		return <VxRcSlider {...this.props} ref="VxRcSlider" changSwitchState={ this.props.changSwitchState } />;

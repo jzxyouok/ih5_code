@@ -438,6 +438,7 @@ class TimelineView extends React.Component {
 			this.state.currentTrack.node['data'] = data;
 			this.forceUpdate();
             TimelineAction['ChangeKeyframe'](false);
+            this.refs.VxSlider.selectKey(index);
 
             let historyName = "添加关键帧" + this.state.currentTrack.parent.props.name;
             WidgetActions['updateHistoryRecord'](historyName);
