@@ -1793,8 +1793,9 @@ function dragover(e) {
   e.preventDefault();
 }
 
+//x,y相对于widget在舞台的位置
 function getRelativePosition(x, y, widget) {
-    if((x!==null||x!==undefined)&&(y!==null||y!==undefined)) {
+    if((x===null||x===undefined)||(y===null||y===undefined)) {
         return null;
     }
     if(widget&&widget.className !=='root') {
@@ -1815,26 +1816,27 @@ function getRelativePosition(x, y, widget) {
         y -= pPositionY;
         return {x:x, y:y};
     }
-    return null;
+    return {x:x, y:y};
 }
 
+//widget相对于舞台的位置
 function getAbsolutePosition(widget) {
-    // if(widget&&widget.className !=='root') {
-    //     let x = 0;
-    //     let y = 0;
-    //     //计算当前widget的绝对位置然后算出画框的相对位置
-    //     let calWidget = widget;
-    //     while(calWidget&&calWidget.className!=='root') {
-    //         if(calWidget.props.positionX) {
-    //             x+=calWidget.props.positionX;
-    //         }
-    //         if(calWidget.props.positionY) {
-    //             y+=calWidget.props.positionY;
-    //         }
-    //         calWidget = calWidget.parent;
-    //     }
-    //     return {x:x, y:y};
-    // }
+    if(widget&&widget.className !=='root') {
+        let x = 0;
+        let y = 0;
+        //计算当前widget的绝对位置然后算出画框的相对位置
+        let calWidget = widget;
+        while(calWidget&&calWidget.className!=='root') {
+            if(calWidget.props.positionX) {
+                x+=calWidget.props.positionX;
+            }
+            if(calWidget.props.positionY) {
+                y+=calWidget.props.positionY;
+            }
+            calWidget = calWidget.parent;
+        }
+        return {x:x, y:y};
+    }
     return null;
 }
 
@@ -2394,20 +2396,21 @@ export default Reflux.createStore({
 
             if(isAbsolutePosition) {
                 //获取其绝对位置
-                if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
-                    tempCopy.props.positionX = tempCopy.props.absolutePositionX;
-                    delete  tempCopy.props.absolutePositionX;
-                } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
-                    tempCopy.props.positionY = tempCopy.props.absolutePositionY;
-                    delete  tempCopy.props.absolutePositionY;
-                }
-            } else {
-                if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
-                    delete  tempCopy.props.absolutePositionX;
-                } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
-                    delete  tempCopy.props.absolutePositionY;
+                if (tempCopy.props.absolutePositionX || tempCopy.props.absolutePositionX === 0 &&
+                    (tempCopy.props.absolutePositionY || tempCopy.props.absolutePositionY === 0)) {
+                    let xy = getRelativePosition(tempCopy.props.absolutePositionX, tempCopy.props.absolutePositionY, this.currentWidget);
+                    if(xy) {
+                        tempCopy.props.positionX = xy.x;
+                        tempCopy.props.positionY = xy.y;
+                    }
                 }
             }
+            if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
+                delete  tempCopy.props.absolutePositionX;
+            } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
+                delete  tempCopy.props.absolutePositionY;
+            }
+
             loadTree(this.currentWidget, tempCopy);
             if(tempCopy.props.eventTree){
                 this.reorderEventTreeList();
