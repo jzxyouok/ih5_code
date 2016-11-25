@@ -1807,22 +1807,22 @@ function getRelativePosition(x, y, widget) {
 }
 
 function getAbsolutePosition(widget) {
-    if(widget&&widget.className !=='root') {
-        let x = 0;
-        let y = 0;
-        //计算当前widget的绝对位置然后算出画框的相对位置
-        let calWidget = widget;
-        while(calWidget&&calWidget.className!=='root') {
-            if(calWidget.props.positionX) {
-                x+=calWidget.props.positionX;
-            }
-            if(calWidget.props.positionY) {
-                y+=calWidget.props.positionY;
-            }
-            calWidget = calWidget.parent;
-        }
-        return {x:x, y:y};
-    }
+    // if(widget&&widget.className !=='root') {
+    //     let x = 0;
+    //     let y = 0;
+    //     //计算当前widget的绝对位置然后算出画框的相对位置
+    //     let calWidget = widget;
+    //     while(calWidget&&calWidget.className!=='root') {
+    //         if(calWidget.props.positionX) {
+    //             x+=calWidget.props.positionX;
+    //         }
+    //         if(calWidget.props.positionY) {
+    //             y+=calWidget.props.positionY;
+    //         }
+    //         calWidget = calWidget.parent;
+    //     }
+    //     return {x:x, y:y};
+    // }
     return null;
 }
 
@@ -2046,7 +2046,7 @@ export default Reflux.createStore({
             //     }
             // }
 
-            if(widget.props['locked'] === undefined) {
+            if(widget.props&&(widget.props['locked'] === undefined)) {
                 widget.props['locked'] = false;
             }
             //取选激活的事件树

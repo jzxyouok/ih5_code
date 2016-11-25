@@ -67,6 +67,8 @@ class EditBlock extends React.Component {
         this.isEmptyString = this.isEmptyString.bind(this);
         this.hasSameNameInBlockList = this.hasSameNameInBlockList.bind(this);
         this.hasSameNameParams = this.hasSameNameParams.bind(this);
+
+        this.setDefaultName = this.setDefaultName.bind(this);
     }
 
     toggle(){
@@ -92,7 +94,7 @@ class EditBlock extends React.Component {
             let props = [{name: '', objKey:null, detail:null, mappingKey:null}];
             let events = [{name: '', objKey: null, detail: null, mappingKey:null}];
             let funcs = [{name: '', objKey: null, detail: null, mappingKey:null}];
-            let name = '';
+            let name = this.setDefaultName(this.state.blockList);
             if(widget.selectWidget.props) {
                 let block = null;
                 if(widget.selectWidget.props.block) {
@@ -135,10 +137,43 @@ class EditBlock extends React.Component {
 
     onBlockStatusChange(data) {
         if (data&&data.blockList !== undefined) {
+            let name = this.setDefaultName(data.blockList);
             this.setState({
-                blockList: data.blockList
+                blockList: data.blockList,
+                name: name,
             });
         }
+    }
+
+    setDefaultName(blockList) {
+        //设置一个名字，根据获取的name带小模块开头的名字的长度，根据后面如果有数字的最大值+1
+        if(this.state.selectWidget&&this.state.selectWidget.props) {
+            if(this.state.selectWidget.props.block) {
+                return this.state.selectWidget.props.block.name;
+            } else if(this.state.selectWidget.props.backUpBlock) {
+                return this.state.selectWidget.props.backUpBlock.name;
+            }
+        }
+        let name = '小模块';
+        let numberList = [];
+        blockList.forEach((v)=>{
+            if(v.name.substr(0,3) === '小模块'){
+                let remains = v.name.substr(3);
+                if(remains!==''&&!isNaN(remains)) {
+                    numberList.push(parseInt(remains));
+                }
+            }
+        });
+        if(numberList.length === 0) {
+            name = name+1+'';
+        } else {
+            let max = numberList[0];
+            numberList.forEach(v=>{
+                max=Math.max(max, v);
+            });
+            name = name+(max+1)+'';
+        }
+        return name;
     }
 
     getParamList(type) {
