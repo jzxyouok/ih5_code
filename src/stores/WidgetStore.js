@@ -1400,7 +1400,22 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
                 judges.conFlag = 'change';//触发条件
                 judges.needFills = [];
 
+
+                if(judges.className=='input'){
+                     if(item.needFill[0].default=='输入完成'){
+                         judges.conFlag='change';
+                     }
+                     else if(item.needFill[0].default=='内容改变'){
+                         judges.conFlag='input';
+                     }
+                }
+
+
                 item.needFill.map((v, i)=> {
+                    if(judges.className=='input'&& item.needFill.length>1  && i==0){
+                        return;
+                    }
+
                     if (judges.className === 'sock' && v.actionName === 'message') {
                         let valueObj = keyMap[v.default];
                         if (valueObj) {
@@ -1427,7 +1442,7 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
 
 
                         if ((judges.className == 'text' || judges.className == 'input') && (obj.compareFlag == 'isMatch' || obj.compareFlag == 'isUnMatch')) {
-                            obj.compareFlag = obj.compareFlag == 'isMatch' ? '=' : '!=';
+                            obj.compareFlag = obj.compareFlag == 'isMatch' ? '==' : '!=';
                         } else if (judges.className == 'counter' && ( obj.compareFlag == 'valRange')) {
                             obj.compareFlag = v.showName == '最大值' ? '<' : '>';
                         } else if (v.showName == '碰撞对象') {
@@ -1445,24 +1460,9 @@ function saveTree(data, node, saveKey, saveEventObjKeys) {
                         obj.type = v.type;
                         obj.compareObjFlag = v.default;
 
-
-                        if(judges.className == 'input' && v.type=='select'){
-
-                            //第一步,转译触发条件
-                            if(v.default=='输入完成'){
-                                judges.conFlag='change'
-                            }
-                            else  if(v.default=='内容改变'){
-                                judges.conFlag='input'
-                            }
-                            //第二步,判断neddFill.length时候为1,如果是,则要把obj.compareObjFlag设为''
-                            if(item.needFill.length==1){
-                                obj.compareObjFlag=null;
-                            }
+                        if(judges.className=='input'&& item.needFill.length==1  && i==0){
+                            obj.compareObjFlag=null
                         }
-
-
-
 
                         judges.children.push(obj);
                     }
@@ -1819,22 +1819,22 @@ function getRelativePosition(x, y, widget) {
 }
 
 function getAbsolutePosition(widget) {
-    if(widget&&widget.className !=='root') {
-        let x = 0;
-        let y = 0;
-        //计算当前widget的绝对位置然后算出画框的相对位置
-        let calWidget = widget;
-        while(calWidget&&calWidget.className!=='root') {
-            if(calWidget.props.positionX) {
-                x+=calWidget.props.positionX;
-            }
-            if(calWidget.props.positionY) {
-                y+=calWidget.props.positionY;
-            }
-            calWidget = calWidget.parent;
-        }
-        return {x:x, y:y};
-    }
+    // if(widget&&widget.className !=='root') {
+    //     let x = 0;
+    //     let y = 0;
+    //     //计算当前widget的绝对位置然后算出画框的相对位置
+    //     let calWidget = widget;
+    //     while(calWidget&&calWidget.className!=='root') {
+    //         if(calWidget.props.positionX) {
+    //             x+=calWidget.props.positionX;
+    //         }
+    //         if(calWidget.props.positionY) {
+    //             y+=calWidget.props.positionY;
+    //         }
+    //         calWidget = calWidget.parent;
+    //     }
+    //     return {x:x, y:y};
+    // }
     return null;
 }
 
@@ -2058,7 +2058,7 @@ export default Reflux.createStore({
             //     }
             // }
 
-            if(widget.props['locked'] === undefined) {
+            if(widget.props&&(widget.props['locked'] === undefined)) {
                 widget.props['locked'] = false;
             }
             //取选激活的事件树
@@ -2949,6 +2949,8 @@ export default Reflux.createStore({
         else {
             updateSyncTrack();
         }
+
+        console.log(obj,this.currentWidget ); //TODO:永远显示不能注释
 
         let p = {updateProperties: obj};
         if (skipRender) {

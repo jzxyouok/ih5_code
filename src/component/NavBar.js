@@ -998,6 +998,10 @@ class NavBar extends React.Component {
             svgData.shapeHeight = data.shapeHeight;
             //svgData.width = data.width;
             //svgData.height = data.height;
+            svgData.originX = 0.5;
+            svgData.originY = 0.5;
+            svgData.positionX += svgData.shapeWidth*0.5;
+            svgData.positionY += svgData.shapeHeight*0.5;
 
             //console.log(svgData);
             WidgetActions['addWidget']("path", svgData);
