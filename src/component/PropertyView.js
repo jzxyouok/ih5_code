@@ -1228,7 +1228,7 @@ class PropertyView extends React.Component {
                         }
                     }
                     else{
-                        if(item.name == "_editTrack" || item.name == "_createEffect" || item.name != "_playTrack"){
+                        if(item.name == "_editTrack" || item.name == "_createEffect" || item.name == "_playTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
                         else if(item.name == "_saveTrack" && node.props.is_system == 1 ){
