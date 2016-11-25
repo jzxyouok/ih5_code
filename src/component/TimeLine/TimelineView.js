@@ -56,7 +56,7 @@ class TimelineView extends React.Component {
             whichKey : null,
             startKey : 0,
             isInput : false,
-            selectWidget : []
+            timeHidden : false
 		};
 
         this.flag = 0;
@@ -100,15 +100,15 @@ class TimelineView extends React.Component {
     effectChangeFuc(data){
         if(data.toggleMode){
             this.setState({
-                timerNode : null
+                timeHidden : true
             });
-            WidgetActions['selectWidget'](this.state.selectWidget);
+            WidgetActions['selectWidget'](this.state.timerNode);
         }
         if(data.returnStart){
             this.onTimerChange(0);
         }
         if(data.playTrack){
-            //this.onPlayOrPause();
+            this.onPlayOrPause();
         }
     }
 
@@ -127,11 +127,13 @@ class TimelineView extends React.Component {
 		//	});
 		//}
 		if (widget.selectWidget !== undefined) {
+            if(this.state.isPlaying){
+                this.onPause();
+                this.onTimerChange(0);
+            }
+
             const changed = {currentTrack:null};
 			let node = widget.selectWidget;
-            this.setState({
-                selectWidget : widget.selectWidget
-            });
 			if (node) {
                 //console.log(node);
 				node.children.map(item => {
@@ -197,9 +199,13 @@ class TimelineView extends React.Component {
 			}
             if(changed.currentTrack && changed.currentTrack.props && changed.currentTrack.props.trackType == "effect"){
                 this.setState({
-                    timerNode : null
+                    timeHidden : true
                 });
-                return;
+            }
+            else {
+                this.setState({
+                    timeHidden : false
+                });
             }
 			if (node)
 				node = node.timerWidget || changed.currentTrack;
@@ -220,7 +226,7 @@ class TimelineView extends React.Component {
                 if(this.state.nowLayerId !== nowID){
                     this.setState({
                         isChangeKey : false,
-                        nowLayerId : nowID,
+                        nowLayerId : nowID
                     })
                 }
             }
@@ -958,7 +964,7 @@ class TimelineView extends React.Component {
         TimelineViewStyle['bottom'] = this.state.dragTimelineBottom;
         return (
             <div id='TimelineView'
-                 className={ cls({"hidden":!this.state.timerNode||this.props.isHidden })}
+                 className={ cls({"hidden":!this.state.timerNode||this.props.isHidden || this.state.timeHidden })}
                  onMouseUp={ this.timeKeyUp }
                  style={TimelineViewStyle}>
 
