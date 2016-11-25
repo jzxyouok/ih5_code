@@ -678,6 +678,15 @@
 
                         .title:hover .li-icon{ background-position: -400px -400px; }
                         .title:active .li-icon{ background-position: -400px -440px; }
+
+                        .TitleName {
+                            max-width: 80px;
+                            height: 26px;
+                            line-height: 26px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            white-space: nowrap;
+                        }
                     }
                 }
             }
