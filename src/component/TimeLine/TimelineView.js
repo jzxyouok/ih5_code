@@ -140,6 +140,9 @@ class TimelineView extends React.Component {
             if(this.state.isPlaying){
                 this.onPause();
                 this.onTimerChange(0);
+                if(this.state.nowLayerId !== widget.selectWidget.key && widget.selectWidget.props.timerWidget == null){
+                    bridge.showTrack(null);
+                }
             }
 
             const changed = {currentTrack:null};
