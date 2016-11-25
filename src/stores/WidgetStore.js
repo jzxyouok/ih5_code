@@ -1782,24 +1782,48 @@ function dragover(e) {
 }
 
 function getRelativePosition(x, y, widget) {
+    if((x!==null||x!==undefined)&&(y!==null||y!==undefined)) {
+        return null;
+    }
     if(widget&&widget.className !=='root') {
         //计算当前widget的绝对位置然后算出画框的相对位置
         let calWidget = widget;
         let pPositionX = 0;
         let pPositionY = 0;
         while(calWidget&&calWidget.className!=='root') {
-            if(calWidget.node.positionX) {
-                pPositionX+=calWidget.node.positionX;
+            if(calWidget.props.positionX) {
+                pPositionX+=calWidget.props.positionX;
             }
-            if(calWidget.node.positionY) {
-                pPositionY+=calWidget.node.positionY;
+            if(calWidget.props.positionY) {
+                pPositionY+=calWidget.props.positionY;
             }
             calWidget = calWidget.parent;
         }
         x -= pPositionX;
         y -= pPositionY;
+        return {x:x, y:y};
     }
-    return [x, y];
+    return null;
+}
+
+function getAbsolutePosition(widget) {
+    if(widget&&widget.className !=='root') {
+        let x = 0;
+        let y = 0;
+        //计算当前widget的绝对位置然后算出画框的相对位置
+        let calWidget = widget;
+        while(calWidget&&calWidget.className!=='root') {
+            if(calWidget.props.positionX) {
+                x+=calWidget.props.positionX;
+            }
+            if(calWidget.props.positionY) {
+                y+=calWidget.props.positionY;
+            }
+            calWidget = calWidget.parent;
+        }
+        return {x:x, y:y};
+    }
+    return null;
 }
 
 function dealImageFile(clientX, clientY, files, self) {
@@ -1814,6 +1838,10 @@ function dealImageFile(clientX, clientY, files, self) {
 
     if (self.currentWidget && checkChildClass(self.currentWidget, 'image') && !self.currentWidget.props.block) {
         let xy = getRelativePosition(x, y, self.currentWidget);
+        if(xy) {
+            x = xy.x;
+            y = xy.y;
+        }
         for (i = 0; i < files.length; i++) {
             file = files[i];
             if (file.type.match(/image.*/)) {
@@ -1827,7 +1855,7 @@ function dealImageFile(clientX, clientY, files, self) {
                 }
                 let reader = new FileReader();
                 reader.onload = e => {
-                    let props = {name: fileName, originX: 0.5, originY: 0.5, positionX: xy[0], positionY: xy[1]};
+                    let props = {name: fileName, originX: 0.5, originY: 0.5, positionX: x, positionY: y};
                     self.addWidget('image', props, e.target.result);
                 };
                 reader.readAsDataURL(file);
@@ -2308,7 +2336,12 @@ export default Reflux.createStore({
             } else {
                 saveTree(copyObj, this.currentWidget, false, true);
             }
-            //console.log(copyObj);
+            //获取其相对舞台的绝对位置并存入copyObj
+            let xy = getAbsolutePosition(this.currentWidget);
+            if(xy){
+                copyObj.props.absolutePositionX = xy.x;
+                copyObj.props.absolutePositionY = xy.y;
+            }
 
             //复制时间轴轨迹的时候改变轨迹属性
             if(copyObj.children && copyObj.children.length> 0){
@@ -2320,11 +2353,10 @@ export default Reflux.createStore({
             }
             if(copyObj.cls == 'track' && copyObj.props.trackType == "timer"){
                 copyObj.props.trackType = "track";
-            };
-            //console.log(copyObj);
+            }
         }
     },
-    pasteWidget: function() {
+    pasteWidget: function(isAbsolutePosition) {
         if (this.currentWidget) {
             let tempCopy = cpJson(copyObj);
             if (!tempCopy.className&&!tempCopy.cls) {
@@ -2334,6 +2366,23 @@ export default Reflux.createStore({
             if (tempCopy.props['key'] === undefined) {
                 //copy
                 tempCopy.props = this.addWidgetDefaultName(tempCopy.cls, tempCopy.props, false, true);
+            }
+
+            if(isAbsolutePosition) {
+                //获取其绝对位置
+                if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
+                    tempCopy.props.positionX = tempCopy.props.absolutePositionX;
+                    delete  tempCopy.props.absolutePositionX;
+                } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
+                    tempCopy.props.positionY = tempCopy.props.absolutePositionY;
+                    delete  tempCopy.props.absolutePositionY;
+                }
+            } else {
+                if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
+                    delete  tempCopy.props.absolutePositionX;
+                } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
+                    delete  tempCopy.props.absolutePositionY;
+                }
             }
             loadTree(this.currentWidget, tempCopy);
             if(tempCopy.props.eventTree){
@@ -3706,7 +3755,7 @@ export default Reflux.createStore({
         }
         this.updateHistoryRecord(historyName);
     },
-    pasteTreeNode: function () {
+    pasteTreeNode: function (isAbsolutePosition) {
        switch (copyObj.className) {
            case nodeType.func:
                this.pasteFunction();
@@ -3718,7 +3767,7 @@ export default Reflux.createStore({
                //DBITEM DO NOTHING
                break;
            default:
-               this.pasteWidget();
+               this.pasteWidget(isAbsolutePosition);
                break;
        }
     },
