@@ -197,16 +197,19 @@ class TimelineView extends React.Component {
                     }
                 }
 			}
-            if(changed.currentTrack && changed.currentTrack.props && changed.currentTrack.props.trackType == "effect"){
-                this.setState({
-                    timeHidden : true
-                });
+            if(changed.currentTrack && changed.currentTrack.props){
+                if(changed.currentTrack.props.trackType == "effect"){
+                    this.setState({
+                        timeHidden : true
+                    });
+                }
+                else {
+                    this.setState({
+                        timeHidden : false
+                    });
+                }
             }
-            else {
-                this.setState({
-                    timeHidden : false
-                });
-            }
+
 			if (node)
 				node = node.timerWidget || changed.currentTrack;
 			if (node !== this.state.timerNode) {

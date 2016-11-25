@@ -2016,7 +2016,6 @@ export default Reflux.createStore({
                 this.selectFadeWidget(null, nodeType.dbItem);
             }
         }
-
         //是否触发（不为false就触发）
         if(shouldTrigger!=false) {
             if (isMulti) {
@@ -2308,6 +2307,19 @@ export default Reflux.createStore({
             if (!tempCopy.className&&!tempCopy.cls) {
                 return;
             }
+
+            //复制轨迹到时间轴的时候改变轨迹属性
+            if(copyObj.children && copyObj.children.length> 0){
+                copyObj.children.map((v,i)=>{
+                    if(v.cls == 'track' && v.props.trackType != "timer" && v.timerWidget !== null){
+                        v.props.trackType = "timer";
+                    }
+                });
+            }
+            if(copyObj.cls == 'track' && copyObj.props.trackType != "timer" && v.timerWidget !== null){
+                copyObj.props.trackType = "timer";
+            };
+
             // 重命名要黏贴的widget
             if (tempCopy.props['key'] === undefined) {
                 //copy
@@ -2674,17 +2686,23 @@ export default Reflux.createStore({
                 console.log(1,obj);
 
                 //把时间轴轨迹从时间轴里面拖拽出来的时候改变轨迹属性，或则只是拖拽轨迹
-                if(obj.timerWidget == null){
+                let timeFuc = (timerType)=>{
                     if(obj.className == "track"){
-                        obj.props.trackType = "track";
+                        obj.props.trackType = timerType;
                     }
                     else {
                         obj.children.map((v,i)=>{
-                            if(v.className == 'track'){
-                                v.props.trackType = "track";
+                            if(v.className == "track"){
+                                v.props.trackType = timerType;
                             }
                         })
                     }
+                };
+                if(obj.timerWidget == null){
+                    timeFuc("track");
+                }
+                else {
+                    timeFuc("timer");
                 }
 
                 var destIndex = dest.children.indexOf(obj);
