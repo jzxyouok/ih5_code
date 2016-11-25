@@ -3,7 +3,7 @@ import bridge from 'bridge';
 import {propertyMap, propertyType, backwardTransOptions, forwardTransOptions,
     effectOption, effectOptionsToJudge, easingMoveOptions, widgetFlags} from '../map';
 
-var FLAG_MASK = widgetFlags.Display | widgetFlags.Container | widgetFlags.Page;
+var FLAG_MASK = widgetFlags.Display | widgetFlags.Container | widgetFlags.Page | widgetFlags.Root;
 
 let modeType = {
     flex: 'flex',
@@ -833,15 +833,18 @@ let checkNotInDomMode = (selected, className) => {
     if(propertyMap[className]){
         var type = bridge.getRendererType(selectWidget.node);
         var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
-        var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        var map = bridge.getMap(selectWidget.node, propertyMap[className], 1);
+        var requires = null;
+        if(!map) {
+            return true;
+        } else {
+            requires = map.requires;
+        }
         if (className == 'world') {
             return !(selectWidget.className == 'canvas');
         }
         if (className == 'container') {
             return !provides & widgetFlags.Container;
-        }
-        if (requires & widgetFlags.Root) {
-            return !provides & widgetFlags.Root;
         }
         if ((type == 4 && ((requires & widgetFlags.Canvas) == 0))|| (type == 1 && ((requires & widgetFlags.Flex) == 0))) {
             return true;
@@ -864,15 +867,18 @@ let checkNotInCanvasMode = (selected, className) => {
     if(propertyMap[className]){
         var type = bridge.getRendererType(selectWidget.node);
         var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
-        var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        var map = bridge.getMap(selectWidget.node, propertyMap[className], 1);
+        var requires = null;
+        if(!map) {
+            return true;
+        } else {
+            requires = map.requires;
+        }
         if (className == 'world') {
             return !(selectWidget.className == 'canvas');
         }
         if (className == 'container') {
             return !provides & widgetFlags.Container;
-        }
-        if (requires & widgetFlags.Root) {
-            return !provides & widgetFlags.Root;
         }
         if ((type == 2 && ((requires & widgetFlags.Dom) == 0)) || (type == 1 && ((requires & widgetFlags.Flex) == 0))) {
             return true;
@@ -895,15 +901,18 @@ let checkNotInFlexMode = (selected, className) => {
     if(propertyMap[className]){
         var type = bridge.getRendererType(selectWidget.node);
         var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
-        var requires = bridge.getMap(selectWidget.node, propertyMap[className]).requires;
+        var map = bridge.getMap(selectWidget.node, propertyMap[className], 1);
+        var requires = null;
+        if(!map) {
+            return true;
+        } else {
+            requires = map.requires;
+        }
         if (className == 'world') {
             return !(selectWidget.className == 'canvas');
         }
         if (className == 'container') {
             return !provides & widgetFlags.Container;
-        }
-        if (requires & widgetFlags.Root) {
-            return !provides & widgetFlags.Root;
         }
         if ((type == 2 && ((requires & widgetFlags.Dom) == 0)) || (type == 4 && ((requires & widgetFlags.Canvas) == 0))) {
             return true;
@@ -963,13 +972,17 @@ let checkChildClass = (selected, className) => {
         return false;
     }
 
-    var type = bridge.getRendererType(selected.node);
+    // var type = bridge.getRendererType(selected.node);
     var provides = bridge.getMap(selected.node, propertyMap[selected.className]).provides;
-    if(propertyMap[className]){
-        var requires = bridge.getMap(selected.node, propertyMap[className]).requires;
-    } else {
+    if(!propertyMap[className]){
         return false;
     }
+    var m2 = bridge.getMap(selected.node, propertyMap[className], 1);
+    if (!m2) {
+        return false;
+    }
+
+    var requires = m2.requires;
 
     if (className == 'world')
         return (selected.className == 'canvas');
@@ -977,19 +990,7 @@ let checkChildClass = (selected, className) => {
     if (className == 'container')
         return (provides & widgetFlags.Container);
 
-    if (requires & widgetFlags.Root)
-        return (provides & widgetFlags.Root);
-
     if ((~(provides & FLAG_MASK) & (requires & FLAG_MASK)) != 0)
-        return false;
-
-    if (type == 1 && ((requires & widgetFlags.Flex) == 0))
-        return false;
-
-    if (type == 2 && ((requires & widgetFlags.Dom) == 0))
-        return false;
-
-    if (type == 4 && ((requires & widgetFlags.Canvas) == 0))
         return false;
 
     if ((requires & widgetFlags.Unique) != 0) {
