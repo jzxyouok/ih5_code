@@ -834,12 +834,11 @@ let checkNotInDomMode = (selected, className) => {
         var type = bridge.getRendererType(selectWidget.node);
         var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
         var map = bridge.getMap(selectWidget.node, propertyMap[className], 1);
-        var requires = null;
         if(!map) {
             return true;
-        } else {
-            requires = map.requires;
         }
+        var requires = map.requires;
+
         if (className == 'world') {
             return !(selectWidget.className == 'canvas');
         }
@@ -868,12 +867,11 @@ let checkNotInCanvasMode = (selected, className) => {
         var type = bridge.getRendererType(selectWidget.node);
         var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
         var map = bridge.getMap(selectWidget.node, propertyMap[className], 1);
-        var requires = null;
         if(!map) {
             return true;
-        } else {
-            requires = map.requires;
         }
+        var requires = map.requires;
+
         if (className == 'world') {
             return !(selectWidget.className == 'canvas');
         }
@@ -902,12 +900,11 @@ let checkNotInFlexMode = (selected, className) => {
         var type = bridge.getRendererType(selectWidget.node);
         var provides = bridge.getMap(selectWidget.node, propertyMap[selectWidget.className]).provides;
         var map = bridge.getMap(selectWidget.node, propertyMap[className], 1);
-        var requires = null;
         if(!map) {
             return true;
-        } else {
-            requires = map.requires;
         }
+        var requires = map.requires;
+
         if (className == 'world') {
             return !(selectWidget.className == 'canvas');
         }
