@@ -184,7 +184,7 @@ class ObjectView extends React.Component {
 
     onDrawRect(className,param) {
         this.drawRect = new DrawRect();
-        this.drawRect.start();
+        this.drawRect.start(this.state.currentNode);
         this.drawRect.def.promise().then(data => {
             if(param) {
                 param.positionX = data.positionX;

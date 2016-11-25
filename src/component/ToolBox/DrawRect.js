@@ -11,6 +11,7 @@ export default class DrawRect {
         this.flag = false;
         this.result = {};
         this.def = $.Deferred();
+        this.widget = null;
 
         this.designerView = document.getElementById('iH5-App');
 
@@ -29,7 +30,10 @@ export default class DrawRect {
         this.addDrawRect = this.addDrawRect.bind(this);
     }
 
-    start() {
+    start(widget) {
+        if(widget) {
+            this.widget = widget;
+        }
         this.addDrawRectOverlay();
         this.addDrawRectEventListener();
     }
@@ -96,6 +100,24 @@ export default class DrawRect {
             positionX: parseInt(this.rectLeft) - canvasRect.left,
             positionY: parseInt(this.rectTop) - canvasRect.top
         };
+        if(this.widget&&this.widget.className !=='root') {
+            //计算当前widget的绝对位置然后算出画框的相对位置
+            let calWidget = this.widget;
+            let pPositionX = 0;
+            let pPositionY = 0;
+            while(calWidget&&calWidget.className!=='root') {
+                if(calWidget.node.positionX) {
+                    pPositionX+=calWidget.node.positionX;
+                }
+                if(calWidget.node.positionY) {
+                    pPositionY+=calWidget.node.positionY;
+                }
+                calWidget = calWidget.parent;
+            }
+            result.positionX -= pPositionX;
+            result.positionY -= pPositionY;
+            this.widget = null;
+        }
         this.result = result;
         if(this.flag) {
             this.def.resolve(this.result);

@@ -93,7 +93,7 @@ class ToolBoxButton extends Component {
         this.timeout = setTimeout(function() {
             self.didLongPress = true;
             self.onRightClick();
-        }, 1000);
+        }, 200);
     }
 
     onMouseUp(e) {
@@ -216,7 +216,7 @@ class ToolBoxButton extends Component {
 
     onDrawRect() {
         this.drawRect = new DrawRect();
-        this.drawRect.start();
+        this.drawRect.start(this.state.selectWidget);
         this.drawRect.def.promise().then(data => {
             if(this.props.param) {
                 this.props.param.positionX = data.positionX;

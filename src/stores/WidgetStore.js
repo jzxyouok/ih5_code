@@ -1781,6 +1781,27 @@ function dragover(e) {
   e.preventDefault();
 }
 
+function getRelativePosition(x, y, widget) {
+    if(widget&&widget.className !=='root') {
+        //计算当前widget的绝对位置然后算出画框的相对位置
+        let calWidget = widget;
+        let pPositionX = 0;
+        let pPositionY = 0;
+        while(calWidget&&calWidget.className!=='root') {
+            if(calWidget.node.positionX) {
+                pPositionX+=calWidget.node.positionX;
+            }
+            if(calWidget.node.positionY) {
+                pPositionY+=calWidget.node.positionY;
+            }
+            calWidget = calWidget.parent;
+        }
+        x -= pPositionX;
+        y -= pPositionY;
+    }
+    return [x, y];
+}
+
 function dealImageFile(clientX, clientY, files, self) {
     var i;
     var file;
@@ -1792,6 +1813,7 @@ function dealImageFile(clientX, clientY, files, self) {
     let y = clientY-top+document.body.scrollTop;
 
     if (self.currentWidget && checkChildClass(self.currentWidget, 'image') && !self.currentWidget.props.block) {
+        let xy = getRelativePosition(x, y, self.currentWidget);
         for (i = 0; i < files.length; i++) {
             file = files[i];
             if (file.type.match(/image.*/)) {
@@ -1805,7 +1827,7 @@ function dealImageFile(clientX, clientY, files, self) {
                 }
                 let reader = new FileReader();
                 reader.onload = e => {
-                    let props = {name: fileName, originX: 0.5, originY: 0.5, positionX: x, positionY: y};
+                    let props = {name: fileName, originX: 0.5, originY: 0.5, positionX: xy[0], positionY: xy[1]};
                     self.addWidget('image', props, e.target.result);
                 };
                 reader.readAsDataURL(file);
