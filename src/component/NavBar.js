@@ -979,7 +979,7 @@ class NavBar extends React.Component {
 
         new DrawRect().cleanUp();
         this.drawRect = new DrawRect();
-        this.drawRect.start();
+        this.drawRect.start(this.state.selectWidget);
         let svgData = {
             positionX : undefined,
             positionY : undefined,
