@@ -2050,7 +2050,7 @@ const propertyMap = {
                 { name: 'totalTime', type: 1, default: 10 },
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
-                { name: 'vertical', type: 4, default: false },
+                { name: 'swipeType', type: 4, default: false },
                 { name: 'sliderScale', type: 1, default: 1 } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
@@ -2093,7 +2093,7 @@ const propertyMap = {
                     { name: 'clipped', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 },
-                    { name: 'vertical', type: 4, default: false },
+                    { name: 'swipeType', type: 4, default: false },
                     { name: 'sliderScale', type: 1, default: 1 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
@@ -2134,7 +2134,7 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 },
-                    { name: 'vertical', type: 4, default: false },
+                    { name: 'swipeType', type: 4, default: false },
                     { name: 'sliderScale', type: 1, default: 1 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },

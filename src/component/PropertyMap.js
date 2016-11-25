@@ -62,7 +62,6 @@ let propMapping = {
     'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
     'bgLink': {name:'bgLink', showName:'背景图片', type: propertyType.Button2,ButtonName:'上传图片', default:'',group:'display',order:2},
 
-    'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools'},
 
     'fontSize': {name:'fontSize', showName:'字体大小', type: propertyType.Number,group:'tools', default: 26},
     'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体'},
@@ -76,7 +75,7 @@ let propMapping = {
 
     'link': {name:'link', showName:'资源', type: propertyType.Integer, default:0},
 
-    'delay': {name:'delay', showName:'时间间隔', type: propertyType.Number, default: 0.2},
+
 
     'font': {name:'font', showName:'字体',type: propertyType.Select, default:'上传字体',group:'tools'},
     'size': {name:'size', showName:'文字大小',type: propertyType.Integer, default:26,group:'tools'},
@@ -88,13 +87,15 @@ let propMapping = {
 
     'radius': {name:'radius', showName:'圆角',  type: propertyType.Integer, default: 0,  group:'tools'},
 
-    'vertical': {name:'vertical', showName:'滑动方向', type: propertyType.Select,group:'tools', default: '3',options:{'无':'0','左':'1','右':'2','上':'3','下':'4'}},
+
     'sliderScale': {name:'sliderScale', showName:'滑动比例',type: propertyType.Number,group:'tools', default: 1},
 
-    'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 0,order:1},
+    'totalTime': {name:'totalTime', showName:'总时长', type: propertyType.Number, group:'tools',default: 10,order:1},
     'startTime': {name:'startTime',showName:'开始时间', type: propertyType.Number,group:'tools', default: 0,order:3},
     'endTime': {name:'endTime', showName:'结束时间',type: propertyType.Number,group:'tools', default: 0,order:4},
-    'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false},
+    'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, group:'tools', default: false,order:5},
+    'initVisible': {name:'initVisible', showName:'初始可见', type: propertyType.Boolean2, default: 1, group:'tools',order:6},
+    'delay': {name:'delay', showName:'时间间隔', type: propertyType.Number,group:'tools', default: 0.2,order:7},
     'loop': {name:'loop', showName:'循环播放', type: propertyType.Boolean, group:'tools', default: false},
 
     'src': {name:'src', type: propertyType.String, default:''},
@@ -336,7 +337,8 @@ let specialCaseElementMapping = (className, type)=> {
                 'width': {name:'width', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
                 'height': {name:'height', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},}
         };
-    } else if (isInCLList(className, ['input'])) {
+    }
+    else if (isInCLList(className, ['input'])) {
         return {
             props: {
                 'value': {name:'value', showName:'内容', type: propertyType.String, default: ''},
@@ -378,7 +380,7 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['track'])) {
         return {
             props: {
-                'type': {name:'type', showName:'轨迹类型', type: propertyType.Select, default:'0',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
+                'type': {name:'type', showName:'轨迹类型', type: propertyType.Select, default:'1',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
                 '_createEffect': {name:'_createEffect', showName:'生成动效',styleName:'create-btn',olderClassName:"create-btn",
                     type: propertyType.Button,default:'',group:'buttonArea'},
 
@@ -415,9 +417,37 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['slidetimer', 'pagecontainer'])){
       return {
           props: {
-              'originPos': {name:'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '左上', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',order:5},
+              'originPos': {
+                  name: 'originPos',
+                  showName: '中心点',
+                  type: propertyType.Dropdown,
+                  imgClassName: 'originPos',
+                  default: '左上',
+                  options: {
+                      '上': [0.5, 0],
+                      '下': [0.5, 1],
+                      '左': [0, 0.5],
+                      '右': [1, 0.5],
+                      '中心': [0.5, 0.5],
+                      '左上': [0, 0],
+                      '左下': [0, 1],
+                      '右上': [1, 0],
+                      '右下': [1, 1]
+                  },
+                  group: 'position',
+                  order: 5
+              },
+              'swipeType': {
+                  name: 'swipeType',
+                  showName: '滑动方向',
+                  type: propertyType.Select,
+                  group: 'tools',
+                  default: '3',
+                  options: {'无': '0', '左': '1', '右': '2', '上': '3', '下': '4'}
+              }
+
           }
-      } ;
+      };
     } else {
         return {};
     }
@@ -533,7 +563,7 @@ let modifyPropList = (list, className, type) => {
                 v.type = propertyType.Hidden;
             }
         }
-
+    //所谓优化,都是杂的量累积上去后,再回头来处理.妄想开始就设计好代码的结构,最终都是徒劳.to dear friend,你可以优化啦.
       if(['flex','canvas','dom','pagecontainer'].indexOf(className)>=0){
             if(scaleXTag && widthTag) {
                 if (v.name == 'width' || v.name == 'height') {
@@ -568,7 +598,7 @@ let modifyPropList = (list, className, type) => {
             }
         }
         if(['timer'].indexOf(className) >= 0) {
-            if (['scaleX', 'scaleY','backgroundColor','clipped'].indexOf(v.name) >= 0) {
+            if (['scaleX', 'scaleY','backgroundColor','clipped','bgLink'].indexOf(v.name) >= 0) {
                 v.type = propertyType.Hidden;
             }
         }
@@ -588,12 +618,12 @@ let modifyPropList = (list, className, type) => {
         }
     });
     //部分属性面板才有中心点
-    if (originXTag && originYTag && ['timer','container', 'canvas', 'flex', 'world'].indexOf(className) < 0) {
+    if (originXTag && originYTag && ['timer','container', 'canvas', 'flex', 'world','slidetimer','pagecontainer'].indexOf(className) < 0) {
         aLack.push('originPos');
     }
 
-    if(className=='track'){
-        aLack.push('_createEffect','_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
+    if(className=='track') {
+        aLack.push('_createEffect', '_editTrack', '_saveTrack', '_saveAsTrack', '_cancelTrack');
     }
 
 

@@ -584,8 +584,14 @@ class Event extends React.Component {
         return (<Menu className='dropDownMenu' onClick={this.onMenuClick.bind(this, flag, null, null)}>
             {
                 targetArr.map((v, i)=> {
+                    let classStyle='';
+                    if(v.showName=='向下滑动'){
+                        classStyle='input_line';
+                    }
                     return <MenuItem key={i} index={i} object={v.showName ? v.showName : v}
-                                     keyVal={v.showName ? v.key : null}>{v.showName ? v.showName : v}</MenuItem>;
+                                     keyVal={v.showName ? v.key : null}
+                                     className={classStyle}
+                    >{v.showName ? v.showName : v}</MenuItem>;
                 })
             }
         </Menu>)

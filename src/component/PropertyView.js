@@ -155,9 +155,6 @@ class PropertyView extends React.Component {
                             dom.jscolor.onFineChange = defaultProp.onChange;
                             dom.jscolor.closeText='jsColorCloseBtn';
                         }
-
-
-
                     }
                 }}  {...defaultData}   /> ;
 
@@ -498,7 +495,7 @@ class PropertyView extends React.Component {
                         node.props.headerFontFamily = this.getFontDefault(value);
                         v = value;
                     }
-                    else if(prop.name=='vertical') {
+                    else if(prop.name=='swipeType') {
                         node.props[prop.name+'Key'] = value;
                        v =parseInt(value);
                     }
@@ -640,6 +637,7 @@ class PropertyView extends React.Component {
                             v=value.target.value;
                         }
                     }
+                    console.log(2,v);
                     break;
                 case  propertyType.Button2:
                     if(prop.name == 'bgLink'){
@@ -753,9 +751,7 @@ class PropertyView extends React.Component {
             else {
                 let obj={};
                 obj[prop.name] = v;
-
                 this.onStatusChange({updateProperties: obj, changeNode:node});
-
                 WidgetActions['updateProperties'](obj, false, true, undefined, node);
 
             }
@@ -1118,6 +1114,9 @@ class PropertyView extends React.Component {
         }
         else if (item.type == propertyType.Color || item.type == propertyType.Color2 || item.type === propertyType.TbColor) {
             defaultValue = node.props[item.name];
+            if( node.props[item.name+'Key'] !==undefined){
+                defaultValue = node.props[item.name+'Key'];
+            }
             if (node.props[item.name + '_originColor']) {  //舞台颜色隐藏后保存的颜色
                 defaultValue = node.props[item.name + '_originColor'];
             }
@@ -1148,7 +1147,7 @@ class PropertyView extends React.Component {
                 defaultValue = node.props[item.name + '_val'];
             }  else if (item.name == 'headerFontFamily' && node.props.headerFontFamily) {
                 defaultValue = node.props.headerFontFamily;
-            } else if (item.name == 'vertical' && node.props[item.name+'Key']) {
+            } else if (item.name == 'swipeType' && node.props[item.name+'Key']) {
                 defaultValue = node.props[item.name+'Key'];
             } else if (item.name == 'chooseColumn') {
                 defaultValue = this.state.tbWhichColumn == 0 ? '全部' : '第 ' + this.state.tbWhichColumn + ' 列';
@@ -1464,7 +1463,8 @@ class PropertyView extends React.Component {
         let groupName = item.group || 'basic';
         if (groups[groupName] === undefined) groups[groupName] = [];
 
-        /******** 设置布局结构和图标 *************/
+        /******** 设置布局结构和图标*************/
+            //todo:dear friend, 有些杂乱,有空优化下吧
         let hasTwin; //左右结构显示
         let hasOne=false;  //独占一栏结构显示,用于兼容旋转度属性独占一栏的样式
         let isBody= className == "body"?true:false;  //对body对象定制样式
@@ -1491,7 +1491,7 @@ class PropertyView extends React.Component {
         else if (className === 'twoDArr') {
             hasTwin = ['行', '列'].indexOf(item.showName) >= 0;
         }
-        else if (className == "timer"||className == "track") {
+        else if (['timer','track','slidetimer','pagecontainer'].indexOf(className)>=0) {
             hasTwin = ['X', 'Y', 'W', 'H', 'shapeW', 'shapeH', 'scaleX', 'scaleY', '原始宽', '原始高', '自动播放', '循环播放'].indexOf(item.showName) >= 0;
             hasOne = item.name == 'rotation'?true:false;
         }
@@ -1622,13 +1622,7 @@ class PropertyView extends React.Component {
 
     onStatusChange(widget) {
 
-
-        //处理颜色板在点击舞台对象和右边树对象后不消失的bug
-        // if(widget.selectWidget||widget.updateProperties){
-        //
-        //     alert($($('span:contains("jsColorCloseBtn")')[0]).parent().parent().html());
-        //
-        // }
+        //console.log(widget);
 
         if(widget.fontListObj){
             this.fontList =  widget.fontListObj.fontList;
@@ -1642,7 +1636,16 @@ class PropertyView extends React.Component {
             }
         }
 
+        if(widget.selectWidget||(widget.updateProperties && widget.updateProperties.positionX !==undefined && widget.updateProperties.positionY !==undefined )){
 
+            let jsColorArr=document.getElementsByClassName('jscolor-active');
+            if(jsColorArr){
+                for(let i=0;i<jsColorArr.length;i++){
+                    jsColorArr[i].jscolor.hide();
+                }
+            }
+
+        }
 
         if(widget.imageTextSizeObj){
             this.textSizeObj = widget.imageTextSizeObj;
@@ -1768,6 +1771,9 @@ class PropertyView extends React.Component {
         })
     }
     componentDidMount() {
+
+
+
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         this.effectChange = EffectStore.listen(this.effectChangeFuc.bind(this));
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
