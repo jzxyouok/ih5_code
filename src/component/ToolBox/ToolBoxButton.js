@@ -93,7 +93,7 @@ class ToolBoxButton extends Component {
         this.timeout = setTimeout(function() {
             self.didLongPress = true;
             self.onRightClick();
-        }, 1000);
+        }, 200);
     }
 
     onMouseUp(e) {
