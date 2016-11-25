@@ -474,7 +474,6 @@ class PropertyView extends React.Component {
                     }
                     break;
                 case propertyType.Select:
-
                     if(['type'].indexOf(prop.name)>=0 && node.className=='track'){
                         node.props[prop.name+'Key'] = value;
                         v = parseInt(value);
@@ -753,7 +752,6 @@ class PropertyView extends React.Component {
                 obj[prop.name] = v;
                 this.onStatusChange({updateProperties: obj, changeNode:node});
                 WidgetActions['updateProperties'](obj, false, true, undefined, node);
-
             }
         }
 
@@ -1134,6 +1132,7 @@ class PropertyView extends React.Component {
         }
         else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
             defaultValue = item.default;
+
             //当originY时才会激活,而不是originPos
             if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems','type'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];

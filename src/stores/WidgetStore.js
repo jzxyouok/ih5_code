@@ -2949,7 +2949,6 @@ export default Reflux.createStore({
         else {
             updateSyncTrack();
         }
-        //console.log(obj,this.currentWidget );
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -2961,6 +2960,14 @@ export default Reflux.createStore({
             bridge.updateSelector(tempWidget.node);
         }
         this.trigger(p);
+
+        //改变轨迹类型更新舞台轨迹
+        if(tempWidget.className == "track"){
+            if(obj.type == 0 || obj.type){
+                this.selectWidget(tempWidget.parent);
+                this.selectWidget(tempWidget);
+            }
+        }
 
         if(isHistoryRecord && special == undefined){
             historyName = "更改属性" + tempWidget.node.name;
