@@ -58,7 +58,7 @@ let propMapping = {
     'originPos': {name:'originPos', showName:'中心点',type: propertyType.Dropdown,imgClassName:'originPos',default: '中心', options:{'上':[0.5,0],'下':[0.5,1],'左':[0,0.5],'右':[1,0.5],'中心':[0.5,0.5],'左上':[0,0],'左下':[0,1],'右上':[1,0],'右下':[1,1]}, group:'position',order:5},
     'rotation': {name:'rotation', showName:'旋转度', type: propertyType.Integer,imgClassName:'rotation', default: 0, group:'position',order:6},
     'alpha': {name:'alpha', showName:'不透明度', type: propertyType.Percentage, default: 1, group:'display',order:1 },
-    'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '', group:'tools',order:2},
+    'backgroundColor': {name:'backgroundColor', showName:'背景颜色', type: propertyType.Color2, default: '无', group:'tools',order:2},
     'bgColor': {name:'bgColor', showName:'背景颜色', type: propertyType.Color, default: ''},
     'bgLink': {name:'bgLink', showName:'背景图片', type: propertyType.Button2,ButtonName:'上传图片', default:'',group:'display',order:2},
 
@@ -341,12 +341,20 @@ let specialCaseElementMapping = (className, type)=> {
     else if (isInCLList(className, ['input'])) {
         return {
             props: {
-                'value': {name:'value', showName:'内容', type: propertyType.String, default: ''},
-                'width': {name:'width', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
-                'height': {name:'height', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
-                'shapeWidth': {name:'shapeWidth', type: propertyType.Hidden, default: 0, group:'position'},
-                'shapeHeight': {name:'shapeHeight', type: propertyType.Hidden, default: 0, group:'position'},
-                'color': {name:'color', showName:'背景颜色', type: propertyType.Color, default:'#FFFFFF'}},
+                'value': {name: 'value', showName: '内容', type: propertyType.String, default: ''},
+                'width': {name: 'width', type: propertyType.Hidden, default: 0, group: 'position', readOnly: true},
+                'height': {name: 'height', type: propertyType.Hidden, default: 0, group: 'position', readOnly: true},
+                'shapeWidth': {name: 'shapeWidth', type: propertyType.Hidden, default: 0, group: 'position'},
+                'shapeHeight': {name: 'shapeHeight', type: propertyType.Hidden, default: 0, group: 'position'},
+                'backgroundColor': {
+                    name: 'backgroundColor',
+                    showName: '背景颜色',
+                    type: propertyType.Color2,
+                    default: '#FFFFFF',
+                    group: 'tools',
+                    order: 2
+                },
+            },
             events: {
                 'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'文本',type:'string',default:''}]},
                 'isUnMatch': {name:'isUnMatch', showName:'不匹配', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'文本',type:'string',default:''}]},

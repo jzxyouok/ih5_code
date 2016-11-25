@@ -133,6 +133,7 @@ class PropertyView extends React.Component {
                     <Input ref={(inputDom) => {
                         if (inputDom) {
                             var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                            dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF';
                             if (!dom.jscolor) {
                                 dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                 dom.jscolor.onFineChange = defaultProp.onChange;
@@ -146,15 +147,32 @@ class PropertyView extends React.Component {
                 if(defaultProp.tbCome){
                     delete defaultData.tbCome;
                 }
+                node =this.selectNode;
                 return  <Input ref={(inputDom) => {
+                    //这个属性很奇怪,显示值要在这内部设定
                     if (inputDom) {
                         var dom = ReactDOM.findDOMNode(inputDom).firstChild;
-                        dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'white';
+                        //文字设定
+                         console.log(node,defaultData,'node');
+
+                         dom.value = node.props.backgroundColor===undefined
+                             ?defaultData.placeholder
+                             :(node.props.backgroundColor=='transparent')?'无':node.props.backgroundColor;
+
+                        //背景设定
+                        if(node.props.backgroundColor=='transparent') {
+                            dom.style.backgroundColor='transparent';
+                            dom.style.color='#858585';
+                        }else{
+                            dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'transparent';
+                        }
+
                         if (!dom.jscolor) {
                             dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                             dom.jscolor.onFineChange = defaultProp.onChange;
                             dom.jscolor.closeText='jsColorCloseBtn';
                         }
+
                     }
                 }}  {...defaultData}   /> ;
 
@@ -203,6 +221,7 @@ class PropertyView extends React.Component {
                             ref={(inputDom) => {
                                 if (inputDom) {
                                     var dom = ReactDOM.findDOMNode(inputDom).firstChild;
+                                    dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF';
                                     if (!dom.jscolor) {
                                         dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                         dom.jscolor.onFineChange = defaultProp.onChange;
@@ -645,16 +664,12 @@ class PropertyView extends React.Component {
                             value=null;
                             node.props[prop.name+'Key']='上传图片';
                             let obj={
-                                bgLink:null
+                                bgLink:null,
+                                backgroundColor:node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF'
                             }
                             this.onStatusChange({updateProperties: obj});
                             WidgetActions['updateProperties'](obj, false, true);
 
-                            let obj2={
-                                backgroundColor:node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF'
-                            }
-                            this.onStatusChange({updateProperties: obj2});
-                            WidgetActions['updateProperties'](obj2, false, true);
                             bTag = false;
                         }
                         else {
@@ -681,11 +696,6 @@ class PropertyView extends React.Component {
                                         thisObj.onStatusChange({updateProperties: obj});
                                         WidgetActions['updateProperties'](obj, false, true);
 
-                                        let obj2={
-                                            backgroundColor:node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF'
-                                        }
-                                        thisObj.onStatusChange({updateProperties: obj2});
-                                        WidgetActions['updateProperties'](obj2, false, true);
                                     };
                                     reader.readAsDataURL(w.files[0]);
                                 }

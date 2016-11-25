@@ -1794,8 +1794,9 @@ function dragover(e) {
   e.preventDefault();
 }
 
+//x,y相对于widget在舞台的位置
 function getRelativePosition(x, y, widget) {
-    if((x!==null||x!==undefined)&&(y!==null||y!==undefined)) {
+    if((x===null||x===undefined)||(y===null||y===undefined)) {
         return null;
     }
     if(widget&&widget.className !=='root') {
@@ -1816,26 +1817,27 @@ function getRelativePosition(x, y, widget) {
         y -= pPositionY;
         return {x:x, y:y};
     }
-    return null;
+    return {x:x, y:y};
 }
 
+//widget相对于舞台的位置
 function getAbsolutePosition(widget) {
-    // if(widget&&widget.className !=='root') {
-    //     let x = 0;
-    //     let y = 0;
-    //     //计算当前widget的绝对位置然后算出画框的相对位置
-    //     let calWidget = widget;
-    //     while(calWidget&&calWidget.className!=='root') {
-    //         if(calWidget.props.positionX) {
-    //             x+=calWidget.props.positionX;
-    //         }
-    //         if(calWidget.props.positionY) {
-    //             y+=calWidget.props.positionY;
-    //         }
-    //         calWidget = calWidget.parent;
-    //     }
-    //     return {x:x, y:y};
-    // }
+    if(widget&&widget.className !=='root') {
+        let x = 0;
+        let y = 0;
+        //计算当前widget的绝对位置然后算出画框的相对位置
+        let calWidget = widget;
+        while(calWidget&&calWidget.className!=='root') {
+            if(calWidget.props.positionX) {
+                x+=calWidget.props.positionX;
+            }
+            if(calWidget.props.positionY) {
+                y+=calWidget.props.positionY;
+            }
+            calWidget = calWidget.parent;
+        }
+        return {x:x, y:y};
+    }
     return null;
 }
 
@@ -2369,7 +2371,7 @@ export default Reflux.createStore({
             }
         }
     },
-    pasteWidget: function(isAbsolutePosition) {
+    pasteWidget: function(isRelativePosition) {
         if (this.currentWidget) {
             let tempCopy = cpJson(copyObj);
             if (!tempCopy.className&&!tempCopy.cls) {
@@ -2394,22 +2396,23 @@ export default Reflux.createStore({
                 tempCopy.props = this.addWidgetDefaultName(tempCopy.cls, tempCopy.props, false, true);
             }
 
-            if(isAbsolutePosition) {
-                //获取其绝对位置
-                if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
-                    tempCopy.props.positionX = tempCopy.props.absolutePositionX;
-                    delete  tempCopy.props.absolutePositionX;
-                } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
-                    tempCopy.props.positionY = tempCopy.props.absolutePositionY;
-                    delete  tempCopy.props.absolutePositionY;
-                }
-            } else {
-                if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
-                    delete  tempCopy.props.absolutePositionX;
-                } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
-                    delete  tempCopy.props.absolutePositionY;
+            if(!isRelativePosition) {
+                //获取其绝对位置并转为相对位置
+                if (tempCopy.props.absolutePositionX || tempCopy.props.absolutePositionX === 0 &&
+                    (tempCopy.props.absolutePositionY || tempCopy.props.absolutePositionY === 0)) {
+                    let xy = getRelativePosition(tempCopy.props.absolutePositionX, tempCopy.props.absolutePositionY, this.currentWidget);
+                    if(xy) {
+                        tempCopy.props.positionX = xy.x;
+                        tempCopy.props.positionY = xy.y;
+                    }
                 }
             }
+            if(tempCopy.props.absolutePositionX||tempCopy.props.absolutePositionX===0) {
+                delete  tempCopy.props.absolutePositionX;
+            } else if(tempCopy.props.absolutePositionY||tempCopy.props.absolutePositionY===0) {
+                delete  tempCopy.props.absolutePositionY;
+            }
+
             loadTree(this.currentWidget, tempCopy);
             if(tempCopy.props.eventTree){
                 this.reorderEventTreeList();
@@ -2764,11 +2767,19 @@ export default Reflux.createStore({
                 bridge.removeWidget(src.node);
                 src.parent.children.splice(src.parent.children.indexOf(src), 1);
 
+                //相对舞台的绝对位置
+                let xy = getAbsolutePosition(src);
+                if(xy) {
+                    let rXy = getRelativePosition(xy.x, xy.y, dest);
+                    if(rXy) {
+                        saved.props.positionX = rXy.x;
+                        saved.props.positionY = rXy.y;
+                    }
+                }
                 //获取名字
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
-                console.log(1,obj);
 
                 //把时间轴轨迹从时间轴里面拖拽出来的时候改变轨迹属性，或则只是拖拽轨迹
                 let timeFuc = (timerType)=>{
@@ -2922,6 +2933,7 @@ export default Reflux.createStore({
              skipRender = false;
              skipProperty = false;
          }
+
         //处理backgroundColor,如果为null,则变为transparent
         // if(obj.backgroundColor ===null){
         //     obj.backgroundColor='transparent';
@@ -2952,7 +2964,20 @@ export default Reflux.createStore({
             updateSyncTrack();
         }
 
+
+        if(obj.backgroundColor ===null || obj.backgroundColor==='无'){
+            let color='transparent';
+            obj.backgroundColor=color;
+            tempWidget.node.backgroundColor=color;
+            tempWidget.props.backgroundColor=color;
+            tempWidget.props.backgroundColorKey='无';
+            skipRender = false;
+            skipProperty = false;
+        }
+
+
         console.log(obj,this.currentWidget ); //TODO:永远显示不能注释
+
 
         let p = {updateProperties: obj};
         if (skipRender) {
@@ -3551,7 +3576,7 @@ export default Reflux.createStore({
             copyObj = {
                 'name': this.currentFunction.name,
                 'value': this.currentFunction.value,
-                'className': this.currentFunction.className,
+                'cls': this.currentFunction.className,
                 'params': this.currentFunction.params,
                 'props': {
                     'name': this.currentFunction.props.name,
@@ -3672,7 +3697,7 @@ export default Reflux.createStore({
             copyObj = {
                 'name': this.currentVariable.name,
                 'value': this.currentVariable.value,
-                'className': this.currentVariable.className,
+                'cls': this.currentVariable.className,
                 'type': this.currentVariable.type,
                 'props': {
                     'name': this.currentVariable.props.name,
@@ -3804,8 +3829,11 @@ export default Reflux.createStore({
         }
         this.updateHistoryRecord(historyName);
     },
-    pasteTreeNode: function (isAbsolutePosition) {
-       switch (copyObj.className) {
+    pasteTreeNode: function (isRelativePosition) {
+       if(!checkChildClass(this.currentWidget, copyObj.cls)||this.currentWidget.props.block) {
+            return;
+       }
+       switch (copyObj.cls) {
            case nodeType.func:
                this.pasteFunction();
                break;
@@ -3816,7 +3844,7 @@ export default Reflux.createStore({
                //DBITEM DO NOTHING
                break;
            default:
-               this.pasteWidget(isAbsolutePosition);
+               this.pasteWidget(isRelativePosition);
                break;
        }
     },

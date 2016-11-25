@@ -354,7 +354,7 @@ class DesignView extends React.Component {
                     <div id='canvas-dom'
                          className="DesignView"
                          ref='view'
-                         style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')' }}>
+                         style={{ 'transform' : 'scale('+  this.props.stageZoom / 100 +')','backgroundColor':'#FFFFFF' }}>
                       <div className='h_ruler_wraper'><ul  id='h_ruler'></ul></div>
                       <ul id='v_ruler'></ul>
                     </div>
