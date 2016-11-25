@@ -2769,7 +2769,6 @@ export default Reflux.createStore({
                 // this.currentWidget = dest;
                 // let props = this.addWidgetDefaultName(src.className, src.props, false, true);
                 var obj = loadTree(dest, saved);
-                console.log(1,obj);
 
                 //把时间轴轨迹从时间轴里面拖拽出来的时候改变轨迹属性，或则只是拖拽轨迹
                 let timeFuc = (timerType)=>{
@@ -3553,7 +3552,7 @@ export default Reflux.createStore({
             copyObj = {
                 'name': this.currentFunction.name,
                 'value': this.currentFunction.value,
-                'className': this.currentFunction.className,
+                'cls': this.currentFunction.className,
                 'params': this.currentFunction.params,
                 'props': {
                     'name': this.currentFunction.props.name,
@@ -3674,7 +3673,7 @@ export default Reflux.createStore({
             copyObj = {
                 'name': this.currentVariable.name,
                 'value': this.currentVariable.value,
-                'className': this.currentVariable.className,
+                'cls': this.currentVariable.className,
                 'type': this.currentVariable.type,
                 'props': {
                     'name': this.currentVariable.props.name,
@@ -3807,7 +3806,10 @@ export default Reflux.createStore({
         this.updateHistoryRecord(historyName);
     },
     pasteTreeNode: function (isRelativePosition) {
-       switch (copyObj.className) {
+       if(!checkChildClass(this.currentWidget, copyObj.cls)||this.currentWidget.props.block) {
+            return;
+       }
+       switch (copyObj.cls) {
            case nodeType.func:
                this.pasteFunction();
                break;
