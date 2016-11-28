@@ -2,7 +2,6 @@ import Reflux from 'reflux';
 import Actions from '../actions/effectAction';
 import WidgetActions from '../actions/WidgetActions';
 import Cookies  from 'js-cookie';
-import $ from 'jquery'
 
 //let domainName = "http://test-beta.ih5.cn/editor3b/";
 let ContentType = "application/json";
@@ -128,4 +127,3 @@ export default Reflux.createStore({
         this.trigger({changeTrackType : bool});
     }
 });
-

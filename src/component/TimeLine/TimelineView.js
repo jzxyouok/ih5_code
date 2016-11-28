@@ -1,7 +1,6 @@
 import React from 'react';
 import cls from 'classnames';
 import bridge from 'bridge';
-import $ from 'jquery';
 
 import { Slider, Row, Col, Card, Button } from 'antd';
 import WidgetStore from '../../stores/WidgetStore';
@@ -623,18 +622,17 @@ class TimelineView extends React.Component {
             let self = this;
             let initialmarginLeft = self.state.marginLeft;
             let movableDistance = self.state.movableDistance;
-            $(".overall-zoom .overall span").mousedown(function(e){
+            document.querySelector(".overall-zoom .overall span").addEventListener('mousedown', function documentMousedown(e){
                 move=true;
                 _x=e.pageX;
                 initialmarginLeft = self.state.marginLeft;
                 movableDistance = self.state.movableDistance;
-
-                $(document).bind('mousemove',(function(e){
+								const documentMousemove = function documentMousemove(e){
                     if(move && self.state.percentage !== null){
                         let x =  e.pageX - _x;
                         let value = initialmarginLeft + x;
                         let result;
-                        if(value<0){
+                        if(value < 0){
                             result = 0;
                         }
                         else {
@@ -646,18 +644,20 @@ class TimelineView extends React.Component {
                             , isScroll : true
                         });
                     }
-                }));
-                $(document).bind('mouseup',(function(){
+                };
+								document.addEventListener('mousemove', documentMousemove);
+
+		            document.addEventListener('mouseup',function documentMouseup(){
                     move=false;
                     initialmarginLeft = self.state.marginLeft >= movableDistance
                         ? movableDistance : self.state.marginLeft;
                     self.setState({
                         isScroll : false
                     },()=>{
-                        $(document).unbind('mousemove');
-                        $(document).unbind('mouseup');
+											document.removeEventListener('mousemove', documentMousemove);
+			                document.removeEventListener('mouseup', documentMouseup);
                     });
-                }));
+                });
             });
         }
     }
@@ -787,11 +787,10 @@ class TimelineView extends React.Component {
         let left = this.state.dragZoomLeft;
         let p = 0;
         let a = this.state.multiple;
-        $(".overall-zoom .zoom-slider .btn").mousedown(function(e){
+        document.querySelector(".overall-zoom .zoom-slider .btn").addEventListener('mousedown', function btnMousedown(e){
             move=true;
             _x=e.pageX;
-
-            $(document).bind('mousemove',(function(e){
+						const documentMousemove = function documentMousemove(e){
                 if(move){
                     let x =  e.pageX - _x;
                     p = left + x;
@@ -815,14 +814,16 @@ class TimelineView extends React.Component {
                         self.changeAllWidth(false,null,false);
                     })
                 }
-            }));
-            $(document).bind('mouseup',(function(){
+            };
+						document.addEventListener('mousemove', documentMousemove);
+
+						document.addEventListener('mouseup',function documentMouseup(){
                 move=false;
                 left = self.state.dragZoomLeft;
                 self.changeAllWidth(false,null,true);
-                $(document).unbind('mousemove');
-                $(document).unbind('mouseup');
-            }));
+								document.removeEventListener('mousemove', documentMousemove);
+								document.removeEventListener('mouseup', documentMouseup);
+            });
         });
     }
 
@@ -836,15 +837,14 @@ class TimelineView extends React.Component {
         let right = 281;
         let bottom = 0;
 
-        $(".dragTimeline").mousedown(function(e){
+        document.querySelector(".dragTimeline").addEventListener('mousedown', function timelineMousedown(e) {
             move=true;
             _x= e.pageX;
             _y= e.pageY;
             left = self.state.dragTimelineLeft;
             right = self.state.dragTimelineRight;
             bottom = self.state.dragTimelineBottom;
-
-            $(document).bind('mousemove',(function(e){
+						const documentMousemove = function documentMousemove(e) {
                 if(move){
                     let x = e.pageX - _x;
                     let y = e.pageY - _y;
@@ -854,8 +854,9 @@ class TimelineView extends React.Component {
                         dragTimelineBottom : bottom - y <=0 ? 0 :bottom - y
                     })
                 }
-            }));
-            $(document).bind('mouseup',(function(){
+            };
+						document.addEventListener('mousemove', documentMousemove);
+            document.addEventListener('mouseup',function documentMouseup(){
                 move=false;
                 let isLeft = self.state.dragTimelineLeft<=87;
                 let isBootom = self.state.dragTimelineBottom <= 50;
@@ -879,11 +880,11 @@ class TimelineView extends React.Component {
                         leftAddRight : left + right
                     },()=>{
                         self.changeAllWidth(false,null,true);
-                        $(document).unbind('mousemove');
-                        $(document).unbind('mouseup');
+												document.removeEventListener('mousemove', documentMousemove);
+				                document.removeEventListener('mouseup', documentMouseup);
                     })
                 }
-            }));
+            });
         });
     }
 

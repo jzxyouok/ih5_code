@@ -1,7 +1,6 @@
 'use strict';
 import React from 'react';
 import $class from 'classnames';
-import $ from 'jquery';
 
 import WidgetActions from '../actions/WidgetActions';
 import WidgetStore from '../stores/WidgetStore';
@@ -257,25 +256,29 @@ class  TbCome extends React.Component {
     chickOtherClose(){
         let self = this;
         let fuc = function(e){
-            let _con1 = $('.item-dropDown');   // 设置目标区域
-            let _con2 = $('.dropDown-layer');
+            let _con1 = document.querySelector('.item-dropDown');// 设置目标区域
+            let _con2 = document.querySelector('.dropDown-layer');
+            // let _con1 = $('.item-dropDown');   // 设置目标区域
+            // let _con2 = $('.dropDown-layer');
             if(
-                (!_con1.is(e.target) && _con1.has(e.target).length === 0)
-                &&(!_con2.is(e.target) && _con2.has(e.target).length === 0)
+                (_con1 !== e.target && _con1 && !_con1.contains(e.target))
+                &&(_con2 !== e.target && _con2 && !_con2.contains(e.target))
+                // (!_con1.is(e.target) && _con1.has(e.target).length === 0)
+                // &&(!_con2.is(e.target) && _con2.has(e.target).length === 0)
             ){
                 self.setState({
                     whichHeader : -1,
                     dbChoose : false
                 },()=>{
-                    $(document).off('mouseup', fuc);
+                    document.removeEventListener('mouseup', fuc);
                 })
             }
         };
         if(this.state.dropDownState !== 0){
-            $(document).on('mouseup', fuc);
+            document.addEventListener('mouseup', fuc);
         }
         else {
-            $(document).off('mouseup', fuc);
+            document.removeEventListener('mouseup', fuc);
         }
     }
 
@@ -317,7 +320,7 @@ class  TbCome extends React.Component {
     }
 
     inputFocus(i){
-        $('.iDropDown-input' + i).select();
+        document.querySelector('.iDropDown-input' + i).select();
     }
 
     inputBlur(i){
@@ -353,7 +356,7 @@ class  TbCome extends React.Component {
 
     updateScroll(){
         let widthShow = 439;
-        let getWidth = parseFloat($(".TbCome .item-layer .item-main").css('width'));
+        let getWidth = document.querySelector(".TbCome .item-layer .item-main").getBoundingClientRect().width;
         let width = getWidth > widthShow ? getWidth : widthShow;
         let moveLength = width - widthShow;
         let multiple = width / widthShow;
@@ -379,12 +382,11 @@ class  TbCome extends React.Component {
         let left = this.state.marginLeft;
         let moveLength;
 
-        $(".TbCome .scroll span").mousedown(function(e){
+        document.querySelector(".TbCome .scroll span").addEventListener('mousedown', function documentMousedown(e) {
             move=true;
             _x=e.pageX;
             moveLength = self.state.moveLength / self.state.multiple;
-
-            $(document).bind('mousemove',(function(e){
+            const documentMousemove = function documentMousemove(e) {
                 if(move && moveLength !== 0){
                     let x =  e.pageX - _x;
                     let value = left + x;
@@ -399,14 +401,15 @@ class  TbCome extends React.Component {
                         marginLeft : value
                     });
                 }
-            }));
+            };
+            document.addEventListener('mousemove', documentMousemove);
 
-            $(document).bind('mouseup',(function(){
+            document.addEventListener('mouseup',function documentMouseup() {
                 move=false;
                 left = self.state.marginLeft;
-                $(document).unbind('mousemove');
-                $(document).unbind('mouseup');
-            }));
+                document.removeEventListener('mousemove', documentMousemove);
+                document.removeEventListener('mouseup', documentMouseup);
+            });
         });
     }
 
@@ -600,4 +603,3 @@ class  TbCome extends React.Component {
 }
 
 module.exports = TbCome;
-

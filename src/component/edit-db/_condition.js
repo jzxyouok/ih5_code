@@ -1,7 +1,6 @@
 //限制条件
 import React from 'react';
 import $class from 'classnames';
-import $ from 'jquery';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
@@ -25,6 +24,7 @@ class Condition extends React.Component {
         this.unsubscribe = WidgetStore.listen(this.onStatusChange.bind(this));
         this.onStatusChange(WidgetStore.getStore());
         DbHeaderStores.listen(this.DbHeaderData.bind(this));
+
     }
 
     componentWillUnmount() {
@@ -70,8 +70,8 @@ class Condition extends React.Component {
                    this.setState({
                        dbNameError : "（该名称已被占用）"
                    });
-                   $(".dbname").focus();
-                   $(".dbname").select();
+                   document.querySelector(".dbname").focus();
+                   document.querySelector(".dbname").select();
                }
                 return bool;
             });
@@ -232,6 +232,3 @@ class Condition extends React.Component {
 }
 
 module.exports = Condition;
-
-
-

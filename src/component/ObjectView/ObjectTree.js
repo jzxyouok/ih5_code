@@ -1,7 +1,6 @@
 //对象树
 import React from 'react';
 import $class from 'classnames';
-import $ from 'jquery';
 
 
 import ComponentPanel from '../ComponentPanel';
@@ -1250,7 +1249,7 @@ class ObjectTree extends React.Component {
                     if(!(srcParentKey === destKey && srcOrder === 0)) {
                         if(checkChildClass(destWidget, this.selectDragData.className)) {
                             WidgetActions['moveWidget'](this.selectDragData, destWidget, 0);
-                        } 
+                        }
                     }
                 }
             } else if((srcKey == destKey && srcParentKey === destParentKey)) {

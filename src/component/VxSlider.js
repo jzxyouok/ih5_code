@@ -6,7 +6,6 @@ import Track from 'rc-slider/src/Track';
 import Steps from 'rc-slider/src/Steps';
 import Marks from 'rc-slider/src/Marks';
 import cls from 'classnames';
-import $ from 'jquery';
 
 import WidgetStore from '../stores/WidgetStore';
 import WidgetActions from '../actions/WidgetActions';
@@ -416,7 +415,7 @@ class VxRcSlider extends RcSlider {
         let dragLocusLeft = null;
         let left = 0;
 
-        $(".drag-locus-"+ self.props.myID + " .drag-left" ).mousedown(function(e){
+        document.querySelector(".drag-locus-"+ self.props.myID + " .drag-left" ).addEventListener('mousedown', function leftBtnMousedown(e){
             move=true;
             _x=e.pageX;
             //self.selectTrack();
@@ -434,8 +433,7 @@ class VxRcSlider extends RcSlider {
             }
             left = dragLocusLeft;
             self.setState({dragLeft:dragLocusLeft});
-
-            $(document).bind('mousemove',(function(e){
+            const documentMousemove = function documentMousemove(e) {
                 if(move){
                     let x =  e.pageX - _x;
                     let value = left + x;
@@ -455,8 +453,9 @@ class VxRcSlider extends RcSlider {
                     });
                     //console.log(left + x);
                 }
-            }));
-            $(document).bind('mouseup',(function(){
+            };
+            document.addEventListener('mousemove', documentMousemove);
+            document.addEventListener('mouseup',function documentMouseup(){
                 move=false;
                 left = self.state.dragLeft;
 
@@ -472,10 +471,10 @@ class VxRcSlider extends RcSlider {
                     WidgetActions['updateProperties']({startTime:startTime}, false, false);
                     self.props.refTrack.props['startTime'] = startTime;
                     self.props.refTrack.node['startTime'] = startTime;
-                    $(document).unbind('mousemove');
-                    $(document).unbind('mouseup');
+                    document.removeEventListener('mousemove', documentMousemove);
+    								document.removeEventListener('mouseup', documentMouseup);
                 }
-            }));
+            });
         });
     }
 
@@ -486,7 +485,7 @@ class VxRcSlider extends RcSlider {
         let dragLocusRight = null;
         let right = 0;
 
-        $(".drag-locus-"+ self.props.myID + " .drag-right" ).mousedown(function(e){
+        document.querySelector(".drag-locus-"+ self.props.myID + " .drag-right" ).addEventListener('mousedown', function rightBtnMousedown(e) {
             move=true;
             _x=e.pageX;
             let endTime = self.props.refTrack.node.endTime;
@@ -504,8 +503,7 @@ class VxRcSlider extends RcSlider {
             right = dragLocusRight;
             //console.log(self.props.totalTime, endTime,dragLocusRight);
             self.setState({dragRight:dragLocusRight});
-
-            $(document).bind('mousemove',(function(e){
+            const documentMousemove = function documentMousemove(e) {
                 if(move){
                     let x =  -(e.pageX - _x);
                     let value = right + x;
@@ -527,8 +525,9 @@ class VxRcSlider extends RcSlider {
                     });
                     //console.log(right + x);
                 }
-            }));
-            $(document).bind('mouseup',(function(){
+            };
+            document.addEventListener('mousemove', documentMousemove);
+            document.addEventListener('mouseup',function documentMouseup(){
                 move=false;
                 right = self.state.dragRight;
 
@@ -545,10 +544,10 @@ class VxRcSlider extends RcSlider {
                     self.props.refTrack.props['endTime'] = endTime;
                     self.props.refTrack.node['endTime'] = endTime;
                     WidgetActions['updateProperties']({endTime:endTime}, false, false);
-                    $(document).unbind('mousemove');
-                    $(document).unbind('mouseup');
+                    document.removeEventListener('mousemove', documentMousemove);
+                    document.removeEventListener('mouseup', documentMouseup);
                 }
-            }));
+            });
         });
     }
 

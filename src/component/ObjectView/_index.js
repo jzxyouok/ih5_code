@@ -2,7 +2,6 @@
 
 import React from 'react';
 import $class from 'classnames';
-import $ from 'jquery';
 
 //import Outline from './Outline';
 //import ParamsPanel from './ParamsPanel';
@@ -266,23 +265,24 @@ class ObjectView extends React.Component {
         let _x;
         let self = this;
         let initialWidth = 280;
-        $(".drag-left").mousedown(function(e){
+        document.querySelector(".drag-left").addEventListener('mousedown', function mousedownFn(e){
             move=true;
             _x=e.pageX;
-            $(document).bind('mousemove',(function(e){
+            const documentMousemove = function documentMousemove(e){
                 if(move){
                     let x = -( e.pageX - _x);
                     self.setState({
                         width : initialWidth + x
                     });
                 }
-            }));
-            $(document).bind('mouseup',(function(){
+            };
+            document.addEventListener('mousemove', documentMousemove);
+            document.addEventListener('mouseup',function documentMouseup(){
                 move=false;
                 initialWidth = self.state.width <=280 ? 280 : self.state.width;
-                $(document).unbind('mousemove');
-                $(document).unbind('mouseup');
-            }));
+                document.removeEventListener('mousemove', documentMousemove);
+                document.removeEventListener('mouseup', documentMouseup);
+            });
         });
     }
 
