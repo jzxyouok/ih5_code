@@ -9,7 +9,7 @@ import WidgetActions from '../../actions/WidgetActions'
 import ComponentPanel from '../ComponentPanel';
 import DbHeaderStores from '../../stores/DbHeader';
 
-import $ from 'jquery';
+import {getSize} from '../../utils/getSize'
 import {imgServer} from '../../api/BaseApi';
 
 const objListType = {
@@ -327,10 +327,15 @@ class EventBox extends React.Component {
 
     setTitleMaxWidth (v,i) {
         let name = v.tree.props.name+'事件';
-        let sensor = $('<span style="font-size: 14px;">'+ name +'</span>').css({display: 'none'});
-        $('body').append(sensor);
-        let width = sensor.width();
-        sensor.remove();
+        let sensor = document.createElement('span');
+        sensor.innerText = name;
+        sensor.style.display = 'none';
+        sensor.style.fontSize = '14px';
+        document.body.appendChild(sensor);
+        let width = getSize(sensor).width+2;
+        if(sensor&&sensor.parentElement) {
+            sensor.parentElement.removeChild(sensor);
+        }
         if(i!==0) {
             this.totalWidth += width+25;
         } else {
