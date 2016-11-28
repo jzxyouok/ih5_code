@@ -37,6 +37,7 @@ class PropertyView extends React.Component {
             isSliderChange : false,
             dbList: [],
             AllDbList : [],
+            effectList : []
         };
         this.moudleMove=null;
         this.selectNode = null;
@@ -153,7 +154,7 @@ class PropertyView extends React.Component {
                     if (inputDom) {
                         var dom = ReactDOM.findDOMNode(inputDom).firstChild;
                         //文字设定
-                         console.log(node,defaultData,'node');
+                        // console.log(node,defaultData,'node');
 
                          dom.value = node.props.backgroundColor===undefined
                              ?defaultData.placeholder
@@ -575,6 +576,22 @@ class PropertyView extends React.Component {
                         node.props[prop.name+'Key']=value;
                         v = value;
                     }
+                    else if(prop.name == '_effectType'){
+                        //let obj = {};
+                        let name;
+                        if(value == 0){
+                            name = "track";
+                        }
+                        else {
+                            this.state.effectList.map((v,i)=>{
+                                if(i == value-1){
+                                    name = v.name;
+                                }
+                            })
+                        }
+                        EffectAction['loadEffect'](true,name);
+                        bTag = false;
+                    }
                     else {
                         v = parseInt(value);
                     }
@@ -655,7 +672,7 @@ class PropertyView extends React.Component {
                             v=value.target.value;
                         }
                     }
-                    console.log(2,v);
+                    //console.log(2,v);
                     break;
                 case  propertyType.Button2:
                     if(prop.name == 'bgLink'){
@@ -1148,7 +1165,6 @@ class PropertyView extends React.Component {
         }
         else if (item.type == propertyType.Select || item.type == propertyType.TbSelect) {
             defaultValue = item.default;
-
             //当originY时才会激活,而不是originPos
             if (['font', 'scaleStage',  'swipeType', 'alignSelf', 'flex', 'flexDirection', 'justifyContent', 'alignItems','type'].indexOf(item.name) >= 0 && node.props[item.name + 'Key']) {
                 defaultValue = node.props[item.name + 'Key'];
@@ -1378,6 +1394,21 @@ class PropertyView extends React.Component {
                     defaultProp.options.push(<Option key={item.options[i]} className={selectClassName}>{i}</Option>);
                 }
             }
+            else if(item.name == '_effectType'){
+                defaultProp.options.push(<Option key={0} >自定义</Option>);
+                if(this.state.effectList.length > 0){
+                   this.state.effectList.map((v,i)=>{
+                       defaultProp.options.push(<Option key={ i+1 }>{v.name}</Option>);
+                   })
+                }
+                if(node.props.effectCome == undefined || node.props.effectCome == "track"){
+                    defaultProp.value = "自定义";
+                }
+                else {
+                    defaultProp.value = node.props.effectCome + " ";
+                }
+                //console.log(defaultProp.value);
+            }
 
             if (defaultProp.options.length == 0) {
                 //优化:设置了value的值
@@ -1574,6 +1605,10 @@ class PropertyView extends React.Component {
             else {
                 style['width'] = "100%";
             }
+        }
+        else if(className == "track" && node.timerWidget != undefined && item.name == "_effectType"){
+            style['margin'] = "0";
+            style['display'] = "none";
         }
 
         groups[groupName].push(
@@ -1819,6 +1854,11 @@ class PropertyView extends React.Component {
     }
 
     effectChangeFuc(data){
+        if(data.effectList){
+            this.setState({
+                effectList : data.effectList
+            })
+        }
         if(data.createEffect){
             this.selectNode.props.trackType = "effect";
             this.selectNode.node.trackType = "effect";
