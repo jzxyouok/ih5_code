@@ -991,7 +991,7 @@ class NavBar extends React.Component {
             path : svgPath
         };
 
-        this.drawRect.def.promise().then(data => {
+        this.drawRect.def.promise.then(data => {
             svgData.positionX = data.positionX;
             svgData.positionY = data.positionY;
             svgData.shapeWidth = data.shapeWidth;

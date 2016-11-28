@@ -2949,17 +2949,6 @@ export default Reflux.createStore({
              skipProperty = false;
          }
 
-        //处理backgroundColor,如果为null,则变为transparent
-        // if(obj.backgroundColor ===null){
-        //     obj.backgroundColor='transparent';
-        //     tempWidget.node.backgroundColor='transparent';
-        //     tempWidget.props.backgroundColor='transparent';
-        //     tempWidget.props.backgroundColorKey='无';
-        // }
-
-
-
-
         //当轨迹处于时间轴外面的时候,并且处于动态模式,移动位置，所有关键点也移动位置
         let updateSyncTrack = ()=>{
             if(tempWidget.timerWidget == null){
@@ -2979,20 +2968,24 @@ export default Reflux.createStore({
             updateSyncTrack();
         }
 
-
-        if(obj.backgroundColor ===null || obj.backgroundColor==='无'){
-            let color='transparent';
-            obj.backgroundColor=color;
-            tempWidget.node.backgroundColor=color;
-            tempWidget.props.backgroundColor=color;
-            tempWidget.props.backgroundColorKey='无';
-            skipRender = false;
-            skipProperty = false;
+        //对color的处理
+        let colorName = ['bgColor', 'backgroundColor','fontFill','fillColor','lineColor',
+            'headerFontFill','altColor','color','head'];
+        for(var key in obj){
+            if(colorName.indexOf(key)>=0) {
+                if(obj[key]===''||obj[key]==='无') {
+                    let color='transparent';
+                    obj[key]=color;
+                    tempWidget.node[key]=color;
+                    tempWidget.props[key]=color;
+                    tempWidget.props[key+'Key']='无';
+                    skipRender = false;
+                    skipProperty = false;
+                }
+            }
         }
 
-
-        //console.log(obj,this.currentWidget );
-
+        // console.log(obj,this.currentWidget);
 
         let p = {updateProperties: obj};
         if (skipRender) {

@@ -73,12 +73,29 @@ class PropertyView extends React.Component {
         this.sliderUp = this.sliderUp.bind(this);
         this.sliderChange = this.sliderChange.bind(this);
         this.effectToggleTrack = this.effectToggleTrack.bind(this);
+
+        this.setUpDefaultInputBackground = this.setUpDefaultInputBackground.bind(this);
+    }
+
+    setUpDefaultInputBackground(dom, defaultData, item, node){
+        //文字设定
+        dom.value = node.props[item.name]===undefined
+            ?defaultData.placeholder
+            :(node.props[item.name]=='transparent')?'无':node.props[item.name];
+        //背景设定
+        if(node.props[item.name]=='transparent') {
+            dom.style.backgroundColor='transparent';
+            dom.style.color='#858585';
+        } else {
+            dom.style.backgroundColor = node.props[item.name] ? node.props[item.name] : 'transparent';
+            dom.style.color= node.props[item.name] ? 'black' : '#858585';
+        }
     }
 
     //获取封装的form组件
     getInputBox(type,defaultProp,item,cNode) {
         let node = this.selectNode;
-        if(cNode) {
+        if(cNode&&node.props.block) {
             node = cNode;
         }
         let style = {};
@@ -134,7 +151,7 @@ class PropertyView extends React.Component {
                     <Input ref={(inputDom) => {
                         if (inputDom) {
                             var dom = ReactDOM.findDOMNode(inputDom).firstChild;
-                            dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF';
+                            this.setUpDefaultInputBackground(dom, defaultData, item, node);
                             if (!dom.jscolor) {
                                 dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                 dom.jscolor.onFineChange = defaultProp.onChange;
@@ -148,26 +165,11 @@ class PropertyView extends React.Component {
                 if(defaultProp.tbCome){
                     delete defaultData.tbCome;
                 }
-                node =this.selectNode;
                 return  <Input ref={(inputDom) => {
                     //这个属性很奇怪,显示值要在这内部设定
                     if (inputDom) {
                         var dom = ReactDOM.findDOMNode(inputDom).firstChild;
-                        //文字设定
-                        // console.log(node,defaultData,'node');
-
-                         dom.value = node.props.backgroundColor===undefined
-                             ?defaultData.placeholder
-                             :(node.props.backgroundColor=='transparent')?'无':node.props.backgroundColor;
-
-                        //背景设定
-                        if(node.props.backgroundColor=='transparent') {
-                            dom.style.backgroundColor='transparent';
-                            dom.style.color='#858585';
-                        }else{
-                            dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'transparent';
-                        }
-
+                        this.setUpDefaultInputBackground(dom, defaultData, item, node);
                         if (!dom.jscolor) {
                             dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                             dom.jscolor.onFineChange = defaultProp.onChange;
@@ -222,7 +224,7 @@ class PropertyView extends React.Component {
                             ref={(inputDom) => {
                                 if (inputDom) {
                                     var dom = ReactDOM.findDOMNode(inputDom).firstChild;
-                                    dom.style.backgroundColor=node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF';
+                                    this.setUpDefaultInputBackground(dom, defaultData, item, node);
                                     if (!dom.jscolor) {
                                         dom.jscolor = new window.jscolor(dom, {hash:true, required:false});
                                         dom.jscolor.onFineChange = defaultProp.onChange;
@@ -291,7 +293,7 @@ class PropertyView extends React.Component {
     onChangeProp(prop, cNode, value) {
         let v;
         let node = this.selectNode;
-        if(cNode) {
+        if(cNode&&node.props.block) {
             node = cNode;
         }
         //let
@@ -660,17 +662,19 @@ class PropertyView extends React.Component {
                         if(value){
                             colorStr =node.props[prop.name+'_originColor'];
                             node.props[prop.name+'_originColor']=null;
-                        }else{
+                        } else {
                             colorStr='transparent';
                             node.props[prop.name+'_originColor'] = node.props[prop.name];
                         }
                         v=colorStr;
+                        node.props[prop.name+'Key'] = colorStr;
                     }else{
                         if(node.props[prop.name+'_originColor']){
-                            node.props[prop.name+'_originColor']=value.target.value
-                        }else{
+                            node.props[prop.name+'_originColor']=value.target.value;
+                        } else {
                             v=value.target.value;
                         }
+                        node.props[prop.name+'Key'] = value.target.value;
                     }
                     //console.log(2,v);
                     break;
@@ -1493,7 +1497,7 @@ class PropertyView extends React.Component {
         }
 
         //小模块处理
-        if(cNode) {
+        if(cNode&&node.props.block) {
             //对不同mapping属性属性的处理
             node = cNode;
         }
