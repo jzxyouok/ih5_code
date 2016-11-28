@@ -105,10 +105,20 @@ class TimelineView extends React.Component {
             WidgetActions['selectWidget'](this.state.timerNode);
         }
         if(data.returnStart){
-            this.onTimerChange(0);
+            if(this.state.currentTime !== 0){
+                this.onTimerChange(0);
+            }
         }
         if(data.playTrack){
-            this.onPlayOrPause();
+            if(this.state.currentTime !== 0){
+                this.onTimerChange(0);
+            }
+            this.onPlay();
+        }
+        if(data.changeTrackType !== undefined){
+            if(!data.changeTrackType){
+                bridge.showTrack(null);
+            }
         }
     }
 
@@ -130,6 +140,9 @@ class TimelineView extends React.Component {
             if(this.state.isPlaying){
                 this.onPause();
                 this.onTimerChange(0);
+                if(this.state.nowLayerId !== widget.selectWidget.key && widget.selectWidget.props.timerWidget == null){
+                    bridge.showTrack(null);
+                }
             }
 
             const changed = {currentTrack:null};
@@ -199,6 +212,7 @@ class TimelineView extends React.Component {
 			}
             if(changed.currentTrack && changed.currentTrack.props){
                 if(changed.currentTrack.props.trackType == "effect"){
+                    bridge.showTrack(null);
                     this.setState({
                         timeHidden : true
                     });
@@ -230,7 +244,7 @@ class TimelineView extends React.Component {
                     this.setState({
                         isChangeKey : false,
                         nowLayerId : nowID
-                    })
+                    });
                 }
             }
 		}
@@ -279,7 +293,7 @@ class TimelineView extends React.Component {
 
 	onTimer(p) {
 		this.setState({currentTime:p});
-		WidgetActions['syncTrack']();
+		//WidgetActions['syncTrack']();
         if(this.state.isPlaying && p === this.state.timerNode.node['totalTime'] ){
             this.onPause(true);
             this.setState({

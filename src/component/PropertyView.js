@@ -1237,6 +1237,7 @@ class PropertyView extends React.Component {
                         }
                     }
                     else if(node.props.trackType == "effect"){
+                        EffectAction['changeTrackType'](false);
                         if(item.name != "_editTrack" && item.name != "_playTrack"){
                             item.styleName = item.olderClassName + " hidden";
                         }
@@ -1832,6 +1833,8 @@ class PropertyView extends React.Component {
             WidgetActions['updateProperties'](obj, false, true);
             EffectAction['toggleMode']("effect");
             this.setState({fields: this.getFields()});
+
+            EffectAction['changeTrackType'](false);
         }
         if(data.updateEffect){
             this.selectNode.props.trackType = "effect";
@@ -1841,6 +1844,8 @@ class PropertyView extends React.Component {
             WidgetActions['updateProperties'](obj, false, true);
             EffectAction['toggleMode']("effect");
             this.setState({fields: this.getFields()});
+
+            EffectAction['changeTrackType'](false);
         }
         if(data.effectToggleTrack){
             this.effectToggleTrack();

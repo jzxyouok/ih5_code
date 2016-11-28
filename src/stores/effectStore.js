@@ -21,6 +21,7 @@ export default Reflux.createStore({
         this.listenTo(Actions['returnStart'], this.returnStart);
         this.listenTo(Actions['effectToggleTrack'], this.effectToggleTrack);
         this.listenTo(Actions['playTrack'], this.playTrack);
+        this.listenTo(Actions['changeTrackType'], this.changeTrackType);
         this.token = Cookies.get('ih5token');
         this.system();
     },
@@ -121,6 +122,10 @@ export default Reflux.createStore({
 
     playTrack:function(){
         this.trigger({playTrack : true});
+    },
+
+    changeTrackType:function(bool){
+        this.trigger({changeTrackType : bool});
     }
 });
 
