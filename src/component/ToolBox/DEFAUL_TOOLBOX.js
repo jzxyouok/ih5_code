@@ -201,7 +201,8 @@ var DEFAULT_TOOLBOX = {
         gid:13,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.PAGECONTAINER,name:'页面容器',icon:pageContainerIcon, className:'pagecontainer', drawRect:true, param: {'swipeType': 4,'width':200,'height':200,'clipped':true, 'originX':0, 'originY':0, 'shapeResize': true}}
+            {cid:TOOL_ID.PAGECONTAINER,name:'页面容器',icon:pageContainerIcon, className:'pagecontainer', drawRect:true,
+                param: {'swipeType': 3,'width':200,'height':200,'clipped':true, 'originX':0, 'originY':0, 'shapeResize': true}}
         ]
     },{
         name:'排版容器',
@@ -242,7 +243,7 @@ var DEFAULT_TOOLBOX = {
             // {cid:TOOL_ID.EASING, name:'缓动', icon: easingIcon, className: 'easing'},
             // {cid:TOOL_ID.EFFECT, name:'动效', icon: effectIcon, className: 'effect'},
             {cid:TOOL_ID.SLIDE_TIMER, name:'滑动时间轴', icon: slidetimerIcon, className: 'slidetimer', drawRect:true,
-                param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10, 'shapeResize': true}}
+                param: {'shapeWidth': 100, 'shapeHeight': 100, 'lineWidth':0, 'fillColor':'transparent', 'totalTime': 10, 'shapeResize': true, 'swipeType':3}}
         ]
     },{
         name:'物理世界',
