@@ -12,5 +12,5 @@ export default Reflux.createActions([
     'returnStart',
     'effectToggleTrack',
     'playTrack',
-    'changeTrackType',
+    'changeTrackType'
 ]);

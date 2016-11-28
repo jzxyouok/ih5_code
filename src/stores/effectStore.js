@@ -103,10 +103,10 @@ export default Reflux.createStore({
             let result = JSON.parse(text);
             if (result) {
                 if(bool){
-                    this.trigger({addSpecificEffect : result});
+                    this.trigger({addSpecificEffect : result ,updatePropertyView :true});
                 }
                 else {
-                    this.trigger({loadSpecificEffect : result});
+                    this.trigger({loadSpecificEffect : result,updatePropertyView :true});
                 }
             }
         }.bind(this));

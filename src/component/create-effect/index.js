@@ -73,7 +73,7 @@ class CreateModule extends React.Component {
                                 updateData.props.key =  undefined;
                                 WidgetActions['selectWidget'](v);
                                 WidgetActions['deleteTreeNode'](v.className);
-                                WidgetActions['addEffect'](updateData);
+                                WidgetActions['addEffect'](updateData,false);
                             }
                             if( v.children && v.children.length > 0){
                                 fuc(v.children);
@@ -117,8 +117,9 @@ class CreateModule extends React.Component {
                         let effectData = JSON.parse(v.data);
                         effectData.props.key = undefined;
                         effectData.props.trackType = "effect";
+                        effectData.props.effectCome = data.effectName;
                         WidgetActions['deleteTreeNode'](this.state.selectWidget.className);
-                        WidgetActions['addEffect'](effectData);
+                        WidgetActions['addEffect'](effectData,true);
                     }
                     else {
                         EffectAction['getSpecificEffect'](false,v.id);
@@ -129,17 +130,20 @@ class CreateModule extends React.Component {
 
             if(!isCreate){
                 effectData = {"cls":"track","props":{"prop":["positionX","positionY","scaleX","scaleY","rotation","alpha"],
-                    "data":[], "name":data.effectName,"trackType":"track","locked":false,"key": this.state.selectWidget.key}};
+                    "data":[], "name":data.effectName,"trackType":"track","locked":false,"key": undefined}};
+                effectData.props.effectCome = data.effectName;
                 WidgetActions['deleteTreeNode'](this.state.selectWidget.className);
-                WidgetActions['addEffect'](effectData);
+                WidgetActions['addEffect'](effectData,true);
             }
         }
 
         if(data.loadSpecificEffect){
             let effectData = JSON.parse(data.loadSpecificEffect.data);
-            effectData.props.key =  this.state.selectWidget.key;
+            effectData.props.key =  undefined;
+            effectData.props.trackType = "effect";
+            effectData.props.effectCome = effectData.props.name;
             WidgetActions['deleteTreeNode'](this.state.selectWidget.className);
-            WidgetActions['addEffect'](effectData);
+            WidgetActions['addEffect'](effectData,true);
         }
     }
 
@@ -211,6 +215,7 @@ class CreateModule extends React.Component {
         else {
             let testDate = this.state.effectData;
             testDate.props.name = name;
+            testDate.props.effectCome = name;
             let data = JSON.stringify(testDate);
             //data.props.name = name;
             let effectData = {

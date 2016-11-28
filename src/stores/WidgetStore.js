@@ -2323,7 +2323,7 @@ export default Reflux.createStore({
             this.trigger({saveEffect : saveEffect})
         }
     },
-    addEffect : function(data){
+    addEffect : function(data,bool){
         if (this.currentWidget) {
             let effect = cpJson(data);
             if (!effect.className&&!effect.cls) {
@@ -2338,7 +2338,22 @@ export default Reflux.createStore({
             if(effect.props.eventTree){
                 this.reorderEventTreeList();
             }
-            this.trigger({selectWidget: this.currentWidget});
+            if(bool){
+                let test = true;
+                this.currentWidget.children.map((v,i)=>{
+                    if(v.className == "track" && v.props.name == effect.props.name){
+                        this.trigger({selectWidget: v});
+                        this.currentWidget = v;
+                        test = false;
+                    }
+                });
+                if(test){
+                    this.trigger({selectWidget: this.currentWidget});
+                }
+            }
+            else {
+                this.trigger({selectWidget: this.currentWidget});
+            }
             this.trigger({redrawEventTree: true});
             this.render();
         }
@@ -2870,7 +2885,7 @@ export default Reflux.createStore({
             props['name'] = props.type + cOrder;
         }
         else if(className == "track" && this.currentWidget.timerWidget == null){
-            if(name){
+            if(name && name !== "track"){
                 props['name'] = name;
                 props['trackType'] = "effect";
             }
