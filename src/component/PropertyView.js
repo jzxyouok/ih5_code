@@ -687,9 +687,9 @@ class PropertyView extends React.Component {
                             let obj={
                                 bgLink:null,
                                 backgroundColor:node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF'
-                            }
-                            this.onStatusChange({updateProperties: obj});
-                            WidgetActions['updateProperties'](obj, false, true);
+                            };
+                            this.onStatusChange({updateProperties: obj, changeNode:node});
+                            WidgetActions['updateProperties'](obj, false, true, undefined, node);
 
                             bTag = false;
                         }
@@ -714,8 +714,8 @@ class PropertyView extends React.Component {
                                     reader.onload = function (e) {
                                         node.props[prop.name + 'Key'] = fileName;
                                         node.rootWidget.imageList.push(e.target.result);
-                                        thisObj.onStatusChange({updateProperties: obj});
-                                        WidgetActions['updateProperties'](obj, false, true);
+                                        thisObj.onStatusChange({updateProperties: obj, changeNode:node});
+                                        WidgetActions['updateProperties'](obj, false, true, undefined, node);
 
                                     };
                                     reader.readAsDataURL(w.files[0]);
