@@ -121,7 +121,7 @@ var DEFAULT_TOOLBOX = {
         gid:3,
         primary: 0,
         secondary: [
-            {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50, 'fontSize':26}}]
+            {cid:TOOL_ID.INPUT,name:'输入框',icon:inputIcon, className:'input', drawRect:true, param:{'shapeWidth': 200, 'shapeHeight': 50, 'fontSize':26, 'backgroundColor': '#FFFFFF'}}]
     },{
         name:'计数器',
         key:15,

@@ -346,14 +346,7 @@ let specialCaseElementMapping = (className, type)=> {
                 'height': {name: 'height', type: propertyType.Hidden, default: 0, group: 'position', readOnly: true},
                 'shapeWidth': {name: 'shapeWidth', type: propertyType.Hidden, default: 0, group: 'position'},
                 'shapeHeight': {name: 'shapeHeight', type: propertyType.Hidden, default: 0, group: 'position'},
-                'backgroundColor': {
-                    name: 'backgroundColor',
-                    showName: '背景颜色',
-                    type: propertyType.Color2,
-                    default: '#FFFFFF',
-                    group: 'tools',
-                    order: 2
-                },
+                'backgroundColor': {name: 'backgroundColor', showName: '背景颜色', type: propertyType.Color2, default:'无', group: 'tools', order: 2},
             },
             events: {
                 'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'文本',type:'string',default:''}]},
@@ -388,7 +381,10 @@ let specialCaseElementMapping = (className, type)=> {
     } else if (isInCLList(className, ['track'])) {
         return {
             props: {
+                '_effectType': {name:'_effectType', showName:'动效类型', type: propertyType.Select, default:'0',options:{},group:'tools',order:2},
+
                 'type': {name:'type', showName:'轨迹类型', type: propertyType.Select, default:'1',options:{'直线':'0','曲线':'1','贝塞尔曲线':'2'},group:'tools',order:2},
+
                 '_createEffect': {name:'_createEffect', showName:'生成动效',styleName:'create-btn',olderClassName:"create-btn",
                     type: propertyType.Button,default:'',group:'buttonArea'},
 
@@ -635,7 +631,7 @@ let modifyPropList = (list, className, type) => {
 
 
     if(className=='track'){
-        aLack.push('_createEffect','_playTrack','_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
+        aLack.push('_effectType','_createEffect','_playTrack','_editTrack','_saveTrack','_saveAsTrack','_cancelTrack');
     }
 
     list = list.concat(dealElementList(aLack, className, 'props', type));

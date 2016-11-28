@@ -14,7 +14,7 @@ import { ArrTableDropDown } from '../PropertyView/ArrTableDropDown';
 import { getPropertyMap, propertyType } from '../PropertyMap'
 import SelectTargetAction from '../../actions/SelectTargetAction';
 
-import $ from 'jquery';
+import {getSize} from '../../utils/getSize'
 
 const MenuItem = Menu.Item;
 
@@ -628,10 +628,14 @@ class FormulaInput extends React.Component {
 
     resizeInputWidth(value) {
         if(value){
-            let sensor = $('<span>'+ value +'</span>').css({display: 'none'});
-            $('body').append(sensor);
-            let width = sensor.width()+2;
-            sensor.remove();
+            let sensor = document.createElement('span');
+            sensor.innerText = value;
+            sensor.style.display = 'none';
+            document.body.appendChild(sensor);
+            let width = getSize(sensor).width+2;
+            if(sensor&&sensor.parentElement) {
+                sensor.parentElement.removeChild(sensor);
+            }
             if(width>minInputWidth){
                 return width;
             }

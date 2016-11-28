@@ -994,7 +994,7 @@ class NavBar extends React.Component {
             path : svgPath
         };
 
-        this.drawRect.def.promise().then(data => {
+        this.drawRect.def.promise.then(data => {
             svgData.positionX = data.positionX;
             svgData.positionY = data.positionY;
             svgData.shapeWidth = data.shapeWidth;
@@ -1221,6 +1221,7 @@ class NavBar extends React.Component {
                         let effectData = JSON.parse(v.data);
                         effectData.props.key = undefined;
                         effectData.props.trackType = "effect";
+                        effectData.props.effectCome = v.name;
                         effectData.props.is_system = 1;
                         WidgetActions['addEffect'](effectData);
                     }

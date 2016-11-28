@@ -2323,7 +2323,7 @@ export default Reflux.createStore({
             this.trigger({saveEffect : saveEffect})
         }
     },
-    addEffect : function(data){
+    addEffect : function(data,bool){
         if (this.currentWidget) {
             let effect = cpJson(data);
             if (!effect.className&&!effect.cls) {
@@ -2338,7 +2338,22 @@ export default Reflux.createStore({
             if(effect.props.eventTree){
                 this.reorderEventTreeList();
             }
-            this.trigger({selectWidget: this.currentWidget});
+            if(bool){
+                let test = true;
+                this.currentWidget.children.map((v,i)=>{
+                    if(v.className == "track" && v.props.name == effect.props.name){
+                        this.trigger({selectWidget: v});
+                        this.currentWidget = v;
+                        test = false;
+                    }
+                });
+                if(test){
+                    this.trigger({selectWidget: this.currentWidget});
+                }
+            }
+            else {
+                this.trigger({selectWidget: this.currentWidget});
+            }
             this.trigger({redrawEventTree: true});
             this.render();
         }
@@ -2870,7 +2885,7 @@ export default Reflux.createStore({
             props['name'] = props.type + cOrder;
         }
         else if(className == "track" && this.currentWidget.timerWidget == null){
-            if(name){
+            if(name && name !== "track"){
                 props['name'] = name;
                 props['trackType'] = "effect";
             }
@@ -2934,17 +2949,6 @@ export default Reflux.createStore({
              skipProperty = false;
          }
 
-        //处理backgroundColor,如果为null,则变为transparent
-        // if(obj.backgroundColor ===null){
-        //     obj.backgroundColor='transparent';
-        //     tempWidget.node.backgroundColor='transparent';
-        //     tempWidget.props.backgroundColor='transparent';
-        //     tempWidget.props.backgroundColorKey='无';
-        // }
-
-
-
-
         //当轨迹处于时间轴外面的时候,并且处于动态模式,移动位置，所有关键点也移动位置
         let updateSyncTrack = ()=>{
             if(tempWidget.timerWidget == null){
@@ -2964,20 +2968,30 @@ export default Reflux.createStore({
             updateSyncTrack();
         }
 
-
-        if(obj.backgroundColor ===null || obj.backgroundColor==='无'){
-            let color='transparent';
-            obj.backgroundColor=color;
-            tempWidget.node.backgroundColor=color;
-            tempWidget.props.backgroundColor=color;
-            tempWidget.props.backgroundColorKey='无';
-            skipRender = false;
-            skipProperty = false;
+        //对color的处理
+        let colorName = ['bgColor', 'backgroundColor','fontFill','fillColor','lineColor',
+            'headerFontFill','altColor','color','head'];
+        for(var key in obj){
+            if(colorName.indexOf(key)>=0) {
+                if(obj[key]===''||obj[key]==='无') {
+                    let color='transparent';
+                    obj[key]=color;
+                    tempWidget.node[key]=color;
+                    tempWidget.props[key]=color;
+                    tempWidget.props[key+'Key']='无';
+                    skipRender = false;
+                    skipProperty = false;
+                }
+            }
         }
 
+        if(obj.bgLink===null) {
+            //没有了背景图的话，就填充它的背景颜色
+            tempWidget.node['backgroundColor']=tempWidget.props['backgroundColor'];
+            obj.backgroundColor = tempWidget.props['backgroundColor'];
+        }
 
-        //console.log(obj,this.currentWidget );
-
+        // console.log(obj,this.currentWidget);
 
         let p = {updateProperties: obj};
         if (skipRender) {

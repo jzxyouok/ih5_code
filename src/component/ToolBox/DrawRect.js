@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import {Deferred} from '../../utils/Promise';
 
 export default class DrawRect {
     constructor () {
@@ -10,7 +10,7 @@ export default class DrawRect {
         this.rectWidth = '0px';
         this.flag = false;
         this.result = {};
-        this.def = $.Deferred();
+        this.def = new Deferred();
         this.widget = null;
 
         this.designerView = document.getElementById('iH5-App');
