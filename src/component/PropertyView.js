@@ -685,12 +685,11 @@ class PropertyView extends React.Component {
                             value=null;
                             node.props[prop.name+'Key']='上传图片';
                             let obj={
-                                bgLink:null,
-                                backgroundColor:node.props.backgroundColor?node.props.backgroundColor:'#FFFFFF'
+                                bgLink:null
                             };
                             this.onStatusChange({updateProperties: obj, changeNode:node});
                             WidgetActions['updateProperties'](obj, false, true, undefined, node);
-
+                            this.forceUpdate();
                             bTag = false;
                         }
                         else {

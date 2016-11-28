@@ -2985,6 +2985,12 @@ export default Reflux.createStore({
             }
         }
 
+        if(obj.bgLink===null) {
+            //没有了背景图的话，就填充它的背景颜色
+            tempWidget.node['backgroundColor']=tempWidget.props['backgroundColor'];
+            obj.backgroundColor = tempWidget.props['backgroundColor'];
+        }
+
         // console.log(obj,this.currentWidget);
 
         let p = {updateProperties: obj};
