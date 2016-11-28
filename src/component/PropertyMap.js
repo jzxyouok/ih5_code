@@ -346,14 +346,7 @@ let specialCaseElementMapping = (className, type)=> {
                 'height': {name: 'height', type: propertyType.Hidden, default: 0, group: 'position', readOnly: true},
                 'shapeWidth': {name: 'shapeWidth', type: propertyType.Hidden, default: 0, group: 'position'},
                 'shapeHeight': {name: 'shapeHeight', type: propertyType.Hidden, default: 0, group: 'position'},
-                'backgroundColor': {
-                    name: 'backgroundColor',
-                    showName: '背景颜色',
-                    type: propertyType.Color2,
-                    default: '#FFFFFF',
-                    group: 'tools',
-                    order: 2
-                },
+                'backgroundColor': {name: 'backgroundColor', showName: '背景颜色', type: propertyType.Color2, default:'无', group: 'tools', order: 2},
             },
             events: {
                 'isMatch': {name:'isMatch', showName:'匹配', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'},{showName:'文本',type:'string',default:''}]},
