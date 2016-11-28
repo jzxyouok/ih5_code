@@ -106,11 +106,11 @@ export default class DrawRect {
             let pPositionX = 0;
             let pPositionY = 0;
             while(calWidget&&calWidget.className!=='root') {
-                if(calWidget.props.positionX) {
-                    pPositionX+=calWidget.props.positionX;
+                if(calWidget.node.positionX) {
+                    pPositionX+=calWidget.node.positionX;
                 }
-                if(calWidget.props.positionY) {
-                    pPositionY+=calWidget.props.positionY;
+                if(calWidget.node.positionY) {
+                    pPositionY+=calWidget.node.positionY;
                 }
                 calWidget = calWidget.parent;
             }

@@ -306,7 +306,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -322,6 +323,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'padding', type: 2, default: '' },
                 { name: 'flexDirection', type: 2, default: '' },
                 { name: 'justifyContent', type: 2, default: '' },
@@ -343,7 +346,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -377,7 +381,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -413,6 +418,7 @@ const propertyMap = {
     { funcs:
         [ { name: 'delete', info: '' },
             { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' },
             { name: 'nextPage', info: '' },
             { name: 'prevPage', info: '' },
             { name: 'gotoPageNum', info: 'page, direction' },
@@ -453,7 +459,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -468,7 +475,9 @@ const propertyMap = {
                 { name: 'minWidth', type: 2, default: '' },
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
-                { name: 'maxHeight', type: 2, default: '' } ],
+                { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
                 { name: 'touchDown', info: 'globalX, globalY' },
@@ -482,7 +491,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -513,7 +523,8 @@ const propertyMap = {
     { dom:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -550,7 +561,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -566,6 +578,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'clipped', type: 4, default: false } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
@@ -582,6 +596,7 @@ const propertyMap = {
     { funcs:
         [ { name: 'delete', info: '' },
             { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' },
             { name: 'nextPage', info: '' },
             { name: 'prevPage', info: '' },
             { name: 'gotoPageNum', info: 'page, direction' },
@@ -616,7 +631,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -631,7 +647,9 @@ const propertyMap = {
                 { name: 'minWidth', type: 2, default: '' },
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
-                { name: 'maxHeight', type: 2, default: '' } ],
+                { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
                 { name: 'touchDown', info: 'globalX, globalY' },
@@ -645,7 +663,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -675,7 +694,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -707,7 +727,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -723,6 +744,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'value', type: 2, default: '' },
                 { name: 'fontSize', type: 0, default: 26 },
                 { name: 'fontFamily', type: 0, default: 0 },
@@ -741,7 +764,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -776,7 +800,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -813,7 +838,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -829,6 +855,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'fontSize', type: 0, default: 26 },
                 { name: 'fontFamily', type: 2, default: '' },
                 { name: 'fontFill', type: 6, default: '' },
@@ -848,7 +876,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -884,7 +913,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -922,7 +952,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -937,6 +968,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'fillColor', type: 6, default: '' },
@@ -956,7 +989,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -991,7 +1025,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1029,7 +1064,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -1044,6 +1080,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'fillColor', type: 6, default: '' },
@@ -1062,7 +1100,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1096,7 +1135,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1133,7 +1173,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -1148,6 +1189,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'fillColor', type: 6, default: '' },
@@ -1169,7 +1212,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1206,7 +1250,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1247,6 +1292,7 @@ const propertyMap = {
     { funcs:
         [ { name: 'delete', info: '' },
             { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' },
             { name: 'play', info: '' },
             { name: 'replay', info: '' },
             { name: 'pause', info: '' },
@@ -1273,7 +1319,8 @@ const propertyMap = {
                 { name: 'clipped', type: 4, default: false },
                 { name: 'autoPlay', type: 4, default: false },
                 { name: 'loop', type: 4, default: false },
-                { name: 'totalTime', type: 1, default: 10 } ],
+                { name: 'totalTime', type: 1, default: 10 },
+                { name: 'timerScale', type: 1, default: 1 } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
                 { name: 'touchDown', info: 'globalX, globalY' },
@@ -1289,6 +1336,7 @@ const propertyMap = {
         { funcs:
             [ { name: 'delete', info: '' },
                 { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' },
                 { name: 'play', info: '' },
                 { name: 'replay', info: '' },
                 { name: 'pause', info: '' },
@@ -1313,7 +1361,8 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'autoPlay', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
-                    { name: 'totalTime', type: 1, default: 10 } ],
+                    { name: 'totalTime', type: 1, default: 10 },
+                    { name: 'timerScale', type: 1, default: 1 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
                     { name: 'touchDown', info: 'globalX, globalY' },
@@ -1332,6 +1381,7 @@ const propertyMap = {
     { funcs:
         [ { name: 'delete', info: '' },
             { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' },
             { name: 'play', info: '' },
             { name: 'replay', info: '' },
             { name: 'pause', info: '' },
@@ -1358,7 +1408,7 @@ const propertyMap = {
                 { name: 'clipped', type: 4, default: false },
                 { name: 'loop', type: 4, default: false },
                 { name: 'totalTime', type: 1, default: 10 },
-                { name: 'sliderScale', type: 1, default: 1 },
+                { name: 'timerScale', type: 1, default: 1 },
                 { name: 'swipeType', type: 0, default: 4 } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
@@ -1375,6 +1425,7 @@ const propertyMap = {
         { funcs:
             [ { name: 'delete', info: '' },
                 { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' },
                 { name: 'play', info: '' },
                 { name: 'replay', info: '' },
                 { name: 'pause', info: '' },
@@ -1399,7 +1450,7 @@ const propertyMap = {
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 },
-                    { name: 'sliderScale', type: 1, default: 1 },
+                    { name: 'timerScale', type: 1, default: 1 },
                     { name: 'swipeType', type: 0, default: 4 } ],
             events:
                 [ { name: 'click', info: 'globalX, globalY' },
@@ -1427,6 +1478,8 @@ const propertyMap = {
                 { name: 'autoPlay', type: 4, default: false },
                 { name: 'loop', type: 4, default: false },
                 { name: 'totalTime', type: 1, default: 10 },
+                { name: 'timerScale', type: 1, default: 1 },
+                { name: 'syncLast', type: 4, default: false },
                 { name: 'type', type: 0, default: 0 },
                 { name: 'startTime', type: 1, default: -1 },
                 { name: 'endTime', type: 1, default: -1 } ],
@@ -1445,6 +1498,8 @@ const propertyMap = {
                     { name: 'autoPlay', type: 4, default: false },
                     { name: 'loop', type: 4, default: false },
                     { name: 'totalTime', type: 1, default: 10 },
+                    { name: 'timerScale', type: 1, default: 1 },
+                    { name: 'syncLast', type: 4, default: false },
                     { name: 'type', type: 0, default: 0 },
                     { name: 'startTime', type: 1, default: -1 },
                     { name: 'endTime', type: 1, default: -1 } ],
@@ -1455,7 +1510,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -1471,6 +1527,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'value', type: 2, default: '' } ],
@@ -1487,7 +1545,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1520,7 +1579,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1555,7 +1615,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -1571,6 +1632,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'fontSize', type: 0, default: 26 },
                 { name: 'fontFamily', type: 2, default: '' },
                 { name: 'fontFill', type: 6, default: '' },
@@ -1591,7 +1654,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1628,7 +1692,8 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1668,6 +1733,7 @@ const propertyMap = {
     { funcs:
         [ { name: 'delete', info: '' },
             { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' },
             { name: 'play', info: '' },
             { name: 'pause', info: '' } ],
         props:
@@ -1757,7 +1823,8 @@ const propertyMap = {
     { dom:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -1786,7 +1853,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -1802,6 +1870,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'fontSize', type: 0, default: 26 },
@@ -1825,7 +1895,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -1909,6 +1980,7 @@ const propertyMap = {
     { funcs:
         [ { name: 'delete', info: '' },
             { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' },
             { name: 'nextImage', info: '' },
             { name: 'prevImage', info: '' },
             { name: 'play', info: '' },
@@ -1928,9 +2000,18 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'autoPlay', type: 4, default: false },
                 { name: 'delay', type: 1, default: 0.2 },
-                { name: 'loop', type: 4, default: true } ],
+                { name: 'loop', type: 4, default: true },
+                { name: 'positionX', type: 1, default: 0 },
+                { name: 'positionY', type: 1, default: 0 },
+                { name: 'scaleX', type: 1, default: 1 },
+                { name: 'scaleY', type: 1, default: 1 },
+                { name: 'originX', type: 1, default: 1 },
+                { name: 'originY', type: 1, default: 1 },
+                { name: 'rotation', type: 1, default: 1 } ],
         events:
             [ { name: 'click', info: 'globalX, globalY' },
                 { name: 'touchDown', info: 'globalX, globalY' },
@@ -1945,6 +2026,7 @@ const propertyMap = {
         { funcs:
             [ { name: 'delete', info: '' },
                 { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' },
                 { name: 'nextImage', info: '' },
                 { name: 'prevImage', info: '' },
                 { name: 'play', info: '' },
@@ -1956,13 +2038,13 @@ const propertyMap = {
                     { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
                     { name: 'backgroundColor', type: 6, default: '' },
-                    { name: 'positionX', type: 0, default: 0 },
-                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'positionX', type: 1, default: 0 },
+                    { name: 'positionY', type: 1, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
-                    { name: 'originX', type: 1, default: 0 },
-                    { name: 'originY', type: 1, default: 0 },
-                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'originX', type: 1, default: 1 },
+                    { name: 'originY', type: 1, default: 1 },
+                    { name: 'rotation', type: 1, default: 1 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
                     { name: 'autoPlay', type: 4, default: false },
@@ -1982,6 +2064,7 @@ const propertyMap = {
         { funcs:
             [ { name: 'delete', info: '' },
                 { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' },
                 { name: 'nextImage', info: '' },
                 { name: 'prevImage', info: '' },
                 { name: 'play', info: '' },
@@ -1992,15 +2075,15 @@ const propertyMap = {
                     { name: 'visible', type: 4, default: true },
                     { name: 'alpha', type: 5, default: 1 },
                     { name: 'keepRatio', type: 4, default: false },
-                    { name: 'positionX', type: 0, default: 0 },
-                    { name: 'positionY', type: 0, default: 0 },
+                    { name: 'positionX', type: 1, default: 0 },
+                    { name: 'positionY', type: 1, default: 0 },
                     { name: 'scaleX', type: 1, default: 1 },
                     { name: 'scaleY', type: 1, default: 1 },
-                    { name: 'rotation', type: 1, default: 0 },
+                    { name: 'rotation', type: 1, default: 1 },
                     { name: 'width', type: 0, default: 0, readOnly: true },
                     { name: 'height', type: 0, default: 0, readOnly: true },
-                    { name: 'originX', type: 1, default: 0 },
-                    { name: 'originY', type: 1, default: 0 },
+                    { name: 'originX', type: 1, default: 1 },
+                    { name: 'originY', type: 1, default: 1 },
                     { name: 'autoPlay', type: 4, default: false },
                     { name: 'delay', type: 1, default: 0.2 },
                     { name: 'loop', type: 4, default: true } ],
@@ -2020,7 +2103,8 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -2036,6 +2120,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'src', type: 2, default: '' } ],
@@ -2052,7 +2138,8 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -2086,7 +2173,11 @@ const propertyMap = {
     { flex:
     { funcs:
         [ { name: 'delete', info: '' },
-            { name: 'clone', info: 'obj, id, props, isBottom' } ],
+            { name: 'clone', info: 'obj, id, props, isBottom' },
+            { name: 'hideSibling', info: '' },
+            { name: 'getResult', info: 'num' },
+            { name: 'prevResult', info: '' },
+            { name: 'nextResult', info: '' } ],
         props:
             [ { name: 'id', type: 2, default: '' },
                 { name: 'initVisible', type: 4, default: null },
@@ -2101,6 +2192,8 @@ const propertyMap = {
                 { name: 'maxWidth', type: 2, default: '' },
                 { name: 'minHeight', type: 2, default: '' },
                 { name: 'maxHeight', type: 2, default: '' },
+                { name: 'positionX', type: 0, default: 0, readOnly: true },
+                { name: 'positionY', type: 0, default: 0, readOnly: true },
                 { name: 'shapeWidth', type: 0, default: 0 },
                 { name: 'shapeHeight', type: 0, default: 0 },
                 { name: 'fillColor', type: 6, default: '' },
@@ -2132,7 +2225,11 @@ const propertyMap = {
         dom:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' },
+                { name: 'getResult', info: 'num' },
+                { name: 'prevResult', info: '' },
+                { name: 'nextResult', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },
@@ -2179,7 +2276,11 @@ const propertyMap = {
         canvas:
         { funcs:
             [ { name: 'delete', info: '' },
-                { name: 'clone', info: 'obj, id, props, isBottom' } ],
+                { name: 'clone', info: 'obj, id, props, isBottom' },
+                { name: 'hideSibling', info: '' },
+                { name: 'getResult', info: 'num' },
+                { name: 'prevResult', info: '' },
+                { name: 'nextResult', info: '' } ],
             props:
                 [ { name: 'id', type: 2, default: '' },
                     { name: 'initVisible', type: 4, default: null },

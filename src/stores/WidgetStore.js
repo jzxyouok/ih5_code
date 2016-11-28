@@ -105,25 +105,26 @@ function onSelect(isMulti) {
 }
 
 const selectableClass = ['image', 'imagelist', 'text', 'video', 'rect', 'ellipse', 'path', 'slidetimer',
-    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'container', 'input', 'html', 'table'];
+    'bitmaptext', 'qrcode', 'counter', 'button', 'taparea', 'input', 'html', 'table', 'container', 'pagecontainer'];
 var currentLoading;
 var addProps = ['positionX', 'positionY', 'rotation'];
-var mulProps = ['scaleX', 'scaleY'];
+var mulProps = ['scaleX', 'scaleY', 'alpha'];
 
 var saveEffect = {};
 
 function syncTrack(parent, props) {
     if (props && props['prop'] && props['data'] && props['data'].length > 0) {
+        var syncIndex = props['syncLast'] ? props['data'].length - 1 : 0;
         for (var i = 0; i < props['prop'].length; i++) {
             if (addProps.indexOf(props['prop'][i]) >= 0) {
-                var delta = parent.node[props['prop'][i]] - props['data'][0][i + 1];
+                var delta = parent.node[props['prop'][i]] - props['data'][syncIndex][i + 1];
                 if (delta != 0) {
                     for (var j = 0; j < props['data'].length; j++) {
                         props['data'][j][i + 1] += delta;
                     }
                 }
             } else if (mulProps.indexOf(props['prop'][i]) >= 0) {
-                var delta = parent.node[props['prop'][i]] / props['data'][0][i + 1];
+                var delta = parent.node[props['prop'][i]] / props['data'][syncIndex][i + 1];
                 if (delta != 1) {
                     for (var j = 0; j < props['data'].length; j++) {
                         props['data'][j][i + 1] *= delta;
@@ -1805,11 +1806,11 @@ function getRelativePosition(x, y, widget) {
         let pPositionX = 0;
         let pPositionY = 0;
         while(calWidget&&calWidget.className!=='root') {
-            if(calWidget.props.positionX) {
-                pPositionX+=calWidget.props.positionX;
+            if(calWidget.node.positionX) {
+                pPositionX+=calWidget.node.positionX;
             }
-            if(calWidget.props.positionY) {
-                pPositionY+=calWidget.props.positionY;
+            if(calWidget.node.positionY) {
+                pPositionY+=calWidget.node.positionY;
             }
             calWidget = calWidget.parent;
         }
@@ -1828,11 +1829,11 @@ function getAbsolutePosition(widget) {
         //计算当前widget的绝对位置然后算出画框的相对位置
         let calWidget = widget;
         while(calWidget&&calWidget.className!=='root') {
-            if(calWidget.props.positionX) {
-                x+=calWidget.props.positionX;
+            if(calWidget.node.positionX) {
+                x+=calWidget.node.positionX;
             }
-            if(calWidget.props.positionY) {
-                y+=calWidget.props.positionY;
+            if(calWidget.node.positionY) {
+                y+=calWidget.node.positionY;
             }
             calWidget = calWidget.parent;
         }

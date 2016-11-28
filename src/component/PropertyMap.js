@@ -300,6 +300,16 @@ let funcMapping = {
  */
 let specialCaseElementMapping = (className, type)=> {
     //以后还要对不同的type进行修正(modeType)
+    let positionXY = ["container","canvas","dom","image","bitmaptext","text","rect","ellipse","path","qrcode","counter","input","imagelist","html","table"];
+    if(isInCLList(className, positionXY) && type === modeType.flex) {
+        //flex下的特殊处理
+        return {
+            props: {
+                positionX: { name: 'positionX', showName:'X', type: propertyType.Hidden, default: 0, readOnly: true },
+                positionY: { name: 'positionY', showName:'Y', type: propertyType.Hidden, default: 0, readOnly: true },
+            }
+        }
+    }
     if(isInCLList(className, ['counter'])) {
         return {
             props: {
@@ -307,38 +317,42 @@ let specialCaseElementMapping = (className, type)=> {
             events: {
                 'change': {name:'change', showName:'数值改变'}}
         };
-    } else if (isInCLList(className, ['root'])) {
+    }
+    if (isInCLList(className, ['root'])) {
         return {
             props: {
                 'loop': {name:'loop', showName:'滑动页面循环', type: propertyType.Boolean, group:'tools', default: false}}
         };
     }
-    else if (isInCLList(className, ['qrcode'])) {
+    if (isInCLList(className, ['qrcode'])) {
         return {
             props: {
                 'value': {name:'value', showName:'数据', type: propertyType.String, default:''}}
         };
-    } else if (isInCLList(className, ['oneDArr', 'twoDArr'])) {
+    }
+    if (isInCLList(className, ['oneDArr', 'twoDArr'])) {
         return {
             props: {
                 'title': {name:'title', showName:'变量名', type: propertyType.String, default: ''},
                 'value': {name:'value', showName:'值',type: propertyType.String, default: ''}}
         };
-    } else if (isInCLList(className, ['bitmaptext'])) {
+    }
+    if (isInCLList(className, ['bitmaptext'])) {
         return {
             props: {
                 'color': {name:'color', showName:'文字颜色', type: propertyType.Color, default:'',group:'tools'},
                 'fontFamily': {name:'fontFamily', showName:'字体',type: propertyType.Select, default:'上传字体',group:'tools'}
             }
         };
-    } else if (isInCLList(className, ['html'])) {
+    }
+    if (isInCLList(className, ['html'])) {
         return {
             props: {
                 'width': {name:'width', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},
                 'height': {name:'height', type: propertyType.Hidden, default: 0, group:'position', readOnly: true},}
         };
     }
-    else if (isInCLList(className, ['input'])) {
+    if (isInCLList(className, ['input'])) {
         return {
             props: {
                 'value': {name: 'value', showName: '内容', type: propertyType.String, default: ''},
@@ -364,21 +378,24 @@ let specialCaseElementMapping = (className, type)=> {
                 'isNotLetter': {name:'isNotLetter', showName:'不是字母', needFill:[{type:'select', option:['输入完成','内容改变'],default:'输入完成'}]}
             }
         };
-    } else if (isInCLList(className, ['easing'])) {
+    }
+    if (isInCLList(className, ['easing'])) {
         return {
             props: {
                 'type': {name:'type', showName:'移动方式',type: propertyType.Select, default: '无', options:easingMoveOptions},
                 'radius': {name:'radius', showName:'圆角', type: propertyType.Number, default: 0},
                 'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, default: false}}
         };
-    } else if (isInCLList(className, ['effect'])) {
+    }
+    if (isInCLList(className, ['effect'])) {
         return {
             props: {
                 'type':{name:'type', showName:'动效类型', type: propertyType.Select,  default:'无',optionsToJudge:effectOptionsToJudge,options:effectOption},
                 'duration': {name:'duration', showName:'时长', type: propertyType.Number, default: 1},
                 'autoPlay': {name:'autoPlay', showName:'自动播放', type: propertyType.Boolean, default: false}}
         };
-    } else if (isInCLList(className, ['track'])) {
+    }
+    if (isInCLList(className, ['track'])) {
         return {
             props: {
                 '_effectType': {name:'_effectType', showName:'动效类型', type: propertyType.Select, default:'0',options:{},group:'tools',order:2},
@@ -404,7 +421,8 @@ let specialCaseElementMapping = (className, type)=> {
                                     type: propertyType.Button,default:'',group:'buttonArea'}
             }
         };
-    } else if (isInCLList(className, ['table'])) {
+    }
+    if (isInCLList(className, ['table'])) {
         return {
             props: {
                 'lineColor': {name:'lineColor', showName:'网格颜色', type: propertyType.Color2,group:'tableW', default: '', tbCome:"tbF"},
@@ -412,7 +430,8 @@ let specialCaseElementMapping = (className, type)=> {
                 'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
                 'fontSize': {name:'fontSize', showName:'图表字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
         };
-    } else if (isInCLList(className, ['tableForSet'])) {
+    }
+    if (isInCLList(className, ['tableForSet'])) {
         return {
             props: {
                 'fillColor': {name:'fillColor', showName:'表格底色', type: propertyType.Color,group:'display', default: ''},
@@ -421,7 +440,8 @@ let specialCaseElementMapping = (className, type)=> {
                 'fontFamily': {name:'fontFamily', showName:'字体', type: propertyType.Select,group:'tools', default: '选择字体', tbCome:"tbF" },
                 'fontSize': {name:'fontSize', showName:'字体大小', type: propertyType.Number,group:'tools', default: 24, tbCome:"tbS" }}
         };
-    } else if (isInCLList(className, ['slidetimer', 'pagecontainer'])){
+    }
+    if (isInCLList(className, ['slidetimer', 'pagecontainer'])){
       return {
           props: {
               'originPos': {
@@ -455,9 +475,8 @@ let specialCaseElementMapping = (className, type)=> {
 
           }
       };
-    } else {
-        return {};
     }
+    return {};
 };
 
 let addCustomWidgetProperties = ()=>{
