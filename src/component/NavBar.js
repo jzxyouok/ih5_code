@@ -6,7 +6,6 @@ import { Row, Col } from 'antd';
 import Cookies  from 'js-cookie';
 import InputText from './InputText';
 import LoginDialog from './LoginDialog';
-import $ from 'jquery'
 import $class from 'classnames'
 
 import ArrangeBlock from './arrange-block/index'
@@ -778,24 +777,28 @@ class NavBar extends React.Component {
     clickOthersHide(){
         let self = this;
         let fuc = function(e){
-            let _con1 = $('.dropDownToggle');   // 设置目标区域
-            let _con2 = $('.dropDownBtn');
+            let _con1 = document.querySelector('.dropDownToggle');// 设置目标区域
+            let _con2 = document.querySelector('.dropDownBtn');
+            // let _con1 = $('.rowRightMenu');   // 设置目标区域
+            // let _con2 = $('.columnRightMenu');
             if(
-                (!_con1.is(e.target) && _con1.has(e.target).length === 0)
-                &&(!_con2.is(e.target) && _con2.has(e.target).length === 0)
+                (_con1 !== e.target && _con1 && !_con1.contains(e.target))
+                &&(_con2 !== e.target && _con2 && !_con2.contains(e.target))
+                // (!_con1.is(e.target) && _con1.has(e.target).length === 0)
+                // &&(!_con2.is(e.target) && _con2.has(e.target).length === 0)
             ){
                 self.setState({
                     dropDownState : 0
                 },()=>{
-                    $(document).off('mouseup', fuc);
+                  document.removeEventListener('mouseup', fuc);
                 })
             }
         };
         if(this.state.dropDownState !== 0){
-            $(document).on('mouseup', fuc);
+          document.addEventListener('mouseup', fuc);
         }
         else {
-            $(document).off('mouseup', fuc);
+          document.removeEventListener('mouseup', fuc);
         }
     }
 
@@ -1052,22 +1055,23 @@ class NavBar extends React.Component {
     clickOthersHide1(){
         let self = this;
         let fuc = function(e){
-            let _con = $('.special-layer');   // 设置目标区域
+            let _con = document.querySelector('.special-layer');   // 设置目标区域
             if(
-                (!_con.is(e.target) && _con.has(e.target).length === 0)
+                _con !== e.target && _con && !_con.contains(e.target)
+                // (!_con.is(e.target) && _con.has(e.target).length === 0)
             ){
                 self.setState({
                     specialLayer : false
                 },()=>{
-                    $(document).off("mouseup", fuc);
+                    document.removeEventListener('mouseup', fuc);
                 })
             }
         };
         if(this.state.whichdropdown !== -1){
-            $(document).on("mouseup", fuc);
+            document.addEventListener('mouseup', fuc);
         }
         else {
-            $(document).off("mouseup", fuc);
+            document.removeEventListener('mouseup', fuc);
         }
     }
 

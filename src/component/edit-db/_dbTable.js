@@ -1,7 +1,6 @@
 //数据库表格
 import React from 'react';
 import $class from 'classnames';
-import $ from 'jquery';
 
 import WidgetActions from '../../actions/WidgetActions';
 import WidgetStore from '../../stores/WidgetStore';
@@ -464,7 +463,7 @@ class DbTable extends React.Component {
 
     updateNewScrollData(bool){
         let widthShow = this.props.isBig ? 535 : 689;
-        let getWidth = parseFloat($(".DT-content table").css('width'));
+        let getWidth = document.querySelector(".DT-content table").getBoundingClientRect().width;
         let getScrollWidth = this.props.isBig ? 555 : 707;
         let width = getWidth > widthShow ? getWidth : widthShow;
         let moveLength = width - widthShow;
@@ -495,12 +494,11 @@ class DbTable extends React.Component {
         let left = this.state.marginLeft;
         let moveLength;
 
-        $(".DbTable .scroll span").mousedown(function(e){
+        document.querySelector(".DbTable .scroll span").addEventListener('mousedown', function documentMousedown(e){
             move=true;
             _x=e.pageX;
             moveLength = self.state.moveLength / self.state.multiple;
-
-            $(document).bind('mousemove',(function(e){
+            const documentMousemove = function documentMousemove(e) {
                 if(move && moveLength !== 0){
                     let x =  e.pageX - _x;
                     let value = left + x;
@@ -515,14 +513,15 @@ class DbTable extends React.Component {
                         marginLeft : value
                     });
                 }
-            }));
+            };
+            document.addEventListener('mousemove', documentMousemove);
 
-            $(document).bind('mouseup',(function(){
+            document.addEventListener('mouseup',function documentMouseup(){
                 move=false;
                 left = self.state.marginLeft;
-                $(document).unbind('mousemove');
-                $(document).unbind('mouseup');
-            }));
+                document.removeEventListener('mousemove', documentMousemove);
+                document.removeEventListener('mouseup', documentMouseup);
+            });
         });
     }
 
@@ -649,8 +648,8 @@ class DbTable extends React.Component {
         if(key === this.state.inputNow) return;
         this.clearRowColumn();
 
-        let width = parseFloat($(".t" + key).css('width'));
-        let height = parseFloat($(".t" + key).css('height'));
+        let width = document.querySelector(".t" + key).getBoundingClientRect().width;
+        let height = document.querySelector(".t" + key).getBoundingClientRect().width;
         let style = {"width":width,"height":height};
         this.setState({
             inputStyle : style,
@@ -660,8 +659,8 @@ class DbTable extends React.Component {
             columnRightMenu : false,
             selectArrayCopy : []
         },()=>{
-            $(".i" + key).focus();
-            $(".i" + key).select();
+            document.querySelector(".i" + key).focus();
+            document.querySelector(".i" + key).select();
         })
     }
 
@@ -922,25 +921,29 @@ class DbTable extends React.Component {
     clickOthersHide(){
         let self = this;
         let fuc = function(e){
-            let _con1 = $('.rowRightMenu');   // 设置目标区域
-            let _con2 = $('.columnRightMenu');
+            let _con1 = document.querySelector('.rowRightMenu');// 设置目标区域
+            let _con2 = document.querySelector('.columnRightMenu');
+            // let _con1 = $('.rowRightMenu');   // 设置目标区域
+            // let _con2 = $('.columnRightMenu');
             if(
-                (!_con1.is(e.target) && _con1.has(e.target).length === 0)
-                &&(!_con2.is(e.target) && _con2.has(e.target).length === 0)
+                  (_con1 !== e.target && _con1 && !_con1.contains(e.target))
+                  &&(_con2 !== e.target && _con2 && !_con2.contains(e.target))
+                // (!_con1.is(e.target) && _con1.has(e.target).length === 0)
+                // &&(!_con2.is(e.target) && _con2.has(e.target).length === 0)
             ){
                 self.setState({
                     rowRightMenu : false,
                     columnRightMenu : false
                 },()=>{
-                    $(document).off('mouseup', fuc);
+                    document.removeEventListener('mouseup', fuc);
                 })
             }
         };
         if(this.state.dropDownState !== 0){
-            $(document).on('mouseup', fuc);
+            document.addEventListener('mouseup', fuc);
         }
         else {
-            $(document).off('mouseup', fuc);
+            document.removeEventListener('mouseup', fuc);
         }
     }
 
@@ -1483,7 +1486,3 @@ class DbTable extends React.Component {
 }
 
 module.exports = DbTable;
-
-
-
-
