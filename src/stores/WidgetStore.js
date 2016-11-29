@@ -560,11 +560,47 @@ function resolveDBItemList(node, list) {
     }
 }
 
+function getImageOrderInRoot(link, rootWidget){
+    let linkOrder = rootWidget.imageList.indexOf(link);
+    if (linkOrder >= 0) {
+        return linkOrder;
+    } else {
+        return rootWidget.imageList.push(link) - 1;
+    }
+}
+
+function replaceImageIndexInBlock(block, imageList, rootWidget){
+    if (block.props['link'] !== undefined) {
+        let index = block.props['link'];
+        if(index<=imageList.length) {
+            block.props['link'] = getImageOrderInRoot(imageList[index], rootWidget);
+        }
+    }
+    if (block.props['bgLink'] !== undefined) {
+        let index = block.props['bgLink'];
+        if(index<=imageList.length) {
+            block.props['bgLink'] = getImageOrderInRoot(imageList[index], rootWidget);
+        }
+    }
+};
+
+function assignImagesInTreeNode(block,rootWidget){
+    if(block.props.block.imageList) {
+        let imageList = block.props.block.imageList;
+        replaceImageIndexInBlock(block, imageList, rootWidget);
+        if (block.children.length > 0) {
+            block.children.map(item => {
+                replaceImageIndexInBlock(item, imageList, rootWidget);
+            });
+        }
+    }
+}
+
 function trimTreeNode(node, links) {
   if (node.props['link'] !== undefined)
     node.props['link'] = links.push(node.rootWidget.imageList[node.props['link']]) - 1;
-    if (node.props['bgLink'] !== undefined)
-        node.props['bgLink'] = links.push(node.rootWidget.imageList[node.props['bgLink']]) - 1;
+  if (node.props['bgLink'] !== undefined)
+    node.props['bgLink'] = links.push(node.rootWidget.imageList[node.props['bgLink']]) - 1;
   if (node.children.length > 0) {
     node.children.map(item => {
       trimTreeNode(item, links);
@@ -4576,9 +4612,15 @@ export default Reflux.createStore({
         }
 
         let saveBlock = {};
+        let links = [];
+        trimTreeNode(this.currentWidget, links);
         generateId(this.currentWidget);//给对象加上id
         //保存小模块
         saveTree(saveBlock, this.currentWidget, false, false);
+        //添加图片列表
+        if(links.length>0) {
+            saveBlock.props['block']['imageList'] = links;
+        }
         //到时还要check id
         let isEdit = false;
         let type = 'create';
@@ -4594,6 +4636,10 @@ export default Reflux.createStore({
         let block = cpJson(data);
         if(block&&block!==''){
             let idList = [];
+            if(block.props.block.imageList) {
+                //对图片链接的处理， 添加到当前block数据下
+                assignImagesInTreeNode(block, this.currentWidget.rootWidget);
+            }
             let widget = loadTree(this.currentWidget, block, idList);
             resolveEventTree(widget, idList);
             resolveBlock(widget, idList);
